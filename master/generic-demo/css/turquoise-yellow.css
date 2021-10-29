@@ -1,0 +1,81 @@
+#map {
+    overflow: hidden; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#578bad+0,70b0db+100 */
+    background: #578bad; /* Old browsers */
+    background: -moz-linear-gradient(left,  #578bad 0%, #70b0db 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #578bad 0%,#70b0db 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #578bad 0%,#70b0db 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#578bad', endColorstr='#70b0db',GradientType=1 ); /* IE6-9 */
+}
+
+/* BEGIN - Common status bar CSS */
+.status-bar-component {
+    position: absolute;
+    bottom: 0px;
+    z-index: 100;
+}
+.component-mouse-coordinates { left: 0px; }
+.component-scale-display { right: 320px; }
+.component-selected-feature-count { left: 260px; }
+.component-view-size { right: 136px; }
+.component-pbmg { right: 0px; }
+/* END - Common status bar CSS */
+.turquoise-yellow-file-menu { color: white; }
+.turquoise-yellow-file-menu .mouse-over {
+    color: white;
+    border-color: black;
+    background-color: #9CBED4;
+}
+.turquoise-yellow-sidebar { background-color: white; }
+.turquoise-yellow-toolbar {
+    color: white;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7d7e7d+0,0e0e0e+100;Black+3D */
+    background: #7d7e7d; /* Old browsers */
+    background: -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
+}
+.turquoise-yellow-toolbar .mouse-over {
+    background-color: #FFE374;
+    border-color: #FFE374;
+    color: black;
+}
+.turquoise-yellow-toolbar .selected-item {
+    background-color: #FDEA9D;
+    border-color: #FDEA9D;
+    color: black;
+}
+.turquoise-yellow-toolbar-vertical, .turquoise-yellow-status-bar {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#faea98+0,fefcea+100 */
+    background: #faea98; /* Old browsers */
+    background: -moz-linear-gradient(top,  #faea98 0%, #fefcea 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #faea98 0%,#fefcea 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #faea98 0%,#fefcea 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faea98', endColorstr='#fefcea',GradientType=0 ); /* IE6-9 */
+}
+.turquoise-yellow-toolbar-vertical .mouse-over {
+    background-color: #FFE06A;
+    border-color: black;
+    color: black;
+}
+.turquoise-yellow-toolbar-vertical .selected-item {
+    background-color: #FEE588;
+    border-color: black;
+    color: black;
+}
+.turquoise-yellow-splitter > .layout-splitter {
+    background-color: #578bad;
+}
+.turquoise-yellow-sb-tabs > .bp3-tab-list {
+    padding-left: 8px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#faea98+0,fefcea+100 */
+    background: #faea98; /* Old browsers */
+    background: -moz-linear-gradient(top,  #faea98 0%, #fefcea 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #faea98 0%,#fefcea 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #faea98 0%,#fefcea 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faea98', endColorstr='#fefcea',GradientType=0 ); /* IE6-9 */
+}
+.turquoise-yellow-sb-tabs > .bp3-tab-list > .bp3-tab {
+    color: #11449E;
+}

@@ -1948,7 +1948,7 @@ a.bp3-button{
   min-height:40px;
   padding-left:20px;
   padding-right:5px;
-  z-index:30; }
+  z-index:0; }
   .bp3-dialog-header .bp3-icon-large,
   .bp3-dialog-header .bp3-icon{
     color:#5c7080;
@@ -2002,6 +2002,10 @@ a.bp3-button{
   display:-webkit-box;
   display:-ms-flexbox;
   display:flex; }
+  .bp3-multistep-dialog-panels:first-child .bp3-dialog-step-container:first-child{
+    border-radius:6px 0 0 0; }
+  .bp3-multistep-dialog-panels:first-child .bp3-multistep-dialog-right-panel{
+    border-top-right-radius:6px; }
 
 .bp3-multistep-dialog-left-panel{
   display:-webkit-box;
@@ -2033,10 +2037,20 @@ a.bp3-button{
   background-color:#ffffff;
   border-radius:0 0 6px 0;
   border-top:1px solid rgba(16, 22, 26, 0.15);
+  display:-webkit-box;
+  display:-ms-flexbox;
+  display:flex;
+  -webkit-box-pack:justify;
+      -ms-flex-pack:justify;
+          justify-content:space-between;
   padding:10px; }
   .bp3-dark .bp3-multistep-dialog-footer{
     background:#30404d;
     border-top:1px solid rgba(16, 22, 26, 0.4); }
+  .bp3-multistep-dialog-footer .bp3-dialog-footer-actions{
+    -webkit-box-flex:1;
+        -ms-flex-positive:1;
+            flex-grow:1; }
 
 .bp3-dialog-step-container{
   background-color:#f5f8fa;

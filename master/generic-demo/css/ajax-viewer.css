@@ -1,0 +1,40 @@
+/* BEGIN - Common status bar CSS */
+.status-bar-component {
+    position: absolute;
+    bottom: 0px;
+    z-index: 100;
+}
+.component-mouse-coordinates { left: 0px; }
+.component-scale-display { right: 320px; }
+.component-selected-feature-count { left: 260px; }
+.component-view-size { right: 136px; }
+.component-pbmg { right: 0px; }
+/* END - Common status bar CSS */
+.component-mouse-coordinates, .component-scale-display, .component-selected-feature-count, .component-view-size {
+    background-color: #f0f0f0;
+}
+.ajax-sidebar-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.ajax-sidebar-panel-heading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 26px;
+    padding: 3px;
+    padding-left: 6px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.ajax-sidebar-panel-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 26px;
+    bottom: 0;
+    overflow-y: auto;
+}

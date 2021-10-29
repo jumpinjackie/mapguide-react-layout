@@ -1171,6 +1171,17 @@ var GenericSubjectLayerType;
      * A vector layer based on a Mapbox Vector Tile set
      */
     GenericSubjectLayerType["MVT"] = "MVT";
+    /**
+     * A XYZ tileset
+     * @since 0.14.3
+     * @remarks A XYZ subject layer will not be added as a base layer. It will be considered as an "overlay" with respect to any existing base layers present
+     */
+    GenericSubjectLayerType["XYZ"] = "XYZ";
+    /**
+     * A static image layer
+     * @since 0.14.3
+     */
+    GenericSubjectLayerType["StaticImage"] = "StaticImage";
 })(GenericSubjectLayerType = exports.GenericSubjectLayerType || (exports.GenericSubjectLayerType = {}));
 function isGenericSubjectMapLayer(map) {
     var _a;
@@ -1302,7 +1313,7 @@ exports.closeComponent = closeComponent;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ViewerInitCommand = exports.isStateless = exports.getMapDefinitionsFromFlexLayout = exports.buildSubjectLayerDefn = void 0;
+exports.ViewerInitCommand = exports.isStateless = exports.isMapDefinition = exports.getMapDefinitionsFromFlexLayout = exports.buildSubjectLayerDefn = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var init_1 = __webpack_require__(/*! ./init */ "./src/actions/init.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
@@ -1422,6 +1433,10 @@ function getMapDefinitionsFromFlexLayout(appDef) {
     return maps;
 }
 exports.getMapDefinitionsFromFlexLayout = getMapDefinitionsFromFlexLayout;
+function isMapDefinition(arg) {
+    return arg.mapDef != null;
+}
+exports.isMapDefinition = isMapDefinition;
 function isStateless(appDef) {
     var _a;
     // This appdef is stateless if:
@@ -1431,7 +1446,14 @@ function isStateless(appDef) {
     if (((_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.Stateless) == "true")
         return true;
     try {
-        return getMapDefinitionsFromFlexLayout(appDef).length == 0;
+        var maps = getMapDefinitionsFromFlexLayout(appDef);
+        for (var _i = 0, maps_1 = maps; _i < maps_1.length; _i++) {
+            var m = maps_1[_i];
+            if (isMapDefinition(m)) {
+                return false;
+            }
+        }
+        return true;
     }
     catch (e) {
         return true;
@@ -1525,7 +1547,7 @@ var ViewerInitCommand = /** @class */ (function () {
                     }
                 }
                 mapsDict = mapsByName;
-                maps = this.setupMaps(appDef, mapsDict, config, warnings);
+                maps = this.setupMaps(appDef, mapsDict, config, warnings, locale);
                 if (appDef.Title) {
                     document.title = appDef.Title || document.title;
                 }
@@ -1597,6 +1619,7 @@ var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var assert_1 = __webpack_require__(/*! ../utils/assert */ "./src/utils/assert.ts");
 var lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
+var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 var TYPE_SUBJECT = "SubjectLayer";
 var TYPE_EXTERNAL = "External";
 /**
@@ -1611,6 +1634,15 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
     }
     DefaultViewerInitCommand.prototype.attachClient = function (client) {
         this.client = client;
+    };
+    DefaultViewerInitCommand.prototype.isArbitraryCoordSys = function (subject) {
+        if (subject) {
+            if ((0, type_guards_1.isRuntimeMap)(subject)) {
+                var arbCs = (0, units_1.tryParseArbitraryCs)(subject.CoordinateSystem.MentorCode);
+                return arbCs != null;
+            }
+        }
+        return false;
     };
     /**
      * @override
@@ -1770,12 +1802,9 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
             });
         });
     };
-    DefaultViewerInitCommand.prototype.isMapDefinition = function (arg) {
-        return arg.mapDef != null;
-    };
     DefaultViewerInitCommand.prototype.createRuntimeMapsAsync = function (session, res, isStateless, mapDefSelector, projectionSelector, sessionWasReused) {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var mapDefs, mapPromises, warnings, locale, subjectLayers, siteVersion, _i, mapDefs_1, m, siteVer, _a, mapDefs_2, m, _b, _c, _d, _e, maps, fetchEpsgs, _f, maps_1, m, epsg, mapDef, extraEpsgs, _g, extraEpsgs_1, e, epsgs, mapsByName, _h, maps_2, map, _j, mapDefs_3, gs;
+            var mapDefs, mapPromises, warnings, locale, subjectLayers, siteVersion, _i, mapDefs_1, m, siteVer, _a, mapDefs_2, m, _b, _c, _d, _e, maps, fetchEpsgs, _f, maps_1, m, epsg, mapDef, arbCs, extraEpsgs, _g, extraEpsgs_1, e, epsgs, mapsByName, _h, maps_2, map, _j, mapDefs_3, gs;
             var _k;
             var _this = this;
             return (0, tslib_1.__generator)(this, function (_l) {
@@ -1805,7 +1834,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                     case 1:
                         if (!(_i < mapDefs_1.length)) return [3 /*break*/, 4];
                         m = mapDefs_1[_i];
-                        if (!this.isMapDefinition(m)) return [3 /*break*/, 3];
+                        if (!(0, init_command_1.isMapDefinition)(m)) return [3 /*break*/, 3];
                         return [4 /*yield*/, siteVersion.getValueAsync()];
                     case 2:
                         siteVer = _l.sent();
@@ -1822,7 +1851,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                     case 6:
                         if (!(_a < mapDefs_2.length)) return [3 /*break*/, 10];
                         m = mapDefs_2[_a];
-                        if (!this.isMapDefinition(m)) return [3 /*break*/, 9];
+                        if (!(0, init_command_1.isMapDefinition)(m)) return [3 /*break*/, 9];
                         if (!sessionWasReused) return [3 /*break*/, 7];
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                         (0, logger_1.info)("Session ID re-used. Attempting recovery of map state of: " + m.name);
@@ -1855,12 +1884,15 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                             m = maps_1[_f];
                             epsg = m.CoordinateSystem.EpsgCode;
                             mapDef = m.MapDefinition;
-                            if (epsg == "0") {
-                                throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || i18n_1.DEFAULT_LOCALE, { mapDefinition: mapDef }));
-                            }
-                            //Must be registered to proj4js if not 4326 or 3857
-                            if (!proj4_2.default.defs["EPSG:" + epsg]) {
-                                fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+                            arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
+                            if (!arbCs) {
+                                if (epsg == "0") {
+                                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || i18n_1.DEFAULT_LOCALE, { mapDefinition: mapDef }));
+                                }
+                                //Must be registered to proj4js if not 4326 or 3857
+                                if (!proj4_2.default.defs["EPSG:" + epsg]) {
+                                    fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+                                }
                             }
                         }
                         extraEpsgs = projectionSelector(res);
@@ -1885,7 +1917,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                         }
                         for (_j = 0, mapDefs_3 = mapDefs; _j < mapDefs_3.length; _j++) {
                             gs = mapDefs_3[_j];
-                            if (!this.isMapDefinition(gs)) {
+                            if (!(0, init_command_1.isMapDefinition)(gs)) {
                                 mapsByName[gs.name] = gs;
                             }
                         }
@@ -2032,7 +2064,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
      * @returns {Dictionary<MapInfo>}
      * @memberof MgViewerInitCommand
      */
-    DefaultViewerInitCommand.prototype.setupMaps = function (appDef, mapsByName, config, warnings) {
+    DefaultViewerInitCommand.prototype.setupMaps = function (appDef, mapsByName, config, warnings, locale) {
         var dict = {};
         if (appDef.MapSet) {
             for (var _i = 0, _a = appDef.MapSet.MapGroup; _i < _a.length; _i++) {
@@ -2041,6 +2073,8 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                 //Setup external layers
                 var initExternalLayers = [];
                 var externalBaseLayers = [];
+                var subject = void 0;
+                //Need to do this in 2 passes. 1st pass to try and get the MG map
                 for (var _b = 0, _c = mGroup.Map; _b < _c.length; _b++) {
                     var map = _c[_b];
                     if (map.Type === "MapGuide") {
@@ -2062,19 +2096,47 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                             var mapDef = mapsByName[name_1];
                             if ((0, type_guards_1.isRuntimeMap)(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
                                 mapName = name_1;
+                                subject = mapDef;
                                 break;
                             }
                         }
                     }
-                    else if (map.Type == TYPE_SUBJECT) {
+                }
+                var isArbitrary = this.isArbitraryCoordSys(subject);
+                //2nd pass to process non-MG maps
+                for (var _d = 0, _e = mGroup.Map; _d < _e.length; _d++) {
+                    var map = _e[_d];
+                    if (map.Type == "MapGuide") {
+                        continue;
+                    }
+                    if (map.Type == TYPE_SUBJECT) {
                         mapName = mGroup["@id"];
                     }
                     else {
-                        if (map.Type == TYPE_EXTERNAL) {
-                            initExternalLayers.push((0, init_command_1.buildSubjectLayerDefn)(map.Extension.layer_name, map));
+                        if (isArbitrary) {
+                            warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER", locale, { mapId: mGroup["@id"], type: map.Type }));
                         }
                         else {
-                            (0, init_1.processLayerInMapGroup)(map, warnings, config, appDef, externalBaseLayers);
+                            if (map.Type == TYPE_EXTERNAL) {
+                                initExternalLayers.push((0, init_command_1.buildSubjectLayerDefn)(map.Extension.layer_name, map));
+                            }
+                            else {
+                                (0, init_1.processLayerInMapGroup)(map, warnings, config, appDef, externalBaseLayers);
+                            }
+                        }
+                    }
+                }
+                if (isArbitrary) {
+                    //Check for incompatible widgets
+                    for (var _f = 0, _g = appDef.WidgetSet; _f < _g.length; _f++) {
+                        var wset = _g[_f];
+                        for (var _h = 0, _j = wset.Widget; _h < _j.length; _h++) {
+                            var widget = _j[_h];
+                            switch (widget.Type) {
+                                case "CoordinateTracker":
+                                    warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, { mapId: mGroup["@id"], widget: widget.Type }));
+                                    break;
+                            }
                         }
                     }
                 }
@@ -2363,7 +2425,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
                 var _a = map.Extension.Options, name_1 = _a.name, type = _a.type;
-                var sName = Array.isArray(name_1) ? name_1[0] : name_1;
+                var sName_1 = Array.isArray(name_1) ? name_1[0] : name_1;
                 var sType = Array.isArray(type) ? type[0] : type;
                 var options = {};
                 var bAdd = true;
@@ -2392,7 +2454,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 }
                 if (bAdd) {
                     externalBaseLayers.push({
-                        name: sName,
+                        name: sName_1,
                         kind: "BingMaps",
                         options: options
                     });
@@ -2404,7 +2466,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
                 var _b = map.Extension.Options, name_2 = _b.name, type = _b.type;
-                var sName = Array.isArray(name_2) ? name_2[0] : name_2;
+                var sName_2 = Array.isArray(name_2) ? name_2[0] : name_2;
                 var sType = Array.isArray(type) ? type[0] : type;
                 var options = {};
                 switch (sType) {
@@ -2416,7 +2478,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                         break;
                 }
                 externalBaseLayers.push({
-                    name: sName,
+                    name: sName_2,
                     kind: "OSM",
                     options: options
                 });
@@ -2427,10 +2489,10 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
                 var _c = map.Extension.Options, name_3 = _c.name, type = _c.type;
-                var sName = Array.isArray(name_3) ? name_3[0] : name_3;
+                var sName_3 = Array.isArray(name_3) ? name_3[0] : name_3;
                 var sType = Array.isArray(type) ? type[0] : type;
                 externalBaseLayers.push({
-                    name: sName,
+                    name: sName_3,
                     kind: "Stamen",
                     options: {
                         layer: sType
@@ -2452,12 +2514,22 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 });
             }
             break;
+        case "XYZDebug":
+            //HACK: De-arrayification of arbitrary extension elements
+            //is shallow (hence name/type is string[]). Do we bother to fix this?
+            var name_4 = map.Extension.Options.name;
+            var sName = Array.isArray(name_4) ? name_4[0] : name_4;
+            externalBaseLayers.push({
+                name: sName,
+                kind: "XYZDebug"
+            });
+            break;
         case "XYZ":
             {
                 //HACK: De-arrayification of arbitrary extension elements
                 //is shallow (hence name/type is string[]). Do we bother to fix this?
-                var _d = map.Extension.Options, name_4 = _d.name, type = _d.type, attributions = _d.attributions;
-                var sName = Array.isArray(name_4) ? name_4[0] : name_4;
+                var _d = map.Extension.Options, name_5 = _d.name, type = _d.type, attributions = _d.attributions;
+                var sName_4 = Array.isArray(name_5) ? name_5[0] : name_5;
                 var sType = Array.isArray(type) ? type[0] : type;
                 var tilePixelRatio = 1;
                 if (map.Extension.Options.tilePixelRatio) {
@@ -2469,7 +2541,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 //placeholder tokens
                 var urls = (map.Extension.Options.urls || []).map(function (s) { return (0, string_1.strReplaceAll)(s, "${", "{"); });
                 externalBaseLayers.push({
-                    name: sName,
+                    name: sName_4,
                     kind: "XYZ",
                     options: {
                         layer: sType,
@@ -2626,24 +2698,26 @@ function refresh() {
     return function (dispatch, getState) {
         var state = getState();
         var args = state.config;
-        var map = (0, common_1.getRuntimeMap)(state);
-        if (map && args.agentUri && args.agentKind) {
-            var client = new client_1.Client(args.agentUri, args.agentKind);
-            client.describeRuntimeMap({
-                mapname: map.Name,
-                session: map.SessionId,
-                requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups
-            }).then(function (res) {
-                if (args.activeMapName) {
-                    dispatch({
-                        type: actions_1.ActionType.MAP_REFRESH,
-                        payload: {
-                            mapName: args.activeMapName,
-                            map: res
-                        }
-                    });
-                }
-            });
+        if (!args.viewer.isStateless) {
+            var map = (0, common_1.getRuntimeMap)(state);
+            if (map && args.agentUri && args.agentKind) {
+                var client = new client_1.Client(args.agentUri, args.agentKind);
+                client.describeRuntimeMap({
+                    mapname: map.Name,
+                    session: map.SessionId,
+                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups
+                }).then(function (res) {
+                    if (args.activeMapName) {
+                        dispatch({
+                            type: actions_1.ActionType.MAP_REFRESH,
+                            payload: {
+                                mapName: args.activeMapName,
+                                map: res
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 }
@@ -2661,7 +2735,7 @@ exports.refresh = refresh;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.clearClientSelection = exports.addClientSelectedFeature = exports.removeMapLayerBusyWorker = exports.addMapLayerBusyWorker = exports.setMapLayerVectorStyle = exports.setMapLayerVisibility = exports.setHeatmapLayerRadius = exports.setHeatmapLayerBlur = exports.setMapLayerOpacity = exports.setMapLayerIndex = exports.removeMapLayer = exports.externalLayersReady = exports.mapLayerAdded = exports.showSelectedFeature = exports.setViewRotationEnabled = exports.setViewRotation = exports.setManualFeatureTooltipsEnabled = exports.setFeatureTooltipsEnabled = exports.setActiveMap = exports.setActiveTool = exports.nextView = exports.previousView = exports.setViewSizeUnits = exports.setLayerTransparency = exports.setMouseCoordinates = exports.setScale = exports.setBaseLayer = exports.setBusyCount = exports.invokeCommand = exports.setSelection = exports.mapResized = exports.setCurrentView = exports.queryMapFeatures = void 0;
+exports.clearClientSelection = exports.addClientSelectedFeature = exports.removeMapLayerBusyWorker = exports.addMapLayerBusyWorker = exports.setMapLayerVectorStyle = exports.setMapLayerVisibility = exports.setHeatmapLayerRadius = exports.setHeatmapLayerBlur = exports.setMapLayerOpacity = exports.setMapLayerIndex = exports.removeMapLayer = exports.externalLayersReady = exports.mapLayerAdded = exports.showSelectedFeature = exports.setViewRotationEnabled = exports.setViewRotation = exports.setManualFeatureTooltipsEnabled = exports.enableSelectDragPan = exports.setFeatureTooltipsEnabled = exports.setActiveMap = exports.setActiveTool = exports.nextView = exports.previousView = exports.setViewSizeUnits = exports.setLayerTransparency = exports.setMouseCoordinates = exports.setScale = exports.setBaseLayer = exports.setBusyCount = exports.invokeCommand = exports.setSelection = exports.mapResized = exports.setCurrentView = exports.queryMapFeatures = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
@@ -3124,6 +3198,19 @@ function setFeatureTooltipsEnabled(enabled) {
     };
 }
 exports.setFeatureTooltipsEnabled = setFeatureTooltipsEnabled;
+/**
+ * Sets whether the select tool can pan while dragging
+ *
+ * @param enabled
+ * @since 0.14.2
+ */
+function enableSelectDragPan(enabled) {
+    return {
+        type: actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN,
+        payload: enabled
+    };
+}
+exports.enableSelectDragPan = enableSelectDragPan;
 /**
  * Sets whether manual feature tooltips (aka. Map Tips) are enabled
  *
@@ -5639,6 +5726,13 @@ var LayerProperty;
      * @since 0.14
      */
     LayerProperty["IS_HEATMAP"] = "is_heatmap";
+    /**
+     * A source definition to attach to the layer. This is to assist in persistence of this layer for easy
+     * restoration on an application-defined basis
+     *
+     * @since 0.14.3
+     */
+    LayerProperty["LAYER_DEFN"] = "layer_defn";
 })(LayerProperty = exports.LayerProperty || (exports.LayerProperty = {}));
 /**
  * Custom properties that can be attached to OpenLayers image source instances
@@ -6560,6 +6654,8 @@ var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.j
 var base_layer_set_1 = __webpack_require__(/*! ./base-layer-set */ "./src/api/base-layer-set.ts");
 var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
 var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 exports.DEFAULT_METERS_PER_UNIT = 1.0;
 var M_TO_IN = 39.37;
 var DEFAULT_DPI = 96;
@@ -6605,7 +6701,24 @@ var GenericLayerSetOL = /** @class */ (function (_super) {
         return sources;
     };
     GenericLayerSetOL.prototype.updateTransparency = function (trans) {
-        //throw new Error("Method not implemented.");
+        //If no external layers defined, this won't be set
+        if (this.externalBaseLayersGroup) {
+            if (constants_1.LAYER_ID_BASE in trans) {
+                this.externalBaseLayersGroup.setOpacity((0, number_1.restrictToRange)(trans[constants_1.LAYER_ID_BASE], 0, 1.0));
+            }
+            else {
+                this.externalBaseLayersGroup.setOpacity(1.0);
+            }
+        }
+        if (this.subjectLayer) {
+            if (constants_1.LAYER_ID_MG_BASE in trans) {
+                var opacity = (0, number_1.restrictToRange)(trans[constants_1.LAYER_ID_MG_BASE], 0, 1.0);
+                this.subjectLayer.setOpacity(opacity);
+            }
+            else {
+                this.subjectLayer.setOpacity(1.0);
+            }
+        }
     };
     GenericLayerSetOL.prototype.showActiveSelectedFeature = function (mapExtent, size, uri) {
         //throw new Error("Method not implemented.");
@@ -6954,11 +7067,11 @@ var LayerManager = /** @class */ (function () {
     LayerManager.prototype.addLayerFromParsedFeatures = function (options) {
         var _a, _b, _c;
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata, proj, view, source, csArgs, layer, clusterSettings, k, bStyle, values, baseTemplatePoint, baseTemplateLine, baseTemplatePoly, th, ramp, chosenRamp, ruleCount, palette, i, v, filter, style, layerInfo;
+            var features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata, defn, proj, view, source, csArgs, layer, clusterSettings, k, bStyle, values, baseTemplatePoint, baseTemplateLine, baseTemplatePoly, th, ramp, chosenRamp, ruleCount, palette, i, v, filter, style, layerInfo;
             return (0, tslib_1.__generator)(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        features = options.features, projection = options.projection, defaultStyle = options.defaultStyle, extraOptions = options.extraOptions, labelOnProperty = options.labelOnProperty, selectedPopupTemplate = options.selectedPopupTemplate, metadata = options.metadata;
+                        features = options.features, projection = options.projection, defaultStyle = options.defaultStyle, extraOptions = options.extraOptions, labelOnProperty = options.labelOnProperty, selectedPopupTemplate = options.selectedPopupTemplate, metadata = options.metadata, defn = options.defn;
                         proj = projection;
                         if (!proj) {
                             view = this.map.getView();
@@ -6990,6 +7103,7 @@ var LayerManager = /** @class */ (function () {
                         layer.set(common_1.LayerProperty.LAYER_NAME, features.name);
                         layer.set(common_1.LayerProperty.LAYER_DISPLAY_NAME, features.name);
                         layer.set(common_1.LayerProperty.LAYER_TYPE, features.type);
+                        layer.set(common_1.LayerProperty.LAYER_DEFN, defn);
                         if ((extraOptions === null || extraOptions === void 0 ? void 0 : extraOptions.kind) == "Heatmap") {
                             layer.set(common_1.LayerProperty.IS_HEATMAP, true);
                         }
@@ -7876,7 +7990,7 @@ exports.LayerSetGroupBase = LayerSetGroupBase;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MgInnerLayerSetFactory = exports.MgLayerSetOL = exports.MgLayerSetMode = exports.mockMapGuideImageLoadFunction = exports.blankImageLoadFunction = void 0;
+exports.MgInnerLayerSetFactory = exports.MgLayerSetOL = exports.MgLayerSetMode = exports.mockMapGuideImageLoadFunction = exports.blankImageLoadFunction = exports.toProjUnit = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
 var Group_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
@@ -7901,6 +8015,7 @@ var generic_layer_set_1 = __webpack_require__(/*! ./generic-layer-set */ "./src/
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var error_1 = __webpack_require__(/*! ./error */ "./src/api/error.ts");
+var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 var DEFAULT_BOUNDS_3857 = [
     -20026376.39,
     -20048966.10,
@@ -7912,6 +8027,31 @@ function getMetersPerUnit(projection) {
     var proj = (0, proj_1.get)(projection);
     return proj.getMetersPerUnit();
 }
+function toProjUnit(unit) {
+    switch (unit) {
+        case common_1.UnitOfMeasure.Meters:
+            return "m";
+        case common_1.UnitOfMeasure.Feet:
+            return "ft";
+        case common_1.UnitOfMeasure.Inches:
+            return "in";
+        case common_1.UnitOfMeasure.Centimeters:
+            return "cm";
+        case common_1.UnitOfMeasure.Kilometers:
+            return "km";
+        case common_1.UnitOfMeasure.Yards:
+            return "yd";
+        case common_1.UnitOfMeasure.Millimeters:
+            return "mm";
+        case common_1.UnitOfMeasure.Miles:
+            return "mi";
+        case common_1.UnitOfMeasure.NauticalMiles:
+            return "nm";
+        case common_1.UnitOfMeasure.Pixels:
+            return "px";
+    }
+}
+exports.toProjUnit = toProjUnit;
 function blankImageLoadFunction(image) {
     image.getImage().src = constants_1.BLANK_GIF_DATA_URI;
 }
@@ -8242,8 +8382,17 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
             for (var i = 0; i < finiteScales.length; ++i) {
                 resolutions[i] = finiteScales[i] / inPerUnit / dpi;
             }
-            if (map.CoordinateSystem.EpsgCode.length > 0) {
-                projection = "EPSG:" + map.CoordinateSystem.EpsgCode;
+            var parsedArb = (0, units_1.tryParseArbitraryCs)(map.CoordinateSystem.MentorCode);
+            if (parsedArb) {
+                projection = new proj_1.Projection({
+                    code: parsedArb.code,
+                    units: toProjUnit(parsedArb.units)
+                });
+            }
+            else {
+                if (map.CoordinateSystem.EpsgCode.length > 0) {
+                    projection = "EPSG:" + map.CoordinateSystem.EpsgCode;
+                }
             }
             var tileGrid = new TileGrid_1.default({
                 origin: olExtent.getTopLeft(extent),
@@ -8393,7 +8542,18 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
                 projection = "EPSG:4326";
                 bounds = DEFAULT_BOUNDS_4326;
             }
-            var metersPerUnit = getMetersPerUnit(projection);
+            var parsedArb = (0, units_1.tryParseArbitraryCs)(projection);
+            var metersPerUnit = 1;
+            if (parsedArb) {
+                projection = new proj_1.Projection({
+                    code: parsedArb.code,
+                    units: toProjUnit(parsedArb.units),
+                    extent: bounds
+                });
+            }
+            else {
+                metersPerUnit = getMetersPerUnit(projection);
+            }
             var view = new View_1.default({
                 projection: projection
             });
@@ -11291,7 +11451,7 @@ var About = function (props) {
         React.createElement("hr", null),
         React.createElement("p", null,
             "Hash: ",
-            "6af7ef515a5454592a8ebec928a4097479942627"),
+            "9ba843ebe95dcf3ac9771d7556189003a442ca9b"),
         React.createElement("hr", null),
         React.createElement("p", null,
             React.createElement("a", { target: "_blank", href: "https://github.com/jumpinjackie/mapguide-react-layout" }, "GitHub")),
@@ -11600,6 +11760,7 @@ var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var defs_1 = __webpack_require__(/*! ../actions/defs */ "./src/actions/defs.ts");
 var XYZ_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/XYZ */ "./node_modules/ol/source/XYZ.js"));
 var OSM_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/OSM */ "./node_modules/ol/source/OSM.js"));
+var TileDebug_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileDebug */ "./node_modules/ol/source/TileDebug.js"));
 var Stamen_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Stamen */ "./node_modules/ol/source/Stamen.js"));
 var BingMaps_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/BingMaps */ "./node_modules/ol/source/BingMaps.js"));
 var UTFGrid_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/UTFGrid */ "./node_modules/ol/source/UTFGrid.js"));
@@ -11625,6 +11786,8 @@ var Projection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/proj/
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
+var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var ImageStatic_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageStatic */ "./node_modules/ol/source/ImageStatic.js"));
 function sameProjectionAs(proj1, proj2) {
     var nproj1 = (0, proj_1.get)(proj1);
     var nproj2 = (0, proj_1.get)(proj2);
@@ -11680,6 +11843,7 @@ function applyVectorLayerProperties(defn, layer, isExternal) {
     layer.set(common_1.LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
     layer.set(common_1.LayerProperty.IS_GROUP, false);
     layer.set(common_1.LayerProperty.LAYER_METADATA, defn.meta);
+    layer.set(common_1.LayerProperty.LAYER_DEFN, defn);
     layer.setVisible(defn.initiallyVisible);
 }
 var EMPTY_GEOJSON = { type: "FeatureCollection", features: [] };
@@ -11703,24 +11867,58 @@ function clusterSourceIfRequired(source, def) {
 exports.clusterSourceIfRequired = clusterSourceIfRequired;
 function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettings) {
     var _this = this;
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     switch (defn.type) {
+        case defs_1.GenericSubjectLayerType.StaticImage:
+            {
+                var sourceArgs = (0, tslib_1.__assign)({ crossOrigin: "anonymous" }, defn.sourceParams);
+                if (!sourceArgs.imageExtent)
+                    sourceArgs.imageExtent = (_a = defn.meta) === null || _a === void 0 ? void 0 : _a.extents;
+                var layer = new Image_1.default({
+                    source: new ImageStatic_1.default(sourceArgs)
+                });
+                layer.set(common_1.LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(common_1.LayerProperty.LAYER_TYPE, "StaticImage");
+                layer.set(common_1.LayerProperty.IS_SELECTABLE, false);
+                layer.set(common_1.LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(common_1.LayerProperty.IS_GROUP, false);
+                layer.set(common_1.LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(common_1.LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
+        case defs_1.GenericSubjectLayerType.XYZ:
+            {
+                var sourceArgs = (0, tslib_1.__assign)({ crossOrigin: "anonymous" }, defn.sourceParams);
+                var layer = new Tile_1.default({
+                    source: new XYZ_1.default(sourceArgs)
+                });
+                layer.set(common_1.LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(common_1.LayerProperty.LAYER_TYPE, "XYZ");
+                layer.set(common_1.LayerProperty.IS_SELECTABLE, false);
+                layer.set(common_1.LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(common_1.LayerProperty.IS_GROUP, false);
+                layer.set(common_1.LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(common_1.LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
         case defs_1.GenericSubjectLayerType.GeoJSON_Inline:
             {
-                var features = (new GeoJSON_1.default()).readFeatures((_a = defn.sourceParams.features) !== null && _a !== void 0 ? _a : EMPTY_GEOJSON);
+                var features = (new GeoJSON_1.default()).readFeatures((_b = defn.sourceParams.features) !== null && _b !== void 0 ? _b : EMPTY_GEOJSON);
                 var source = new Vector_2.default({
                     features: features,
                     attributions: defn.sourceParams.attributions
                 });
                 var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
-                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_b = defn.vectorStyle) !== null && _b !== void 0 ? _b : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_c = defn.vectorStyle) !== null && _c !== void 0 ? _c : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case defs_1.GenericSubjectLayerType.GeoJSON:
             {
                 var isWebM = sameProjectionAs(mapProjection, "EPSG:3857");
-                var asVT = ((_c = defn.meta) === null || _c === void 0 ? void 0 : _c.geojson_as_vt) == true;
+                var asVT = ((_d = defn.meta) === null || _d === void 0 ? void 0 : _d.geojson_as_vt) == true;
                 if (asVT && isWebM) {
                     var lazyTileIndex_1 = new lazy_1.AsyncLazy(function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () {
                         var resp, json, gj, features, tileIndex;
@@ -11786,7 +11984,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     var vectorLayer = new VectorTile_2.default({
                         source: vectorSource_1,
                     });
-                    (0, ol_style_helpers_1.setOLVectorLayerStyle)(vectorLayer, (_d = defn.vectorStyle) !== null && _d !== void 0 ? _d : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                    (0, ol_style_helpers_1.setOLVectorLayerStyle)(vectorLayer, (_e = defn.vectorStyle) !== null && _e !== void 0 ? _e : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                     applyVectorLayerProperties(defn, vectorLayer, isExternal);
                     return vectorLayer;
                 }
@@ -11800,7 +11998,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                         attributions: defn.sourceParams.attributions
                     });
                     var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
-                    (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_e = defn.vectorStyle) !== null && _e !== void 0 ? _e : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                    (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_f = defn.vectorStyle) !== null && _f !== void 0 ? _f : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                     applyVectorLayerProperties(defn, layer, isExternal);
                     return layer;
                 }
@@ -11837,7 +12035,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     }
                 });
                 var layer = new VectorTile_2.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: source }));
-                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_f = defn.vectorStyle) !== null && _f !== void 0 ? _f : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_g = defn.vectorStyle) !== null && _g !== void 0 ? _g : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -11866,7 +12064,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     attributions: defn.sourceParams.attributions
                 });
                 var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(vectorSource_2, defn) }));
-                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_g = defn.vectorStyle) !== null && _g !== void 0 ? _g : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_h = defn.vectorStyle) !== null && _h !== void 0 ? _h : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -11894,6 +12092,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                 layer.set(common_1.LayerProperty.IS_GROUP, false);
                 layer.set(common_1.LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
                 layer.set(common_1.LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(common_1.LayerProperty.LAYER_DEFN, defn);
                 layer.setVisible(defn.initiallyVisible);
                 return layer;
             }
@@ -11910,7 +12109,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                 var layer = factory(defn.sourceParams, defn.meta, defn.layerOptions, appSettings);
                 var source = clusterSourceIfRequired(layer.getSource(), defn);
                 layer.setSource(source);
-                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_h = defn.vectorStyle) !== null && _h !== void 0 ? _h : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_j = defn.vectorStyle) !== null && _j !== void 0 ? _j : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
@@ -11931,6 +12130,9 @@ function createExternalSource(layer) {
     switch (layer.kind) {
         case "XYZ":
             sourceCtor = XYZ_1.default;
+            break;
+        case "XYZDebug":
+            sourceCtor = TileDebug_1.default;
             break;
         case "OSM":
             sourceCtor = OSM_1.default;
@@ -14532,6 +14734,19 @@ var ol_style_helpers_1 = __webpack_require__(/*! ../../api/ol-style-helpers */ "
 var runtime_1 = __webpack_require__(/*! ../../api/runtime */ "./src/api/runtime.ts");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
 var context_1 = __webpack_require__(/*! ./context */ "./src/components/map-providers/context.tsx");
+function isValidView(view) {
+    if (view.resolution) {
+        return !isNaN(view.x)
+            && !isNaN(view.y)
+            && !isNaN(view.scale)
+            && !isNaN(view.resolution);
+    }
+    else {
+        return !isNaN(view.x)
+            && !isNaN(view.y)
+            && !isNaN(view.scale);
+    }
+}
 function inflateBoundsByMeters(thisProj, extent, meters) {
     // We need to inflate this bbox by a known unit of measure (meters), so re-project this extent to a meter's based coordinate system (EPSG:3857)
     var webmBounds = (0, proj_1.transformExtent)(extent, thisProj, "EPSG:3857");
@@ -15471,7 +15686,13 @@ var BaseMapProviderContext = /** @class */ (function () {
         //for the initial view (un-desirable), but we still only get one map image request
         //for the initial view (good!). Everything is fine after that.
         if (this._triggerZoomRequestOnMoveEnd) {
-            (_a = this._comp) === null || _a === void 0 ? void 0 : _a.onDispatch((0, map_1.setCurrentView)(this.getCurrentView()));
+            var cv = this.getCurrentView();
+            if (isValidView(cv)) {
+                (_a = this._comp) === null || _a === void 0 ? void 0 : _a.onDispatch((0, map_1.setCurrentView)(cv));
+            }
+            else {
+                console.warn("Attempt to set invalid view", cv);
+            }
         }
         else {
             (0, logger_1.info)("Triggering zoom request on moveend suppresseed");
@@ -15495,6 +15716,11 @@ var BaseMapProviderContext = /** @class */ (function () {
         });
         this._zoomSelectBox = new DragBox_1.default({
             condition: function (e) {
+                var _a;
+                // DragBox needs to be suppressed if the select tool can drag pan
+                if (_this._state.activeTool == common_1.ActiveMapTool.Select && ((_a = _this._comp) === null || _a === void 0 ? void 0 : _a.selectCanDragPan()) === true) {
+                    return false;
+                }
                 var startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent(e.originalEvent);
                 return !_this.isDigitizing() && !startingMiddleMouseDrag && (_this._state.activeTool === common_1.ActiveMapTool.Select || _this._state.activeTool === common_1.ActiveMapTool.Zoom);
             }
@@ -15522,6 +15748,11 @@ var BaseMapProviderContext = /** @class */ (function () {
                 new DragRotate_1.default(),
                 new DragPan_1.default({
                     condition: function (e) {
+                        var _a;
+                        // We'll allow for select tool to pan if instructed from above
+                        if (_this._state.activeTool == common_1.ActiveMapTool.Select && ((_a = _this._comp) === null || _a === void 0 ? void 0 : _a.selectCanDragPan()) === true) {
+                            return true;
+                        }
                         var startingMiddleMouseDrag = e.type == "pointerdown" && isMiddleMouseDownEvent(e.originalEvent);
                         var enabled = (startingMiddleMouseDrag || _this._supportsTouch || _this._state.activeTool === common_1.ActiveMapTool.Pan);
                         //console.log(e);
@@ -19222,6 +19453,10 @@ var ActionType;
     ActionType["MAP_SET_SCALE"] = "Map/SET_SCALE";
     ActionType["MAP_SET_ACTIVE_TOOL"] = "Map/SET_ACTIVE_TOOL";
     ActionType["MAP_SET_MAPTIP"] = "Map/SET_MAPTIP";
+    /**
+     * @since 0.14.2
+     */
+    ActionType["MAP_ENABLE_SELECT_DRAGPAN"] = "Map/ENABLE_SELECT_DRAGPAN";
     ActionType["MAP_SET_MANUAL_MAPTIP"] = "Map/MAP_SET_MANUAL_MAPTIP";
     ActionType["MAP_SET_SELECTION"] = "Map/SET_SELECTION";
     /**
@@ -20207,10 +20442,31 @@ exports.useActiveMapSubjectLayer = useActiveMapSubjectLayer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useActiveMapState = exports.useActiveMapFiniteScales = exports.useActiveMapSessionId = exports.useActiveMapSelectableLayerNames = exports.useActiveMapActiveSelectedFeature = exports.useActiveMapLayerTransparency = exports.useActiveMapHideLayers = exports.useActiveMapHideGroups = exports.useActiveMapShowLayers = exports.useActiveMapShowGroups = exports.useActiveMapSelectableLayers = exports.useActiveMapExpandedGroups = exports.useActiveMapProjection = exports.useActiveMapMetersPerUnit = void 0;
+exports.useActiveMapState = exports.useActiveMapFiniteScales = exports.useActiveMapSessionId = exports.useActiveMapSelectableLayerNames = exports.useActiveMapActiveSelectedFeature = exports.useActiveMapLayerTransparency = exports.useActiveMapHideLayers = exports.useActiveMapHideGroups = exports.useActiveMapShowLayers = exports.useActiveMapShowGroups = exports.useActiveMapSelectableLayers = exports.useActiveMapExpandedGroups = exports.useActiveMapProjectionUnits = exports.useActiveMapProjection = exports.useActiveMapMetersPerUnit = exports.useActiveMapIsArbitraryCoordSys = void 0;
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
+/**
+ * @since 0.14.3
+ */
+function useActiveMapIsArbitraryCoordSys() {
+    return (0, context_1.useAppState)(function (state) {
+        var _a, _b, _c;
+        var arbCs = false;
+        if (state.config.activeMapName) {
+            var ms = state.mapState[state.config.activeMapName];
+            if ((_a = ms.mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap) {
+                arbCs = (0, units_1.tryParseArbitraryCs)(ms.mapguide.runtimeMap.CoordinateSystem.MentorCode) != null;
+            }
+            else if ((_b = ms.generic) === null || _b === void 0 ? void 0 : _b.subject) {
+                arbCs = (0, units_1.tryParseArbitraryCs)((_c = ms.generic.subject.meta) === null || _c === void 0 ? void 0 : _c.projection) != null;
+            }
+        }
+        return arbCs;
+    });
+}
+exports.useActiveMapIsArbitraryCoordSys = useActiveMapIsArbitraryCoordSys;
 function useActiveMapMetersPerUnit() {
     return (0, context_1.useAppState)(function (state) {
         var _a;
@@ -20243,6 +20499,27 @@ function useActiveMapProjection() {
     });
 }
 exports.useActiveMapProjection = useActiveMapProjection;
+/**
+ * @since 0.14.3
+ */
+function useActiveMapProjectionUnits() {
+    return (0, context_1.useAppState)(function (state) {
+        var _a, _b, _c, _d, _e;
+        var arbUnits;
+        if (state.config.activeMapName) {
+            var map = (_a = state.mapState[state.config.activeMapName].mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap;
+            var subject = (_b = state.mapState[state.config.activeMapName].generic) === null || _b === void 0 ? void 0 : _b.subject;
+            if (map) {
+                arbUnits = (_c = (0, units_1.tryParseArbitraryCs)(map.CoordinateSystem.MentorCode)) === null || _c === void 0 ? void 0 : _c.units;
+            }
+            else if (subject) {
+                arbUnits = (_e = (0, units_1.tryParseArbitraryCs)((_d = subject.meta) === null || _d === void 0 ? void 0 : _d.projection)) === null || _e === void 0 ? void 0 : _e.units;
+            }
+        }
+        return arbUnits;
+    });
+}
+exports.useActiveMapProjectionUnits = useActiveMapProjectionUnits;
 function useActiveMapExpandedGroups() {
     return (0, context_1.useAppState)(function (state) { var _a, _b; return (_b = (_a = (0, hooks_1.getActiveMapBranch)(state)) === null || _a === void 0 ? void 0 : _a.mapguide) === null || _b === void 0 ? void 0 : _b.expandedGroups; });
 }
@@ -20316,8 +20593,8 @@ exports.useActiveMapState = useActiveMapState;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.useTemplateInitialInfoPaneWidth = exports.useTemplateSelectionVisible = exports.useTemplateTaskPaneVisible = exports.useTemplateLegendVisible = exports.useConfiguredCapabilities = exports.useConfiguredUndoLastPointKey = exports.useConfiguredCancelDigitizationKey = exports.useConfiguredLoadIndicatorColor = exports.useConfiguredLoadIndicatorPositioning = exports.useConfiguredManualFeatureTooltips = exports.useViewerFeatureTooltipsEnabled = exports.useViewerPointSelectionBuffer = exports.useViewerActiveFeatureSelectionColor = exports.useViewerSelectionColor = exports.useViewerSelectionImageFormat = exports.useViewerImageFormat = exports.useViewerIsStateless = exports.useIsContextMenuOpen = exports.useConfiguredAgentKind = exports.useConfiguredAgentUri = exports.useConfiguredCoordinateFormat = exports.useConfiguredCoordinateDecimals = exports.useConfiguredCoordinateProjection = exports.useViewerViewRotationEnabled = exports.useViewerActiveTool = exports.useViewerViewRotation = exports.useViewerBusyCount = exports.useAvailableMaps = exports.useActiveMapInitialView = exports.useActiveMapClientSelectionSet = exports.useCustomAppSettings = exports.useActiveMapSelectionSet = exports.useActiveMapBranch = exports.getActiveMapBranch = exports.useInitErrorOptions = exports.useInitErrorStack = exports.useInitError = exports.useInitWarnings = exports.useViewerFlyouts = exports.useCurrentMouseCoordinates = exports.useActiveMapExternalBaseLayers = exports.useViewerSizeUnits = exports.useActiveMapHeight = exports.useActiveMapWidth = exports.useActiveMapView = exports.useViewerLocale = exports.useActiveMapLayers = exports.useActiveMapInitialExternalLayers = exports.useActiveMapName = exports.usePrevious = void 0;
-exports.useReducedToolbarAppState = exports.useLastDispatchedAction = exports.useTaskPaneNavigationStack = exports.useTaskPaneLastUrlPushed = exports.useTaskPaneNavigationIndex = exports.useTaskPaneInitialUrl = exports.useTemplateInitialTaskPaneWidth = void 0;
+exports.useTemplateSelectionVisible = exports.useTemplateTaskPaneVisible = exports.useTemplateLegendVisible = exports.useConfiguredCapabilities = exports.useConfiguredUndoLastPointKey = exports.useConfiguredCancelDigitizationKey = exports.useConfiguredLoadIndicatorColor = exports.useConfiguredLoadIndicatorPositioning = exports.useConfiguredManualFeatureTooltips = exports.useViewerSelectCanDragPan = exports.useViewerFeatureTooltipsEnabled = exports.useViewerPointSelectionBuffer = exports.useViewerActiveFeatureSelectionColor = exports.useViewerSelectionColor = exports.useViewerSelectionImageFormat = exports.useViewerImageFormat = exports.useViewerIsStateless = exports.useIsContextMenuOpen = exports.useConfiguredAgentKind = exports.useConfiguredAgentUri = exports.useConfiguredCoordinateFormat = exports.useConfiguredCoordinateDecimals = exports.useConfiguredCoordinateProjection = exports.useViewerViewRotationEnabled = exports.useViewerActiveTool = exports.useViewerViewRotation = exports.useViewerBusyCount = exports.useAvailableMaps = exports.useActiveMapInitialView = exports.useActiveMapClientSelectionSet = exports.useCustomAppSettings = exports.useActiveMapSelectionSet = exports.useActiveMapBranch = exports.getActiveMapBranch = exports.useInitErrorOptions = exports.useInitErrorStack = exports.useInitError = exports.useInitWarnings = exports.useViewerFlyouts = exports.useCurrentMouseCoordinates = exports.useActiveMapExternalBaseLayers = exports.useViewerSizeUnits = exports.useActiveMapHeight = exports.useActiveMapWidth = exports.useActiveMapView = exports.useViewerLocale = exports.useActiveMapLayers = exports.useActiveMapInitialExternalLayers = exports.useActiveMapName = exports.usePrevious = void 0;
+exports.useReducedToolbarAppState = exports.useLastDispatchedAction = exports.useTaskPaneNavigationStack = exports.useTaskPaneLastUrlPushed = exports.useTaskPaneNavigationIndex = exports.useTaskPaneInitialUrl = exports.useTemplateInitialTaskPaneWidth = exports.useTemplateInitialInfoPaneWidth = void 0;
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
@@ -20552,6 +20829,13 @@ function useViewerFeatureTooltipsEnabled() {
     return (0, context_1.useAppState)(function (state) { return state.viewer.featureTooltipsEnabled; });
 }
 exports.useViewerFeatureTooltipsEnabled = useViewerFeatureTooltipsEnabled;
+/**
+ * @since 0.14.2
+ */
+function useViewerSelectCanDragPan() {
+    return (0, context_1.useAppState)(function (state) { return state.config.selectCanDragPan; });
+}
+exports.useViewerSelectCanDragPan = useViewerSelectCanDragPan;
 function useConfiguredManualFeatureTooltips() {
     return (0, context_1.useAppState)(function (state) { return state.config.manualFeatureTooltips; });
 }
@@ -20670,7 +20954,7 @@ var InitWarningDisplay = function () {
     var warnings = (0, hooks_1.useInitWarnings)();
     var locale = (0, hooks_1.useViewerLocale)();
     if (warnings && warnings.length && acknowledge) {
-        return React.createElement(core_1.Dialog, { icon: "warning-sign", isOpen: true, onClose: acknowledge, title: (0, i18n_1.tr)("WARNING", locale) },
+        return React.createElement(core_1.Dialog, { icon: "warning-sign", isOpen: true, usePortal: false, onClose: acknowledge, title: (0, i18n_1.tr)("WARNING", locale) },
             React.createElement("div", { className: "bp3-dialog-body" },
                 React.createElement("p", null, (0, i18n_1.tr)("INIT_WARNINGS_FOUND", locale)),
                 React.createElement("ul", null, warnings.map(function (w) { return React.createElement("li", { key: w }, w); }))),
@@ -20954,7 +21238,14 @@ var LineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/
 var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
 var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
+var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var LAYER_NAME = "measure-layer";
+function isArbitraryProjection(proj) {
+    if (proj instanceof proj_1.Projection) {
+        return /XY-[A-Z]+/.test(proj.getCode());
+    }
+    return false;
+}
 /**
  * @hidden
  */
@@ -21072,29 +21363,50 @@ var MeasureContext = /** @class */ (function () {
         var length;
         var segments;
         var locale;
+        var isArbitrary = false;
+        var sourceProj = this.viewer.getProjection();
         if (this.parent) {
             locale = this.parent.getLocale();
             var coordinates = line.getCoordinates();
             segments = [];
             length = 0;
-            var sourceProj = this.viewer.getProjection();
-            for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                var dist = olSphere.getDistance(c1, c2);
-                length += dist;
-                segments.push({ segment: (i + 1), length: dist });
+            if (isArbitraryProjection(sourceProj)) {
+                isArbitrary = true;
+                // Do euclidean distance
+                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    var c1 = coordinates[i];
+                    var c2 = coordinates[i + 1];
+                    var a = c1[0] - c2[0];
+                    var b = c1[1] - c2[1];
+                    var dist = Math.sqrt(a * a + b * b);
+                    length += dist;
+                    segments.push({ segment: (i + 1), length: dist });
+                }
+            }
+            else {
+                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                    var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                    var dist = olSphere.getDistance(c1, c2);
+                    length += dist;
+                    segments.push({ segment: (i + 1), length: dist });
+                }
             }
         }
         else {
             length = NaN;
         }
         var output;
-        if (length > 100) {
-            output = (0, i18n_1.tr)("UNIT_FMT_KM", locale, { value: ((0, number_1.roundTo)(length / 1000, 2)) });
+        if (isArbitrary && sourceProj instanceof proj_1.Projection) {
+            output = (0, number_1.roundTo)(length, 2) + " " + sourceProj.getUnits();
         }
         else {
-            output = (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: ((0, number_1.roundTo)(length, 2)) });
+            if (length > 100) {
+                output = (0, i18n_1.tr)("UNIT_FMT_KM", locale, { value: ((0, number_1.roundTo)(length / 1000, 2)) });
+            }
+            else {
+                output = (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: ((0, number_1.roundTo)(length, 2)) });
+            }
         }
         return [output, length, segments];
     };
@@ -21107,40 +21419,63 @@ var MeasureContext = /** @class */ (function () {
         var area;
         var segments;
         var locale;
+        var isArbitrary = false;
+        var sourceProj = this.viewer.getProjection();
         if (this.parent) {
             locale = this.parent.getLocale();
             segments = [];
-            var sourceProj = this.viewer.getProjection();
             var geom = polygon;
-            area = olSphere.getArea(geom, { projection: sourceProj });
-            (0, logger_1.debug)("Polygon area: " + area);
-            var ring = geom.getLinearRing(0);
-            var coordinates = ring.getCoordinates();
-            for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                // Unlike getArea(), getDistance() requires that our input coordinates are in
-                // EPSG:4326 first
-                var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                var dist = olSphere.getDistance(c1, c2);
-                segments.push({ segment: (i + 1), length: dist });
+            if (isArbitraryProjection(sourceProj)) {
+                isArbitrary = true;
+                area = geom.getArea();
+                // Do euclidean distance
+                var ring = geom.getLinearRing(0);
+                var coordinates = ring.getCoordinates();
+                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    var c1 = coordinates[i];
+                    var c2 = coordinates[i + 1];
+                    var a = c1[0] - c2[0];
+                    var b = c1[1] - c2[1];
+                    var dist = Math.sqrt(a * a + b * b);
+                    segments.push({ segment: (i + 1), length: dist });
+                }
+            }
+            else {
+                area = olSphere.getArea(geom, { projection: sourceProj });
+                (0, logger_1.debug)("Polygon area: " + area);
+                var ring = geom.getLinearRing(0);
+                var coordinates = ring.getCoordinates();
+                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                    // Unlike getArea(), getDistance() requires that our input coordinates are in
+                    // EPSG:4326 first
+                    var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                    var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                    var dist = olSphere.getDistance(c1, c2);
+                    segments.push({ segment: (i + 1), length: dist });
+                }
             }
         }
         else {
             area = NaN;
         }
         var output;
-        //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
-        //jarring, so we should provide a fixed unit value option in the future that will be used to 
-        //display regardless of the size of value
-        if (area > 10000) {
-            output = (0, i18n_1.tr)("UNIT_FMT_SQKM", locale, {
-                value: "" + ((0, number_1.roundTo)(area / 1000000, 2))
-            });
+        if (isArbitrary && sourceProj instanceof proj_1.Projection) {
+            output = (0, number_1.roundTo)(area, 2) + " " + sourceProj.getUnits() + "<sup>2</sup>";
         }
         else {
-            output = (0, i18n_1.tr)("UNIT_FMT_SQM", locale, {
-                value: "" + ((0, number_1.roundTo)(area, 2))
-            });
+            //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
+            //jarring, so we should provide a fixed unit value option in the future that will be used to 
+            //display regardless of the size of value
+            if (area > 10000) {
+                output = (0, i18n_1.tr)("UNIT_FMT_SQKM", locale, {
+                    value: "" + ((0, number_1.roundTo)(area / 1000000, 2))
+                });
+            }
+            else {
+                output = (0, i18n_1.tr)("UNIT_FMT_SQM", locale, {
+                    value: "" + ((0, number_1.roundTo)(area, 2))
+                });
+            }
         }
         return [output, area, segments];
     };
@@ -21339,6 +21674,8 @@ var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var GeometryType_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/GeometryType */ "./node_modules/ol/geom/GeometryType.js"));
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
+var layer_set_1 = __webpack_require__(/*! ../api/layer-set */ "./src/api/layer-set.ts");
 var _measurements = [];
 var MeasureContainerInner = /** @class */ (function (_super) {
     (0, tslib_1.__extends)(MeasureContainerInner, _super);
@@ -21475,6 +21812,7 @@ var MeasureContainerInner = /** @class */ (function (_super) {
     MeasureContainerInner.prototype.render = function () {
         var _this = this;
         var _a = this.state, measuring = _a.measuring, type = _a.drawType;
+        var measureUnits = this.props.measureUnits;
         var locale = this.getLocale();
         return React.createElement("div", { className: "component-measure" },
             React.createElement("form", { className: "form-inline" },
@@ -21503,7 +21841,9 @@ var MeasureContainerInner = /** @class */ (function (_super) {
                                             _this.state.segments.map(function (s) {
                                                 return React.createElement("tr", { key: "segment-" + s.segment },
                                                     React.createElement("td", null, (0, i18n_1.tr)("MEASURE_SEGMENT_PART", locale, { segment: s.segment })),
-                                                    React.createElement("td", null, (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: (0, number_1.roundTo)(s.length, 2) })));
+                                                    measureUnits
+                                                        ? React.createElement("td", null, (0, number_1.roundTo)(s.length, 2) + " " + (0, layer_set_1.toProjUnit)(measureUnits))
+                                                        : React.createElement("td", null, (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: (0, number_1.roundTo)(s.length, 2) })));
                                             }),
                                             (function () {
                                                 if (_this.state.segmentTotal && _this.state.activeType) {
@@ -21512,15 +21852,17 @@ var MeasureContainerInner = /** @class */ (function (_super) {
                                                             return React.createElement(React.Fragment, null,
                                                                 React.createElement("td", null,
                                                                     React.createElement("strong", null, (0, i18n_1.tr)("MEASURE_TOTAL_AREA", locale))),
-                                                                React.createElement("td", null,
-                                                                    React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_SQM", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
+                                                                React.createElement("td", null, measureUnits
+                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, number_1.roundTo)(_this.state.segmentTotal, 4) + " " + (0, layer_set_1.toProjUnit)(measureUnits) + " <sup>2</sup>" } })
+                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_SQM", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
                                                         }
                                                         else {
                                                             return React.createElement(React.Fragment, null,
                                                                 React.createElement("td", null,
                                                                     React.createElement("strong", null, (0, i18n_1.tr)("MEASURE_TOTAL_LENGTH", locale))),
-                                                                React.createElement("td", null,
-                                                                    React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
+                                                                React.createElement("td", null, measureUnits
+                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, number_1.roundTo)(_this.state.segmentTotal, 4) + " " + (0, layer_set_1.toProjUnit)(measureUnits) } })
+                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
                                                         }
                                                     })());
                                                 }
@@ -21539,7 +21881,9 @@ var MeasureContainer = function (props) {
     var mapNames = (_a = (0, hooks_1.useAvailableMaps)()) === null || _a === void 0 ? void 0 : _a.map(function (m) { return m.value; });
     var dispatch = (0, context_1.useReduxDispatch)();
     var setActiveToolAction = function (tool) { return dispatch((0, map_1.setActiveTool)(tool)); };
-    return React.createElement(MeasureContainerInner, (0, tslib_1.__assign)({ activeMapName: activeMapName, locale: locale, mapNames: mapNames, setActiveTool: setActiveToolAction }, props));
+    var isArbitrary = (0, hooks_mapguide_1.useActiveMapIsArbitraryCoordSys)();
+    var projUnits = (0, hooks_mapguide_1.useActiveMapProjectionUnits)();
+    return React.createElement(MeasureContainerInner, (0, tslib_1.__assign)({ activeMapName: activeMapName, locale: locale, mapNames: mapNames, setActiveTool: setActiveToolAction, measureUnits: isArbitrary ? projUnits : undefined }, props));
 };
 exports.MeasureContainer = MeasureContainer;
 
@@ -21807,6 +22151,7 @@ var CoreMapViewer = /** @class */ (function (_super) {
     function CoreMapViewer(props) {
         var _this = _super.call(this, props) || this;
         //#region IViewerComponent
+        _this.selectCanDragPan = function () { return _this.props.selectCanDragPan; };
         _this.isContextMenuOpen = function () { return _this.props.isContextMenuOpen; };
         _this.setDigitizingType = function (digitizingType) { return _this.setState({ digitizingType: digitizingType }); };
         _this.onBeginDigitization = function (callback) { };
@@ -21996,6 +22341,7 @@ var MapViewer = function (_a) {
         }
     }, [clientSelection]);
     var bContextMenuOpen = (((_b = flyouts[constants_1.WEBLAYOUT_CONTEXTMENU]) === null || _b === void 0 ? void 0 : _b.open) == true);
+    var bSelectCanDragPan = (0, hooks_1.useViewerSelectCanDragPan)();
     var showContextMenuAction = function (pos) { return dispatch((0, flyout_1.openContextMenu)({ x: pos[0], y: pos[1] })); };
     var hideContextMenuAction = function () { return dispatch((0, flyout_1.closeContextMenu)()); };
     var onContextMenu = function (pos) { return showContextMenuAction === null || showContextMenuAction === void 0 ? void 0 : showContextMenuAction(pos); };
@@ -22014,7 +22360,7 @@ var MapViewer = function (_a) {
     if (nextState.isReady) {
         return React.createElement(React.Fragment, null,
             React.createElement(core_1.Toaster, { usePortal: false, position: core_1.Position.TOP, ref: toasterRef }),
-            React.createElement(CoreMapViewer, { context: context, onDispatch: dispatch, backgroundColor: bgColor, onContextMenu: onContextMenu, onHideContextMenu: hideContextMenuAction, isContextMenuOpen: bContextMenuOpen, loadIndicatorPosition: loadIndicatorPositioning, loadIndicatorColor: loadIndicatorColor }, children));
+            React.createElement(CoreMapViewer, { context: context, onDispatch: dispatch, backgroundColor: bgColor, onContextMenu: onContextMenu, onHideContextMenu: hideContextMenuAction, isContextMenuOpen: bContextMenuOpen, selectCanDragPan: bSelectCanDragPan, loadIndicatorPosition: loadIndicatorPositioning, loadIndicatorColor: loadIndicatorColor }, children));
     }
     else {
         return React.createElement("div", null, (0, i18n_1.tr)("LOADING_MSG", locale));
@@ -23002,6 +23348,7 @@ var ViewerOptions = function () {
     var mapName = (0, hooks_1.useActiveMapName)();
     var layerTransparency = (0, hooks_mapguide_1.useActiveMapLayerTransparency)();
     var featureTooltipsEnabled = (0, hooks_1.useViewerFeatureTooltipsEnabled)();
+    var selectDragPanEnabled = (0, hooks_1.useViewerSelectCanDragPan)();
     var manualFeatureTooltips = (0, hooks_1.useConfiguredManualFeatureTooltips)();
     var viewSizeUnits = (0, hooks_1.useViewerSizeUnits)();
     var stateless = (0, hooks_1.useViewerIsStateless)();
@@ -23010,6 +23357,7 @@ var ViewerOptions = function () {
     var dispatch = (0, context_1.useReduxDispatch)();
     var toggleManualMapTipsAction = function (enabled) { return dispatch((0, map_1.setManualFeatureTooltipsEnabled)(enabled)); };
     var toggleMapTipsAction = function (enabled) { return dispatch((0, map_1.setFeatureTooltipsEnabled)(enabled)); };
+    var toggleSelectDragPanAction = function (enabled) { return dispatch((0, map_1.enableSelectDragPan)(enabled)); };
     var setLayerTransparencyAction = function (mapName, id, opacity) { return dispatch((0, map_1.setLayerTransparency)(mapName, id, opacity)); };
     var setViewSizeDisplayUnitsAction = function (units) { return dispatch((0, map_1.setViewSizeUnits)(units)); };
     var onMgLayerOpacityChanged = function (mapName, layerId, value) {
@@ -23031,6 +23379,9 @@ var ViewerOptions = function () {
     };
     var onFeatureTooltipsChanged = function (e) {
         toggleMapTipsAction(e.target.checked);
+    };
+    var onSelectDragPanEnabled = function (e) {
+        toggleSelectDragPanAction(e.target.checked);
     };
     var onManualFeatureTooltipsChanged = function (e) {
         toggleManualMapTipsAction(e.target.checked);
@@ -23069,6 +23420,10 @@ var ViewerOptions = function () {
                     (0, i18n_1.tr)("MANUAL_FEATURE_TOOLTIPS", locale));
             }
         })(),
+        React.createElement("label", { className: "bp3-control bp3-switch" },
+            React.createElement("input", { type: "checkbox", checked: selectDragPanEnabled, onChange: onSelectDragPanEnabled }),
+            React.createElement("span", { className: "bp3-control-indicator" }),
+            (0, i18n_1.tr)("ENABLE_SELECT_DRAGPAN", locale)),
         React.createElement("fieldset", null,
             React.createElement("legend", null, (0, i18n_1.tr)("LAYER_TRANSPARENCY", locale)),
             (function () {
@@ -26307,6 +26662,8 @@ var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
+var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
+var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 exports.CONFIG_INITIAL_STATE = {
     agentUri: undefined,
     agentKind: "mapagent",
@@ -26319,6 +26676,7 @@ exports.CONFIG_INITIAL_STATE = {
     manualFeatureTooltips: false,
     cancelDigitizationKey: common_1.KC_ESCAPE,
     undoLastPointKey: common_1.KC_U,
+    selectCanDragPan: false,
     coordinates: {
         decimals: 6
     },
@@ -26344,7 +26702,7 @@ exports.CONFIG_INITIAL_STATE = {
     }
 };
 function configReducer(state, action) {
-    var _a;
+    var _a, _b;
     if (state === void 0) { state = exports.CONFIG_INITIAL_STATE; }
     switch (action.type) {
         case actions_1.ActionType.SET_LOCALE:
@@ -26401,14 +26759,35 @@ function configReducer(state, action) {
                         coordConfig.format = payload.config.coordinateDisplayFormat;
                     }
                     var state2 = { viewer: viewerConfig, coordinates: coordConfig };
+                    var mapKeys = Object.keys(payload.maps);
                     if (payload.config.viewSizeUnits != null) {
                         state2.viewSizeUnits = payload.config.viewSizeUnits;
+                    }
+                    else if (mapKeys.length == 1) {
+                        var m = payload.maps[mapKeys[0]].map;
+                        if (m) {
+                            var arbCs = void 0;
+                            if ((0, type_guards_1.isRuntimeMap)(m)) {
+                                arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
+                            }
+                            else {
+                                arbCs = (0, units_1.tryParseArbitraryCs)((_b = m === null || m === void 0 ? void 0 : m.meta) === null || _b === void 0 ? void 0 : _b.projection);
+                            }
+                            // If arbitrary, infer units from it
+                            if (arbCs) {
+                                state2.viewSizeUnits = arbCs.units;
+                            }
+                        }
                     }
                     return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, newState), state2);
                 }
                 else {
                     return newState;
                 }
+            }
+        case actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN:
+            {
+                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { selectCanDragPan: action.payload });
             }
         case actions_1.ActionType.MAP_SET_VIEW_ROTATION:
             {
@@ -26554,6 +26933,7 @@ var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants
 var defs_1 = __webpack_require__(/*! ../actions/defs */ "./src/actions/defs.ts");
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
+var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 exports.MAP_STATE_INITIAL_STATE = {};
 exports.MG_INITIAL_SUB_STATE = {
     selectionSet: undefined,
@@ -26561,6 +26941,7 @@ exports.MG_INITIAL_SUB_STATE = {
     selectableLayers: {},
     expandedGroups: {},
     runtimeMap: undefined,
+    isArbitraryCs: false,
     showLayers: [],
     showGroups: [],
     hideLayers: [],
@@ -26622,7 +27003,8 @@ function mapStateReducer(state, action) {
             {
                 var payload_1 = action.payload;
                 return applyMapGuideSubState(state, payload_1.mapName, function (_) { return ({
-                    runtimeMap: payload_1.map
+                    runtimeMap: payload_1.map,
+                    isArbitraryCs: (0, units_1.tryParseArbitraryCs)(payload_1.map.CoordinateSystem.MentorCode) != null
                 }); });
             }
         case actions_1.ActionType.INIT_APP:
@@ -26659,7 +27041,8 @@ function mapStateReducer(state, action) {
                     var rtm = maps[mapName].map;
                     if (rtm) {
                         if (!(0, defs_1.isGenericSubjectMapLayer)(rtm)) {
-                            mrtm = { runtimeMap: rtm };
+                            var arbCs = (0, units_1.tryParseArbitraryCs)(rtm.CoordinateSystem.MentorCode);
+                            mrtm = { runtimeMap: rtm, isArbitraryCs: arbCs != null };
                         }
                         else {
                             mgeneric = { subject: (0, tslib_1.__assign)({}, rtm) };
@@ -26807,6 +27190,7 @@ function mapStateReducer(state, action) {
             }
         case actions_1.ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {
+                //TODO: Move state to non-MG branch for next major release
                 var payload_2 = action.payload;
                 return applyMapGuideSubState(state, payload_2.mapName, function (mgSubState) {
                     var trans = (0, tslib_1.__assign)({}, mgSubState.layerTransparency);
@@ -27640,6 +28024,13 @@ function viewerReducer(state, action) {
                 };
                 return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
             }
+        case actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN:
+            {
+                var state1 = {
+                    selectCanDragPan: action.payload
+                };
+                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+            }
         case actions_1.ActionType.MAP_SET_BUSY_COUNT:
             {
                 var state1 = {
@@ -28107,7 +28498,10 @@ exports.STRINGS_EN = {
     "CREATE_VECTOR_LAYER": "Vector Layer",
     "CREATE_VECTOR_THEMED": "Themed Vector Layer",
     "CREATE_VECTOR_CLUSTERED": "Clustered Point Layer",
-    "CREATE_VECTOR_HEATMAP": "Heatmap Layer"
+    "CREATE_VECTOR_HEATMAP": "Heatmap Layer",
+    "ENABLE_SELECT_DRAGPAN": "Enable pan dragging for select tool",
+    "INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER": "This viewer refers to a map ({mapId}) with an arbitrary coordinate system, which is incompatible with this layer type ({type})",
+    "INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET": "This viewer refers to a map ({mapId}) with an arbitrary coordinate system, which is incompatible with this widget ({widget})",
 };
 
 
@@ -28864,9 +29258,10 @@ exports.isRuntimeMap = isRuntimeMap;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getMapSize = exports.getUnitOfMeasure = exports.getUnits = exports.getUnitsOfMeasure = void 0;
+exports.tryParseArbitraryCs = exports.getMapSize = exports.getUnitOfMeasure = exports.getUnits = exports.getUnitsOfMeasure = void 0;
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
+var string_1 = __webpack_require__(/*! ./string */ "./src/utils/string.ts");
 var mUnits = [
     { name: "Unknown", localizedName: function (locale) { return (0, i18n_1.tr)("UNIT_UNKNOWN", locale); }, abbreviation: function (locale) { return (0, i18n_1.tr)("UNIT_ABBR_UNKNOWN", locale); }, unitsPerMeter: 1.0, metersPerUnit: 1.0 },
     { name: "Inches", localizedName: function (locale) { return (0, i18n_1.tr)("UNIT_INCHES", locale); }, abbreviation: function (locale) { return (0, i18n_1.tr)("UNIT_ABBR_INCHES", locale); }, unitsPerMeter: 39.370079, metersPerUnit: 0.0254 },
@@ -28967,6 +29362,43 @@ function getMapSize(displaySize, metersPerUnit, units, resolution, precision) {
     return [gw, gh];
 }
 exports.getMapSize = getMapSize;
+/**
+ * Attempts to be parse unit information for the given mentor CS code
+ *
+ * @param csCode
+ * @since 0.14.3
+ * @returns
+ */
+function tryParseArbitraryCs(csCode) {
+    if (!(0, string_1.strIsNullOrEmpty)(csCode) && (0, string_1.strStartsWith)(csCode, "XY-")) {
+        // We'll only cover arbitrary CSes that are clearly mappable to our UOM set
+        var suffix = csCode.substring(3);
+        switch (suffix) {
+            case "M":
+                return { code: csCode, units: common_1.UnitOfMeasure.Meters };
+            case "FT":
+                return { code: csCode, units: common_1.UnitOfMeasure.Feet };
+            case "IN":
+                return { code: csCode, units: common_1.UnitOfMeasure.Inches };
+            case "CM":
+                return { code: csCode, units: common_1.UnitOfMeasure.Centimeters };
+            case "KM":
+                return { code: csCode, units: common_1.UnitOfMeasure.Kilometers };
+            case "YD":
+                return { code: csCode, units: common_1.UnitOfMeasure.Yards };
+            case "MM":
+                return { code: csCode, units: common_1.UnitOfMeasure.Millimeters };
+            case "MI":
+                return { code: csCode, units: common_1.UnitOfMeasure.Miles };
+            case "NM":
+                return { code: csCode, units: common_1.UnitOfMeasure.NauticalMiles };
+            case "PX": //Not supported by MapGuide, but our own defn to support static images
+                return { code: csCode, units: common_1.UnitOfMeasure.Pixels };
+        }
+    }
+    return undefined;
+}
+exports.tryParseArbitraryCs = tryParseArbitraryCs;
 
 
 /***/ }),
@@ -29292,9 +29724,20 @@ var array_1 = __webpack_require__(/*! ./array */ "./src/utils/array.ts");
  */
 function areViewsCloseToEqual(view, otherView) {
     if (view && otherView) {
-        return (0, number_1.areNumbersEqual)(view.x, otherView.x) &&
+        var basePartsEqual = (0, number_1.areNumbersEqual)(view.x, otherView.x) &&
             (0, number_1.areNumbersEqual)(view.y, otherView.y) &&
             (0, number_1.areNumbersEqual)(view.scale, otherView.scale);
+        if (view.resolution != null && otherView.resolution != null) {
+            return basePartsEqual && (0, number_1.areNumbersEqual)(view.resolution, otherView.resolution);
+        }
+        else {
+            if ((view.resolution == null && otherView.resolution != null) || (view.resolution != null && otherView.resolution == null)) {
+                return false;
+            }
+            else {
+                return basePartsEqual;
+            }
+        }
     }
     else {
         return false;

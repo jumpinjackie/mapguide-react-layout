@@ -26,6 +26,28 @@ Where applicable, an issue number is attached to indicate that such issues are a
    * `PanOnClick`
  * Due to lack of Google Maps integration, the Google Street View widget is not supported if referenced in an Application Definition (and will not be ported across due to current technical and legal constraints)
 
+## Maps using arbitrary coordinate systems
+
+Since the `0.14.3` release, the viewer has basic support for MapGuide Map Definitions that use arbitrary coordinate systems. Please observe the following caveats.
+
+ * The following coordinate system codes will be recognised as arbitrary:
+   * `XY-M`: Units will be `Meters`
+   * `XY-FT`: Units will be `Feet`
+   * `XY-IN`: Units will be `Inches`
+   * `XY-CM`: Units will be `Centimeters`
+   * `XY-KM`: Units will be `Kilometers`
+   * `XY-YD`: Units will be `Yards`
+   * `XY-MM`: Units will be `Millimeters`
+   * `XY-MI`: Units will be `Miles`
+   * `XY-NM`: Units will be `NauticalMiles`
+   * Any other arbitrary coordinate system is not supported
+ * Any external layers (base or overlay) specified with the map in any map group are incompatible and init warnings will be displayed for such a configuration.
+ * The following widgets are incompatible with such a map and init warnings are displayed for such widgets
+   * `CoordinateTracker`
+ * The measure tool will measure in cartesian distances for such maps instead of great circle distances
+ * The view size widget will display the cartesian dimensions of the current map view in the units inferred from the arbitrary coordinate system.
+ * Maps with arbitrary coordinate systems *cannot* currently be used in stateless mode
+
 ## Components
 
  * Task Pane

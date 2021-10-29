@@ -1,3 +1,13 @@
+0.14.3
+======
+
+ * [#1354](https://github.com/jumpinjackie/mapguide-react-layout/issues/1354): Support for static images as subject layers
+ * [#1350](https://github.com/jumpinjackie/mapguide-react-layout/issues/1350): Fix opacity not applying to subject layers
+ * [#1348](https://github.com/jumpinjackie/mapguide-react-layout/issues/1348): Basic support for MapGuide Map Definitions that use arbitrary (non-geographic) coordinate systems. Refer to [Known Issues](https://jumpinjackie.github.io/mapguide-react-layout/#/KNOWN_ISSUES) for caveats to using the viewer with such maps.
+ * [#1349](https://github.com/jumpinjackie/mapguide-react-layout/issues/1349): Restore display of viewer init warnings on startup
+ * [#1344](https://github.com/jumpinjackie/mapguide-react-layout/issues/1344): Template-specific CSS now embedded alongside its respective layout component. All template HTML files are now virtually identical except for the template to init with. A new PHP version of the template is included that can now also parameterize the template name via a `template` query string parameter.
+ * [#1346](https://github.com/jumpinjackie/mapguide-react-layout/issues/1346): External layer instances can now carry arbitrary JSON metadata to support persistence and restoration of such layers (the viewer will not be doing this, that aspect is left to you, the consuming application to handle)
+
 0.14.2
 ======
 

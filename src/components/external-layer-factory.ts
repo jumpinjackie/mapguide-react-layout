@@ -122,7 +122,6 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
         case GenericSubjectLayerType.StaticImage:
             {
                 const sourceArgs = {
-                    crossOrigin: "anonymous",
                     ...defn.sourceParams
                 };
                 if (!sourceArgs.imageExtent)
@@ -143,7 +142,6 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
         case GenericSubjectLayerType.XYZ:
             {
                 const sourceArgs = {
-                    crossOrigin: "anonymous",
                     ...defn.sourceParams
                 };
                 const layer = new TileLayer({
@@ -346,7 +344,6 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
         case GenericSubjectLayerType.TileWMS:
             {
                 const sourceArgs = {
-                    crossOrigin: "anonymous",
                     ...defn.sourceParams
                 };
                 const layer = new TileLayer({

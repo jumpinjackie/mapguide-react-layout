@@ -45,7 +45,9 @@ Once done, you can preview using any of the templates provided by `mapguide-reac
 In your browser, open the URL to your [viewer template](TEMPLATES.md) and include a `resource` query string parameter which points to either:
 
  * A MapGuide WebLayout/ApplicationDefinition resource id
- * OR: A URL to an Application Definition JSON document. This can be either an absolute URL or a URL relative to the viewer HTML file.
+    * Example URL: `http://yourmapguideserver/mapguide/viewer/slate.html?resource=Library://Samples/Sheboygan/FlexibleLayouts/Slate.ApplicationDefinition`
+ * OR: A URL to an Application Definition JSON document. This can be either an absolute URL or a URL relative to the viewer HTML file. 
+    * Example URL: `http://yourmapguideserver/mapguide/viewer/slate.html?resource=path/to/my/appdef.json`
 
 If `resource` parameter is not specified, the viewer will try to load [the default appdef.json](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/viewer/appdef.json). This Application Definition defines the map of the world with a OpenStreetMap/Stamen backdrop. along with a standard suite of viewer functions.
 

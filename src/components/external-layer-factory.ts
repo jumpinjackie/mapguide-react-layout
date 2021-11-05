@@ -360,6 +360,25 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.setVisible(defn.initiallyVisible);
                 return layer;
             }
+        case GenericSubjectLayerType.WFS:
+            {
+                const sourceArgs = {
+                    ...defn.sourceParams
+                };
+                const layer = new VectorLayer({
+                    ...defn.layerOptions,
+                    source: new VectorSource({
+                        ...sourceArgs,
+                        format: new GeoJSON({
+                            dataProjection: defn.meta?.projection,
+                            featureProjection: mapProjection
+                        })
+                    })
+                });
+                setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                applyVectorLayerProperties(defn, layer, isExternal);
+                return layer;
+            }
         case GenericSubjectLayerType.CustomVector:
             {
                 if (strIsNullOrEmpty(defn.driverName)) {

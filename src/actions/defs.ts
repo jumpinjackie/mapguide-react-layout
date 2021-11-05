@@ -160,7 +160,12 @@ export enum GenericSubjectLayerType {
      * A static image layer
      * @since 0.14.3
      */
-    StaticImage = "StaticImage"
+    StaticImage = "StaticImage",
+    /**
+     * A WFS layer
+     * @since 0.14.4
+     */
+    WFS = "WFS"
 }
 
 /**

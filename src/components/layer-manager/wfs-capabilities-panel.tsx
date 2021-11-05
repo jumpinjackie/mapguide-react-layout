@@ -30,7 +30,8 @@ export function parseEpsgCodeFromCRS(crs: string | undefined): number | undefine
 function isGeoJsonMimeType(mimeType: string): boolean {
     const lmt = mimeType?.toLowerCase() ?? "";
     if (lmt.indexOf("application/vnd.geo+json") >= 0 ||
-        lmt.indexOf("application/json") >= 0) {
+        lmt.indexOf("application/json") >= 0 ||
+        lmt.indexOf("geojson") >= 0) {
         return true;
     }
     return false;

@@ -195,6 +195,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const warnings = [] as string[];
         const { locale } = this.options;
         const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
+        const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
         if (isStateless) {
             // We use an AsyncLazy because we only want to fetch the site version *iff* we encounter a MG map defn
             const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => {
@@ -207,6 +208,15 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                     const siteVer = await siteVersion.getValueAsync();
                     assertIsDefined(this.client);
                     mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVer.Version, m));
+                } else {
+                    const proj = m.meta?.projection;
+                    if (!strIsNullOrEmpty(proj)) {
+                        //Must be registered to proj4js if not 4326 or 3857
+                        const [_, epsg] = proj.split(':');
+                        if (!proj4.defs[`EPSG:${epsg}`]) {
+                            fetchEpsgs.push({ epsg: epsg, mapDef: m.name });
+                        }
+                    }
                 }
             }
         } else {
@@ -231,7 +241,6 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             }
         }
         const maps = await Promise.all(mapPromises);
-        const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
         //All must be non-zero
         for (const m of maps) {
             const epsg = m.CoordinateSystem.EpsgCode;

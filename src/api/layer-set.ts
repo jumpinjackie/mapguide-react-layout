@@ -586,8 +586,8 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                 externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
                 externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
                 externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
-                projection = "EPSG:3857";
-                bounds = DEFAULT_BOUNDS_3857;
+                //projection = "EPSG:3857";
+                //bounds = DEFAULT_BOUNDS_3857;
             }
             let subjectLayer;
             if (map) {

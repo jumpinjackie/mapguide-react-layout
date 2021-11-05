@@ -83,6 +83,53 @@ const geoJsonVt2GeoJSON = (key: string, value: any) => {
     }
 };
 
+async function getRawGeoJson(defn: IGenericSubjectMapLayer) {
+    const { url } = defn.sourceParams;
+    if (typeof (url) == 'string') {
+        debug(`Fetching url: ${url}`);
+        const resp = await fetch(url);
+        let json = await resp.json();
+        return json;
+    } else if (typeof (url) == 'object' && !strIsNullOrEmpty(url.var_source)) {
+        if (!window[url.var_source]) {
+            throw new Error(`No such global var (${url.var_source})`);
+        }
+        return window[url.var_source];
+    } else {
+        throw new Error("Don't know how to process URL source");
+    }
+}
+
+function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection: ProjectionLike) {
+    const { url, attributions } = defn.sourceParams;
+    if (typeof (url) == 'string') {
+        const source = new VectorSource({
+            url: url,
+            format: new GeoJSON(),
+            attributions: attributions
+        });
+        return source;
+    } else if (typeof (url) == 'object' && !strIsNullOrEmpty(url.var_source)) {
+        if (!window[url.var_source]) {
+            throw new Error(`No such global var (${url.var_source})`);
+        }
+        const vectorSource = new VectorSource({
+            loader: (_extent, _resolution, projection) => {
+                const format = new GeoJSON({
+                    dataProjection: defn.meta?.projection,
+                    featureProjection: mapProjection
+                });
+                const features = format.readFeatures(window[url.var_source]);
+                vectorSource.addFeatures(features);
+            },
+            attributions: attributions
+        });
+        return vectorSource;
+    } else {
+        throw new Error("Don't know how to process URL source");
+    }
+}
+
 function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExternalLayer, layer: LayerBase, isExternal: boolean) {
     layer.set(LayerProperty.LAYER_NAME, defn.name);
     layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
@@ -178,9 +225,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const asVT = defn.meta?.geojson_as_vt == true;
                 if (asVT && isWebM) {
                     const lazyTileIndex = new AsyncLazy(async () => {
-                        debug(`Fetching url: ${defn.sourceParams.url}`);
-                        const resp = await fetch(defn.sourceParams.url);
-                        let json = await resp.json();
+                        let json = await getRawGeoJson(defn);
                         if (defn.meta?.projection != "EPSG:4326") {
                             const gj = new GeoJSON({
                                 dataProjection: defn.meta?.projection,
@@ -244,11 +289,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     if (asVT) {
                         console.warn("The geojson_as_vt meta option only applies if the MapGuide map or Primary Subject Layer is in EPSG:3857. This layer will be loaded as a regular GeoJSON layer");
                     }
-                    const source = new VectorSource({
-                        url: defn.sourceParams.url,
-                        format: new GeoJSON(),
-                        attributions: defn.sourceParams.attributions
-                    });
+                    const source = createGeoJsonVectorSource(defn, mapProjection);
                     const layer = new VectorLayer({
                         ...defn.layerOptions,
                         source: clusterSourceIfRequired(source, defn)

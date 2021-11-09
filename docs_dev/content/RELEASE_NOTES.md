@@ -1,3 +1,12 @@
+0.14.4
+======
+
+ * [#1362](https://github.com/jumpinjackie/mapguide-react-layout/issues/1362): Un-break static image layers in appdef
+ * [#1361](https://github.com/jumpinjackie/mapguide-react-layout/issues/1361): Fix inability to load a Map Definition with an arbitrary coordinate system not based in meters.
+ * [#1360](https://github.com/jumpinjackie/mapguide-react-layout/issues/1360): Fix inability to add some GeoJSON-based WFS layers
+ * [#1358](https://github.com/jumpinjackie/mapguide-react-layout/issues/1358): GeoJSON appdef layers can now source their data from a browser global variable
+ * [#1357](https://github.com/jumpinjackie/mapguide-react-layout/issues/1357): Added support for WFS (GeoJSON format) in appdef external layers
+
 0.14.3
 ======
 

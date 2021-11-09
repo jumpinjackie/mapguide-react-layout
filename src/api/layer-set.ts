@@ -30,7 +30,7 @@ import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OV
 import { OLImageLayer, OLTileLayer } from './ol-types';
 import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
-import { get, Projection, ProjectionLike } from "ol/proj";
+import { get, METERS_PER_UNIT, Projection, ProjectionLike } from "ol/proj";
 import { isRuntimeMap } from '../utils/type-guards';
 import { MgError } from './error';
 import { tryParseArbitraryCs } from '../utils/units';
@@ -47,6 +47,45 @@ const DEFAULT_BOUNDS_4326: Bounds = [-180, -90, 180, 90];
 function getMetersPerUnit(projection: string) {
     const proj = get(projection);
     return proj.getMetersPerUnit();
+}
+
+function toMetersPerUnit(unit: UnitOfMeasure) {
+    const u = toProjUnit(unit);
+    // Use OL-provided mpu if available
+    let mpu = METERS_PER_UNIT[u];
+    if (mpu) {
+        return mpu;
+    } else {
+        // Otherwise, compute ourselves
+        switch (unit) {
+            case UnitOfMeasure.Centimeters:
+                return 0.01;
+            case UnitOfMeasure.DMS:
+            case UnitOfMeasure.DecimalDegrees:
+            case UnitOfMeasure.Degrees:
+                return (2 * Math.PI * 6370997) / 360;
+            case UnitOfMeasure.Feet:
+                return 0.3048;
+            case UnitOfMeasure.Inches:
+                return 0.0254;
+            case UnitOfMeasure.Kilometers:
+                return 1000;
+            case UnitOfMeasure.Meters:
+                return 1;
+            case UnitOfMeasure.Miles:
+                return 1609.344;
+            case UnitOfMeasure.Millimeters:
+                return 0.001;
+            case UnitOfMeasure.NauticalMiles:
+                return 1852;
+            case UnitOfMeasure.Pixels:
+                return 1;
+            case UnitOfMeasure.Unknown:
+                return 1;
+            case UnitOfMeasure.Yards:
+                return 0.9144;
+        }
+    }
 }
 
 export function toProjUnit(unit: UnitOfMeasure) {
@@ -435,7 +474,8 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             if (parsedArb) {
                 projection = new Projection({
                     code: parsedArb.code,
-                    units: toProjUnit(parsedArb.units)
+                    units: toProjUnit(parsedArb.units),
+                    metersPerUnit: toMetersPerUnit(parsedArb.units)
                 })
             } else {
                 if (map.CoordinateSystem.EpsgCode.length > 0) {
@@ -608,6 +648,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                 projection = new Projection({
                     code: parsedArb.code,
                     units: toProjUnit(parsedArb.units),
+                    metersPerUnit: toMetersPerUnit(parsedArb.units),
                     extent: bounds
                 });
             } else {

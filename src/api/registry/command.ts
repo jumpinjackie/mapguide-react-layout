@@ -360,8 +360,6 @@ export function isSupportedCommandInStatelessMode(name: string | undefined) {
         case DefaultCommands.QuickPlot:
         case DefaultCommands.SelectRadius:
         case DefaultCommands.SelectPolygon:
-        case DefaultCommands.ClearSelection:
-        case DefaultCommands.ZoomToSelection:
         case DefaultCommands.Buffer:
         case DefaultCommands.SelectWithin:
         case DefaultCommands.Redline:

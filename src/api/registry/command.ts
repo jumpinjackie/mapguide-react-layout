@@ -356,7 +356,6 @@ function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalT
 
 export function isSupportedCommandInStatelessMode(name: string | undefined) {
     switch (name) {
-        case DefaultCommands.Select:
         case DefaultCommands.MapTip:
         case DefaultCommands.QuickPlot:
         case DefaultCommands.SelectRadius:

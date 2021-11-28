@@ -74,7 +74,7 @@
     "react-splitter-layout": "^4.0.0",
     "redux": "^4.1.2",
     "redux-logger": "^4.0.0",
-    "redux-thunk": "^2.4.0",
+    "redux-thunk": "^2.4.1",
     "shortid": "^2.2.16",
     "stickybits": "3.7.9",
     "tslib": "^2.3.1",

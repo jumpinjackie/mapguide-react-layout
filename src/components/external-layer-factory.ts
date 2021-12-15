@@ -136,6 +136,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
     layer.set(LayerProperty.LAYER_DISPLAY_NAME, defn.displayName);
     layer.set(LayerProperty.LAYER_TYPE, defn.type);
     layer.set(LayerProperty.IS_SELECTABLE, defn.selectable);
+    layer.set(LayerProperty.DISABLE_HOVER, defn.disableHover);
     layer.set(LayerProperty.IS_EXTERNAL, isExternal);
     layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
     layer.set(LayerProperty.IS_GROUP, false);

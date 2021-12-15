@@ -57,6 +57,7 @@ export function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGen
     const keys = Object.keys(map.Extension);
     let popupTemplate = map.Extension.popup_template;
     let selectable: boolean | undefined = map.Extension.is_selectable ?? true;
+    let disableHover: boolean | undefined = map.Extension.disable_hover ?? false;
     for (const k of keys) {
         const spidx = k.indexOf("source_param_");
         const loidx = k.indexOf("layer_opt_");
@@ -83,6 +84,7 @@ export function buildSubjectLayerDefn(name: string, map: MapConfiguration): IGen
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
         initiallyVisible,
         selectable,
+        disableHover,
         popupTemplate,
         vectorStyle: map.Extension.vector_layer_style
     } as IGenericSubjectMapLayer;

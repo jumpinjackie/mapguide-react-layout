@@ -263,6 +263,12 @@ export interface IGenericSubjectMapLayer {
     displayName?: string;
     initiallyVisible: boolean;
     selectable: boolean;
+    /**
+     * Opt-out of hover highlight selection processing. Has no effect for non-vector layers
+     * 
+     * @since 0.14.5
+     */
+    disableHover?: boolean;
     vectorStyle?: IVectorLayerStyle;
     cluster?: IClusterSettings;
     attributions?: string[];

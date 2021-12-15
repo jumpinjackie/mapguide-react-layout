@@ -184,6 +184,7 @@ export interface IMapProviderState {
     viewRotation: number;
     viewRotationEnabled: boolean;
     mapName: string | undefined;
+    busyWorkers: number;
     locale: string;
     externalBaseLayers: IExternalBaseLayer[] | undefined;
     cancelDigitizationKey: number;
@@ -274,6 +275,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             locale: DEFAULT_LOCALE,
             cancelDigitizationKey: KC_ESCAPE,
             undoLastPointKey: KC_U,
+            busyWorkers: 0,
             mapName: undefined,
             externalBaseLayers: undefined,
             initialExternalLayers: []
@@ -791,6 +793,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     protected handleHighlightHover(e: GenericEvent) {
         if (e.dragging) {
+            return;
+        }
+        if (this._state.busyWorkers > 0) {
+            //console.log("Skip highlight hover due to busyWorkers > 0");
             return;
         }
         if (this._state.mapName && this._map) {

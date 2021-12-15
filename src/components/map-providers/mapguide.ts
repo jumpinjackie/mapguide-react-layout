@@ -29,7 +29,7 @@ import { ensureParameters } from '../../utils/url';
 import { ActionType } from '../../constants/actions';
 import { buildSelectionXml, getActiveSelectedFeatureXml } from '../../api/builders/deArrayify';
 import { MapGuideMockMode } from '../mapguide-debug-context';
-import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless, useCustomAppSettings } from '../../containers/hooks';
+import { useViewerImageFormat, useConfiguredAgentUri, useConfiguredAgentKind, useViewerPointSelectionBuffer, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSelectionColor, useViewerSelectionImageFormat, useViewerActiveFeatureSelectionColor, useActiveMapSelectionSet, useConfiguredLoadIndicatorPositioning, useConfiguredLoadIndicatorColor, useViewerActiveTool, useActiveMapView, useViewerViewRotation, useViewerViewRotationEnabled, useActiveMapName, useViewerLocale, useActiveMapExternalBaseLayers, useConfiguredCancelDigitizationKey, useConfiguredUndoLastPointKey, useActiveMapLayers, useActiveMapInitialExternalLayers, useViewerIsStateless, useCustomAppSettings, useViewerBusyCount } from '../../containers/hooks';
 import { useActiveMapState, useActiveMapSessionId, useActiveMapSelectableLayerNames, useActiveMapLayerTransparency, useActiveMapShowGroups, useActiveMapHideGroups, useActiveMapShowLayers, useActiveMapHideLayers, useActiveMapActiveSelectedFeature } from '../../containers/hooks-mapguide';
 import { useReduxDispatch } from './context';
 import { UTFGridTrackingTooltip } from '../tooltips/utfgrid';
@@ -58,6 +58,7 @@ function useMapGuideViewerState() {
     const layers = useActiveMapLayers();
     const initialExternalLayers = useActiveMapInitialExternalLayers();
     const dispatch = useReduxDispatch();
+    const busyWorkers = useViewerBusyCount();
     const appSettings = useCustomAppSettings();
     // ============== Generic ============== //
     const subject = useActiveMapSubjectLayer();
@@ -115,6 +116,7 @@ function useMapGuideViewerState() {
     const nextState: IMapGuideProviderState & IMapProviderStateExtras = {
         stateless,
         activeTool,
+        busyWorkers,
         view,
         viewRotation,
         viewRotationEnabled,

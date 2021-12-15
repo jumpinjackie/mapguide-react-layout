@@ -1,3 +1,5 @@
+import debounce from 'lodash.debounce';
+import { areArraysDifferent } from '../utils/array';
 import { appendParameters, parseUrlParameters } from '../utils/url';
 
 /**
@@ -20,6 +22,10 @@ export interface IAppUrlState {
 }
 
 const S_DELIM = "_"; //This is the current layer/group name delimiter
+
+// Firefox does not like us hammering window.history.replaceState() willy-nilly, so wrap it in a debounced version
+// 100ms should be sufficient breathing space
+const debouncedReplaceState = debounce((state, _, url) => window.history.replaceState(state, _, url), 100);
 
 /**
  * Updates the main URL with the given application state. If passing extra custom state,
@@ -64,7 +70,8 @@ export function updateUrl(state: IAppUrlState, extraState?: any): void {
         }
     }
     const url = appendParameters(window.location.href, st, true, false);
-    window.history.replaceState(st, "", url);
+    //window.history.replaceState(st, "", url);
+    debouncedReplaceState(st, "", url);
 }
 
 /**
@@ -137,4 +144,27 @@ export function getStateFromUrl(ignoreKeys?: string[]): IAppUrlState {
         }
     }
     return state;
+}
+
+/**
+ * Determines if the 2 url state are equal
+ * @param a 
+ * @param b 
+ * @returns true if both states are equal. false otherwise
+ * 
+ * @since 0.14.5
+ */
+export function areStatesEqual(a: IAppUrlState, b: IAppUrlState): boolean {
+    return a.ft == b.ft
+        && !areArraysDifferent(a.hg, b.hg) // We trust this is fast enough for the kinds of arrays we're expecting
+        && !areArraysDifferent(a.hl, b.hl)
+        && a.locale == b.locale
+        && a.map == b.map
+        && a.resource == b.resource
+        && a.scale == b.scale
+        && a.session == b.session
+        && !areArraysDifferent(a.sg, b.sg)
+        && !areArraysDifferent(a.sl, b.sl)
+        && a.x == b.x
+        && a.y == b.y;
 }

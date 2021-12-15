@@ -16,7 +16,7 @@ import { AppContext } from "../components/context";
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
-import { getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
+import { areStatesEqual, getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
@@ -368,7 +368,10 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 }
             }
         }
-        updateUrl(nextUrlState);
+        if (areStatesEqual(curUrlState, nextUrlState))
+            updateUrl(nextUrlState);
+        //else
+        //    console.log("Skip pointless url state update");
     }
     private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
         const msg = err.message;

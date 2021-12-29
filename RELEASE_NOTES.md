@@ -1,3 +1,21 @@
+0.14.5
+======
+
+ * Update to OL 6.10.0
+ * [#1368](https://github.com/jumpinjackie/mapguide-react-layout/issues/1368): Fix Firefox instability by debouncing history API access on url state update
+ * [#1369](https://github.com/jumpinjackie/mapguide-react-layout/issues/1369): Fix `e.declutterTree is null` errors on vector feature hovering
+ * [#1370](https://github.com/jumpinjackie/mapguide-react-layout/issues/1370): Allow appdef vector layers to opt-out of automatic hover highlight processing
+
+0.14.4
+======
+
+ * [#1363](https://github.com/jumpinjackie/mapguide-react-layout/issues/1363): Hover highlighting now only happens if the active map tool is `Select`
+ * [#1362](https://github.com/jumpinjackie/mapguide-react-layout/issues/1362): Un-break static image layers in appdef
+ * [#1361](https://github.com/jumpinjackie/mapguide-react-layout/issues/1361): Fix inability to load a Map Definition with an arbitrary coordinate system not based in meters.
+ * [#1360](https://github.com/jumpinjackie/mapguide-react-layout/issues/1360): Fix inability to add some GeoJSON-based WFS layers
+ * [#1358](https://github.com/jumpinjackie/mapguide-react-layout/issues/1358): GeoJSON appdef layers can now source their data from a browser global variable
+ * [#1357](https://github.com/jumpinjackie/mapguide-react-layout/issues/1357): Added support for WFS (GeoJSON format) in appdef external layers
+
 0.14.3
 ======
 

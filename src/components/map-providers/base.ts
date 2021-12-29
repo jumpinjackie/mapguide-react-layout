@@ -11,7 +11,7 @@ import { SelectedFeaturesTooltip, ISelectionPopupContentOverrideProvider, Select
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import { MapOptions } from 'ol/PluggableMap';
+import type { MapOptions } from 'ol/PluggableMap';
 import Attribution from 'ol/control/Attribution';
 import Rotate from 'ol/control/Rotate';
 import DragRotate from 'ol/interaction/DragRotate';
@@ -26,39 +26,38 @@ import Point from 'ol/geom/Point';
 import GeometryType from 'ol/geom/GeometryType';
 import LineString from 'ol/geom/LineString';
 import Circle from 'ol/geom/Circle';
-import Interaction from 'ol/interaction/Interaction';
-import Overlay from 'ol/Overlay';
+import type Interaction from 'ol/interaction/Interaction';
+import type Overlay from 'ol/Overlay';
 import { transformExtent, ProjectionLike } from 'ol/proj';
 import { LayerManager } from '../../api/layer-manager';
-import Collection from 'ol/Collection';
+import type Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
-import MapBrowserEvent from 'ol/MapBrowserEvent';
+import type MapBrowserEvent from 'ol/MapBrowserEvent';
 import { tr, DEFAULT_LOCALE } from '../../api/i18n';
-import { LayerSetGroupBase } from '../../api/layer-set-group-base';
+import type { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady, addClientSelectedFeature, clearClientSelection } from '../../actions/map';
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
-import { ISubscriberProps } from '../../containers/subscriber';
+import type { ISubscriberProps } from '../../containers/subscriber';
 import isMobile from "ismobilejs";
-import { IInitialExternalLayer } from '../../actions/defs';
+import type { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
-import Layer from 'ol/layer/Layer';
 import LayerBase from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
-import Source from 'ol/source/Source';
-import { LoadFunction as TileLoadFunction } from 'ol/Tile';
-import { LoadFunction as ImageLoadFunction } from 'ol/Image';
+import type { LoadFunction as TileLoadFunction } from 'ol/Tile';
+import type { LoadFunction as ImageLoadFunction } from 'ol/Image';
 import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, DEFAULT_LINE_STYLE, IBasicVectorPolygonStyle, DEFAULT_POLY_STYLE, ClusterClickAction } from '../../api/ol-style-contracts';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
-import { OLStyleMapSet } from '../../api/ol-style-map-set';
+import type { OLStyleMapSet } from '../../api/ol-style-map-set';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
 import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
+import type { OLFeature, OLLayer } from "../../api/ol-types";
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -541,7 +540,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected abstract getInitialProviderState(): Omit<TState, keyof IMapProviderState>;
     //#region IMapViewerContextCallback
     protected getMockMode(): MapGuideMockMode | undefined { return undefined; }
-    protected addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void {
+    protected addFeatureToHighlight(feat: OLFeature | undefined, bAppend: boolean): void {
         if (this._state.mapName) {
             // Features have to belong to layer in order to be visible and have the highlight style, 
             // so in addition to adding this new feature to the OL select observable collection, we 
@@ -708,7 +707,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 }
                 this._activeDrawInteraction = draw;
                 this._activeDrawInteraction.once("drawend", (e: GenericEvent) => {
-                    const drawnFeature: Feature<Geometry> = e.feature;
+                    const drawnFeature: OLFeature = e.feature;
                     const geom: T = drawnFeature.getGeometry() as T;
                     this.cancelDigitization();
                     handler(geom);
@@ -784,8 +783,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected handleMouseTooltipMouseMove(e: GenericEvent) {
         this._mouseTooltip?.onMouseMove?.(e);
     }
-    private _highlightedFeature: Feature<Geometry> | undefined;
-    private isLayerHoverable(layer: Layer<Source>) {
+    private _highlightedFeature: OLFeature | undefined;
+    private isLayerHoverable(layer: OLLayer) {
         return !(layer?.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true)
             && !(layer?.get(LayerProperty.IS_WMS_SELECTION_OVERLAY) == true)
             && !(layer?.get(LayerProperty.IS_HEATMAP) == true)
@@ -805,7 +804,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (activeLayerSet) {
                 const pixel = this._map.getEventPixel(e.originalEvent);
                 if (pixel) {
-                    const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
+                    const featureToLayerMap = [] as [OLFeature, OLLayer][];
                     this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
                         if (this.isLayerHoverable(layer) && feature instanceof Feature) {
                             featureToLayerMap.push([feature, layer]);
@@ -831,7 +830,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected hideSelectedVectorFeaturesTooltip() {
         this._selectTooltip?.hide();
     }
-    protected showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
+    protected showSelectedVectorFeatures(features: Collection<OLFeature>, pixel: [number, number], featureToLayerMap: [OLFeature, OLLayer][], locale?: string) {
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
     protected async queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D, bAppendMode: boolean) {
@@ -858,12 +857,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
-    private addClientSelectedFeature(f: Feature<Geometry>, l: LayerBase) {
+    private addClientSelectedFeature(f: OLFeature, l: LayerBase) {
         if (this._select)
             this._select.getFeatures().push(f);
         if (this._state.mapName) {
             const features = f.get("features");
-            let theFeature: Feature<Geometry>;
+            let theFeature: OLFeature;
             //Are we clustered?
             if (Array.isArray(features)) {
                 // Only proceeed with dispatch if single item array
@@ -915,7 +914,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         //out the proper UI for such a case before we enable multiple selection.
         const bAppendMode = false;
 
-        const featureToLayerMap = [] as [Feature<Geometry>, Layer<Source>][];
+        const featureToLayerMap = [] as [OLFeature, OLLayer][];
         if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
             if (!bAppendMode) {
                 this.clearClientSelectedFeatures();

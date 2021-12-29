@@ -16,7 +16,10 @@ import type ImageLayer from "ol/layer/Image";
 import type TileLayer from "ol/layer/Tile";
 import type TileSource from "ol/source/Tile";
 import type { Options as VectorLayerOptions } from "ol/layer/BaseVector";
+import Source from "ol/source/Source";
+import Layer from "ol/layer/Layer";
 
+export type OLLayer = Layer<Source, any>;
 export type OLFeature = Feature<Geometry>;
 export type OLGeometryType = string;
 export type OLMapGuideImageSourceOptions = MGImageSourceOptions;

@@ -7,23 +7,19 @@ import olSourceTileWMS from "ol/source/TileWMS";
 import GeoJSON from "ol/format/GeoJSON";
 import OverlayPositioning from 'ol/OverlayPositioning';
 import Collection from 'ol/Collection';
-import Feature from 'ol/Feature';
 import { tr } from '../../api/i18n';
 import { ILayerManager, Coordinate2D, LayerProperty, Dictionary } from '../../api/common';
 import { Client } from '../../api/client';
 import { parseEpsgCodeFromCRS } from '../layer-manager/wfs-capabilities-panel';
 import { ProjectionLike } from 'ol/proj';
 import { LayerSetGroupBase } from '../../api/layer-set-group-base';
-import Geometry from 'ol/geom/Geometry';
 import { ISelectedFeaturePopupTemplateConfiguration } from '../../actions/defs';
 import { strIsNullOrEmpty, extractPlaceholderTokens, strReplaceAll } from '../../utils/string';
-import Layer from 'ol/layer/Layer';
 import LayerBase from "ol/layer/Base";
-import Source from 'ol/source/Source';
 import { WmsQueryAugmentation } from '../map-providers/base';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import stickybits from 'stickybits';
-import { OLFeature } from "../../api/ol-types";
+import type { OLFeature, OLLayer } from "../../api/ol-types";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -33,15 +29,15 @@ export interface IQueryWmsFeaturesCallback {
      * @param l 
      * @since 0.14
      */
-    addClientSelectedFeature(feat: Feature<Geometry>, l: LayerBase): void;
-    addFeatureToHighlight(feat: Feature<Geometry> | undefined, bAppend: boolean): void;
+    addClientSelectedFeature(feat: OLFeature, l: LayerBase): void;
+    addFeatureToHighlight(feat: OLFeature | undefined, bAppend: boolean): void;
     getWmsRequestAugmentations(): Dictionary<WmsQueryAugmentation>;
 }
 
 /**
  * @since 0.14
  */
-export type SelectionPopupContentRenderer = (feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) => string;
+export type SelectionPopupContentRenderer = (feat: OLFeature, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) => string;
 
 /**
  * @since 0.14
@@ -282,7 +278,7 @@ export class SelectedFeaturesTooltip {
         }
         return false;
     }
-    private generateFeatureHtml(layerName: string | undefined, feat: Feature<Geometry>, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
+    private generateFeatureHtml(layerName: string | undefined, feat: OLFeature, locale?: string, popupConfig?: ISelectedFeaturePopupTemplateConfiguration) {
         if (layerName) {
             const customRenderer = this.parent.getSelectionPopupRenderer(layerName);
             if (customRenderer) {
@@ -306,7 +302,7 @@ export class SelectedFeaturesTooltip {
         }
         return false;
     };
-    public showSelectedVectorFeatures(features: Collection<Feature<Geometry>>, pixel: [number, number], featureToLayerMap: [Feature<Geometry>, Layer<Source>][], locale?: string) {
+    public showSelectedVectorFeatures(features: Collection<OLFeature>, pixel: [number, number], featureToLayerMap: [OLFeature, OLLayer][], locale?: string) {
         const coords = this.map.getCoordinateFromPixel(pixel);
         if (features.getLength() > 0) {
             this.featureTooltip.setPosition(coords);

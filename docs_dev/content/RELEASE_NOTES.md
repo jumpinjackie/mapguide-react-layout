@@ -1,6 +1,7 @@
 0.14.5
 ======
 
+ * Update to OL 6.10.0
  * [#1368](https://github.com/jumpinjackie/mapguide-react-layout/issues/1368): Fix Firefox instability by debouncing history API access on url state update
  * [#1369](https://github.com/jumpinjackie/mapguide-react-layout/issues/1369): Don't do hover highlight processing for vector features while the viewer is in a busy state
  * [#1370](https://github.com/jumpinjackie/mapguide-react-layout/issues/1370): Allow appdef vector layers to opt-out of automatic hover highlight processing

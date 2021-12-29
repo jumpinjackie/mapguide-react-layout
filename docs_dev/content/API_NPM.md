@@ -2,7 +2,7 @@
 
 `mapguide-react-layout` is a modern map viewer for [MapGuide Open Source](http://mapguide.osgeo.org) and [Autodesk Infrastructure Map Server](http://www.autodesk.com/products/infrastructure-map-server/overview)
 
-This API documentation covers the `mapguide-react-layout` npm module (version **0.14.2**)
+This API documentation covers the `mapguide-react-layout` npm module (version **0.14.5**)
 
 For an example of how this npm module is used, check out the [mapguide-react-layout-example](https://github.com/jumpinjackie/mapguide-react-layout-example)
 

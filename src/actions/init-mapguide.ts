@@ -16,7 +16,6 @@ import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
-import * as shortid from 'shortid';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
 import { registerCommand } from '../api/registry/command';
 import { ensureParameters } from '../utils/url';
@@ -27,9 +26,12 @@ import { AsyncLazy } from '../api/lazy';
 import { SiteVersionResponse } from '../api/contracts/common';
 import { isRuntimeMap } from '../utils/type-guards';
 import { tryParseArbitraryCs } from '../utils/units';
+import { ScopedId } from '../utils/scoped-id';
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
+
+const scopedId = new ScopedId();
 
 /**
  * @since 0.14
@@ -86,7 +88,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
             return `${mapDef.substring(lastSlash + 1, lastDot)}`;
         } else {
-            return `Map_${shortid.generate()}`;
+            return `Map_${scopedId.next()}`;
         }
     }
     private async initFromWebLayoutAsync(webLayout: WebLayout, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {

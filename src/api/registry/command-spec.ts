@@ -1,6 +1,5 @@
 import { ApplicationDefinition, ContainerItem, UIWidget, Widget } from '../contracts/fusion';
 import { DefaultCommands, isSupportedCommandInStatelessMode } from './command';
-import * as shortid from "shortid";
 import { DefaultComponentNames } from './component';
 import { tr } from '../i18n';
 import { CommandTarget, Dictionary, ICommand, IInvokeUrlCommand, ISearchCommand } from '../common';
@@ -11,6 +10,9 @@ import { UIItem, CommandDef, isCommandItem, isTargetedCommand, isBasicCommand, i
 import { isStateless } from '../../actions/init-command';
 import { SPRITE_INVOKE_SCRIPT, SPRITE_INVOKE_URL } from '../../constants/assets';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from '../../constants';
+import { ScopedId } from '../../utils/scoped-id';
+
+const scopedId = new ScopedId();
 
 function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommandSpec {
     return !strIsNullOrEmpty((cmd as any).command);
@@ -137,7 +139,7 @@ function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolea
         case "Maptip":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.MapTip);
         case "MapMenu":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.MapMenu, flyoutId: `${DefaultComponentNames.MapMenu}_${shortid.generate()}`, parameters: widget.Extension };
+            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.MapMenu, flyoutId: `${DefaultComponentNames.MapMenu}_${scopedId.next()}`, parameters: widget.Extension };
         case "Query":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Query);
         case "QuickPlot":
@@ -168,7 +170,7 @@ function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolea
         case "Print":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Print);
         case "BasemapSwitcher":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${shortid.generate()}`, parameters: widget.Extension };
+            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${scopedId.next()}`, parameters: widget.Extension };
         case "InvokeScript":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         default:
@@ -475,7 +477,7 @@ export function prepareSubMenus(tbConf: Dictionary<ToolbarConf>): [PreparedSubMe
             for (const item of tbConf[key].items) {
                 //Special case: contextmenu is all inline
                 if (isFlyoutSpec(item) && key != WEBLAYOUT_CONTEXTMENU) {
-                    const flyoutId = `${item.label}_${shortid.generate()}`;
+                    const flyoutId = `${item.label}_${scopedId.next()}`;
                     prepared.toolbars[key].items.push({
                         label: item.label,
                         tooltip: item.tooltip,

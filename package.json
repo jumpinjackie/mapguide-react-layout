@@ -76,7 +76,6 @@
     "redux": "^4.1.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.1",
-    "shortid": "^2.2.16",
     "stickybits": "3.7.9",
     "tslib": "^2.3.1",
     "url-parse": "^1.5.10"
@@ -105,7 +104,6 @@
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@types/react-dom": "17.0.13",
     "@types/react-redux": "^7.1.23",
-    "@types/shortid": "0.0.29",
     "@types/topojson-specification": "1.0.2",
     "@wojtekmaj/enzyme-adapter-react-17": "0.6.6",
     "barrelsby": "2.3.3",

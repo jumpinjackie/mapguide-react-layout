@@ -130,6 +130,16 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
 
         const maps: any = {};
         const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsByName);
+        
+        for (const mapName in mapsByName) {
+            const map = mapsByName[mapName];
+            maps[mapName] = {
+                mapGroupId: mapName,
+                map: map,
+                externalBaseLayers: this.options.externalBaseLayers ?? [],
+                initialView: initialView
+            };
+        }
 
         const menus: Dictionary<ToolbarConf> = {};
         menus[WEBLAYOUT_TOOLBAR] = {

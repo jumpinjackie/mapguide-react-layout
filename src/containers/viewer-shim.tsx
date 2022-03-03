@@ -26,6 +26,7 @@ import { goHome } from '../actions/taskpane';
 import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME } from '../constants';
 import { useActiveMapState } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { sanitize } from "dompurify";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -452,19 +453,19 @@ class FusionWidgetApiShim {
     info(msg: string): void { //Map MessageBar
         const viewer = getViewer();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+            this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: sanitize(msg) }} />);
         }
     }
     warn(msg: string): void { //Map MessageBar
         const viewer = getViewer();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+            this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: sanitize(msg) }} />);
         }
     }
     error(msg: string): void { //Map MessageBar
         const viewer = getViewer();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: msg }} />);
+            this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: sanitize(msg) }} />);
         }
     }
     clear(): void { //Map MessageBar

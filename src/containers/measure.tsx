@@ -16,6 +16,7 @@ import { OLGeometryType } from '../api/ol-types';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
 import { toProjUnit } from "../api/layer-set";
+import { sanitize } from "dompurify";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -223,7 +224,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
                                                                     <td>
                                                                         {measureUnits
                                                                             ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` }} />
-                                                                            : <div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} />}
+                                                                            : <div dangerouslySetInnerHTML={{ __html: sanitize(tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` })) }} />}
                                                                     </td>
                                                                 </>
                                                             } else {
@@ -232,7 +233,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
                                                                     <td>
                                                                         {measureUnits
                                                                             ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)}` }} />
-                                                                            : <div dangerouslySetInnerHTML={{ __html: tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` }) }} />}
+                                                                            : <div dangerouslySetInnerHTML={{ __html: sanitize(tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` })) }} />}
                                                                     </td>
                                                                 </>
                                                             }

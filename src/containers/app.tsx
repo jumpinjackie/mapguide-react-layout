@@ -22,6 +22,7 @@ import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { sanitize } from "dompurify";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -378,22 +379,22 @@ class AppInner extends React.Component<AppInnerProps, any> {
         switch (msg) {
             case "MgConnectionFailedException":
                 {
-                    const arg = { __html: tr("INIT_ERROR_NO_CONNECTION", locale) };
+                    const arg = { __html: sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             case "MgResourceNotFoundException":
                 {
-                    const arg = { __html: tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId }) };
+                    const arg = { __html: sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             case "MgSessionExpiredException":
                 {
-                    const arg = { __html: tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session }) };
+                    const arg = { __html: sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             default:
                 {
-                    const arg = { __html: msg };
+                    const arg = { __html: sanitize(msg) };
                     const stack = normalizeStack(err);
                     return <div>
                         <div dangerouslySetInnerHTML={arg} />

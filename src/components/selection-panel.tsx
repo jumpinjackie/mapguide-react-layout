@@ -5,6 +5,7 @@ import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { GenericEvent, ICompositeSelection } from "../api/common";
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../utils/string";
+import { sanitize } from "dompurify";
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -45,6 +46,8 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                         if (allowHtmlValues && !strIsNullOrEmpty(value)) {
                             if (cleanHTML) {
                                 value = cleanHTML(value);
+                            } else {
+                                value = sanitize(value);
                             }
                             return <td className="property-value-cell" data-property-value-for={prop.Name} dangerouslySetInnerHTML={{ __html: value }} />
                         } else {

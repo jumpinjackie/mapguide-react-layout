@@ -2,6 +2,7 @@ import * as React from "react";
 import { IMapView, UnitOfMeasure } from "../api/common";
 import { getUnitOfMeasure, getMapSize } from "../utils/units";
 import { fmt } from '../api/i18n';
+import { sanitize } from "dompurify";
 
 export interface IViewSizeProps {
     /**
@@ -54,7 +55,7 @@ export interface IViewSizeProps {
 
 const ViewSizeContent = ({ gw, gh, unit }: { gw: number, gh: number, unit: string }) => {
     const str = fmt("{gw} x {gh} ({unit})", { gw, gh, unit });
-    return <span dangerouslySetInnerHTML={{ __html: str }} />;
+    return <span dangerouslySetInnerHTML={{ __html: sanitize(str) }} />;
 }
 
 export const ViewSize = (props: IViewSizeProps) => {

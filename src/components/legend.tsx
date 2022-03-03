@@ -13,6 +13,7 @@ import { NBSP } from '../constants';
 import { strIsNullOrEmpty } from '../utils/string';
 import { useReduxDispatch } from "./map-providers/context";
 import { setMapLayerVisibility } from "../actions/map";
+import { sanitize } from "dompurify";
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -54,7 +55,7 @@ const LegendLabel = (props: ILegendLabelProps) => {
     } else {
         inner = props.text;
     }
-    return <span className="legend-label" style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }} dangerouslySetInnerHTML={{ __html: inner }} />;
+    return <span className="legend-label" style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }} dangerouslySetInnerHTML={{ __html: sanitize(inner) }} />;
 };
 
 /**

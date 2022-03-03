@@ -217,9 +217,12 @@ class OL2Geom {
                 return { x: c[0], y: c[1] };
             })
         } else if (g instanceof olPolygon) {
-            return g.getLinearRing(0).getCoordinates().map(c => {
-                return { x: c[0], y: c[1] };
-            });
+            const ring = g.getLinearRing(0);
+            if (ring) {
+                return ring.getCoordinates().map(c => {
+                    return { x: c[0], y: c[1] };
+                });
+            }
         }
         return [];
     }
@@ -870,13 +873,15 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
                 //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
                 //is what we're after
                 const ring = poly.getLinearRing(0);
-                const coords = ring.getCoordinates().map<IAjaxViewerPoint>(coord => {
-                    return {
-                        X: coord[0],
-                        Y: coord[1]
-                    };
-                });
-                handler(new AjaxViewerLineStringOrPolygon(coords));
+                if (ring) {
+                    const coords = ring.getCoordinates().map<IAjaxViewerPoint>(coord => {
+                        return {
+                            X: coord[0],
+                            Y: coord[1]
+                        };
+                    });
+                    handler(new AjaxViewerLineStringOrPolygon(coords));
+                }
             });
         }
     }

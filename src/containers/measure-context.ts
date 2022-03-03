@@ -180,27 +180,31 @@ export class MeasureContext {
                 area = geom.getArea();
                 // Do euclidean distance
                 const ring = geom.getLinearRing(0);
-                const coordinates = ring.getCoordinates() as Coordinate2D[];
-                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                    const c1 = coordinates[i];
-                    const c2 = coordinates[i + 1];
-                    const a = c1[0] - c2[0];
-                    const b = c1[1] - c2[1];
-                    const dist = Math.sqrt(a * a + b * b);
-                    segments.push({ segment: (i + 1), length: dist });
+                if (ring) {
+                    const coordinates = ring.getCoordinates() as Coordinate2D[];
+                    for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                        const c1 = coordinates[i];
+                        const c2 = coordinates[i + 1];
+                        const a = c1[0] - c2[0];
+                        const b = c1[1] - c2[1];
+                        const dist = Math.sqrt(a * a + b * b);
+                        segments.push({ segment: (i + 1), length: dist });
+                    }
                 }
             } else {
                 area = olSphere.getArea(geom, { projection: sourceProj });
                 debug(`Polygon area: ${area}`);
                 const ring = geom.getLinearRing(0);
-                const coordinates = ring.getCoordinates() as Coordinate2D[];
-                for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                    // Unlike getArea(), getDistance() requires that our input coordinates are in
-                    // EPSG:4326 first
-                    const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                    const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                    const dist = olSphere.getDistance(c1, c2);
-                    segments.push({ segment: (i + 1), length: dist });
+                if (ring) {
+                    const coordinates = ring.getCoordinates() as Coordinate2D[];
+                    for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                        // Unlike getArea(), getDistance() requires that our input coordinates are in
+                        // EPSG:4326 first
+                        const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                        const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                        const dist = olSphere.getDistance(c1, c2);
+                        segments.push({ segment: (i + 1), length: dist });
+                    }
                 }
             }
         } else {
@@ -313,7 +317,7 @@ export class MeasureContext {
         });
     }
     private createDrawInteraction(type: OLGeometryType): DrawInteraction {
-        const source = this.measureLayer.getSource();
+        const source = this.measureLayer.getSource()!;
         return this.olFactory.createInteractionDraw({
             source: source,
             type: /** @type {ol.geom.GeometryType} */ (type),
@@ -410,7 +414,7 @@ export class MeasureContext {
         this.removeElement(this.helpTooltipElement);
     }
     public clearMeasurements() {
-        this.measureLayer.getSource().clear();
+        this.measureLayer.getSource()?.clear();
         for (const ov of this.measureOverlays) {
             this.viewer.removeOverlay(ov);
         }

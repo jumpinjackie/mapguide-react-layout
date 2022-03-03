@@ -40,7 +40,10 @@ import Static from "ol/source/ImageStatic";
 function sameProjectionAs(proj1: ProjectionLike, proj2: ProjectionLike) {
     const nproj1 = get(proj1);
     const nproj2 = get(proj2);
-    return equivalent(nproj1, nproj2);
+    if (nproj1 && nproj2)
+        return equivalent(nproj1, nproj2);
+    else
+        return true; // null == null, so yeah
 }
 
 // Converts geojson-vt data to GeoJSON
@@ -272,11 +275,14 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                                     },
                                     geoJsonVt2GeoJSON
                                 );
-                                const features = format.readFeatures(geojson, {
-                                    extent: vectorSource.getTileGrid().getTileCoordExtent(tileCoord),
-                                    featureProjection: mapProjection,
-                                });
-                                tile.setFeatures(features);
+                                const grid = vectorSource.getTileGrid();
+                                if (grid) {
+                                    const features = format.readFeatures(geojson, {
+                                        extent: grid.getTileCoordExtent(tileCoord),
+                                        featureProjection: mapProjection,
+                                    });
+                                    tile.setFeatures(features);
+                                }
                             });
                         }
                     });
@@ -432,7 +438,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                     throw new Error(`Could not resolve an approriate factory for the given driver: ${defn.driverName}`);
                 }
                 const layer = factory(defn.sourceParams, defn.meta, defn.layerOptions, appSettings) as OLVectorLayer;
-                const source = clusterSourceIfRequired(layer.getSource(), defn);
+                const source = clusterSourceIfRequired(layer.getSource()!, defn);
                 layer.setSource(source);
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);

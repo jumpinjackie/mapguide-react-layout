@@ -24,7 +24,7 @@ export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
         const source = layer.getSource();
         let bounds;
         if (source instanceof olClusterSource) {
-            bounds = source.getSource().getExtent();
+            bounds = source.getSource()?.getExtent();
         } else {
             bounds = source.getExtent();
         }

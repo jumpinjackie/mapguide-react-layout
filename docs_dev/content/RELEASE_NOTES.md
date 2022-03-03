@@ -1,3 +1,8 @@
+0.14.7
+======
+
+ * Remove `shortid` dependency by replacing existing usages with a simple sequential numerical id generator
+
 0.14.6
 ======
 

@@ -13,6 +13,7 @@ import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
+import { sanitize } from "dompurify";
 
 /**
  * @hidden
@@ -236,7 +237,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             </FormGroup>}
         </>;
 
-        const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: tr("COLORBREWER_THEME", locale) }} />;
+        const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: sanitize(tr("COLORBREWER_THEME", locale)) }} />;
         const themeEl = <>
             <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
                 <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>

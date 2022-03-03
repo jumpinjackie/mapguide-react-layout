@@ -20,6 +20,7 @@ import { WmsQueryAugmentation } from '../map-providers/base';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import stickybits from 'stickybits';
 import type { OLFeature, OLLayer } from "../../api/ol-types";
+import { sanitize } from "dompurify";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -55,9 +56,9 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
     if (bClustered && size > 1) {
         title = popupConfig?.clusteredTitle?.(size) ?? tr("SEL_CLUSTER_PROPERTIES", locale, { size });
     }
-    html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
+    html += "<div class='selected-popup-header'><div>" + sanitize(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 
-    const renderForMultiple = (subFeatures: OLFeature[]) => {
+    const renderForMultipleSanitized = (subFeatures: OLFeature[]) => {
         let table = "<table class='selected-popup-cluster-table'>";
         const fheadings = popupConfig?.propertyMappings
             ? popupConfig.propertyMappings.filter(pm => pm.name != subFeatures[0].getGeometryName()).map(pm => pm.value)
@@ -67,14 +68,15 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
             : Object.keys(subFeatures[0].getProperties()).filter(pn => pn != subFeatures[0].getGeometryName());
         table += "<thead><tr>";
         for (const heading of fheadings) {
-            table += `<th>${heading}</th>`;
+            table += `<th>${sanitize(heading)}</th>`;
         }
         table += "</tr></thead>";
         table += "<tbody>"
         for (const f of subFeatures) {
             table += "<tr>";
             for (const property of fprops) {
-                table += `<td>${f.get(property)}</td>`;
+                const val = f.get(property);
+                table += `<td>${sanitize(val)}</td>`;
             }
             table += "</tr>";
         }
@@ -82,7 +84,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
         table += "</table>";
         return table
     };
-    const renderForSingle = (feature: OLFeature): [string, number, string | undefined] => {
+    const renderForSingleSanitized = (feature: OLFeature): [string, number, string | undefined] => {
         let linkFragment: string | undefined;
         let table = "<table class='selected-popup-single-properties-table'>";
         table += "<tbody>";
@@ -94,8 +96,8 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + pm.value + "</td>";
-                table += "<td class='property-value-cell'>" + f[pm.name] + "</td>";
+                table += "<td class='property-name-cell'>" + sanitize(pm.value) + "</td>";
+                table += "<td class='property-value-cell'>" + sanitize(f[pm.name]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -105,8 +107,8 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + key + "</td>";
-                table += "<td class='property-value-cell'>" + f[key] + "</td>";
+                table += "<td class='property-name-cell'>" + sanitize(key) + "</td>";
+                table += "<td class='property-value-cell'>" + sanitize(f[key]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -132,17 +134,17 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                 linkHref = url;
             }
             if (!strIsNullOrEmpty(linkHref)) {
-                linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${linkHref}" target='${linkTarget}'>${label}</a></div>`;
+                linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${sanitize(linkHref)}" target='${sanitize(linkTarget)}'>${sanitize(label)}</a></div>`;
             }
         }
         return [table, pc, linkFragment];
     };
     const singlePopupContentRender = (feature: OLFeature, appendHtml: (h: string) => void) => {
-        const [table, pc, linkFragment] = renderForSingle(feature);
+        const [table, pc, linkFragment] = renderForSingleSanitized(feature);
         if (pc > 0) {
             appendHtml(`<div class='selected-popup-content-wrapper'>${table}</div>`);
         } else {
-            appendHtml("<div class='selected-popup-content-none'>" + tr("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>");
+            appendHtml("<div class='selected-popup-content-none'>" + sanitize(tr("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
         }
         if (!strIsNullOrEmpty(linkFragment)) {
             appendHtml(linkFragment);
@@ -154,7 +156,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
         if (subFeatures.length == 1) {
             singlePopupContentRender(subFeatures[0], h => html += h);
         } else {
-            const table = renderForMultiple(subFeatures);
+            const table = renderForMultipleSanitized(subFeatures);
             html += `<div class='selected-popup-content-wrapper'>${table}</div>`;
         }
     } else {

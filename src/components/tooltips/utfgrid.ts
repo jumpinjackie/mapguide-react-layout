@@ -3,6 +3,7 @@ import olMap from "ol/Map";
 import OverlayPositioning from 'ol/OverlayPositioning';
 import UTFGridSource from "ol/source/UTFGrid";
 import { GenericEvent } from '../../api/common';
+import { sanitize } from "dompurify";
 
 export class UTFGridTrackingTooltip {
     private tooltip: olOverlay;
@@ -37,16 +38,9 @@ export class UTFGridTrackingTooltip {
                 //
                 //mapElement.style.cursor = data ? 'pointer' : '';
                 if (data) {
-                    /*
-                    var html = "<table>";
-                    for (var key in data) {
-                        html += "<tr><td>" + key + "</td><td>" + data[key] + "</td></tr>";
-                    }
-                    html += "</table>";
-                    */
                     var html = "";
                     if (data.MG_TOOLTIP)
-                        html += data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />');
+                        html += sanitize(data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />'));
                     if (data.MG_URL) {
                         html += "<br/><br/>";
                         html += "<strong>CTRL + Click for more information</strong>";

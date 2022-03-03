@@ -1,3 +1,11 @@
+0.14.6
+======
+
+ * Update to OL 6.13.0
+ * [#1385](https://github.com/jumpinjackie/mapguide-react-layout/issues/1385): Use DOMPurify to sanitize all cases where raw HTML content is being assembled.
+   * DOMPurify is now also the default HTML cleaning function for the selection panel component if no custom HTML cleaning function is provided.
+ * [#1374](https://github.com/jumpinjackie/mapguide-react-layout/issues/1374): Un-break support for Web Layouts
+
 0.14.5
 ======
 

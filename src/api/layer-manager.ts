@@ -2,6 +2,7 @@ import { LayerProperty, ILayerManager, ILayerInfo, IParseFeaturesFromFileOptions
 import olSourceVector from "ol/source/Vector";
 import olMap from "ol/Map";
 import olLayerBase from "ol/layer/Base";
+import olPoint from "ol/geom/Point";
 import { setOLVectorLayerStyle } from './ol-style-helpers';
 import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
@@ -232,7 +233,7 @@ export class LayerManager implements ILayerManager {
         let layer: olLayerBase;
         if (extraOptions?.kind == "Heatmap") {
             layer = new olHeatmapLayer({
-                source: source,
+                source: source as olSourceVector<olPoint>,
                 weight: extraOptions.weightProperty
             });
         } else {

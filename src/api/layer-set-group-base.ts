@@ -85,16 +85,16 @@ export abstract class LayerSetGroupBase {
         this.hoverHighlightLayer.set(LayerProperty.IS_HOVER_HIGHLIGHT, true)
     }
     addHighlightedFeature(feature: Feature<Geometry>) {
-        this.hoverHighlightLayer.getSource().addFeature(feature);
+        this.hoverHighlightLayer.getSource()?.addFeature(feature);
     }
     removeHighlightedFeature(feature: Feature<Geometry>) {
         const hs = this.hoverHighlightLayer.getSource();
-        if (hs.hasFeature(feature)) {
+        if (hs?.hasFeature(feature)) {
             hs.removeFeature(feature);
         }
     }
     clearHighlightedFeatures() {
-        this.hoverHighlightLayer.getSource().clear();
+        this.hoverHighlightLayer.getSource()?.clear();
     }
     /**
      * @virtual
@@ -103,16 +103,16 @@ export abstract class LayerSetGroupBase {
      */
     public tryGetSubjectLayer(): LayerBase | undefined { return undefined; }
     public addWmsSelectionOverlay(feat: Feature<Geometry>) {
-        this.wmsSelOverlayLayer.getSource().addFeature(feat);
+        this.wmsSelOverlayLayer.getSource()?.addFeature(feat);
     }
     public clearWmsSelectionOverlay() {
-        this.wmsSelOverlayLayer.getSource().clear();
+        this.wmsSelOverlayLayer.getSource()?.clear();
     }
     public addScratchFeature(feat: Feature<Geometry>) {
-        this.scratchLayer.getSource().addFeature(feat);
+        this.scratchLayer.getSource()?.addFeature(feat);
     }
     public clearScratchLayer() {
-        this.scratchLayer.getSource().clear();
+        this.scratchLayer.getSource()?.clear();
     }
     public abstract tryGetWmsSource(): [LayerBase, (ImageWMSSource | TileWMSSource)] | undefined;
     protected registerSourceEvents(source: Source): void {

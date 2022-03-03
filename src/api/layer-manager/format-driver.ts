@@ -2,7 +2,6 @@ import { ParsedFeatures, IParsedFeatures } from './parsed-features';
 import TextFeature from 'ol/format/TextFeature';
 import JSONFeature from 'ol/format/JSONFeature';
 import XMLFeature from 'ol/format/XMLFeature';
-import Geometry from 'ol/geom/Geometry';
 
 /**
  * Defines a format driver for reading plain text into vector features
@@ -42,7 +41,7 @@ export class FormatDriver implements IFormatDriver {
         let bHasLine = false;
         let bHasPoly = false;
         for (const f of fs) {
-            const g: Geometry = f.getGeometry();
+            const g = f.getGeometry();
             switch (g?.getType()) {
                 case "Point":
                     bHasPoint = true;

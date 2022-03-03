@@ -46,7 +46,7 @@ const DEFAULT_BOUNDS_4326: Bounds = [-180, -90, 180, 90];
 
 function getMetersPerUnit(projection: string) {
     const proj = get(projection);
-    return proj.getMetersPerUnit();
+    return proj?.getMetersPerUnit();
 }
 
 function toMetersPerUnit(unit: UnitOfMeasure) {
@@ -110,6 +110,8 @@ export function toProjUnit(unit: UnitOfMeasure) {
             return "nm";
         case UnitOfMeasure.Pixels:
             return "px";
+        default:
+            throw new MgError("Unsupported unit");
     }
 }
 
@@ -218,14 +220,26 @@ export class MgLayerSetOL implements ILayerSetOL {
             }
         }
         for (let i = this.mgTiledLayers.length - 1; i >= 0; i--) {
-            sources.push(this.mgTiledLayers[i].getSource());
+            const s = this.mgTiledLayers[i].getSource();
+            if (s) {
+                sources.push();
+            }
         }
-        sources.push(this.overlay.getSource());
+        const ovs = this.overlay.getSource();
+        if (ovs) {
+            sources.push(ovs);
+        }
         if (this.selectionOverlay) {
-            sources.push(this.selectionOverlay.getSource());
+            const sovs = this.selectionOverlay.getSource();
+            if (sovs) {
+                sources.push(sovs);
+            }
         }
         if (this.activeSelectedFeatureOverlay) {
-            sources.push(this.activeSelectedFeatureOverlay.getSource());
+            const asovs = this.activeSelectedFeatureOverlay.getSource();
+            if (asovs) {
+                sources.push(asovs);
+            }
         }
         return sources;
     }

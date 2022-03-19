@@ -54,7 +54,7 @@
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "browserslist": "IE >= 10",
   "dependencies": {
-    "@blueprintjs/core": "^3.53.0",
+    "@blueprintjs/core": "^3.54.0",
     "colorbrewer": "^1.5.2",
     "dompurify": "^2.3.6",
     "expr-eval": "2.0.2",

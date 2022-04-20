@@ -73,7 +73,7 @@
     "react-redux": "^7.2.8",
     "react-rnd": "^10.3.5",
     "react-splitter-layout": "^4.0.0",
-    "redux": "^4.1.2",
+    "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.1",
     "stickybits": "3.7.9",

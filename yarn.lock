@@ -12607,10 +12607,10 @@ statuses@2.0.1:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
 
-stickybits@3.7.9:
-  version "3.7.9"
-  resolved "https://registry.yarnpkg.com/stickybits/-/stickybits-3.7.9.tgz#0e469ffb960e1e661bd308ba4da370dc439902bf"
-  integrity sha512-wSEH/RO0TPIeI1rYI6p3Hv9FFSKr6+58Ru4xyYbEgd4PfE1r3TGgbYUWvW6SwnfoRY3DMDLxOuvUoW+8LWblQQ==
+stickybits@3.7.11:
+  version "3.7.11"
+  resolved "https://registry.yarnpkg.com/stickybits/-/stickybits-3.7.11.tgz#4609f3a91ef4209987c1a45b313e5f682b248bf6"
+  integrity sha512-WO+ns7BYZqGS4jWVTg5JNhIvNV4LGbUtNTSck4zAkWRQzA1IfxwIkMGc0BbdGy4PGIjK7kKo5CZcN6Sd5dHVlw==
 
 store2@^2.12.0:
   version "2.13.2"

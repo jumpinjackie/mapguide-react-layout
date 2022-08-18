@@ -16,7 +16,7 @@ import { debug } from '../../utils/logger';
  * @since 0.13
  */
 export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, locale: string, mapDef: string): Promise<any> {
-    const r = await fetch(`//epsg.io?format=json&q=${epsg}`);
+    const r = await fetch(`https://epsg.io?format=json&q=${epsg}`);
     const resp = await r.json();
     if (resp.results && resp.results.length > 0) {
         proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);

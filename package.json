@@ -56,7 +56,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.54.0",
     "colorbrewer": "^1.5.3",
-    "dompurify": "^2.4.2",
+    "dompurify": "^2.4.4",
     "expr-eval": "2.0.2",
     "geojson-vt": "^3.2.1",
     "immutability-helper": "^3.1.1",

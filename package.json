@@ -141,5 +141,7 @@
     "webpack": "5.69.1",
     "webpack-cli": "^4.9.2"
   },
-  "resolutions": {}
+  "resolutions": {
+    "minimist": "1.2.6"
+  }
 }

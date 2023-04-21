@@ -369,7 +369,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 }
             }
         }
-        if (areStatesEqual(curUrlState, nextUrlState))
+        if (!areStatesEqual(curUrlState, nextUrlState))
             updateUrl(nextUrlState);
         //else
         //    console.log("Skip pointless url state update");

@@ -165,6 +165,10 @@ export function useViewerSideEffects(context: IMapProviderContext,
 }
 
 export interface IViewerComponent {
+    /**
+     * @since 0.14.8
+     */
+    isShiftKeyDown: () => boolean;
     isContextMenuOpen: () => boolean;
     setDigitizingType: (digitizingType: string | undefined) => void;
     onDispatch: ReduxDispatch;

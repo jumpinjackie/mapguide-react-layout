@@ -9,7 +9,7 @@ import { Slider, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless, useViewerSelectCanDragPan } from './hooks';
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits, enableSelectDragPan } from '../actions/map';
 import { useActiveMapLayerTransparency, useActiveMapState } from './hooks-mapguide';
-import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
+import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_DYNAMIC_OVERLAY, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { isRuntimeMap } from "../utils/type-guards";
 
@@ -42,6 +42,9 @@ export const ViewerOptions = () => {
     const onBaseOpacityChanged = (value: number) => {
         onMgLayerOpacityChanged(mapName, LAYER_ID_BASE, value);
     };
+    const onMgDynamicOverlayOpacityChanged = (value: number) => {
+        onMgLayerOpacityChanged(mapName, LAYER_ID_MG_DYNAMIC_OVERLAY, value);
+    }
     const onMgOpacityChanged = (value: number) => {
         onMgLayerOpacityChanged(mapName, LAYER_ID_MG_BASE, value);
     };
@@ -64,6 +67,7 @@ export const ViewerOptions = () => {
     let opBase = 1.0;
     let opMgBase = 1.0;
     let opMgSelOverlay = 1.0;
+    let opMgDynamicOverlay = 1.0;
     if (layerTransparency) {
         if (LAYER_ID_BASE in layerTransparency) {
             opBase = layerTransparency[LAYER_ID_BASE];
@@ -71,13 +75,19 @@ export const ViewerOptions = () => {
         if (LAYER_ID_MG_BASE in layerTransparency) {
             opMgBase = layerTransparency[LAYER_ID_MG_BASE];
         }
+        if (LAYER_ID_MG_DYNAMIC_OVERLAY in layerTransparency) {
+            opMgDynamicOverlay = layerTransparency[LAYER_ID_MG_DYNAMIC_OVERLAY];
+        }
         if (LAYER_ID_MG_SEL_OVERLAY in layerTransparency) {
             opMgSelOverlay = layerTransparency[LAYER_ID_MG_SEL_OVERLAY];
         }
     }
+    let hasMgBaseLayers = false;
     let isStateless = stateless;
     if (!map) {
         isStateless = true;
+    } else {
+        hasMgBaseLayers = (map.FiniteDisplayScale?.length ?? 0) > 0;
     }
     return <div className="component-viewer-options">
         <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
@@ -113,10 +123,16 @@ export const ViewerOptions = () => {
                     </label>;
                 }
             })()}
+            {hasMgBaseLayers && <label className="bp3-label noselect">
+                {tr("LAYER_ID_MG_BASE_LAYERS", locale)}
+                <div style={{ paddingLeft: 8, paddingRight: 8 }}>
+                    <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={onMgOpacityChanged} />
+                </div>
+            </label>}
             <label className="bp3-label noselect">
                 {map ? tr("LAYER_ID_MG_BASE", locale) : tr("LAYER_ID_SUBJECT", locale)}
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
-                    <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={onMgOpacityChanged} />
+                    <Slider min={0} max={1.0} stepSize={0.01} value={opMgDynamicOverlay} onChange={onMgDynamicOverlayOpacityChanged} />
                 </div>
             </label>
             {!isStateless && <label className="bp3-label noselect">

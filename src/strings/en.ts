@@ -17,6 +17,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "LAYER_ID_MG_BASE": "MapGuide Map",
     "LAYER_ID_SUBJECT": "Subject Layer",
     "LAYER_ID_MG_SEL_OVERLAY": "MapGuide Selection Overlay",
+    "LAYER_ID_MG_BASE_LAYERS": "MapGuide Base Layers",
     "UNKNOWN_WIDGET": "This button references an unknown or unsupported widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "This button references an unknown command or unsupported: {command}",
     "INIT": "Initializing",

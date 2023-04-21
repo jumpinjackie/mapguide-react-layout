@@ -26,7 +26,7 @@ import Geometry from 'ol/geom/Geometry';
 import UrlTile from 'ol/source/UrlTile';
 import { LoadFunction as TileLoadFunction } from 'ol/Tile';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
-import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
+import { BLANK_GIF_DATA_URI, LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_DYNAMIC_OVERLAY, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { OLImageLayer, OLTileLayer } from './ol-types';
 import { IGenericSubjectMapLayer } from '../actions/defs';
 import { GenericLayerSetOL } from './generic-layer-set';
@@ -321,14 +321,19 @@ export class MgLayerSetOL implements ILayerSetOL {
             }
         }
 
+        if (LAYER_ID_MG_DYNAMIC_OVERLAY in trans) {
+            const opacity = restrictToRange(trans[LAYER_ID_MG_DYNAMIC_OVERLAY], 0, 1.0);
+            this.overlay.setOpacity(opacity);
+        } else {
+            this.overlay.setOpacity(1.0);
+        }
+
         if (LAYER_ID_MG_BASE in trans) {
             const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1.0);
-            this.overlay.setOpacity(opacity);
             for (const group of this.mgTiledLayers) {
                 group.setOpacity(opacity);
             }
         } else {
-            this.overlay.setOpacity(1.0);
             for (const group of this.mgTiledLayers) {
                 group.setOpacity(1.0);
             }

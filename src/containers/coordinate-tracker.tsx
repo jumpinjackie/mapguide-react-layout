@@ -6,19 +6,20 @@ import { useViewerLocale, useCurrentMouseCoordinates } from './hooks';
 import { useActiveMapProjection } from './hooks-mapguide';
 
 export interface ICoordinateTrackerContainerProps {
-    projections: string[];
+    projections: string | string[];
 }
 
 
 export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
     const { projections } = props;
+    const aProjections = Array.isArray(projections) ? projections : [projections];
     const locale = useViewerLocale();
     const mouse = useCurrentMouseCoordinates();
     const proj = useActiveMapProjection();
-    if (projections && projections.length) {
+    if (aProjections && aProjections.length) {
         return <div style={{ margin: 8 }}>
             <h4 className="bp3-heading">{tr("COORDTRACKER", locale)}</h4>
-            {projections.map(p => {
+            {aProjections.map(p => {
                 let x = NaN;
                 let y = NaN;
                 if (mouse && proj) {

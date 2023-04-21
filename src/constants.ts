@@ -19,6 +19,10 @@ export const FUSION_REDLINE_NAME = "Redline";
 
 export const LAYER_ID_BASE = "LAYER_ID_BASE";
 export const LAYER_ID_MG_BASE = "LAYER_ID_MG_BASE";
+/**
+ * @since 0.14.8
+ */
+export const LAYER_ID_MG_DYNAMIC_OVERLAY = "LAYER_ID_MG_DYNAMIC_OVERLAY";
 export const LAYER_ID_MG_SEL_OVERLAY = "LAYER_ID_MG_SEL_OVERLAY";
 
 export const BLANK_GIF_DATA_URI = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";

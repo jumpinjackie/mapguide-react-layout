@@ -25,6 +25,7 @@ export interface ILocalizedMessages {
     LAYER_ID_MG_BASE: string;
     LAYER_ID_SUBJECT: string;
     LAYER_ID_MG_SEL_OVERLAY: string;
+    LAYER_ID_MG_BASE_LAYERS: string;
     UNKNOWN_WIDGET: string;
     UNKNOWN_COMMAND_REFERENCE: string;
     INIT: string;

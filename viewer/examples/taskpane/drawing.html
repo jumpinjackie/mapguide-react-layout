@@ -106,14 +106,9 @@
                 // Set the vector layer style with a custom marker icon
                 var ptStyle = viewer.getDefaultPointIconStyle();
                 ptStyle.src = "examples/taskpane/marker2.png";
-                var defaultVectorStyle = {
-                    point: ptStyle,
-                    line: viewer.getDefaultLineStyle(),
-                    polygon: viewer.getDefaultPolygonStyle()
-                };
                 var layerInfo = layerMgr.addLayer(LAYER_NAME, layer);
                 // Dispatch mapLayerAdded to notify components like the external layer manager
-                viewer.dispatch(parent.parent.MapGuide.Actions.Map.mapLayerAdded(viewer.getMapName(), layerInfo, defaultVectorStyle));
+                viewer.dispatch(parent.parent.MapGuide.Actions.Map.mapLayerAdded(viewer.getMapName(), layerInfo));
                 alert("Layer (" + LAYER_NAME + ") added");
                 layerAdded = true;
                 document.getElementById("btnAddLayer").disabled = true;

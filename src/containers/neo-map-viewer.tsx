@@ -55,6 +55,7 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         }
     }
     //#region IViewerComponent
+    isShiftKeyDown = () => this.state.shiftKey;
     selectCanDragPan = () => this.props.selectCanDragPan;
     isContextMenuOpen = () => this.props.isContextMenuOpen;
     setDigitizingType = (digitizingType: string | undefined) => this.setState({ digitizingType });

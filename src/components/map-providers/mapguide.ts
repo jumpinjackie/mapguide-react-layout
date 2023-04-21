@@ -836,7 +836,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 if (failure) {
                     failure(err);
                 }
-            }
+            },
+            append: this._comp.isShiftKeyDown()
         });
         this._comp.onDispatch(action);
     }

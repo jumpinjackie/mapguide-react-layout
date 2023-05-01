@@ -87,6 +87,19 @@ Since the `0.14.3` release, the viewer has basic support for MapGuide Map Defini
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
       * You can find proj4js definitions at [epsg.io](https://epsg.io)
       * You will currently need to modify the respective template HTML file to include the projection
+   * Alternatively, as of 0.14.8 you can register custom projections without invasive viewer HTML modifications by specifyinjg the following top-level extension element in your appdef XML to auto-register any custom projections
+
+```xml
+<ApplicationDefinition>
+  ...
+  <Extension>
+    <CustomProjections>
+      <Projection epsg="26741">+proj=lcc +lat_1=41.66666666666666 +lat_2=40 +lat_0=39.33333333333334 +lon_0=-122 +x_0=609601.2192024384 +y_0=0 +ellps=clrk66 +datum=NAD27 +to_meter=0.3048006096012192 +no_defs</Projection>
+      <Projection epsg="28355">+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</Projection>
+    </CustomProjections>
+  </Extension>
+</ApplicationDefinition>
+```
 
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Digitization tools have poor user experience on mobile/tablet devices
  * [#34](https://github.com/jumpinjackie/mapguide-react-layout/issues/34): Feature Tooltips does not work on mobile/tablet devices

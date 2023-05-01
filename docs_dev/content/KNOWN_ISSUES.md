@@ -87,7 +87,7 @@ Since the `0.14.3` release, the viewer has basic support for MapGuide Map Defini
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
       * You can find proj4js definitions at [epsg.io](https://epsg.io)
       * You will currently need to modify the respective template HTML file to include the projection
-   * Alternatively, as of 0.14.8 you can register custom projections without invasive viewer HTML modifications by specifyinjg the following top-level extension element in your appdef XML to auto-register any custom projections
+   * Alternatively, as of 0.14.8 you can register custom projections without invasive viewer HTML modifications by specifying the following top-level extension element in your appdef XML to auto-register any custom projections
 
 ```xml
 <ApplicationDefinition>

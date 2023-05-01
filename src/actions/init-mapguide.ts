@@ -132,7 +132,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
 
         const maps: any = {};
         const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsByName);
-        
+
         for (const mapName in mapsByName) {
             const map = mapsByName[mapName];
             maps[mapName] = {
@@ -270,7 +270,9 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         }
         const extraEpsgs = projectionSelector(res);
         for (const e of extraEpsgs) {
-            fetchEpsgs.push({ epsg: e, mapDef: "" });
+            if (!proj4.defs[`EPSG:${e}`]) {
+                fetchEpsgs.push({ epsg: e, mapDef: "" });
+            }
         }
         const epsgs = await Promise.all(fetchEpsgs.filter(fe => !strIsNullOrEmpty(fe.epsg)).map(f => resolveProjectionFromEpsgIoAsync(f.epsg, locale, f.mapDef)));
 
@@ -519,6 +521,25 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         return dict;
     }
     private async initFromAppDefAsync(appDef: ApplicationDefinition, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        if (Array.isArray(appDef.Extension?.CustomProjections?.Projection)) {
+            for (const pd of appDef.Extension.CustomProjections.Projection) {
+                let k, v;
+                if (typeof (pd.epsg) === 'string' && typeof (pd.text) === 'string') { // appdef json form
+                    k = pd.epsg;
+                    v = pd.text;
+                } else { // appdef xml translated form
+                    const [epsg] = pd["@epsg"];
+                    const [projStr] = pd["#text"];
+                    k = epsg;
+                    v = projStr;
+                }
+                if (!strIsNullOrEmpty(k) && !strIsNullOrEmpty(v)) {
+                    proj4.defs(`EPSG:${k}`, v);
+                    debug(`Registered proj4 defn from appdef for EPSG:${k}`, v);
+                }
+            }
+            register(proj4);
+        }
         const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
     }

@@ -21,7 +21,7 @@ import Layer from "ol/layer/Layer";
 
 export type OLLayer = Layer<Source, any>;
 export type OLFeature = Feature<Geometry>;
-export type OLGeometryType = string;
+export { Type as OLGeometryType } from "ol/geom/Geometry";
 export type OLMapGuideImageSourceOptions = MGImageSourceOptions;
 export type OLVectorSource = VectorSource<Geometry>;
 export type OLVectorLayer = VectorLayer<OLVectorSource>;

@@ -1,4 +1,3 @@
-import OverlayPositioning from 'ol/OverlayPositioning';
 import debounce from 'lodash.debounce';
 import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
@@ -10,7 +9,6 @@ import * as olExtent from "ol/extent";
 import { isSessionExpiredError } from '../../api/error';
 import { tr } from '../../api/i18n';
 import { debug } from '../../utils/logger';
-import Feature from 'ol/Feature';
 
 export interface IFeatureQueryCallback {
     incrementBusyWorker(): void;
@@ -45,7 +43,7 @@ export class FeatureQueryTooltip {
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT
+            positioning: "center-left"
         })
         this.map = map;
         this.map.addOverlay(this.featureTooltip);

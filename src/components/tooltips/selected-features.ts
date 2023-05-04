@@ -5,7 +5,6 @@ import olTileLayer from "ol/layer/Tile";
 import olSourceWMS from "ol/source/ImageWMS";
 import olSourceTileWMS from "ol/source/TileWMS";
 import GeoJSON from "ol/format/GeoJSON";
-import OverlayPositioning from 'ol/OverlayPositioning';
 import Collection from 'ol/Collection';
 import { tr } from '../../api/i18n';
 import { ILayerManager, Coordinate2D, LayerProperty, Dictionary } from '../../api/common';
@@ -180,7 +179,7 @@ export class SelectedFeaturesTooltip {
         this.featureTooltip = new olOverlay({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT
+            positioning: "center-left"
         })
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
@@ -241,11 +240,13 @@ export class SelectedFeaturesTooltip {
                 const resp = await client.getText(url);
                 const json = JSON.parse(resp);
                 if (json.features?.length > 0) {
-                    let srcProj: ProjectionLike = source.getProjection();
+                    let srcProj: ProjectionLike | null = source.getProjection();
                     if (!srcProj) {
                         const epsg = parseEpsgCodeFromCRS(json.crs?.properties?.name);
                         if (epsg) {
-                            srcProj = `EPSG:${epsg}`;
+                            srcProj =  `EPSG:${epsg}`;
+                        } else { //Type narrowing hack
+                            srcProj = undefined;
                         }
                     }
                     const features = format.readFeatures(resp, {

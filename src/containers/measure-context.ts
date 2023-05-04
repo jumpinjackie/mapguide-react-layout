@@ -16,7 +16,6 @@ import Style from "ol/style/Style";
 import DrawInteraction from "ol/interaction/Draw";
 import Feature from "ol/Feature";
 import VectorLayer from "ol/layer/Vector";
-import OverlayPositioning from 'ol/OverlayPositioning';
 import { debug } from '../utils/logger';
 import { OLGeometryType } from '../api/ol-types';
 import Geometry from 'ol/geom/Geometry';
@@ -320,7 +319,7 @@ export class MeasureContext {
         const source = this.measureLayer.getSource()!;
         return this.olFactory.createInteractionDraw({
             source: source,
-            type: /** @type {ol.geom.GeometryType} */ (type),
+            type: type,
             style: this.olFactory.createStyle({
                 fill: this.olFactory.createStyleFill({
                     color: 'rgba(255, 255, 255, 0.2)'
@@ -357,7 +356,7 @@ export class MeasureContext {
         this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT
+            positioning: "center-left"
         });
         this.viewer.addOverlay(this.helpTooltip);
     }
@@ -375,7 +374,7 @@ export class MeasureContext {
         this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
-            positioning: OverlayPositioning.BOTTOM_CENTER
+            positioning: "bottom-center"
         });
         this.viewer.addOverlay(this.measureTooltip);
     }

@@ -23,7 +23,6 @@ import KeyboardZoom from 'ol/interaction/KeyboardZoom';
 import MouseWheelZoom from 'ol/interaction/MouseWheelZoom';
 import View from 'ol/View';
 import Point from 'ol/geom/Point';
-import GeometryType from 'ol/geom/GeometryType';
 import LineString from 'ol/geom/LineString';
 import Circle from 'ol/geom/Circle';
 import type Interaction from 'ol/interaction/Interaction';
@@ -1285,14 +1284,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePoint(handler: DigitizerCallback<Point>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POINT
+            type: "Point"
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || tr("DIGITIZE_POINT_PROMPT", this._state.locale));
     }
     public digitizeLine(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING,
+            type: "LineString",
             minPoints: 2,
             maxPoints: 2
         });
@@ -1301,7 +1300,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeLineString(handler: DigitizerCallback<LineString>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.LINE_STRING,
+            type: "LineString",
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || tr("DIGITIZE_LINESTRING_PROMPT", this._state.locale, {
@@ -1311,7 +1310,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizeCircle(handler: DigitizerCallback<Circle>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.CIRCLE
+            type: "Circle"
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || tr("DIGITIZE_CIRCLE_PROMPT", this._state.locale));
     }
@@ -1329,7 +1328,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return geometry;
         };
         const draw = new Draw({
-            type: GeometryType.LINE_STRING,
+            type: "LineString",
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -1338,7 +1337,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public digitizePolygon(handler: DigitizerCallback<Polygon>, prompt?: string): void {
         assertIsDefined(this._comp);
         const draw = new Draw({
-            type: GeometryType.POLYGON
+            type: "Polygon"
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || tr("DIGITIZE_POLYGON_PROMPT", this._state.locale, {
             key: String.fromCharCode(this._state.undoLastPointKey ?? KC_U) //Pray that a sane (printable) key was bound

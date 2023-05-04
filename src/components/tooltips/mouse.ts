@@ -1,6 +1,5 @@
 import olOverlay from "ol/Overlay";
 import olMap from "ol/Map";
-import OverlayPositioning from 'ol/OverlayPositioning';
 import { GenericEvent } from '../../api/common';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
@@ -20,7 +19,7 @@ export class MouseTrackingTooltip {
         this.tooltip = new olOverlay({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT
+            positioning: "center-left"
         })
         this.map.addOverlay(this.tooltip);
         this.text = null;

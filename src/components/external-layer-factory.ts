@@ -23,7 +23,6 @@ import MVT from 'ol/format/MVT';
 import type { Options as MVTOptions } from 'ol/format/MVT';
 import { ExternalLayerFactoryRegistry } from '../api/registry/external-layer';
 import { strIsNullOrEmpty } from '../utils/string';
-import GeometryType from 'ol/geom/GeometryType';
 import { setOLVectorLayerStyle } from '../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../api/ol-style-contracts';
 import VectorTile from "ol/VectorTile";
@@ -157,7 +156,7 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
             distance: def.cluster.distance,
             geometryFunction: (feature) => {
                 const geometry = feature.getGeometry();
-                if (geometry && geometry.getType() == GeometryType.POINT) {
+                if (geometry && geometry.getType() == "Point") {
                     return geometry;
                 }
                 return undefined as any;

@@ -1,6 +1,5 @@
 import olOverlay from "ol/Overlay";
 import olMap from "ol/Map";
-import OverlayPositioning from 'ol/OverlayPositioning';
 import UTFGridSource from "ol/source/UTFGrid";
 import { GenericEvent } from '../../api/common';
 import { sanitize } from "dompurify";
@@ -18,7 +17,7 @@ export class UTFGridTrackingTooltip {
         this.tooltip = new olOverlay({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning.CENTER_LEFT
+            positioning: 'center-left'
         })
         this.map.addOverlay(this.tooltip);
         this.text = null;

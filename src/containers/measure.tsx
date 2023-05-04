@@ -10,7 +10,6 @@ import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } f
 import { roundTo } from "../utils/number";
 import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
-import GeometryType from 'ol/geom/GeometryType';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
 import { useReduxDispatch } from "../components/map-providers/context";
@@ -50,7 +49,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         super(props);
         this.state = {
             measuring: false,
-            drawType: GeometryType.LINE_STRING // "LineString"
+            drawType: "LineString"
         }
     }
     private onTypeChanged = (e: GenericEvent) => {

@@ -1126,6 +1126,7 @@ export function deArrayify(json: any): DeArrayifiedResult {
  * @returns {string} The selection XML string
  */
 export function buildSelectionXml(selection: FeatureSet | undefined, layerIds?: string[]): string {
+    let idCount = 0;
     let xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {
@@ -1135,18 +1136,23 @@ export function buildSelectionXml(selection: FeatureSet | undefined, layerIds?: 
             if (layerIds != null && layerIds.indexOf(layerId) < 0) {
                 continue;
             }
-            xml += `<Layer id="${layerId}">`;
             const cls = layer.Class;
+            if (cls.ID.length === 0) { // Don't bother writing out empty Layer/Class elements
+                continue;
+            }
+            xml += `<Layer id="${layerId}">`;
             xml += `<Class id="${cls["@id"]}">`;
             for (const id of cls.ID) {
                 xml += `<ID>${id}</ID>`;
+                idCount++;
             }
             xml += '</Class>';
             xml += '</Layer>';
         }
     }
     xml += '</FeatureSet>';
-    return xml;
+    // If we didn't write any ids, just return an empty string instead
+    return idCount > 0 ? xml : '';
 }
 
 /**

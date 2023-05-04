@@ -57,12 +57,14 @@ import { ClientSelectionFeature } from "../api/contracts/common";
 import xor from "lodash.xor";
 import xorby from "lodash.xorby";
 import { RuntimeMap } from "../api/contracts/runtime-map";
+import { debug } from "../utils/logger";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
-    // Technically speaking, this function wouldn't really be called (because we've found a way to use the 
-    // merged selection XML QUERYMAPFEATURES call as an opportunity to get back the full attribute set of the
-    // merged selection), but if we ever do hit here we are totally assuming a v4 QUERYMAPFEATURES response
-    // and the selected features will be having a SelectionKey set so we can easily xorby the 2 arrays
+    // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
+    // attributes on the first QUERYMAPFEATURES call and use the save merged selection XML QUERYMAPFEATURES call as an 
+    // opportunity to get back the full attribute set of the merged selection), but if we ever do hit here we are totally
+    // assuming a v4 QUERYMAPFEATURES response and the selected features will be having a SelectionKey set so we can easily 
+    // xorby the 2 arrays
     return xorby(oldRes, newRes, f => f.SelectionKey);
 }
 
@@ -181,12 +183,14 @@ async function queryMapFeaturesHelper(map: RuntimeMap,
         ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
         : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
 
-    const isAppendingWithAttributes = opts.append === true
+    const isAppendingWithAttributesOnOldMapGuide = !isV4
+        && opts.append === true
         && opts.options.persist === 1
         && opts.options.requestdata !== undefined
         && (opts.options.requestdata & QueryFeaturesSet.Attributes);
 
-    if (isAppendingWithAttributes) {
+    if (isAppendingWithAttributesOnOldMapGuide) {
+        debug("Not asking for attributes in first QUERYMAPFEATURES");
         // Momentarily stop requesting for attributes
         opts.options.requestdata! &= ~QueryFeaturesSet.Attributes;
     }
@@ -204,13 +208,15 @@ async function queryMapFeaturesHelper(map: RuntimeMap,
                 featurefilter: mergedXml
             };
             // If appending with attributes, we can now also include attributes of the merged result
-            if (isAppendingWithAttributes) {
+            if (isAppendingWithAttributesOnOldMapGuide) {
+                debug("Now asking for attributes in second QUERYMAPFEATURES");
                 opts2.requestdata = QueryFeaturesSet.Attributes;
             }
             const res2 = await queryOp(opts2);
             // If appending with attributes, res2 represents the attributes of the merged result, so accept
             // it as the new combined without having to do any stitching
-            if (isAppendingWithAttributes) {
+            if (isAppendingWithAttributesOnOldMapGuide) {
+                debug("Accepting second QUERYMAPFEATURES as new combined selection response");
                 combined = res2;
             }
             persistSelectionSetToLocalStorage(map.SessionId, mapName, combined); // set and forget

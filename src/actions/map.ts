@@ -7,16 +7,13 @@ import {
     getRuntimeMap,
     getSelectionSet,
     UnitOfMeasure,
-    ILayerInfo,
-    Bounds
-} from "../api/common";
+    ILayerInfo} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
-import { makeUnique } from "../utils/array";
 import { ActionType } from '../constants/actions';
 import {
     IMapSetBusyCountAction,
@@ -55,32 +52,11 @@ import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version'
 import { areViewsCloseToEqual } from '../utils/viewer-state';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { ClientSelectionFeature } from "../api/contracts/common";
+import xor from "lodash.xor";
+import xorby from "lodash.xorby";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
-    const merged: SelectedFeature[] = [];
-    for (const feat of oldRes) {
-        merged.push(feat);
-    }
-    for (const feat of newRes) {
-        //NOTE: Due to lack of identity property information, we have to
-        //check all property values
-        const matches = merged.filter(f => {
-            for (const p of f.Property) {
-                for (const np of feat.Property) {
-                    if (p.Name == np.Name) {
-                        if (p.Value != np.Value) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        });
-        if (matches.length == 0) {
-            merged.push(feat);
-        }
-    }
-    return merged;
+    return xorby(oldRes, newRes, f => f.SelectionKey);
 }
 
 function combineSelectedFeatureSets(oldRes: SelectedFeatureSet | undefined, newRes: SelectedFeatureSet | undefined): SelectedFeatureSet | undefined {
@@ -125,14 +101,17 @@ function combineFeatureSets(oldRes: FeatureSet | undefined, newRes: FeatureSet |
             if (existing.length == 0) {
                 merged.Layer.push(layer);
             } else {
-                existing[0].Class.ID = makeUnique(existing[0].Class.ID.concat(layer.Class.ID));
+                existing[0].Class.ID = xor(existing[0].Class.ID, layer.Class.ID);
             }
         }
     }
     return merged;
 }
 
-function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
+/**
+ * @hidden Exported just to be unit testable
+ */
+export function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, newRes: QueryMapFeaturesResponse): QueryMapFeaturesResponse {
     if (oldRes) {
         const merged: QueryMapFeaturesResponse = {
             SelectedFeatures: combineSelectedFeatureSets(oldRes.SelectedFeatures, newRes.SelectedFeatures),

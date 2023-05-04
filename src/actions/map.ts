@@ -7,12 +7,14 @@ import {
     getRuntimeMap,
     getSelectionSet,
     UnitOfMeasure,
-    ILayerInfo} from "../api/common";
+    ILayerInfo,
+    ReduxDispatch
+} from "../api/common";
 import { getViewer } from "../api/runtime";
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
-import { IQueryMapFeaturesOptions } from '../api/request-builder';
+import { IQueryMapFeaturesOptions, QueryFeaturesSet } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { ActionType } from '../constants/actions';
 import {
@@ -54,8 +56,13 @@ import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts'
 import { ClientSelectionFeature } from "../api/contracts/common";
 import xor from "lodash.xor";
 import xorby from "lodash.xorby";
+import { RuntimeMap } from "../api/contracts/runtime-map";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
+    // Technically speaking, this function wouldn't really be called (because we've found a way to use the 
+    // merged selection XML QUERYMAPFEATURES call as an opportunity to get back the full attribute set of the
+    // merged selection), but if we ever do hit here we are totally assuming a v4 QUERYMAPFEATURES response
+    // and the selected features will be having a SelectionKey set so we can easily xorby the 2 arrays
     return xorby(oldRes, newRes, f => f.SelectionKey);
 }
 
@@ -160,6 +167,65 @@ export interface QueryMapFeatureActionOptions {
     errBack?: (err: any) => void;
 }
 
+async function queryMapFeaturesHelper(map: RuntimeMap,
+    client: Client,
+    opts: QueryMapFeatureActionOptions,
+    selectionSet: QueryMapFeaturesResponse | undefined,
+    dispatch: ReduxDispatch
+) {
+    const mapName = map.Name;
+    //We want v4.0.0 QUERYMAPFEATURES if available
+    const sv = getSiteVersion(map);
+    const isV4 = canUseQueryMapFeaturesV4(sv);
+    const queryOp = isV4
+        ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
+        : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
+
+    const isAppendingWithAttributes = opts.append === true
+        && opts.options.persist === 1
+        && opts.options.requestdata !== undefined
+        && (opts.options.requestdata & QueryFeaturesSet.Attributes);
+
+    if (isAppendingWithAttributes) {
+        // Momentarily stop requesting for attributes
+        opts.options.requestdata! &= ~QueryFeaturesSet.Attributes;
+    }
+
+    const res = await queryOp(opts.options);
+    if (opts.options.persist === 1) {
+        if (opts.append === true) {
+            let combined = combineSelections(selectionSet, res);
+            const mergedXml = buildSelectionXml(combined.FeatureSet);
+            // Need to update the server-side selection with the merged result
+            const opts2: IQueryMapFeaturesOptions = {
+                session: map.SessionId,
+                mapname: map.Name,
+                persist: 1,
+                featurefilter: mergedXml
+            };
+            // If appending with attributes, we can now also include attributes of the merged result
+            if (isAppendingWithAttributes) {
+                opts2.requestdata = QueryFeaturesSet.Attributes;
+            }
+            const res2 = await queryOp(opts2);
+            // If appending with attributes, res2 represents the attributes of the merged result, so accept
+            // it as the new combined without having to do any stitching
+            if (isAppendingWithAttributes) {
+                combined = res2;
+            }
+            persistSelectionSetToLocalStorage(map.SessionId, mapName, combined); // set and forget
+            dispatch(setSelection(mapName, combined));
+            return combined;
+        } else {
+            persistSelectionSetToLocalStorage(map.SessionId, mapName, res); // set and forget
+            dispatch(setSelection(mapName, res));
+            return res;
+        }
+    } else {
+        return res;
+    }
+}
+
 /**
  * Queries map features
  *
@@ -186,36 +252,8 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
                     opts.errBack(err);
                 }
             };
-            //We want v4.0.0 QUERYMAPFEATURES if available
-            const sv = getSiteVersion(map);
-            const queryOp = canUseQueryMapFeaturesV4(sv)
-                ? (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures_v4(opts)
-                : (opts: IQueryMapFeaturesOptions) => client.queryMapFeatures(opts);
-            queryOp(opts.options).then(res => {
-                if (opts.options.persist === 1) {
-                    if (opts.append === true) {
-                        const combined = combineSelections(selectionSet, res);
-                        const mergedXml = buildSelectionXml(combined.FeatureSet);
-                        //Need to update the server-side selection with the merged result
-                        queryOp({
-                            session: map.SessionId,
-                            mapname: map.Name,
-                            persist: 1,
-                            featurefilter: mergedXml
-                        }).then(() => {
-                            persistSelectionSetToLocalStorage(map.SessionId, mapName, combined); // set and forget
-                            dispatch(setSelection(mapName, combined));
-                            success(combined);
-                        });
-                    } else {
-                        persistSelectionSetToLocalStorage(map.SessionId, mapName, res); // set and forget
-                        dispatch(setSelection(mapName, res));
-                        success(res);
-                    }
-                } else {
-                    success(res);
-                }
-            }).catch(failure);
+            queryMapFeaturesHelper(map, client, opts, selectionSet, dispatch).then(r => success(r))
+                .catch(e => failure(e));
         }
     };
 }

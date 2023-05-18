@@ -307,7 +307,6 @@ export interface IGroupNodeProps {
 export const GroupNode = (props: IGroupNodeProps) => {
     const { group } = props;
     const legendCtx = React.useContext(LegendContext);
-    const [groupVisible, setGroupVisible] = React.useState(legendCtx.getGroupVisibility(group));
     const getExpanded = () => {
         let expanded = legendCtx.getGroupExpanded(group.ObjectId);
         if (expanded == null)
@@ -319,7 +318,6 @@ export const GroupNode = (props: IGroupNodeProps) => {
         legendCtx.setGroupExpanded(group.ObjectId, !expanded);
     };
     const onVisibilityChanged = (e: GenericEvent) => {
-        setGroupVisible(e.target.checked);
         legendCtx.setGroupVisibility(group.ObjectId, e.target.checked);
     };
     const currentScale = legendCtx.getCurrentScale();
@@ -331,7 +329,7 @@ export const GroupNode = (props: IGroupNodeProps) => {
     const expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
         {bs => <BpIcon icon={isExpanded ? ICON_LEGEND_TOGGLE : ICON_LEGEND_TOGGLE_EXPAND} iconSize={bs} />}
     </Icon>;
-    const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE(legendCtx.getBaseIconSize())} value={group.ObjectId} onChange={onVisibilityChanged} checked={(groupVisible)} />;
+    const chkbox = <input type='checkbox' className='group-checkbox' style={CHK_STYLE(legendCtx.getBaseIconSize())} value={group.ObjectId} onChange={onVisibilityChanged} checked={legendCtx.getGroupVisibility(group)} />;
     const tooltip = group.LegendLabel;
     const nodeClassName = "group-node";
     let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };

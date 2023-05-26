@@ -221,7 +221,9 @@ function deArrayifyRuntimeMap(json: any): RuntimeMap {
         Extents: deArrayifyExtents(root.Extents),
         Group: deArrayifyGroups(root.Group),
         Layer: deArrayifyLayers(root.Layer),
-        FiniteDisplayScale: deArrayifyFiniteDisplayScales(root.FiniteDisplayScale)
+        FiniteDisplayScale: deArrayifyFiniteDisplayScales(root.FiniteDisplayScale),
+        TilePixelRatio: getter(root, "TilePixelRatio", "int"),
+        TileSetProvider: getter(root, "TileSetProvider")
     };
     return rtMap;
 }

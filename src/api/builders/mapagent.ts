@@ -166,6 +166,12 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         return this.get<RuntimeMap>(url);
     }
 
+    public createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
+        const p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0" };
+        const url = this.stringifyGetUrl({ ...options, ...p1 });
+        return this.get<RuntimeMap>(url);
+    }
+
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
         return this.post<QueryMapFeaturesResponse>(this.agentUri, { ...options, ...p1 });
@@ -182,8 +188,16 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         return this.get<RuntimeMap>(url);
     }
 
-    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
-        const urlTemplate = `${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${xPlaceholder}&TILEROW=${yPlaceholder}&SCALEINDEX=${zPlaceholder}`;
-        return urlTemplate;
+    public describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
+        const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0" };
+        const url = this.stringifyGetUrl({ ...options, ...p1 });
+        return this.get<RuntimeMap>(url);
+    }
+
+    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string {
+        if (isXYZ)
+            return`${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${yPlaceholder}&TILEROW=${xPlaceholder}&SCALEINDEX=${zPlaceholder}`;
+        else
+            return`${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${xPlaceholder}&TILEROW=${yPlaceholder}&SCALEINDEX=${zPlaceholder}`;
     }
 }

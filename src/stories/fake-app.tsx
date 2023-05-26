@@ -56,6 +56,9 @@ class FakeMapAgent extends RequestBuilder {
         }
         return Promise.reject(`Unknown test map: ${options.mapDefinition}`);
     }
+    public createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
+        return this.createRuntimeMap(options);
+    }
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return Promise.resolve({});
     }
@@ -72,6 +75,9 @@ class FakeMapAgent extends RequestBuilder {
                 return isRuntimeMap(testMapMelbourne) ? Promise.resolve(testMapMelbourne) : Promise.reject("Not a runtime map");
         }
         return Promise.reject(`Unknown test map state: ${options.mapname}`);
+    }
+    public describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
+        return this.describeRuntimeMap(options);
     }
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
         throw new Error("Method not implemented - getTileTemplateUrl.");

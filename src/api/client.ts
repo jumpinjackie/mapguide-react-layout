@@ -142,7 +142,7 @@ export class Client implements IMapGuideClient {
     }
 
     /**
-     * Creates a runtime map from the specified map definition
+     * Creates a runtime map from the specified map definition. Issues a v3.0.0 request
      *
      * @param {ICreateRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
@@ -154,7 +154,20 @@ export class Client implements IMapGuideClient {
     }
 
     /**
-     * Describes a runtime map
+     * Creates a runtime map from the specified map definition. Issues a v4.0.0 request
+     *
+     * @param {ICreateRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
+     *
+     * @memberOf Client
+     * @since 0.14.8
+     */
+    public createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
+        return this.builder.createRuntimeMap_v4(options);
+    }
+
+    /**
+     * Describes a runtime map. Issues a v3.0.0 request
      *
      * @param {IDescribeRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
@@ -163,6 +176,19 @@ export class Client implements IMapGuideClient {
      */
     public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
+    }
+
+    /**
+     * Describes a runtime map. Issues a v4.0.0 request
+     *
+     * @param {IDescribeRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
+     *
+     * @memberOf Client
+     * @since 0.14.8
+     */
+    public describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
+        return this.builder.describeRuntimeMap_v4(options);
     }
 
     /**
@@ -201,8 +227,9 @@ export class Client implements IMapGuideClient {
      * @returns {string}
      *
      * @memberOf Client
+     * @since 0.14.8 added isXYZ parameter
      */
-    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string {
-        return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder);
+    public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string {
+        return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ);
     }
 }

@@ -12,7 +12,17 @@ export type SiteVersion = [number, number, number, number];
  * @since 0.12
  */
 export function getSiteVersion(map: RuntimeMap): SiteVersion {
-    const [sMaj, sMin, sPatch, sRev] = map.SiteVersion.split(".");
+    return parseSiteVersion(map.SiteVersion);
+}
+
+/**
+ * Parses the given version string
+ * 
+ * @param ver The version string
+ * @since 0.14.8
+ */
+export function parseSiteVersion(ver: string): SiteVersion {
+    const [sMaj, sMin, sPatch, sRev] = ver.split(".");
     const vMaj = parseInt(sMaj, 10);
     const vMin = parseInt(sMin, 10);
     const vPatch = parseInt(sPatch, 10);

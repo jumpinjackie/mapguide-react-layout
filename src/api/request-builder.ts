@@ -355,9 +355,12 @@ export interface IMapGuideClient {
      * @param {string} xPlaceholder
      * @param {string} yPlaceholder
      * @param {string} zPlaceholder
+     * @param {boolean} isXYZ
      * @returns {string}
+     * 
+     * @since 0.14.8 added isXYZ parameter
      */
-    getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
+    getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string;
 }
 
 /**
@@ -382,13 +385,17 @@ export abstract class RequestBuilder implements IMapGuideClient {
 
     public abstract createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap>;
 
+    public abstract createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap>;
+
     public abstract queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
     public abstract queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse>;
 
     public abstract describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap>;
 
-    public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string): string;
+    public abstract describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap>;
+
+    public abstract getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string;
 
     public abstract getSiteVersion(): Promise<SiteVersionResponse>;
 }

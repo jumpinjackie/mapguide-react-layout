@@ -230,4 +230,15 @@ export interface RuntimeMap {
     Group?: MapGroup[] | undefined;
     Layer?: MapLayer[] | undefined;
     FiniteDisplayScale?: number[] | undefined;
+
+    /**
+     * The pixel ratio of the tile set if this map links to it. Only available if sending a
+     * CREATERUNTIMEMAP v4.0.0 request
+     */
+    TilePixelRatio?: number;
+    /**
+     * The provider of the tile set if this map links to a tile set. Only available if sending a
+     * CREATERUNTIMEMAP v4.0.0 request
+     */
+    TileSetProvider?: string;
 }

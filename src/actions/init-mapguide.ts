@@ -6,7 +6,7 @@ import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { isResourceId, strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
 import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGroup } from './init';
-import { RuntimeMapFeatureFlags } from '../api/request-builder';
+import { ICreateRuntimeMapOptions, IDescribeRuntimeMapOptions, RuntimeMapFeatureFlags } from '../api/request-builder';
 import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
@@ -27,6 +27,7 @@ import { SiteVersionResponse } from '../api/contracts/common';
 import { isRuntimeMap } from '../utils/type-guards';
 import { tryParseArbitraryCs } from '../utils/units';
 import { ScopedId } from '../utils/scoped-id';
+import { canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
@@ -179,23 +180,45 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             initialActiveTool: ActiveMapTool.Pan
         };
     }
-    private async tryDescribeRuntimeMapAsync(mapName: string, session: AsyncLazy<string>, mapDef: string) {
+    private async createRuntimeMap(options: ICreateRuntimeMapOptions, siteVersion: AsyncLazy<SiteVersionResponse>): Promise<RuntimeMap> {
+        assertIsDefined(this.client);
+        let map: RuntimeMap;
+        const sv = await siteVersion.getValueAsync();
+        if (canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version))) {
+            map = await this.client.createRuntimeMap_v4(options);
+        } else {
+            map = await this.client.createRuntimeMap(options);
+        }
+        return map;
+    }
+    private async describeRuntimeMap(options: IDescribeRuntimeMapOptions, siteVersion: AsyncLazy<SiteVersionResponse>): Promise<RuntimeMap> {
+        assertIsDefined(this.client);
+        let map: RuntimeMap;
+        const sv = await siteVersion.getValueAsync();
+        if (canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version))) {
+            map = await this.client.describeRuntimeMap_v4(options);
+        } else {
+            map = await this.client.describeRuntimeMap(options);
+        }
+        return map;
+    }
+    private async tryDescribeRuntimeMapAsync(mapName: string, session: AsyncLazy<string>, mapDef: string, siteVersion: AsyncLazy<SiteVersionResponse>) {
         assertIsDefined(this.client);
         try {
-            const map = await this.client.describeRuntimeMap({
+            const map = await this.describeRuntimeMap({
                 mapname: mapName,
                 requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
                 session: await session.getValueAsync()
-            });
+            }, siteVersion);
             return map;
         } catch (e) {
             if (e.message === "MgResourceNotFoundException") {
-                const map = await this.client.createRuntimeMap({
+                const map = await this.createRuntimeMap({
                     mapDefinition: mapDef,
                     requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
                     session: await session.getValueAsync(),
                     targetMapName: mapName
-                });
+                }, siteVersion);
                 return map;
             }
             throw e;
@@ -208,13 +231,13 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const { locale } = this.options;
         const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
         const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
-        if (isStateless) {
-            // We use an AsyncLazy because we only want to fetch the site version *iff* we encounter a MG map defn
-            const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => {
-                assertIsDefined(this.client);
-                const sv = await this.client.getSiteVersion();
-                return sv;
-            });
+        // We use an AsyncLazy because we only want to fetch the site version *iff* we are required to
+        const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => {
+            assertIsDefined(this.client);
+            const sv = await this.client.getSiteVersion();
+            return sv;
+        });
+        if (isStateless) { 
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
                     const siteVer = await siteVersion.getValueAsync();
@@ -238,16 +261,16 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                     if (sessionWasReused) {
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                         info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
-                        mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef));
+                        mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
                     } else {
                         info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
                         assertIsDefined(this.client);
-                        mapPromises.push(this.client.createRuntimeMap({
+                        mapPromises.push(this.createRuntimeMap({
                             mapDefinition: m.mapDef,
                             requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
                             session: await session.getValueAsync(),
                             targetMapName: m.name
-                        }));
+                        }, siteVersion));
                     }
                 }
             }

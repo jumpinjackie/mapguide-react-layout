@@ -1,8 +1,10 @@
 import { RefreshMode, IExternalBaseLayer, Bounds, LayerTransparencySet, LayerProperty, MgBuiltInLayers, MgLayerType, MG_LAYER_TYPE_NAME, MG_BASE_LAYER_GROUP_NAME, ImageFormat, GenericEvent, ClientKind, Coordinate2D, Size, BLANK_SIZE, Dictionary, UnitOfMeasure } from './common';
 import LayerGroup from "ol/layer/Group";
 import TileGrid from "ol/tilegrid/TileGrid";
+import { createXYZ } from "ol/tilegrid";
 import AbstractSource from "ol/source/Source";
 import TileImageSource from "ol/source/TileImage";
+import XYZSource from "ol/source/XYZ";
 import { createMapGuideSource } from "./ol-mapguide-source-factory";
 import ImageStaticSource from "ol/source/ImageStatic";
 import { restrictToRange } from "../utils/number";
@@ -442,7 +444,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
         }
     }
     private getTileUrlFunctionForGroup(resourceId: string, groupName: string, zOrigin: number) {
-        const urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
+        const urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}', false);
         return function (tileCoord: [number, number, number]) {
             const z = tileCoord[0];
             const x = tileCoord[1];
@@ -501,16 +503,8 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                     projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
                 }
             }
-
-            const tileGrid = new TileGrid({
-                origin: olExtent.getTopLeft(extent),
-                resolutions: resolutions,
-                tileSize: [tileWidth, tileHeight]
-            });
-
             const zOrigin = finiteScales.length - 1;
             const mgTiledLayers = [];
-
             //const groupLayers = [] as TileLayer[];
             if (map.Group) {
                 for (let i = 0; i < map.Group.length; i++) {
@@ -518,16 +512,42 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                     if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                         continue;
                     }
-                    const tileSource = new TileImageSource({
-                        tileGrid: tileGrid,
-                        projection: projection,
-                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                        wrapX: false
-                    });
-                    const tileLayer = new TileLayer({
-                        //name: group.Name,
-                        source: tileSource
-                    });
+                    let tileLayer: TileLayer<any>;
+                    if (group.Type === 3 && map.TileSetProvider === "XYZ") {
+                        let retinaScale = 1;
+                        if (typeof (map.TilePixelRatio) != 'undefined') {
+                            retinaScale = map.TilePixelRatio;
+                        }
+                        const tileSource = new XYZSource({
+                            tileSize: [256 * retinaScale, 256 * retinaScale],
+                            tileGrid: createXYZ({ tileSize: [256, 256] }),
+                            projection: projection,
+                            // TODO: Should use tileUrlFunction for consistency with MG tiled layers below and to also faciliate 
+                            // something like client-side tile caching in the future
+                            url: this.callback.getClient().getTileTemplateUrl(resourceId, group.Name, '{x}', '{y}', '{z}', true),
+                            wrapX: false
+                        });
+                        tileLayer = new TileLayer({
+                            //name: group.Name,
+                            source: tileSource
+                        });
+                    } else {
+                        const tileGrid = new TileGrid({
+                            origin: olExtent.getTopLeft(extent),
+                            resolutions: resolutions,
+                            tileSize: [tileWidth, tileHeight]
+                        });
+                        const tileSource = new TileImageSource({
+                            tileGrid: tileGrid,
+                            projection: projection,
+                            tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+                            wrapX: false
+                        });
+                        tileLayer = new TileLayer({
+                            //name: group.Name,
+                            source: tileSource
+                        });
+                    }
                     tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
                     tileLayer.set(LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
                     tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);

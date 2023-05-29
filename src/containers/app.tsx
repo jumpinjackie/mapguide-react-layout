@@ -5,7 +5,8 @@ import {
     IBranchedMapSubState,
     ClientKind,
     InitError,
-    IMapViewer
+    IMapViewer,
+    Dictionary
 } from "../api/common";
 import { IInitAppLayout, initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
@@ -151,6 +152,10 @@ export interface IAppProps {
      * @since 0.14
      */
     mapguide?: IMapGuideAppProps;
+    /**
+     * @since 0.14.8
+     */
+    appSettings?: Dictionary<string> | undefined;
 }
 
 /**
@@ -205,7 +210,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
             locale,
             resourceId,
             externalBaseLayers,
-            initCommand
+            initCommand,
+            appSettings
         } = this.props;
         const {
             locale: urlLocale,
@@ -288,7 +294,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     externalBaseLayers: externalBaseLayers,
                     session: urlSession ?? mapguide?.session,
                     onInit: onInit,
-                    layout: typeof(this.props.layout) == 'string' ? this.props.layout : undefined
+                    layout: typeof(this.props.layout) == 'string' ? this.props.layout : undefined,
+                    appSettings: appSettings
                 },
                 ...(ftArgs ?? {}),
                 ...(amArgs ?? {}),

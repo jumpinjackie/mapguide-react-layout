@@ -60,6 +60,15 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     ...{ locale: action.payload }
                 }
             }
+        case ActionType.SET_APP_SETTING:
+            {
+                const settings = { ...(state.appSettings ?? {}) };
+                settings[action.payload.key] = action.payload.value;
+                return {
+                    ...state,
+                    ...{ appSettings: settings }
+                };
+            }
         case ActionType.INIT_APP:
             {
                 const payload = action.payload ?? {};
@@ -75,6 +84,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     am = mapNames[0];
                 }
                 const state1: Partial<IConfigurationReducerState> = {
+                    appSettings: payload.appSettings,
                     locale: payload.locale || DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: am,

@@ -1,5 +1,5 @@
 import { Client } from "../api/client";
-import { ReduxDispatch, IMapView } from "../api/common";
+import { ReduxDispatch, IMapView, Dictionary } from "../api/common";
 import {
     ApplicationDefinition,
     MapConfiguration
@@ -113,6 +113,10 @@ export interface IInitAppLayout {
      * @since 0.14
      */
     layout?: string;
+    /**
+     * @since 0.14.8
+     */
+    appSettings?: Dictionary<string> | undefined;
 }
 
 /**
@@ -311,6 +315,7 @@ export function initLayout(cmd: IViewerInitCommand, options: IInitAppLayout): Re
             initPayload.initialShowGroups = opts.initialShowGroups;
             initPayload.initialShowLayers = opts.initialShowLayers;
             initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+            initPayload.appSettings = opts.appSettings;
             dispatch({
                 type: ActionType.INIT_APP,
                 payload

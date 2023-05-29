@@ -5,6 +5,7 @@ import { createMap, createInitAction, createInitialState } from "../../test-data
 import { configReducer } from "../../src/reducers/config";
 import { ActionType } from "../../src/constants/actions";
 import { setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
+import { ViewerAction } from "../../src/actions/defs";
 
 describe("reducers/config", () => {
     describe(ActionType.INIT_APP, () => {
@@ -45,7 +46,7 @@ describe("reducers/config", () => {
             expect(vw.imageFormat).toBe(initImageFormat);
             expect(vw.selectionImageFormat).toBe(initSelectionImageFormat);
             expect(vw.selectionColor).toBe(initSelectionColor);
-            
+
             const cs = state.coordinates!;
             expect(cs).not.toBeUndefined();
             expect(cs.decimals).toBe(coordDecimals);
@@ -79,6 +80,25 @@ describe("reducers/config", () => {
             expect(state.viewRotationEnabled).toBe(true);
             const state2 = configReducer(state, setViewRotationEnabled(false));
             expect(state2.viewRotationEnabled).toBe(false);
+        });
+    });
+    describe(ActionType.SET_APP_SETTING, () => {
+        it("updates", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = {
+                type: ActionType.SET_APP_SETTING,
+                payload: {
+                    key: "DISABLE_CURSORS",
+                    value: "1"
+                }
+            };
+            const state = configReducer(initialState.config, action);
+            expect(state.appSettings).not.toBeUndefined();
+            expect(state.appSettings!["DISABLE_CURSORS"]).toBe("1");
+            action.payload.value = "0";
+            const state2 = configReducer(state, action);
+            expect(state2.appSettings).not.toBeUndefined();
+            expect(state2.appSettings!["DISABLE_CURSORS"]).toBe("0");
         });
     });
     describe(ActionType.MAP_SET_ACTIVE_MAP, () => {

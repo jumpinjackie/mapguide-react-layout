@@ -349,6 +349,10 @@ export interface IInitAppActionPayload {
      * @since 0.12.5
      */
     initialActiveTool?: ActiveMapTool;
+    /**
+     * @since 0.14.8
+     */
+    appSettings?: Dictionary<string> | undefined;
 }
 
 /**
@@ -636,6 +640,17 @@ export interface ISetFeatureTooltipsEnabledAction {
 export interface IEnableSelectDragPanAction {
     type: ActionType.MAP_ENABLE_SELECT_DRAGPAN;
     payload: boolean;
+}
+
+/**
+ * @since 0.14.8
+ */
+export interface ISetAppSettingAction {
+    type: ActionType.SET_APP_SETTING;
+    payload: {
+        key: string;
+        value: string;
+    }
 }
 
 /**
@@ -969,3 +984,4 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetHeatmapLayerBlurAction //@since 0.14
     | ISetHeatmapLayerRadiusAction //@since 0.14
     | IEnableSelectDragPanAction //@since 0.14.2
+    | ISetAppSettingAction //@since 0.14.8

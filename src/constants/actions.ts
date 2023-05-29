@@ -113,5 +113,9 @@ export enum ActionType {
     /**
      * @since 0.14
      */
-    SET_HEATMAP_LAYER_RADIUS = 'Map/SET_HEATMAP_LAYER_RADIUS'
+    SET_HEATMAP_LAYER_RADIUS = 'Map/SET_HEATMAP_LAYER_RADIUS',
+    /**
+     * @since 0.14.8
+     */
+    SET_APP_SETTING = 'MapGuide/SET_APP_SETTING'
 }

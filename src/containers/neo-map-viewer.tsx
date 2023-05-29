@@ -25,6 +25,7 @@ interface ICoreMapViewerProps {
     onContextMenu: (pos: [number, number]) => void;
     onHideContextMenu: () => void;
     onDispatch: ReduxDispatch;
+    disableCursors?: boolean;
     backgroundColor?: string;
     children?: React.ReactNode;
     isContextMenuOpen: boolean;
@@ -146,56 +147,58 @@ class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerS
         this.mounted = false;
     }
     render(): JSX.Element {
-        const { context, backgroundColor } = this.props;
+        const { context, backgroundColor, disableCursors } = this.props;
         const { isMouseDown } = this.state;
         const tool = context.getActiveTool();
         const style: React.CSSProperties = {
             width: "100%",
             height: "100%"
         };
-        if (context.isDigitizing()) {
-            const dtype = this.state.digitizingType;
-            switch (dtype) {
-                case "Point":
-                    style.cursor = `url(${CURSOR_DIGITIZE_POINT}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Line":
-                    style.cursor = `url(${CURSOR_DIGITIZE_LINE}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "LineString":
-                    style.cursor = `url(${CURSOR_DIGITIZE_LINESTRING}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Rectangle":
-                    style.cursor = `url(${CURSOR_DIGITIZE_RECT}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Polygon":
-                    style.cursor = `url(${CURSOR_DIGITIZE_POLYGON}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Circle":
-                    style.cursor = `url(${CURSOR_DIGITIZE_CIRCLE}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-            }
-        } else {
-            switch (tool) {
-                case ActiveMapTool.Pan:
-                    if (isMouseDown) {
-                        style.cursor = `url(${CURSOR_GRABBING}), auto`;
+        if (!disableCursors) {
+            if (context.isDigitizing()) {
+                const dtype = this.state.digitizingType;
+                switch (dtype) {
+                    case "Point":
+                        style.cursor = `url(${CURSOR_DIGITIZE_POINT}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
-                    } else {
-                        style.cursor = `url(${CURSOR_GRAB}), auto`;
+                        break;
+                    case "Line":
+                        style.cursor = `url(${CURSOR_DIGITIZE_LINE}), auto`;
                         //console.log(`cursor: ${style.cursor}`);
-                    }
-                    break;
-                case ActiveMapTool.Zoom:
-                    style.cursor = `url(${CURSOR_ZOOM_IN}), auto`;
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
+                        break;
+                    case "LineString":
+                        style.cursor = `url(${CURSOR_DIGITIZE_LINESTRING}), auto`;
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Rectangle":
+                        style.cursor = `url(${CURSOR_DIGITIZE_RECT}), auto`;
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Polygon":
+                        style.cursor = `url(${CURSOR_DIGITIZE_POLYGON}), auto`;
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Circle":
+                        style.cursor = `url(${CURSOR_DIGITIZE_CIRCLE}), auto`;
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                }
+            } else {
+                switch (tool) {
+                    case ActiveMapTool.Pan:
+                        if (isMouseDown) {
+                            style.cursor = `url(${CURSOR_GRABBING}), auto`;
+                            //console.log(`cursor: ${style.cursor}`);
+                        } else {
+                            style.cursor = `url(${CURSOR_GRAB}), auto`;
+                            //console.log(`cursor: ${style.cursor}`);
+                        }
+                        break;
+                    case ActiveMapTool.Zoom:
+                        style.cursor = `url(${CURSOR_ZOOM_IN}), auto`;
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                }
             }
         }
         if (backgroundColor) {
@@ -260,6 +263,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
                 onDispatch={dispatch}
                 backgroundColor={bgColor}
                 onContextMenu={onContextMenu}
+                disableCursors={appSettings?.["DISABLE_CURSORS"] == "1"}
                 onHideContextMenu={hideContextMenuAction}
                 isContextMenuOpen={bContextMenuOpen}
                 selectCanDragPan={bSelectCanDragPan}

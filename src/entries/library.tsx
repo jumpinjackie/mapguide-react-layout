@@ -22,6 +22,7 @@ import * as FlyoutActions from "../actions/flyout";
 import * as ModalActions from "../actions/modal";
 import * as TaskPaneActions from "../actions/taskpane";
 import * as TemplateActions from "../actions/template";
+import * as AppActions from "../actions/app";
 import { registerRequestBuilder } from '../api/builders/factory';
 import { MapAgentRequestBuilder } from '../api/builders/mapagent';
 import { addFormatDriver } from '../api/layer-manager/driver-registry';
@@ -211,5 +212,6 @@ export const Actions = {
     Flyout: FlyoutActions,
     Modal: ModalActions,
     TaskPane: TaskPaneActions,
-    Template: TemplateActions
+    Template: TemplateActions,
+    App: AppActions
 }

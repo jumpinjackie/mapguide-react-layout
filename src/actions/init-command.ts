@@ -250,7 +250,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
         }
         const settings: Record<string, string> = {};
-        if (Array.isArray(appDef.Extension.ViewerSettings?.Setting)) {
+        if (Array.isArray(appDef.Extension?.ViewerSettings?.Setting)) {
             for (const s of appDef.Extension.ViewerSettings.Setting) {
                 const [sn] = s["@name"];
                 const [sv] = s["@value"];

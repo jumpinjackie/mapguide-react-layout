@@ -484,6 +484,9 @@ export interface ITaskPaneHomeAction {
 
 /**
  * @since 0.12
+ * @since 0.14.8 If size/position is specified in modal settings, it will only be honored if the modal 
+ * is to be shown for the first time. Otherwise, it will use the previous size/position the last time
+ * a modal of this name was closed
  */
 export interface IShowComponentInModalAction {
     type: ActionType.MODAL_SHOW_COMPONENT;
@@ -492,6 +495,9 @@ export interface IShowComponentInModalAction {
 
 /**
  * @since 0.12
+ * @since 0.14.8 If size/position is specified in modal settings, it will only be honored if the modal 
+ * is to be shown for the first time. Otherwise, it will use the previous size/position the last time
+ * a modal of this name was closed
  */
 export interface IShowModalUrlAction {
     type: ActionType.MODAL_SHOW_URL;

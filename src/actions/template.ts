@@ -4,7 +4,7 @@
  * Actions to support fusion templates
  */
 import { ActionType } from '../constants/actions';
-import { IElementState, ITemplateSetElementStateAction, ITemplateSetTaskPaneVisibilityAction, ITemplateSetSelectionPanelVisibility, ITemplateSetLegendVisibility } from './defs';
+import { IElementState, ITemplateSetElementStateAction, ITemplateSetTaskPaneVisibilityAction, ITemplateSetSelectionPanelVisibility, ITemplateSetLegendVisibility, ITemplateSetCustomDataAction } from './defs';
 
 export function setElementStates(states: IElementState): ITemplateSetElementStateAction {
     return {
@@ -41,4 +41,22 @@ export function setLegendVisibility(visible: boolean): ITemplateSetLegendVisibil
         type: ActionType.FUSION_SET_LEGEND_VISIBILITY,
         payload: visible
     };
+}
+
+/**
+ * 
+ * @param name 
+ * @param value 
+ * @returns 
+ * 
+ * @since 0.14.8
+ */
+export function setTemplateCustomData(name: string, value: any): ITemplateSetCustomDataAction {
+    return {
+        type: ActionType.FUSION_SET_TEMPLATE_CUSTOM_DATA,
+        payload: {
+            name,
+            value
+        }
+    }
 }

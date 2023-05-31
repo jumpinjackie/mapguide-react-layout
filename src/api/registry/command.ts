@@ -7,15 +7,12 @@ import {
     ITargetedCommand,
     IApplicationState,
     ReduxDispatch,
-    ReduxStore,
     getSelectionSet,
     getRuntimeMap,
-    DEFAULT_MODAL_SIZE,
     NOOP,
     ALWAYS_FALSE,
     IInvokeUrlCommandParameter,
-    ActiveMapTool
-} from "../../api/common";
+    ActiveMapTool} from "../../api/common";
 import { getFusionRoot } from "../../api/runtime";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import { tr } from "../i18n";
@@ -346,7 +343,6 @@ function openModalUrl(name: string, dispatch: ReduxDispatch, url: string, modalT
         modal: {
             title: modalTitle || tr(name as any),
             backdrop: false,
-            size: DEFAULT_MODAL_SIZE,
             overflowYScroll: true
         },
         name: name,

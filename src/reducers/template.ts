@@ -12,7 +12,8 @@ export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
     taskPaneVisible: true,
     selectionPanelVisible: true,
     legendVisible: true,
-    autoDisplaySelectionPanelOnSelection: true
+    autoDisplaySelectionPanelOnSelection: true,
+    templateData: {}
 };
 
 /**
@@ -73,6 +74,11 @@ export function templateReducer(origState = TEMPLATE_INITIAL_STATE, action: View
                 ...{ selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false }
             }
         }
+    }
+    if (action.type == ActionType.FUSION_SET_TEMPLATE_CUSTOM_DATA) {
+        const state1 = { ...state };
+        state1.templateData[action.payload.name] = action.payload.value;
+        return state1;
     }
     if (typeof (_ovReducer) == 'function') {
         return _ovReducer(origState, state, action);

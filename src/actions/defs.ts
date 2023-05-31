@@ -428,6 +428,17 @@ export interface ITemplateSetLegendVisibility {
 }
 
 /**
+ * @since 0.14.8
+ */
+export interface ITemplateSetCustomDataAction {
+    type: ActionType.FUSION_SET_TEMPLATE_CUSTOM_DATA,
+    payload: {
+        name: string;
+        value: any;
+    }
+}
+
+/**
  * @since 0.12
  */
 export interface ITaskPaneBackAction {
@@ -493,6 +504,27 @@ export interface IShowModalUrlAction {
 export interface ICloseModalAction {
     type: ActionType.MODAL_CLOSE;
     payload: string;
+}
+
+/**
+ * @since 0.14.8
+ */
+export type ModalChangeArgs = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+/**
+ * @since 0.14.8
+ */
+export interface IUpdateModalDimensionsAction {
+    type: ActionType.MODAL_UPDATE;
+    payload: { 
+        name: string;
+        args: ModalChangeArgs;
+    }
 }
 
 /**
@@ -985,3 +1017,5 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetHeatmapLayerRadiusAction //@since 0.14
     | IEnableSelectDragPanAction //@since 0.14.2
     | ISetAppSettingAction //@since 0.14.8
+    | IUpdateModalDimensionsAction //@since 0.14.8
+    | ITemplateSetCustomDataAction //@since 0.14.8

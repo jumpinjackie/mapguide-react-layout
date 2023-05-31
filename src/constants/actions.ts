@@ -59,6 +59,10 @@ export enum ActionType {
     FUSION_SET_LEGEND_VISIBILITY = 'Fusion/SET_LEGEND_VISIBILITY',
     FUSION_SET_SELECTION_PANEL_VISIBILITY = 'Fusion/SET_SELECTION_PANEL_VISIBILITY',
     //FUSION_SET_OVERVIEW_MAP_VISIBILITY = 'Fusion/SET_OVERVIEW_MAP_VISIBILITY',
+    /**
+     * @since 0.14.8
+     */
+    FUSION_SET_TEMPLATE_CUSTOM_DATA = 'Fusion/SET_TEMPLATE_CUSTOM_DATA',
     FLYOUT_OPEN = 'Flyout/OPEN',
     FLYOUT_CLOSE = 'Flyout/CLOSE',
     CONTEXT_MENU_OPEN  = 'ContextMenu/OPEN',
@@ -69,6 +73,10 @@ export enum ActionType {
     MODAL_SHOW_COMPONENT = 'Modal/SHOW_COMPONENT',
     MODAL_SHOW_URL = 'Modal/SHOW_URL',
     MODAL_CLOSE = 'Modal/CLOSE',
+    /**
+     * @since 0.14.8
+     */
+    MODAL_UPDATE = 'Modal/UPDATE',
 
     /**
      * @since 0.13

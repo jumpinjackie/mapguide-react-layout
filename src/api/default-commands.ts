@@ -13,8 +13,7 @@ import {
     getRuntimeMap,
     getCurrentView,
     ITargetedCommand,
-    IConfigurationReducerState,
-    DEFAULT_MODAL_SIZE
+    IConfigurationReducerState
 } from "./common";
 import { tr } from "../api/i18n";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -211,8 +210,7 @@ export function initDefaultCommands() {
             dispatch(showModalComponent({
                 modal: {
                     title: tr("ABOUT", getState().config.locale),
-                    backdrop: true,
-                    size: DEFAULT_MODAL_SIZE
+                    backdrop: true
                 },
                 name: DefaultComponentNames.About,
                 component: DefaultComponentNames.About
@@ -228,8 +226,7 @@ export function initDefaultCommands() {
             dispatch(showModalUrl({
                 modal: {
                     title: tr("HELP", getState().config.locale),
-                    backdrop: true,
-                    size: DEFAULT_MODAL_SIZE
+                    backdrop: true
                 },
                 name: DefaultCommands.Help,
                 url: "help/index.html"

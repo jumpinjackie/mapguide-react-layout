@@ -7,18 +7,13 @@ import { ModalLauncher } from "../containers/modal-launcher";
 import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { RndModalDialog } from "../components/modal-dialog";
 import { tr } from "../api/i18n";
-import { RuntimeMap } from "../api/contracts/runtime-map";
-import {
-    IConfigurationReducerState,
-    ITemplateReducerState,
-    IViewerCapabilities
-} from "../api/common";
+import { ITemplateReducerState } from "../api/common";
 import { InitWarningDisplay } from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
-import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
-import { setLegendVisibility, setSelectionPanelVisibility, setTaskPaneVisibility } from '../actions/template';
+import { useTemplateCustomData, useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { setLegendVisibility, setSelectionPanelVisibility, setTaskPaneVisibility, setTemplateCustomData } from '../actions/template';
 import { useActiveMapState } from '../containers/hooks-mapguide';
 import { useActiveMapSubjectLayer } from "../containers/hooks-generic";
 
@@ -106,6 +101,12 @@ export const AquaTemplateLayout = () => {
         showTaskPane,
         dispatch
     } = useCommonTemplateState(aquaTemplateReducer);
+    const posLegend = useTemplateCustomData("AQUA_LEGEND_POS");
+    const sizeLegend = useTemplateCustomData("AQUA_LEGEND_SIZE");
+    const posSelection = useTemplateCustomData("AQUA_SELECTION_POS");
+    const sizeSelection = useTemplateCustomData("AQUA_SELECTION_SIZE");
+    const posTaskPane = useTemplateCustomData("AQUA_TASKPANE_POS");
+    const sizeTaskPane = useTemplateCustomData("AQUA_TASKPANE_SIZE");
     const map = useActiveMapState();
     const subject = useActiveMapSubjectLayer();
     const hideLegend = () => dispatch(setLegendVisibility(false));
@@ -174,16 +175,23 @@ export const AquaTemplateLayout = () => {
         <ModalLauncher>
             {(() => {
                 if (hasSelectionPanel) {
+                    const pos = posSelection ?? [40, 500];
+                    const size = sizeSelection ?? [initInfoPaneWidth, SELECTION_DIALOG_HEIGHT];
                     return <RndModalDialog
                         icon="th"
                         locale={locale}
                         isOpen={!!showSelection}
                         onClose={onHideSelection}
                         title={tr("TPL_TITLE_SELECTION_PANEL", locale)}
-                        x={40}
-                        y={500}
-                        width={initInfoPaneWidth}
-                        height={SELECTION_DIALOG_HEIGHT}
+                        onChange={args => {
+                            dispatch(setTemplateCustomData("AQUA_SELECTION_POS", [args.x, args.y]));
+                            dispatch(setTemplateCustomData("AQUA_SELECTION_SIZE", [args.width, args.height]));
+                        }}
+                        x={pos[0]}
+                        y={pos[1]}
+                        width={size[0]}
+                        height={size[1]}
+
                         disableYOverflow={true}
                         enableInteractionMask={true}>
                         {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.SelectionPanel} componentProps={{ maxHeight: h }} />}
@@ -192,16 +200,22 @@ export const AquaTemplateLayout = () => {
             })()}
             {(() => {
                 if (hasLegend) {
+                    const pos = posLegend ?? [40, 70];
+                    const size = sizeLegend ?? [initInfoPaneWidth, LEGEND_DIALOG_HEIGHT];
                     return <RndModalDialog
                         icon="layers"
                         locale={locale}
                         isOpen={!!showLegend}
                         onClose={onHideLegend}
                         title={tr("TPL_TITLE_LEGEND", locale)}
-                        x={40}
-                        y={70}
-                        width={initInfoPaneWidth}
-                        height={LEGEND_DIALOG_HEIGHT}
+                        onChange={args => {
+                            dispatch(setTemplateCustomData("AQUA_LEGEND_POS", [args.x, args.y]));
+                            dispatch(setTemplateCustomData("AQUA_LEGEND_SIZE", [args.width, args.height]));
+                        }}
+                        x={pos[0]}
+                        y={pos[1]}
+                        width={size[0]}
+                        height={size[1]}
                         enableInteractionMask={true}>
                         {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.Legend} componentProps={{ inlineBaseLayerSwitcher: false, maxHeight: h }} />}
                     </RndModalDialog>
@@ -209,16 +223,22 @@ export const AquaTemplateLayout = () => {
             })()}
             {(() => {
                 if (hasTaskPane) {
+                    const pos = posTaskPane ?? [document.body.clientWidth - initTaskPaneWidth - 70, 80];
+                    const size = sizeTaskPane ?? [initTaskPaneWidth, TASK_DIALOG_HEIGHT];
                     return <RndModalDialog
                         icon="application"
                         locale={locale}
                         isOpen={!!showTaskPane}
                         onClose={onHideTaskPane}
-                        width={initTaskPaneWidth}
-                        height={TASK_DIALOG_HEIGHT}
+                        onChange={args => {
+                            dispatch(setTemplateCustomData("AQUA_TASKPANE_POS", [args.x, args.y]));
+                            dispatch(setTemplateCustomData("AQUA_TASKPANE_SIZE", [args.width, args.height]));
+                        }}
+                        width={size[0]}
+                        height={size[1]}
                         title={tr("TPL_TITLE_TASKPANE", locale)}
-                        x={document.body.clientWidth - initTaskPaneWidth - 70}
-                        y={80}
+                        x={pos[0]}
+                        y={pos[1]}
                         disableYOverflow={true}
                         enableInteractionMask={false}>
                         {([, h]) => <PlaceholderComponent locale={locale} id={DefaultComponentNames.TaskPane} componentProps={{ maxHeight: h - 15 /* some height breathing space */ }} />}

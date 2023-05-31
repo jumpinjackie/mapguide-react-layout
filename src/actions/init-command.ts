@@ -249,7 +249,16 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         if (!bFoundContextMenu) {
             warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
         }
+        const settings: Record<string, string> = {};
+        if (Array.isArray(appDef.Extension.ViewerSettings?.Setting)) {
+            for (const s of appDef.Extension.ViewerSettings.Setting) {
+                const [sn] = s["@name"];
+                const [sv] = s["@value"];
+                settings[sn] = sv;
+            }
+        }
         return normalizeInitPayload({
+            appSettings: settings,
             activeMapName: firstMapName,
             initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
             featureTooltipsEnabled: featureTooltipsEnabled,

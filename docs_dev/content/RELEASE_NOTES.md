@@ -1,3 +1,19 @@
+0.14.8
+======
+
+ * OpenLayers updated to `6.15.1`
+ * [#1411](https://github.com/jumpinjackie/mapguide-react-layout/issues/1411): Support pre-registering custom projections from appdef
+ * [#1463](https://github.com/jumpinjackie/mapguide-react-layout/issues/1463): Support reading app settings from appdef
+ * [#1461](https://github.com/jumpinjackie/mapguide-react-layout/issues/1461): Support loading Map Definitions that link to a XYZ tileset
+ * [#1447](https://github.com/jumpinjackie/mapguide-react-layout/issues/1447): Support disabling custom cursors through a new `DISABLE_CURSORS` app setting (`1` to enable, `0` to disable)
+ * [#1458](https://github.com/jumpinjackie/mapguide-react-layout/issues/1458): Fix potential stale legend state from dispatched update action
+ * [#1411](https://github.com/jumpinjackie/mapguide-react-layout/issues/1411): Fix epsg.io lookup
+ * [#1416](https://github.com/jumpinjackie/mapguide-react-layout/issues/1416): Support Coordinate Tracker with only one projection specified
+ * [#1426](https://github.com/jumpinjackie/mapguide-react-layout/issues/1426): Add separate opacity control for MapGuide Base Layers
+ * [#1412](https://github.com/jumpinjackie/mapguide-react-layout/issues/1412): Un-break viewer API drawing example
+ * [#1444](https://github.com/jumpinjackie/mapguide-react-layout/issues/1444): Restore selection appending while holding down SHIFT key
+ * [#1452](https://github.com/jumpinjackie/mapguide-react-layout/issues/1452): Fix viewer state not pushing to url
+
 0.14.7
 ======
 

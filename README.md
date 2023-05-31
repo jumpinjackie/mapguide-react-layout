@@ -20,7 +20,7 @@ This project is not affiliated with Autodesk or OSGeo.
  * A [**modern web browser**](http://browsehappy.com/). Practically speaking, this means any of the following:
     * Google Chrome (stable channel)
     * Mozilla Firefox (stable channel)
-    * Internet Explorer 11. Older versions (intentionally) not supported.
+    * ~~Internet Explorer 11. Older versions (intentionally) not supported.~~
     * Microsoft Edge
     * For mobile devices:
       * iOS: Mobile Safari

@@ -12,7 +12,6 @@ For an example of how this npm module is used, check out the [mapguide-react-lay
  * Chrome
  * Firefox
  * Safari
- * IE11
  * Microsoft Edge
 
 # Usage

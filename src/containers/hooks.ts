@@ -291,6 +291,16 @@ export function useTemplateInitialTaskPaneWidth() {
     return useAppState<number>(state => state.template.initialTaskPaneWidth);
 }
 
+/**
+ * 
+ * @param key 
+ * @returns 
+ * @since 0.14.8
+ */
+export function useTemplateCustomData(key: string) {
+    return useAppState(state => state.template.templateData[key]);
+}
+
 export function useTaskPaneInitialUrl() {
     return useAppState<string | undefined>(state => state.taskpane.initialUrl);
 }

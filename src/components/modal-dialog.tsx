@@ -2,6 +2,7 @@ import * as React from "react";
 import { Dialog, Icon, Button, NonIdealState, IconName } from '@blueprintjs/core';
 import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
+import { ModalChangeArgs } from "../actions/defs";
 
 export interface IRndModalDialogProps {
     x: number;
@@ -16,6 +17,14 @@ export interface IRndModalDialogProps {
     locale: string;
     enableInteractionMask: boolean;
     disableYOverflow?: boolean;
+    /**
+     * Called when position or size changes
+     * 
+     * @param args 
+     * @returns 
+     * @since 0.14.8
+     */
+    onChange?: (args: ModalChangeArgs) => void;
 }
 
 const DIAG_HEADER_HEIGHT = 40;
@@ -35,6 +44,7 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
     const [diagHeight, setDiagHeight] = React.useState< number>(props.height);
     const [diagX, setDiagX] = React.useState(props.x);
     const [diagY, setDiagY] = React.useState(props.y);
+
     const ZINDEX = {
         zIndex: 1980 //So flyouts will appear above it
     };
@@ -65,6 +75,14 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
             setDiagX(d.x);
             setDiagY(d.y);
             setIsDragging(false);
+            const args = {
+                x: d.x,
+                y: d.y,
+                width: diagWidth,
+                height: diagHeight
+            };
+            //console.log("Modal Change", args);
+            props.onChange?.(args);
         }}
         onResizeStart={() => setIsResizing(true)}
         onResize={(e, direction, ref, delta, position) => {
@@ -79,6 +97,14 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
             setDiagX(position.x);
             setDiagY(position.y);
             setIsResizing(false);
+            const args = {
+                x: position.x,
+                y: position.y,
+                width: ref.offsetWidth,
+                height: ref.offsetHeight
+            };
+            //console.log("Modal Change", args);
+            props.onChange?.(args);
         }}
         dragHandleClassName="bp3-heading"
         default={{ x: props.x, y: props.y, width: props.width, height: props.height }}>

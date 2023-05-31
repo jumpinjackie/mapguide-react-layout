@@ -1356,14 +1356,27 @@ export type ClientKind = "mapagent" | "mapguide-rest";
 export interface IModalParameters {
     title: string;
     backdrop: boolean;
-    size: [number, number];
+    /**
+     * @since 0.14.8 Now optional
+     */
+    size?: [number, number];
     overflowYScroll?: boolean;
+    /**
+     * @since 0.14.8
+     */
+    position?: [number, number];
 }
 
 /**
  * The default modal dialog size
  */
 export const DEFAULT_MODAL_SIZE: [number, number] = [350, 500];
+
+/**
+ * The default modal dialog position
+ * @since 0.14.8
+ */
+export const DEFAULT_MODAL_POSITION: [number, number] = [500, 80];
 
 /**
  * Base modal display options
@@ -1455,8 +1468,12 @@ export interface ITaskPaneReducerState {
 export type IModalReducerState = {
     /**
      * Gets the modal parameters for the given key
+     * 
+     * @since 0.14.8 all modal sub-properties now optional
      */
-    [key: string]: IModalDisplayOptions | IModalComponentDisplayOptions;
+    [key: string]: Omit<IModalDisplayOptions | IModalComponentDisplayOptions, "modal"> & {
+        modal: Partial<IModalParameters>;
+    }
 };
 
 /*
@@ -1853,6 +1870,12 @@ export interface ITemplateReducerState {
      * @since 0.13
      */
     autoDisplaySelectionPanelOnSelection: boolean;
+
+    /**
+     * Template-specific data
+     * @since 0.14.8
+     */
+    templateData: Dictionary<any>;
 }
 
 /**

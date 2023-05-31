@@ -3,7 +3,7 @@ import {
     IModalDisplayOptions
 } from "../api/common";
 import { ActionType } from '../constants/actions';
-import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction } from './defs';
+import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction, IUpdateModalDimensionsAction, ModalChangeArgs } from './defs';
 
 /**
  * Displays the specified component in a modal dialog
@@ -49,4 +49,21 @@ export function hideModal(name: string): ICloseModalAction {
         type: ActionType.MODAL_CLOSE,
         payload: name
     };
+}
+
+/**
+ * Update settings of the given modal
+ * 
+ * @param name The name of the modal to update
+ * @param args 
+ * @since 0.14.8
+ */
+export function updateModal(name: string, args: ModalChangeArgs): IUpdateModalDimensionsAction {
+    return {
+        type: ActionType.MODAL_UPDATE,
+        payload: {
+            name,
+            args: args
+        }
+    }
 }

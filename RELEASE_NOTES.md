@@ -1,9 +1,39 @@
+0.14.8
+======
+
+ * OpenLayers updated to `6.15.1`
+ * [#1411](https://github.com/jumpinjackie/mapguide-react-layout/issues/1411): Support pre-registering custom projections from appdef
+ * [#1463](https://github.com/jumpinjackie/mapguide-react-layout/issues/1463): Support reading app settings from appdef
+ * [#1461](https://github.com/jumpinjackie/mapguide-react-layout/issues/1461): Support loading Map Definitions that link to a XYZ tileset
+ * [#1447](https://github.com/jumpinjackie/mapguide-react-layout/issues/1447): Support disabling custom cursors through a new `DISABLE_CURSORS` app setting (`1` to enable, `0` to disable)
+ * [#1258](https://github.com/jumpinjackie/mapguide-react-layout/issues/1258): Modal dialog size and positioning is now persisted
+ * [#1458](https://github.com/jumpinjackie/mapguide-react-layout/issues/1458): Fix potential stale legend state from dispatched update action
+ * [#1411](https://github.com/jumpinjackie/mapguide-react-layout/issues/1411): Fix epsg.io lookup
+ * [#1416](https://github.com/jumpinjackie/mapguide-react-layout/issues/1416): Support Coordinate Tracker with only one projection specified
+ * [#1426](https://github.com/jumpinjackie/mapguide-react-layout/issues/1426): Add separate opacity control for MapGuide Base Layers
+ * [#1412](https://github.com/jumpinjackie/mapguide-react-layout/issues/1412): Un-break viewer API drawing example
+ * [#1444](https://github.com/jumpinjackie/mapguide-react-layout/issues/1444): Restore selection appending while holding down SHIFT key
+ * [#1452](https://github.com/jumpinjackie/mapguide-react-layout/issues/1452): Fix viewer state not pushing to url
+
+0.14.7
+======
+
+ * Remove `shortid` dependency by replacing existing usages with a simple sequential numerical id generator
+
+0.14.6
+======
+
+ * Update to OL 6.13.0
+ * [#1385](https://github.com/jumpinjackie/mapguide-react-layout/issues/1385): Use DOMPurify to sanitize all cases where raw HTML content is being assembled.
+   * DOMPurify is now also the default HTML cleaning function for the selection panel component if no custom HTML cleaning function is provided.
+ * [#1374](https://github.com/jumpinjackie/mapguide-react-layout/issues/1374): Un-break support for Web Layouts
+
 0.14.5
 ======
 
  * Update to OL 6.10.0
  * [#1368](https://github.com/jumpinjackie/mapguide-react-layout/issues/1368): Fix Firefox instability by debouncing history API access on url state update
- * [#1369](https://github.com/jumpinjackie/mapguide-react-layout/issues/1369): Fix `e.declutterTree is null` errors on vector feature hovering
+ * [#1369](https://github.com/jumpinjackie/mapguide-react-layout/issues/1369): Don't do hover highlight processing for vector features while the viewer is in a busy state
  * [#1370](https://github.com/jumpinjackie/mapguide-react-layout/issues/1370): Allow appdef vector layers to opt-out of automatic hover highlight processing
 
 0.14.4

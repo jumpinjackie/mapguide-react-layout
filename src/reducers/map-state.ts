@@ -215,6 +215,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
+                let rs = state;
                 if (subState) {
                     const index = subState.historyIndex - 1;
                     if (index >= 0) {
@@ -222,15 +223,17 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             historyIndex: index,
                             currentView: subState.history[index]
                         };
-                        return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                        rs = mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                     }
                 }
-                return state;
+                debug(`Next navigation stack:`, rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case ActionType.MAP_NEXT_VIEW:
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
+                let rs = state;
                 if (subState) {
                     const index = subState.historyIndex + 1;
                     if (index < subState.history.length) {
@@ -238,10 +241,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                             historyIndex: index,
                             currentView: subState.history[index]
                         };
-                        return mergeSubState(state, payload.mapName, { ...subState, ...state1 });
+                        rs = mergeSubState(state, payload.mapName, { ...subState, ...state1 });
                     }
                 }
-                return state;
+                debug(`Next navigation stack:`, rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case ActionType.MAP_SET_SCALE:
             {
@@ -276,6 +280,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
             {
                 const { payload } = action;
                 const subState = state[payload.mapName];
+                let rs = state;
                 if (subState) {
                     const data = payload.view;
                     if (isMapView(data)) {
@@ -293,10 +298,11 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                                 newSubState.history.splice(newSubState.historyIndex + 1);
                             }
                         }
-                        return mergeSubState(state, payload.mapName, newSubState);
+                        rs = mergeSubState(state, payload.mapName, newSubState);
                     }
                 }
-                return state;
+                debug(`Next navigation stack:`, rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {

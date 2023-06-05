@@ -535,6 +535,7 @@ function setupTree(map: RuntimeMap | undefined) {
 }
 
 const DEFAULT_ICON_SIZE = 16;
+const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 0, top: 0 };
 
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
@@ -553,16 +554,16 @@ export const Legend = (props: ILegendProps) => {
         const tree: any = setupTree(props.map);
         setState(tree);
     }, [props.map]);
-    const onEnterFilterMode = () => {
+    const onEnterFilterMode = React.useCallback(() => {
         setIsFiltering(true);
         setFilterText("");
         setFilteredTree(_tree);
-    };
-    const onExitFilterMode = () => {
+    }, []);
+    const onExitFilterMode = React.useCallback(() => {
         setIsFiltering(false);
         setFilterText("");
         setFilteredTree(undefined);
-    };
+    }, []);
     const onFilterUpdate = (text: string) => {
         setFilterText(text);
         if (strIsNullOrEmpty(text)) {
@@ -679,9 +680,9 @@ export const Legend = (props: ILegendProps) => {
                         placeholder={tr("LEGEND_FILTER_LAYERS", props.locale)}
                         onChange={(e: any) => onFilterUpdate(e.target.value)}
                         rightElement={<Button minimal icon={ICON_CLEAR}
-                            onClick={() => onExitFilterMode()} />} />;
+                            onClick={onExitFilterMode} />} />;
                 } else {
-                    return <Button onClick={() => onEnterFilterMode()} title={tr("LEGEND_FILTER_LAYERS", props.locale)} icon={ICON_SEARCH} style={{ position: "absolute", right: 0, top: 0 }} />
+                    return <Button onClick={onEnterFilterMode} title={tr("LEGEND_FILTER_LAYERS", props.locale)} icon={ICON_SEARCH} style={FILTER_BUTTON_STYLE} />
                 }
             })()}
             <ul style={UL_LIST_STYLE(props.baseIconSize ?? DEFAULT_ICON_SIZE)}>

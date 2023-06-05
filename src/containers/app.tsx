@@ -13,7 +13,7 @@ import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { AppContext, LegendNodeExtraHTMLProps } from "../components/context";
+import { AppContext, AppContextProvider, IApplicationContext, LegendNodeExtraHTMLProps } from "../components/context";
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
@@ -224,18 +224,6 @@ class AppInner extends React.Component<AppInnerProps, any> {
         this.state = {
             isLoading: true
         };
-    }
-    private allowHtmlValuesInSelection(): boolean {
-        return this.props.mapguide?.selectionSettings?.allowHtmlValues ?? false;
-    }
-    private getHtmlCleaner(): (value: string) => string {
-        return this.props.mapguide?.selectionSettings?.cleanHtml ?? (v => v);
-    }
-    private getLegendLayerExtraIconsProvider(options: LegendNodeExtraHTMLProps<MapLayer>) {
-        return this.props.mapguide?.legendSettings?.provideExtraLayerIconsHtml?.(options) ?? [];
-    }
-    private getLegendGroupExtraIconsProvider(options: LegendNodeExtraHTMLProps<MapGroup>) {
-        return this.props.mapguide?.legendSettings?.provideExtraGroupIconsHtml?.(options) ?? [];
     }
     componentDidMount() {
         const {
@@ -470,6 +458,8 @@ class AppInner extends React.Component<AppInnerProps, any> {
     render(): JSX.Element {
         const { layout, configuredLocale, error } = this.props;
         const { isLoading } = this.state;
+        this.props.mapguide
+
         if (error) {
             return <Error error={error} errorRenderer={this.initErrorRenderer} />
         } else {
@@ -483,15 +473,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
             } else {
                 const layoutEl = typeof (layout) == 'string' ? getLayout(layout) : layout.factory;
                 if (layoutEl) {
-                    const providerImpl = {
-                        allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
-                        getHTMLCleaner: () => this.getHtmlCleaner(),
-                        getLegendLayerExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapLayer>) => this.getLegendLayerExtraIconsProvider(options),
-                        getLegendGroupExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapGroup>) => this.getLegendGroupExtraIconsProvider(options)
-                    };
-                    return <AppContext.Provider value={providerImpl}>
+                    return <AppContextProvider mapguide={this.props.mapguide}>
                         {layoutEl()}
-                    </AppContext.Provider>
+                    </AppContextProvider>
                 } else {
                     return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
                 }

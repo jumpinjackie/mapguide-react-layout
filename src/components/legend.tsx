@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IExternalBaseLayer, GenericEvent, ILayerInfo } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
-import { LegendContext, ILegendContext } from "./context";
+import { LegendContext, ILegendContext, LegendNodeExtraHTMLProps } from "./context";
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
@@ -31,6 +31,7 @@ const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
 const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
 const CHK_STYLE = (baseSize: number) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 1, verticalAlign: "middle" });
 const EMPTY_STYLE = (baseSize: number) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
+const EXTRAS_STYLE = (baseSize: number) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 
 export type MapElementChangeFunc = (objectId: string, visible: boolean) => void;
 
@@ -89,6 +90,20 @@ export interface ILegendProps {
     inlineBaseLayerSwitcher: boolean;
     externalLayers?: ILayerInfo[];
     activeMapName?: string;
+    /**
+     * Provide extra HTML elements to insert before a layer name in a layer legend node
+     * 
+     * @param options
+     * @since 0.14.9
+     */
+    provideExtraLayerIconsHtml?: (options: LegendNodeExtraHTMLProps<MapLayer>) => string[];
+    /**
+     * Provide extra HTML elements to insert before a group name in a group legend node
+     * 
+     * @param options
+     * @since 0.14.9
+     */
+    provideExtraGroupIconsHtml?: (options: LegendNodeExtraHTMLProps<MapGroup>) => string[];
 }
 
 function getIconUri(iconMimeType: string | undefined, iconBase64: string | undefined): string | undefined {
@@ -103,7 +118,7 @@ interface IEmptyNodeProps {
     baseSize: number;
 }
 
-const EmptyNode: React.StatelessComponent<IEmptyNodeProps> = (props: IEmptyNodeProps) => {
+const EmptyNode: React.FC<IEmptyNodeProps> = (props: IEmptyNodeProps) => {
     return <div style={EMPTY_STYLE(props.baseSize)}>{NBSP}</div>;
 };
 
@@ -243,7 +258,14 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 } else {
                     expanded = <EmptyNode baseSize={legendCtx.getBaseIconSize()} />;
                 }
-                return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={text} /> {body}</li>;
+                const mapName = legendCtx.getMapName();
+                const session = legendCtx.getSessionId();
+                let extras;
+                if (mapName && session) {
+                    extras = (legendCtx.provideExtraLayerIconsHtml?.({ item: layer, mapName: mapName, session: session, sanitize: sanitize, elementSize: legendCtx.getBaseIconSize() }) ?? [])
+                        .map((html, i) => <div style={EXTRAS_STYLE(legendCtx.getBaseIconSize())} key={`layer-${layer.ObjectId}-extras-${i}`} dangerouslySetInnerHTML={{ __html: html }} />)
+                }
+                return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {extras} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={text} /> {body}</li>;
             } else { //This is generally a raster
                 icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
                     {bs => <BpIcon icon={ICON_LEGEND_RASTER} iconSize={bs} />}
@@ -333,8 +355,15 @@ export const GroupNode = (props: IGroupNodeProps) => {
     const tooltip = group.LegendLabel;
     const nodeClassName = "group-node";
     let nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
+    const mapName = legendCtx.getMapName();
+    const session = legendCtx.getSessionId();
+    let extras;
+    if (mapName && session) {
+        extras = (legendCtx.provideExtraGroupIconsHtml?.({ item: group, mapName: mapName, session: session, sanitize: sanitize, elementSize: legendCtx.getBaseIconSize() }) ?? [])
+            .map((html, i) => <div style={EXTRAS_STYLE(legendCtx.getBaseIconSize())} key={`group-${group.ObjectId}-extras-${i}`} dangerouslySetInnerHTML={{ __html: html }} />)
+    }
     return <li title={tooltip} style={nodeStyle} className={nodeClassName}>
-        <span>{expanded} {chkbox} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={group.LegendLabel} /></span>
+        <span>{expanded} {chkbox} {extras} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={group.LegendLabel} /></span>
         {(() => {
             if (isExpanded && props.childItems.length > 0) {
                 return <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>{props.childItems.map(item => {
@@ -609,6 +638,7 @@ export const Legend = (props: ILegendProps) => {
         getFilterText: () => filterText,
         getLocale: () => props.locale,
         getMapName: () => props.activeMapName,
+        getSessionId: () => props.map?.SessionId,
         getBaseIconSize: () => props.baseIconSize ?? DEFAULT_ICON_SIZE,
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,
@@ -623,7 +653,9 @@ export const Legend = (props: ILegendProps) => {
         getGroupExpanded: getGroupExpanded,
         setGroupExpanded: setGroupExpanded,
         getLayerExpanded: getLayerExpanded,
-        setLayerExpanded: setLayerExpanded
+        setLayerExpanded: setLayerExpanded,
+        provideExtraGroupIconsHtml: props.provideExtraGroupIconsHtml,
+        provideExtraLayerIconsHtml: props.provideExtraLayerIconsHtml
     };
     const daTree = providerImpl.getTree();
     const rootItems: (MapLayer | MapGroup)[] = daTree.root;
@@ -682,4 +714,4 @@ export const Legend = (props: ILegendProps) => {
             </ul>
         </div>
     </LegendContext.Provider>;
-}
+};

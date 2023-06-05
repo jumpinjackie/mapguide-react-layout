@@ -31,6 +31,15 @@ export interface SelectionOptions {
 }
 
 /**
+ * @since 0.14.9 Extracted out to separate interface
+ */
+export interface IInitialElementVisibility {
+    taskpane: boolean;
+    legend: boolean;
+    selection: boolean;
+}
+
+/**
  * MapGuide-specific application options
  *
  * @export
@@ -66,18 +75,8 @@ export interface IMapGuideAppProps {
     selectionSettings?: SelectionOptions;
     /**
      * Defines initial element visibility
-     *
-     * @type {{
-        *         taskpane: boolean;
-        *         legend: boolean;
-        *         selection: boolean;
-        *     }}
-        */
-       initialElementVisibility: {
-           taskpane: boolean;
-           legend: boolean;
-           selection: boolean;
-       }
+     */
+    initialElementVisibility: IInitialElementVisibility;
 }
 
 /**

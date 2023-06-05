@@ -29,37 +29,37 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const stateless = useViewerIsStateless();
     const appContext = React.useContext(AppContext);
-    const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
-    const setGroupVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options));
-    const setLayerVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options));
-    const setLayerSelectableAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerSelectable(mapName, options));
-    const setGroupExpandedAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupExpanded(mapName, options));
+    const setBaseLayerAction = React.useCallback((mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName)), [dispatch]);
+    const setGroupVisibilityAction = React.useCallback((mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options)), [dispatch]);
+    const setLayerVisibilityAction = React.useCallback((mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options)), [dispatch]);
+    const setLayerSelectableAction = React.useCallback((mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerSelectable(mapName, options)), [dispatch]);
+    const setGroupExpandedAction = React.useCallback((mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupExpanded(mapName, options)), [dispatch]);
     const layers = useActiveMapLayers();
-    const onLayerSelectabilityChanged = (id: string, selectable: boolean) => {
+    const onLayerSelectabilityChanged = React.useCallback((id: string, selectable: boolean) => {
         if (activeMapName) {
             setLayerSelectableAction?.(activeMapName, { id: id, value: selectable });
         }
-    };
-    const onGroupExpansionChanged = (id: string, expanded: boolean) => {
+    }, [setLayerSelectableAction]);
+    const onGroupExpansionChanged = React.useCallback((id: string, expanded: boolean) => {
         if (setGroupExpandedAction && activeMapName) {
             setGroupExpandedAction(activeMapName, { id: id, value: expanded });
         }
-    };
-    const onGroupVisibilityChanged = (groupId: string, visible: boolean) => {
+    }, [setGroupExpandedAction]);
+    const onGroupVisibilityChanged = React.useCallback((groupId: string, visible: boolean) => {
         if (setGroupVisibilityAction && activeMapName) {
             setGroupVisibilityAction(activeMapName, { id: groupId, value: visible });
         }
-    };
-    const onLayerVisibilityChanged = (layerId: string, visible: boolean) => {
+    }, [setGroupVisibilityAction]);
+    const onLayerVisibilityChanged = React.useCallback((layerId: string, visible: boolean) => {
         if (setLayerVisibilityAction && activeMapName) {
             setLayerVisibilityAction(activeMapName, { id: layerId, value: visible });
         }
-    };
-    const onBaseLayerChanged = (layerName: string) => {
+    }, [setLayerVisibilityAction]);
+    const onBaseLayerChanged = React.useCallback((layerName: string) => {
         if (setBaseLayerAction && activeMapName) {
             setBaseLayerAction(activeMapName, layerName);
         }
-    };
+    }, [setBaseLayerAction]);
     if ((map || layers) && view) {
         let scale = view.scale;
         if (scale || layers) {

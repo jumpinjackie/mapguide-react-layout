@@ -13,7 +13,7 @@ import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { AppContext } from "../components/context";
+import { AppContext, LegendNodeExtraHTMLProps } from "../components/context";
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
@@ -24,10 +24,37 @@ import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { sanitize } from "dompurify";
+import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
     cleanHtml?: (value: string) => string;
+}
+
+/**
+ * @since 0.14.9
+ */
+export interface LegendOptions {
+    /**
+     * Provide extra HTML elements to insert before a layer name in a layer legend node
+     * 
+     * Please note: If the HTML returned by this function would contain potentially untrusted input, you 
+     * are responsible for sanitizing the HTML content. The given options contains a sanitize function for
+     * you to sanitize untrusted parts of the HTML content being assembled.
+     * 
+     * @param options
+     */
+    provideExtraLayerIconsHtml?: (options: LegendNodeExtraHTMLProps<MapLayer>) => string[];
+    /**
+     * Provide extra HTML elements to insert before a group name in a group legend node
+     * 
+     * Please note: If the HTML returned by this function would contain potentially untrusted input, you 
+     * are responsible for sanitizing the HTML content. The given options contains a sanitize function for
+     * you to sanitize untrusted parts of the HTML content being assembled.
+     * 
+     * @param options
+     */
+    provideExtraGroupIconsHtml?: (options: LegendNodeExtraHTMLProps<MapGroup>) => string[];
 }
 
 /**
@@ -73,6 +100,10 @@ export interface IMapGuideAppProps {
      * Settings that control the selection panel (if provided by the template)
      */
     selectionSettings?: SelectionOptions;
+    /**
+     * Settings that control the legend (if provided by the template)
+     */
+    legendSettings?: LegendOptions;
     /**
      * Defines initial element visibility
      */
@@ -199,6 +230,12 @@ class AppInner extends React.Component<AppInnerProps, any> {
     }
     private getHtmlCleaner(): (value: string) => string {
         return this.props.mapguide?.selectionSettings?.cleanHtml ?? (v => v);
+    }
+    private getLegendLayerExtraIconsProvider(options: LegendNodeExtraHTMLProps<MapLayer>) {
+        return this.props.mapguide?.legendSettings?.provideExtraLayerIconsHtml?.(options) ?? [];
+    }
+    private getLegendGroupExtraIconsProvider(options: LegendNodeExtraHTMLProps<MapGroup>) {
+        return this.props.mapguide?.legendSettings?.provideExtraGroupIconsHtml?.(options) ?? [];
     }
     componentDidMount() {
         const {
@@ -448,7 +485,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 if (layoutEl) {
                     const providerImpl = {
                         allowHtmlValuesInSelection: () => this.allowHtmlValuesInSelection(),
-                        getHTMLCleaner: () => this.getHtmlCleaner()
+                        getHTMLCleaner: () => this.getHtmlCleaner(),
+                        getLegendLayerExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapLayer>) => this.getLegendLayerExtraIconsProvider(options),
+                        getLegendGroupExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapGroup>) => this.getLegendGroupExtraIconsProvider(options)
                     };
                     return <AppContext.Provider value={providerImpl}>
                         {layoutEl()}

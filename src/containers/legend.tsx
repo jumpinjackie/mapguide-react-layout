@@ -6,6 +6,7 @@ import { setBaseLayer } from '../actions/map';
 import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
 import { useActiveMapState, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { AppContext } from "../components/context";
 
 export interface ILegendContainerProps {
     maxHeight?: number;
@@ -27,6 +28,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const selectableLayers = useActiveMapSelectableLayers();
     const externalBaseLayers = useActiveMapExternalBaseLayers(false);
     const stateless = useViewerIsStateless();
+    const appContext = React.useContext(AppContext);
     const setBaseLayerAction = (mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName));
     const setGroupVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setGroupVisibility(mapName, options));
     const setLayerVisibilityAction = (mapName: string, options: { id: string, value: boolean }) => dispatch(setLayerVisibility(mapName, options));
@@ -80,7 +82,9 @@ export const LegendContainer = (props: ILegendContainerProps) => {
                 onLayerSelectabilityChanged={onLayerSelectabilityChanged}
                 onGroupExpansionChanged={onGroupExpansionChanged}
                 onGroupVisibilityChanged={onGroupVisibilityChanged}
-                onLayerVisibilityChanged={onLayerVisibilityChanged} />;
+                onLayerVisibilityChanged={onLayerVisibilityChanged}
+                provideExtraLayerIconsHtml={appContext.getLegendLayerExtraIconsProvider}
+                provideExtraGroupIconsHtml={appContext.getLegendGroupExtraIconsProvider} />;
         } else {
             return <div>{tr("LOADING_MSG", locale)}</div>;
         }

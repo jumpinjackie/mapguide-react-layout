@@ -46,13 +46,19 @@ export function getEnabled(item: IItem): boolean {
     return true;
 }
 
+type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["bpIconName"], iconSize: number };
+
+const OpacityIcon: React.FC<OpacityIconProps> = React.memo(({ opacity, icon, iconSize }) => {
+    return <Icon style={{ opacity }} icon={icon} iconSize={iconSize} />;
+});
+
 function getIconElement(item: IItem, enabled: boolean, size: number): React.ReactNode {
     const iconStyle = getIconStyle(enabled, size);
     if (item.iconClass || item.icon) {
         return <ImageIcon style={iconStyle} url={item.icon} spriteClass={item.iconClass} />
     } else if (item.bpIconName) {
         const { opacity } = iconStyle; //For SVG, we only care about opacity
-        return <Icon style={{ opacity }} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
+        return <OpacityIcon opacity={opacity} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
     } else {
         return <></>;
     }

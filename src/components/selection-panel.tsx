@@ -141,7 +141,7 @@ const FloatClear = () => <div style={{ clear: "both" }} />;
  * Displays attributes of selected features with the ability to zoom in on selected features
  * @param props 
  */
-export const SelectionPanel = (props: ISelectionPanelProps) => {
+export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
     const {
         maxHeight,
         selection,
@@ -298,4 +298,4 @@ export const SelectionPanel = (props: ISelectionPanelProps) => {
             })()}
         </div>
     </div>;
-}
+});

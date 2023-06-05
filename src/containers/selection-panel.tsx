@@ -51,10 +51,12 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     };
     const compSel = new CompositeSelection(selection?.SelectedFeatures, clientSelection);
     if (selection?.SelectedFeatures != null || clientSelection) {
+        const allowHtmlValues = appContext.allowHtmlValuesInSelection();
+        const cleaner = appContext.getHTMLCleaner();
         return <SelectionPanel locale={locale}
             onResolveLayerLabel={resolveLayerLabel}
-            allowHtmlValues={appContext.allowHtmlValuesInSelection()}
-            cleanHTML={appContext.getHTMLCleaner()}
+            allowHtmlValues={allowHtmlValues}
+            cleanHTML={cleaner}
             selection={compSel}
             onRequestZoomToFeature={onZoomToSelectedFeature}
             onShowSelectedFeature={onShowSelectedFeature}

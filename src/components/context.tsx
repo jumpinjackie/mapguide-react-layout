@@ -8,8 +8,9 @@ import { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { DEFAULT_LOCALE } from '../api/i18n';
 import { STR_EMPTY } from '../utils/string';
+import { IMapGuideAppProps } from "../containers/app";
 
-const VOID_NOOP = () => {}
+const VOID_NOOP = () => { }
 
 /**
  * @since 0.14.9
@@ -78,6 +79,21 @@ export const AppContext = React.createContext<IApplicationContext>({
     getLegendLayerExtraIconsProvider: () => [],
     getLegendGroupExtraIconsProvider: () => []
 });
+
+/**
+ * @since 0.14.9
+ */
+export const AppContextProvider: React.FC<{ mapguide: IMapGuideAppProps | undefined }> = ({ mapguide, children }) => {
+    const providerImpl = React.useMemo<IApplicationContext>(() => ({
+        allowHtmlValuesInSelection: () => mapguide?.selectionSettings?.allowHtmlValues ?? false,
+        getHTMLCleaner: () => mapguide?.selectionSettings?.cleanHtml ?? (v => v),
+        getLegendLayerExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapLayer>) => mapguide?.legendSettings?.provideExtraLayerIconsHtml?.(options) ?? [],
+        getLegendGroupExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapGroup>) => mapguide?.legendSettings?.provideExtraGroupIconsHtml?.(options) ?? []
+    }), [mapguide]);
+    return <AppContext.Provider value={providerImpl}>
+        {children}
+    </AppContext.Provider>
+}
 
 export interface ILegendContext {
     stateless: boolean;

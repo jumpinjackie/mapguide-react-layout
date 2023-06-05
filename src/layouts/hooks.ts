@@ -37,7 +37,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
     const showLegend = useTemplateLegendVisible();
     const showTaskPane = useTemplateTaskPaneVisible();
     const dispatch = useReduxDispatch();
-    const setElementStatesAction = (states: IElementState) => dispatch(setElementStates(states));
+    const setElementStatesAction = React.useCallback((states: IElementState) => dispatch(setElementStates(states)), [dispatch]);
     const onDragStart = () => setIsResizing(true);
     const onDragEnd = () => setIsResizing(false);
     //componentDidMount
@@ -55,7 +55,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
             viewer.updateSize();
         }
     };
-    const onActiveElementChanged = (id: "Legend" | "TaskPane" | "Selection") => {
+    const onActiveElementChanged = React.useCallback((id: "Legend" | "TaskPane" | "Selection") => {
         const states: IElementState = {
             legendVisible: false,
             taskPaneVisible: false,
@@ -75,7 +75,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
         //One of these must be true
         if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible)
             setElementStatesAction(states);
-    };
+    }, [setElementStatesAction]);
     return {
         isResizing,
         setIsResizing,

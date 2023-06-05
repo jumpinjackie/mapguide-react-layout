@@ -58,7 +58,7 @@ function validatePanelId(panels: IAccordionPanelSpec[], id: string | undefined):
  * A generic, reusable Accordion component
  * @param props 
  */
-export const Accordion = (props: IAccordionProps) => {
+export const Accordion = React.memo((props: IAccordionProps) => {
     const { style, panels, isResizing, onActivePanelChanged } = props;
     const activeId = validatePanelId(props.panels, props.activePanelId);
     const [dim, setDim] = React.useState<Pick<DOMRectReadOnly, "width" | "height">>({
@@ -94,4 +94,4 @@ export const Accordion = (props: IAccordionProps) => {
             })}
         </div>
     </ResizeSensor>;
-}
+});

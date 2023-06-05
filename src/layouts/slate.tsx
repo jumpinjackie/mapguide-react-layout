@@ -74,6 +74,7 @@ function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplate
 }
 
 const STATUS_BAR_HEIGHT = 18;
+const ACCORDION_STYLE: React.CSSProperties = { position: "absolute", top: 0, bottom: 0, left: 0, right: 0 };
 
 /**
  * A viewer template that resembles the Slate Fusion template
@@ -102,7 +103,7 @@ export const SlateTemplateLayout = () => {
     const sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     const topOffset = (DEFAULT_TOOLBAR_SIZE * 3);
-    const panels: IAccordionPanelSpec[] = [
+    const panels: IAccordionPanelSpec[] = React.useMemo(() => [
         {
             id: "Legend",
             title: tr("TPL_TITLE_LEGEND", locale),
@@ -135,7 +136,7 @@ export const SlateTemplateLayout = () => {
                 </div>;
             }
         }
-    ];
+    ], [locale]);
     let activeId;
     const states = [
         { id: "Selection", visible: showSelection },
@@ -153,7 +154,7 @@ export const SlateTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div>
-                            <Accordion style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }} onActivePanelChanged={onActiveElementChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                            <Accordion style={ACCORDION_STYLE} onActivePanelChanged={onActiveElementChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
                         </div>;
                     }
                 })()}

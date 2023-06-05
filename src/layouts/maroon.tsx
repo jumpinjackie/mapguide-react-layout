@@ -75,6 +75,7 @@ function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplat
 
 const STATUS_BAR_HEIGHT = 18;
 const OUTER_PADDING = 3;
+const ACCORDION_STYLE: React.CSSProperties = { position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 };
 
 /**
  * A viewer template that resembles the Maroon Fusion template
@@ -100,7 +101,7 @@ export const MaroonTemplateLayout = () => {
     }
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     const topOffset = (DEFAULT_TOOLBAR_SIZE * 2) + OUTER_PADDING;
-    const panels: IAccordionPanelSpec[] = [
+    const panels: IAccordionPanelSpec[] = React.useMemo(() =>[
         {
             id: "Legend",
             title: tr("TPL_TITLE_LEGEND", locale),
@@ -133,7 +134,7 @@ export const MaroonTemplateLayout = () => {
                 </div>;
             }
         }
-    ];
+    ], [locale]);
     let activeId;
     const states = [
         { id: "Selection", visible: showSelection },
@@ -167,7 +168,7 @@ export const MaroonTemplateLayout = () => {
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
                         return <div>
-                            <Accordion style={{ position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }} onActivePanelChanged={onActiveElementChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
+                            <Accordion style={ACCORDION_STYLE} onActivePanelChanged={onActiveElementChanged} activePanelId={activeId} panels={panels} isResizing={isResizing} />
                         </div>;
                     }
                 })()}

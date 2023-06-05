@@ -109,6 +109,7 @@
     "@types/react-redux": "^7.1.23",
     "@types/topojson-specification": "1.0.2",
     "@wojtekmaj/enzyme-adapter-react-17": "0.6.6",
+    "@welldone-software/why-did-you-render": "^7.0.1",
     "barrelsby": "2.3.3",
     "bestzip": "2.2.0",
     "cache-loader": "^4.1.0",

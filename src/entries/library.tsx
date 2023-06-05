@@ -1,4 +1,10 @@
-import * as React from "react";
+import React from "react"; // Can't use import * as React as wdyr cannot hook into that imported form of React
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+    });
+}
 import * as ReactDOM from "react-dom";
 import { registerStringBundle } from "../api/i18n";
 import { initDefaultCommands } from "../api/default-commands";

@@ -101,7 +101,7 @@ export class FeatureQueryTooltip {
         //this.featureTooltipElement.classList.remove("tooltip-hidden");
         const coords = olExtent.getCenter(geom.getExtent());
         this.featureTooltip.setPosition(coords);
-        this.callback.incrementBusyWorker();
+        //this.callback.incrementBusyWorker();
         client.queryMapFeatures({
             mapname: this.callback.getMapName(),
             session: this.callback.getSessionId(),
@@ -131,10 +131,9 @@ export class FeatureQueryTooltip {
             } else {
                 this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
-        }).then(() => {
-            this.callback.decrementBusyWorker();
+            //this.callback.decrementBusyWorker();
         }).catch(err => {
-            this.callback.decrementBusyWorker();
+            //this.callback.decrementBusyWorker();
             if (isSessionExpiredError(err)) {
                 this.callback.onSessionExpired();
             }

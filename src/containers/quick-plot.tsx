@@ -8,7 +8,8 @@ import {
     IConfigurationReducerState,
     IExternalBaseLayer,
     IMapViewer,
-    Size
+    Size,
+    isVisualBaseLayer
 } from "../api/common";
 import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
 import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
@@ -188,7 +189,7 @@ export const QuickPlotContainer = () => {
     const mapNames = useAvailableMaps()?.map(m => m.value);
     const map = useActiveMapState();
     const view = useActiveMapView();
-    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
+    const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const dispatch = useReduxDispatch();
     const setViewRotationAction = (rotation: number) => dispatch(setViewRotation(rotation));
     const setViewRotationEnabledAction = (enabled: boolean) => dispatch(setViewRotationEnabled(enabled));

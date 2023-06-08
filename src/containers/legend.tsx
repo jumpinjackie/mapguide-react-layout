@@ -14,6 +14,13 @@ export interface ILegendContainerProps {
 }
 
 export const LegendContainer = (props: ILegendContainerProps) => {
+    /**
+     * TODO: Although we've nailed down the majority of excessive re-renders on un-related events, there are still one case
+     * where it should not re-render but currently does: Panning
+     * 
+     * Panning does not alter zoom/scale or layer/group structure, things that the Legend does not care about, so what is it?
+     * Another mis-behaving hook? Something else?
+     */
     const { maxHeight, inlineBaseLayerSwitcher } = props;
     const dispatch = useReduxDispatch();
     const activeMapName = useActiveMapName();

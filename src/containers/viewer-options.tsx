@@ -1,7 +1,8 @@
 import * as React from "react";
 import {
     GenericEvent,
-    UnitOfMeasure
+    UnitOfMeasure,
+    isVisualBaseLayer
 } from "../api/common";
 import { tr } from "../api/i18n";
 import { getUnits, getUnitOfMeasure } from "../utils/units";
@@ -18,7 +19,7 @@ export interface IViewerOptionsProps {
 }
 
 export const ViewerOptions = () => {
-    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
+    const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
     const featureTooltipsEnabled = useViewerFeatureTooltipsEnabled();

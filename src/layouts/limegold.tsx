@@ -77,6 +77,7 @@ const SIDEBAR_PADDING = 0;
 const TOP_BAR_HEIGHT = 35;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
+const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 
 /**
  * A viewer template that resembles the LimeGold Fusion template
@@ -162,7 +163,7 @@ export const LimeGoldTemplateLayout = () => {
                                     if (hasLegend) {
                                         const p1: React.CSSProperties = { overflow: "auto" };
                                         const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: false }} />
+                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
                                         </div>;
                                         return <Tab id="Legend" title={legendTitle} panel={panel} />;
                                     }

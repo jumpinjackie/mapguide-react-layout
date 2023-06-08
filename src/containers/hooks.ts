@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 import { areArraysDifferent } from "../utils/array";
 import { IInitialExternalLayer } from '../actions/defs';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { IToolbarAppState, reduceAppToToolbarState } from '../api/registry/command';
+import { reduceAppToToolbarState } from '../api/registry/command';
 import { useAppState } from '../components/map-providers/context';
 import { ClientSelectionSet } from '../api/contracts/common';
 import { IHeatmapSettings } from '../api/ol-style-contracts';
@@ -88,12 +88,12 @@ export function useViewerSizeUnits() {
 /**
  * Gets the current set of available external base layers
  * 
- * @param includeNonVisual Include "non-visual" base layers like UTFGrid tile sets
  * @returns The current set of available external base layers
  * @since 0.14 New required includeNonVisual parameter
+ * @since 0.14.9 Removed includeNonVisual parameter. Let the hook caller determine themselves if non-visual base layers should be omitted
  */
-export function useActiveMapExternalBaseLayers(includeNonVisual: boolean) {
-    return useAppState<IExternalBaseLayer[] | undefined>(state => getExternalBaseLayers(state, includeNonVisual));
+export function useActiveMapExternalBaseLayers() {
+    return useAppState<IExternalBaseLayer[] | undefined>(state => getExternalBaseLayers(state));
 }
 
 export function useCurrentMouseCoordinates() {

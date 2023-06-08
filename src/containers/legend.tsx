@@ -26,7 +26,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
     const hideLayers=  useActiveMapHideLayers();
     const expandedGroups = useActiveMapExpandedGroups();
     const selectableLayers = useActiveMapSelectableLayers();
-    const externalBaseLayers = useActiveMapExternalBaseLayers(false);
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
     const stateless = useViewerIsStateless();
     const appContext = React.useContext(AppContext);
     const setBaseLayerAction = React.useCallback((mapName: string, layerName: string) => dispatch(setBaseLayer(mapName, layerName)), [dispatch]);

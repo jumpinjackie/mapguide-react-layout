@@ -12,6 +12,8 @@ import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { WEBLAYOUT_TOOLBAR } from '../constants';
 
+const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
+
 /**
  * A viewer template that resembles the MapGuide AJAX viewer
  */
@@ -66,7 +68,7 @@ export const AjaxViewerLayout = () => {
                                                         <p>{tr("TPL_TITLE_LEGEND", locale)}</p>
                                                     </div>
                                                     <div className="ajax-sidebar-panel-body">
-                                                        <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                                                        <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
                                                     </div>
                                                 </div>;
                                             }

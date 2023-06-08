@@ -75,6 +75,7 @@ function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplate
 
 const STATUS_BAR_HEIGHT = 18;
 const ACCORDION_STYLE: React.CSSProperties = { position: "absolute", top: 0, bottom: 0, left: 0, right: 0 };
+const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 
 /**
  * A viewer template that resembles the Slate Fusion template
@@ -111,7 +112,7 @@ export const SlateTemplateLayout = () => {
                 return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                     <PlaceholderComponent id={DefaultComponentNames.Legend}
                         locale={locale}
-                        componentProps={{ inlineBaseLayerSwitcher: false }} />
+                        componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
                 </div>;
             }
         },

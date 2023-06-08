@@ -76,6 +76,7 @@ function maroonTemplateReducer(origState: ITemplateReducerState, state: ITemplat
 const STATUS_BAR_HEIGHT = 18;
 const OUTER_PADDING = 3;
 const ACCORDION_STYLE: React.CSSProperties = { position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 };
+const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 
 /**
  * A viewer template that resembles the Maroon Fusion template
@@ -109,7 +110,7 @@ export const MaroonTemplateLayout = () => {
                 return <div style={{ width: dim.width, height: dim.height, overflowY: "auto" }}>
                     <PlaceholderComponent id={DefaultComponentNames.Legend}
                         locale={locale}
-                        componentProps={{ inlineBaseLayerSwitcher: false }} />
+                        componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
                 </div>;
             }
         },

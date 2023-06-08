@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IExternalBaseLayer } from "../api/common";
+import { IExternalBaseLayer, isVisualBaseLayer } from "../api/common";
 import { STR_EMPTY, strIsNullOrEmpty } from "../utils/string";
 import { tr } from "../api/i18n";
 
@@ -40,7 +40,7 @@ export const BaseLayerSwitcher = (props: IBaseLayerSwitcherProps) => {
                 {tr("NONE", locale)}
             </label>
         </div>
-        {externalBaseLayers.map(layer => {
+        {externalBaseLayers.filter(ebl => isVisualBaseLayer(ebl)).map(layer => {
             return <div className="base-layer-switcher-item-container" key={`base-layer-${layer.name}`}>
                 <label className="bp3-control bp3-radio">
                     <input className="base-layer-switcher-option" type="radio" value={layer.name} checked={layer.name === selected} onChange={onBaseLayerChanged} />

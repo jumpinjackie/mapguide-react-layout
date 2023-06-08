@@ -17,6 +17,8 @@ import { NBSP, WEBLAYOUT_TOOLBAR } from "../constants";
 import isMobile from "ismobilejs";
 import { setElementStates } from '../actions/template';
 
+const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
+
 function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
         case ActionType.MAP_SET_SELECTION:
@@ -258,7 +260,7 @@ const Sidebar = (props: ISidebarProps) => {
                     return <div className={`sidebar-pane ${activeTab == "legend" ? "active" : ""}`}>
                         <SidebarHeader text={tr("TPL_TITLE_LEGEND", props.locale)} onCloseClick={onClickCollapse} />
                         <div style={{ position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" }}>
-                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={props.locale} componentProps={{ inlineBaseLayerSwitcher: true }} />
+                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={props.locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
                         </div>
                     </div>;
                 }

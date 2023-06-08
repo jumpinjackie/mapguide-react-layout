@@ -2426,24 +2426,30 @@ export function getCurrentView(state: Readonly<IApplicationState>): IMapView | u
 }
 
 /**
+ * Determines if the given external base layer is one with a visual representation
+ * 
+ * @param layer 
+ * @returns 
+ * @since 0.14.9
+ */
+export function isVisualBaseLayer(layer: IExternalBaseLayer) {
+    return layer.kind != "UTFGrid";
+}
+
+/**
  * Helper function to get the current set of available external base layers from the application state
  *
  * @remarks This does not include "non-visual" base layers such as UTFGrid tilesets
  * 
  * @export
  * @param {Readonly<IApplicationState>} state
- * @param includeNonVisual Include "non-visual" base layers like UTFGrid tile sets
  * @returns {(IExternalBaseLayer[] | undefined)}
+ * 
+ * @since 0.14.9 Removed includeNonVisual parameter
  */
-export function getExternalBaseLayers(state: Readonly<IApplicationState>, includeNonVisual: boolean): IExternalBaseLayer[] | undefined {
+export function getExternalBaseLayers(state: Readonly<IApplicationState>): IExternalBaseLayer[] | undefined {
     if (state.config.activeMapName) {
-        if (includeNonVisual) {
-            return state.mapState[state.config.activeMapName].externalBaseLayers;
-        } else {
-            // UTFGrid may exist as a "base layer", but it has no visual representation so it is not a switchable candidate, so
-            // exclude it from the list if present
-            return state.mapState[state.config.activeMapName].externalBaseLayers.filter(ebl => ebl.kind != "UTFGrid");
-        }
+        return state.mapState[state.config.activeMapName].externalBaseLayers;
     }
     return undefined;
 }

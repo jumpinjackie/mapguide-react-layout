@@ -52,7 +52,7 @@ function useMapGuideViewerState() {
     const viewRotationEnabled = useViewerViewRotationEnabled();
     const mapName = useActiveMapName();
     const locale = useViewerLocale();
-    const externalBaseLayers = useActiveMapExternalBaseLayers(true);
+    const externalBaseLayers = useActiveMapExternalBaseLayers();
     const cancelDigitizationKey = useConfiguredCancelDigitizationKey();
     const undoLastPointKey = useConfiguredUndoLastPointKey();
     const layers = useActiveMapLayers();

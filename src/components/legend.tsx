@@ -14,6 +14,7 @@ import { strIsNullOrEmpty } from '../utils/string';
 import { useReduxDispatch } from "./map-providers/context";
 import { setMapLayerVisibility } from "../actions/map";
 import { sanitize } from "dompurify";
+import { areArraysDifferent } from "../utils/array";
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -542,18 +543,28 @@ const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 
  * the ability to toggle the group/layer visibility of the current map
  * @param props 
  */
-export const Legend = (props: ILegendProps) => {
-    const [state, setState] = React.useState(setupTree(props.map));
+export const Legend = /*React.memo(*/(props: ILegendProps) => {
+    const {
+        showGroups,
+        hideGroups,
+        showLayers,
+        hideLayers,
+        currentScale,
+        externalBaseLayers,
+        onBaseLayerChanged,
+        maxHeight,
+        map
+    } = props;
+    const [state, setState] = React.useState(setupTree(map));
     const { tree: _tree } = state;
-    const { currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight } = props;
     const [isFiltering, setIsFiltering] = React.useState(false);
     const [filterText, setFilterText] = React.useState("");
     const [filteredTree, setFilteredTree] = React.useState<TreeState | undefined>(undefined);
     React.useEffect(() => {
         onExitFilterMode();
-        const tree: any = setupTree(props.map);
+        const tree: any = setupTree(map);
         setState(tree);
-    }, [props.map]);
+    }, [map]);
     const onEnterFilterMode = React.useCallback(() => {
         setIsFiltering(true);
         setFilterText("");
@@ -564,37 +575,36 @@ export const Legend = (props: ILegendProps) => {
         setFilterText("");
         setFilteredTree(undefined);
     }, []);
-    const onFilterUpdate = (text: string) => {
+    const onFilterUpdate = React.useCallback((text: string) => {
         setFilterText(text);
         if (strIsNullOrEmpty(text)) {
             setFilteredTree(_tree);
         } else {
             setFilteredTree(buildFilteredTree(_tree, text.toLocaleLowerCase()));
         }
-    }
-    const getLayerSelectability = (layerId: string): boolean => {
-        const items: any = props.overrideSelectableLayers || {};
+    }, [_tree]);
+    const getLayerSelectability = React.useCallback((layerId: string): boolean => {
+        const items: any = props.overrideSelectableLayers ?? {};
         return items[layerId];
-    };
-    const setLayerSelectability = (layerId: string, selectable: boolean): void => {
+    }, [props.overrideSelectableLayers]);
+    const setLayerSelectability = React.useCallback((layerId: string, selectable: boolean): void => {
         props.onLayerSelectabilityChanged?.(layerId, selectable);
-    };
-    const getGroupExpanded = (groupId: string): boolean => {
-        const items: any = props.overrideExpandedItems || {};
+    }, [props.onLayerSelectabilityChanged]);
+    const getGroupExpanded = React.useCallback((groupId: string): boolean => {
+        const items: any = props.overrideExpandedItems ?? {};
         return items[groupId];
-    };
-    const setGroupExpanded = (groupId: string, expanded: boolean): void => {
+    }, [props.overrideExpandedItems]);
+    const setGroupExpanded = React.useCallback((groupId: string, expanded: boolean): void => {
         props.onGroupExpansionChanged?.(groupId, expanded);
-    };
-    const getLayerExpanded = (layerId: string): boolean => {
-        const items: any = props.overrideExpandedItems || {};
+    }, [props.onGroupExpansionChanged]);
+    const getLayerExpanded = React.useCallback((layerId: string): boolean => {
+        const items: any = props.overrideExpandedItems ?? {};
         return items[layerId];
-    };
-    const setLayerExpanded = (layerId: string, expanded: boolean): void => {
+    }, [props.overrideExpandedItems]);
+    const setLayerExpanded = React.useCallback((layerId: string, expanded: boolean): void => {
         props.onGroupExpansionChanged?.(layerId, expanded);
-    };
-    const getGroupVisibility = (group: MapGroup): boolean => {
-        const { showGroups, hideGroups } = props;
+    }, [props.onGroupExpansionChanged]);
+    const getGroupVisibility = React.useCallback((group: MapGroup): boolean => {
         let visible = group.Visible;
         if (showGroups && showGroups.indexOf(group.ObjectId) >= 0) {
             visible = true;
@@ -602,9 +612,8 @@ export const Legend = (props: ILegendProps) => {
             visible = false;
         }
         return visible;
-    };
-    const getLayerVisibility = (layer: MapLayer): boolean => {
-        const { showLayers, hideLayers } = props;
+    }, [showGroups, hideGroups]);
+    const getLayerVisibility = React.useCallback((layer: MapLayer): boolean => {
         let visible = layer.Visible;
         if (showLayers && showLayers.indexOf(layer.ObjectId) >= 0) {
             visible = true;
@@ -612,21 +621,21 @@ export const Legend = (props: ILegendProps) => {
             visible = false;
         }
         return visible;
-    };
-    const setGroupVisibility = (groupId: string, visible: boolean) => {
+    }, [showLayers, hideLayers]);
+    const setGroupVisibility = React.useCallback((groupId: string, visible: boolean) => {
         props.onGroupVisibilityChanged?.(groupId, visible);
-    };
-    const setLayerVisibility = (layerId: string, visible: boolean) => {
+    }, [props.onGroupVisibilityChanged]);
+    const setLayerVisibility = React.useCallback((layerId: string, visible: boolean) => {
         props.onLayerVisibilityChanged?.(layerId, visible);
-    };
-    const getIconMimeType = (): string | undefined => {
+    }, [props.onLayerVisibilityChanged]);
+    const getIconMimeType = React.useCallback((): string | undefined => {
         return props.map?.IconMimeType
             ? `${props.map.IconMimeType}`
             : undefined;
-    };
-    const getChildren = (objectId: string): (MapLayer | MapGroup)[] => {
-        return state.tree.groupChildren[objectId] || [];
-    };
+    }, [props.map?.IconMimeType]);
+    const getChildren = React.useCallback((objectId: string): (MapLayer | MapGroup)[] => {
+        return _tree.groupChildren[objectId] ?? [];
+    }, [_tree]);
     const rootStyle: React.CSSProperties = {
         position: "relative"
     };
@@ -715,4 +724,40 @@ export const Legend = (props: ILegendProps) => {
             </ul>
         </div>
     </LegendContext.Provider>;
-};
+}/*, (a, b) => {
+    const equals = [];
+    equals.push(a.activeMapName === b.activeMapName);
+    equals.push(a.baseIconSize === b.baseIconSize);
+    equals.push(a.currentScale === b.currentScale);
+    equals.push(a.externalBaseLayers === b.externalBaseLayers);
+    equals.push(a.externalLayers === b.externalLayers);
+    equals.push(a.hideGroups === b.hideGroups);
+    equals.push(a.hideLayers === b.hideLayers);
+    //equals.push(!areArraysDifferent(a.externalBaseLayers, b.externalBaseLayers));
+    //equals.push(!areArraysDifferent(a.externalLayers, b.externalLayers));
+    //equals.push(!areArraysDifferent(a.hideGroups, b.hideGroups));
+    //equals.push(!areArraysDifferent(a.hideLayers, b.hideLayers));
+    equals.push(a.inlineBaseLayerSwitcher === b.inlineBaseLayerSwitcher);
+    equals.push(a.locale === b.locale);
+    equals.push(a.map == b.map);
+    equals.push(a.maxHeight === b.maxHeight);
+    equals.push(a.onBaseLayerChanged === b.onBaseLayerChanged);
+    equals.push(a.onGroupExpansionChanged === b.onGroupExpansionChanged);
+    equals.push(a.onGroupVisibilityChanged === b.onGroupVisibilityChanged);
+    equals.push(a.onLayerSelectabilityChanged === b.onLayerSelectabilityChanged);
+    equals.push(a.onLayerVisibilityChanged === b.onLayerVisibilityChanged);
+    equals.push(a.overrideExpandedItems === b.overrideExpandedItems);
+    equals.push(a.overrideSelectableLayers === b.overrideSelectableLayers);
+    equals.push(a.provideExtraGroupIconsHtml === b.provideExtraGroupIconsHtml);
+    equals.push(a.provideExtraLayerIconsHtml === b.provideExtraLayerIconsHtml);
+    equals.push(a.showGroups === b.showGroups);
+    equals.push(a.showLayers === b.showLayers);
+    //equals.push(!areArraysDifferent(a.showGroups, b.showGroups));
+    //equals.push(!areArraysDifferent(a.showLayers, b.showLayers));
+    equals.push(a.stateless === b.stateless);
+    const bChanged = equals.some(s => !s);
+    if (bChanged) {
+        console.log("Legend changed", equals);
+    }
+    return bChanged;
+});*/

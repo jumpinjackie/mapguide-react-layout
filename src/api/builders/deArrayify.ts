@@ -13,7 +13,7 @@
  * These functions help "clean" those responses to be of the form we expect (and prefer)
  */
 import { MgError } from "../error";
-import { ActiveSelectedFeature, getExternalBaseLayers } from "../common";
+import { ActiveSelectedFeature } from "../common";
 import { RuleInfo, FeatureStyleInfo, ScaleRangeInfo, FeatureSourceInfo, MapLayer, MapGroup, CoordinateSystemType, EnvCoordinate, Envelope, RuntimeMap } from '../contracts/runtime-map';
 import { FeatureSetClass, FeatureSetLayer, FeatureSet, SelectionImage, FeatureProperty, SelectedFeature, LayerPropertyMetadata, LayerMetadata, SelectedLayer, SelectedFeatureSet, QueryMapFeaturesResponse } from '../contracts/query';
 import { WebLayoutMap, WebLayoutControl, WebLayoutInfoPane, MapView, TaskButton, WebLayoutTaskBar, UIItem, WebLayoutTaskPane, CommandUIItem, FlyoutUIItem, ResultColumnSet, ResultColumn, LayerSet, ParameterPair, CommandDef, BasicCommandDef, InvokeScriptCommandDef, InvokeURLCommandDef, SearchCommandDef, WebLayoutCommandSet, WebLayout, WebLayoutToolbar, WebLayoutContextMenu, WebLayoutStatusBar, WebLayoutZoomControl } from '../contracts/weblayout';

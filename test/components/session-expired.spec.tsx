@@ -1,17 +1,17 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "@testing-library/react";
 import { SessionExpired } from "../../src/components/session-expired";
 
 describe("components/session-expired", () => {
     it("renders", () => {
-        const wrapper = shallow(<SessionExpired locale="en" />);
-        const div = wrapper.find("div");
+        const { container } = render(<SessionExpired locale="en" />);
+        const div = container.getElementsByTagName("div");
         expect(div).toHaveLength(1);
-        const p = div.find("p");
-        const ul = div.find("ul");
+        const p = div[0].getElementsByTagName("p");
+        const ul = div[0].getElementsByTagName("ul");
         expect(p).toHaveLength(2);
         expect(ul).toHaveLength(1);
-        const li = ul.find("li");
+        const li = ul[0].getElementsByTagName("li");
         expect(li).toHaveLength(1);
     });
 });

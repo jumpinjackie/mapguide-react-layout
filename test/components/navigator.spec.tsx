@@ -1,33 +1,33 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { fireEvent, render } from "@testing-library/react";
 import { Navigator, PanDirection, ZoomDirection } from "../../src/components/navigator";
-
-type PanFunc = (direction: PanDirection) => void;
-type ZoomFunc = (direction: ZoomDirection) => void;
 
 describe("components/navigator", () => {
     it("renders spinner shown when busy", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={true} scale={5000} />);
-        expect(wrapper.find("img.navigator-spinner")).toHaveLength(1);
-        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).toBe("visible");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={true} scale={5000} />);
+        const spin = container.querySelectorAll("img.navigator-spinner");
+        expect(spin).toHaveLength(1);
+        expect((spin.item(0) as HTMLElement).style.visibility).toBe("visible");
     });
     it("renders spinner hidden when not busy", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        expect(wrapper.find("img.navigator-spinner")).toHaveLength(1);
-        expect((wrapper.find("img.navigator-spinner").props() as any).style.visibility).toBe("hidden");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const spin = container.querySelectorAll("img.navigator-spinner");
+        expect(spin).toHaveLength(1);
+        expect((spin.item(0) as HTMLElement).style.visibility).toBe("hidden");
     });
     it("clicking right raises pan east", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(0).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[0];
+        fireEvent.click(area);
         expect(onPan.mock.calls).toHaveLength(1);
         expect(onPan.mock.calls[0]).toHaveLength(1);
         expect(onPan.mock.calls[0][0]).toBe(PanDirection.East);
@@ -36,8 +36,9 @@ describe("components/navigator", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(1).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[1];
+        fireEvent.click(area);
         expect(onPan.mock.calls).toHaveLength(1);
         expect(onPan.mock.calls[0]).toHaveLength(1);
         expect(onPan.mock.calls[0][0]).toBe(PanDirection.West);
@@ -46,8 +47,9 @@ describe("components/navigator", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(2).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[2];
+        fireEvent.click(area);
         expect(onPan.mock.calls).toHaveLength(1);
         expect(onPan.mock.calls[0]).toHaveLength(1);
         expect(onPan.mock.calls[0][0]).toBe(PanDirection.South);
@@ -56,8 +58,9 @@ describe("components/navigator", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(3).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[3];
+        fireEvent.click(area);
         expect(onPan.mock.calls).toHaveLength(1);
         expect(onPan.mock.calls[0]).toHaveLength(1);
         expect(onPan.mock.calls[0][0]).toBe(PanDirection.North);
@@ -66,8 +69,9 @@ describe("components/navigator", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(4).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[4];
+        fireEvent.click(area);
         expect(onZoom.mock.calls).toHaveLength(1);
         expect(onZoom.mock.calls[0]).toHaveLength(1);
         expect(onZoom.mock.calls[0][0]).toBe(ZoomDirection.Out);
@@ -76,8 +80,9 @@ describe("components/navigator", () => {
         const onPan = jest.fn();
         const onRequestZoomToScale = jest.fn();
         const onZoom = jest.fn();
-        const wrapper = shallow(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
-        wrapper.find("area").at(5).simulate("click");
+        const { container } = render(<Navigator onPan={onPan} onRequestZoomToScale={onRequestZoomToScale} onZoom={onZoom} busy={false} scale={5000} />);
+        const area = container.getElementsByTagName("area")[5];
+        fireEvent.click(area);
         expect(onZoom.mock.calls).toHaveLength(1);
         expect(onZoom.mock.calls[0]).toHaveLength(1);
         expect(onZoom.mock.calls[0][0]).toBe(ZoomDirection.In);

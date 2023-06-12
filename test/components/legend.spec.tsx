@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "@testing-library/react";
 import { MapLayer } from "../../src/api/contracts/runtime-map";
 import { LayerNode } from "../../src/components/legend";
 import { ILegendContext, LegendContext } from "../../src/components/context";
@@ -97,10 +97,10 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const wrapper = mount(<LegendContext.Provider value={mockContext()}>
+        const { container } = render(<LegendContext.Provider value={mockContext()}>
             <LayerNode layer={layer} />
         </LegendContext.Provider>);
-        const rules = wrapper.find("RuleNode");
+        const rules = container.querySelectorAll("li.layer-rule-node");
         expect(rules.length).toBe(8);
     });
     it("renders a multi-geom-style layer with a rule for each geom style", () => {
@@ -148,10 +148,10 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const wrapper = mount(<LegendContext.Provider value={mockContext()}>
+        const { container } = render(<LegendContext.Provider value={mockContext()}>
             <LayerNode layer={layer} />
         </LegendContext.Provider>);
-        const rules = wrapper.find("RuleNode");
-        expect(rules.length).toBe(3); //One for each geom style
+        const rules = container.querySelectorAll("li.layer-rule-node");
+        expect(rules).toHaveLength(3); //One for each geom style
     });
 });

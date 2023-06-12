@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow } from "enzyme";
+import { render } from "@testing-library/react";
 import { SelectedFeatureCount } from "../../src/components/selected-feature-count";
 import { FeatureSet } from "../../src/api/contracts/query";
 import { tr } from "../../src/api/i18n";
@@ -40,42 +40,48 @@ describe("components/selected-feature-count", () => {
             Layer: []
         };
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} />);
-        expect(wrapper.text()).toBe("");
+        const { container } = render(<SelectedFeatureCount summary={summary} />);
+        const el = container.querySelectorAll(".component-selected-feature-count")[0];
+        expect(el.innerHTML).toBe("");
     });
-    it("Non-empty selection results in count displayed", () => {
+    it("Non-empty selection results in count displayed", async () => {
         const set = createSelectionSet();
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" />);
-        expect(wrapper.text()).toBe(tr("FMT_SELECTION_COUNT", "en", { total: 4, layerCount: 2 }));
+        const wrapper = render(<SelectedFeatureCount summary={summary} locale="en" />);
+        const el = await wrapper.findByText(tr("FMT_SELECTION_COUNT", "en", { total: 4, layerCount: 2 }));
+        expect(el).not.toBeUndefined();
     });
-    it("Non-empty selection results with unsupported locale results in localization key", () => {
+    it("Non-empty selection results with unsupported locale results in localization key", async () => {
         const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
         const set = createSelectionSet();
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="zh" />);
-        expect(wrapper.text()).toBe("FMT_SELECTION_COUNT");
+        const wrapper = render(<SelectedFeatureCount summary={summary} locale="zh" />);
+        const el = await wrapper.findByText("FMT_SELECTION_COUNT");
+        expect(el).not.toBeUndefined();
         expect(spy).toHaveBeenCalledTimes(1);
         spy.mockReset();
     });
-    it("Non-empty selection with custom format results in count displayed in specified format", () => {
+    it("Non-empty selection with custom format results in count displayed in specified format", async () => {
         const set = createSelectionSet();
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount}" />);
-        expect(wrapper.text()).toBe("Selected 4/2");
+        const wrapper = render(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount}" />);
+        const el = await wrapper.findByText("Selected 4/2");
+        expect(el).not.toBeUndefined();
     });
-    it("Non-empty selection with custom format containing invalid placeholders results in count displayed in specified format with unresolved placeholders remaining", () => {
+    it("Non-empty selection with custom format containing invalid placeholders results in count displayed in specified format with unresolved placeholders remaining", async () => {
         const set = createSelectionSet();
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount} on {map}" />);
-        expect(wrapper.text()).toBe("Selected 4/2 on {map}");
+        const wrapper = render(<SelectedFeatureCount summary={summary} locale="en" format="Selected {total}/{layerCount} on {map}" />);
+        const el = await wrapper.findByText("Selected 4/2 on {map}");
+        expect(el).not.toBeUndefined();
     });
     it("Empty selection with custom format still results in no text", () => {
         const set: FeatureSet = {
             Layer: []
         };
         const summary = countSelection(set);
-        const wrapper = shallow(<SelectedFeatureCount summary={summary} format="Selected {total}/{layerCount}" />);
-        expect(wrapper.text()).toBe("");
+        const { container } = render(<SelectedFeatureCount summary={summary} format="Selected {total}/{layerCount}" />);
+        const el = container.querySelectorAll(".component-selected-feature-count")[0];
+        expect(el.innerHTML).toBe("");
     });
 });

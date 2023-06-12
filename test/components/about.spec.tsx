@@ -1,25 +1,25 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "@testing-library/react";
 import { About } from "../../src/components/about";
 
 describe("components/about", () => {
     it("renders a <h4> title", () => {
-        const wrapper = shallow(<About />);
-        const h4 = wrapper.find("h4");
+        const { container } = render(<About />);
+        const h4 = container.querySelectorAll("h4");
         expect(h4).toHaveLength(1);
-        expect(h4.text()).toBe("mapguide-react-layout");
+        expect(h4[0].innerHTML).toBe("mapguide-react-layout");
     });
     it("renders a <hr>", () => {
-        const wrapper = shallow(<About />);
-        const hr = wrapper.find("hr");
+        const { container } = render(<About />);
+        const hr = container.querySelectorAll("hr");
         expect(hr).toHaveLength(2);
     });
     it("renders 3 <a> links", () => {
-        const wrapper = shallow(<About />);
-        const anchors = wrapper.find("a");
+        const { container } = render(<About />);
+        const anchors = container.querySelectorAll("a");
         expect(anchors).toHaveLength(3);
-        expect(anchors.at(0).text()).toBe("GitHub");
-        expect(anchors.at(1).text()).toBe("Issues");
-        expect(anchors.at(2).text()).toBe("Fugue icon set by Yusuke Kamiyamane");
+        expect(anchors[0].innerHTML).toBe("GitHub");
+        expect(anchors[1].innerHTML).toBe("Issues");
+        expect(anchors[2].innerHTML).toBe("Fugue icon set by Yusuke Kamiyamane");
     });
 });

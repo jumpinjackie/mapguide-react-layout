@@ -1,9 +1,5 @@
-import queryString from "qs";
 import type { IInvokeUrlCommandParameter } from "../api/common";
 import { strIsNullOrEmpty } from './string';
-const parse = require("url-parse");
-
-const DEFAULT_PARSE_OPTIONS = { ignoreQueryPrefix: true };
 
 /**
  * Indicates if the given arrays are equal
@@ -31,19 +27,22 @@ function arraysEqual(a: string[] | null, b: string[] | null): boolean {
 /**
  * Indicates if the given sets of parameterse are the same
  *
- * @param {*} params1
- * @param {*} params2
+ * @param {URLSearchParams} params1
+ * @param {URLSearchParams} params2
  * @returns {boolean}
  */
-function areParamsEqual(params1: any, params2: any): boolean {
+function areParamsEqual(params1: URLSearchParams, params2: URLSearchParams): boolean {
     //HACK: locale is an optional part of the mapname/session/locale triplet
     //For the purpose of the same url test, the presence (or lack thereof) of
     //this parameter should not break the url equality test
-    const keys1 = Object.keys(params1).filter(k => k.toLowerCase() != "locale").sort();
-    const keys2 = Object.keys(params2).filter(k => k.toLowerCase() != "locale").sort();
-    if (arraysEqual(keys1, keys2)) {
+    const keys1 = Array.from(params1.keys());
+    const keys2 = Array.from(params2.keys());
+    const nKeys1 = keys1.filter(k => k.toLowerCase() != "locale").sort(); // Object.keys(params1).filter(k => k.toLowerCase() != "locale").sort();
+    const nKeys2 = keys2.filter(k => k.toLowerCase() != "locale").sort(); // Object.keys(params2).filter(k => k.toLowerCase() != "locale").sort();
+
+    if (arraysEqual(nKeys1, nKeys2)) {
         for (const key of keys1) {
-            if (params1[key] != params2[key]) {
+            if (params1.get(key) != params2.get(key)) {
                 return false;
             }
         }
@@ -51,6 +50,8 @@ function areParamsEqual(params1: any, params2: any): boolean {
     }
     return false;
 }
+
+const FAKE_BASE = "https://fake-host";
 
 /**
  * Indicates if the given URLs are the same
@@ -61,14 +62,22 @@ function areParamsEqual(params1: any, params2: any): boolean {
  * @returns {boolean}
  */
 export function areUrlsSame(url1: string, url2: string): boolean {
-    const parsed1 = parse(url1);
-    const parsed2 = parse(url2);
-    const params1 = queryString.parse(parsed1.query, DEFAULT_PARSE_OPTIONS);
-    const params2 = queryString.parse(parsed2.query, DEFAULT_PARSE_OPTIONS);
+    let parsed1: URL;
+    let parsed2: URL;
+    try {
+        parsed1 = new URL(url1);
+    } catch (e) { //HACK: Workaround lack of relative URL support (https://github.com/whatwg/url/issues/531)
+        parsed1 = new URL(url1, FAKE_BASE);
+    }
+    try {
+        parsed2 = new URL(url2);
+    } catch (e) { //HACK: Workaround lack of relative URL support (https://github.com/whatwg/url/issues/531)
+        parsed2 = new URL(url2, FAKE_BASE);
+    }
+    const params1 = new URLSearchParams(parsed1.search);
+    const params2 = new URLSearchParams(parsed2.search);
 
     const same = parsed1.protocol == parsed2.protocol
-        && parsed1.slashes == parsed2.slashes
-        && parsed1.auth == parsed2.auth
         && parsed1.username == parsed2.username
         && parsed1.password == parsed2.password
         && parsed1.host == parsed2.host
@@ -104,6 +113,16 @@ export function isComponentUri(uri: string): boolean {
     return uri.indexOf("component://") >= 0;
 }
 
+function searchParamsToObject(p: URLSearchParams) {
+    const o: Record<string, string | string[]> = {};
+    const keys = Array.from(p.keys());
+    for (const k of keys) {
+        const value = p.getAll(k);
+        o[k] = value.length === 1 ? value[0] : value;
+    }
+    return o;
+}
+
 /**
  * Parses the given component URI. If it not a valid component URI returns undefined
  * 
@@ -115,7 +134,7 @@ export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
     if (isComponentUri(uri)) {
         const qi = uri.lastIndexOf("?");
         const name = qi < 0 ? uri.substring(12) : uri.substring(12, qi);
-        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi), DEFAULT_PARSE_OPTIONS);
+        const props = qi < 0 ? {} : searchParamsToObject(new URLSearchParams(uri.substring(qi)));
         return {
             name,
             props
@@ -141,7 +160,7 @@ export function ensureParameters(url: string, mapName: string | undefined, sessi
         return url;
     }
     const parsed = parseUrl(url);
-    const params: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    const params: any = parsed.query ?? {};
     let bNeedMapName = true;
     let bNeedSession = true;
     let bNeedLocale = true;
@@ -224,7 +243,7 @@ export function parseUrl(url: string): IParsedUrl {
     //return queryString.parseUrl(url);
     const qi = url.lastIndexOf("?");
     const parsedUrl = qi < 0 ? url : url.substring(0, qi);
-    const query = qi < 0 ? {} : queryString.parse(url.substring(qi), DEFAULT_PARSE_OPTIONS);
+    const query = qi < 0 ? {} : searchParamsToObject(new URLSearchParams(url.substring(qi)));
     return {
         url: parsedUrl,
         query
@@ -239,7 +258,17 @@ export function parseUrl(url: string): IParsedUrl {
  * @returns {string} The query string fragment
  */
 export function stringifyQuery(parameters: any): string {
-    return queryString.stringify(parameters);
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(parameters)) {
+        if (Array.isArray(v)) {
+            for (const vv of v) {
+                p.append(k, `${vv}`);
+            }
+        } else {
+            p.append(k, `${v}`);
+        }
+    }
+    return p.toString();
 }
 
 /**
@@ -254,10 +283,10 @@ export function stringifyQuery(parameters: any): string {
  * @since 0.12
  */
 export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false) {
-    const parsed = parse(url);
+    const parsed = new URL(url);
     let currentParams: any;
     if (!bDiscardExistingParams) {
-        currentParams = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+        currentParams = searchParamsToObject(parsed.searchParams);
     } else {
         currentParams = {};
     }
@@ -286,7 +315,7 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
         currentParams = params2;
     }
 
-    parsed.query = queryString.stringify(currentParams);
+    parsed.search = stringifyQuery(currentParams);
     const result = parsed.toString();
 
     if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
@@ -303,7 +332,7 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
  * @since 0.13
  */
 export function parseUrlParameters(url: string): any {
-    const parsed = parse(url);
-    const currentParams: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    const parsed = new URL(url);
+    const currentParams: any = searchParamsToObject(parsed.searchParams);
     return currentParams;
 }

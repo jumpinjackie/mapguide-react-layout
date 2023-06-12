@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { fireEvent, render } from "@testing-library/react";
 import { IItem, FlyoutMenuChildItem } from "../../src/components/toolbar";
 
 describe("components/toolbar", () => {
@@ -9,17 +9,18 @@ describe("components/toolbar", () => {
                 label: "Foo",
                 tooltip: "Bar"
             };
-            const wrapper = mount(<FlyoutMenuChildItem item={item} />);
-            const li = wrapper.find("li");
+            const { getByText, container } = render(<FlyoutMenuChildItem item={item} />);
+            const li = container.querySelectorAll("li");
             expect(li).toHaveLength(1);
-            expect(li.at(0).hasClass("noselect")).toBe(true);
-            expect(li.at(0).hasClass("flyout-menu-child-item")).toBe(true);
-            expect((li.at(0).props() as any).title).toBe("Bar");
-            const div = wrapper.find("div");
+            expect(li[0].classList.contains("noselect")).toBe(true);
+            expect(li[0].classList.contains("flyout-menu-child-item")).toBe(true);
+            expect(li[0].getAttribute("title")).toBe("Bar");
+            const div = container.querySelectorAll("div");
             expect(div).toHaveLength(1);
-            const img = wrapper.find("img");
+            const img = container.querySelectorAll("img");
             expect(img).toHaveLength(0); //Because we have no icon settings
-            expect(div.text().trim()).toBe("Foo");
+            const res = getByText("Foo");
+            expect(res).not.toBeUndefined();
         });
         it("renders item w/ dynamic tooltip", () => {
             let tt = "Bar";
@@ -27,28 +28,31 @@ describe("components/toolbar", () => {
                 label: "Foo",
                 tooltip: () => tt
             };
-            let wrapper = mount(<FlyoutMenuChildItem item={item} />);
-            let li = wrapper.find("li");
-            expect(li).toHaveLength(1);
-            expect((li.at(0).props() as any).title).toBe("Bar");
-
+            {
+                const { container } = render(<FlyoutMenuChildItem item={item} />);
+                const li = container.querySelectorAll("li");
+                expect(li).toHaveLength(1);
+                expect(li[0].getAttribute("title")).toBe("Bar");
+            }
             tt = "Bazz";
-            wrapper = mount(<FlyoutMenuChildItem item={item} />);
-            li = wrapper.find("li");
-            expect(li).toHaveLength(1);
-            expect((li.at(0).props() as any).title).toBe("Bazz");
+            {
+                const { container } = render(<FlyoutMenuChildItem item={item} />);
+                const li = container.querySelectorAll("li");
+                expect(li).toHaveLength(1);
+                expect(li[0].getAttribute("title")).toBe("Bazz");
+            }
         });
         it("renders select item w/ appropriate styles", () => {
             const item: IItem = {
                 label: "Foo",
                 selected: true
             };
-            let wrapper = mount(<FlyoutMenuChildItem item={item} />);
-            let li = wrapper.find("li");
+            const { container } = render(<FlyoutMenuChildItem item={item} />);
+            const li = container.querySelectorAll("li");
             expect(li).toHaveLength(1);
-            let div = li.find("div");
+            const div = li[0].getElementsByTagName("div");
             expect(div).toHaveLength(1);
-            const style = div.at(0).props().style;
+            const style = div[0].style;
             expect(style).not.toBeNull();
             if (style) {
                 expect(style.cursor).toBe("pointer");
@@ -66,10 +70,10 @@ describe("components/toolbar", () => {
                 enabled: false,
                 invoke: invoker
             };
-            let wrapper = mount(<FlyoutMenuChildItem item={item} onInvoked={handler} />);
-            let li = wrapper.find("li");
+            const { container } = render(<FlyoutMenuChildItem item={item} onInvoked={handler} />);
+            const li = container.querySelectorAll("li");
             expect(li).toHaveLength(1);
-            li.simulate("click");
+            fireEvent.click(li[0]);
             expect(handler.mock.calls).toHaveLength(0);
             expect(invoker.mock.calls).toHaveLength(0);
         });
@@ -80,10 +84,10 @@ describe("components/toolbar", () => {
                 enabled: true,
                 invoke: invoker
             };
-            let wrapper = mount(<FlyoutMenuChildItem item={item} onInvoked={handler} />);
-            let li = wrapper.find("li");
+            const { container } = render(<FlyoutMenuChildItem item={item} onInvoked={handler} />);
+            const li = container.querySelectorAll("li");
             expect(li).toHaveLength(1);
-            li.simulate("click");
+            fireEvent.click(li[0]);
             expect(handler.mock.calls).toHaveLength(1);
             expect(invoker.mock.calls).toHaveLength(1);
         });

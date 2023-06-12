@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render, fireEvent } from "@testing-library/react";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../../src/components/accordion";
 
 const PANEL_SPEC: IAccordionPanelSpec[] = [
@@ -35,10 +35,10 @@ const PANEL_SPEC: IAccordionPanelSpec[] = [
 describe("components/accordion", () => {
     it("clicking collapsed panel expands it and collapses others", () => {
         const handler = jest.fn();
-        const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} onActivePanelChanged={handler} />);
-        const midPanel = wrapper.find(".component-accordion-panel-header").at(1);
-        expect(midPanel).not.toBeNull();
-        midPanel.simulate("click");
+        const wrapper = render(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} onActivePanelChanged={handler} />);
+        const midPanel = wrapper.container.querySelectorAll(".component-accordion-panel-header")[1];
+        expect(midPanel).not.toBeUndefined();
+        fireEvent.click(midPanel);
         //1 call
         expect(handler.mock.calls.length).toBe(1);
         //1 argument
@@ -48,10 +48,10 @@ describe("components/accordion", () => {
     });
     it("clicking expanded panel does not collapse it", () => {
         const handler = jest.fn();
-        const wrapper = mount(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
-        const lastPanel = wrapper.find(".component-accordion-panel-header").at(2);
-        expect(lastPanel).not.toBeNull();
-        lastPanel.simulate("click");
+        const wrapper = render(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
+        const lastPanel = wrapper.container.querySelectorAll(".component-accordion-panel-header")[2];
+        expect(lastPanel).not.toBeUndefined();
+        fireEvent.click(lastPanel);
         //Expect handler to not be called as the panel clicked is already expanded
         expect(handler.mock.calls.length).toBe(0);
     });

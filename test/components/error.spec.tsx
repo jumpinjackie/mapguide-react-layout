@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "@testing-library/react";
 import { MgError } from "../../src/api/error";
 import { Error } from "../../src/components/error";
 
@@ -20,16 +20,20 @@ function captureError() {
 describe("components/error", () => {
     it("renders a MgError with stack", () => {
         const err = captureError();
-        const wrapper = render(<Error error={err} />);
-        expect(wrapper.find(".error-header")).toHaveLength(1);
-        expect(wrapper.find(".error-header").text()).toBe(err.message);
-        expect(wrapper.find(".error-stack")).toHaveLength(1);
+        const { container } = render(<Error error={err} />);
+        const head = container.querySelectorAll(".error-header");
+        expect(head).toHaveLength(1);
+        expect(head[0].innerHTML).toBe(err.message);
+        const stack = container.querySelectorAll(".error-stack");
+        expect(stack).toHaveLength(1);
     });
     it("renders a string without a stack", () => {
         const err = "Uh oh!";
-        const wrapper = render(<Error error={err} />);
-        expect(wrapper.find(".error-header")).toHaveLength(1);
-        expect(wrapper.find(".error-header").text()).toBe(err);
-        expect(wrapper.find(".error-stack")).toHaveLength(0);
+        const { container } = render(<Error error={err} />);
+        const head = container.querySelectorAll(".error-header");
+        expect(head).toHaveLength(1);
+        expect(head[0].innerHTML).toBe(err);
+        const stack = container.querySelectorAll(".error-stack");
+        expect(stack).toHaveLength(0);
     });
 });

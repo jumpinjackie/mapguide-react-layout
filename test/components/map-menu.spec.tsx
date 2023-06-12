@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { render } from "@testing-library/react";
 import { IMapMenuEntry } from "../../src/api/common";
 import { MapMenu } from "../../src/components/map-menu";
 
@@ -16,29 +16,25 @@ const EXTERNAL_LAYERS: IMapMenuEntry[] = [
 
 describe("components/map-menu", () => {
     it("renders checked radio for selected map", () => {
-        const wrapper = mount(<MapMenu selectedMap={"Foo"} maps={EXTERNAL_LAYERS} locale="en" />);
-        const radFoo = wrapper.find("input.map-menu-option").at(0);
+        const { container } = render(<MapMenu selectedMap={"Foo"} maps={EXTERNAL_LAYERS} locale="en" />);
+        const radFoo = container.querySelectorAll("input.map-menu-option")[0];
         expect(radFoo).not.toBeNull();
-        const radFooProps = radFoo.props();
-        expect(radFooProps.value).toBe("Foo");
-        expect(radFooProps.checked).toBe(true);
-        const radBar = wrapper.find("input.map-menu-option").at(1);
+        expect((radFoo as HTMLInputElement).value).toBe("Foo");
+        expect((radFoo as HTMLInputElement).checked).toBe(true);
+        const radBar = container.querySelectorAll("input.map-menu-option")[1];
         expect(radBar).not.toBeNull();
-        const radBarProps = radBar.props();
-        expect(radBarProps.value).toBe("Bar");
-        expect(radBarProps.checked).toBe(false);
+        expect((radBar as HTMLInputElement).value).toBe("Bar");
+        expect((radBar as HTMLInputElement).checked).toBe(false);
     });
     it("renders no checked radios for bogus selected map", () => {
-        const wrapper = mount(<MapMenu selectedMap={"Baz"} maps={EXTERNAL_LAYERS} locale="en" />);
-        const radFoo = wrapper.find("input.map-menu-option").at(0);
+        const { container } = render(<MapMenu selectedMap={"Baz"} maps={EXTERNAL_LAYERS} locale="en" />);
+        const radFoo = container.querySelectorAll("input.map-menu-option")[0];
         expect(radFoo).not.toBeNull();
-        const radFooProps = radFoo.props();
-        expect(radFooProps.value).toBe("Foo");
-        expect(radFooProps.checked).toBe(false);
-        const radBar = wrapper.find("input.map-menu-option").at(1);
+        expect((radFoo as HTMLInputElement).value).toBe("Foo");
+        expect((radFoo as HTMLInputElement).checked).toBe(false);
+        const radBar = container.querySelectorAll("input.map-menu-option")[1];
         expect(radBar).not.toBeNull();
-        const radBarProps = radBar.props();
-        expect(radBarProps.value).toBe("Bar");
-        expect(radBarProps.checked).toBe(false);
+        expect((radBar as HTMLInputElement).value).toBe("Bar");
+        expect((radBar as HTMLInputElement).checked).toBe(false);
     });
 });

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { shallow, mount, render } from "enzyme";
+import { fireEvent, render } from "@testing-library/react";
 import { ScaleDisplay } from "../../src/components/scale-display";
 import {
     IMapView
@@ -25,12 +25,12 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
-        const sel = wrapper.find("select");
-        const num = wrapper.find("input");
+        const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
+        const sel = container.getElementsByTagName("select");
+        const num = container.getElementsByTagName("input");
         expect(sel).toHaveLength(1);
         expect(num).toHaveLength(0);
-        const opts = sel.find("option");
+        const opts = sel[0].getElementsByTagName("option");
         expect(opts).toHaveLength(FINITE_SCALES.length);
     });
     it("Renders a numeric textbox if no finite scale list on map", () => {
@@ -40,9 +40,9 @@ describe("containers/scale-display", () => {
             scale: 2000
         };
         const func = jest.fn();
-        const wrapper = mount(<ScaleDisplay locale="en" view={view} onScaleChanged={func} />);
-        const sel = wrapper.find("select");
-        const num = wrapper.find("input");
+        const { container } = render(<ScaleDisplay locale="en" view={view} onScaleChanged={func} />);
+        const sel = container.getElementsByTagName("select");
+        const num = container.getElementsByTagName("input");
         expect(sel).toHaveLength(0);
         expect(num).toHaveLength(1);
     });
@@ -53,10 +53,10 @@ describe("containers/scale-display", () => {
             scale: 2000
         };
         const func = jest.fn();
-        const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
-        const sel = wrapper.find("select");
+        const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
+        const sel = container.getElementsByTagName("select");
         expect(sel).toHaveLength(1);
-        sel.simulate("change", { target: { value: "180.375" } });
+        fireEvent.change(sel[0], { target: { value: "180.375" } });
         expect(func.mock.calls).toHaveLength(1);
         expect(func.mock.calls[0]).toHaveLength(1);
         expect(func.mock.calls[0][0]).toBe(180.375);
@@ -68,10 +68,10 @@ describe("containers/scale-display", () => {
             scale: 2000
         };
         const func = jest.fn();
-        const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
-        const sel = wrapper.find("select");
+        const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
+        const sel = container.querySelectorAll("select");
         expect(sel).toHaveLength(1);
-        sel.simulate("change", { target: { value: "900" } });
+        fireEvent.change(sel[0], { target: { value: "900" } });
         expect(func.mock.calls).toHaveLength(1);
         expect(func.mock.calls[0]).toHaveLength(1);
         expect(func.mock.calls[0][0]).toBe(900);
@@ -83,8 +83,8 @@ describe("containers/scale-display", () => {
             scale: 600.000000003
         };
         const func = jest.fn();
-        const wrapper = mount(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
-        const sel = wrapper.find("select");
-        expect(sel.props().value).toBe(600);
+        const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
+        const sel = container.querySelectorAll("select");
+        expect((sel[0] as HTMLSelectElement).value).toBe("600");
     });
 });

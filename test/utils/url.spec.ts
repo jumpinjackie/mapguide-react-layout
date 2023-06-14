@@ -1,4 +1,4 @@
-import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters, parseUrl, stringifyQuery } from "../../src/utils/url";
+import { areUrlsSame, parseComponentUri, isComponentUri, ensureParameters, appendParameters, parseUrl } from "../../src/utils/url";
 
 describe("utils/url", () => {
     describe("areUrlsSame", () => {
@@ -118,14 +118,6 @@ describe("utils/url", () => {
                 expect(parsed.props.name[0]).toBe("Bar");
                 expect(parsed.props.name[1]).toBe("Baz");
             }
-        });
-    });
-    describe("stringifyQuery", () => {
-        it("stringifies query strings", () => {
-            const str1 = stringifyQuery({ a: "b", c: "d" });
-            expect(str1).toBe("a=b&c=d");
-            const str2 = stringifyQuery({ a: "b", c: ["d", "e"] });
-            expect(str2).toBe("a=b&c=d&c=e");
         });
     });
 });

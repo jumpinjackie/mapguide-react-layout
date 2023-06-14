@@ -40,13 +40,17 @@ const debouncedReplaceState = debounce((state, _, url) => window.history.replace
  * @export
  * @param {IAppUrlState} state
  * @param {*} [extraState] Any extra state to include into the main URL
- * @rem
+ * @param {string[] | undefined} ignoreProps Do not write the following properties to the URL
+ * 
  * @since 0.13
  * @since 0.14 - New optional extraState argument
+ * @since 0.14.9 - New optional ignoreProps argument
  */
-export function updateUrl(state: IAppUrlState, extraState?: any): void {
+export function updateUrl(state: IAppUrlState, extraState?: any, ignoreProps?: string[] | undefined): void {
     const st: any = { ...extraState };
     for (const k in state) {
+        if (ignoreProps && ignoreProps.indexOf(k) >= 0)
+            continue;
         const val: any = (state as any)[k];
         switch (k) {
             case "ft":
@@ -69,7 +73,7 @@ export function updateUrl(state: IAppUrlState, extraState?: any): void {
                 break;
         }
     }
-    const url = appendParameters(window.location.href, st, true, false);
+    const url = appendParameters(window.location.href, st, true, false, ignoreProps != null);
     //window.history.replaceState(st, "", url);
     debouncedReplaceState(st, "", url);
 }

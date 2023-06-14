@@ -318,7 +318,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     externalBaseLayers: externalBaseLayers,
                     session: urlSession ?? mapguide?.session,
                     onInit: onInit,
-                    layout: typeof(this.props.layout) == 'string' ? this.props.layout : undefined,
+                    layout: typeof (this.props.layout) == 'string' ? this.props.layout : undefined,
                     appSettings: appSettings
                 },
                 ...(ftArgs ?? {}),
@@ -340,7 +340,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             locale: curUrlState.locale ?? this.props.locale,
             session: curUrlState.session ?? this.props.mapguide?.session
         };
-        if (typeof(this.props.resourceId) == 'string') {
+        if (typeof (this.props.resourceId) == 'string') {
             nextUrlState.resource = curUrlState.resource ?? this.props.resourceId
         }
         if (nextProps.featureTooltipsEnabled != prevProps.featureTooltipsEnabled) {
@@ -401,7 +401,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             }
         }
         if (!areStatesEqual(curUrlState, nextUrlState))
-            updateUrl(nextUrlState);
+            updateUrl(nextUrlState, undefined, nextProps.urlPropsIgnore);
         //else
         //    console.log("Skip pointless url state update");
     }

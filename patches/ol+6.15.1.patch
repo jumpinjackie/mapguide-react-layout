@@ -1,0 +1,57 @@
+diff --git a/node_modules/ol/source/ImageMapGuide.js b/node_modules/ol/source/ImageMapGuide.js
+index 7bdb953..babd415 100644
+--- a/node_modules/ol/source/ImageMapGuide.js
++++ b/node_modules/ol/source/ImageMapGuide.js
+@@ -167,8 +167,12 @@ var ImageMapGuide = /** @class */ (function (_super) {
+         var size = [width * pixelRatio, height * pixelRatio];
+         if (this.url_ !== undefined) {
+             var imageUrl = this.getUrl(this.url_, this.params_, extent, size, projection);
+-            image = new ImageWrapper(extent, resolution, pixelRatio, imageUrl, this.crossOrigin_, this.imageLoadFunction_);
+-            image.addEventListener(EventType.CHANGE, this.handleImageChange.bind(this));
++            if (imageUrl == null) {
++                image = null;
++            } else {
++                image = new ImageWrapper(extent, resolution, pixelRatio, imageUrl, this.crossOrigin_, this.imageLoadFunction_);
++                image.addEventListener(EventType.CHANGE, this.handleImageChange.bind(this));
++            }
+         }
+         else {
+             image = null;
+@@ -205,6 +209,26 @@ var ImageMapGuide = /** @class */ (function (_super) {
+     ImageMapGuide.prototype.getUrl = function (baseUrl, params, extent, size, projection) {
+         var scale = getScale(extent, size, this.metersPerUnit_, this.displayDpi_);
+         var center = getCenter(extent);
++        var w = Math.round(size[0]);
++        var h = Math.round(size[1]);
++        if (this.useOverlay_) {
++            if (w <= 0) {
++                console.warn("Abort generating invalid GETDYNAMICMAPOVERLAYIMAGE url, width is 0");
++                return null;
++            }
++            if (h <= 0) {
++                console.warn("Abort generating invalid GETDYNAMICMAPOVERLAYIMAGE url, height is 0");
++                return null;
++            }
++            if (this.displayDpi_ <= 0) {
++                console.warn("Abort generating invalid GETDYNAMICMAPOVERLAYIMAGE url, this.displayDpi_ is 0");
++                return null;
++            }
++            if (scale <= 0) {
++                console.warn("Abort generating invalid GETDYNAMICMAPOVERLAYIMAGE url, scale is 0 computed from extent", extent, "size", size, "metersPerUnit_", this.metersPerUnit_, "displayDpi_", this.displayDpi_);
++                return null;
++            }
++        }
+         var baseParams = {
+             'OPERATION': this.useOverlay_
+                 ? 'GETDYNAMICMAPOVERLAYIMAGE'
+@@ -214,8 +238,8 @@ var ImageMapGuide = /** @class */ (function (_super) {
+             'CLIENTAGENT': 'ol/source/ImageMapGuide source',
+             'CLIP': '1',
+             'SETDISPLAYDPI': this.displayDpi_,
+-            'SETDISPLAYWIDTH': Math.round(size[0]),
+-            'SETDISPLAYHEIGHT': Math.round(size[1]),
++            'SETDISPLAYWIDTH': w,
++            'SETDISPLAYHEIGHT': h,
+             'SETVIEWSCALE': scale,
+             'SETVIEWCENTERX': center[0],
+             'SETVIEWCENTERY': center[1],

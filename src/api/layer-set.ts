@@ -732,7 +732,10 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             // really low quality map images. For such devices, the DPI should be some
             // function of the device pixel ratio reported. As this value can be fractional
             // round it down to the nearest integer
-            displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96
+            //
+            // UPDATE 18/07/2023: But cap it to a minimum of 1, otherwise a sub-1 ratio floors to 0, making the
+            // final DPI 0, which breaks everything
+            displayDpi: Math.max(Math.floor(olHas.DEVICE_PIXEL_RATIO), 1) * 96
         });
         overlaySource.setAttributions(tr("PBMG", locale ?? DEFAULT_LOCALE));
         const layer = new ImageLayer({

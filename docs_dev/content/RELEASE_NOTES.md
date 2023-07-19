@@ -1,3 +1,12 @@
+0.14.9
+======
+
+ * [#1418](https://github.com/jumpinjackie/mapguide-react-layout/issues/1418): Internet Explorer is no longer supported. All polyfills to support this browser have been removed.
+ * [#1441](https://github.com/jumpinjackie/mapguide-react-layout/issues/1441): New viewer mount option to add extra HTML content alongside a layer or group legend item.
+ * [#1467](https://github.com/jumpinjackie/mapguide-react-layout/issues/1467): Heavy component refactoring to avoid excessive updates and re-renders.
+ * [#1465](https://github.com/jumpinjackie/mapguide-react-layout/issues/1465): Fix `urlPropsIgnore` not considered when updating URL state
+ * [#1468](https://github.com/jumpinjackie/mapguide-react-layout/issues/1468): Fix 0 display DPI when browser zoom is below 100%
+
 0.14.8
 ======
 

@@ -9,10 +9,15 @@ mapguide-react-layout also offers an [API compatibility layer](APICOMPAT.md) whi
 
 Click any of the links below for the API documentation for your specific version
 
-# 0.14.8 - latest
+# 0.14.9 - latest
 
  * [Global script bundle](API_BROWSER.md)
  * [NPM module](https://jumpinjackie.github.io/mapguide-react-layout/latest/apidoc_npm/index.html)
+
+# 0.14.8
+
+ * [Global script bundle](API_BROWSER.md)
+ * [NPM module](https://jumpinjackie.github.io/mapguide-react-layout/0.14.8/apidoc_npm/index.html)
 
 # 0.14.0
 

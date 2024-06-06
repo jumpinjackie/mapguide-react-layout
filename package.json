@@ -79,7 +79,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
     "stickybits": "3.7.11",
-    "tslib": "^2.6.2",
+    "tslib": "^2.6.3",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {

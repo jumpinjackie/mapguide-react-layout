@@ -55,7 +55,7 @@
   "browserslist": "IE >= 10",
   "dependencies": {
     "@blueprintjs/core": "^3.53.0",
-    "colorbrewer": "^1.5.7",
+    "colorbrewer": "^1.5.9",
     "dompurify": "^2.5.8",
     "expr-eval": "2.0.2",
     "geojson-vt": "^3.2.1",

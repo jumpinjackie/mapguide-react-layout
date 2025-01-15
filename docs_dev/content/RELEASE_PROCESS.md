@@ -7,6 +7,7 @@ Release Process
    * `docs_dev/content/API_NPM.md` (In the **Introduction** section). You may skip this part if doing a point (bugfix) release.
 2. Write up new features/fixes in `docs_dev/content/RELEASE_NOTES.md`
 3. Generate API docs and copy output to a new versioned subdirectory in the `gh-pages` branch
+   3.1. Rename `latest` directory to the previous version before doing this
 4. Regenerate static site content and overwrite existing site html in the `gh-pages` branch
    4.1. Ensure the following static site content reside in the versioned subdirectory as well:
      * `api_browser.html`

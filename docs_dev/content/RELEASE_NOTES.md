@@ -1,3 +1,9 @@
+0.14.10
+=======
+
+ * [#1534](https://github.com/jumpinjackie/mapguide-react-layout/issues/1534): Replaced `epsg.io` with `spatialreference.org` for projection lookups by EPSG code
+ * [#1436](https://github.com/jumpinjackie/mapguide-react-layout/issues/1436): Update stamen tile layer URLs to point to Stadia Maps using a `XYZ` tile source. A Stadia Maps API key is now required for such layers. This API key is expected to be defined in a top-level `StadiaMaps` extension property of the Flexible Layout. Sign-up for an API key at https://stadiamaps.com/
+
 0.14.9
 ======
 

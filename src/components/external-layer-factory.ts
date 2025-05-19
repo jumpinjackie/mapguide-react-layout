@@ -452,12 +452,22 @@ interface OLSourceCtor {
     new(options?: any): olSource;
 }
 
+function convertStamenLayerName(name: string) {
+    switch (name) {
+        case 'toner-lite':
+            return 'toner_lite';
+        default:
+            return name;
+    }
+}
+
 /**
  * Creates an OpenLayers source based on the given external base layer definition
  *
  * @export
  * @param {IExternalBaseLayer} layer
  * @returns
+ * @since 0.14.10 - Stamen now creates a XYZ layer and a StadiaMaps API key is required
  */
 export function createExternalSource(layer: IExternalBaseLayer): olSource {
     let sourceCtor: OLSourceCtor;
@@ -471,9 +481,20 @@ export function createExternalSource(layer: IExternalBaseLayer): olSource {
         case "OSM":
             sourceCtor = OSM;
             break;
+        case "StadiaMaps":
+            //TODO: This XYZ tile layer approach is a workaround until we upgrade OpenLayers to latest
+            return new XYZ({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/" + layer.options.layer + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "Stamen":
-            sourceCtor = Stamen;
-            break;
+            //TODO: Re-activate original code path when we update OpenLayers to latest. This XYZ tile layer approach
+            //is a workaround until then
+            //sourceCtor = Stamen;
+            return new XYZ({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/stamen_" + convertStamenLayerName(layer.options.layer) + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "BingMaps":
             sourceCtor = BingMaps;
             break;

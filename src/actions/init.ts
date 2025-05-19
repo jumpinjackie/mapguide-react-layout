@@ -210,6 +210,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 });
             }
             break;
+        case "StadiaMaps":
         case "Stamen":
             {
                 //HACK: De-arrayification of arbitrary extension elements
@@ -217,13 +218,25 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                 const { name, type } = map.Extension.Options;
                 const sName = Array.isArray(name) ? name[0] : name;
                 const sType = Array.isArray(type) ? type[0] : type;
-                externalBaseLayers.push({
-                    name: sName,
-                    kind: "Stamen",
-                    options: {
-                        layer: sType
-                    }
-                });
+
+                const options: any = {
+                    layer: sType
+                };
+                let bAdd = true;
+                if (appDef.Extension.StadiaMapsKey) {
+                    options.key = appDef.Extension.StadiaMapsKey;
+                }
+                else {
+                    bAdd = false;
+                    warnings.push(tr("INIT_WARNING_STADIAMAPS_API_KEY_REQD", config.locale));
+                }
+                if (bAdd) {
+                    externalBaseLayers.push({
+                        name: sName,
+                        kind: map.Type,
+                        options: options
+                    });
+                }
             }
             break;
         case "UTFGrid":

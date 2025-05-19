@@ -272,7 +272,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
-                    {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
+                    {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://spatialreference.org/" target="_blank">EPSG:</a>} inline>
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>

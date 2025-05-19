@@ -9,7 +9,7 @@ import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGr
 import { ICreateRuntimeMapOptions, IDescribeRuntimeMapOptions, RuntimeMapFeatureFlags } from '../api/request-builder';
 import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
-import { resolveProjectionFromEpsgIoAsync } from '../api/registry/projections';
+import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
 import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
@@ -297,7 +297,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 fetchEpsgs.push({ epsg: e, mapDef: "" });
             }
         }
-        const epsgs = await Promise.all(fetchEpsgs.filter(fe => !strIsNullOrEmpty(fe.epsg)).map(f => resolveProjectionFromEpsgIoAsync(f.epsg, locale, f.mapDef)));
+        const epsgs = await Promise.all(fetchEpsgs.filter(fe => !strIsNullOrEmpty(fe.epsg)).map(f => resolveProjectionFromEpsgCodeAsync(f.epsg, locale, f.mapDef)));
 
         //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
         //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra

@@ -82,10 +82,10 @@ Since the `0.14.3` release, the viewer has basic support for MapGuide Map Defini
 
  * Viewer will only accept Map Definitions in coordinate systems that have a corresponding EPSG code
 
- * For maps with a projection that is not known to proj4js, the viewer will automatically attempt to find a matching definition from https://epsg.io
+ * For maps with a projection that is not known to proj4js, the viewer will automatically attempt to find a matching definition from https://spatialreference.org
    * If you want to avoid this automatic external request, register the projection with proj4js before the viewer is mounted
       * Example: `MapGuide.Externals.proj4.defs("EPSG:28355","+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");`
-      * You can find proj4js definitions at [epsg.io](https://epsg.io)
+      * You can find proj4js definitions at [spatialreference.org](const defn = await r.text();)
       * You will currently need to modify the respective template HTML file to include the projection
    * Alternatively, as of 0.14.8 you can register custom projections without invasive viewer HTML modifications by specifying the following top-level extension element in your appdef to auto-register any custom projections
 

@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { strEndsWith, strIsNullOrEmpty, extractPlaceholderTokens } from '../../src/utils/string';
 
 describe("utils/string", () => {
@@ -24,7 +25,7 @@ describe("utils/string", () => {
             expect(strEndsWith("", "")).toBe(true);
         });
     });
-    describe("extractPlaceholderTokens", () => {
+    it("extractPlaceholderTokens", () => {
         const tokens = extractPlaceholderTokens("http://foo.com/bar/{BAR_ID}/{WHAT}", "{", "}");
         expect(tokens).toHaveLength(2);
         expect(tokens).toContain("BAR_ID");

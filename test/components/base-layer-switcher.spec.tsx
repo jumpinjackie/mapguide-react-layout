@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { IExternalBaseLayer } from "../../src/api/common";
 import { BaseLayerSwitcher } from "../../src/components/base-layer-switcher";
@@ -6,7 +7,7 @@ import { STR_EMPTY } from "../../src/utils/string";
 
 describe("components/base-layer-switcher", () => {
     it("Renders only NONE on empty base layer array", () => {
-        const onBaseLayerChanged = jest.fn();
+        const onBaseLayerChanged = vi.fn();
         const layers: IExternalBaseLayer[] = [];
         const { container } = render(<BaseLayerSwitcher externalBaseLayers={layers} onBaseLayerChanged={onBaseLayerChanged} locale="en" />);
         const cnt = container.querySelectorAll(".base-layer-switcher-item-container");
@@ -17,7 +18,7 @@ describe("components/base-layer-switcher", () => {
         expect((radio[0] as HTMLInputElement).checked).toBe(true);
     });
     it("Renders items on non-empty base layer array", () => {
-        const onBaseLayerChanged = jest.fn();
+        const onBaseLayerChanged = vi.fn();
         const layers: IExternalBaseLayer[] = [
             { name: "OpenStreetMap", kind: "OSM",  visible: true },
             { name: "Stamen - Toner", kind: "Stamen" }
@@ -35,7 +36,7 @@ describe("components/base-layer-switcher", () => {
         expect((radio[2] as HTMLInputElement).checked).toBe(false);
     });
     it("Renders NONE as checked item on non-empty base layer array where more than one layer is set visible", () => {
-        const onBaseLayerChanged = jest.fn();
+        const onBaseLayerChanged = vi.fn();
         const layers: IExternalBaseLayer[] = [
             { name: "OpenStreetMap", kind: "OSM", visible: true },
             { name: "Stamen - Toner", kind: "Stamen", visible: true }

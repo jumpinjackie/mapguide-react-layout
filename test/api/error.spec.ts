@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { MgError, isSessionExpiredError } from "../../src/api/error";
 
 describe("api/error", () => {

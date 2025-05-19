@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { makeUnique, areArraysDifferent } from "../../src/utils/array";
 
 describe("utils/array", () => {

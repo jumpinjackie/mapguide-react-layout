@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { setMouseCoordinates } from "../../src/actions/map";
 import { ActionType } from "../../src/constants/actions";
 import { mouseReducer } from "../../src/reducers/mouse";

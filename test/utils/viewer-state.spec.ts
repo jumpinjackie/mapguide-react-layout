@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { IMapView, LayerTransparencySet } from "../../src/api/common";
 import { areMapsSame, areViewsCloseToEqual, layerTransparencyChanged } from "../../src/utils/viewer-state";
 

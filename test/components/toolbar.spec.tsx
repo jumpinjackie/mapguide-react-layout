@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
 import { IItem, FlyoutMenuChildItem } from "../../src/components/toolbar";
 
@@ -64,8 +65,8 @@ describe("components/toolbar", () => {
             }
         });
         it("Does not trigger onInvoked if disabled", () => {
-            const handler = jest.fn();
-            const invoker = jest.fn();
+            const handler = vi.fn();
+            const invoker = vi.fn();
             const item: IItem = {
                 enabled: false,
                 invoke: invoker
@@ -78,8 +79,8 @@ describe("components/toolbar", () => {
             expect(invoker.mock.calls).toHaveLength(0);
         });
         it("Does trigger onInvoked if enabled", () => {
-            const handler = jest.fn();
-            const invoker = jest.fn();
+            const handler = vi.fn();
+            const invoker = vi.fn();
             const item: IItem = {
                 enabled: true,
                 invoke: invoker

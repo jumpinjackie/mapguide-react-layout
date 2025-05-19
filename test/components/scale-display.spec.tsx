@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
 import { ScaleDisplay } from "../../src/components/scale-display";
 import {
@@ -19,7 +20,7 @@ type SetScaleFunc = (scale: number) => void;
 
 describe("containers/scale-display", () => {
     it("Renders a select with finite scale list if found on map", () => {
-        const func = jest.fn();
+        const func = vi.fn();
         const view: IMapView = {
             x: 0,
             y: 0,
@@ -39,7 +40,7 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = jest.fn();
+        const func = vi.fn();
         const { container } = render(<ScaleDisplay locale="en" view={view} onScaleChanged={func} />);
         const sel = container.getElementsByTagName("select");
         const num = container.getElementsByTagName("input");
@@ -52,7 +53,7 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = jest.fn();
+        const func = vi.fn();
         const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
         const sel = container.getElementsByTagName("select");
         expect(sel).toHaveLength(1);
@@ -67,7 +68,7 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 2000
         };
-        const func = jest.fn();
+        const func = vi.fn();
         const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
         const sel = container.querySelectorAll("select");
         expect(sel).toHaveLength(1);
@@ -82,7 +83,7 @@ describe("containers/scale-display", () => {
             y: 0,
             scale: 600.000000003
         };
-        const func = jest.fn();
+        const func = vi.fn();
         const { container } = render(<ScaleDisplay locale="en" view={view} finiteScales={FINITE_SCALES} onScaleChanged={func} />);
         const sel = container.querySelectorAll("select");
         expect((sel[0] as HTMLSelectElement).value).toBe("600");

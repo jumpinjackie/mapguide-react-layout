@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmt } from "../api/i18n";
 import { strTrim } from '../utils/string';
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 
 /**
  * MouseCoordinates component props
@@ -30,7 +30,7 @@ function formatCoordinates(props: IMouseCoordinatesProps) {
         y: `${decimals != null ? y.toFixed(decimals) : y}`,
         units: units || ""
     });
-    return <span dangerouslySetInnerHTML={{ __html: sanitize(strTrim(str)) }} />;
+    return <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(strTrim(str)) }} />;
 }
 
 /**

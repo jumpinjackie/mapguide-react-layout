@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { Size2, UnitOfMeasure } from "../../src/api/common";
 import { getMapSize, getUnitOfMeasure, getUnits, getUnitsOfMeasure, tryParseArbitraryCs } from "../../src/utils/units";
 
@@ -10,8 +11,8 @@ describe("utils/units", () => {
             }
         });
         it("Returns unknown unit def for invalid enum values (eg. out of bounds index)", () => {
-            expect(getUnitOfMeasure(-1).name).toBe("Unknown");
-            expect(getUnitOfMeasure(14).name).toBe("Unknown");
+            expect(getUnitOfMeasure(-1 as any).name).toBe("Unknown");
+            expect(getUnitOfMeasure(14 as any).name).toBe("Unknown");
         });
     });
     it("getMapSize", () => {

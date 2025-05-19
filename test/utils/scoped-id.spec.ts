@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { ScopedId } from "../../src/utils/scoped-id";
 
 describe("utils/scoped-id", () => {

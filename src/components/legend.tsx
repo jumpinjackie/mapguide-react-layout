@@ -13,8 +13,7 @@ import { NBSP } from '../constants';
 import { strIsNullOrEmpty } from '../utils/string';
 import { useReduxDispatch } from "./map-providers/context";
 import { setMapLayerVisibility } from "../actions/map";
-import { sanitize } from "dompurify";
-import { areArraysDifferent } from "../utils/array";
+import DOMPurify from "dompurify";
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -57,7 +56,7 @@ const LegendLabel = (props: ILegendLabelProps) => {
     } else {
         inner = props.text;
     }
-    return <span className="legend-label" style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }} dangerouslySetInnerHTML={{ __html: sanitize(inner) }} />;
+    return <span className="legend-label" style={{ lineHeight: `${props.baseSize}px`, verticalAlign: "middle" }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(inner) }} />;
 };
 
 /**
@@ -263,7 +262,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 const session = legendCtx.getSessionId();
                 let extras;
                 if (mapName && session) {
-                    extras = (legendCtx.provideExtraLayerIconsHtml?.({ item: layer, mapName: mapName, session: session, sanitize: sanitize, elementSize: legendCtx.getBaseIconSize() }) ?? [])
+                    extras = (legendCtx.provideExtraLayerIconsHtml?.({ item: layer, mapName: mapName, session: session, sanitize: html => DOMPurify.sanitize(html), elementSize: legendCtx.getBaseIconSize() }) ?? [])
                         .map((html, i) => <div style={EXTRAS_STYLE(legendCtx.getBaseIconSize())} key={`layer-${layer.ObjectId}-extras-${i}`} dangerouslySetInnerHTML={{ __html: html }} />)
                 }
                 return <li title={tooltip} style={nodeStyle} className={nodeClassName}>{expanded} {chkbox} {selectable} {extras} {icon} <LegendLabel baseSize={legendCtx.getBaseIconSize()} text={text} /> {body}</li>;
@@ -360,7 +359,7 @@ export const GroupNode = (props: IGroupNodeProps) => {
     const session = legendCtx.getSessionId();
     let extras;
     if (mapName && session) {
-        extras = (legendCtx.provideExtraGroupIconsHtml?.({ item: group, mapName: mapName, session: session, sanitize: sanitize, elementSize: legendCtx.getBaseIconSize() }) ?? [])
+        extras = (legendCtx.provideExtraGroupIconsHtml?.({ item: group, mapName: mapName, session: session, sanitize: html => DOMPurify.sanitize(html), elementSize: legendCtx.getBaseIconSize() }) ?? [])
             .map((html, i) => <div style={EXTRAS_STYLE(legendCtx.getBaseIconSize())} key={`group-${group.ObjectId}-extras-${i}`} dangerouslySetInnerHTML={{ __html: html }} />)
     }
     return <li title={tooltip} style={nodeStyle} className={nodeClassName}>

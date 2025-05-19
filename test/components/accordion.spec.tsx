@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../../src/components/accordion";
 
@@ -34,7 +35,7 @@ const PANEL_SPEC: IAccordionPanelSpec[] = [
 
 describe("components/accordion", () => {
     it("clicking collapsed panel expands it and collapses others", () => {
-        const handler = jest.fn();
+        const handler = vi.fn();
         const wrapper = render(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} onActivePanelChanged={handler} />);
         const midPanel = wrapper.container.querySelectorAll(".component-accordion-panel-header")[1];
         expect(midPanel).not.toBeUndefined();
@@ -47,7 +48,7 @@ describe("components/accordion", () => {
         expect(handler.mock.calls[0][0]).toBe("Bar");
     });
     it("clicking expanded panel does not collapse it", () => {
-        const handler = jest.fn();
+        const handler = vi.fn();
         const wrapper = render(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} />);
         const lastPanel = wrapper.container.querySelectorAll(".component-accordion-panel-header")[2];
         expect(lastPanel).not.toBeUndefined();

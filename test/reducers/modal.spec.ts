@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { hideModal, showModalComponent, showModalUrl, updateModal } from "../../src/actions/modal";
 import { ActionType } from "../../src/constants/actions";
 import { modalReducer } from "../../src/reducers/modal";

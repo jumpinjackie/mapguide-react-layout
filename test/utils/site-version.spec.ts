@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { getSiteVersion } from "../../src/utils/site-version"
 
 describe("utils/site-version", () => {

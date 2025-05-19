@@ -5,6 +5,7 @@ import { LimeGoldTemplate } from "./page-models/limegold-template";
 import { MaroonTemplate } from "./page-models/maroon-template";
 import { SidebarTemplate } from "./page-models/sidebar-template";
 import { TurquoiseYellowTemplate } from "./page-models/turquoiseyellow-template";
+import { BaseTemplate } from "./page-models/base-template";
 
 export const BASE_URL = "http://localhost/mapguide/react";
 export const LAYOUT_ID = "Library://Samples/e2e_test/MultiMap.ApplicationDefinition";
@@ -18,4 +19,4 @@ export const TEMPLATES = [
     { testToolbarActions: true, template: "maroon", pageFactory: t => new MaroonTemplate(t) },
     { testToolbarActions: false, template: "sidebar", pageFactory: t => new SidebarTemplate(t) },
     { testToolbarActions: true, template: "turquoiseyellow", pageFactory: t => new TurquoiseYellowTemplate(t) }
-];
+] as { testToolbarActions: boolean, template: string, page?: string, pageFactory: (t: TestController) => BaseTemplate }[];

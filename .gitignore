@@ -12,10 +12,6 @@ typings
 yarn-error.log
 npm-debug.log
 index.d.ts
-test/**/*.js
-test/**/*.js.map
-src/**/*.js
-src/**/*.js.map
 !src/externs/*.js
 viewer/dist
 declarations

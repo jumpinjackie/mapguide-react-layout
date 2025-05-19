@@ -56,6 +56,14 @@ export abstract class BaseLayerSetOL implements ILayerSetOL {
     abstract getLayers(): LayerBase[];
     abstract getSourcesForProgressTracking(): Source[];
     abstract updateTransparency(trans: LayerTransparencySet): void;
+    /**
+     * 
+     * @param mapExtent 
+     * @param size @deprecated This parameter is no longer used and will be removed in a later release
+     * @param uri 
+     * 
+     * @since 0.15 Deprecated size parameter
+     */
     abstract showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void;
     abstract update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void;
     abstract updateSelectionColor(color: string): void;

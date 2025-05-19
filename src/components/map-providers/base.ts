@@ -11,7 +11,7 @@ import { SelectedFeaturesTooltip, ISelectionPopupContentOverrideProvider, Select
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import type { MapOptions } from 'ol/PluggableMap';
+import type { MapOptions } from 'ol/Map';
 import Attribution from 'ol/control/Attribution';
 import Rotate from 'ol/control/Rotate';
 import DragRotate from 'ol/interaction/DragRotate';

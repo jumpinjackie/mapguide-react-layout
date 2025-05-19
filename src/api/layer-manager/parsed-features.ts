@@ -41,7 +41,7 @@ export interface IParsedFeatures {
      * @param dataProjection 
      * @since 0.14 This method is now async (returns a promise)
      */
-    addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): Promise<void>;
+    addTo(source: olSourceVector, mapProjection: ProjectionLike, dataProjection?: ProjectionLike): Promise<void>;
     /**
      * The geometry types encountered in this source file
      * @since 0.14
@@ -70,7 +70,7 @@ export class ParsedFeatures implements IParsedFeatures {
         public projection: string | null = null) { }
     public hasFeatures(): boolean { return this.hasFeaturesFlag; }
     public name: string;
-    public async addTo(source: olSourceVector<Geometry>, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
+    public async addTo(source: olSourceVector, mapProjection: ProjectionLike, dataProjection?: ProjectionLike) {
         const features = await this.features();
         if (dataProjection) {
             for (const f of features) {

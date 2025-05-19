@@ -105,7 +105,7 @@ export interface IOLFactory {
     createGeomMultiPoint(coordinates: Coordinate2D[]): MultiPoint;
     createGeomMultiPolygon(coordinates: Coordinate2D[][][]): MultiPolygon;
     createGeomCollection(geometries: Geometry[]): GeometryCollection;
-    createVectorSource(options?: VectorOptions): VectorSource<Geometry>;
+    createVectorSource(options?: VectorOptions): VectorSource;
     createVectorLayer(options?: OLVectorLayerOptions | undefined): OLVectorLayer;
     createOverlay(options: OverlayOptions): Overlay;
     createInteractionDraw(options: DrawOptions): DrawInteraction;
@@ -204,7 +204,7 @@ export class OLFactory implements IOLFactory {
     public createGeomCollection(geometries: Geometry[]): GeometryCollection {
         return new GeometryCollection(geometries);
     }
-    public createVectorSource(options?: VectorOptions): VectorSource<Geometry> {
+    public createVectorSource(options?: VectorOptions): VectorSource {
         return new VectorSource(options);
     }
     public createVectorLayer(options?: OLVectorLayerOptions | undefined): OLVectorLayer {

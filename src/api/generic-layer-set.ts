@@ -73,6 +73,14 @@ export class GenericLayerSetOL extends BaseLayerSetOL {
             }
         }
     }
+    /**
+     * 
+     * @param mapExtent 
+     * @param size @deprecated This parameter is no longer used and will be removed in a later release
+     * @param uri 
+     * 
+     * @since 0.15 Deprecated size parameter
+     */
     showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void {
         //throw new Error("Method not implemented.");
     }

@@ -5,7 +5,6 @@ import olSource from "ol/source/Source";
 import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
 import TileDebug from "ol/source/TileDebug";
-import Stamen from "ol/source/Stamen";
 import BingMaps from "ol/source/BingMaps";
 import UTFGrid from "ol/source/UTFGrid";
 import TileLayer from 'ol/layer/Tile';
@@ -105,7 +104,7 @@ async function getRawGeoJson(defn: IGenericSubjectMapLayer) {
 function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection: ProjectionLike) {
     const { url, attributions } = defn.sourceParams;
     if (typeof (url) == 'string') {
-        const source = new VectorSource({
+        const source = new VectorSource<Feature>({
             url: url,
             format: new GeoJSON(),
             attributions: attributions
@@ -115,7 +114,7 @@ function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection:
         if (!window[url.var_source]) {
             throw new Error(`No such global var (${url.var_source})`);
         }
-        const vectorSource = new VectorSource({
+        const vectorSource = new VectorSource<Feature>({
             loader: (_extent, _resolution, projection) => {
                 const format = new GeoJSON({
                     dataProjection: defn.meta?.projection,
@@ -258,7 +257,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                             // Use the tile coordinate as a pseudo URL for caching purposes
                             return JSON.stringify(tileCoord);
                         },
-                        tileLoadFunction: (tile: VectorTile, url) => {
+                        tileLoadFunction: (tile: VectorTile<Feature>, url) => {
                             const tileCoord = JSON.parse(url);
                             lazyTileIndex.getValueAsync().then(tileIndex => {
                                 const data = tileIndex.getTile(
@@ -312,14 +311,14 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 };
                 switch (defn.sourceParams.mvtFeatureClass) {
                     case "feature":
-                        mo.featureClass = Feature;
+                        mo.featureClass = (Feature as any); //HACK: type band-aid
                         break;
                 }
                 const source = new VectorTileSource({
                     url: defn.sourceParams.url,
                     format: new MVT(mo),
                     attributions: defn.sourceParams.attributions,
-                    tileLoadFunction: function (tile: VectorTile, url) {
+                    tileLoadFunction: function (tile: VectorTile<Feature>, url) {
                         tile.setLoader(function (extent, resolution, projection) {
                             fetch(url).then(function (response) {
                                 if (response.status == 200) {

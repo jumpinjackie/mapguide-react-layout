@@ -54,7 +54,7 @@ function getMetersPerUnit(projection: string) {
 function toMetersPerUnit(unit: UnitOfMeasure) {
     const u = toProjUnit(unit);
     // Use OL-provided mpu if available
-    let mpu = METERS_PER_UNIT[u];
+    let mpu: number = (METERS_PER_UNIT as any)[u];
     if (mpu) {
         return mpu;
     } else {
@@ -368,10 +368,18 @@ export class MgLayerSetOL implements ILayerSetOL {
     private makeActiveSelectedFeatureSource(mapExtent: Bounds, size: Size, url: string = BLANK_GIF_DATA_URI) {
         return new ImageStaticSource({
             imageExtent: mapExtent,
-            imageSize: [size.w, size.h],
+            //imageSize: [size.w, size.h],
             url: url
         });
     }
+    /**
+     * 
+     * @param mapExtent 
+     * @param size @deprecated This parameter is no longer used and will be removed in a later release
+     * @param uri 
+     * 
+     * @since 0.15 Deprecated size parameter
+     */
     public showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string) {
         if (this.activeSelectedFeatureOverlay) {
             this.activeSelectedFeatureOverlay.setSource(this.makeActiveSelectedFeatureSource(mapExtent, size, uri));
@@ -490,14 +498,14 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             for (let i = 0; i < finiteScales.length; ++i) {
                 resolutions[i] = finiteScales[i] / inPerUnit / dpi;
             }
-
             const parsedArb = tryParseArbitraryCs(map.CoordinateSystem.MentorCode);
             if (parsedArb) {
                 projection = new Projection({
                     code: parsedArb.code,
-                    units: toProjUnit(parsedArb.units),
+                    // HACK: Going to take a risk and just jam the values in
+                    units: toProjUnit(parsedArb.units) as any,
                     metersPerUnit: toMetersPerUnit(parsedArb.units)
-                })
+                });
             } else {
                 if (map.CoordinateSystem.EpsgCode.length > 0) {
                     projection = `EPSG:${map.CoordinateSystem.EpsgCode}`;
@@ -596,7 +604,7 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
                     //active selected feature image
                     source: new ImageStaticSource({
                         imageExtent: extent,
-                        imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
+                        //imageSize: [BLANK_SIZE.w, BLANK_SIZE.h],
                         url: BLANK_GIF_DATA_URI
                     })
                 });
@@ -686,7 +694,8 @@ export class MgInnerLayerSetFactory implements ILayerSetFactory {
             if (parsedArb) {
                 projection = new Projection({
                     code: parsedArb.code,
-                    units: toProjUnit(parsedArb.units),
+                    // HACK: Going to take a risk and just jam the values in
+                    units: toProjUnit(parsedArb.units) as any,
                     metersPerUnit: toMetersPerUnit(parsedArb.units),
                     extent: bounds
                 });

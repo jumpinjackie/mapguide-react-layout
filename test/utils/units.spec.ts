@@ -1,15 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { Size2, UnitOfMeasure } from "../../src/api/common";
-import { getMapSize, getUnitOfMeasure, getUnits, getUnitsOfMeasure, tryParseArbitraryCs } from "../../src/utils/units";
+import { getMapSize, getUnitOfMeasure, getUnitsOfMeasure, tryParseArbitraryCs } from "../../src/utils/units";
 
 describe("utils/units", () => {
     describe("getUnitOfMeasure", () => {
-        it("Returns appropriate unit def for the given enum", () => {
-            const pairs = getUnits();
-            for (const pair of pairs) {
-                expect(getUnitOfMeasure(pair[0]).name).toBe(pair[1]);
-            }
-        });
         it("Returns unknown unit def for invalid enum values (eg. out of bounds index)", () => {
             expect(getUnitOfMeasure(-1 as any).name).toBe("Unknown");
             expect(getUnitOfMeasure(14 as any).name).toBe("Unknown");

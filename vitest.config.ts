@@ -8,6 +8,7 @@ export default defineConfig({
                 '.storybook/**',
                 'docs_output/**',
                 'e2e/**',
+                'mocks/**',
                 'node_modules/**',
                 'package/**',
                 'patches/**',
@@ -19,6 +20,10 @@ export default defineConfig({
             ],
             reporter: ['lcov', 'html'],
             reportsDirectory: "./coverage-report"
+        },
+        alias: {
+            "\\.(jpg|jpeg|png|gif|cur|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mocks/fileMock.js",
+            "\\.(css|less)$": "<rootDir>/mocks/styleMock.js"
         },
         setupFiles: ['./vitest-setup.ts'],
         globals: true,

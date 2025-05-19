@@ -27,8 +27,6 @@
         "src/store",
         "src/utils/menu.ts",
         "test",
-        "test-data",
-        "typings/main",
-        "typings/main.d.ts"
+        "test-data"
     ]
 }

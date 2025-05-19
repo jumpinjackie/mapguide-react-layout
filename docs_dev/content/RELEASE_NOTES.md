@@ -1,3 +1,11 @@
+next
+====
+
+ * [#1359](https://github.com/jumpinjackie/mapguide-react-layout/issues/1359): Added Cloud-Optimized GeoTIFF as a supported external layer type loadable from an appdef. Your browser needs to support WebGL to view such layers.
+ * Replaced `jest` with `vitest` for testing
+ * OpenLayers updated to `10.5.0`
+ * TypeScript updated to `5.8.3`
+
 0.14.10
 =======
 

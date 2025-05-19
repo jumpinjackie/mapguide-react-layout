@@ -165,7 +165,12 @@ export enum GenericSubjectLayerType {
      * A WFS layer
      * @since 0.14.4
      */
-    WFS = "WFS"
+    WFS = "WFS",
+    /**
+     * A cloud-optimized GeoTIFF layer
+     * @since 0.15
+     */
+    GeoTIFF = "GeoTIFF"
 }
 
 /**

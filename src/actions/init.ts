@@ -223,7 +223,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
                     layer: sType
                 };
                 let bAdd = true;
-                if (appDef.Extension.StadiaMapsKey) {
+                if (appDef.Extension?.StadiaMapsKey) {
                     options.key = appDef.Extension.StadiaMapsKey;
                 }
                 else {

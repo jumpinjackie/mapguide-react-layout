@@ -6,8 +6,10 @@ import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
 import TileDebug from "ol/source/TileDebug";
 import BingMaps from "ol/source/BingMaps";
+import GeoTIFF from "ol/source/GeoTIFF";
 import UTFGrid from "ol/source/UTFGrid";
 import TileLayer from 'ol/layer/Tile';
+import WebGLTileLayer from "ol/layer/WebGLTile";
 import TileWMS from 'ol/source/TileWMS';
 import LayerBase from "ol/layer/Base";
 import VectorLayer from 'ol/layer/Vector';
@@ -440,6 +442,25 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 layer.setSource(source);
                 setOLVectorLayerStyle(layer, defn.vectorStyle ?? DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
+                return layer;
+            }
+        case GenericSubjectLayerType.GeoTIFF:
+            {
+                const sourceArgs = {
+                    ...defn.sourceParams
+                };
+                const layer = new WebGLTileLayer({
+                    source: new GeoTIFF(sourceArgs)
+                });
+                layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(LayerProperty.LAYER_TYPE, "GeoTIFF");
+                layer.set(LayerProperty.IS_SELECTABLE, false); //Let's assume this WMS service is capable of GetFeatureInfo in GeoJSON representation
+                layer.set(LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(LayerProperty.IS_GROUP, false);
+                //layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
+                layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
                 return layer;
             }
         default:

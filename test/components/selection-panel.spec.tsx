@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
 import { SelectionPanel } from "../../src/components/selection-panel";
 import { SelectedFeatureSet } from "../../src/api/contracts/query";
@@ -10,12 +11,12 @@ import { strReplaceAll } from "../../src/utils/string";
 
 describe("components/selection-panel", () => {
     it("null selection results in empty results message", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = {
             SelectedLayer: []
         };
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -26,12 +27,12 @@ describe("components/selection-panel", () => {
         expect(nosel[0].innerHTML).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Empty MG selection results in empty results message", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = {
             SelectedLayer: []
         };
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -42,9 +43,9 @@ describe("components/selection-panel", () => {
         expect(nosel[0].innerHTML).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Empty client selection results in empty results message", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
-        const cleanHTML = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const csel: ClientSelectionSet = {
             layers: []
@@ -58,9 +59,9 @@ describe("components/selection-panel", () => {
         expect(nosel[0].innerHTML).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Empty MG and client selection results in empty results message", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
-        const cleanHTML = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(undefined, undefined);
         const { container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -71,10 +72,10 @@ describe("components/selection-panel", () => {
         expect(nosel[0].innerHTML).toBe(tr("NO_SELECTED_FEATURES"));
     });
     it("Selection should show first feature of first layer when set", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { getByText, container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -85,8 +86,8 @@ describe("components/selection-panel", () => {
         expect(el).not.toBeUndefined();
     });
     it("HTML cleaning function is called if given", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
         const cleanHTML = (html: string) => strReplaceAll(html, "Foo", "Cleaned")
         const allowHTMLValues = true;
@@ -99,10 +100,10 @@ describe("components/selection-panel", () => {
         expect(el).not.toBeUndefined();
     });
     it("Can scroll forwards/backwards on first selected layer", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { getByText, container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -119,10 +120,10 @@ describe("components/selection-panel", () => {
         expect(res2).not.toBeUndefined();
     });
     it("Zoom to current feature raises handler", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -136,10 +137,10 @@ describe("components/selection-panel", () => {
         expect(onZoomRequest.mock.calls[0][0]).toBe(set.SelectedLayer[0].Feature[0]);
     });
     it("Switching selected layer of MG selection resets feature index to 0", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         const { getByText, container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
@@ -158,10 +159,10 @@ describe("components/selection-panel", () => {
         expect(res2).not.toBeUndefined();
     });
     it("Switching selected layer of client selection resets feature index to 0", () => {
-        const onZoomRequest = jest.fn();
-        const onShowSelectedFeature = jest.fn();
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
         const set = createClientSelectionSet();
-        const cleanHTML = jest.fn();
+        const cleanHTML = vi.fn();
         const allowHTMLValues = false;
         const sel = new CompositeSelection(undefined, set);
         const { getByText, container } = render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);

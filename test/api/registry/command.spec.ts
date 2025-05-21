@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { CommandConditions, mergeInvokeUrlParameters, reduceAppToToolbarState } from "../../../src/api/registry/command";
 import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
 import { IBranchedMapSubState } from '../../../src/api/common';

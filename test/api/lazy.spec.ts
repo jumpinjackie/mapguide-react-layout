@@ -1,8 +1,9 @@
+import { describe, it, expect, vi } from "vitest";
 import { AsyncLazy, Lazy } from "../../src/api/lazy";
 
 describe("api/lazy", () => {
     it("lazy", () => {
-        const fetchProxy = jest.fn();
+        const fetchProxy = vi.fn();
         const lazy = new Lazy<number>(() => {
             fetchProxy();
             return 42;
@@ -18,7 +19,7 @@ describe("api/lazy", () => {
         }
     });
     it("async lazy", async () => {
-        const fetchProxy = jest.fn();
+        const fetchProxy = vi.fn();
         const lazy = new AsyncLazy<number>(() => {
             fetchProxy();
             return Promise.resolve(42);

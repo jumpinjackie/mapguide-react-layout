@@ -2,8 +2,7 @@
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "declaration": true,
-        "outDir": "lib",
-        "skipLibCheck": true
+        "outDir": "lib"
     },
     "exclude": [
         "lib",
@@ -14,8 +13,6 @@
         "src/entries/library.tsx",
         "src/stories",
         "test",
-        "test-data",
-        "typings/main",
-        "typings/main.d.ts"
+        "test-data"
     ]
 }

@@ -1,9 +1,8 @@
-import { exportAllDeclaration } from "@babel/types";
+import { describe, it, expect } from "vitest";
 import { IMapSetViewAction } from "../../src/actions/defs";
 import { setGroupExpanded, setGroupVisibility, setLayerSelectable, setLayerVisibility } from "../../src/actions/legend";
 import { addClientSelectedFeature, clearClientSelection, nextView, previousView, setBaseLayer, setCurrentView, setScale, setSelection } from "../../src/actions/map";
 import { IMapView } from "../../src/api/common";
-import { QueryMapFeaturesResponse } from "../../src/api/contracts/query";
 import { RuntimeMap } from "../../src/api/contracts/runtime-map";
 import { ActionType } from "../../src/constants/actions";
 import { mapStateReducer } from "../../src/reducers/map-state";

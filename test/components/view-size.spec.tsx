@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { ViewSize } from "../../src/components/view-size";
 import { UnitOfMeasure, IMapView } from "../../src/api/common";

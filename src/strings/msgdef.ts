@@ -16,6 +16,10 @@ export interface ILocalizedMessages {
     WARNING: string;
     PBMG: string;
     INIT_WARNINGS_FOUND: string;
+    /**
+     * @since 0.14.10
+     */
+    INIT_WARNING_STADIAMAPS_API_KEY_REQD: string;
     INIT_WARNING_BING_API_KEY_REQD: string;
     INIT_WARNING_BING_UNKNOWN_LAYER: string;
     INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS: string;

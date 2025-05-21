@@ -1,11 +1,11 @@
 import * as React from "react";
-import { SelectedFeatureSet, SelectedFeature, LayerMetadata, SelectedLayer, FeatureProperty } from "../api/contracts/query";
+import { SelectedFeature, LayerMetadata, FeatureProperty } from "../api/contracts/query";
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { GenericEvent, ICompositeSelection } from "../api/common";
 import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../utils/string";
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -47,7 +47,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                             if (cleanHTML) {
                                 value = cleanHTML(value);
                             } else {
-                                value = sanitize(value);
+                                value = DOMPurify.sanitize(value);
                             }
                             return <td className="property-value-cell" data-property-value-for={prop.Name} dangerouslySetInnerHTML={{ __html: value }} />
                         } else {

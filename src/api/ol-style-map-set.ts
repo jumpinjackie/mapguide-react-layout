@@ -80,9 +80,9 @@ function buildStyleMap(pts: Style, lns: Style, pls: Style) {
     const cpts = pts.clone();
     const cpls = pls.clone();
     const gcs = new Style({
-        image: cpts.getImage(),
-        stroke: cpls.getStroke(),
-        fill: cpls.getFill()
+        image: cpts.getImage() ?? undefined,
+        stroke: cpls.getStroke() ?? undefined,
+        fill: cpls.getFill() ?? undefined
     });
     return {
         id: `${scopedId.next()}`,

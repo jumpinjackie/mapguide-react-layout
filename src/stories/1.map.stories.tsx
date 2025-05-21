@@ -1,142 +1,126 @@
 import * as React from "react";
-import { storiesOf } from "@storybook/react";
-import { withKnobs } from '@storybook/addon-knobs';
-import { FakeApp } from './fake-app';
-import { LegendContainer } from '../containers/legend';
-import { TaskPaneContainer } from '../containers/task-pane';
-import { ScaleDisplayContainer } from '../containers/scale-display';
-import { SelectedFeatureCountContainer } from '../containers/selected-feature-count';
-import { SelectionPanelContainer } from '../containers/selection-panel';
-import { NavigatorContainer } from '../containers/navigator';
-import { MapMenuContainer } from '../containers/map-menu';
-import { BaseLayerSwitcherContainer } from '../containers/base-layer-switcher';
-import { CoordinateTrackerContainer } from '../containers/coordinate-tracker';
-import { AddManageLayersContainer } from '../containers/add-manage-layers';
-import { Button, ButtonGroup, Card, Intent } from '@blueprintjs/core';
-import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
-import { CommandConditions } from '../api/registry/command';
-import { QueryMapFeaturesResponse } from '../api/contracts/query';
-import { deArrayify, isQueryMapFeaturesResponse } from '../api/builders/deArrayify';
-import { MouseCoordinatesContainer } from '../containers/mouse-coordinates';
-import { ViewSizeContainer } from '../containers/view-size';
-import { ViewerOptions } from '../containers/viewer-options';
-import { setSelection } from '../actions/map';
-import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
-import { MapViewer } from '../containers/neo-map-viewer';
-import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
-import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
+import { withKnobs } from "@storybook/addon-knobs";
+import { FakeApp } from "./fake-app";
+import { TaskPaneContainer } from "../containers/task-pane";
+import { ScaleDisplayContainer } from "../containers/scale-display";
+import { NavigatorContainer } from "../containers/navigator";
+import { MapMenuContainer } from "../containers/map-menu";
+import { BaseLayerSwitcherContainer } from "../containers/base-layer-switcher";
+import { CoordinateTrackerContainer } from "../containers/coordinate-tracker";
+import { AddManageLayersContainer } from "../containers/add-manage-layers";
+import { Card } from "@blueprintjs/core";
+import {
+  deArrayify,
+  isQueryMapFeaturesResponse,
+} from "../api/builders/deArrayify";
+import { MouseCoordinatesContainer } from "../containers/mouse-coordinates";
+import { ViewSizeContainer } from "../containers/view-size";
+import { ViewerOptions } from "../containers/viewer-options";
+import { MapGuideMockMode } from "../components/mapguide-debug-context";
+import { MapStoryFrame } from "./map-story-frame";
 
 //import MeasureContainer from '../containers/measure';
 
-const testSelSheboygan = deArrayify(require("./data/test-selection-response-sheboygan.json"));
+const testSelSheboygan = deArrayify(
+  require("./data/test-selection-response-sheboygan.json"),
+);
 
-interface MapDependentContainer {
-    
-    includeSelect?: boolean;
-    children: React.ReactNode;
+export interface MapDependentContainer {
+  includeSelect?: boolean;
+  children: React.ReactNode;
 }
 
-function getQueryMapFeaturesResponse(activeMapName: string) {
-    switch (activeMapName) {
-        case "Sheboygan":
-            if (isQueryMapFeaturesResponse(testSelSheboygan))
-                return testSelSheboygan;
-    }
-    return {};
+export function getQueryMapFeaturesResponse(activeMapName: string) {
+  switch (activeMapName) {
+    case "Sheboygan":
+      if (isQueryMapFeaturesResponse(testSelSheboygan)) return testSelSheboygan;
+  }
+  return {};
 }
 
-const MapStoryFrame = (props: MapDependentContainer) => {
-    const SB_WIDTH = 350;
-    const includeTools = !!props.includeSelect;
-    const dispatch = useReduxDispatch();
-    const state = useReducedToolbarAppState();
-    const activeMapName = useActiveMapName();
-    const context = useMapProviderContext() as MapGuideMapProviderContext;
-    const doTestSelect = () => {
-        if (activeMapName) {
-            const q = setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
-            dispatch(q);
-        }
-    }
-    const doClearSelection = () => {
-        if (activeMapName) {
-            const q = setSelection(activeMapName, {});
-            dispatch(q);
-        }
-    }
-    return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SB_WIDTH, overflowY: "auto" }}>
-            {props.children}
-        </div>
-        <div style={{ position: "absolute", left: SB_WIDTH, top: 0, bottom: 0, right: 0 }}>
-            <MapDebugContext.Provider value={{ mock: context.mockMode }}>
-                <MapViewer />
-                {props.includeSelect && <ButtonGroup style={{ position: "absolute", right: 15, top: 15 }}>
-                    <Button intent={Intent.PRIMARY} onClick={() => doTestSelect()}>Test Select</Button>
-                    <Button intent={Intent.DANGER} onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
-                </ButtonGroup>}
-            </MapDebugContext.Provider>
-        </div>
-    </div>;
-}
+export default {
+  title: "Map and Map Interaction Components",
 
-storiesOf("Map and Map Interaction Components", module)
-    .addDecorator(withKnobs)
-    .addDecorator(storyFn => <FakeApp mgMockMode={MapGuideMockMode.DoNotRender}>
-        <MapStoryFrame>
-            {storyFn()}
-        </MapStoryFrame>
-    </FakeApp>)
-    .add("Map Viewer", () => <Card>
-        <h5 className="bp3-heading"><a href="#">Map Viewer</a></h5>
-        <p>This story (and all sibling stories) showcases the map viewer component and other components that depend or interact with map viewer state</p>
-        <p>For MapGuide-specific stories, the MapGuide layer has been mocked out with a placeholder that shows the mapagent request that would be made</p>
-        <p>Some components require selections to be made. Some fake select tools are included to trigger such selection actions</p>
-    </Card>)
-    .add("Task Pane", () => <TaskPaneContainer />)
-    .add("Mouse Coordinates", () => <>
-        <Card>
-            <h5 className="bp3-heading"><a href="#">Mouse Coordinates</a></h5>
-            <p>Move the mouse around the map and its geographic coordinates should be shown below</p>
-        </Card>
-        <MouseCoordinatesContainer />
-    </>)
-    .add("View Size", () => <>
-        <Card>
-            <h5 className="bp3-heading"><a href="#">View Size</a></h5>
-            <p>Zoom in or out of the map. The physical map size should be shown below</p>
-        </Card>
-        <ViewSizeContainer />
-    </>)
-    .add("Scale Display", () => <>
-        <Card>
-            <h5 className="bp3-heading"><a href="#">Scale Display</a></h5>
-            <p>Zoom in or out of the map. The map scale should be shown below</p>
-        </Card>
-        <ScaleDisplayContainer />
-    </>)
-    .add("Navigator", () => <NavigatorContainer />)
-    .add("Map Menu", () => <MapMenuContainer />)
-    .add("Base Layer Switcher", () => <BaseLayerSwitcherContainer />)
-    .add("Viewer Options", () => <ViewerOptions />)
-    //.add("Measure", () => <MeasureContainer />)
-    .add("Coordinate Tracker", () => <CoordinateTrackerContainer projections={["EPSG:4326", "EPSG:3857"]} />)
-    .add("External Layer Manager", () => <AddManageLayersContainer />);
+  decorators: [
+    withKnobs,
+    (storyFn: () => boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined) => (
+      <FakeApp mgMockMode={MapGuideMockMode.DoNotRender}>
+        <MapStoryFrame>{storyFn()}</MapStoryFrame>
+      </FakeApp>
+    ),
+  ],
 
-storiesOf("Map and Map Interaction Components / MapGuide-specific", module)
-    .addDecorator(withKnobs)
-    .addDecorator(storyFn => <FakeApp mgMockMode={MapGuideMockMode.RenderPlaceholder}>
-        <MapStoryFrame includeSelect={true}>
-            {storyFn()}
-        </MapStoryFrame>
-    </FakeApp>)
-    .add("Legend", () => <LegendContainer />)
-    .add("Legend - with base layer switcher", () => <LegendContainer inlineBaseLayerSwitcher={true} />)
-    .add("Selected Feature Count", () => <>
-        <Card>
-            <h5 className="bp3-heading"><a href="#">Selected Feature Count</a></h5>
-            <p>Click the test select button to simulate a map selection request. The selection count should display below</p>
-        </Card>
-        <SelectedFeatureCountContainer />
-    </>)
-    .add("Selection Panel", () => <SelectionPanelContainer />)
+  excludeStories: ["MapDependentContainer", "getQueryMapFeaturesResponse"],
+};
+
+export const MapViewer = () => (
+  <Card>
+    <h5 className="bp3-heading">
+      <a href="#">Map Viewer</a>
+    </h5>
+    <p>
+      This story (and all sibling stories) showcases the map viewer component
+      and other components that depend or interact with map viewer state
+    </p>
+    <p>
+      For MapGuide-specific stories, the MapGuide layer has been mocked out with
+      a placeholder that shows the mapagent request that would be made
+    </p>
+    <p>
+      Some components require selections to be made. Some fake select tools are
+      included to trigger such selection actions
+    </p>
+  </Card>
+);
+
+export const TaskPane = () => <TaskPaneContainer />;
+
+export const MouseCoordinates = () => (
+  <>
+    <Card>
+      <h5 className="bp3-heading">
+        <a href="#">Mouse Coordinates</a>
+      </h5>
+      <p>
+        Move the mouse around the map and its geographic coordinates should be
+        shown below
+      </p>
+    </Card>
+    <MouseCoordinatesContainer />
+  </>
+);
+
+export const ViewSize = () => (
+  <>
+    <Card>
+      <h5 className="bp3-heading">
+        <a href="#">View Size</a>
+      </h5>
+      <p>
+        Zoom in or out of the map. The physical map size should be shown below
+      </p>
+    </Card>
+    <ViewSizeContainer />
+  </>
+);
+
+export const ScaleDisplay = () => (
+  <>
+    <Card>
+      <h5 className="bp3-heading">
+        <a href="#">Scale Display</a>
+      </h5>
+      <p>Zoom in or out of the map. The map scale should be shown below</p>
+    </Card>
+    <ScaleDisplayContainer />
+  </>
+);
+
+export const Navigator = () => <NavigatorContainer />;
+export const MapMenu = () => <MapMenuContainer />;
+export const BaseLayerSwitcher = () => <BaseLayerSwitcherContainer />;
+export const _ViewerOptions = () => <ViewerOptions />;
+export const CoordinateTracker = () => (
+  <CoordinateTrackerContainer projections={["EPSG:4326", "EPSG:3857"]} />
+);
+export const ExternalLayerManager = () => <AddManageLayersContainer />;

@@ -1,4 +1,4 @@
-version: 0.14.9.{build}
+version: 0.15.0.{build}
 shallow_clone: true
 # Don't actually build. This is not a .net project
 build: off
@@ -22,7 +22,7 @@ before_build:
   - echo APPVEYOR_REPO_COMMIT_TIMESTAMP %APPVEYOR_REPO_COMMIT_TIMESTAMP%
 
 environment:
-  nodejs_version: "14"
+  nodejs_version: "22"
 
 install:
   # Get the latest stable version of Node.js or io.js

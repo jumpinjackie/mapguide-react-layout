@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { MgError } from "../../src/api/error";
 import { Error } from "../../src/components/error";

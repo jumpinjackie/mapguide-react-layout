@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { SelectedFeatureCount } from "../../src/components/selected-feature-count";
 import { FeatureSet } from "../../src/api/contracts/query";
@@ -52,7 +53,7 @@ describe("components/selected-feature-count", () => {
         expect(el).not.toBeUndefined();
     });
     it("Non-empty selection results with unsupported locale results in localization key", async () => {
-        const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
+        const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
         const set = createSelectionSet();
         const summary = countSelection(set);
         const wrapper = render(<SelectedFeatureCount summary={summary} locale="zh" />);

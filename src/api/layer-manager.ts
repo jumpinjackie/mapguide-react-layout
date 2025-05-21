@@ -112,10 +112,21 @@ export function getLayerInfo(layer: olLayerBase, isExternal: boolean): ILayerInf
         }
     }
     if (layer instanceof olHeatmapLayer) {
-        hs = {
-            blur: layer.getBlur(),
-            radius: layer.getRadius()
-        };
+        const blurExpr = layer.getBlur();
+        const radiusExpr = layer.getRadius();
+        if (!Array.isArray(blurExpr) && !Array.isArray(radiusExpr)) {
+            hs = {
+                blur: blurExpr,
+                radius: radiusExpr
+            };
+        } else {
+            if (Array.isArray(blurExpr)) {
+                console.warn("Don't know how to evaluate blur", blurExpr);
+            }
+            if (Array.isArray(radiusExpr)) {
+                console.warn("Don't know how to evaluate radius", radiusExpr);
+            }
+        }
     }
     return {
         visible: layer.getVisible(),
@@ -233,7 +244,7 @@ export class LayerManager implements ILayerManager {
         let layer: olLayerBase;
         if (extraOptions?.kind == "Heatmap") {
             layer = new olHeatmapLayer({
-                source: source as olSourceVector<olPoint>,
+                source: source as olSourceVector,
                 weight: extraOptions.weightProperty
             });
         } else {

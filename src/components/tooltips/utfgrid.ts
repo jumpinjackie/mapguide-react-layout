@@ -2,7 +2,7 @@ import olOverlay from "ol/Overlay";
 import olMap from "ol/Map";
 import UTFGridSource from "ol/source/UTFGrid";
 import { GenericEvent } from '../../api/common';
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 
 export class UTFGridTrackingTooltip {
     private tooltip: olOverlay;
@@ -39,7 +39,7 @@ export class UTFGridTrackingTooltip {
                 if (data) {
                     var html = "";
                     if (data.MG_TOOLTIP)
-                        html += sanitize(data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />'));
+                        html += DOMPurify.sanitize(data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />'));
                     if (data.MG_URL) {
                         html += "<br/><br/>";
                         html += "<strong>CTRL + Click for more information</strong>";

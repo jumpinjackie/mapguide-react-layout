@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { combineSelections } from "../../src/actions/map"
 import { QueryMapFeaturesResponse } from "../../src/api/contracts/query"
 

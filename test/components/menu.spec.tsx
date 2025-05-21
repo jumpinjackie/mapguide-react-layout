@@ -1,4 +1,5 @@
 import * as React from "react";
+import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
 import { MenuComponent } from "../../src/components/menu";
 import { IItem } from "../../src/components/toolbar";
@@ -9,7 +10,7 @@ describe("components/menu", () => {
             { label: "Foo" },
             { label: "Bar" }
         ];
-        const fnInvoke = jest.fn();
+        const fnInvoke = vi.fn();
         const { container } = render(<MenuComponent items={items} onInvoked={fnInvoke} />);
         const eItems = container.querySelectorAll("a.bp3-menu-item");
         expect(eItems).toHaveLength(2);
@@ -18,15 +19,15 @@ describe("components/menu", () => {
         const items: IItem[] = [
             { label: "Foo" }
         ];
-        const fnInvoke = jest.fn();
+        const fnInvoke = vi.fn();
         const { container } = render(<MenuComponent items={items} onInvoked={fnInvoke} />);
         const eItems = container.querySelectorAll("a.bp3-menu-item");
         fireEvent.click(eItems[0]);
         expect(fnInvoke.mock.calls).toHaveLength(1);
     });
     it("Raises onInvoke and item's invoke handler if a child item is clicked", () => {
-        const fnInvoke = jest.fn();
-        const fnInvoke2 = jest.fn();
+        const fnInvoke = vi.fn();
+        const fnInvoke2 = vi.fn();
         const items: IItem[] = [
             { label: "Foo", invoke: fnInvoke2 }
         ];

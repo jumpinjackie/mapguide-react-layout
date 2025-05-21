@@ -45,27 +45,12 @@ export function getUnitsOfMeasure(): UnitOfMeasure[] {
 }
 
 /**
- * @deprecated Use getUnitsOfMeasure() instead
+ * 
+ * @param unit The unit of measure
+ * @returns 
+ * 
+ * @since 0.15 Replaces getUnits function which has been removed
  */
-export function getUnits(): [UnitOfMeasure, UnitName][] {
-    return [
-        [UnitOfMeasure.Centimeters, "Centimeters"],
-        [UnitOfMeasure.DecimalDegrees, "Decimal Degrees"],
-        [UnitOfMeasure.Degrees, "Degrees"],
-        [UnitOfMeasure.DMS, "Degrees Minutes Seconds"],
-        [UnitOfMeasure.Feet, "Feet"],
-        [UnitOfMeasure.Inches, "Inches"],
-        [UnitOfMeasure.Kilometers, "Kilometers"],
-        [UnitOfMeasure.Meters, "Meters"],
-        [UnitOfMeasure.Miles, "Miles"],
-        [UnitOfMeasure.Millimeters, "Millimeters"],
-        [UnitOfMeasure.NauticalMiles, "Nautical Miles"],
-        [UnitOfMeasure.Pixels, "Pixels"],
-        [UnitOfMeasure.Unknown, "Unknown"],
-        [UnitOfMeasure.Yards, "Yards"]
-    ];
-}
-
 export function getUnitOfMeasure(unit: UnitOfMeasure): UnitInfo {
     const u = mUnits[unit];
     return u || mUnits[0]; //The unknown unit

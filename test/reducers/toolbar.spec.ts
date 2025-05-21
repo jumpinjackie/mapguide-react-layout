@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { IMapView } from "../../src/api/common";
 import { ICommandSpec, IFlyoutSpec } from "../../src/api/registry/command-spec";
 import { ActionType } from "../../src/constants/actions";

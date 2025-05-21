@@ -13,7 +13,7 @@ import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 
 /**
  * @hidden
@@ -237,7 +237,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             </FormGroup>}
         </>;
 
-        const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: sanitize(tr("COLORBREWER_THEME", locale)) }} />;
+        const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("COLORBREWER_THEME", locale)) }} />;
         const themeEl = <>
             <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
                 <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
@@ -272,7 +272,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
-                    {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://epsg.io" target="_blank">EPSG:</a>} inline>
+                    {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://spatialreference.org/" target="_blank">EPSG:</a>} inline>
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>

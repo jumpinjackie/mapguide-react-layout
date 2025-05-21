@@ -13,7 +13,7 @@ import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
-import { AppContext, AppContextProvider, IApplicationContext, LegendNodeExtraHTMLProps } from "../components/context";
+import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
 import { IElementState } from '../actions/defs';
 import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
@@ -23,7 +23,7 @@ import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useReduxDispatch } from "../components/map-providers/context";
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 
 export interface SelectionOptions {
@@ -410,22 +410,22 @@ class AppInner extends React.Component<AppInnerProps, any> {
         switch (msg) {
             case "MgConnectionFailedException":
                 {
-                    const arg = { __html: sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) };
+                    const arg = { __html: DOMPurify.sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             case "MgResourceNotFoundException":
                 {
-                    const arg = { __html: sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) };
+                    const arg = { __html: DOMPurify.sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             case "MgSessionExpiredException":
                 {
-                    const arg = { __html: sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) };
+                    const arg = { __html: DOMPurify.sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) };
                     return <div dangerouslySetInnerHTML={arg} />;
                 }
             default:
                 {
-                    const arg = { __html: sanitize(msg) };
+                    const arg = { __html: DOMPurify.sanitize(msg) };
                     const stack = normalizeStack(err);
                     return <div>
                         <div dangerouslySetInnerHTML={arg} />

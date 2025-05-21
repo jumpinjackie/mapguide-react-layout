@@ -19,7 +19,7 @@ import { WmsQueryAugmentation } from '../map-providers/base';
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import stickybits from 'stickybits';
 import type { OLFeature, OLLayer } from "../../api/ol-types";
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 
 export interface IQueryWmsFeaturesCallback {
     getLocale(): string | undefined;
@@ -55,7 +55,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
     if (bClustered && size > 1) {
         title = popupConfig?.clusteredTitle?.(size) ?? tr("SEL_CLUSTER_PROPERTIES", locale, { size });
     }
-    html += "<div class='selected-popup-header'><div>" + sanitize(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
+    html += "<div class='selected-popup-header'><div>" + DOMPurify.sanitize(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 
     const renderForMultipleSanitized = (subFeatures: OLFeature[]) => {
         let table = "<table class='selected-popup-cluster-table'>";
@@ -67,7 +67,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
             : Object.keys(subFeatures[0].getProperties()).filter(pn => pn != subFeatures[0].getGeometryName());
         table += "<thead><tr>";
         for (const heading of fheadings) {
-            table += `<th>${sanitize(heading)}</th>`;
+            table += `<th>${DOMPurify.sanitize(heading)}</th>`;
         }
         table += "</tr></thead>";
         table += "<tbody>"
@@ -75,7 +75,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
             table += "<tr>";
             for (const property of fprops) {
                 const val = f.get(property);
-                table += `<td>${sanitize(val)}</td>`;
+                table += `<td>${DOMPurify.sanitize(val)}</td>`;
             }
             table += "</tr>";
         }
@@ -95,8 +95,8 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + sanitize(pm.value) + "</td>";
-                table += "<td class='property-value-cell'>" + sanitize(f[pm.name]) + "</td>";
+                table += "<td class='property-name-cell'>" + DOMPurify.sanitize(pm.value) + "</td>";
+                table += "<td class='property-value-cell'>" + DOMPurify.sanitize(f[pm.name]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -106,8 +106,8 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + sanitize(key) + "</td>";
-                table += "<td class='property-value-cell'>" + sanitize(f[key]) + "</td>";
+                table += "<td class='property-name-cell'>" + DOMPurify.sanitize(key) + "</td>";
+                table += "<td class='property-value-cell'>" + DOMPurify.sanitize(f[key]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -133,7 +133,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
                 linkHref = url;
             }
             if (!strIsNullOrEmpty(linkHref)) {
-                linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${sanitize(linkHref)}" target='${sanitize(linkTarget)}'>${sanitize(label)}</a></div>`;
+                linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${DOMPurify.sanitize(linkHref)}" target='${DOMPurify.sanitize(linkTarget)}'>${DOMPurify.sanitize(label)}</a></div>`;
             }
         }
         return [table, pc, linkFragment];
@@ -143,7 +143,7 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
         if (pc > 0) {
             appendHtml(`<div class='selected-popup-content-wrapper'>${table}</div>`);
         } else {
-            appendHtml("<div class='selected-popup-content-none'>" + sanitize(tr("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
+            appendHtml("<div class='selected-popup-content-none'>" + DOMPurify.sanitize(tr("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
         }
         if (!strIsNullOrEmpty(linkFragment)) {
             appendHtml(linkFragment);

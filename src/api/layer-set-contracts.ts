@@ -20,6 +20,14 @@ export interface ILayerSetOL {
     updateExternalBaseLayers(externalBaseLayers: IExternalBaseLayer[]): void;
     updateTransparency(trans: LayerTransparencySet): void;
     // ====== This is MapGuide-specific ======== //
+    /**
+     * 
+     * @param mapExtent 
+     * @param size @deprecated This parameter is no longer used and will be removed in a later release
+     * @param uri 
+     * 
+     * @since 0.15 Deprecated size parameter
+     */
     showActiveSelectedFeature(mapExtent: Bounds, size: Size, uri: string): void;
     update(showGroups: string[] | undefined, showLayers: string[] | undefined, hideGroups: string[] | undefined, hideLayers: string[] | undefined): void;
     updateSelectionColor(color: string): void;

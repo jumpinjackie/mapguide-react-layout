@@ -1,3 +1,36 @@
+next
+====
+
+ * [#1359](https://github.com/jumpinjackie/mapguide-react-layout/issues/1359): Added Cloud-Optimized GeoTIFF as a supported external layer type loadable from an appdef. Your browser needs to support WebGL to view such layers.
+ * Replaced `jest` with `vitest` for testing
+ * OpenLayers updated to `10.5.0`
+ * TypeScript updated to `5.8.3`
+
+0.14.10
+=======
+
+ * [#1534](https://github.com/jumpinjackie/mapguide-react-layout/issues/1534): Replaced `epsg.io` with `spatialreference.org` for projection lookups by EPSG code
+ * [#1436](https://github.com/jumpinjackie/mapguide-react-layout/issues/1436): Update stamen tile layer URLs to point to Stadia Maps using a `XYZ` tile source. A Stadia Maps API key is now required for such layers. This API key is expected to be defined in a top-level `StadiaMaps` extension property of the Flexible Layout. Sign-up for an API key at https://stadiamaps.com/
+     * As part of this work, support is now also available for Stadia Maps
+ * Updated the following dependencies:
+     * `colorbrewer`
+     * `dompurify`
+     * `papaparse`
+     * `proj4`
+     * `qs`
+     * `react-redux`
+     * `react-rnd`
+     * `tslib`
+
+0.14.9
+======
+
+ * [#1418](https://github.com/jumpinjackie/mapguide-react-layout/issues/1418): Internet Explorer is no longer supported. All polyfills to support this browser have been removed.
+ * [#1441](https://github.com/jumpinjackie/mapguide-react-layout/issues/1441): New viewer mount option to add extra HTML content alongside a layer or group legend item.
+ * [#1467](https://github.com/jumpinjackie/mapguide-react-layout/issues/1467): Heavy component refactoring to avoid excessive updates and re-renders.
+ * [#1465](https://github.com/jumpinjackie/mapguide-react-layout/issues/1465): Fix `urlPropsIgnore` not considered when updating URL state
+ * [#1468](https://github.com/jumpinjackie/mapguide-react-layout/issues/1468): Fix 0 display DPI when browser zoom is below 100%
+
 0.14.8
 ======
 

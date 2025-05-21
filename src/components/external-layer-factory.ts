@@ -5,10 +5,11 @@ import olSource from "ol/source/Source";
 import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
 import TileDebug from "ol/source/TileDebug";
-import Stamen from "ol/source/Stamen";
 import BingMaps from "ol/source/BingMaps";
+import GeoTIFF from "ol/source/GeoTIFF";
 import UTFGrid from "ol/source/UTFGrid";
 import TileLayer from 'ol/layer/Tile';
+import WebGLTileLayer from "ol/layer/WebGLTile";
 import TileWMS from 'ol/source/TileWMS';
 import LayerBase from "ol/layer/Base";
 import VectorLayer from 'ol/layer/Vector';
@@ -105,7 +106,7 @@ async function getRawGeoJson(defn: IGenericSubjectMapLayer) {
 function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection: ProjectionLike) {
     const { url, attributions } = defn.sourceParams;
     if (typeof (url) == 'string') {
-        const source = new VectorSource({
+        const source = new VectorSource<Feature>({
             url: url,
             format: new GeoJSON(),
             attributions: attributions
@@ -115,7 +116,7 @@ function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection:
         if (!window[url.var_source]) {
             throw new Error(`No such global var (${url.var_source})`);
         }
-        const vectorSource = new VectorSource({
+        const vectorSource = new VectorSource<Feature>({
             loader: (_extent, _resolution, projection) => {
                 const format = new GeoJSON({
                     dataProjection: defn.meta?.projection,
@@ -258,7 +259,7 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                             // Use the tile coordinate as a pseudo URL for caching purposes
                             return JSON.stringify(tileCoord);
                         },
-                        tileLoadFunction: (tile: VectorTile, url) => {
+                        tileLoadFunction: (tile: VectorTile<Feature>, url) => {
                             const tileCoord = JSON.parse(url);
                             lazyTileIndex.getValueAsync().then(tileIndex => {
                                 const data = tileIndex.getTile(
@@ -312,14 +313,14 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 };
                 switch (defn.sourceParams.mvtFeatureClass) {
                     case "feature":
-                        mo.featureClass = Feature;
+                        mo.featureClass = (Feature as any); //HACK: type band-aid
                         break;
                 }
                 const source = new VectorTileSource({
                     url: defn.sourceParams.url,
                     format: new MVT(mo),
                     attributions: defn.sourceParams.attributions,
-                    tileLoadFunction: function (tile: VectorTile, url) {
+                    tileLoadFunction: function (tile: VectorTile<Feature>, url) {
                         tile.setLoader(function (extent, resolution, projection) {
                             fetch(url).then(function (response) {
                                 if (response.status == 200) {
@@ -443,6 +444,25 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
+        case GenericSubjectLayerType.GeoTIFF:
+            {
+                const sourceArgs = {
+                    ...defn.sourceParams
+                };
+                const layer = new WebGLTileLayer({
+                    source: new GeoTIFF(sourceArgs)
+                });
+                layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
+                layer.set(LayerProperty.LAYER_TYPE, "GeoTIFF");
+                layer.set(LayerProperty.IS_SELECTABLE, false); //Let's assume this WMS service is capable of GetFeatureInfo in GeoJSON representation
+                layer.set(LayerProperty.IS_EXTERNAL, isExternal);
+                layer.set(LayerProperty.IS_GROUP, false);
+                //layer.set(LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
+                layer.set(LayerProperty.LAYER_METADATA, defn.meta);
+                layer.set(LayerProperty.LAYER_DEFN, defn);
+                layer.setVisible(defn.initiallyVisible);
+                return layer;
+            }
         default:
             throw new Error(`Unknown subject layer type: ${defn.type}`);
     }
@@ -452,12 +472,22 @@ interface OLSourceCtor {
     new(options?: any): olSource;
 }
 
+function convertStamenLayerName(name: string) {
+    switch (name) {
+        case 'toner-lite':
+            return 'toner_lite';
+        default:
+            return name;
+    }
+}
+
 /**
  * Creates an OpenLayers source based on the given external base layer definition
  *
  * @export
  * @param {IExternalBaseLayer} layer
  * @returns
+ * @since 0.14.10 - Stamen now creates a XYZ layer and a StadiaMaps API key is required
  */
 export function createExternalSource(layer: IExternalBaseLayer): olSource {
     let sourceCtor: OLSourceCtor;
@@ -471,9 +501,20 @@ export function createExternalSource(layer: IExternalBaseLayer): olSource {
         case "OSM":
             sourceCtor = OSM;
             break;
+        case "StadiaMaps":
+            //TODO: This XYZ tile layer approach is a workaround until we upgrade OpenLayers to latest
+            return new XYZ({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/" + layer.options.layer + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "Stamen":
-            sourceCtor = Stamen;
-            break;
+            //TODO: Re-activate original code path when we update OpenLayers to latest. This XYZ tile layer approach
+            //is a workaround until then
+            //sourceCtor = Stamen;
+            return new XYZ({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/stamen_" + convertStamenLayerName(layer.options.layer) + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "BingMaps":
             sourceCtor = BingMaps;
             break;

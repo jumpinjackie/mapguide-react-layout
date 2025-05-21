@@ -3,7 +3,7 @@
     "buildOnSave": false,
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es5",
+        "target": "ES2015",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "importHelpers": true,
@@ -12,6 +12,7 @@
         "experimentalDecorators": true,
         "noImplicitAny": true,
         "removeComments": false,
+        "skipLibCheck": true,
         "sourceMap": true,
         "jsx": "react",
         "lib": [
@@ -19,10 +20,18 @@
             "dom"
         ]
     },
+    "types": [
+        "vitest/globals",
+        "@testing-library/jest-dom"
+    ],
     "exclude": [
         "node_modules",
         "e2e",
-        "typings/main",
-        "typings/main.d.ts"
+        "mocks",
+        "test",
+        "test-data",
+        "**/*.d.ts",
+        "vitest-config.ts",
+        "vitest-setup.ts"
     ]
 }

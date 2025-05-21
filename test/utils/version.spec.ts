@@ -1,4 +1,5 @@
-import { getSiteVersion, canUseQueryMapFeaturesV4 } from "../../src/utils/site-version";
+import { describe, it, expect } from "vitest";
+import { canUseQueryMapFeaturesV4 } from "../../src/utils/site-version";
 
 describe("utils/site-version", () => {
     it("Returns true for MapGuide >= 4.0 preview 1", () => {

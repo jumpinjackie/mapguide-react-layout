@@ -6,7 +6,7 @@ import { register } from 'ol/proj/proj4';
 import { debug } from '../../utils/logger';
 
 /**
- * Performs a projection definititon lookup at epsg.io for the given EPSG code
+ * Performs a projection definititon lookup for the given EPSG code
  *
  * @export
  * @param {string | number} epsg
@@ -14,13 +14,14 @@ import { debug } from '../../utils/logger';
  * @param {string} mapDef
  * @returns {Promise<any>}
  * @since 0.13
+ * @since 0.14.10 - Renamed to resolveProjectionFromEpsgCodeAsync from resolveProjectionFromEpsgIoAsync as this no longer hits epsg.io
  */
-export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, locale: string, mapDef: string): Promise<any> {
-    const r = await fetch(`https://epsg.io?format=json&q=${epsg}`);
-    const resp = await r.json();
-    if (resp.results && resp.results.length > 0) {
-        proj4.defs(`EPSG:${epsg}`, resp.results[0].proj4);
-        debug(`Registered projection EPSG:${epsg} from epsg.io`);
+export async function resolveProjectionFromEpsgCodeAsync(epsg: string | number, locale: string, mapDef: string): Promise<any> {
+    const r = await fetch(`https://spatialreference.org/ref/epsg/${epsg}/proj4.txt`);
+    if (r.ok) {
+        const defn = await r.text();
+        proj4.defs(`EPSG:${epsg}`, defn);
+        debug(`Registered projection EPSG:${epsg} from spatialreference.org`);
         return proj4.defs[`EPSG:${epsg}`];
     } else {
         throw new MgError(tr("INIT_ERROR_UNREGISTERED_EPSG_CODE", locale, { epsg: epsg, mapDefinition: mapDef }));
@@ -28,14 +29,14 @@ export async function resolveProjectionFromEpsgIoAsync(epsg: string | number, lo
 }
 
 /**
- * Ensures the given projection (by EPSG code) exists and if not invokes the given factory function (or does an epsg.io lookup)
+ * Ensures the given projection (by EPSG code) exists and if not invokes the given factory function (or does an epsg lookup)
  * to fetch the definition to be registered.
  * 
  * Once registered, it will update the projection set within OpenLayers
  * 
  * @export
  * @param {number} epsgCode
- * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, a lookup to epsg.io will be done instead
+ * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, an external epsg lookup will be done instead
  * @param {string} alias
  * @returns {Promise<string>}
  * @since 0.13
@@ -52,7 +53,7 @@ export async function ensureProjection(epsgCode: number, locale: string, alias?:
             bAdded = true;
             resolvedName = name;
         } else {
-            await resolveProjectionFromEpsgIoAsync(epsgCode, locale, "");
+            await resolveProjectionFromEpsgCodeAsync(epsgCode, locale, "");
             resolvedName = name;
         }
     }

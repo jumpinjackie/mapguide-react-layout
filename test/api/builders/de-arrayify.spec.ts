@@ -11,6 +11,7 @@ import MDF_SHEBOYGAN from "../../../test-data/mdf_sheboygan";
 import MDF_MELBOURNE from "../../../test-data/mdf_melbourne";
 import MDF_REDDING from "../../../test-data/mdf_redding";
 import MDF_WORLD from "../../../test-data/mdf_world";
+import { describe, it, expect, vi } from "vitest";
 import { deArrayify, isAppDef, isMapDef, isQueryMapFeaturesResponse, isTileSet, isWebLayout } from '../../../src/api/builders/deArrayify';
 import { isStateless } from "../../../src/actions/init-command";
 import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLayout, parseWidgetsInAppDef } from "../../../src/api/registry/command-spec";
@@ -24,7 +25,7 @@ describe("de-arrayify", () => {
         if (valid) {
             const locale = "en";
             const tbConf: any = {};
-            const registerCmd = jest.fn();
+            const registerCmd = vi.fn();
             const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
             for (const widgetSet of appDef.WidgetSet) {
                 for (const cont of widgetSet.Container) {
@@ -42,7 +43,7 @@ describe("de-arrayify", () => {
             expect(isStateless(appDef)).toBe(false);
             const locale = "en";
             const tbConf: any = {};
-            const registerCmd = jest.fn();
+            const registerCmd = vi.fn();
             const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
             for (const widgetSet of appDef.WidgetSet) {
                 for (const cont of widgetSet.Container) {
@@ -59,7 +60,7 @@ describe("de-arrayify", () => {
             expect(isStateless(appDef)).toBe(true);
             const locale = "en";
             const tbConf: any = {};
-            const registerCmd = jest.fn();
+            const registerCmd = vi.fn();
             const { widgetsByKey } = parseWidgetsInAppDef(appDef, registerCmd);
             for (const widgetSet of appDef.WidgetSet) {
                 for (const cont of widgetSet.Container) {
@@ -91,7 +92,7 @@ describe("de-arrayify", () => {
         expect(valid).toBe(true);
         if (valid) {
             const locale = "en";
-            const registerCmd = jest.fn();
+            const registerCmd = vi.fn();
             const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCmd);
             const mainToolbar = (webLayout.ToolBar.Visible
                 ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)

@@ -62,7 +62,7 @@ export class MeasureContext {
     private olFactory: IOLFactory;
     private draw: DrawInteraction;
     private measureOverlays: Overlay[];
-    private measureLayer: VectorLayer<VectorSource<Geometry>>;
+    private measureLayer: VectorLayer;
     private viewer: IMapViewer;
     private sketch: Feature<Geometry> | null;
     private listener: any;

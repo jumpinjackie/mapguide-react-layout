@@ -5,14 +5,13 @@ import {
     isVisualBaseLayer
 } from "../api/common";
 import { tr } from "../api/i18n";
-import { getUnits, getUnitOfMeasure } from "../utils/units";
+import { getUnitOfMeasure, getUnitsOfMeasure } from "../utils/units";
 import { Slider, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless, useViewerSelectCanDragPan } from './hooks';
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits, enableSelectDragPan } from '../actions/map';
 import { useActiveMapLayerTransparency, useActiveMapState } from './hooks-mapguide';
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_DYNAMIC_OVERLAY, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { useReduxDispatch } from "../components/map-providers/context";
-import { isRuntimeMap } from "../utils/type-guards";
 
 export interface IViewerOptionsProps {
 
@@ -64,7 +63,7 @@ export const ViewerOptions = () => {
     const onManualFeatureTooltipsChanged = (e: GenericEvent) => {
         toggleManualMapTipsAction(e.target.checked);
     };
-    const units = getUnits();
+    const units = getUnitsOfMeasure();
     let opBase = 1.0;
     let opMgBase = 1.0;
     let opMgSelOverlay = 1.0;
@@ -147,8 +146,7 @@ export const ViewerOptions = () => {
             {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
             <div className="bp3-select">
                 <HTMLSelect value={viewSizeUnits} onChange={onViewSizeUnitsChanged}>
-                    {units.map(u => {
-                        const [uom] = u;
+                    {units.map(uom => {
                         const ui = getUnitOfMeasure(uom);
                         return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
                     })}

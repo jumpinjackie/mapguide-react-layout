@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { mapResized, setActiveTool, setBusyCount, setFeatureTooltipsEnabled } from "../../src/actions/map";
 import { ActiveMapTool, IMapView } from "../../src/api/common";
 import { ActionType } from "../../src/constants/actions";

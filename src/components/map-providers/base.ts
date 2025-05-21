@@ -11,7 +11,7 @@ import { SelectedFeaturesTooltip, ISelectionPopupContentOverrideProvider, Select
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import type { MapOptions } from 'ol/PluggableMap';
+import type { MapOptions } from 'ol/Map';
 import Attribution from 'ol/control/Attribution';
 import Rotate from 'ol/control/Rotate';
 import DragRotate from 'ol/interaction/DragRotate';
@@ -57,6 +57,7 @@ import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
+import { supportsTouch } from "../../utils/mobile-browser";
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -267,8 +268,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._imageSourceLoaders = {};
         this._wmsQueryAugmentations = {};
         this._triggerZoomRequestOnMoveEnd = true;
-        const ism = isMobile(navigator.userAgent);
-        this._supportsTouch = ism.phone || ism.tablet;
+        this._supportsTouch = supportsTouch();
         const baseInitialState: IMapProviderState = {
             activeTool: ActiveMapTool.None,
             view: undefined,

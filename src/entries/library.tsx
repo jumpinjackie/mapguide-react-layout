@@ -125,7 +125,6 @@ export var __BRANCH__: string;
  *  - Custom commands
  *  - Component factories
  *
- * @export
  * @class Registry
  */
 export class Registry {
@@ -136,7 +135,7 @@ export class Registry {
      * @param {string} locale The locale
      * @param {*} bundle The string bundle
      *
-     * @memberof Registry
+     *
      */
     public static registerStringBundle(locale: string, bundle: any) {
         registerStringBundle(locale, bundle);
@@ -149,7 +148,7 @@ export class Registry {
      * @param {() => JSX.Element} factory The JSX element factory that creates the viewer template component
      * @param caps Viewer template capabilities
      *
-     * @memberof Registry
+     *
      * @since 0.14 Added required caps parameter
      */
     public static registerLayout(name: string, factory: () => JSX.Element, caps: LayoutCapabilities) {
@@ -162,7 +161,7 @@ export class Registry {
      * @param {string} name The name of the command
      * @param {(Common.ICommand | Common.IInvokeUrlCommand | Common.ISearchCommand)} cmdDef The command to register
      *
-     * @memberof Registry
+     *
      */
     public static registerCommand(name: string, cmdDef: Common.ICommand | Common.IInvokeUrlCommand | Common.ISearchCommand) {
         registerCommand(name, cmdDef);
@@ -174,7 +173,7 @@ export class Registry {
      * @param {string} id The component id
      * @param {(props: any) => JSX.Element} factory The JSX element factory that creates the component
      *
-     * @memberof Registry
+     *
      */
     public static registerComponentFactory(id: string, factory: (props: any) => JSX.Element) {
         registerComponentFactory(id, factory);

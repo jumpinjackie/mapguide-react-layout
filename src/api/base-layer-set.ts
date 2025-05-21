@@ -50,7 +50,6 @@ export abstract class BaseLayerSetOL implements ILayerSetOL {
      *
      * @virtual
      * @param {RefreshMode} mode
-     * @memberof BaseLayerSetOL
      */
     refreshMap(mode: RefreshMode): void { }
     abstract getLayers(): LayerBase[];

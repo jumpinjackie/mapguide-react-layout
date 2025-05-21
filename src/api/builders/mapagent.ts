@@ -11,7 +11,6 @@ const MG_MAPAGENT_ERROR_CODE = 559;
 /**
  * Indicates if the given response is an error response
  *
- * @export
  * @param {Response} response
  * @returns {boolean}
  */
@@ -22,7 +21,7 @@ export function isErrorResponse(response: Response): boolean {
 /**
  * Encodes the given object for a POST submission
  *
- * @export
+
  * @param {*} data
  * @returns {string}
  */
@@ -35,7 +34,6 @@ export function serialize(data: any, uppercase: boolean = true): string {
 /**
  * The mapagent client
  *
- * @export
  * @class MapAgentRequestBuilder
  * @extends {RequestBuilder}
  */

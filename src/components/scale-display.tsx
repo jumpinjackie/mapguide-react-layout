@@ -9,7 +9,6 @@ import { getFiniteScaleIndexForScale } from "../utils/number";
 /**
  * ScaleDisplay component props
  *
- * @export
  * @interface IScaleDisplayProps
  */
 export interface IScaleDisplayProps {

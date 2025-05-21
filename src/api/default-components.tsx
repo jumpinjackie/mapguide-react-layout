@@ -15,8 +15,6 @@ import { ShareLinkToViewContainer } from '../containers/share-link-to-view';
 
 /**
  * Registers the default set of components
- *
- * @export
  */
 export function registerDefaultComponents(): void {
     registerComponentFactory(DefaultComponentNames.Navigator, (props) => <NavigatorContainer {...props} />);

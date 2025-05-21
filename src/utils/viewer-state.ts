@@ -7,7 +7,6 @@ import { RuntimeMap } from '../api/contracts/runtime-map';
 /**
  * Determines if the given IMapView instances are equal or close to it
  *
- * @export
  * @param {(IMapView | undefined)} view
  * @param {(IMapView | undefined)} otherView
  * @returns {boolean}
@@ -34,7 +33,6 @@ export function areViewsCloseToEqual(view: IMapView | undefined, otherView: IMap
 /**
  * Indicates if the given runtime map instances are the same or have the same name
  *
- * @export
  * @param {RuntimeMap} map
  * @param {RuntimeMap} other
  * @returns {boolean}

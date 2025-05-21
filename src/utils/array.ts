@@ -4,11 +4,11 @@
  * @param items The array of strings to make unique
  * @since 0.13
  */
-export function makeUnique(arr: string[]): string[] {
+export function makeUnique(items: string[]): string[] {
     const a = [];
-    for (let i = 0, l = arr.length; i < l; i++) {
-        if (a.indexOf(arr[i]) === -1 && arr[i] !== '')
-            a.push(arr[i]);
+    for (let i = 0, l = items.length; i < l; i++) {
+        if (a.indexOf(items[i]) === -1 && items[i] !== '')
+            a.push(items[i]);
     }
     return a;
 }

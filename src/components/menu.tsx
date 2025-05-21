@@ -9,7 +9,6 @@ const MENU_ITEM_HEIGHT = 30;
 /**
  * MenuComponent props
  *
- * @export
  * @interface IMenuComponentProps
  */
 export interface IMenuComponentProps {

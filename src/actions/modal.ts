@@ -8,7 +8,6 @@ import { ICloseModalAction, IShowModalUrlAction, IShowComponentInModalAction, IU
 /**
  * Displays the specified component in a modal dialog
  *
- * @export
  * @param {*} options Modal dialog display options
  * @returns {IShowComponentInModalAction}
  */
@@ -24,7 +23,6 @@ export function showModalComponent(options: IModalComponentDisplayOptions): ISho
 /**
  * Displays the specified URL in a modal dialog
  *
- * @export
  * @param {*} options Modal dialog display options
  * @returns {IShowModalUrlAction}
  */
@@ -40,7 +38,6 @@ export function showModalUrl(options: IModalDisplayOptions): IShowModalUrlAction
 /**
  * Hides an open modal dialog
  *
- * @export
  * @param name The name of the modal to hide
  * @returns {ICloseModalAction}
  */

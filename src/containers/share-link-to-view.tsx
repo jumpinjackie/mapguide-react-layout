@@ -10,7 +10,6 @@ import { useActiveMapState } from "./hooks-mapguide";
 /**
  * 
  * @since 0.11
- * @export
  * @interface IShareLinkToViewContainerProps
  */
 export interface IShareLinkToViewContainerProps {

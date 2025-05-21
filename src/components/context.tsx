@@ -47,14 +47,12 @@ export interface IApplicationContext {
      * Gets whether to display HTML property values in the selection panel (provided via mount option)
      * 
      * @since 0.11
-     * @memberof IApplicationContext
      */
     allowHtmlValuesInSelection: () => boolean;
     /**
      * Gets a HTML sanitization function (if provided via mount option)
      * 
      * @since 0.11
-     * @memberof IApplicationContext
      */
     getHTMLCleaner: () => (((value: string) => string) | undefined);
     /**

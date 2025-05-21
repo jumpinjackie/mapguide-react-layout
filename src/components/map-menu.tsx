@@ -4,7 +4,6 @@ import { IMapMenuEntry } from "../api/common";
 /**
  * MapMenu component props
  *
- * @export
  * @interface IMapMenuProps
  */
 export interface IMapMenuProps {

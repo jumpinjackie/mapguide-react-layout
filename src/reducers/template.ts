@@ -19,7 +19,6 @@ export const TEMPLATE_INITIAL_STATE: ITemplateReducerState = {
 /**
  * Checks if the given payload is an element state
  *
- * @export
  * @param {*} args
  * @returns {args is IElementState}
  */
@@ -36,7 +35,6 @@ let _ovReducer: TemplateReducerFunction;
  * Installs a custom template reducer function. This is generally used by viewer templates
  * which need to respond to template-related actions in a way that is unique to the template
  *
- * @export
  * @param {ReducerFunction<ITemplateReducerState>} func
  */
 export function setCustomTemplateReducer(func: TemplateReducerFunction): void {

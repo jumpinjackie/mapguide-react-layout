@@ -99,7 +99,6 @@ export abstract class LayerSetGroupBase {
     /**
      * @virtual
      * @returns {(LayerBase | undefined)}
-     * @memberof LayerSetGroupBase
      */
     public tryGetSubjectLayer(): LayerBase | undefined { return undefined; }
     public addWmsSelectionOverlay(feat: Feature<Geometry>) {

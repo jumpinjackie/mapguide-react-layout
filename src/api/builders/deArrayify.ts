@@ -1084,7 +1084,6 @@ export type DeArrayifiedResult = RuntimeMap | QueryMapFeaturesResponse | WebLayo
 /**
  * Normalizes the given JSON object to match the content model of its original XML form
  *
- * @export
  * @param {*} json The JSON object to normalize
  * @returns {*} The normalized JSON object
  */
@@ -1122,7 +1121,6 @@ export function deArrayify(json: any): DeArrayifiedResult {
 /**
  * Builds an XML selection string from the given selection set.
  *
- * @export
  * @param {(FeatureSet | undefined)} selection The selection set
  * @param {string[]} [layerIds] If specified, the selection XML will only include selections from the specified layers
  * @returns {string} The selection XML string

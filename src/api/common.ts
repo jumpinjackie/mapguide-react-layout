@@ -118,7 +118,7 @@ export interface UnitInfo {
 
 /**
  * Describes a map view
- * @export
+ * 
  * @interface IMapView
  */
 export interface IMapView {
@@ -126,28 +126,28 @@ export interface IMapView {
      * The x coordinate
      *
      * @type {number}
-     * @memberof IMapView
+     *
      */
     x: number;
     /**
      * The Y coordinate
      *
      * @type {number}
-     * @memberof IMapView
+     *
      */
     y: number;
     /**
      * The scale
      *
      * @type {number}
-     * @memberof IMapView
+     *
      */
     scale: number;
     /**
      * The view resolution
      * 
      * @type {number | undefined}
-     * @memberof IMapView
+     *
      */
     resolution?: number;
 }
@@ -160,7 +160,6 @@ export type DispatcherFunc = (dispatch: ReduxDispatch, getState: () => Readonly<
 /**
  * Describes a viewer command
  *
- * @export
  * @interface ICommand
  */
 export interface ICommand {
@@ -168,7 +167,7 @@ export interface ICommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberof ICommand
+     *
      */
     icon?: string;
     iconClass?: string;
@@ -181,21 +180,21 @@ export interface ICommand {
      * Indicates if this command is enabled based on the given application state
      *
      *
-     * @memberof ICommand
+     *
      */
     enabled: (state: Readonly<IToolbarAppState>, parameters?: any) => boolean;
     /**
      * Indicates if this command is enabled based on the given application state
      *
      *
-     * @memberof ICommand
+     *
      */
     selected: (state: Readonly<IToolbarAppState>) => boolean;
     /**
      * Invokes the command
      *
      * @type {DispatcherFunc}
-     * @memberof ICommand
+     *
      */
     invoke: DispatcherFunc;
 }
@@ -208,7 +207,6 @@ export type CommandTarget = "TaskPane" | "NewWindow" | "SpecifiedFrame";
 /**
  * An InvokeURL command parameter
  *
- * @export
  * @interface IInvokeUrlCommandParameter
  */
 export interface IInvokeUrlCommandParameter {
@@ -216,14 +214,14 @@ export interface IInvokeUrlCommandParameter {
      * The name of the parameter
      *
      * @type {string}
-     * @memberof IInvokeUrlCommandParameter
+     *Parameter
      */
     name: string;
     /**
      * The value of the parameter
      *
      * @type {string}
-     * @memberof IInvokeUrlCommandParameter
+     *Parameter
      */
     value: string;
 }
@@ -231,7 +229,6 @@ export interface IInvokeUrlCommandParameter {
 /**
  * Describes a command that will run in a pre-defined target frame or window
  *
- * @export
  * @interface ITargetedCommand
  */
 export interface ITargetedCommand {
@@ -239,7 +236,7 @@ export interface ITargetedCommand {
      * Specifies the target which the URL should be invoked in
      *
      * @type {CommandTarget}
-     * @memberof IInvokeUrlCommand
+     *
      */
     target: CommandTarget;
     /**
@@ -252,7 +249,6 @@ export interface ITargetedCommand {
 /**
  * Describes a command that invokes a URL into a specified target
  *
- * @export
  * @interface IInvokeUrlCommand
  */
 export interface IInvokeUrlCommand extends ITargetedCommand {
@@ -260,7 +256,7 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberof IInvokeUrlCommand
+     *
      */
     icon?: string;
     iconClass?: string;
@@ -272,19 +268,19 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
      * The URL to invoke
      *
      * @type {string}
-     * @memberof IInvokeUrlCommand
+     *
      */
     url: string;
     /**
      * Indicates whether to disable this command if there is no map selection
      *
      * @type {boolean}
-     * @memberof IInvokeUrlCommand
+     *
      */
     disableIfSelectionEmpty?: boolean;
     /**
      * Additional command parameters
-     * @memberof IInvokeUrlCommand
+     *
      */
     parameters: IInvokeUrlCommandParameter[];
 }
@@ -292,7 +288,6 @@ export interface IInvokeUrlCommand extends ITargetedCommand {
 /**
  * Describes a search command
  *
- * @export
  * @interface ISearchCommand
  */
 export interface ISearchCommand extends ITargetedCommand {
@@ -300,7 +295,7 @@ export interface ISearchCommand extends ITargetedCommand {
      * The icon for this command
      *
      * @type {string}
-     * @memberof ISearchCommand
+     *
      */
     icon?: string;
     iconClass?: string;
@@ -308,42 +303,42 @@ export interface ISearchCommand extends ITargetedCommand {
      * The name of the map layer this commmand applies to
      *
      * @type {string}
-     * @memberof ISearchCommand
+     *
      */
     layer: string;
     /**
      * The prompt to display in the search command UI
      *
      * @type {string}
-     * @memberof ISearchCommand
+     *
      */
     prompt: string;
     /**
      * The title to display in the search command UI
      *
      * @type {string}
-     * @memberof ISearchCommand
+     *
      */
     title: string;
     /**
      * The set of feature properties to show in the search results
      *
      * @type {ResultColumnSet}
-     * @memberof ISearchCommand
+     *
      */
     resultColumns: ResultColumnSet;
     /**
      * The search filter to apply based on user input
      *
      * @type {string}
-     * @memberof ISearchCommand
+     *
      */
     filter?: string;
     /**
      * The maximum number of results to return
      *
      * @type {number}
-     * @memberof ISearchCommand
+     *
      */
     matchLimit: number;
 }
@@ -372,7 +367,6 @@ export type Bounds = [number, number, number, number];
 /**
  * An active map viewer tool
  *
- * @export
  * @enum {number}
  */
 export enum ActiveMapTool {
@@ -396,8 +390,7 @@ export enum ActiveMapTool {
 
 /**
  * Describes an external base layer
- *
- * @export
+ * 
  * @interface IExternalBaseLayer
  */
 export interface IExternalBaseLayer {
@@ -405,28 +398,28 @@ export interface IExternalBaseLayer {
      * The name of the external base layer
      *
      * @type {string}
-     * @memberof IExternalBaseLayer
+     *
      */
     name: string;
     /**
      * The kind of external base layer
      *
      * @type {string}
-     * @memberof IExternalBaseLayer
+     *
      */
     kind: string;
     /**
      * Indicates if this external base layer is visible
      *
      * @type {boolean}
-     * @memberof IExternalBaseLayer
+     *
      */
     visible?: boolean;
     /**
      * Additional options for initializing the external base layer
      *
      * @type {*}
-     * @memberof IExternalBaseLayer
+     *
      */
     options?: any;
 }
@@ -434,8 +427,7 @@ export interface IExternalBaseLayer {
 
 /**
  * Describes a menu entry on the Map Menu component
- *
- * @export
+ * 
  * @interface IMapMenuEntry
  */
 export interface IMapMenuEntry {
@@ -443,14 +435,14 @@ export interface IMapMenuEntry {
      * The runtime map name
      *
      * @type {string}
-     * @memberof IMapMenuEntry
+     *
      */
     mapName: string;
     /**
      * The menu entry label
      *
      * @type {string}
-     * @memberof IMapMenuEntry
+     *
      */
     label: string;
 }
@@ -458,7 +450,6 @@ export interface IMapMenuEntry {
 /**
  * A bit mask indicating how a map viewer should refresh
  *
- * @export
  * @enum {number}
  */
 export enum RefreshMode {
@@ -480,7 +471,6 @@ export type SelectionVariant = "INTERSECTS" | "TOUCHES" | "WITHIN" | "ENVELOPEIN
 /**
  * MapGuide-specific viewer functionality
  *
- * @export
  * @interface IMapGuideViewerSupport
  * @since 0.14
  */
@@ -493,14 +483,14 @@ export interface IMapGuideViewerSupport {
      * @param {(res: QueryMapFeaturesResponse) => void} [success]
      * @param {(err: Error) => void} [failure]
      *
-     * @memberof IMapViewer
+     *er
      */
     setSelectionXml(xml: string, queryOpts?: Partial<IQueryMapFeaturesOptions>, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     /**
      * Clears the map selection
      *
      *
-     * @memberof IMapViewer
+     *er
      */
     clearSelection(): void;
     /**
@@ -508,7 +498,7 @@ export interface IMapGuideViewerSupport {
      *
      * @param {olGeometry} geom The geometry to select with
      * @param {SelectionVariant} selectionMethod The selection method
-     * @memberof IMapViewer
+     *er
      */
     selectByGeometry(geom: olGeometry, selectionMethod?: SelectionVariant): void;
     /**
@@ -518,7 +508,7 @@ export interface IMapGuideViewerSupport {
      * @param {(res: QueryMapFeaturesResponse) => void} [success]
      * @param {(err: Error) => void} [failure]
      *
-     * @memberof IMapViewer
+     *er
      */
     queryMapFeatures(options: IQueryMapFeaturesOptions, success?: (res: QueryMapFeaturesResponse) => void, failure?: (err: Error) => void): void;
     /**
@@ -526,7 +516,7 @@ export interface IMapGuideViewerSupport {
      *
      * @returns {QueryMapFeaturesResponse}
      *
-     * @memberof IMapViewer
+     *er
      */
     getSelection(): QueryMapFeaturesResponse | null;
     /**
@@ -536,14 +526,14 @@ export interface IMapGuideViewerSupport {
      * @param {string[]} [layerIds]
      * @returns {string}
      *
-     * @memberof IMapViewer
+     *er
      */
     getSelectionXml(selection: FeatureSet, layerIds?: string[]): string;
     /**
      * Gets the current session id
      * 
      * @returns {string}
-     * @memberof IMapViewer
+     *er
      */
     getSessionId(): string;
     /**
@@ -551,7 +541,7 @@ export interface IMapGuideViewerSupport {
      *
      * @returns {boolean}
      *
-     * @memberof IMapViewer
+     *er
      */
     isFeatureTooltipEnabled(): boolean;
     /**
@@ -559,7 +549,7 @@ export interface IMapGuideViewerSupport {
      *
      * @param {boolean} enabled
      *
-     * @memberof IMapViewer
+     *er
      */
     setFeatureTooltipEnabled(enabled: boolean): void;
 }
@@ -567,7 +557,6 @@ export interface IMapGuideViewerSupport {
 /**
  * Map image export options
  *
- * @export
  * @interface IMapImageExportOptions
  * @since 0.14
  */
@@ -576,20 +565,20 @@ export interface IMapImageExportOptions {
      * The size of the image to export. If not specified, it will use the map's current size
      *
      * @type {Size2}
-     * @memberof IMapImageExportOptions
+     *
      */
     size?: Size2;
     /**
      * The type to export the mime type as. If not specified, it will default to PNG (image/png)
      *
      * @type {string}
-     * @memberof IMapImageExportOptions
+     *
      */
     exportMimeType?: string;
     /**
      * The callback that will receive the content of the exported map image
      *
-     * @memberof IMapImageExportOptions
+     *
      */
     callback: (imageBase64: string) => void;
 }
@@ -597,7 +586,6 @@ export interface IMapImageExportOptions {
 /**
  * Describes the API for interacting with the map viewer
  *
- * @export
  * @interface IMapViewer
  */
 export interface IMapViewer {
@@ -605,7 +593,7 @@ export interface IMapViewer {
      * Gets MapGuide-specific viewer functionality. If this viewer was not set up with MapGuide support, this is undefined
      *
      * @returns {(IMapGuideViewerSupport | undefined)}
-     * @memberof IMapViewer
+     *er
      * @since 0.14
      */
     mapguideSupport(): IMapGuideViewerSupport | undefined;
@@ -614,7 +602,7 @@ export interface IMapViewer {
      *
      * @returns {ol.ProjectionLike}
      *
-     * @memberof IMapViewer
+     *er
      */
     getProjection(): ProjectionLike;
     /**
@@ -623,7 +611,7 @@ export interface IMapViewer {
      * @param {Bounds} extent
      * @returns {IMapView}
      *
-     * @memberof IMapViewer
+     *er
      * @since 0.14 If given an extent with zero-width or zero-height, the view will be computed off of an "inflated" version of this extent. If inflation is required, it will be inflated by 30 meters
      */
     getViewForExtent(extent: Bounds): IMapView;
@@ -632,7 +620,7 @@ export interface IMapViewer {
      *
      * @returns {Bounds}
      *
-     * @memberof IMapViewer
+     *er
      */
     getCurrentExtent(): Bounds;
     /**
@@ -640,7 +628,7 @@ export interface IMapViewer {
      *
      * @returns {IMapView}
      *
-     * @memberof IMapViewer
+     *er
      */
     getCurrentView(): IMapView;
     /**
@@ -648,7 +636,7 @@ export interface IMapViewer {
      *
      * @returns {[number, number]}
      *
-     * @memberof IMapViewer
+     *er
      */
     getSize(): [number, number];
     /**
@@ -658,7 +646,7 @@ export interface IMapViewer {
      * @param {number} y
      * @param {number} scale
      *
-     * @memberof IMapViewer
+     *er
      */
     zoomToView(x: number, y: number, scale: number): void;
     /**
@@ -666,7 +654,7 @@ export interface IMapViewer {
      *
      * @param {RefreshMode} [mode]
      *
-     * @memberof IMapViewer
+     *er
      */
     refreshMap(mode?: RefreshMode): void;
     /**
@@ -674,7 +662,7 @@ export interface IMapViewer {
      *
      * @returns {number}
      *
-     * @memberof IMapViewer
+     *er
      */
     getMetersPerUnit(): number;
     /**
@@ -682,7 +670,7 @@ export interface IMapViewer {
      *
      * @param {ActiveMapTool} tool
      *
-     * @memberof IMapViewer
+     *er
      */
     setActiveTool(tool: ActiveMapTool): void;
     /**
@@ -690,14 +678,14 @@ export interface IMapViewer {
      *
      * @returns {ActiveMapTool}
      *
-     * @memberof IMapViewer
+     *er
      */
     getActiveTool(): ActiveMapTool;
     /**
      * Sets the initial map view
      *
      *
-     * @memberof IMapViewer
+     *er
      */
     initialView(): void;
     /**
@@ -705,7 +693,7 @@ export interface IMapViewer {
      *
      * @param {number} delta
      *
-     * @memberof IMapViewer
+     *er
      */
     zoomDelta(delta: number): void;
     /**
@@ -713,13 +701,13 @@ export interface IMapViewer {
      *
      * @returns {boolean}
      *
-     * @memberof IMapViewer
+     *er
      */
     isDigitizing(): boolean;
     /**
      * Cancels active digitization
      *
-     * @memberof IMapViewer
+     *er
      */
     cancelDigitization(): void;
     /**
@@ -728,7 +716,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPoint>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizePoint(handler: DigitizerCallback<olPoint>, prompt?: string): void;
     /**
@@ -737,7 +725,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olLineString>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizeLine(handler: DigitizerCallback<olLineString>, prompt?: string): void;
     /**
@@ -746,7 +734,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olLineString>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizeLineString(handler: DigitizerCallback<olLineString>, prompt?: string): void;
     /**
@@ -755,7 +743,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olCircle>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizeCircle(handler: DigitizerCallback<olCircle>, prompt?: string): void;
     /**
@@ -764,7 +752,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPolygon>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizeRectangle(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
@@ -773,7 +761,7 @@ export interface IMapViewer {
      * @param {DigitizerCallback<olPolygon>} handler
      * @param {string} [prompt]
      *
-     * @memberof IMapViewer
+     *er
      */
     digitizePolygon(handler: DigitizerCallback<olPolygon>, prompt?: string): void;
     /**
@@ -781,7 +769,7 @@ export interface IMapViewer {
      *
      * @param {Bounds} extent
      *
-     * @memberof IMapViewer
+     *er
      */
     zoomToExtent(extent: Bounds): void;
     /**
@@ -790,7 +778,7 @@ export interface IMapViewer {
      *
      * @param {string} [mapName]
      * @returns {ILayerManager}
-     * @memberof IMapViewer
+     *er
      * @since 0.12
      */
     getLayerManager(mapName?: string): ILayerManager;
@@ -801,7 +789,7 @@ export interface IMapViewer {
      * @param {T} interaction
      * @returns {T}
      *
-     * @memberof IMapViewer
+     *er
      */
     addInteraction<T extends olInteraction>(interaction: T): T;
     /**
@@ -810,7 +798,7 @@ export interface IMapViewer {
      * @template T
      * @param {T} interaction
      *
-     * @memberof IMapViewer
+     *er
      */
     removeInteraction<T extends olInteraction>(interaction: T): void;
     /**
@@ -818,7 +806,7 @@ export interface IMapViewer {
      *
      * @param {olOverlay} overlay
      *
-     * @memberof IMapViewer
+     *er
      */
     addOverlay(overlay: olOverlay): void;
     /**
@@ -826,7 +814,7 @@ export interface IMapViewer {
      *
      * @param {olOverlay} overlay
      *
-     * @memberof IMapViewer
+     *er
      */
     removeOverlay(overlay: olOverlay): void;
     /**
@@ -835,7 +823,7 @@ export interface IMapViewer {
      * @param {string} eventName
      * @param {Function} handler
      *
-     * @memberof IMapViewer
+     *er
      */
     addHandler(eventName: string, handler: Function): void;
     /**
@@ -844,7 +832,7 @@ export interface IMapViewer {
      * @param {string} eventName
      * @param {Function} handler
      *
-     * @memberof IMapViewer
+     *er
      */
     removeHandler(eventName: string, handler: Function): void;
     /**
@@ -856,7 +844,7 @@ export interface IMapViewer {
      *
      * @returns {number}
      *
-     * @memberof IMapViewer
+     *er
      */
     getResolution(): number | undefined;
     /**
@@ -864,42 +852,42 @@ export interface IMapViewer {
      *
      * @returns {number}
      *
-     * @memberof IMapViewer
+     *er
      */
     scaleToResolution(scale: number): number;
     /**
      * Gets the name of the current runtime map
      * 
      * @returns {string} 
-     * @memberof IMapViewer
+     *er
      */
     getMapName(): string;
     /**
      * Sets the current view rotation
      * 
      * @param {number} rotation 
-     * @memberof IMapViewer
+     *er
      */
     setViewRotation(rotation: number): void;
     /**
      * Gets the current view rotation
      * 
      * @returns {number} 
-     * @memberof IMapViewer
+     *er
      */
     getViewRotation(): number;
     /**
      * Gets whether view rotation is enabled
      * 
      * @returns {boolean} 
-     * @memberof IMapViewer
+     *er
      */
     isViewRotationEnabled(): boolean;
     /**
      * Sets whether view rotation is enabled or not
      * 
      * @param {boolean} enabled 
-     * @memberof IMapViewer
+     *er
      */
     setViewRotationEnabled(enabled: boolean): void;
     /**
@@ -908,7 +896,7 @@ export interface IMapViewer {
      * @param {number} x 
      * @param {number} y 
      * @returns {[number, number]} 
-     * @memberof IMapViewer
+     *er
      */
     screenToMapUnits(x: number, y: number): [number, number];
 
@@ -925,7 +913,7 @@ export interface IMapViewer {
      * to events on this collection for when new features are added or removed from this collection
      * 
      * @returns {Collection<Feature>}
-     * @memberof IMapViewer
+     *er
      * @since 0.13
      * @since 0.14 - The return value may be undefined if called when the map viewer is detached/disposed/destroyed
      */
@@ -959,7 +947,7 @@ export interface IMapViewer {
      * EXPERIMENTAL:
      * Removes application state subscribers of the given names
      * 
-     * @param name 
+     * @param names
      * @since 0.13
      */
     removeSubscribers(names: string[]): boolean;
@@ -1009,7 +997,7 @@ export interface IMapViewer {
      * Exports an image of the current map view
      *
      * @param {IMapImageExportOptions} options
-     * @memberof IMapViewer
+     *er
      * @since 0.14
      */
     exportImage(options: IMapImageExportOptions): void;
@@ -1037,14 +1025,14 @@ export interface ILayerInfo {
      * The name of the layer
      * 
      * @type {string}
-     * @memberof ILayerInfo
+     *
     * */
     name: string;
     /**
      * The display name of this layer
      *
      * @type {string}
-     * @memberof ILayerInfo
+     *
      * @since 0.14
      */
     displayName: string;
@@ -1052,14 +1040,14 @@ export interface ILayerInfo {
      * The type of layer
      * 
      * @type {string}
-     * @memberof ILayerInfo
+     *
      */
     type: string;
     /**
      * An optional description for the layer
      *
      * @type {string}
-     * @memberof ILayerInfo
+     *
      * @since 0.14
      */
     description?: string;
@@ -1086,7 +1074,7 @@ export interface ILayerInfo {
      * 
      * @since 0.13
      * @type {number}
-     * @memberof ILayerInfo
+     *
      */
     opacity: number;
     /**
@@ -1123,7 +1111,7 @@ export interface ILayerInfo {
      * Metadata attached to the layer
      * 
      * @since 0.14
-     * @memberof ILayerInfo
+     *
      */
     metadata?: any;
 }
@@ -1138,14 +1126,14 @@ export interface AddVectorLayerClusteringOptions {
     /**
      * The distance to use for clustering. Setting this value will create a clustered layer.
      * 
-     *  * If {@see clusterDistance} is set, but {@see clusterStyle} is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
+     *  * If {@link clusterDistance} is set, but {@link clusterStyle} is not set, the {@link IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
      */
     clusterDistance: number;
     /**
      * The style to use for this clustered layer. 
      * 
-     *  * If {@see clusterDistance} is not set, this has no effect
-     *  * If {@see clusterDistance} is set but this is not set, the {@see IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
+     *  * If {@link clusterDistance} is not set, this has no effect
+     *  * If {@link clusterDistance} is set but this is not set, the {@link IAddLayerFromParsedFeaturesOptions.defaultStyle} will be used if set, otherwise the default vector style will be used
      */
     clusterStyle?: IVectorLayerStyle;
     /**
@@ -1186,8 +1174,7 @@ export type AddVectorLayerExtraOptions = AddVectorLayerClusteringOptions | AddVe
 
 /**
  * Options to add a new layer from parsed features
- * 
- * @export
+ *
  * @interface IAddLayerFromParsedFeaturesOptions
  * @since 0.13
  */
@@ -1240,8 +1227,7 @@ export interface IAddLayerFromParsedFeaturesOptions {
 
 /**
  * Options for parsing features from a file
- * 
- * @export
+ *
  * @interface IParseFeaturesFromFileOptions
  * @since 0.13
  */
@@ -1253,8 +1239,7 @@ export interface IParseFeaturesFromFileOptions {
 
 /**
  * Manages custom layers for a map
- * 
- * @export
+ *
  * @interface ILayerManager
  */
 export interface ILayerManager {
@@ -1263,7 +1248,7 @@ export interface ILayerManager {
      * and this method will always return undefined in such cases
      *
      * @returns {olLayerBase}
-     * @memberof ILayerManager
+     *
      * @since 0.14
      */
     tryGetSubjectLayer(): olLayerBase | undefined;
@@ -1271,7 +1256,7 @@ export interface ILayerManager {
      * Gets all custom layers on this map, sorted by draw order (First item is top-most layer. Last item is bottom-most layer.)
      * 
      * @returns {ILayerInfo[]} 
-     * @memberof ILayerManager
+     *
     * */
     getLayers(): ILayerInfo[];
     /**
@@ -1286,7 +1271,7 @@ export interface ILayerManager {
      * @param {T} layer The layer object
      * @param {boolean} [allowReplace] If false or not set, this method will throw an error if a layer of the specified name already exists. Otherwise that layer will be replaced with the given layer
      * @returns {T} The added layer
-     * @memberof ILayerManager
+     *
      */
     addLayer<T extends olLayerBase>(name: string, layer: T, allowReplace?: boolean): ILayerInfo;
     /**
@@ -1295,7 +1280,7 @@ export interface ILayerManager {
      * @param {string} name
      * @returns {(olLayerBase | undefined)}
      *
-     * @memberof IMapViewer
+     *er
      */
     removeLayer(name: string): olLayerBase | undefined;
     /**
@@ -1305,7 +1290,7 @@ export interface ILayerManager {
      * @param {string} name
      * @returns {T}
      *
-     * @memberof IMapViewer
+     *er
      */
     getLayer<T extends olLayerBase>(name: string): T | undefined;
 
@@ -1315,7 +1300,7 @@ export interface ILayerManager {
      * 
      * @param {IParseFeaturesFromFileOptions} options
      * @returns {Promise<IParsedFeatures>}
-     * @memberof ILayerManager
+     *
      * @since 0.13
      */
     parseFeaturesFromFile(options: IParseFeaturesFromFileOptions): Promise<IParsedFeatures>;
@@ -1325,7 +1310,7 @@ export interface ILayerManager {
      * 
      * @param {IAddLayerFromParsedFeaturesOptions} options
      * @returns {Promise<ILayerInfo>}
-     * @memberof ILayerManager
+     *
      * @since 0.13
      * @since 0.14 Styles for geometry types not found in the parsed features will be deleted
      */
@@ -1381,7 +1366,6 @@ export const DEFAULT_MODAL_POSITION: [number, number] = [500, 80];
 /**
  * Base modal display options
  *
- * @export
  * @interface IModalDisplayOptionsBase
  */
 export interface IModalDisplayOptionsBase {
@@ -1392,7 +1376,6 @@ export interface IModalDisplayOptionsBase {
 /**
  * Modal display options for URL content
  *
- * @export
  * @interface IModalDisplayOptions
  * @extends {IModalDisplayOptionsBase}
  */
@@ -1401,7 +1384,6 @@ export interface IModalDisplayOptions extends IModalDisplayOptionsBase {
      * The URL of the content to load in the modal dialog
      *
      * @type {string}
-     * @memberof IModalDisplayOptions
      */
     url: string;
 }
@@ -1411,14 +1393,14 @@ export interface IModalComponentDisplayOptions extends IModalDisplayOptionsBase 
      * The id of the component to display
      *
      * @type {string}
-     * @memberof IModalComponentDisplayOptions
+     *
      */
     component: string;
     /**
      * Component properties
      *
      * @type {*}
-     * @memberof IModalComponentDisplayOptions
+     *
      */
     componentProps?: any;
 }
@@ -1431,7 +1413,7 @@ export interface IToolbarReducerState {
 /**
  * Describes the reducer state branch for Task Pane component
  *
- * @export
+ *
  * @interface ITaskPaneReducerState
  */
 export interface ITaskPaneReducerState {
@@ -1439,28 +1421,28 @@ export interface ITaskPaneReducerState {
      * The current navigation index
      *
      * @type {number}
-     * @memberof ITaskPaneReducerState
+     *
      */
     navIndex: number;
     /**
      * The current navigation history stack
      *
      * @type {string[]}
-     * @memberof ITaskPaneReducerState
+     *
      */
     navigation: string[];
     /**
      * The initial URL
      *
      * @type {(string | undefined)}
-     * @memberof ITaskPaneReducerState
+     *
      */
     initialUrl: string | undefined;
     /**
      * The last pushed URL
      *
      * @type {boolean}
-     * @memberof ITaskPaneReducerState
+     *
      */
     lastUrlPushed: boolean;
 }
@@ -1508,7 +1490,7 @@ export interface ActiveSelectedFeature {
 /**
  * Generic layer sub-state
  *
- * @export
+ *
  * @interface IGenericLayerSubState
  * @since 0.14
  */
@@ -1517,7 +1499,6 @@ export interface IGenericLayerSubState {
      * The subject layer
      *
      * @type {IGenericSubjectMapLayer}
-     * @memberof IGenericLayerSubState
      */
     subject: IGenericSubjectMapLayer;
 }
@@ -1525,7 +1506,7 @@ export interface IGenericLayerSubState {
 /**
  * MapGuide-specific map sub-state
  *
- * @export
+ *
  * @interface IMapGuideSubState
  * @since 0.14
  */
@@ -1534,7 +1515,7 @@ export interface IMapGuideSubState {
      * The runtime map state
      *
      * @type {(RuntimeMap | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      */
     runtimeMap: RuntimeMap | undefined;
     /**
@@ -1546,63 +1527,63 @@ export interface IMapGuideSubState {
      * A set of selectable layer ids
      *
      * @type {*}
-     * @memberof IBranchedMapSubState
+     *
      */
     selectableLayers: any;
     /**
      * A set of expanded group ids
      *
      * @type {*}
-     * @memberof IBranchedMapSubState
+     *
      */
     expandedGroups: any;
     /**
      * The current MapGuide selection state
      *
      * @type {(QueryMapFeaturesResponse | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      */
     selectionSet: QueryMapFeaturesResponse | undefined;
     /**
      * The array of ids of layers to show
      *
      * @type {string[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     showLayers: string[];
     /**
      * The array of ids of groups to show
      *
      * @type {string[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     showGroups: string[];
     /**
      * The array of ids of layers to hide
      *
      * @type {string[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     hideLayers: string[];
     /**
      * The array of ids of groups to hide
      *
      * @type {string[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     hideGroups: string[];
     /**
      * Layer transparency settings
      * 
      * @type {{ [layerName: string]: number }}
-     * @memberof IBranchedMapSubState
+     *
      */
     layerTransparency: LayerTransparencySet;
     /**
      * The active selected feature to highlight
      * 
      * @type {(ActiveSelectedFeature | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      */
     activeSelectedFeature: ActiveSelectedFeature | undefined;
 }
@@ -1610,7 +1591,7 @@ export interface IMapGuideSubState {
 /**
  * Describes the reducer state branch for a particular map group
  *
- * @export
+ *
  * @interface IBranchedMapSubState
  */
 export interface IBranchedMapSubState {
@@ -1618,7 +1599,7 @@ export interface IBranchedMapSubState {
      * The external base layers for the map group
      *
      * @type {IExternalBaseLayer[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     externalBaseLayers: IExternalBaseLayer[];
     /**
@@ -1626,7 +1607,7 @@ export interface IBranchedMapSubState {
      * to pre-load on viewer startup.
      *
      * @type {IInitialExternalLayer[]}
-     * @memberof IBranchedMapSubState
+     *
      * @since 0.14
      */
     initialExternalLayers: IInitialExternalLayer[];
@@ -1639,35 +1620,35 @@ export interface IBranchedMapSubState {
      * The current map view
      *
      * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      */
     currentView: IMapView | undefined;
     /**
      * The initial map view
      *
      * @type {(IMapView | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      */
     initialView: IMapView | undefined;
     /**
      * The view navigation history stack
      *
      * @type {IMapView[]}
-     * @memberof IBranchedMapSubState
+     *
      */
     history: IMapView[];
     /**
      * The current position in the view navigation history stack
      *
      * @type {number}
-     * @memberof IBranchedMapSubState
+     *
      */
     historyIndex: number;
     /**
      * MapGuide-specific sub-state
      *
      * @type {IMapGuideSubState}
-     * @memberof IBranchedMapSubState
+     *
      * @since 0.14
      */
     mapguide: IMapGuideSubState | undefined;
@@ -1681,7 +1662,7 @@ export interface IBranchedMapSubState {
      * Generic layer sub-state
      *
      * @type {(IGenericLayerSubState | undefined)}
-     * @memberof IBranchedMapSubState
+     *
      * @since 0.14
      */
     generic: IGenericLayerSubState | undefined;
@@ -1691,7 +1672,7 @@ export interface IBranchedMapSubState {
  * The reducer state branch for runtime map state. Map-specific state is keyed on
  * their respective runtime map name as sub-branches on this branch
  *
- * @export
+ *
  * @interface IBranchedMapState
  */
 export interface IBranchedMapState {
@@ -1701,7 +1682,7 @@ export interface IBranchedMapState {
 /**
  * Coordinate display configuration
  *
- * @export
+ *
  * @interface ICoordinateConfiguration
  */
 export interface ICoordinateConfiguration {
@@ -1709,21 +1690,21 @@ export interface ICoordinateConfiguration {
      * The number of decimal places to show
      *
      * @type {number}
-     * @memberof ICoordinateConfiguration
+     *
      */
     decimals: number;
     /**
      * The display projection for these coordinates
      * 
      * @type {string}
-     * @memberof ICoordinateConfiguration
+     *
      */
     projection: string;
     /**
      * Display format string
      * 
      * @type {string}
-     * @memberof ICoordinateConfiguration
+     *
      */
     format?: string;
 }
@@ -1731,7 +1712,7 @@ export interface ICoordinateConfiguration {
 /**
  * Describes the capabilities of the current view
  *
- * @export
+ *
  * @interface IViewerCapabilities
  */
 export interface IViewerCapabilities {
@@ -1739,56 +1720,56 @@ export interface IViewerCapabilities {
      * Indicates if this viewer as a Task Pane component mounted
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasTaskPane: boolean;
     /**
      * Indicates if the Task Pane on this viewer has a Task Bar
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasTaskBar: boolean;
     /**
      * Indicates if this viewer has a status bar
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasStatusBar: boolean;
     /**
      * Indicates if this viewer has a zoom slider
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasNavigator: boolean;
     /**
      * Indicates if this viewer has a selection panel component mounted
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasSelectionPanel: boolean;
     /**
      * Indicates if this viewer has a legend component mounted
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasLegend: boolean;
     /**
      * Indicates if this viewer has a primary toolbar mounted
      *
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasToolbar: boolean;
     /**
      * Indicates if this viewer has the view size mounted
      * 
      * @type {boolean}
-     * @memberof IViewerCapabilities
+     *
      */
     hasViewSize: boolean;
 }
@@ -1796,7 +1777,7 @@ export interface IViewerCapabilities {
 /**
  * Describes a name/value pair
  *
- * @export
+ *
  * @interface INameValuePair
  */
 export interface INameValuePair {
@@ -1804,14 +1785,14 @@ export interface INameValuePair {
      * The name
      *
      * @type {string}
-     * @memberof INameValuePair
+     *
      */
     name: string;
     /**
      * The value
      *
      * @type {string}
-     * @memberof INameValuePair
+     *
      */
     value: string;
 }
@@ -1824,7 +1805,7 @@ export type ReducerFunction<TState> = (state: TState, action: ViewerAction) => T
 /**
  * Describes the reducer state branch for the current viewer template
  *
- * @export
+ *
  * @interface ITemplateReducerState
  */
 export interface ITemplateReducerState {
@@ -1832,35 +1813,35 @@ export interface ITemplateReducerState {
      * The initial width of the information pane. Only certain templates will recognise this setting
      * 
      * @type {number}
-     * @memberof ITemplateReducerState
+     *
      */
     initialInfoPaneWidth: number;
     /**
      * The initial width of the task pane. Only certain templates will recognise this setting
      * 
      * @type {number}
-     * @memberof ITemplateReducerState
+     *
      */
     initialTaskPaneWidth: number;
     /**
      * Indicates if the task pane is visible
      *
      * @type {boolean}
-     * @memberof ITemplateReducerState
+     *
      */
     taskPaneVisible: boolean;
     /**
      * Indicates if the legend is visible
      *
      * @type {boolean}
-     * @memberof ITemplateReducerState
+     *
      */
     legendVisible: boolean;
     /**
      * Indicates if the selection panel is visible
      *
      * @type {boolean}
-     * @memberof ITemplateReducerState
+     *
      */
     selectionPanelVisible: boolean;
     /**
@@ -1903,7 +1884,7 @@ export type MapLoadIndicatorPositioning = "top" | "bottom";
 /**
  * Describes the reducer state branch for various configuration properties
  *
- * @export
+ *
  * @interface IConfigurationReducerState
  */
 export interface IConfigurationReducerState {
@@ -1911,49 +1892,49 @@ export interface IConfigurationReducerState {
      * The agent URI
      *
      * @type {(string | undefined)}
-     * @memberof IConfigurationReducerState
+     *
      */
     agentUri: string | undefined;
     /**
      * The type of agent
      *
      * @type {ClientKind}
-     * @memberof IConfigurationReducerState
+     *
      */
     agentKind: ClientKind;
     /**
      * The current locale
      *
      * @type {string}
-     * @memberof IConfigurationReducerState
+     *
      */
     locale: string;
     /**
      * The current active map name
      *
      * @type {(string | undefined)}
-     * @memberof IConfigurationReducerState
+     *
      */
     activeMapName: string | undefined;
     /**
      * The array of available runtime maps
      *
      * @type {(INameValuePair[] | undefined)}
-     * @memberof IConfigurationReducerState
+     *
      */
     availableMaps: INameValuePair[] | undefined;
     /**
      * Coordinate display configuration
      *
      * @type {ICoordinateConfiguration}
-     * @memberof IConfigurationReducerState
+     *
      */
     coordinates: ICoordinateConfiguration;
     /**
      * Viewer capabilities
      *
      * @type {IViewerCapabilities}
-     * @memberof IConfigurationReducerState
+     *
      */
     capabilities: IViewerCapabilities;
     /**
@@ -1965,7 +1946,7 @@ export interface IConfigurationReducerState {
     /**
      * Viewer configuration
      * 
-     * @memberof IConfigurationReducerState
+     *
      */
     viewer: {
         /**
@@ -2021,21 +2002,21 @@ export interface IConfigurationReducerState {
      * Indicates if view rotation is enabled
      * 
      * @type {boolean}
-     * @memberof IConfigurationReducerState
+     *
      */
     viewRotationEnabled: boolean;
     /**
      * The current view rotation
      * 
      * @type {number}
-     * @memberof IConfigurationReducerState
+     *
      */
     viewRotation: number;
     /**
      * The unit to display view size in
      * 
      * @type {UnitOfMeasure}
-     * @memberof IConfigurationReducerState
+     *
      */
     viewSizeUnits: UnitOfMeasure;
     /**
@@ -2049,21 +2030,21 @@ export interface IConfigurationReducerState {
      * An active MapTip component with this setting enabled will override normal click-based selection.
      * 
      * @type {boolean}
-     * @memberof IConfigurationReducerState
+     *
      */
     manualFeatureTooltips: boolean;
     /**
      * The key code to listen for cancelling an active digitization
      * 
      * @type {number}
-     * @memberof IKeyBindingConfiguration
+     *
      */
     cancelDigitizationKey: number;
     /**
      * The key code to listen for undoing the last drawn point of an active digitization
      * 
      * @type {number}
-     * @memberof IKeyBindingConfiguration
+     *
      */
     undoLastPointKey: number;
 }
@@ -2071,7 +2052,7 @@ export interface IConfigurationReducerState {
 /**
  * Describes an error thrown during initialization
  *
- * @export
+ *
  * @interface InitError
  */
 export interface InitError {
@@ -2079,14 +2060,14 @@ export interface InitError {
      * The error message
      *
      * @type {string}
-     * @memberof InitError
+     *
      */
     message: string;
     /**
      * The error stack trace
      *
      * @type {string[]}
-     * @memberof InitError
+     *
      */
     stack: string[];
 }
@@ -2094,7 +2075,7 @@ export interface InitError {
 /**
  * Describes the reducer state branch for initialization errors
  *
- * @export
+ *
  * @interface IInitErrorReducerState
  */
 export interface IInitErrorReducerState {
@@ -2102,28 +2083,28 @@ export interface IInitErrorReducerState {
      * The caught initialization error
      *
      * @type {(InitError | undefined)}
-     * @memberof IInitErrorReducerState
+     *
      */
     error: InitError | undefined;
     /**
      * The initialization options
      *
      * @type {*}
-     * @memberof IInitErrorReducerState
+     *
      */
     options: any;
     /**
      * Indicates if the stack trace should be shown
      *
      * @type {boolean}
-     * @memberof IInitErrorReducerState
+     *
      */
     includeStack: boolean;
     /**
      * Any warnings that were encountered during initialization
      * 
      * @type {string[]}
-     * @memberof IInitErrorReducerState
+     *
      */
     warnings: string[];
 }
@@ -2131,7 +2112,7 @@ export interface IInitErrorReducerState {
 /**
  * Describes the reducer state branch for viewer state
  *
- * @export
+ *
  * @interface IViewerReducerState
  */
 export interface IViewerReducerState {
@@ -2139,7 +2120,7 @@ export interface IViewerReducerState {
      * The current size of the map viewport (in pixels)
      * 
      * @type {([number, number] | undefined)}
-     * @memberof IViewerReducerState
+     *
      */
     size: [number, number] | undefined;
     /**
@@ -2147,21 +2128,21 @@ export interface IViewerReducerState {
      * indicates busy activity.
      *
      * @type {number}
-     * @memberof IViewerReducerState
+     *
      */
     busyCount: number;
     /**
      * The active map tool
      *
      * @type {ActiveMapTool}
-     * @memberof IViewerReducerState
+     *
      */
     tool: ActiveMapTool;
     /**
      * Indicates if feature tooltips are enabled
      *
      * @type {boolean}
-     * @memberof IViewerReducerState
+     *
      */
     featureTooltipsEnabled: boolean;
 }
@@ -2169,7 +2150,7 @@ export interface IViewerReducerState {
 /**
  * Describes the reducer state branch for tracked mouse coordinates
  *
- * @export
+ *
  * @interface IMouseReducerState
  */
 export interface IMouseReducerState {
@@ -2177,7 +2158,6 @@ export interface IMouseReducerState {
      * The last tracked mouse coordinate
      *
      * @type {(Coordinate2D | undefined)}
-     * @memberof IMouseReducerState
      */
     coords: Coordinate2D | undefined;
 }
@@ -2187,7 +2167,7 @@ export interface IMouseReducerState {
  * various properties and branches of this tree and be automatically notified of any changes and
  * update and re-render themselves accordingly
  *
- * @export
+ *
  * @interface IApplicationState
  */
 export interface IApplicationState {
@@ -2195,70 +2175,70 @@ export interface IApplicationState {
      * Initialization errors
      *
      * @type {Readonly<IInitErrorReducerState>}
-     * @memberof IApplicationState
+     *
      */
     initError: Readonly<IInitErrorReducerState>;
     /**
      * Viewer configuration
      *
      * @type {Readonly<IConfigurationReducerState>}
-     * @memberof IApplicationState
+     *
      */
     config: Readonly<IConfigurationReducerState>;
     /**
      * Current template state
      *
      * @type {Readonly<ITemplateReducerState>}
-     * @memberof IApplicationState
+     *
      */
     template: Readonly<ITemplateReducerState>;
     /**
      * Viewer state
      *
      * @type {Readonly<IViewerReducerState>}
-     * @memberof IApplicationState
+     *
      */
     viewer: Readonly<IViewerReducerState>;
     /**
      * Runtime map state
      *
      * @type {Readonly<IBranchedMapState>}
-     * @memberof IApplicationState
+     *
      */
     mapState: Readonly<IBranchedMapState>;
     /**
      * Toolbar state
      *
      * @type {Readonly<IToolbarReducerState>}
-     * @memberof IApplicationState
+     *
      */
     toolbar: Readonly<IToolbarReducerState>;
     /**
      * Task Pane component state
      *
      * @type {Readonly<ITaskPaneReducerState>}
-     * @memberof IApplicationState
+     *
      */
     taskpane: Readonly<ITaskPaneReducerState>;
     /**
      * Modal dialog state
      *
      * @type {Readonly<IModalReducerState>}
-     * @memberof IApplicationState
+     *
      */
     modal: Readonly<IModalReducerState>;
     /**
      * Tracked mouse coordinate state
      *
      * @type {Readonly<IMouseReducerState>}
-     * @memberof IApplicationState
+     *
      */
     mouse: Readonly<IMouseReducerState>;
     /**
      * Tracks the last dispatched action
      *
      * @type {*}
-     * @memberof IApplicationState
+     *
      */
     lastaction: any;
 }
@@ -2268,7 +2248,7 @@ export interface IApplicationState {
 /**
  * Describes the redux store
  *
- * @export
+ *
  * @interface ReduxStore
  */
 export interface ReduxStore {
@@ -2276,8 +2256,6 @@ export interface ReduxStore {
      * Gets the application state
      *
      * @returns {Readonly<IApplicationState>}
-     *
-     * @memberof ReduxStore
      */
     getState(): Readonly<IApplicationState>;
 }
@@ -2296,14 +2274,14 @@ export type ReduxDispatch = (action: ViewerAction | ReduxThunkedAction) => void;
 /**
  * A function that does nothing
  *
- * @export
+ *
  */
 export function NOOP() { }
 
 /**
  * A function that always returns false
  *
- * @export
+ *
  * @returns false
  */
 export function ALWAYS_FALSE() { return false; }
@@ -2311,7 +2289,7 @@ export function ALWAYS_FALSE() { return false; }
 /**
  * A function that always returns true
  *
- * @export
+ *
  * @returns true
  */
 export function ALWAYS_TRUE() { return true; }
@@ -2319,7 +2297,7 @@ export function ALWAYS_TRUE() { return true; }
 /**
  * Describe the size/dimensions of a DOM element in a toolbar or flyout menu
  *
- * @export
+ *
  * @interface IDOMElementMetrics
  */
 export interface IDOMElementMetrics {
@@ -2327,35 +2305,35 @@ export interface IDOMElementMetrics {
      * The X position of this element
      *
      * @type {number}
-     * @memberof IDOMElementMetrics
+     *
      */
     posX: number;
     /**
      * The Y position of this element
      *
      * @type {number}
-     * @memberof IDOMElementMetrics
+     *
      */
     posY: number;
     /**
      * The width of this element
      *
      * @type {number}
-     * @memberof IDOMElementMetrics
+     *
      */
     width: number;
     /**
      * The height of this element
      *
      * @type {number}
-     * @memberof IDOMElementMetrics
+     *
      */
     height: number;
     /**
      * Indicates of this toolbar is vertically-oriented
      *
      * @type {boolean}
-     * @memberof IDOMElementMetrics
+     *
      */
     vertical?: boolean;
 }
@@ -2363,7 +2341,7 @@ export interface IDOMElementMetrics {
 /**
  * Helper function to get the initial map view from the application state
  *
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(IMapView | undefined)}
  */
@@ -2377,7 +2355,7 @@ export function getInitialView(state: Readonly<IApplicationState>): IMapView | u
 /**
  * Helper function to get the mapguide-specific sub state of the current map group
  *
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(IMapGuideSubState | undefined)}
  * @since 0.14
@@ -2392,7 +2370,7 @@ export function getMapGuideSubState(state: Readonly<IApplicationState>): IMapGui
 /**
  * Helper function to get the current selection set from the application state
  *
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(QueryMapFeaturesResponse | undefined)}
  */
@@ -2403,7 +2381,7 @@ export function getSelectionSet(state: Readonly<IApplicationState>): QueryMapFea
 /**
  * Helper function to get the current runtime map state from the application state
  *
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(RuntimeMap | undefined)}
  */
@@ -2414,7 +2392,7 @@ export function getRuntimeMap(state: Readonly<IApplicationState>): RuntimeMap | 
 /**
  * Helper function to get the current view from the application state
  *
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(IMapView | undefined)}
  */
@@ -2441,7 +2419,7 @@ export function isVisualBaseLayer(layer: IExternalBaseLayer) {
  *
  * @remarks This does not include "non-visual" base layers such as UTFGrid tilesets
  * 
- * @export
+ *
  * @param {Readonly<IApplicationState>} state
  * @returns {(IExternalBaseLayer[] | undefined)}
  * 
@@ -2469,7 +2447,7 @@ export interface WmsCapabilitiesDocument {
      * WMS service version
      * 
      * @type {string}
-     * @memberof WmsCapabilitiesDocument
+     *
      */
     version: string;
     Service: WMSServiceDescription;

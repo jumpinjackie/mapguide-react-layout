@@ -333,7 +333,6 @@ export const DEFAULT_CLUSTERED_LAYER_STYLE = {
 /**
  * An OpenLayers style map
  * 
- * @export
  * @interface IOlStyleMap
  * @since 0.13
  */

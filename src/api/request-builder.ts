@@ -6,7 +6,7 @@ import { QueryMapFeaturesResponse } from './contracts/query';
 /**
  * Describes a request that takes either a session or username/password pair
  *
- * @export
+ *
  * @interface IAuthenticatedRequest
  */
 export interface IAuthenticatedRequest {
@@ -14,21 +14,21 @@ export interface IAuthenticatedRequest {
      * The session id
      *
      * @type {string}
-     * @memberOf IAuthenticatedRequest
+     *
      */
     session?: string;
     /**
      * The username
      *
      * @type {string}
-     * @memberOf IAuthenticatedRequest
+     *
      */
     username?: string;
     /**
      * The password
      *
      * @type {string}
-     * @memberOf IAuthenticatedRequest
+     *
      */
     password?: string;
 }
@@ -36,7 +36,7 @@ export interface IAuthenticatedRequest {
 /**
  * Bitmask describing what data to return when creating a runtime map
  *
- * @export
+ *
  * @enum {number}
  */
 export enum RuntimeMapFeatureFlags {
@@ -57,7 +57,7 @@ export enum RuntimeMapFeatureFlags {
 /**
  * Describes options for creating a runtime map
  *
- * @export
+ *
  * @interface ICreateRuntimeMapOptions
  * @extends {IAuthenticatedRequest}
  */
@@ -66,49 +66,49 @@ export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
      * The map definition id
      *
      * @type {ResourceIdentifier}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     mapDefinition: ResourceIdentifier;
     /**
      * A bitmask indicating what data to return
      *
      * @type {(number | RuntimeMapFeatureFlags)}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     requestedFeatures: number | RuntimeMapFeatureFlags;
     /**
      * If requesting icons, the number of icons per scale range
      *
      * @type {number}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     iconsPerScaleRange?: number;
     /**
      * The image format for requested icons
      *
      * @type {("PNG" | "PNG8" | "GIF" | "JPG")}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     iconFormat?: "PNG" | "PNG8" | "GIF" | "JPG";
     /**
      * The width of requested icons
      *
      * @type {number}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     iconWidth?: number;
     /**
      * The height of requested icons
      *
      * @type {number}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     iconHeight?: number;
     /**
      * The target map name to assign. Otherwise the map name will be computed from the map definition id
      *
      * @type {string}
-     * @memberOf ICreateRuntimeMapOptions
+     *
      */
     targetMapName?: string;
 }
@@ -116,7 +116,7 @@ export interface ICreateRuntimeMapOptions extends IAuthenticatedRequest {
 /**
  * Describes operations requiring a session id
  *
- * @export
+ *
  * @interface ISessionBasedRequest
  */
 export interface ISessionBasedRequest {
@@ -124,7 +124,6 @@ export interface ISessionBasedRequest {
      * The session id
      *
      * @type {string}
-     * @memberOf ISessionBasedRequest
      */
     session: string;
 }
@@ -132,7 +131,7 @@ export interface ISessionBasedRequest {
 /**
  * Describes operations against a runtime map
  *
- * @export
+ *
  * @interface IRuntimeMapRequest
  * @extends {ISessionBasedRequest}
  */
@@ -141,7 +140,6 @@ export interface IRuntimeMapRequest extends ISessionBasedRequest {
      * The name of the runtime map
      *
      * @type {string}
-     * @memberOf IRuntimeMapRequest
      */
     mapname: string;
 }
@@ -149,7 +147,7 @@ export interface IRuntimeMapRequest extends ISessionBasedRequest {
 /**
  * A bitmask indicating what to return when querying map features
  *
- * @export
+ *
  * @enum {number}
  */
 export enum QueryFeaturesSet {
@@ -176,7 +174,7 @@ export enum QueryFeaturesSet {
 /**
  * Options for querying map features
  *
- * @export
+ *
  * @interface IQueryMapFeaturesOptions
  * @extends {IRuntimeMapRequest}
  */
@@ -242,7 +240,7 @@ export interface IQueryMapFeaturesOptions extends IRuntimeMapRequest {
 /**
  * Options for describing a runtime map
  *
- * @export
+ *
  * @interface IDescribeRuntimeMapOptions
  * @extends {IRuntimeMapRequest}
  */
@@ -251,35 +249,35 @@ export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {
      * A bitmask of data to return about a runtime map
      *
      * @type {(number | RuntimeMapFeatureFlags)}
-     * @memberOf IDescribeRuntimeMapOptions
+     *
      */
     requestedFeatures?: number | RuntimeMapFeatureFlags;
     /**
      * If requesting icons, the number of icons per scale range
      *
      * @type {number}
-     * @memberOf IDescribeRuntimeMapOptions
+     *
      */
     iconsPerScaleRange?: number;
     /**
      * The image format for requested icons
      *
      * @type {("PNG" | "PNG8" | "GIF" | "JPG")}
-     * @memberOf IDescribeRuntimeMapOptions
+     *
      */
     iconFormat?: "PNG" | "PNG8" | "GIF" | "JPG";
     /**
      * The width of requested icons
      *
      * @type {number}
-     * @memberOf IDescribeRuntimeMapOptions
+     *
      */
     iconWidth?: number;
     /**
      * The height of requested icons
      *
      * @type {number}
-     * @memberOf IDescribeRuntimeMapOptions
+     *
      */
     iconHeight?: number;
 }
@@ -287,7 +285,7 @@ export interface IDescribeRuntimeMapOptions extends IRuntimeMapRequest {
 /**
  * Provides client services for a MapGuide map viewer
  *
- * @export
+ *
  * @interface IMapGuideClient
  */
 export interface IMapGuideClient {
@@ -366,10 +364,9 @@ export interface IMapGuideClient {
 /**
  * An abstract MapGuide service client
  *
- * @export
+ *
  * @abstract
  * @class RequestBuilder
- * @implements {IMapGuideClient}
  */
 export abstract class RequestBuilder implements IMapGuideClient {
     protected agentUri: string;

@@ -37,7 +37,6 @@ const debouncedReplaceState = debounce((state, _, url) => window.history.replace
  * To avoid this, you should delete/omit said keys from the application state when calling this method if
  * you want to take the equivalent key/value from the custom state.
  *
- * @export
  * @param {IAppUrlState} state
  * @param {*} [extraState] Any extra state to include into the main URL
  * @param {string[] | undefined} ignoreProps Do not write the following properties to the URL
@@ -82,7 +81,6 @@ export function updateUrl(state: IAppUrlState, extraState?: any, ignoreProps?: s
  * Gets the application state from the current main URL. If the URL was updated with custom state
  * via updateUrl(), they will also be included in the returned state.
  *
- * @export
  * @param {string[]} [ignoreKeys]
  * @returns {IAppUrlState}
  * @since 0.13

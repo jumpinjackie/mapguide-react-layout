@@ -5,7 +5,7 @@ import { tr } from "../i18n";
 /**
  * The default set of component names
  *
- * @export
+ *
  * @class DefaultComponentNames
  */
 export enum DefaultComponentNames {
@@ -41,7 +41,7 @@ const components: { [id: string]: ComponentFactory } = {};
 /**
  * Registers a react component factory function for the given component id
  *
- * @export
+ *
  * @param {string} id
  * @param {ComponentFactory} factory
  */
@@ -52,7 +52,7 @@ export function registerComponentFactory(id: string, factory: ComponentFactory):
 /**
  * Gets the registered component factory function for the given component id
  *
- * @export
+ *
  * @param {string} id
  * @returns {ComponentFactory}
  */
@@ -63,7 +63,7 @@ export function getComponentFactory(id: string): ComponentFactory | undefined {
 /**
  * Placeholder component properties
  *
- * @export
+ *
  * @interface IPlaceholderComponentProps
  */
 export interface IPlaceholderComponentProps {
@@ -71,21 +71,21 @@ export interface IPlaceholderComponentProps {
      * The id of the component this placeholder is for
      *
      * @type {string}
-     * @memberOf IPlaceholderComponentProps
+     *
      */
     id: string;
     /**
      * The locale
      *
      * @type {string}
-     * @memberOf IPlaceholderComponentProps
+     *
      */
     locale?: string;
     /**
      * The props of the underlying component
      *
      * @type {*}
-     * @memberOf IPlaceholderComponentProps
+     *
      */
     componentProps?: any;
 }
@@ -93,7 +93,7 @@ export interface IPlaceholderComponentProps {
 /**
  * A component placeholder
  *
- * @export
+ *
  * @class PlaceholderComponent
  * @extends {React.Component<IPlaceholderComponentProps, any>}
  */

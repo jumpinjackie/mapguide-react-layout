@@ -66,7 +66,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
      * @override
      * @protected
      * @param {Dictionary<RuntimeMap>} mapsByName
-     * @memberof MgViewerInitCommand
+     *
      */
     protected establishInitialMapNameAndSession(mapsByName: Dictionary<SubjectLayerType>): [string, string] {
         let firstMapName = "";
@@ -445,7 +445,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
      * @param {*} config
      * @param {string[]} warnings
      * @returns {Dictionary<MapInfo>}
-     * @memberof MgViewerInitCommand
+     *
      */
     protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[], locale: string): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};

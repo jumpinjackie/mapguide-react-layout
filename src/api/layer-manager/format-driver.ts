@@ -6,7 +6,6 @@ import XMLFeature from 'ol/format/XMLFeature';
 /**
  * Defines a format driver for reading plain text into vector features
  *
- * @export
  * @interface IFormatDriver
  * @since 0.13
  */
@@ -19,7 +18,6 @@ export interface IFormatDriver {
      * @param {number} size
      * @param {string} text
      * @returns {Promise<IParsedFeatures>}
-     * @memberof IFormatDriver
      */
     tryParse(size: number, text: string): Promise<IParsedFeatures>;
 }
@@ -28,9 +26,7 @@ export interface IFormatDriver {
  * A default format driver implementation primarily for interfacing with any
  * existing OpenLayers format driver instances
  *
- * @export
  * @class FormatDriver
- * @implements {IFormatDriver}
  * @since 0.13
  */
 export class FormatDriver implements IFormatDriver {

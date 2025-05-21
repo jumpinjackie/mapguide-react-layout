@@ -15,7 +15,7 @@ let _viewer: IMapViewer | undefined;
 /**
  * Sets the Fusion base URL
  *
- * @export
+ *
  * @param {string} root
  */
 export function setFusionRoot(root: string): void {
@@ -26,7 +26,7 @@ export function setFusionRoot(root: string): void {
 /**
  * Gets the Fusion base URL
  *
- * @export
+ *
  * @returns {string}
  */
 export function getFusionRoot(): string {
@@ -48,7 +48,7 @@ export function setViewer(viewer: IMapViewer): void {
 /**
  * Gets whether the runtime environment is ready
  *
- * @export
+ *
  * @returns {boolean}
  */
 export function isReady(): boolean {
@@ -58,9 +58,9 @@ export function isReady(): boolean {
 /**
  * Gets the map viewer in this runtime environment
  *
- * @export
+ *
  * @returns {IMapViewer}
- * @deprecated You should be using the map provider context accessed via the {@link useMapProviderContext} hook where possible
+ * @deprecated You should be using the map provider context accessed via the {@link components/map-providers/context!useMapProviderContext} hook where possible
  */
 export function getViewer(): IMapViewer | undefined {
     return _viewer;

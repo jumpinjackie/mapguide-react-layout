@@ -292,7 +292,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * Exports an image of the current map view
      *
      * @param {IMapImageExportOptions} options
-     * @memberof IMapViewer
      * @since 0.14
      */
     public exportImage(options: IMapImageExportOptions): void {
@@ -456,7 +455,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     /**
      * @virtual
      * @returns {(IMapGuideViewerSupport | undefined)}
-     * @memberof BaseMapProviderContext
+     *
      */
     mapguideSupport(): IMapGuideViewerSupport | undefined {
         return undefined;
@@ -641,7 +640,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @protected
      * @param {GenericEvent} e
      * @returns
-     * @memberof BaseMapProviderContext
+     *
      */
     protected onMouseMove(e: GenericEvent) {
         if (this._comp) {
@@ -724,7 +723,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @virtual
      * @protected
      * @param {Polygon} geom
-     * @memberof BaseMapProviderContext
+     *
      */
     protected selectFeaturesByExtent(geom: Polygon) { }
 
@@ -774,7 +773,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     /**
      * @virtual
      * @readonly
-     * @memberof BaseMapProviderContext
+     *
      */
     public isMouseOverTooltip() { return this._selectTooltip?.isMouseOver ?? false; }
     protected clearMouseTooltip(): void {
@@ -856,7 +855,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @virtual
      * @protected
      * @param {GenericEvent} e
-     * @memberof BaseMapProviderContext
+     *
      */
     protected onImageError(e: GenericEvent) { }
 
@@ -1016,7 +1015,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @virtual
      * @protected
      * @param {TLayerSetGroup} layerSetGroup
-     * @memberof BaseMapProviderContext
+     *
      */
     protected onBeforeAttachingLayerSetGroup(layerSetGroup: TLayerSetGroup): void { }
     public setToasterRef(ref: React.RefObject<Toaster>) {
@@ -1118,7 +1117,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @virtual
      * @param {HTMLElement} el
      * @param {IViewerComponent} comp
-     * @memberof BaseMapProviderContext
+     *
      */
     public attachToComponent(el: HTMLElement, comp: IViewerComponent): void {
         this._comp = comp;
@@ -1255,7 +1254,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     /**
      * @virtual
      * @param {RefreshMode} [mode=RefreshMode.LayersOnly | RefreshMode.SelectionOnly]
-     * @memberof BaseMapProviderContext
+     *
      */
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void { }
     public getMetersPerUnit(): number {

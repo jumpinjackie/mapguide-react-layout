@@ -6,7 +6,6 @@ import DOMPurify from "dompurify";
 /**
  * MouseCoordinates component props
  *
- * @export
  * @interface IMouseCoordinatesProps
  * @extends {React.Props<any>}
  */

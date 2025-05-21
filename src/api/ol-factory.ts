@@ -45,7 +45,6 @@ import { OLVectorLayer, OLVectorLayerOptions } from "./ol-types";
 /**
  * Creates various OpenLayers types used by the viewer
  *
- * @export
  * @interface IOLFactory
  */
 export interface IOLFactory {
@@ -114,7 +113,6 @@ export interface IOLFactory {
      * @since 0.11
      * @param {ModifyOptions} options 
      * @returns {ModifyInteraction} 
-     * @memberof IOLFactory
      */
     createInteractionModify(options: ModifyOptions): ModifyInteraction;
     /**
@@ -122,7 +120,6 @@ export interface IOLFactory {
      * @since 0.11
      * @param {SelectOptions} options 
      * @returns {SelectInteraction} 
-     * @memberof IOLFactory
      */
     createInteractionSelect(options: SelectOptions): SelectInteraction;
     createInteractionExtent(options: ExtentOptions): ExtentInteraction;
@@ -136,9 +133,7 @@ export interface IOLFactory {
 /**
  * Creates various OpenLayers types used by the viewer
  *
- * @export
  * @class OLFactory
- * @implements {IOLFactory}
  */
 export class OLFactory implements IOLFactory {
     public createStyle(options?: StyleOptions): Style {

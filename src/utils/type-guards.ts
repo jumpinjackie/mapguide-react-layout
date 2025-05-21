@@ -12,7 +12,6 @@ import { DeArrayifiedResult } from "../api/builders/deArrayify";
 /**
  * Indicates if the given argument is an IModalDisplayOptions
  *
- * @export
  * @param {*} arg
  * @returns {arg is IModalDisplayOptions}
  */
@@ -23,7 +22,7 @@ export function isModalDisplayOptions(arg: any): arg is IModalDisplayOptions {
 /**
  * Indicates if the given argument is an IModalComponentDisplayOptions
  *
- * @export
+ *
  * @param {*} arg
  * @returns {arg is IModalComponentDisplayOptions}
  */
@@ -34,7 +33,7 @@ export function isModalComponentDisplayOptions(arg: any): arg is IModalComponent
 /**
  * Indicates if the given argument is an Error object
  *
- * @export
+ *
  * @param {*} err
  * @returns {err is Error}
  */
@@ -45,7 +44,7 @@ export function isError(err: any): err is Error {
 /**
  * Indicates if the given argument is an InitError object
  *
- * @export
+ *
  * @param {*} item
  * @returns {item is InitError}
  */
@@ -56,7 +55,7 @@ export function isInitError(item: any): item is InitError {
 /**
  * Indicates if the given arguemnt has the shape of an IFlyoutMenu
  *
- * @export
+ *
  * @param {*} item
  * @returns {item is IFlyoutMenu}
  */
@@ -67,7 +66,7 @@ export function isMenuRef(item: any): item is IFlyoutMenu {
 /**
  * Indicates if the given argument has the shape of an IComponentFlyoutItem
  *
- * @export
+ *
  * @param {*} item
  * @returns {item is IComponentFlyoutItem}
  */
@@ -78,7 +77,7 @@ export function isComponentFlyout(item: any): item is IComponentFlyoutItem {
 /**
  * Indicates if the given argument has the shape of an IInlineMenu
  *
- * @export
+ *
  * @param {*} item
  * @returns {item is IInlineMenu}
  */
@@ -89,7 +88,7 @@ export function isMenu(item: any): item is IInlineMenu {
 /**
  * Indicates if the given argument is a MapLayer object
  *
- * @export
+ *
  * @param {*} layer
  * @returns {layer is MapLayer}
  */
@@ -100,7 +99,7 @@ export function isLayer(layer: any): layer is MapLayer {
 /**
  * Indicates if the given argument has the shape of an IMapView
  *
- * @export
+ *
  * @param {*} view
  * @returns {view is IMapView}
  */
@@ -113,7 +112,6 @@ export function isMapView(view: any): view is IMapView {
 /**
  * Indicates if the given argument is a coordinate pair
  *
- * @export
  * @param {*} coord
  * @returns {coord is [number, number]}
  */
@@ -127,7 +125,7 @@ export function isCoordinate(coord: any): coord is [number, number] {
 /**
  * Indicates if the given argument has the shape of a ViewerAction
  *
- * @export
+ *
  * @param {*} action
  * @returns {action is ViewerAction}
  */

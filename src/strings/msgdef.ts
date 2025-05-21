@@ -1,13 +1,10 @@
-import { IAcknowledgeStartupWarningsAction } from "../actions/defs";
-
 /**
  * Defines our localized message bundle. Any property name here
- * can be used as a key in any {@link tr} call
+ * can be used as a key in any {@link api/i18n!tr} call
  * 
  * Any translated string bundles must conform to the shape as defined by
  * this interface
  * 
- * @export
  * @interface ILocalizedMessages
  */
 export interface ILocalizedMessages {

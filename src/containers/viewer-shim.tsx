@@ -682,7 +682,6 @@ type ViewerApiShimProps = IViewerApiShimProps & IViewerApiShimState & IViewerApi
  * This component installs a AJAX/Fusion viewer API compatibility layer when mounted allowing for existing
  * script content to work against this viewer.
  * 
- * @export
  * @class ViewerApiShim
  * @extends {React.Component<ViewerApiShimProps, any>}
  */

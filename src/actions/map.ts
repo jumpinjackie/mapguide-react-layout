@@ -137,7 +137,6 @@ export function combineSelections(oldRes: QueryMapFeaturesResponse | undefined, 
 /**
  * Options for map querying
  *
- * @export
  * @interface QueryMapFeatureActionOptions
  */
 export interface QueryMapFeatureActionOptions {
@@ -145,26 +144,26 @@ export interface QueryMapFeatureActionOptions {
      * The main set of map querying options
      *
      * @type {IQueryMapFeaturesOptions}
-     * @memberof QueryMapFeatureActionOptions
+     *
      */
     options: IQueryMapFeaturesOptions;
     /**
      * If true, the selection changes will be appended to the current selection set. False otherwise
      *
      * @type {boolean}
-     * @memberof QueryMapFeatureActionOptions
+     *
      */
     append?: boolean;
     /**
      * An optional callback to invoke on successful operation
      *
-     * @memberof QueryMapFeatureActionOptions
+     *
      */
     callback?: (res: QueryMapFeaturesResponse) => void;
     /**
      * An optional callback to invoke on failure
      *
-     * @memberof QueryMapFeatureActionOptions
+     *
      */
     errBack?: (err: any) => void;
 }
@@ -235,7 +234,6 @@ async function queryMapFeaturesHelper(map: RuntimeMap,
 /**
  * Queries map features
  *
- * @export
  * @param {string} mapName The name of the current runtime map
  * @param {QueryMapFeatureActionOptions} opts query options
  * @returns {ReduxThunkedAction}
@@ -271,7 +269,6 @@ export function queryMapFeatures(mapName: string, opts: QueryMapFeatureActionOpt
  * calling this method. For purposes of optimization, views passed in that are "close enough"
  * to the current view are not dispatched to subscribing components.
  * 
- * @export
  * @param {IMapView} view The map view to set
  * @returns {ReduxThunkedAction}
  */
@@ -316,7 +313,6 @@ export function setCurrentView(view: IMapView): ReduxThunkedAction {
 /**
  * Sends a map resized notification
  * 
- * @export
  * @param {number} width 
  * @param {number} height 
  * @returns {IMapResizedAction} 
@@ -353,7 +349,6 @@ export function setSelection(mapName: string, selectionSet: QueryMapFeaturesResp
 /**
  * Invokes the specified command
  *
- * @export
  * @param {ICommand} cmd
  * @param {*} [parameters]
  * @returns {ReduxThunkedAction}
@@ -368,7 +363,6 @@ export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedActi
  * Sets the busy count of the viewer. A value greater than zero signifies that the viewer is currently
  * busy performing various actions (eg. Loading/Rendering the current map image)
  *
- * @export
  * @param {number} busyCount The current busy count
  * @returns {IMapSetBusyCountAction}
  */
@@ -382,7 +376,6 @@ export function setBusyCount(busyCount: number): IMapSetBusyCountAction {
 /**
  * Set the given external base layer as the active base layer
  *
- * @export
  * @param {string} mapName The name of the current runtime map
  * @param {string} layerName The name of the external base layer to set as active
  * @returns
@@ -400,7 +393,6 @@ export function setBaseLayer(mapName: string, layerName: string): IMapSetBaseLay
 /**
  * Sets the view scale
  *
- * @export
  * @param {string} mapName The name of the current runtime map
  * @param {number} scale The scale to set
  * @returns
@@ -424,7 +416,6 @@ export function setScale(mapName: string, scale: number): IMapSetScaleAction {
 /**
  * Sets the current mouse coordinates
  *
- * @export
  * @param {string} mapName The name of the current runtime map
  * @param {*} coord The current mouse coordinates
  * @returns
@@ -441,8 +432,7 @@ export function setMouseCoordinates(mapName: string, coord: any): IMapSetMouseCo
 
 /**
  * Set the transparency for the given OL layer
- * 
- * @export
+ *
  * @param {string} mapName The name of the current runtime map
  * @param {string} layerName The name of the OL layer
  * @param {number} opacity A value between 0 and 1. 1 - Fully Opaque, 0 - Fully Transparent
@@ -461,8 +451,7 @@ export function setLayerTransparency(mapName: string, layerName: string, opacity
 
 /**
  * Sets the units for the map view size display
- * 
- * @export
+ *
  * @param {UnitOfMeasure} unit 
  * @returns {IMapSetViewSizeUnitsAction} 
  */
@@ -476,7 +465,6 @@ export function setViewSizeUnits(unit: UnitOfMeasure): IMapSetViewSizeUnitsActio
 /**
  * Goes back to the previous view on the navigation stack
  *
- * @export
  * @param {string} mapName The name of the current runtime map
  * @returns
  */
@@ -492,7 +480,6 @@ export function previousView(mapName: string): IMapPreviousViewAction {
 /**
  * Goes to the next view on the navigation stack
  *
- * @export
  * @param {string} mapName The name of the current runtime amp
  * @returns
  */
@@ -508,7 +495,6 @@ export function nextView(mapName: string): IMapNextViewAction {
 /**
  * Sets the active map tool
  *
- * @export
  * @param {ActiveMapTool} tool The active map tool command
  * @returns
  */
@@ -522,7 +508,6 @@ export function setActiveTool(tool: ActiveMapTool): ISetActiveMapToolAction {
 /**
  * Sets the active runtime map
  *
- * @export
  * @param {string} mapName The name of the runtime map to set as active
  * @returns
  */
@@ -536,7 +521,6 @@ export function setActiveMap(mapName: string): ISetActiveMapAction {
 /**
  * Sets whether feature tooltips (aka. Map Tips) are enabled
  *
- * @export
  * @param {boolean} enabled
  * @returns
  */
@@ -563,7 +547,6 @@ export function enableSelectDragPan(enabled: boolean): IEnableSelectDragPanActio
 /**
  * Sets whether manual feature tooltips (aka. Map Tips) are enabled
  *
- * @export
  * @param {boolean} enabled
  * @returns
  */
@@ -576,8 +559,7 @@ export function setManualFeatureTooltipsEnabled(enabled: boolean): ISetManualFea
 
 /**
  * Sets the rotation of the current view
- * 
- * @export
+ *
  * @param {number} rotation 
  * @returns 
  */
@@ -590,8 +572,7 @@ export function setViewRotation(rotation: number): IMapSetViewRotationAction {
 
 /**
  * Sets whether view rotation is enabled or not
- * 
- * @export
+ *
  * @param {boolean} enabled 
  */
 export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEnabledAction {
@@ -603,8 +584,7 @@ export function setViewRotationEnabled(enabled: boolean): IMapSetViewRotationEna
 
 /**
  * Shows the selected feature on the map
- * 
- * @export
+ *
  * @param {string} mapName 
  * @param {string} layerId 
  * @param {string} selectionKey 
@@ -626,7 +606,6 @@ export function showSelectedFeature(mapName: string, layerId: string, selectionK
  * that a new layer has been added. It is expected to be dispatched by any component that is managing
  * layers
  * 
- * @export
  * @param {string} mapName
  * @param {ILayerInfo} layer
  * @param {IVectorLayerStyle} [defaultStyle]
@@ -664,7 +643,6 @@ export function externalLayersReady(mapName: string) {
 /**
  * Removes a given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @returns {IRemoveLayerAction}
@@ -683,7 +661,6 @@ export function removeMapLayer(mapName: string, layerName: string): IRemoveLayer
 /**
  * Sets the display order index for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @param {number} index
@@ -704,7 +681,6 @@ export function setMapLayerIndex(mapName: string, layerName: string, index: numb
 /**
  * Sets the opacity for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @param {number} opacity
@@ -761,7 +737,6 @@ export function setHeatmapLayerRadius(mapName: string, layerName: string, radius
 /**
  * Sets the visibility for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @param {boolean} visible
@@ -782,7 +757,6 @@ export function setMapLayerVisibility(mapName: string, layerName: string, visibl
 /**
  * Sets the vector style for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @param {IVectorLayerStyle} style
@@ -806,7 +780,6 @@ export function setMapLayerVectorStyle(mapName: string, layerName: string, style
 /**
  * Adds a busy worker for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @returns {IAddMapLayerBusyWorkerAction}
@@ -825,7 +798,6 @@ export function addMapLayerBusyWorker(mapName: string, layerName: string): IAddM
 /**
  * Removes a busy worker for the given external layer for the given map
  * 
- * @export
  * @param {string} mapName
  * @param {string} layerName
  * @returns {IRemoveMapLayerBusyWorkerAction}

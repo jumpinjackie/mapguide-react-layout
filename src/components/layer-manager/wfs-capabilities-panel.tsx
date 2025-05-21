@@ -6,8 +6,7 @@ import { Bounds } from '../../api/common';
 
 /**
  * Attempts to extract an EPSG code from the given CRS identifier
- * 
- * @export
+ *
  * @param {string | undefined} crs
  * @returns {(number | undefined)}
  * @since 0.13

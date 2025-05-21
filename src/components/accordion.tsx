@@ -7,7 +7,6 @@ import { Collapse, Icon as BpIcon, ResizeSensor, IResizeEntry } from '@blueprint
 /**
  * Accordion panel dimensions
  *
- * @export
  * @interface IAccordionPanelContentDimensions
  */
 export interface IAccordionPanelContentDimensions {
@@ -18,7 +17,6 @@ export interface IAccordionPanelContentDimensions {
 /**
  * Describes a panel in the accordion
  *
- * @export
  * @interface IAccordionPanelSpec
  */
 export interface IAccordionPanelSpec {
@@ -30,7 +28,6 @@ export interface IAccordionPanelSpec {
 /**
  * Accordion component props
  *
- * @export
  * @interface IAccordionProps
  */
 export interface IAccordionProps {

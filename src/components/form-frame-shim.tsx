@@ -5,7 +5,6 @@ export type FormFrameShimProps = any;
 /**
  * The FormFrameShim component provides a compatibility shim for the AJAX viewer form frame
  *
- * @export
  * @class FormFrameShim
  * @extends {React.Component<FormFrameShimProps, any>}
  */

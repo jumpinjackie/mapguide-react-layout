@@ -382,7 +382,6 @@ export interface IContainerItem extends IItem {
 /**
  * Toolbar component props
  *
- * @export
  * @interface IToolbarProps
  */
 export interface IToolbarProps {

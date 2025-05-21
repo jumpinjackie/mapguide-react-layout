@@ -55,7 +55,6 @@ function areParamsEqual(params1: any, params2: any): boolean {
 /**
  * Indicates if the given URLs are the same
  *
- * @export
  * @param {string} url1
  * @param {string} url2
  * @returns {boolean}
@@ -85,7 +84,6 @@ export function areUrlsSame(url1: string, url2: string): boolean {
 /**
  * A parsed component URI
  * 
- * @export
  * @interface ParsedComponentUri
  */
 export interface ParsedComponentUri {
@@ -95,8 +93,7 @@ export interface ParsedComponentUri {
 
 /**
  * Indicates if the given URI is a component URI
- * 
- * @export
+ *
  * @param {string} uri 
  * @returns {boolean} 
  */
@@ -106,8 +103,7 @@ export function isComponentUri(uri: string): boolean {
 
 /**
  * Parses the given component URI. If it not a valid component URI returns undefined
- * 
- * @export
+ *
  * @param {string} uri 
  * @returns {(ParsedComponentUri | undefined)} 
  */
@@ -125,8 +121,7 @@ export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
 
 /**
  * Normalizes the given URL to ensure it has the baseline set of required parameters for invoking any server-side script that uses the MapGuide Web API
- * 
- * @export
+ *
  * @param {string} url The url to normalize
  * @param {(string | undefined)} mapName The name of the current runtime map
  * @param {(string | undefined)} session The current session id
@@ -203,7 +198,6 @@ export function ensureParameters(url: string, mapName: string | undefined, sessi
 /**
  * Represents a parsed URL with query string separated
  *
- * @export
  * @interface IParsedUrl
  * @since 0.12
  */
@@ -215,7 +209,6 @@ export interface IParsedUrl {
 /**
  * Parses the given URL and separates out the query string parameters
  *
- * @export
  * @param {string} url The URL to parse
  * @returns {IParsedUrl}
  * @since 0.12
@@ -234,7 +227,6 @@ export function parseUrl(url: string): IParsedUrl {
 /**
  * Converts the given object to a query string fragment
  *
- * @export
  * @param {*} parameters The object to stringify
  * @returns {string} The query string fragment
  */
@@ -245,7 +237,6 @@ export function stringifyQuery(parameters: any): string {
 /**
  * Appends the specified parameters to the given URL
  *
- * @export
  * @param {string} url The URL to append parameters to
  * @param {*} parameters The parameters to append
  * @param {boolean} [bOverwriteExisting=true] If true, will overwrite any existing parameters if the URL already has them

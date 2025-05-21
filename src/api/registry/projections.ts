@@ -8,7 +8,6 @@ import { debug } from '../../utils/logger';
 /**
  * Performs a projection definititon lookup for the given EPSG code
  *
- * @export
  * @param {string | number} epsg
  * @param {string} locale
  * @param {string} mapDef
@@ -34,7 +33,6 @@ export async function resolveProjectionFromEpsgCodeAsync(epsg: string | number, 
  * 
  * Once registered, it will update the projection set within OpenLayers
  * 
- * @export
  * @param {number} epsgCode
  * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, an external epsg lookup will be done instead
  * @param {string} alias

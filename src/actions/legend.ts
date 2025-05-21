@@ -10,7 +10,6 @@ import { ILegendSetGroupVisibilityAction, ILegendSetGroupExpandedAction, ILegend
 /**
  * Sets the visibility for the given map group
  *
- * @export
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
@@ -25,7 +24,6 @@ export function setGroupVisibility(mapName: string, options: { id: string, value
 /**
  * Sets the visibility for the given map layer
  *
- * @export
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
@@ -40,7 +38,6 @@ export function setLayerVisibility(mapName: string, options: { id: string, value
 /**
  * Sets the expanded/collapsed state of the given group
  *
- * @export
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
@@ -55,7 +52,6 @@ export function setGroupExpanded(mapName: string, options: { id: string, value: 
 /**
  * Sets the selectability state for the given map layer
  *
- * @export
  * @param {string} mapName
  * @param {{ id: string, value: boolean }} options
  * @returns
@@ -68,9 +64,8 @@ export function setLayerSelectable(mapName: string, options: { id: string, value
 }
 
 /**
- * Perform a full refresh with a requery of the layer/group structure
+ * Perform a full refresh with a re-query of the layer/group structure
  *
- * @export
  * @returns {ReduxThunkedAction}
  */
 export function refresh(): ReduxThunkedAction {

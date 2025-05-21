@@ -60,7 +60,6 @@ export function getUnitOfMeasure(unit: UnitOfMeasure): UnitInfo {
  * Utility function to compute the physical map size based on the given display size and various display settings
  * 
  * @since 0.11
- * @export
  * @param {[number, number]} displaySize 
  * @param {number} metersPerUnit 
  * @param {UnitOfMeasure} units 

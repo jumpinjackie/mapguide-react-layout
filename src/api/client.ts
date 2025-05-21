@@ -10,9 +10,7 @@ import { QueryMapFeaturesResponse } from './contracts/query';
 /**
  * The MapGuide HTTP client
  *
- * @export
  * @class Client
- * @implements {IMapGuideClient}
  */
 export class Client implements IMapGuideClient {
     private builder: RequestBuilder;
@@ -34,7 +32,7 @@ export class Client implements IMapGuideClient {
      * @param {string} url The url to make the request to
      * @returns {Promise<T>} A promise for the value of the requested type
      *
-     * @memberOf Client
+     *
      */
     public get<T>(url: string): Promise<T> {
         return new Promise<T>((resolve, reject) => {
@@ -64,7 +62,7 @@ export class Client implements IMapGuideClient {
      * @param {*} data The POST form data
      * @returns {Promise<T>} A promise for the value of the requested type
      *
-     * @memberOf Client
+     *
      */
     public post<T>(url: string, data: any): Promise<T> {
         if (!data.format) {
@@ -100,7 +98,7 @@ export class Client implements IMapGuideClient {
      * @param {string} password
      * @returns {Promise<string>}
      *
-     * @memberOf Client
+     *
      */
     public createSession(username: string, password: string): Promise<string> {
         return this.builder.createSession(username, password);
@@ -112,7 +110,7 @@ export class Client implements IMapGuideClient {
      * @param {string} session
      * @returns {Promise<number>}
      *
-     * @memberOf Client
+     *
      */
     public getServerSessionTimeout(session: string): Promise<number> {
         return this.builder.getServerSessionTimeout(session);
@@ -135,7 +133,7 @@ export class Client implements IMapGuideClient {
      * @param {*} [args]
      * @returns {Promise<T>}
      *
-     * @memberOf Client
+     *
      */
     public getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T> {
         return this.builder.getResource<T>(resourceId, args);
@@ -147,7 +145,7 @@ export class Client implements IMapGuideClient {
      * @param {ICreateRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
      *
-     * @memberOf Client
+     *
      */
     public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
         return this.builder.createRuntimeMap(options);
@@ -159,7 +157,7 @@ export class Client implements IMapGuideClient {
      * @param {ICreateRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
      *
-     * @memberOf Client
+     *
      * @since 0.14.8
      */
     public createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
@@ -172,7 +170,7 @@ export class Client implements IMapGuideClient {
      * @param {IDescribeRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
      *
-     * @memberOf Client
+     *
      */
     public describeRuntimeMap(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
         return this.builder.describeRuntimeMap(options);
@@ -184,7 +182,7 @@ export class Client implements IMapGuideClient {
      * @param {IDescribeRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
      *
-     * @memberOf Client
+     *
      * @since 0.14.8
      */
     public describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
@@ -197,7 +195,7 @@ export class Client implements IMapGuideClient {
      * @param {IQueryMapFeaturesOptions} options
      * @returns {Promise<QueryMapFeaturesResponse>}
      *
-     * @memberOf Client
+     *
      */
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures(options);
@@ -210,7 +208,7 @@ export class Client implements IMapGuideClient {
      * @param {IQueryMapFeaturesOptions} options
      * @returns {Promise<QueryMapFeaturesResponse>}
      *
-     * @memberOf Client
+     *
      */
     public queryMapFeatures_v4(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
         return this.builder.queryMapFeatures_v4(options);
@@ -226,7 +224,7 @@ export class Client implements IMapGuideClient {
      * @param {string} zPlaceholder
      * @returns {string}
      *
-     * @memberOf Client
+     *
      * @since 0.14.8 added isXYZ parameter
      */
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string {

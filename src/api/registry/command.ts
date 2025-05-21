@@ -194,18 +194,15 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
 /**
  * Common command condition evaluators
  *
- * @export
+ *
  * @class CommandConditions
  */
 export class CommandConditions {
     /**
      * The viewer is not busy
      *
-     * @static
      * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
-     *
-     * @memberof CommandConditions
      */
     public static isNotBusy(state: Readonly<IToolbarAppState>): boolean {
         return state.busyWorkerCount == 0;
@@ -213,11 +210,8 @@ export class CommandConditions {
     /**
      * The viewer has a MapGuide selection set
      *
-     * @static
      * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
-     *
-     * @memberof CommandConditions
      */
     public static hasSelection(state: Readonly<IToolbarAppState>): boolean {
         return state.hasSelection;
@@ -225,10 +219,8 @@ export class CommandConditions {
     /**
      * The viewer has a client-side selection set
      *
-     * @static
      * @param state 
-     * @returns 
-     * 
+     * @returns  
      * @since 0.14
      */
     public static hasClientSelection(state: Readonly<IToolbarAppState>): boolean {
@@ -237,11 +229,8 @@ export class CommandConditions {
     /**
      * The command is set to be disabled if selection is empty
      *
-     * @static
      * @param {*} [parameters]
      * @returns {boolean}
-     *
-     * @memberof CommandConditions
      */
     public static disabledIfEmptySelection(state: Readonly<IToolbarAppState>, parameters?: any): boolean {
         if (!state.hasSelection) {
@@ -252,11 +241,8 @@ export class CommandConditions {
     /**
      * The viewer has a previous view in the view navigation stack
      *
-     * @static
      * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
-     *
-     * @memberof CommandConditions
      */
     public static hasPreviousView(state: Readonly<IToolbarAppState>): boolean {
         return state.hasPreviousView;
@@ -264,11 +250,8 @@ export class CommandConditions {
     /**
      * The viewer has a next view in the view navigation stack
      *
-     * @static
      * @param {Readonly<IToolbarAppState>} state
      * @returns {boolean}
-     *
-     * @memberof CommandConditions
      */
     public static hasNextView(state: Readonly<IToolbarAppState>): boolean {
         return state.hasNextView;
@@ -278,7 +261,7 @@ export class CommandConditions {
 /**
  * The set of default command names
  *
- * @export
+ *
  * @class DefaultCommands
  */
 export enum DefaultCommands {
@@ -418,7 +401,7 @@ export function openUrlInTarget(name: string, cmdDef: ITargetedCommand, hasTaskP
 /**
  * Registers a viewer command
  *
- * @export
+ *
  * @param {string} name
  * @param {(ICommand | IInvokeUrlCommand | ISearchCommand)} cmdDef
  */
@@ -481,7 +464,7 @@ export function registerCommand(name: string, cmdDef: ICommand | IInvokeUrlComma
 /**
  * Gets a registered viewer command by its name
  *
- * @export
+ *
  * @param {string} name
  * @returns {(ICommand | undefined)}
  */

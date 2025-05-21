@@ -4,7 +4,6 @@ import { tr, fmt } from "../api/i18n";
 /**
  * SelectedFeatureCount component props
  *
- * @export
  * @interface ISelectedFeatureCountProps
  */
 export interface ISelectedFeatureCountProps {

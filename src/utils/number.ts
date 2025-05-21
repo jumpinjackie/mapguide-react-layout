@@ -8,7 +8,7 @@ function epsilon(): number {
 /**
  * Restricts the given number to the given range
  * 
- * @export
+ *
  * @param {number} val 
  * @param {number} lower 
  * @param {number} upper 
@@ -20,7 +20,7 @@ export function restrictToRange(val: number, lower: number, upper: number) {
 /**
  * Indicates if the given numbers are equal
  *
- * @export
+ *
  * @param {number} a
  * @param {number} b
  * @returns {boolean}
@@ -32,7 +32,7 @@ export function areNumbersEqual(a: number, b: number): boolean {
 /**
  * Indicates if the given scale is within the specified range
  *
- * @export
+ *
  * @param {number} scale
  * @param {number} minScale
  * @param {number} maxScale
@@ -46,7 +46,7 @@ export function scaleRangeBetween(scale: number, minScale: number, maxScale: num
 /**
  * Gets the closest scale index for the given scale and scale array pair
  *
- * @export
+ *
  * @param {[number, number]} scales
  * @param {number} scale
  * @returns {number}
@@ -63,7 +63,7 @@ export function getClosestScaleIndex(scales: [number, number], scale: number): n
 /**
  * Gets the applicable finite scale index for the given scale and finite scale array
  *
- * @export
+ *
  * @param {number[]} finiteScaleList
  * @param {number} scale
  * @returns {number}
@@ -123,7 +123,7 @@ export function rad2deg(radians: number) {
  * Computes the sum of the given array
  * 
  * @since 0.11
- * @export
+ *
  * @template T 
  * @param {T[]} array 
  * @param {(item: T) => number} numSelector 
@@ -141,7 +141,7 @@ export function sum<T>(array: T[], numSelector: (item: T) => number): number {
  * Rounds the given number to the specified number of decimals
  * 
  * @since 0.11
- * @export
+ *
  * @param {number} num 
  * @param {number} [decimals=2] 
  * @returns {number} 

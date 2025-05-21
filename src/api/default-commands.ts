@@ -98,8 +98,6 @@ export function buildTargetedCommand(config: Readonly<IConfigurationReducerState
  * Registers the default set of commands into the command registry. This is automatically called by the default viewer
  * bundle. If creating your own viewer bundle, be sure to call this function in your entry point, or individually register
  * the commands you want to make available in your custom viewer bundle
- *
- * @export
  */
 export function initDefaultCommands() {
     //Select Tool

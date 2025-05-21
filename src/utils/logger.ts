@@ -3,7 +3,6 @@
 /**
  * Log an informational message. Does nothing in a production build
  *
- * @export
  * @param {*} [message]
  * @param {...any[]} optionalParams
  */
@@ -16,7 +15,6 @@ export function info(message?: any, ...optionalParams: any[]) {
 /**
  * Log a warning message. Does nothing in a production build
  *
- * @export
  * @param {*} [message]
  * @param {...any[]} optionalParams
  */
@@ -29,7 +27,6 @@ export function warn(message?: any, ...optionalParams: any[]) {
 /**
  * Log an error message. Does nothing in a production build
  *
- * @export
  * @param {*} [message]
  * @param {...any[]} optionalParams
  */
@@ -42,7 +39,6 @@ export function error(message?: any, ...optionalParams: any[]) {
 /**
  * Log a debug message. Does nothing in a production build
  *
- * @export
  * @param {*} [message]
  * @param {...any[]} optionalParams
  */

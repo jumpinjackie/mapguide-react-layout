@@ -69,7 +69,6 @@ export interface IInitialElementVisibility {
 /**
  * MapGuide-specific application options
  *
- * @export
  * @interface IMapGuideAppProps
  * @since 0.14
  */
@@ -82,14 +81,12 @@ export interface IMapGuideAppProps {
      * The mapagent URI
      *
      * @type {string}
-     * @memberof IMapGuideAppProps
      */
     agentUri: string;
     /**
      * The agent kind
      *
      * @type {ClientKind}
-     * @memberof IMapGuideAppProps
      */
     agentKind?: ClientKind;
     /**
@@ -123,7 +120,6 @@ export type AdHocLayoutTemplate = {
 /**
  * App component properties
  *
- * @export
  * @interface IAppProps
  */
 export interface IAppProps {
@@ -131,7 +127,7 @@ export interface IAppProps {
      * The command that will carry out viewer initialization
      *
      * @type {IViewerInitCommand}
-     * @memberof IAppProps
+     *
      * @since 0.14
      */
     initCommand: IViewerInitCommand;
@@ -143,14 +139,14 @@ export interface IAppProps {
     /**
      * A resource id to a Web Layout or Application Definition or a function that will fetch the required Application Definition. 
      *
-     * @memberof IAppProps
+     *
      */
     resourceId: string | (() => Promise<ApplicationDefinition>);
     /**
      * The list of external base layers
      *
      * @type {IExternalBaseLayer[]}
-     * @memberof IAppProps
+     *
      * 
      * @remarks This option is for when you are passing in a Web Layout to the viewer, but you still want to provide external 
      * base layers. If passing in an Application Definition, this option is redundant as the Application Definition itself can
@@ -162,7 +158,7 @@ export interface IAppProps {
      * reading these params when initializing/refreshing.
      *
      * @type {string[]}
-     * @memberof IAppProps
+     *
      * @since 0.14
      */
     urlPropsIgnore?: string[];
@@ -178,7 +174,7 @@ export interface IAppProps {
      * MapGuide-specific options
      *
      * @type {IMapGuideAppProps}
-     * @memberof IAppProps
+     *
      * @since 0.14
      */
     mapguide?: IMapGuideAppProps;
@@ -191,7 +187,6 @@ export interface IAppProps {
 /**
  * App component state
  *
- * @export
  * @interface IAppState
  */
 export interface IAppState {
@@ -208,7 +203,6 @@ export interface IAppState {
 /**
  * App component action dispatchers
  *
- * @export
  * @interface IAppDispatch
  */
 export interface IAppDispatch {

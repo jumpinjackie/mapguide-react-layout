@@ -68,7 +68,6 @@ export class MgLayerSetGroup extends LayerSetGroupBase {
     /**
      * @override
      * @returns
-     * @memberof MgLayerSetGroup
      */
     public tryGetWmsSource(): [LayerBase, (ImageWMS | TileWMS)] | undefined {
         const subjectLayer = this.tryGetSubjectLayer();

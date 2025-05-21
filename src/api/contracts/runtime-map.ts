@@ -108,7 +108,6 @@ export interface MapLayer extends MapElement {
 /**
  * Describes a group of Runtime Map Layers
  *
- * @export
  * @interface MapGroup
  * @extends {MapElement}
  */
@@ -134,7 +133,6 @@ export interface Envelope {
 /**
  * Describes the coordinate system of the runtime map
  *
- * @export
  * @interface CoordinateSystemType
  */
 export interface CoordinateSystemType {

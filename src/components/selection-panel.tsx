@@ -63,7 +63,6 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
 /**
  * SelectionPanel component props
  *
- * @export
  * @interface ISelectionPanelProps
  */
 export interface ISelectionPanelProps {
@@ -82,7 +81,6 @@ export interface ISelectionPanelProps {
      * 
      * @since 0.11
      * @type {boolean}
-     * @memberof ISelectionPanelProps
      */
     allowHtmlValues: boolean;
     /**
@@ -91,7 +89,6 @@ export interface ISelectionPanelProps {
      * a santitization function if your HTML property values come from an un-trusted source
      * 
      * @since 0.11
-     * @memberof ISelectionPanelProps
      */
     cleanHTML?: (html: string) => string;
 }

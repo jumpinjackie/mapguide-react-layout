@@ -26,7 +26,6 @@ export interface IImageIconProps {
      * The icon path relative to the standard asset path
      *
      * @type {string}
-     * @memberof IIconProps
      */
     url?: string;
     spriteClass?: string;

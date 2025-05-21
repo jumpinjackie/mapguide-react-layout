@@ -6,7 +6,6 @@ import { tr } from "../api/i18n";
 /**
  * BaseLayersSwitcher component props
  *
- * @export
  * @interface IBaseLayerSwitcherProps
  */
 export interface IBaseLayerSwitcherProps {

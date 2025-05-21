@@ -15,7 +15,6 @@ import { DefaultViewerInitCommand } from "../actions/init-mapguide";
  * Extra application mount options.
  * 
  * @since 0.11
- * @export
  * @interface IApplicationMountOptions
  */
 export interface IApplicationMountOptions {
@@ -31,7 +30,6 @@ export interface IApplicationMountOptions {
      * 
      * @since 0.11
      * @type {Partial<IConfigurationReducerState>}
-     * @memberof IApplicationMountOptions
      */
     initialConfig: Partial<IConfigurationReducerState>;
 }
@@ -58,7 +56,7 @@ export class ApplicationViewModel {
      * @virtual
      * @protected
      * @returns {*} 
-     * @memberof ApplicationViewModel
+     *
      */
     protected getExtraInitialState(): any { return {}; }
     /**
@@ -69,7 +67,7 @@ export class ApplicationViewModel {
      * @virtual
      * @protected
      * @returns {*} 
-     * @memberof ApplicationViewModel
+     *
      */
     protected getExtraReducers(): any { return {}; }
     /**
@@ -83,7 +81,7 @@ export class ApplicationViewModel {
      * @param {Element} node
      * @param {IAppProps & IApplicationMountOptions} props
      *
-     * @memberof ApplicationViewModel
+     *
      */
     public mount(node: Element, props: IAppProps & IApplicationMountOptions) {
         const subs: ISubscriberProps[] = props.subscribers ?? [];
@@ -108,7 +106,7 @@ export class ApplicationViewModel {
      * Dispatches the given action
      * 
      * @param {(ViewerAction | ReduxThunkedAction)} action 
-     * @memberof ApplicationViewModel
+     *
      * @remarks Usage outside of the react component context should be used sparingly. In particular
      * you should avoid trying to call this method multiple times in succession. You should call this 
      * method once in response to a DOM element event (eg. A button click)
@@ -122,7 +120,7 @@ export class ApplicationViewModel {
      * 
      * @param {string} commandName 
      * @returns {(ICommand | undefined)} 
-     * @memberof ApplicationViewModel
+     *
      */
     public getCommand(commandName: string): ICommand | undefined {
         return getRegisteredCommand(commandName);
@@ -131,7 +129,7 @@ export class ApplicationViewModel {
      * Returns the current application state. This state is read-only and should not be modified.
      * 
      * @returns {Readonly<IApplicationState>} 
-     * @memberof ApplicationViewModel
+     *
      */
     public getState(): Readonly<IApplicationState> {
         return this._store.getState();

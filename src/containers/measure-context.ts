@@ -435,7 +435,6 @@ export class MeasureContext {
      *
      * @param {string} mapName
      * @param {IMeasureCallback} callback
-     * @memberof MeasureContext
      */
     public activate(mapName: string, callback: IMeasureCallback) {
         this.callback = callback;
@@ -449,7 +448,6 @@ export class MeasureContext {
      * Since 0.12, mapName is required to explicitly state which map you are deactivating the context for
      *
      * @param {string} mapName
-     * @memberof MeasureContext
      */
     public deactivate(mapName: string) {
         this.callback = undefined;

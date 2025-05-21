@@ -6,7 +6,6 @@ import { Intent, Callout } from '@blueprintjs/core';
 /**
  * Error component props
  *
- * @export
  * @interface IErrorProps
  */
 export interface IErrorProps {
@@ -17,7 +16,6 @@ export interface IErrorProps {
 /**
  * Returns a normalized stack trace for the given error object
  *
- * @export
  * @param {(Error|InitError)} err
  * @returns {string[]}
  */

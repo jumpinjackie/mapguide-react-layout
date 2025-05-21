@@ -6,8 +6,7 @@ import { strIsNullOrEmpty } from '../../utils/string';
 
 /**
  * Defines parsed features
- * 
- * @export
+ *
  * @interface IParsedFeatures
  * @since 0.13
  */

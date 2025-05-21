@@ -4,7 +4,6 @@ import { strIsNullOrEmpty } from '../../utils/string';
 /**
  * The root WFS service capabilities
  * 
- * @export
  * @interface IWfsServiceCapabilities
  * @since 0.13
  */
@@ -16,7 +15,6 @@ export interface IWfsServiceCapabilities {
 /**
  * WFS service metadata
  * 
- * @export
  * @interface IWfsServiceInfo
  * @since 0.13
  */
@@ -30,7 +28,6 @@ export interface IWfsServiceInfo {
 /**
  * Metadata for a published WFS layer
  * 
- * @export
  * @interface IWfsLayerInfo
  * @since 0.13
  */
@@ -82,7 +79,6 @@ function trySetProperty<T>(obj: T, setter: (o: T, v: string) => void, value: str
 /**
  * A basic parser for WFS capabilities XML
  *
- * @export
  * @class WfsCapabilitiesParser
  * @since 0.13
  */

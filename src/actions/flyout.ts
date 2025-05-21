@@ -38,7 +38,6 @@ export function closeContextMenu(): ICloseContextMenuAction {
 /**
  * Opens the specified flyout menu
  *
- * @export
  * @param {string} id
  * @param {IDOMElementMetrics} metrics
  * @returns {IOpenFlyoutAction}
@@ -56,7 +55,6 @@ export function openFlyout(id: string, metrics: IDOMElementMetrics): IOpenFlyout
 /**
  * Closes the specified flyout menu
  *
- * @export
  * @param {string} id
  * @returns {ICloseFlyoutAction}
  */
@@ -72,7 +70,6 @@ export function closeFlyout(id: string): ICloseFlyoutAction {
 /**
  * Load the specified component in the given flyout with the given component props
  *
- * @export
  * @param {string} id
  * @param {IDOMElementMetrics} metrics
  * @param {string} name
@@ -94,7 +91,6 @@ export function openComponent(id: string, metrics: IDOMElementMetrics, name: str
 /**
  * Closes the component in the given flyout
  *
- * @export
  * @param {string} id
  * @returns {ICloseComponentInFlyoutAction}
  */

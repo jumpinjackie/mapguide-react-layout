@@ -62,7 +62,6 @@ const LegendLabel = (props: ILegendLabelProps) => {
 /**
  * Legend component props
  *
- * @export
  * @interface ILegendProps
  */
 export interface ILegendProps {

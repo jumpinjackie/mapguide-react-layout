@@ -11,7 +11,6 @@ const STRINGS: { [locale: string]: ILocalizedMessages } = {
 /**
  * Registers a string bundle for the given locale
  *
- * @export
  * @param {string} locale
  * @param {ILocalizedMessages} bundle
  */
@@ -23,7 +22,6 @@ export function registerStringBundle(locale: string, bundle: ILocalizedMessages)
  * Formats the specified string and substitutes any placeholders (enclosed in {})
  * with the specified arguments
  *
- * @export
  * @param {string} format
  * @param {*} [args]
  * @returns {string}
@@ -43,8 +41,7 @@ export function fmt(format: string, args?: any): string {
 
 /**
  * Returns the localized string for the given key
- * 
- * @export
+ *
  * @param {keyof ILocalizedMessages} key Any property name of {@link ILocalizedMessages}
  * @param {string} [locale="en"] 
  * @param {*} [args] If a localized string has placeholders, they will be replaced with the values defined here

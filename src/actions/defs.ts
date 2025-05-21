@@ -85,7 +85,6 @@ export interface ICloseComponentInFlyoutAction {
 /**
  * Metadata about the generic subject layer
  * 
- * @export
  * @interface IGenericSubjectMapLayerMetadata
  * @since 0.14
  */
@@ -94,14 +93,14 @@ export interface IGenericSubjectMapLayerMetadata {
      * The bounds of this layer
      *
      * @type {Bounds}
-     * @memberof IGenericSubjectMapLayerMetadata
+     *
      */
     extents: Bounds;
     /**
      * The projection of this layer
      *
      * @type {string}
-     * @memberof IGenericSubjectMapLayerMetadata
+     *
      */
     projection: string;
     /**
@@ -117,7 +116,6 @@ export interface IGenericSubjectMapLayerMetadata {
 /**
  * Valid generic subject layer types
  * 
- * @export
  * @enum {string}
  * @since 0.14
  */
@@ -143,7 +141,7 @@ export enum GenericSubjectLayerType {
      */
     GeoJSON_Inline = "GeoJSON_Inline",
     /**
-     * A vector layer based on a custom-defined format whose driver was registered with {@link ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
+     * A vector layer based on a custom-defined format whose driver was registered with {@link api/registry/external-layer!ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
      */
     CustomVector = "CustomVector",
     /**
@@ -185,7 +183,6 @@ export interface IPopupLinkExpression {
 /**
  * Popup link control options
  *
- * @export
  * @interface ISelectedFeaturePopupLinkProperty
  * @since 0.14
  */
@@ -194,21 +191,21 @@ export interface ISelectedFeaturePopupLinkProperty {
      * The feature property that contains the link
      *
      * @type {string}
-     * @memberof ISelectedFeaturePopupLinkProperty
+     *
      */
     name: string | IPopupLinkExpression;
     /**
      * The anchor label to render
      *
      * @type {string}
-     * @memberof ISelectedFeaturePopupLinkProperty
+     *
      */
     label: string;
     /**
      * The hyperlink target
      *
      * @type {string}
-     * @memberof ISelectedFeaturePopupLinkProperty
+     *
      */
     linkTarget: string;
 }
@@ -216,7 +213,6 @@ export interface ISelectedFeaturePopupLinkProperty {
 /**
  * Selected feature popup configuration for an external layer
  *
- * @export
  * @interface ISelectedFeaturePopupTemplateConfiguration
  * @since 0.14
  */
@@ -226,7 +222,7 @@ export interface ISelectedFeaturePopupTemplateConfiguration {
      * (string value dependent on your locale's string bundle) will be used
      *
      * @type {string}
-     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     *
      */
     title?: string;
     /**
@@ -240,21 +236,21 @@ export interface ISelectedFeaturePopupTemplateConfiguration {
      * specified here. The value part determines the display label.
      *
      * @type {INameValuePair[]}
-     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     *
      */
     propertyMappings?: INameValuePair[];
     /**
      * If specified, controls link display for the popup
      *
      * @type {INameValuePair}
-     * @memberof ISelectedFeaturePopupTemplateConfiguration
+     *
      */
     linkProperty?: ISelectedFeaturePopupLinkProperty;
 }
 
 /**
+ * Describes a generic map layer
  * 
- * @export
  * @interface IGenericSubjectMapLayer
  * @since 0.14
  */

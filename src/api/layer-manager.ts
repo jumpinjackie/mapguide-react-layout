@@ -158,7 +158,6 @@ export class LayerManager implements ILayerManager {
      * INTERNAL API
      * @param {IInitialExternalLayer} extLayer
      * @returns
-     * @memberof LayerManager
      */
     addExternalLayer(extLayer: IInitialExternalLayer, onlyAddIfNotExists: boolean, appSettings: Dictionary<string>) {
         if (onlyAddIfNotExists && this.hasLayer(extLayer.name)) {

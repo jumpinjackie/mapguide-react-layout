@@ -1,7 +1,6 @@
 /**
  * The base of any viewer-related error
  *
- * @export
  * @class MgError
  * @extends {Error}
  */
@@ -17,7 +16,6 @@ export class MgError extends Error {
 /**
  * Indicates if this error is a session expired error
  *
- * @export
  * @param {MgError} err
  * @returns {boolean}
  */

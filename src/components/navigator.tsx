@@ -41,7 +41,6 @@ const LN9 = Math.log(9);
 /**
  * Navigator component props
  *
- * @export
  * @interface INavigatorProps
  * @extends {React.Props<any>}
  */
@@ -54,7 +53,6 @@ export interface INavigatorProps extends React.Props<any> {
      * in this list. Zooming in and out will move to the next/previous finite scale instead of the default logarithmic calculation
      *
      * @type {number[]}
-     * @memberOf INavigatorProps
      */
     finiteScaleList?: number[];
     locale?: string;

@@ -238,7 +238,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @protected
      * @returns {(MapGuideMockMode | undefined)}
-     * @memberof MapGuideMapProviderContext
+     *
      */
     protected getMockMode(): MapGuideMockMode | undefined { return this.mockMode; }
 
@@ -273,7 +273,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     /**
      * @override
      * @returns {(IMapGuideViewerSupport | undefined)}
-     * @memberof MapGuideMapProviderContext
+     *
      */
     mapguideSupport(): IMapGuideViewerSupport | undefined {
         return this;
@@ -320,7 +320,6 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @protected
      * @param {GenericEvent} e
      * @returns
-     * @memberof BaseMapProviderContext
      */
     protected onMouseMove(e: GenericEvent) {
         if (this._comp) {
@@ -416,7 +415,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @protected
      * @param {GenericEvent} e
-     * @memberof MapGuideMapProviderContext
+     *
      */
     protected onImageError(e: GenericEvent) {
         this._keepAlive?.lastTry().catch(err => {
@@ -454,7 +453,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @virtual
      * @protected
      * @param {Polygon} geom
-     * @memberof MapGuideMapProviderContext
+     *
      */
     protected selectFeaturesByExtent(geom: Polygon) {
         if (!this._state.mapName || !this._comp || !this._state.sessionId || !this._state.selectionColor) {
@@ -516,7 +515,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     /**
      * @override
      * @readonly
-     * @memberof MapGuideMapProviderContext
+     *
      */
     public isMouseOverTooltip() { return this._featureTooltip?.isMouseOver == true || this._selectTooltip?.isMouseOver == true; }
 
@@ -535,7 +534,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @param {HTMLElement} el
      * @param {IViewerComponent} comp
-     * @memberof MapGuideMapProviderContext
+     *
      */
     public attachToComponent(el: HTMLElement, comp: IViewerComponent): void {
         super.attachToComponent(el, comp);
@@ -576,7 +575,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     /**
      * @override
      * @param {RefreshMode} [mode=RefreshMode.LayersOnly | RefreshMode.SelectionOnly]
-     * @memberof MapGuideMapProviderContext
+     *
      */
     public refreshMap(mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         assertIsDefined(this._state.mapName);
@@ -587,7 +586,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @protected
      * @param {MgLayerSetGroup} layerSetGroup
-     * @memberof MapGuideMapProviderContext
+     *
      */
     protected onBeforeAttachingLayerSetGroup(layerSetGroup: MgLayerSetGroup): void {
         layerSetGroup.setMapGuideMocking(this.getMockMode());
@@ -597,7 +596,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      *
      * @virtual
      * @param {IMapGuideProviderState} nextState
-     * @memberof MapGuideMapProviderContext
+     *
      */
     public setProviderState(nextState: IMapGuideProviderState): void {
         // If viewer not mounted yet, just accept the next state and bail

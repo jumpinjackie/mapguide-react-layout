@@ -20,7 +20,6 @@ export interface IFlyoutConfigurationSet {
 /**
  * FlyoutRegion component props
  *
- * @export
  * @interface IFlyoutRegionProps
  */
 export interface IFlyoutRegionProps {
@@ -31,10 +30,6 @@ export interface IFlyoutRegionProps {
 
 /**
  * A FlyoutRegion component defines a region where flyout menus can be displayed
- *
- * @export
- * @class FlyoutRegion
- * @extends {React.Component<IFlyoutRegionProps, any>}
  */
 export const FlyoutRegion = (props: IFlyoutRegionProps) => {
     return <div>

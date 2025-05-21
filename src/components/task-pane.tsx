@@ -33,7 +33,6 @@ function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string | und
 /**
  * TaskPane component props
  *
- * @export
  * @interface ITaskPaneProps
  */
 export interface ITaskPaneProps {
@@ -65,7 +64,6 @@ export interface ITaskPaneProps {
 /**
  * A component that serves as a generic container for content or User Interface for custom functionality
  *
- * @export
  * @class TaskPane
  * @extends {React.Component<ITaskPaneProps, any>}
  */

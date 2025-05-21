@@ -47,7 +47,6 @@ export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
 /**
  * 
  * @since 0.11
- * @export
  * @interface IAddManageLayersContainerProps
  */
 export interface IAddManageLayersContainerProps {

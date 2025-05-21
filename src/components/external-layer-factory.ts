@@ -484,7 +484,6 @@ function convertStamenLayerName(name: string) {
 /**
  * Creates an OpenLayers source based on the given external base layer definition
  *
- * @export
  * @param {IExternalBaseLayer} layer
  * @returns
  * @since 0.14.10 - Stamen now creates a XYZ layer and a StadiaMaps API key is required

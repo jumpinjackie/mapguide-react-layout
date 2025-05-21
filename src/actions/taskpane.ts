@@ -8,7 +8,6 @@ import { ITaskPaneBackAction, ITaskPaneForwardAction, ITaskPanePushUrlAction } f
 /**
  * Go back to the initial task URL
  *
- * @export
  * @returns {ReduxThunkedAction}
  */
 export function goHome(): ReduxThunkedAction {
@@ -27,7 +26,6 @@ export function goHome(): ReduxThunkedAction {
 /**
  * Go back one entry in the task pane navigation history
  *
- * @export
  * @returns
  */
 export function goBack(): ITaskPaneBackAction {
@@ -39,7 +37,6 @@ export function goBack(): ITaskPaneBackAction {
 /**
  * Go forward one entry in the task pane navigation history
  *
- * @export
  * @returns
  */
 export function goForward(): ITaskPaneForwardAction {
@@ -51,7 +48,6 @@ export function goForward(): ITaskPaneForwardAction {
 /**
  * Pushes the given URL to the task pane navigation history stack
  *
- * @export
  * @param {string} url
  * @param {boolean} [silent]
  * @returns

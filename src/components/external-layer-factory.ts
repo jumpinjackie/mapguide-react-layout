@@ -150,6 +150,9 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
 
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
 
+/**
+ * @hidden
+ */
 export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?: { distance: number } }): ClusterSource | OLVectorSource {
     if (def.cluster) {
         const cluster = new ClusterSource({
@@ -168,6 +171,9 @@ export function clusterSourceIfRequired(source: OLVectorSource, def: { cluster?:
     return source;
 }
 
+/**
+ * @hidden
+ */
 export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IInitialExternalLayer, mapProjection: ProjectionLike, isExternal: boolean, appSettings: Dictionary<string>): LayerBase {
     switch (defn.type) {
         case GenericSubjectLayerType.StaticImage:

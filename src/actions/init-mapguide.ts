@@ -1,7 +1,7 @@
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { MapGroup, MapLayer, RuntimeMap } from '../api/contracts/runtime-map';
 import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView } from '../api/common';
-import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets, IGenericSubjectMapLayer } from './defs';
+import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets, IGenericSubjectMapLayer, GenericSubjectLayerType } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { isResourceId, strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
@@ -28,6 +28,7 @@ import { isRuntimeMap } from '../utils/type-guards';
 import { tryParseArbitraryCs } from '../utils/units';
 import { ScopedId } from '../utils/scoped-id';
 import { canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
+import { supportsWebGL } from '../utils/browser-support';
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
@@ -497,7 +498,11 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                             warnings.push(tr("INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER", locale, { mapId: mGroup["@id"], type: map.Type }));
                         } else {
                             if (map.Type == TYPE_EXTERNAL) {
-                                initExternalLayers.push(buildSubjectLayerDefn(map.Extension.layer_name, map));
+                                const layer = buildSubjectLayerDefn(map.Extension.layer_name, map);
+                                if (layer.type == GenericSubjectLayerType.GeoTIFF && !supportsWebGL()) {
+                                    warnings.push(tr("INIT_WARNING_WEBGL_UNSUPPORTED", locale));
+                                }
+                                initExternalLayers.push(layer);
                             } else {
                                 processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
                             }

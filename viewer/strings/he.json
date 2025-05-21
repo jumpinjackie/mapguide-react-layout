@@ -25,6 +25,7 @@
     "INIT_WARNING_BING_UNKNOWN_LAYER": "סוג שכבה לא ידוע של Bing Maps {type}. רמה זו נדחתה",
     "INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS": "מציג זה אינו תומך ברמות הבסיס של מפות Google",
     "INIT_WARNING_NO_CONTEXT_MENU": "לא ניתן למצוא את תצורת תפריט Popup כאשר אתה לוחץ לחיצה ימנית על המפה, תפריט הקשר ריק מוצג. אם אתה טוען מפריסה גמישה, מיכל בשם '{containerName}' חייב להיות זמין.",
+    "INIT_WARNING_WEBGL_UNSUPPORTED": "הדפדפן שלך אינו תומך ב-WebGL. תכונות מסוימות בהן משתמש מציג זה דורשות תמיכה ב-WebGL ואינן פועלות ללא תמיכה זו.",
     "TPL_SIDEBAR_OPEN_TASKPANE": "להצגת חלונית המשימות",
     "TPL_SIDEBAR_OPEN_LEGEND": "להצגת המקרא",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "להצגת טופס בחירה",

@@ -21,6 +21,10 @@ export interface ILocalizedMessages {
     INIT_WARNING_BING_UNKNOWN_LAYER: string;
     INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS: string;
     INIT_WARNING_NO_CONTEXT_MENU: string;
+    /**
+     * @since 0.15
+     */
+    INIT_WARNING_WEBGL_UNSUPPORTED: string;
     LAYER_TRANSPARENCY: string;
     LAYER_ID_BASE: string;
     LAYER_ID_MG_BASE: string;

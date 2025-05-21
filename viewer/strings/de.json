@@ -26,6 +26,7 @@
     "INIT_WARNING_BING_UNKNOWN_LAYER": "Unbekannter Bing-Maps-Layertyp {type}. Diese Ebene wurde übersprungen",
     "INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS": "Dieser Viewer unterstützt keine Google Maps-Basisebenen",
     "INIT_WARNING_NO_CONTEXT_MENU": "Konnte die Konfiguration des Kontextmenüs nicht finden. Wenn Sie mit der rechten Maustaste auf die Karte klicken, wird ein leeres Kontextmenü angezeigt. Wenn Sie von einem flexiblen Layout laden, muss ein Container namens '{containerName}' vorhanden sein.",
+    "INIT_WARNING_WEBGL_UNSUPPORTED": "Ihr Browser unterstützt kein WebGL. Bestimmte Funktionen dieses Viewers erfordern WebGL-Unterstützung und funktionieren ohne diese nicht.",
     "TPL_SIDEBAR_OPEN_TASKPANE": "Öffnen Sie den Task Pane",
     "TPL_SIDEBAR_OPEN_LEGEND": "Öffnen Legend",
     "TPL_SIDEBAR_OPEN_SELECTION_PANEL": "Öffnen Auswahljury",

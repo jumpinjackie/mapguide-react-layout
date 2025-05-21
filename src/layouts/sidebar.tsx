@@ -15,7 +15,7 @@ import { useCommonTemplateState } from './hooks';
 import { isElementState } from '../reducers/template';
 import { NBSP, WEBLAYOUT_TOOLBAR } from "../constants";
 import { setElementStates } from '../actions/template';
-import { isMobileViewport } from "../utils/mobile-browser";
+import { isMobileViewport } from "../utils/browser-support";
 
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 

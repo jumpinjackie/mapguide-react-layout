@@ -57,7 +57,7 @@ import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
-import { supportsTouch } from "../../utils/mobile-browser";
+import { supportsTouch } from "../../utils/browser-support";
 
 function isValidView(view: IMapView) {
     if (view.resolution) {

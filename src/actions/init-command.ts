@@ -1,6 +1,6 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
-import { IGenericSubjectMapLayer, IInitAppActionPayload, isGenericSubjectMapLayer, MapInfo } from './defs';
+import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';

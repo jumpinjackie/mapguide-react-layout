@@ -18,3 +18,14 @@ export function supportsTouch() {
 export function isMobileViewport(minWidthPx = 767) {
     return window.matchMedia(`(max-width: ${minWidthPx}px)`).matches;
 }
+
+/**
+ * Checks if this browser supports WebGL. Some viewer features require this support to be present.
+ * 
+ * @since 0.15
+ */
+export function supportsWebGL() {
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    return gl instanceof WebGLRenderingContext;
+}

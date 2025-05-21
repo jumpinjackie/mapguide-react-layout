@@ -2,82 +2,38 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { withKnobs } from '@storybook/addon-knobs';
 import { FakeApp } from './fake-app';
-import { LegendContainer } from '../containers/legend';
 import { TaskPaneContainer } from '../containers/task-pane';
 import { ScaleDisplayContainer } from '../containers/scale-display';
-import { SelectedFeatureCountContainer } from '../containers/selected-feature-count';
-import { SelectionPanelContainer } from '../containers/selection-panel';
 import { NavigatorContainer } from '../containers/navigator';
 import { MapMenuContainer } from '../containers/map-menu';
 import { BaseLayerSwitcherContainer } from '../containers/base-layer-switcher';
 import { CoordinateTrackerContainer } from '../containers/coordinate-tracker';
 import { AddManageLayersContainer } from '../containers/add-manage-layers';
-import { Button, ButtonGroup, Card, Intent } from '@blueprintjs/core';
-import { useReducedToolbarAppState, useActiveMapName } from '../containers/hooks';
-import { CommandConditions } from '../api/registry/command';
-import { QueryMapFeaturesResponse } from '../api/contracts/query';
+import { Card } from '@blueprintjs/core';
 import { deArrayify, isQueryMapFeaturesResponse } from '../api/builders/deArrayify';
 import { MouseCoordinatesContainer } from '../containers/mouse-coordinates';
 import { ViewSizeContainer } from '../containers/view-size';
 import { ViewerOptions } from '../containers/viewer-options';
-import { setSelection } from '../actions/map';
-import { MapGuideMockMode, MapDebugContext } from '../components/mapguide-debug-context';
-import { MapViewer } from '../containers/neo-map-viewer';
-import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
-import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
+import { MapGuideMockMode } from '../components/mapguide-debug-context';
+import { MapStoryFrame } from "./map-story-frame";
 
 //import MeasureContainer from '../containers/measure';
 
 const testSelSheboygan = deArrayify(require("./data/test-selection-response-sheboygan.json"));
 
-interface MapDependentContainer {
+export interface MapDependentContainer {
     
     includeSelect?: boolean;
     children: React.ReactNode;
 }
 
-function getQueryMapFeaturesResponse(activeMapName: string) {
+export function getQueryMapFeaturesResponse(activeMapName: string) {
     switch (activeMapName) {
         case "Sheboygan":
             if (isQueryMapFeaturesResponse(testSelSheboygan))
                 return testSelSheboygan;
     }
     return {};
-}
-
-const MapStoryFrame = (props: MapDependentContainer) => {
-    const SB_WIDTH = 350;
-    const includeTools = !!props.includeSelect;
-    const dispatch = useReduxDispatch();
-    const state = useReducedToolbarAppState();
-    const activeMapName = useActiveMapName();
-    const context = useMapProviderContext() as MapGuideMapProviderContext;
-    const doTestSelect = () => {
-        if (activeMapName) {
-            const q = setSelection(activeMapName, getQueryMapFeaturesResponse(activeMapName));
-            dispatch(q);
-        }
-    }
-    const doClearSelection = () => {
-        if (activeMapName) {
-            const q = setSelection(activeMapName, {});
-            dispatch(q);
-        }
-    }
-    return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: SB_WIDTH, overflowY: "auto" }}>
-            {props.children}
-        </div>
-        <div style={{ position: "absolute", left: SB_WIDTH, top: 0, bottom: 0, right: 0 }}>
-            <MapDebugContext.Provider value={{ mock: context.mockMode }}>
-                <MapViewer />
-                {props.includeSelect && <ButtonGroup style={{ position: "absolute", right: 15, top: 15 }}>
-                    <Button intent={Intent.PRIMARY} onClick={() => doTestSelect()}>Test Select</Button>
-                    <Button intent={Intent.DANGER} onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
-                </ButtonGroup>}
-            </MapDebugContext.Provider>
-        </div>
-    </div>;
 }
 
 storiesOf("Map and Map Interaction Components", module)
@@ -122,21 +78,3 @@ storiesOf("Map and Map Interaction Components", module)
     //.add("Measure", () => <MeasureContainer />)
     .add("Coordinate Tracker", () => <CoordinateTrackerContainer projections={["EPSG:4326", "EPSG:3857"]} />)
     .add("External Layer Manager", () => <AddManageLayersContainer />);
-
-storiesOf("Map and Map Interaction Components / MapGuide-specific", module)
-    .addDecorator(withKnobs)
-    .addDecorator(storyFn => <FakeApp mgMockMode={MapGuideMockMode.RenderPlaceholder}>
-        <MapStoryFrame includeSelect={true}>
-            {storyFn()}
-        </MapStoryFrame>
-    </FakeApp>)
-    .add("Legend", () => <LegendContainer />)
-    .add("Legend - with base layer switcher", () => <LegendContainer inlineBaseLayerSwitcher={true} />)
-    .add("Selected Feature Count", () => <>
-        <Card>
-            <h5 className="bp3-heading"><a href="#">Selected Feature Count</a></h5>
-            <p>Click the test select button to simulate a map selection request. The selection count should display below</p>
-        </Card>
-        <SelectedFeatureCountContainer />
-    </>)
-    .add("Selection Panel", () => <SelectionPanelContainer />)

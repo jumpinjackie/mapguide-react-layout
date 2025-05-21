@@ -16,6 +16,9 @@ import TileWMS from 'ol/source/TileWMS';
 import ImageWMS from 'ol/source/ImageWMS';
 import LayerBase from "ol/layer/Base";
 
+/**
+ * @hidden
+ */
 export class MgLayerSetGroup extends LayerSetGroupBase {
     constructor(props: IMgLayerSetProps, callback: IMgLayerSetCallback) {
         super(callback);

@@ -141,7 +141,7 @@ export enum GenericSubjectLayerType {
      */
     GeoJSON_Inline = "GeoJSON_Inline",
     /**
-     * A vector layer based on a custom-defined format whose driver was registered with {@link api/registry/external-layer!ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
+     * A vector layer based on a custom-defined format whose driver was registered with {@link ExternalLayerFactoryRegistry.registerExternalVectorLayerCreator}
      */
     CustomVector = "CustomVector",
     /**

@@ -164,6 +164,9 @@ function defaultPopupContentRenderer(feat: OLFeature, locale?: string, popupConf
     return html;
 }
 
+/**
+ * @hidden
+ */
 export class SelectedFeaturesTooltip {
     private map: olMap;
     private featureTooltipElement: HTMLElement;

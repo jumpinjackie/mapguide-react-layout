@@ -1,4 +1,8 @@
 import { Client } from '../api/client';
+
+/**
+ * @hidden
+ */
 export class SessionKeepAlive {
     private getSession: () => string;
     private client: Client;

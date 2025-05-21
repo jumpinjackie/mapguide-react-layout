@@ -4,6 +4,9 @@ import UTFGridSource from "ol/source/UTFGrid";
 import { GenericEvent } from '../../api/common';
 import DOMPurify from "dompurify";
 
+/**
+ * @hidden
+ */
 export class UTFGridTrackingTooltip {
     private tooltip: olOverlay;
     private tooltipElement: HTMLElement;

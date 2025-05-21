@@ -97,6 +97,9 @@ function buildStyleMap(pts: Style, lns: Style, pls: Style) {
     };
 }
 
+/**
+ * @internal
+ */
 export function vectorStyleToStyleMap(style: IVectorFeatureStyle): IOlStyleMap | DynamicStyleMap {
     const ptStyle = style.point ?? DEFAULT_POINT_CIRCLE_STYLE;
     const lnStyle = style.line ?? DEFAULT_LINE_STYLE;

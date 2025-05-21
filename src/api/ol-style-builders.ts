@@ -14,6 +14,9 @@ function toOLColor(color: string, alpha: number | undefined) {
     return c;
 }
 
+/**
+ * @hidden
+ */
 export function evalFeature<T>(expr: ExprOr<T>, feat: OLFeature | undefined, context: ExprEvalContext | undefined): any | undefined {
     if (!isEvaluatable(expr)) {
         return expr;
@@ -34,6 +37,9 @@ function setIfNotUndefined<T, K extends keyof T>(obj: T, prop: K, value: T[K]) {
     }
 }
 
+/**
+ * @hidden
+ */
 export function buildStroke(stroke: IBasicStroke, feat: OLFeature | undefined, context: ExprEvalContext | undefined): Stroke {
     return new Stroke({
         color: toOLColor(evalFeature(stroke.color, feat, context), evalFeature(stroke.alpha, feat, context)),
@@ -41,12 +47,18 @@ export function buildStroke(stroke: IBasicStroke, feat: OLFeature | undefined, c
     })
 }
 
+/**
+ * @hidden
+ */
 export function buildFill(fill: IBasicFill, feat: OLFeature | undefined, context: ExprEvalContext | undefined): Fill {
     return new Fill({
         color: toOLColor(evalFeature(fill.color, feat, context), evalFeature(fill.alpha, feat, context))
     });
 }
 
+/**
+ * @hidden
+ */
 export function tryBuildTextStyle(style: IVectorLabelSettings, feat: OLFeature | undefined, context: ExprEvalContext | undefined): TextStyle | undefined {
     const { label } = style;
     if (label) {

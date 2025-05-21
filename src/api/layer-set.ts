@@ -418,6 +418,9 @@ export interface ILayerSetFactory {
         appSettings: Dictionary<string>): ILayerSetOL
 }
 
+/**
+ * @hidden
+ */
 export class MgInnerLayerSetFactory implements ILayerSetFactory {
     private dynamicOverlayParams: any;
     private staticOverlayParams: any;

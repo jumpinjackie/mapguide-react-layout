@@ -4,6 +4,9 @@ import { GenericEvent } from '../../api/common';
 
 const HIDDEN_CLASS_NAME = "tooltip-hidden";
 
+/**
+ * @hidden
+ */
 export class MouseTrackingTooltip {
     private tooltip: olOverlay;
     private tooltipElement: HTMLElement;

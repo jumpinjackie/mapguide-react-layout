@@ -6,6 +6,7 @@ export default defineConfig({
             exclude: [
                 ...configDefaults.exclude,
                 '.storybook/**',
+                'src/entries/**',
                 'src/stories/**',
                 'docs_output/**',
                 'e2e/**',

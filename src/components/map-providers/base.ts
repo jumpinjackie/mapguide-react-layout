@@ -57,6 +57,7 @@ import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
+import { supportsTouch } from "../../utils/mobile-browser";
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -267,8 +268,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._imageSourceLoaders = {};
         this._wmsQueryAugmentations = {};
         this._triggerZoomRequestOnMoveEnd = true;
-        const ism = isMobile(navigator.userAgent);
-        this._supportsTouch = ism.phone || ism.tablet;
+        this._supportsTouch = supportsTouch();
         const baseInitialState: IMapProviderState = {
             activeTool: ActiveMapTool.None,
             view: undefined,

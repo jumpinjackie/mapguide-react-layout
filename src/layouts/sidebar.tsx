@@ -14,8 +14,8 @@ import { useViewerBusyCount, useLastDispatchedAction, useReducedToolbarAppState 
 import { useCommonTemplateState } from './hooks';
 import { isElementState } from '../reducers/template';
 import { NBSP, WEBLAYOUT_TOOLBAR } from "../constants";
-import isMobile from "ismobilejs";
 import { setElementStates } from '../actions/template';
+import { isMobileViewport } from "../utils/mobile-browser";
 
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 
@@ -30,8 +30,7 @@ function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITempla
                 const { selection } = action.payload;
                 if (selection && selection.SelectedFeatures) {
                     let autoExpandSelectionPanel = origState.autoDisplaySelectionPanelOnSelection;
-                    const ism = isMobile(navigator.userAgent);
-                    if (ism.phone) {
+                    if (isMobileViewport()) {
                         return origState; //Take no action on mobile
                     }
                     if (selection.SelectedFeatures.SelectedLayer.length && autoExpandSelectionPanel) {
@@ -52,8 +51,7 @@ function sidebarTemplateReducer(origState: ITemplateReducerState, state: ITempla
                 const { feature } = action.payload;
                 if (feature?.properties) {
                     let autoExpandSelectionPanel = origState.autoDisplaySelectionPanelOnSelection;
-                    const ism = isMobile(navigator.userAgent);
-                    if (ism.phone) {
+                    if (isMobileViewport()) {
                         return origState; //Take no action on mobile
                     }
                     if (autoExpandSelectionPanel) {

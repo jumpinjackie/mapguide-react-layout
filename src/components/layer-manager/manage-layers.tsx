@@ -1,11 +1,12 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { Button, Intent, ButtonGroup, Card, Icon, Switch, NonIdealState, Slider, Collapse, Spinner, FormGroup } from '@blueprintjs/core';
+import { ButtonGroup, Switch, NonIdealState, Spinner, FormGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
 import { BlueprintSvgIconNames } from '../../constants/assets';
+import { useElementContext } from "../elements/element-context";
 
 function isBoundsZoomable(layer: ILayerInfo) {
     //TODO: See if WGS84_BBOX [is/can be] surfaced to ILayerInfo
@@ -44,6 +45,7 @@ const HEATMAP_SLIDER_RAMP = [0, 10, 20, 30, 40, 50];
 const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
+    const { Card, Button, Collapsible, Slider, Icon } = useElementContext();
     const {
         layer,
         locale,
@@ -104,7 +106,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                 {
                     isWms = true;
                     if (extensions.getLegendUrl) {
-                        extraActions.push(<Button key="toggle-wms-legend" intent={Intent.SUCCESS} icon="info-sign" onClick={() => onToggleWmsLegend(extensions.getLegendUrl as any)} />)
+                        extraActions.push(<Button key="toggle-wms-legend" variant="success" icon="info-sign" onClick={() => onToggleWmsLegend(extensions.getLegendUrl as any)} />)
                     }
                 }
         }
@@ -112,10 +114,10 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
 
     if (layer.vectorStyle) {
         if (layer.type != "KML" && layer.heatmap == null) {
-            extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} intent={Intent.PRIMARY} icon="edit" onClick={() => toggleOpenPanel(OpenPanel.EditVectorStyle)} />)
+            extraActions.push(<Button key="edit-vector-style" title={tr("LAYER_MANAGER_TT_EDIT_STYLE", locale)} variant="primary" icon="edit" onClick={() => toggleOpenPanel(OpenPanel.EditVectorStyle)} />)
         }
     }
-    extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} intent={Intent.PRIMARY} icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
+    extraActions.push(<Button key="more-layer-options" title={tr("LAYER_MANAGER_TT_MORE_OPTIONS", locale)} variant="primary" icon="cog" onClick={() => toggleOpenPanel(OpenPanel.MoreLayerOptions)} />)
     const isWmsLegendOpen = !strIsNullOrEmpty(wmsLegendUrl);
     const layerLabel = layer.displayName ?? layer.name;
     const theVectorStyle = layer.cluster?.style ?? layer.vectorStyle;
@@ -142,13 +144,13 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     return <Card key={layer.name}>
         <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />
         <ButtonGroup>
-            <Button disabled={!canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} intent={Intent.PRIMARY} icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
-            <Button disabled={!canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} intent={Intent.PRIMARY} icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />
-            <Button disabled={!canZoom} title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} intent={Intent.SUCCESS} icon="zoom-to-fit" onClick={() => onZoomToBounds(layer.name)} />
-            <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} intent={Intent.DANGER} icon="trash" onClick={() => onRemoveLayer(layer.name)} />
+            <Button disabled={!canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} variant="primary" icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
+            <Button disabled={!canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} variant="primary" icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />
+            <Button disabled={!canZoom} title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} variant="success" icon="zoom-to-fit" onClick={() => onZoomToBounds(layer.name)} />
+            <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} variant="danger" icon="trash" onClick={() => onRemoveLayer(layer.name)} />
             {extraActions}
         </ButtonGroup>
-        <Collapse isOpen={openPanel == OpenPanel.MoreLayerOptions}>
+        <Collapsible isOpen={openPanel == OpenPanel.MoreLayerOptions}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></h5>
                 <FormGroup label={tr("LAYER_OPACITY", locale)}>
@@ -163,14 +165,14 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                     </FormGroup>
                 </>}
             </Card>
-        </Collapse>
-        {isWms && <Collapse isOpen={isWmsLegendOpen}>
+        </Collapsible>
+        {isWms && <Collapsible isOpen={isWmsLegendOpen}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("WMS_LEGEND", locale)}</a></h5>
                 <img src={wmsLegendUrl} />
             </Card>
-        </Collapse>}
-        {theVectorStyle && <Collapse isOpen={openPanel == OpenPanel.EditVectorStyle}>
+        </Collapsible>}
+        {theVectorStyle && <Collapsible isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <div style={{ padding: 5 }}>
                 <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
                 <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st, which)}
@@ -180,7 +182,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
                     enableLine={enableLine}
                     enablePolygon={enablePolygon} />
             </div>
-        </Collapse>}
+        </Collapsible>}
     </Card>;
 }
 

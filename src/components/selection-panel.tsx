@@ -3,9 +3,10 @@ import { SelectedFeature, LayerMetadata, FeatureProperty } from "../api/contract
 import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
 import { GenericEvent, ICompositeSelection } from "../api/common";
-import { Callout, Intent, HTMLSelect } from '@blueprintjs/core';
+
 import { strIsNullOrEmpty } from "../utils/string";
 import DOMPurify from "dompurify";
+import { useElementContext } from "./elements/element-context";
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -139,6 +140,7 @@ const FloatClear = () => <div style={{ clear: "both" }} />;
  * @param props 
  */
 export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
+    const { Callout } = useElementContext();
     const {
         maxHeight,
         selection,
@@ -263,7 +265,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
                 });
                 return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
                     <div className="bp3-select selection-panel-layer-selector">
-                        <HTMLSelect value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
+                        <select value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
                             {selection.getLayers().map((layer, index) => {
                                 const lid = layer.getLayerId();
                                 const lname = layer.getName();
@@ -272,7 +274,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
                                     : lname;
                                 return <option key={`selected-layer-${lkey}`} value={`${index}`}>{label}</option>
                             })}
-                        </HTMLSelect>
+                        </select>
                     </div>
                     <Toolbar childItems={selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
                     <FloatClear />
@@ -288,7 +290,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
                         return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
                     }
                 } else if (!(selection?.getLayerCount() > 0)) {
-                    return <Callout intent={Intent.PRIMARY} icon="info-sign">
+                    return <Callout variant="primary" icon="info-sign">
                         <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
                     </Callout>;
                 }

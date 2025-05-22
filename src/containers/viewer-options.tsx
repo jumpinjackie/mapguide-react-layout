@@ -6,18 +6,19 @@ import {
 } from "../api/common";
 import { tr } from "../api/i18n";
 import { getUnitOfMeasure, getUnitsOfMeasure } from "../utils/units";
-import { Slider, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerFeatureTooltipsEnabled, useConfiguredManualFeatureTooltips, useViewerSizeUnits, useViewerLocale, useActiveMapExternalBaseLayers, useViewerIsStateless, useViewerSelectCanDragPan } from './hooks';
 import { setManualFeatureTooltipsEnabled, setFeatureTooltipsEnabled, setLayerTransparency, setViewSizeUnits, enableSelectDragPan } from '../actions/map';
 import { useActiveMapLayerTransparency, useActiveMapState } from './hooks-mapguide';
 import { LAYER_ID_BASE, LAYER_ID_MG_BASE, LAYER_ID_MG_DYNAMIC_OVERLAY, LAYER_ID_MG_SEL_OVERLAY } from '../constants';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { useElementContext } from "../components/elements/element-context";
 
 export interface IViewerOptionsProps {
 
 }
 
 export const ViewerOptions = () => {
+    const { Slider } = useElementContext();
     const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
@@ -145,12 +146,12 @@ export const ViewerOptions = () => {
         <label className="bp3-label">
             {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
             <div className="bp3-select">
-                <HTMLSelect value={viewSizeUnits} onChange={onViewSizeUnitsChanged}>
+                <select value={viewSizeUnits} onChange={onViewSizeUnitsChanged}>
                     {units.map(uom => {
                         const ui = getUnitOfMeasure(uom);
                         return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
                     })}
-                </HTMLSelect>
+                </select>
             </div>
         </label>
     </div>;

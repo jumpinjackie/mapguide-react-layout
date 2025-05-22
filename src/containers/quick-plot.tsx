@@ -12,12 +12,12 @@ import {
     isVisualBaseLayer
 } from "../api/common";
 import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
-import { Slider, Button, Intent, Callout, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
 import { useActiveMapState } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { useElementContext } from "../components/elements/element-context";
 
 function getMargin() {
     /*
@@ -168,6 +168,7 @@ export interface IQuickPlotContainerState {
 }
 
 export const QuickPlotContainer = () => {
+    const { Slider, Callout, Button } = useElementContext();
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
     const [showLegend, setShowLegend] = React.useState(false);
@@ -333,13 +334,13 @@ export const QuickPlotContainer = () => {
                             The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
                             We can change the html code to add more paper size or remove some ones.
                         */}
-                    <HTMLSelect className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={paperSize} onChange={onPaperSizeChanged}>
+                    <select className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={paperSize} onChange={onPaperSizeChanged}>
                         <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
                         <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
                         <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
                         <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
                         <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
-                    </HTMLSelect>
+                    </select>
                 </div>
             </label>
             <label className="bp3-label">
@@ -348,10 +349,10 @@ export const QuickPlotContainer = () => {
                         The pre-defined paper orientations
                     */}
                 <div className="bp3-select bp3-fill">
-                    <HTMLSelect className="FixWidth" id="orientation" name="orientation" value={orientation} onChange={onOrientationChanged}>
+                    <select className="FixWidth" id="orientation" name="orientation" value={orientation} onChange={onOrientationChanged}>
                         <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
                         <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
-                    </HTMLSelect>
+                    </select>
                 </div>
             </label>
             <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
@@ -402,12 +403,12 @@ export const QuickPlotContainer = () => {
                                     We can change the html code to extend the pre-defined scales
                                 */}
                             <div className="bp3-select bp3-fill">
-                                <HTMLSelect className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={scale} onChange={onScaleChanged}>
+                                <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={scale} onChange={onScaleChanged}>
                                     <option value="500">1: 500</option>
                                     <option value="1000">1: 1000</option>
                                     <option value="2500">1: 2500</option>
                                     <option value="5000">1: 5000</option>
-                                </HTMLSelect>
+                                </select>
                             </div>
                         </label>
                         <label className="bp3-label">
@@ -417,12 +418,12 @@ export const QuickPlotContainer = () => {
                                     We can change the html code to extend the pre-defined values
                                 */}
                             <div className="bp3-select bp3-fill">
-                                <HTMLSelect className="FixWidth" id="dpi" name="dpi" value={dpi} onChange={onDpiChanged}>
+                                <select className="FixWidth" id="dpi" name="dpi" value={dpi} onChange={onDpiChanged}>
                                     <option value="96">96</option>
                                     <option value="150">150</option>
                                     <option value="300">300</option>
                                     <option value="600">600</option>
-                                </HTMLSelect>
+                                </select>
                             </div>
                         </label>
                         <label className="bp3-label noselect">
@@ -442,13 +443,13 @@ export const QuickPlotContainer = () => {
             <div className="HPlaceholder5px"></div>
             {(() => {
                 if (hasExternalBaseLayers) {
-                    return <Callout intent={Intent.PRIMARY} icon="info-sign">
+                    return <Callout variant="primary" icon="info-sign">
                         {xlate("QUICKPLOT_COMMERCIAL_LAYER_WARNING", locale)}
                     </Callout>;
                 }
             })()}
             <div className="ButtonContainer FixWidth">
-                <Button type="submit" intent={Intent.PRIMARY} icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
+                <Button type="submit" variant="primary" icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
             </div>
             <input type="hidden" id="margin" name="margin" />
             <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />

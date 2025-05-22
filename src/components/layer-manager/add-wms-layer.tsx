@@ -15,16 +15,18 @@ import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
-import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
+import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
 import { getViewer } from '../../api/runtime';
+import { useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
  */
 export const AddWmsLayer = (props: IAddLayerContentProps) => {
+    const { Button } = useElementContext();
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -128,7 +130,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 value={wmsUrl}
                 onChange={onWmsUrlChange}
                 readOnly={loadingCapabilities}
-                rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
+                rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
         </ControlGroup>
         <br />
         <div>

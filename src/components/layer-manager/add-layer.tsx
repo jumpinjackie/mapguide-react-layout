@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch, Spinner, SpinnerSize } from '@blueprintjs/core';
+import { RadioGroup, NonIdealState, EditableText, ButtonGroup, FormGroup, FileInput, Switch, Spinner, SpinnerSize, Intent } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -14,6 +14,7 @@ import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
+import { useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
@@ -90,6 +91,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
+    const { Button, Callout, NumericInput } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
@@ -231,36 +233,36 @@ const AddFileLayer = (props: IAddLayerProps) => {
         const labelEl = <>
             <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
             {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
-                <HTMLSelect value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
+                <select value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
                     {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </HTMLSelect>
+                </select>
             </FormGroup>}
         </>;
 
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("COLORBREWER_THEME", locale)) }} />;
         const themeEl = <>
             <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
-                <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
+                <select value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
                     {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </HTMLSelect>
+                </select>
             </FormGroup>
             <FormGroup label={colorBrewerLabel}>
-                <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
+                <select value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
                     {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
-                </HTMLSelect>
+                </select>
             </FormGroup>
             {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
         </>;
 
         const clusterEl = <>
             <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
-                <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
+                <NumericInput min={1} value={clusterDistance} onChange={v => setClusterDistance(v)} />
             </FormGroup>
             <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
-                <HTMLSelect value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
+                <select value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
                     <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
                     <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
-                </HTMLSelect>
+                </select>
             </FormGroup>
         </>;
         return <NonIdealState
@@ -268,18 +270,18 @@ const AddFileLayer = (props: IAddLayerProps) => {
             icon="upload"
             description={tr("FMT_UPLOADED_FILE", locale, { size: loadedFile.size, type: (strIsNullOrEmpty(loadedFile.type) ? tr("UNKNOWN_FILE_TYPE", locale) : loadedFile.type) })}
             action={<>
-                {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+                {addLayerError && <Callout variant="danger" title={tr("ADDING_LAYER_ERROR", locale)}>
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
                     {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://spatialreference.org/" target="_blank">EPSG:</a>} inline>
-                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
+                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
                 <FormGroup label="Create Layer As">
-                    <HTMLSelect value={createLayerAs} onChange={e => setCreateLayerAs(e.target.value as CreateVectorLayerAs)}>
+                    <select value={createLayerAs} onChange={e => setCreateLayerAs(e.target.value as CreateVectorLayerAs)}>
                         {createOptions.map((kind, i) => <option key={kind.value} value={kind.value}>{kind.label}</option>)}
-                    </HTMLSelect>
+                    </select>
                 </FormGroup>
                 {(() => {
                     switch (createLayerAs) {
@@ -296,8 +298,8 @@ const AddFileLayer = (props: IAddLayerProps) => {
                     }
                 })()}
                 <ButtonGroup>
-                    <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
-                    <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>
+                    <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} variant="primary">{tr("ADD_LAYER", locale)}</Button>
+                    <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} variant="danger">{tr("CANCEL", locale)}</Button>
                 </ButtonGroup>
             </>} />
     } else if (isProcessingFile) {
@@ -306,7 +308,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             title={tr("ADD_FILE_PROCESSING", locale)} />
     } else {
         return <>
-            {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+            {addLayerError && <Callout variant="danger" title={tr("ADDING_LAYER_ERROR", locale)}>
                 {addLayerError.message}
             </Callout>}
             <NonIdealState
@@ -326,13 +328,13 @@ const AddUrlLayer = (props: IAddLayerProps) => {
     };
     const items = Object.keys(ADD_URL_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_URL_LAYER_TYPES[lt].label }));
     return <div>
-        <Label>
+        <label>
             {tr("LAYER_TYPE", locale)}
-            <HTMLSelect value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
+            <select value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
                 <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
                 {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
-            </HTMLSelect>
-        </Label>
+            </select>
+        </label>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {
                 const cprops: IAddLayerContentProps = {
@@ -351,6 +353,7 @@ const AddUrlLayer = (props: IAddLayerProps) => {
  * @hidden
  */
 export const AddLayer = (props: IAddLayerProps) => {
+    const { Radio } = useElementContext();
     const [addLayerKind, setAddLayerKind] = React.useState<AddLayerKind>(AddLayerKind.File);
     const onAddLayerKindChanged = (e: GenericEvent) => {
         setAddLayerKind(parseInt(e.target.value, 10));

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, RadioGroup, Radio, InputGroup, Switch, Button, Intent, ButtonGroup, SwitchProps } from '@blueprintjs/core';
+import { NonIdealState, Tabs, Tab, FormGroup, RadioGroup, Switch, Intent, ButtonGroup, SwitchProps } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -8,6 +8,7 @@ import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor }
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";
 import { vectorStyleToStyleMap } from "../api/ol-style-map-set";
+import { useElementContext } from "./elements/element-context";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -60,6 +61,7 @@ function coalesceExpr<T>(expr: ExprOr<T> | undefined, defaultVal: T): T {
 const DEFAULT_FONT_SIZE = 14;
 
 const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
+    const { Button } = useElementContext();
     const { style, locale, onChange, isLine } = props;
     const [bold, setBold] = React.useState(false);
     const [italic, setItalic] = React.useState(false);
@@ -113,9 +115,9 @@ const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
             <NumberExprEditor locale={locale} value={localFontSize} onChange={t => setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE))} />
         </FormGroup>}
         {hasLabel && <ButtonGroup>
-            <Button intent={Intent.PRIMARY} active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
-            <Button intent={Intent.PRIMARY} active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
-            {isLine && <Button intent={Intent.PRIMARY} active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
+            <Button variant="primary" active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
+            <Button variant="primary" active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
+            {isLine && <Button variant="primary" active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
         </ButtonGroup>}
         {hasLabel && <FormGroup label={tr("LABEL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={localBgColor} onChange={(c: any) => setLocalBgColor(c)} />
@@ -136,6 +138,7 @@ interface ISubStyleEditorProps<TStyle> {
 }
 
 const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IPointIconStyle>) => {
+    const { NumericInput } = useElementContext();
     const [localSrc, setLocalSrc] = React.useState(style.src);
     React.useEffect(() => {
         setLocalSrc(style.src);
@@ -152,8 +155,8 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
             {!isEvaluatable(style.src) && <img src={style.src} />}
         </FormGroup>
         <FormGroup label={tr("VSED_PT_ICON_ANCHOR", locale)}>
-            {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onValueChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
-            {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onValueChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
+            {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
+            {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
         </FormGroup>
         <DynamicSwitch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} expr={style.rotateWithView} onExprChanged={(e: any) => onChange({ ...style, rotateWithView: e })} />
         <FormGroup label={tr("VSED_PT_ICON_ROTATION", locale)}>
@@ -192,6 +195,7 @@ const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProp
 };
 
 const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
+    const { Radio } = useElementContext();
     const [iconStyle, setIconStyle] = React.useState<IPointIconStyle | undefined>(undefined);
     const [circleStyle, setCircleStyle] = React.useState<IBasicPointCircleStyle | undefined>(undefined);
     const [currentStyle, setCurrentStyle] = React.useState(style);
@@ -385,6 +389,7 @@ interface IFilterItemProps extends Omit<IVectorLayerStyleEditorProps, "onChange"
 const parser = new Parser();
 
 const FilterItem = (props: IFilterItemProps) => {
+    const { Button } = useElementContext();
     const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
     const [localFilter, setLocalFilter] = React.useState(filter ?? "");
     const [isLocalFilterValid, setIsLocalFilterValid] = React.useState(true);
@@ -481,7 +486,7 @@ const FilterItem = (props: IFilterItemProps) => {
             {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
             {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
             <td>{isDefault ? <strong>Default Style</strong> : filterExprEd}</td>
-            <td><Button intent={isStyleEditorOpen ? Intent.DANGER : Intent.PRIMARY} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
+            <td><Button variant={isStyleEditorOpen ? "danger" : "primary"} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
         </tr>
         {isStyleEditorOpen && <tr>
             <td colSpan={colSpan}>

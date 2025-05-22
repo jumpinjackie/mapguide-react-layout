@@ -2,7 +2,8 @@ import * as React from "react";
 import {
     GenericEvent
 } from "../api/common";
-import { Collapse, Icon as BpIcon, ResizeSensor, IResizeEntry } from '@blueprintjs/core';
+import { ResizeSensor, IResizeEntry } from '@blueprintjs/core';
+import { useElementContext } from "./elements/element-context";
 
 /**
  * Accordion panel dimensions
@@ -56,6 +57,7 @@ function validatePanelId(panels: IAccordionPanelSpec[], id: string | undefined):
  * @param props 
  */
 export const Accordion = React.memo((props: IAccordionProps) => {
+    const { Icon: BpIcon, Collapsible } = useElementContext();
     const { style, panels, isResizing, onActivePanelChanged } = props;
     const activeId = validatePanelId(props.panels, props.activePanelId);
     const [dim, setDim] = React.useState<Pick<DOMRectReadOnly, "width" | "height">>({
@@ -84,9 +86,9 @@ export const Accordion = React.memo((props: IAccordionProps) => {
                     <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={onTogglePanel}>
                         <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
                     </div>
-                    <Collapse isOpen={isOpen}>
+                    <Collapsible isOpen={isOpen}>
                         {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
-                    </Collapse>
+                    </Collapsible>
                 </div>;
             })}
         </div>

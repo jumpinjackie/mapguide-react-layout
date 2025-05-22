@@ -15,7 +15,7 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
 import { IElementState } from '../actions/defs';
-import { NonIdealState, Spinner, Intent, Callout } from '@blueprintjs/core';
+import { NonIdealState, Spinner, Intent } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
 import { areStatesEqual, getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
@@ -25,6 +25,7 @@ import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
+import { useElementContext } from "../components/elements/element-context";
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -211,6 +212,13 @@ export interface IAppDispatch {
 }
 
 type AppInnerProps = IAppProps & IAppState & IAppDispatch;
+
+const AppInitError: React.FC<{ locale: string }> = (props) => {
+    const { Callout } = useElementContext();
+    return <Callout variant="danger" title={tr("INIT_ERROR_TITLE", props.locale)} icon="error">
+        {props.children}
+    </Callout>;
+}
 
 class AppInner extends React.Component<AppInnerProps, any> {
     constructor(props: AppInnerProps) {
@@ -445,9 +453,9 @@ class AppInner extends React.Component<AppInnerProps, any> {
         }
         //Not showing stack as the error cases are well-defined here and we know where they
         //originate from
-        return <Callout intent={Intent.DANGER} title={tr("INIT_ERROR_TITLE", locale)} icon="error">
+        return <AppInitError locale={locale}>
             {this.renderErrorMessage(err, locale, initOptions || {})}
-        </Callout>;
+        </AppInitError>;
     }
     render(): JSX.Element {
         const { layout, configuredLocale, error } = this.props;

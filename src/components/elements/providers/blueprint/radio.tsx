@@ -1,5 +1,5 @@
-import {Radio} from '@blueprintjs/core';
-import {RadioProps} from '../../element-context';
+import { Radio } from '@blueprintjs/core';
+import { RadioProps } from '../../element-context';
 import React from 'react';
 
 export const BpRadio: React.FC<RadioProps> = (props) => {

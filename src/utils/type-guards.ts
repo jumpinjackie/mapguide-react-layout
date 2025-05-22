@@ -16,7 +16,7 @@ import { DeArrayifiedResult } from "../api/builders/deArrayify";
  * @returns {arg is IModalDisplayOptions}
  */
 export function isModalDisplayOptions(arg: any): arg is IModalDisplayOptions {
-    return typeof(arg.url) != 'undefined';
+    return typeof(arg?.url) != 'undefined';
 }
 
 /**

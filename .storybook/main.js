@@ -1,5 +1,5 @@
 module.exports = {
-    framework: "@storybook/react",
+    framework: "@storybook/react-webpack5",
     stories: ["../src/stories/*.stories.tsx"],
 
     core: {

@@ -28,7 +28,7 @@
     "clean": "rimraf viewer/dist/stdassets && rimraf -g viewer/dist/viewer.* && rimraf package/ && rimraf lib/",
     "lint": "tslint 'src/**/*.tsx' 'src/**/*.ts' 'test/**/*.tsx' 'test/**/*.ts'",
     "postinstall": "patch-package && yarn run build",
-    "storybook": "storybook start -p 4000 -c .storybook",
+    "storybook": "storybook dev -p 4000 -c .storybook",
     "test": "vitest run",
     "test:appveyor": "vitest run --coverage",
     "test:gha": "vitest run --coverage && cat ./coverage-report/lcov.info",

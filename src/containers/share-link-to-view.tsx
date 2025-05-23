@@ -3,7 +3,6 @@ import { tr } from '../api/i18n';
 import { getViewer } from '../api/runtime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { parseUrl, stringifyQuery } from "../utils/url";
-import { TextArea } from '@blueprintjs/core';
 import { useViewerLocale } from './hooks';
 import { useActiveMapState } from "./hooks-mapguide";
 import { useElementContext } from "../components/elements/element-context";
@@ -37,7 +36,7 @@ export const ShareLinkToViewContainer = () => {
     }
     const shareUrl = `${parsed.url}?${stringifyQuery(parsed.query)}`;
     return <div>
-        <TextArea fill={true} rows={16} readOnly value={shareUrl} onChange={NOOP} />
+        <textarea style={{ width: "100%" }} rows={16} readOnly value={shareUrl} onChange={NOOP} />
         <br />
         <div style={{ padding: 15 }}>
             {map && <Checkbox checked={showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", locale)} onChange={onShowSessionChanged} />}

@@ -74,6 +74,42 @@ export type NumericInputProps = {
 
 export type MenuProps = {};
 
+export type InputGroupProps = {
+    style?: React.CSSProperties;
+    round?: boolean;
+    autoFocus?: boolean;
+    leftIcon?: string;
+    placeholder?: string;
+    value?: string;
+    readOnly?: boolean;
+    rightElement?: JSX.Element;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+export type NonIdealStateProps = {
+    icon?: string | JSX.Element;
+    title?: string | JSX.Element;
+    description?: string;
+    action?: JSX.Element;
+}
+
+export type SpinnerSize = "small" | "standard" | "large";
+
+export type SpinnerProps = {
+    variant?: ElementVariant;
+    sizePreset?: SpinnerSize;
+}
+
+export type SwitchProps = {
+    style?: React.CSSProperties;
+    disabled?: boolean;
+    checked?: boolean;
+    label?: string;
+    labelElement?: JSX.Element;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 /**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
@@ -90,6 +126,10 @@ export interface IElementContext {
     Icon: React.ComponentType<IconProps>;
     Card: React.ComponentType<CardProps>;
     NumericInput: React.ComponentType<NumericInputProps>;
+    InputGroup: React.ComponentType<InputGroupProps>;
+    NonIdealState: React.ComponentType<NonIdealStateProps>;
+    Spinner: React.ComponentType<SpinnerProps>;
+    Switch: React.ComponentType<SwitchProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

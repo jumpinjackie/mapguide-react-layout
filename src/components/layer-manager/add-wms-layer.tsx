@@ -15,7 +15,7 @@ import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
-import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup } from '@blueprintjs/core';
+import { ControlGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
@@ -26,7 +26,7 @@ import { useElementContext } from "../elements/element-context";
  * @hidden
  */
 export const AddWmsLayer = (props: IAddLayerContentProps) => {
-    const { Button } = useElementContext();
+    const { Button, InputGroup, NonIdealState, Spinner } = useElementContext();
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -137,7 +137,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
             {(() => {
                 if (loadingCapabilities) {
                     return <NonIdealState
-                        icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                        icon={<Spinner sizePreset="large" />}
                         title={tr("ADD_WMS_LAYER_LOADING", locale)}
                         description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
                 } else {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { LayerProperty, GenericEvent, Bounds } from '../../api/common';
-import { ControlGroup, InputGroup, Button, Intent, NonIdealState, Spinner } from '@blueprintjs/core';
+import { ControlGroup } from '@blueprintjs/core';
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import { Client } from "../../api/client";
@@ -18,11 +18,13 @@ import { getViewer } from '../../api/runtime';
 import { setOLVectorLayerStyle } from '../../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../../api/ol-style-contracts';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
+import { useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
  */
 export const AddWfsLayer = (props: IAddLayerContentProps) => {
+    const { InputGroup, Button, NonIdealState, Spinner } = useElementContext();
     const { locale } = props;
     const [wfsUrl, setWfsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -126,14 +128,14 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 value={wfsUrl}
                 onChange={onWmsUrlChange}
                 readOnly={loadingCapabilities}
-                rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
+                rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
         </ControlGroup>
         <br />
         <div>
             {(() => {
                 if (loadingCapabilities) {
                     return <NonIdealState
-                        icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                        icon={<Spinner sizePreset="large" />}
                         title={tr("ADD_WFS_LAYER_LOADING", locale)}
                         description={tr("ADD_WFS_LAYER_LOADING_DESC", locale)} />;
                 } else {

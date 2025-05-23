@@ -9,13 +9,13 @@ import { GenericEvent, ITemplateReducerState } from "../api/common";
 import { InitWarningDisplay } from "../containers/init-warning-display";
 import { ActionType } from '../constants/actions';
 import { IElementState, ViewerAction } from '../actions/defs';
-import { Spinner, Intent, Icon } from '@blueprintjs/core';
 import { useViewerBusyCount, useLastDispatchedAction, useReducedToolbarAppState } from '../containers/hooks';
 import { useCommonTemplateState } from './hooks';
 import { isElementState } from '../reducers/template';
 import { NBSP, WEBLAYOUT_TOOLBAR } from "../constants";
 import { setElementStates } from '../actions/template';
 import { isMobileViewport } from "../utils/browser-support";
+import { useElementContext } from "../components/elements/element-context";
 
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 
@@ -155,6 +155,7 @@ interface ISidebarProps {
 }
 
 const Sidebar = (props: ISidebarProps) => {
+    const { Spinner, Icon } = useElementContext();
     const onActivateTasks = (e: GenericEvent) => {
         const { onActivateTab } = props;
         e.preventDefault();
@@ -206,7 +207,7 @@ const Sidebar = (props: ISidebarProps) => {
                     {(() => {
                         if (busy === true) {
                             return <a>
-                                <Spinner intent={Intent.WARNING} size={Spinner.SIZE_SMALL} />
+                                <Spinner sizePreset="small" />
                             </a>;
                         } else {
                             if (collapsed) {

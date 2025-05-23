@@ -15,7 +15,6 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
 import { IElementState } from '../actions/defs';
-import { NonIdealState, Spinner, Intent } from '@blueprintjs/core';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
 import { areStatesEqual, getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
@@ -26,6 +25,14 @@ import { useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
+
+const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
+    const { NonIdealState, Spinner } = useElementContext();
+    return <NonIdealState
+        icon={<Spinner sizePreset="large" />}
+        title={tr("INIT", locale)}
+        description={tr("INIT_DESC", locale)} />;
+}
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
@@ -468,10 +475,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             //NOTE: Locale may not have been set at this point, so use default
             const locale = configuredLocale;
             if (isLoading) {
-                return <NonIdealState
-                    icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
-                    title={tr("INIT", locale)}
-                    description={tr("INIT_DESC", locale)} />;
+                return <AppLoadingPlaceholder locale={locale} />;
             } else {
                 const layoutEl = typeof (layout) == 'string' ? getLayout(layout) : layout.factory;
                 if (layoutEl) {

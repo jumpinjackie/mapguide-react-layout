@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NonIdealState } from '@blueprintjs/core';
 import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
 import { ModalChangeArgs } from "../actions/defs";
@@ -34,7 +33,7 @@ export interface IRndModalDialogProps {
 const DIAG_HEADER_HEIGHT = 40;
 
 export const RndModalDialog = (props: IRndModalDialogProps) => {
-    const { Icon, Button } = useElementContext();
+    const { Icon, Button, NonIdealState } = useElementContext();
     if (props.isOpen === false)
         return <div />;
     const modalBodyStyle: React.CSSProperties = {

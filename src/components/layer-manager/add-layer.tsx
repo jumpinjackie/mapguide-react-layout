@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { RadioGroup, NonIdealState, EditableText, ButtonGroup, FormGroup, FileInput, Switch, Spinner, SpinnerSize, Intent } from '@blueprintjs/core';
+import { RadioGroup, EditableText, ButtonGroup, FormGroup, FileInput } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -91,7 +91,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
-    const { Button, Callout, NumericInput } = useElementContext();
+    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
@@ -304,7 +304,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             </>} />
     } else if (isProcessingFile) {
         return <NonIdealState
-            icon={<Spinner intent={Intent.NONE} size={SpinnerSize.LARGE} />}
+            icon={<Spinner sizePreset="large" />}
             title={tr("ADD_FILE_PROCESSING", locale)} />
     } else {
         return <>

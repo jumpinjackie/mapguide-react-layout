@@ -5,7 +5,6 @@ import { LegendContext, ILegendContext, LegendNodeExtraHTMLProps } from "./conte
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
-import { InputGroup } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import { BlueprintSvgIconNames } from '../constants/assets';
@@ -547,7 +546,7 @@ const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 
  * @param props 
  */
 export const Legend = /*React.memo(*/(props: ILegendProps) => {
-    const { Button, Card } = useElementContext();
+    const { Button, Card, InputGroup } = useElementContext();
     const {
         showGroups,
         hideGroups,

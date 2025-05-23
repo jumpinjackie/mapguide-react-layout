@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, RadioGroup, Switch, Intent, ButtonGroup, SwitchProps } from '@blueprintjs/core';
+import { Tabs, Tab, FormGroup, RadioGroup, Intent, ButtonGroup } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -8,7 +8,7 @@ import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor }
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";
 import { vectorStyleToStyleMap } from "../api/ol-style-map-set";
-import { useElementContext } from "./elements/element-context";
+import { SwitchProps, useElementContext } from "./elements/element-context";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -27,6 +27,7 @@ function ExprEditor<T>(props: IExprEditorProps<T>) {
 }
 
 const DynamicSwitch = (props: Omit<Omit<SwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
+    const { Switch } = useElementContext();
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<boolean> {...props} converter={v => v?.toLowerCase() == "true"} />
     } else {
@@ -61,7 +62,7 @@ function coalesceExpr<T>(expr: ExprOr<T> | undefined, defaultVal: T): T {
 const DEFAULT_FONT_SIZE = 14;
 
 const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
-    const { Button } = useElementContext();
+    const { Button, Switch } = useElementContext();
     const { style, locale, onChange, isLine } = props;
     const [bold, setBold] = React.useState(false);
     const [italic, setItalic] = React.useState(false);
@@ -310,6 +311,7 @@ type TabId = "pointStyle" | "lineStyle" | "polyStyle";
  * @since 0.13
  */
 export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
+    const { NonIdealState } = useElementContext();
     const { locale, style, onChange, enableLine, enablePoint, enablePolygon } = props;
     const [selectedTab, setSelectedTab] = React.useState<TabId | undefined>(undefined);
     const [pointStyle, setPointStyle] = React.useState(style?.point ?? DEFAULT_POINT_CIRCLE_STYLE);

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { ButtonGroup, Switch, NonIdealState, Spinner, FormGroup } from '@blueprintjs/core';
+import { ButtonGroup, FormGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
@@ -45,7 +45,7 @@ const HEATMAP_SLIDER_RAMP = [0, 10, 20, 30, 40, 50];
 const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
-    const { Card, Button, Collapsible, Slider, Icon } = useElementContext();
+    const { Card, Button, Collapsible, Slider, Icon, Spinner, Switch } = useElementContext();
     const {
         layer,
         locale,
@@ -88,7 +88,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     const isBusy = (layer.busyWorkerCount > 0);
     if (isBusy) {
         return <Card>
-            <Spinner size={30} />
+            <Spinner sizePreset="small" />
             <p style={{ textAlign: "center", marginTop: 5 }}>{tr("LOADING_LAYER", locale, { name: layer.name })}</p>
         </Card>;
     }
@@ -208,6 +208,7 @@ export interface IManageLayersProps {
  * @hidden
  */
 export const ManageLayers = (props: IManageLayersProps) => {
+    const { NonIdealState } = useElementContext();
     const {
         locale,
         currentResolution,

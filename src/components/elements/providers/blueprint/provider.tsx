@@ -9,6 +9,10 @@ import { BpCallout } from "./callout";
 import { BpNumericInput } from "./numeric-input";
 import { BpCollapsible } from "./collapsible";
 import { BpRadio } from "./radio";
+import { BpInputGroup } from "./input-group";
+import { BpNonIdealState } from "./non-ideal-state";
+import { BpSpinner } from "./spinner";
+import { BpSwitch } from "./switch";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -19,7 +23,11 @@ const provider: IElementContext = {
     Checkbox: BpCheckbox,
     Icon: BpIcon,
     Card: BpCard,
-    NumericInput: BpNumericInput
+    NumericInput: BpNumericInput,
+    InputGroup: BpInputGroup,
+    NonIdealState: BpNonIdealState,
+    Spinner: BpSpinner,
+    Switch: BpSwitch
 };
 
 export default provider;

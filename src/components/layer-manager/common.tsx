@@ -1,4 +1,4 @@
-import { ButtonGroup, InputGroup, Switch } from "@blueprintjs/core";
+import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ExprOr, isEvaluatable } from "../../api/ol-style-contracts";
@@ -128,7 +128,7 @@ function useExprEditor<T>(props: ExprEditorProps<T>) {
 }
 
 function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
-    const { Button, Collapsible, Card, Radio } = useElementContext();
+    const { Button, Collapsible, Card, Radio, InputGroup } = useElementContext();
     const { renderValueEditor, locale, roStyle } = props;
     const {
         isEditValid,
@@ -198,6 +198,7 @@ export const StringExprEditor: React.FC<ExprEditorProps<string>> = props => {
 }
 
 export const BooleanExprEditor: React.FC<ExprEditorProps<boolean>> = props => {
+    const { Switch } = useElementContext();
     return <ExprEditorInner<boolean>
         locale={props.locale}
         value={props.value}

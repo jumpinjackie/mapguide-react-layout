@@ -3,6 +3,7 @@ import olOverlay from "ol/Overlay";
 import olWKTFormat from "ol/format/WKT";
 import olPolygon, { fromExtent } from "ol/geom/Polygon";
 import olMap from "ol/Map";
+import { isEmpty } from "ol/extent";
 import { GenericEvent, GenericEventHandler, ClientKind, Coordinate2D, Bounds } from '../../api/common';
 import { Client } from '../../api/client';
 import * as olExtent from "ol/extent";
@@ -59,9 +60,11 @@ export class FeatureQueryTooltip {
     public get isMouseOver() { return this.isMouseOverTooltip; }
     public raiseQueryFromPoint(pixel: [number, number]) {
         const box = this.callback.getPointSelectionBox(pixel);
-        const geom = fromExtent(box);
-        debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
-        this.sendTooltipQuery(geom);
+        if (!isEmpty(box)) {
+            const geom = fromExtent(box);
+            debug(`[${new Date()}] FeatureTooltip - onMouseMove (${box[0]}, ${box[1]}) (${box[2]}, ${box[3]})`);
+            this.sendTooltipQuery(geom);
+        }
     }
     public onMouseMove(e: GenericEvent) {
         this.throttledMouseMove(e);

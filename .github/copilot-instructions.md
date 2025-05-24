@@ -50,6 +50,7 @@
       - For example, if the module under test is `src/components/MyComponent.tsx`, the test file should be `test/components/MyComponent.spec.tsx`.
       - In this example, the test file should import the module under test using a relative path, like `import MyComponent from '../../src/components/MyComponent';`.
 - If it is clear a test case can be parameterized, use `test.each` to create parameterized tests instead of creating individual test cases
+- Do not pointlessly mock modules used by the module under test, especially if the module is one of our own internal modules
 - Do not generate superfluous test cases that do not add value. Examples include:
    - Tests that only check for the existence of a function or class.
    - Tests that only check for the existence of a module or file.

@@ -6028,10 +6028,10 @@ process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
-proj4@2.16.2:
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.16.2.tgz#6dbf0ebf51f59b7ec21059adc7c98cd4d4fc096b"
-  integrity sha512-1IcYz7wG1kDpPEJSeBy+0v29wW3mhbqUgRReenvhjgHlGjFA9cA72nGWnikUUS/ggq3y/TcShWzR41sikFSrlQ==
+proj4@2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.17.0.tgz#cf196487829e463656607a7d3118ab51d838684b"
+  integrity sha512-BqVoruVAOUgkw5U9Ns76+E2nHZG0Y42tbkC+0BpyqjhwPIai29hoivyQoyelEKFSfaV3zkR3NqPRD0EwPM4Wug==
   dependencies:
     geographiclib-geodesic "^2.1.1"
     mgrs "1.0.0"

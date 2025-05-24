@@ -23,9 +23,11 @@ export function getMaxRamp(scheme: any) {
     let len = 0;
     for (const s in scheme) {
         const arr = scheme[s];
-        if (arr.length > len) {
-            theScheme = arr;
-            len = arr.length;
+        if (Array.isArray(arr)) {
+            if (arr.length > len) {
+                theScheme = arr;
+                len = arr.length;
+            }
         }
     }
     return theScheme;

@@ -34,6 +34,18 @@ const PANEL_SPEC: IAccordionPanelSpec[] = [
 ];
 
 describe("components/accordion", () => {
+    beforeEach(() => {
+        delete (window as any).ResizeObserver;
+        window.ResizeObserver = vi.fn().mockImplementation(() => ({
+            observe: vi.fn(),
+            unobserve: vi.fn(),
+            disconnect: vi.fn(),
+        }));
+    });
+    afterEach(() => {
+        window.ResizeObserver = ResizeObserver;
+        vi.restoreAllMocks();
+    });
     it("clicking collapsed panel expands it and collapses others", () => {
         const handler = vi.fn();
         const wrapper = render(<Accordion style={{ width: 250, height: 500 }} panels={PANEL_SPEC} onActivePanelChanged={handler} />);

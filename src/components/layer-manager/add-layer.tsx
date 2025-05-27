@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { RadioGroup, EditableText, ButtonGroup, FormGroup, FileInput } from '@blueprintjs/core';
+import { EditableText, ButtonGroup, FormGroup, FileInput } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -328,13 +328,15 @@ const AddUrlLayer = (props: IAddLayerProps) => {
     };
     const items = Object.keys(ADD_URL_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_URL_LAYER_TYPES[lt].label }));
     return <div>
-        <label>
-            {tr("LAYER_TYPE", locale)}
-            <select value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
-                <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
-                {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
-            </select>
-        </label>
+        <div style={{ marginBottom: 16 }}>
+            <p>{tr("LAYER_TYPE", locale)}</p>
+            <div className="bp3-select bp3-fill">
+                <select value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
+                    <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
+                    {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
+                </select>
+            </div>
+        </div>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {
                 const cprops: IAddLayerContentProps = {
@@ -359,13 +361,9 @@ export const AddLayer = (props: IAddLayerProps) => {
         setAddLayerKind(parseInt(e.target.value, 10));
     };
     return <div>
-        <RadioGroup
-            label={tr("ADD_LAYER_KIND_PROMPT", props.locale)}
-            onChange={onAddLayerKindChanged}
-            selectedValue={addLayerKind}>
-            <Radio label={tr("LAYER_KIND_FILE", props.locale)} value={AddLayerKind.File} />
-            <Radio label={tr("LAYER_KIND_URL", props.locale)} value={AddLayerKind.Url} />
-        </RadioGroup>
+        <p>{tr("ADD_LAYER_KIND_PROMPT", props.locale)}</p>
+        <Radio label={tr("LAYER_KIND_FILE", props.locale)} checked={addLayerKind == AddLayerKind.File} value={AddLayerKind.File} onChange={onAddLayerKindChanged} />
+        <Radio label={tr("LAYER_KIND_URL", props.locale)} checked={addLayerKind == AddLayerKind.Url} value={AddLayerKind.Url} onChange={onAddLayerKindChanged} />
         <hr />
         {(() => {
             switch (addLayerKind) {

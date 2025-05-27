@@ -8,6 +8,6 @@ export const BpRadio: React.FC<RadioProps> = (props) => {
         value={props.value as any}
         label={props.label}
         checked={props.checked}
-        onChange={e => props.onChange?.(e.currentTarget.value)}
+        onChange={props.onChange}
     />;
 };

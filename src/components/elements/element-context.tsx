@@ -22,7 +22,7 @@ export type RadioProps = {
     label?: string;
     value: string | number;
     checked?: boolean;
-    onChange?: (value: string | number) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export type SliderProps = {

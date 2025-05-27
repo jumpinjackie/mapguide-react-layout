@@ -18,9 +18,8 @@ export const _Button = {
         let icon: string | undefined = select("Icon name", getIconNames(), "");
         const variant = select("Variant", [
             "primary",
-            "secondary",
+            "warning",
             "success",
-            "link",
             "danger"
         ], "primary");
         const disabled = boolean("Disabled", false);
@@ -52,16 +51,14 @@ export const _ButtonVariants = {
             <div>
                 <Button variant="primary">Primary</Button>
                 <Button variant="danger">Danger</Button>
-                <Button variant="link">Link</Button>
-                <Button variant="secondary">Secondary</Button>
+                <Button variant="warning">Warning</Button>
                 <Button variant="success">Success</Button>
             </div>
             <h3>With Icons</h3>
             <div>
                 <Button icon="chevron-up" variant="primary">Primary</Button>
                 <Button icon="chevron-down" variant="danger">Danger</Button>
-                <Button icon="edit" variant="link">Link</Button>
-                <Button icon="cog" variant="secondary">Secondary</Button>
+                <Button icon="cog" variant="warning">Warning</Button>
                 <Button icon="info-sign" variant="success">Success</Button>
             </div>
         </>
@@ -117,9 +114,8 @@ export const _Callout = {
         const { Callout } = useElementContext();
         const variant = select("Variant", [
             "primary",
-            "secondary",
+            "warning",
             "success",
-            "link",
             "danger"
         ], "primary");
         return <Callout variant={variant} title="Attention!">
@@ -320,9 +316,8 @@ export const _Spinner = {
         const { Spinner } = useElementContext();
         const variant = select("Variant", [
             "primary",
-            "secondary",
+            "warning",
             "success",
-            "link",
             "danger"
         ], "primary");
         const size = select("Size Preset", [
@@ -343,8 +338,7 @@ export const _ElementGroup = {
             <ElementGroup vertical={vertical}>
                 <Button variant="primary" onClick={action("clicked")}>Primary</Button>
                 <Button variant="danger" onClick={action("clicked")}>Danger</Button>
-                <Button variant="link" onClick={action("clicked")}>Link</Button>
-                <Button variant="secondary" onClick={action("clicked")}>Secondary</Button>
+                <Button variant="warning" onClick={action("clicked")}>Warning</Button>
                 <Button variant="success" onClick={action("clicked")}>Success</Button>
             </ElementGroup>
         </>

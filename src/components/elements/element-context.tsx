@@ -1,7 +1,7 @@
 import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
 
-export type ElementVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'link';
+export type ElementVariant = 'primary' | 'danger' | 'success' | 'warning';
 
 export type ButtonProps = {
     type?: "submit" | "reset" | "button";
@@ -202,7 +202,7 @@ export type ElementGroupProps = {
  * @since 0.15
  */
 export const ElementGroup: React.FC<ElementGroupProps> = ({ vertical, children }) => {
-    return <div className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : ''}`}>
+    return <div className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : 'mrl-element-group-horizontal'}`}>
         {children}
     </div>
 }

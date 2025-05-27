@@ -9,8 +9,8 @@ export function variantToIntent(variant: ElementVariant | undefined): Intent | u
     switch (variant) {
         case "primary":
             return Intent.PRIMARY;
-        case "secondary":
-            return Intent.NONE;
+        case "warning":
+            return Intent.WARNING;
         case "danger":
             return Intent.DANGER;
         case "success":

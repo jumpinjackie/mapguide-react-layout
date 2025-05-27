@@ -7,7 +7,7 @@ module.exports = ({ config }) => {
         __DEV__: process.env.BUILD_MODE !== 'production',
         __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
         __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
-        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH  || "master")
+        __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master")
     }));
     config.module.rules.push({ //sourcemap
         test: /\.js$/,

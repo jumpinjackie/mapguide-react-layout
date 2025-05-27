@@ -1119,6 +1119,38 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/actions/app.ts":
+/*!****************************!*\
+  !*** ./src/actions/app.ts ***!
+  \****************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.setAppSetting = void 0;
+var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
+/**
+ * Sets an app setting to the given value
+ *
+ * @param key
+ * @param value
+ * @since 0.14.8
+ */
+function setAppSetting(key, value) {
+    return {
+        type: actions_1.ActionType.SET_APP_SETTING,
+        payload: {
+            key: key,
+            value: value
+        }
+    };
+}
+exports.setAppSetting = setAppSetting;
+
+
+/***/ }),
+
 /***/ "./src/actions/defs.ts":
 /*!*****************************!*\
   !*** ./src/actions/defs.ts ***!
@@ -1182,10 +1214,14 @@ var GenericSubjectLayerType;
      * @since 0.14.3
      */
     GenericSubjectLayerType["StaticImage"] = "StaticImage";
+    /**
+     * A WFS layer
+     * @since 0.14.4
+     */
+    GenericSubjectLayerType["WFS"] = "WFS";
 })(GenericSubjectLayerType = exports.GenericSubjectLayerType || (exports.GenericSubjectLayerType = {}));
 function isGenericSubjectMapLayer(map) {
-    var _a;
-    return typeof ((_a = map) === null || _a === void 0 ? void 0 : _a.type) == 'string';
+    return typeof (map === null || map === void 0 ? void 0 : map.type) == 'string';
 }
 exports.isGenericSubjectMapLayer = isGenericSubjectMapLayer;
 
@@ -1202,7 +1238,7 @@ exports.isGenericSubjectMapLayer = isGenericSubjectMapLayer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.closeComponent = exports.openComponent = exports.closeFlyout = exports.openFlyout = exports.closeContextMenu = exports.openContextMenu = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 /**
  * Opens the context menu at the specific position
@@ -1213,7 +1249,7 @@ var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants
 function openContextMenu(position) {
     return {
         type: actions_1.ActionType.CONTEXT_MENU_OPEN,
-        payload: (0, tslib_1.__assign)({}, position)
+        payload: tslib_1.__assign({}, position)
     };
 }
 exports.openContextMenu = openContextMenu;
@@ -1314,7 +1350,7 @@ exports.closeComponent = closeComponent;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewerInitCommand = exports.isStateless = exports.isMapDefinition = exports.getMapDefinitionsFromFlexLayout = exports.buildSubjectLayerDefn = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var init_1 = __webpack_require__(/*! ./init */ "./src/actions/init.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var command_spec_1 = __webpack_require__(/*! ../api/registry/command-spec */ "./src/api/registry/command-spec.ts");
@@ -1355,7 +1391,7 @@ function tryExtractMapMetadata(extension) {
     return ext;
 }
 function buildSubjectLayerDefn(name, map) {
-    var _a, _b;
+    var _a, _b, _c;
     var st = map.Extension.source_type;
     var initiallyVisible = (_a = map.Extension.initially_visible) !== null && _a !== void 0 ? _a : true;
     var sp = {};
@@ -1364,6 +1400,7 @@ function buildSubjectLayerDefn(name, map) {
     var keys = Object.keys(map.Extension);
     var popupTemplate = map.Extension.popup_template;
     var selectable = (_b = map.Extension.is_selectable) !== null && _b !== void 0 ? _b : true;
+    var disableHover = (_c = map.Extension.disable_hover) !== null && _c !== void 0 ? _c : false;
     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
         var k = keys_1[_i];
         var spidx = k.indexOf("source_param_");
@@ -1393,11 +1430,12 @@ function buildSubjectLayerDefn(name, map) {
         meta: (Object.keys(meta).length > 0 ? meta : undefined),
         initiallyVisible: initiallyVisible,
         selectable: selectable,
+        disableHover: disableHover,
         popupTemplate: popupTemplate,
         vectorStyle: map.Extension.vector_layer_style
     };
     if (map.Extension.cluster) {
-        sl.cluster = (0, tslib_1.__assign)({}, map.Extension.cluster);
+        sl.cluster = tslib_1.__assign({}, map.Extension.cluster);
     }
     return sl;
 }
@@ -1465,14 +1503,14 @@ var ViewerInitCommand = /** @class */ (function () {
         this.dispatch = dispatch;
     }
     ViewerInitCommand.prototype.initLocaleAsync = function (options) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var locale, r, res;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         locale = options.locale;
                         if (!(locale != i18n_1.DEFAULT_LOCALE)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, fetch("strings/" + locale + ".json")];
+                        return [4 /*yield*/, fetch("strings/".concat(locale, ".json"))];
                     case 1:
                         r = _a.sent();
                         if (!r.ok) return [3 /*break*/, 3];
@@ -1485,11 +1523,11 @@ var ViewerInitCommand = /** @class */ (function () {
                             type: actions_1.ActionType.SET_LOCALE,
                             payload: locale
                         });
-                        (0, logger_1.info)("Registered string bundle for locale: " + locale);
+                        (0, logger_1.info)("Registered string bundle for locale: ".concat(locale));
                         return [3 /*break*/, 4];
                     case 3:
                         //TODO: Push warning to init error/warning reducer when we implement it
-                        (0, logger_1.warn)("Failed to register string bundle for locale: " + locale);
+                        (0, logger_1.warn)("Failed to register string bundle for locale: ".concat(locale));
                         _a.label = 4;
                     case 4: return [2 /*return*/];
                 }
@@ -1521,24 +1559,25 @@ var ViewerInitCommand = /** @class */ (function () {
         return (0, array_1.makeUnique)(epsgs);
     };
     ViewerInitCommand.prototype.initFromAppDefCoreAsync = function (appDef, options, mapsByName, warnings) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var _a, taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask, locale, featureTooltipsEnabled, config, tbConf, _i, _b, widgetSet, _c, _d, cont, tbName, _e, _f, w, mapsDict, maps, _g, firstMapName, firstSessionId, _h, tb, bFoundContextMenu;
-            return (0, tslib_1.__generator)(this, function (_j) {
-                _a = (0, command_spec_1.parseWidgetsInAppDef)(appDef, command_1.registerCommand), taskPane = _a.taskPane, hasTaskBar = _a.hasTaskBar, hasStatus = _a.hasStatus, hasNavigator = _a.hasNavigator, hasSelectionPanel = _a.hasSelectionPanel, hasLegend = _a.hasLegend, viewSize = _a.viewSize, widgetsByKey = _a.widgetsByKey, isStateless = _a.isStateless, initialTask = _a.initialTask;
+        var _a, _b;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _c, taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask, locale, featureTooltipsEnabled, config, tbConf, _i, _d, widgetSet, _e, _f, cont, tbName, _g, _h, w, mapsDict, maps, _j, firstMapName, firstSessionId, _k, tb, bFoundContextMenu, settings, _l, _m, s, sn, sv;
+            return tslib_1.__generator(this, function (_o) {
+                _c = (0, command_spec_1.parseWidgetsInAppDef)(appDef, command_1.registerCommand), taskPane = _c.taskPane, hasTaskBar = _c.hasTaskBar, hasStatus = _c.hasStatus, hasNavigator = _c.hasNavigator, hasSelectionPanel = _c.hasSelectionPanel, hasLegend = _c.hasLegend, viewSize = _c.viewSize, widgetsByKey = _c.widgetsByKey, isStateless = _c.isStateless, initialTask = _c.initialTask;
                 locale = options.locale, featureTooltipsEnabled = options.featureTooltipsEnabled;
                 config = {};
                 config.isStateless = isStateless;
                 tbConf = {};
                 //Now build toolbar layouts
-                for (_i = 0, _b = appDef.WidgetSet; _i < _b.length; _i++) {
-                    widgetSet = _b[_i];
-                    for (_c = 0, _d = widgetSet.Container; _c < _d.length; _c++) {
-                        cont = _d[_c];
+                for (_i = 0, _d = appDef.WidgetSet; _i < _d.length; _i++) {
+                    widgetSet = _d[_i];
+                    for (_e = 0, _f = widgetSet.Container; _e < _f.length; _e++) {
+                        cont = _f[_e];
                         tbName = cont.Name;
                         tbConf[tbName] = { items: (0, command_spec_1.convertFlexLayoutUIItems)(isStateless, cont.Item, widgetsByKey, locale) };
                     }
-                    for (_e = 0, _f = widgetSet.Widget; _e < _f.length; _e++) {
-                        w = _f[_e];
+                    for (_g = 0, _h = widgetSet.Widget; _g < _h.length; _g++) {
+                        w = _h[_g];
                         if (w.Type == "CursorPosition") {
                             config.coordinateProjection = w.Extension.DisplayProjection;
                             config.coordinateDecimals = w.Extension.Precision;
@@ -1551,12 +1590,22 @@ var ViewerInitCommand = /** @class */ (function () {
                 if (appDef.Title) {
                     document.title = appDef.Title || document.title;
                 }
-                _g = this.establishInitialMapNameAndSession(mapsDict), firstMapName = _g[0], firstSessionId = _g[1];
-                _h = (0, command_spec_1.prepareSubMenus)(tbConf), tb = _h[0], bFoundContextMenu = _h[1];
+                _j = this.establishInitialMapNameAndSession(mapsDict), firstMapName = _j[0], firstSessionId = _j[1];
+                _k = (0, command_spec_1.prepareSubMenus)(tbConf), tb = _k[0], bFoundContextMenu = _k[1];
                 if (!bFoundContextMenu) {
                     warnings.push((0, i18n_1.tr)("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: constants_1.WEBLAYOUT_CONTEXTMENU }));
                 }
+                settings = {};
+                if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.ViewerSettings) === null || _b === void 0 ? void 0 : _b.Setting)) {
+                    for (_l = 0, _m = appDef.Extension.ViewerSettings.Setting; _l < _m.length; _l++) {
+                        s = _m[_l];
+                        sn = s["@name"][0];
+                        sv = s["@value"][0];
+                        settings[sn] = sv;
+                    }
+                }
                 return [2 /*return*/, (0, init_1.normalizeInitPayload)({
+                        appSettings: settings,
                         activeMapName: firstMapName,
                         initialUrl: (0, url_1.ensureParameters)(initialTask, firstMapName, firstSessionId, locale),
                         featureTooltipsEnabled: featureTooltipsEnabled,
@@ -1597,7 +1646,7 @@ exports.ViewerInitCommand = ViewerInitCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DefaultViewerInitCommand = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
@@ -1608,11 +1657,10 @@ var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts
 var error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
 var projections_1 = __webpack_require__(/*! ../api/registry/projections */ "./src/api/registry/projections.ts");
 var proj4_1 = __webpack_require__(/*! ol/proj/proj4 */ "./node_modules/ol/proj/proj4.js");
-var proj4_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
+var proj4_2 = tslib_1.__importDefault(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
 var init_command_1 = __webpack_require__(/*! ./init-command */ "./src/actions/init-command.ts");
 var command_spec_1 = __webpack_require__(/*! ../api/registry/command-spec */ "./src/api/registry/command-spec.ts");
 var session_store_1 = __webpack_require__(/*! ../api/session-store */ "./src/api/session-store.ts");
-var shortid = (0, tslib_1.__importStar)(__webpack_require__(/*! shortid */ "./node_modules/shortid/index.js"));
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
@@ -1620,15 +1668,18 @@ var assert_1 = __webpack_require__(/*! ../utils/assert */ "./src/utils/assert.ts
 var lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
+var scoped_id_1 = __webpack_require__(/*! ../utils/scoped-id */ "./src/utils/scoped-id.ts");
+var site_version_1 = __webpack_require__(/*! ../utils/site-version */ "./src/utils/site-version.ts");
 var TYPE_SUBJECT = "SubjectLayer";
 var TYPE_EXTERNAL = "External";
+var scopedId = new scoped_id_1.ScopedId();
 /**
  * Default viewer init commmand
  *
  * @since 0.14
  */
 var DefaultViewerInitCommand = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(DefaultViewerInitCommand, _super);
+    tslib_1.__extends(DefaultViewerInitCommand, _super);
     function DefaultViewerInitCommand(dispatch) {
         return _super.call(this, dispatch) || this;
     }
@@ -1669,22 +1720,23 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
         var lastSlash = mapDef.lastIndexOf("/");
         var lastDot = mapDef.lastIndexOf(".");
         if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
-            return "" + mapDef.substring(lastSlash + 1, lastDot);
+            return "".concat(mapDef.substring(lastSlash + 1, lastDot));
         }
         else {
-            return "Map_" + shortid.generate();
+            return "Map_".concat(scopedId.next());
         }
     };
     DefaultViewerInitCommand.prototype.initFromWebLayoutAsync = function (webLayout, session, sessionWasReused) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var _a, mapsByName, warnings, _b, locale, featureTooltipsEnabled, externalBaseLayers, cmdsByKey, mainToolbar, taskBar, contextMenu, config, initialView, maps, _c, firstMapName, firstSessionId, menus, tb;
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _b, mapsByName, warnings, _c, locale, featureTooltipsEnabled, externalBaseLayers, cmdsByKey, mainToolbar, taskBar, contextMenu, config, initialView, maps, _d, firstMapName, firstSessionId, mapName, map, menus, tb;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_d) {
-                switch (_d.label) {
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
                     case 0: return [4 /*yield*/, this.createRuntimeMapsAsync(session, webLayout, false, function (wl) { return [{ name: _this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }]; }, function () { return []; }, sessionWasReused)];
                     case 1:
-                        _a = _d.sent(), mapsByName = _a[0], warnings = _a[1];
-                        _b = this.options, locale = _b.locale, featureTooltipsEnabled = _b.featureTooltipsEnabled, externalBaseLayers = _b.externalBaseLayers;
+                        _b = _e.sent(), mapsByName = _b[0], warnings = _b[1];
+                        _c = this.options, locale = _c.locale, featureTooltipsEnabled = _c.featureTooltipsEnabled, externalBaseLayers = _c.externalBaseLayers;
                         cmdsByKey = (0, command_spec_1.parseCommandsInWebLayout)(webLayout, command_1.registerCommand);
                         mainToolbar = (webLayout.ToolBar.Visible
                             ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.ToolBar.Button, cmdsByKey, locale)
@@ -1720,7 +1772,16 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                             document.title = webLayout.Title || document.title;
                         }
                         maps = {};
-                        _c = this.establishInitialMapNameAndSession(mapsByName), firstMapName = _c[0], firstSessionId = _c[1];
+                        _d = this.establishInitialMapNameAndSession(mapsByName), firstMapName = _d[0], firstSessionId = _d[1];
+                        for (mapName in mapsByName) {
+                            map = mapsByName[mapName];
+                            maps[mapName] = {
+                                mapGroupId: mapName,
+                                map: map,
+                                externalBaseLayers: (_a = this.options.externalBaseLayers) !== null && _a !== void 0 ? _a : [],
+                                initialView: initialView
+                            };
+                        }
                         menus = {};
                         menus[constants_1.WEBLAYOUT_TOOLBAR] = {
                             items: mainToolbar
@@ -1759,42 +1820,90 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
             });
         });
     };
-    DefaultViewerInitCommand.prototype.tryDescribeRuntimeMapAsync = function (mapName, session, mapDef) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var map, _a, _b, e_1, map, _c, _d;
-            var _e, _f;
-            return (0, tslib_1.__generator)(this, function (_g) {
-                switch (_g.label) {
+    DefaultViewerInitCommand.prototype.createRuntimeMap = function (options, siteVersion) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var map, sv;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         (0, assert_1.assertIsDefined)(this.client);
-                        _g.label = 1;
+                        return [4 /*yield*/, siteVersion.getValueAsync()];
                     case 1:
-                        _g.trys.push([1, 4, , 8]);
-                        _b = (_a = this.client).describeRuntimeMap;
-                        _e = {
+                        sv = _a.sent();
+                        if (!(0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.client.createRuntimeMap_v4(options)];
+                    case 2:
+                        map = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.client.createRuntimeMap(options)];
+                    case 4:
+                        map = _a.sent();
+                        _a.label = 5;
+                    case 5: return [2 /*return*/, map];
+                }
+            });
+        });
+    };
+    DefaultViewerInitCommand.prototype.describeRuntimeMap = function (options, siteVersion) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var map, sv;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        (0, assert_1.assertIsDefined)(this.client);
+                        return [4 /*yield*/, siteVersion.getValueAsync()];
+                    case 1:
+                        sv = _a.sent();
+                        if (!(0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.client.describeRuntimeMap_v4(options)];
+                    case 2:
+                        map = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.client.describeRuntimeMap(options)];
+                    case 4:
+                        map = _a.sent();
+                        _a.label = 5;
+                    case 5: return [2 /*return*/, map];
+                }
+            });
+        });
+    };
+    DefaultViewerInitCommand.prototype.tryDescribeRuntimeMapAsync = function (mapName, session, mapDef, siteVersion) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var map, _a, e_1, map, _b;
+            var _c, _d;
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        (0, assert_1.assertIsDefined)(this.client);
+                        _e.label = 1;
+                    case 1:
+                        _e.trys.push([1, 4, , 8]);
+                        _a = this.describeRuntimeMap;
+                        _c = {
                             mapname: mapName,
                             requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups
                         };
                         return [4 /*yield*/, session.getValueAsync()];
-                    case 2: return [4 /*yield*/, _b.apply(_a, [(_e.session = _g.sent(),
-                                _e)])];
+                    case 2: return [4 /*yield*/, _a.apply(this, [(_c.session = _e.sent(),
+                                _c), siteVersion])];
                     case 3:
-                        map = _g.sent();
+                        map = _e.sent();
                         return [2 /*return*/, map];
                     case 4:
-                        e_1 = _g.sent();
+                        e_1 = _e.sent();
                         if (!(e_1.message === "MgResourceNotFoundException")) return [3 /*break*/, 7];
-                        _d = (_c = this.client).createRuntimeMap;
-                        _f = {
+                        _b = this.createRuntimeMap;
+                        _d = {
                             mapDefinition: mapDef,
                             requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups
                         };
                         return [4 /*yield*/, session.getValueAsync()];
-                    case 5: return [4 /*yield*/, _d.apply(_c, [(_f.session = _g.sent(),
-                                _f.targetMapName = mapName,
-                                _f)])];
+                    case 5: return [4 /*yield*/, _b.apply(this, [(_d.session = _e.sent(),
+                                _d.targetMapName = mapName,
+                                _d), siteVersion])];
                     case 6:
-                        map = _g.sent();
+                        map = _e.sent();
                         return [2 /*return*/, map];
                     case 7: throw e_1;
                     case 8: return [2 /*return*/];
@@ -1803,22 +1912,23 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
         });
     };
     DefaultViewerInitCommand.prototype.createRuntimeMapsAsync = function (session, res, isStateless, mapDefSelector, projectionSelector, sessionWasReused) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var mapDefs, mapPromises, warnings, locale, subjectLayers, siteVersion, _i, mapDefs_1, m, siteVer, _a, mapDefs_2, m, _b, _c, _d, _e, maps, fetchEpsgs, _f, maps_1, m, epsg, mapDef, arbCs, extraEpsgs, _g, extraEpsgs_1, e, epsgs, mapsByName, _h, maps_2, map, _j, mapDefs_3, gs;
-            var _k;
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var mapDefs, mapPromises, warnings, locale, subjectLayers, fetchEpsgs, siteVersion, _i, mapDefs_1, m, siteVer, proj, _b, _1, epsg, _c, mapDefs_2, m, _d, _e, _f, maps, _g, maps_1, m, epsg, mapDef, arbCs, extraEpsgs, _h, extraEpsgs_1, e, epsgs, mapsByName, _j, maps_2, map, _k, mapDefs_3, gs;
+            var _l;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_l) {
-                switch (_l.label) {
+            return tslib_1.__generator(this, function (_m) {
+                switch (_m.label) {
                     case 0:
                         mapDefs = mapDefSelector(res);
                         mapPromises = [];
                         warnings = [];
                         locale = this.options.locale;
                         subjectLayers = {};
-                        if (!isStateless) return [3 /*break*/, 5];
-                        siteVersion = new lazy_1.AsyncLazy(function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () {
+                        fetchEpsgs = [];
+                        siteVersion = new lazy_1.AsyncLazy(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                             var sv;
-                            return (0, tslib_1.__generator)(this, function (_a) {
+                            return tslib_1.__generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         (0, assert_1.assertIsDefined)(this.client);
@@ -1829,59 +1939,68 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                                 }
                             });
                         }); });
+                        if (!isStateless) return [3 /*break*/, 6];
                         _i = 0, mapDefs_1 = mapDefs;
-                        _l.label = 1;
+                        _m.label = 1;
                     case 1:
-                        if (!(_i < mapDefs_1.length)) return [3 /*break*/, 4];
+                        if (!(_i < mapDefs_1.length)) return [3 /*break*/, 5];
                         m = mapDefs_1[_i];
                         if (!(0, init_command_1.isMapDefinition)(m)) return [3 /*break*/, 3];
                         return [4 /*yield*/, siteVersion.getValueAsync()];
                     case 2:
-                        siteVer = _l.sent();
+                        siteVer = _m.sent();
                         (0, assert_1.assertIsDefined)(this.client);
                         mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVer.Version, m));
-                        _l.label = 3;
+                        return [3 /*break*/, 4];
                     case 3:
+                        proj = (_a = m.meta) === null || _a === void 0 ? void 0 : _a.projection;
+                        if (!(0, string_1.strIsNullOrEmpty)(proj)) {
+                            _b = proj.split(':'), _1 = _b[0], epsg = _b[1];
+                            if (!proj4_2.default.defs["EPSG:".concat(epsg)]) {
+                                fetchEpsgs.push({ epsg: epsg, mapDef: m.name });
+                            }
+                        }
+                        _m.label = 4;
+                    case 4:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 4: return [3 /*break*/, 10];
-                    case 5:
-                        _a = 0, mapDefs_2 = mapDefs;
-                        _l.label = 6;
+                    case 5: return [3 /*break*/, 11];
                     case 6:
-                        if (!(_a < mapDefs_2.length)) return [3 /*break*/, 10];
-                        m = mapDefs_2[_a];
-                        if (!(0, init_command_1.isMapDefinition)(m)) return [3 /*break*/, 9];
-                        if (!sessionWasReused) return [3 /*break*/, 7];
-                        //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-                        (0, logger_1.info)("Session ID re-used. Attempting recovery of map state of: " + m.name);
-                        mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef));
-                        return [3 /*break*/, 9];
+                        _c = 0, mapDefs_2 = mapDefs;
+                        _m.label = 7;
                     case 7:
-                        (0, logger_1.info)("Creating runtime map state (" + m.name + ") for: " + m.mapDef);
+                        if (!(_c < mapDefs_2.length)) return [3 /*break*/, 11];
+                        m = mapDefs_2[_c];
+                        if (!(0, init_command_1.isMapDefinition)(m)) return [3 /*break*/, 10];
+                        if (!sessionWasReused) return [3 /*break*/, 8];
+                        //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
+                        (0, logger_1.info)("Session ID re-used. Attempting recovery of map state of: ".concat(m.name));
+                        mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
+                        return [3 /*break*/, 10];
+                    case 8:
+                        (0, logger_1.info)("Creating runtime map state (".concat(m.name, ") for: ").concat(m.mapDef));
                         (0, assert_1.assertIsDefined)(this.client);
-                        _c = (_b = mapPromises).push;
-                        _e = (_d = this.client).createRuntimeMap;
-                        _k = {
+                        _e = (_d = mapPromises).push;
+                        _f = this.createRuntimeMap;
+                        _l = {
                             mapDefinition: m.mapDef,
                             requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups
                         };
                         return [4 /*yield*/, session.getValueAsync()];
-                    case 8:
-                        _c.apply(_b, [_e.apply(_d, [(_k.session = _l.sent(),
-                                    _k.targetMapName = m.name,
-                                    _k)])]);
-                        _l.label = 9;
                     case 9:
-                        _a++;
-                        return [3 /*break*/, 6];
-                    case 10: return [4 /*yield*/, Promise.all(mapPromises)];
-                    case 11:
-                        maps = _l.sent();
-                        fetchEpsgs = [];
+                        _e.apply(_d, [_f.apply(this, [(_l.session = _m.sent(),
+                                    _l.targetMapName = m.name,
+                                    _l), siteVersion])]);
+                        _m.label = 10;
+                    case 10:
+                        _c++;
+                        return [3 /*break*/, 7];
+                    case 11: return [4 /*yield*/, Promise.all(mapPromises)];
+                    case 12:
+                        maps = _m.sent();
                         //All must be non-zero
-                        for (_f = 0, maps_1 = maps; _f < maps_1.length; _f++) {
-                            m = maps_1[_f];
+                        for (_g = 0, maps_1 = maps; _g < maps_1.length; _g++) {
+                            m = maps_1[_g];
                             epsg = m.CoordinateSystem.EpsgCode;
                             mapDef = m.MapDefinition;
                             arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
@@ -1890,19 +2009,21 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                                     throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || i18n_1.DEFAULT_LOCALE, { mapDefinition: mapDef }));
                                 }
                                 //Must be registered to proj4js if not 4326 or 3857
-                                if (!proj4_2.default.defs["EPSG:" + epsg]) {
+                                if (!proj4_2.default.defs["EPSG:".concat(epsg)]) {
                                     fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
                                 }
                             }
                         }
                         extraEpsgs = projectionSelector(res);
-                        for (_g = 0, extraEpsgs_1 = extraEpsgs; _g < extraEpsgs_1.length; _g++) {
-                            e = extraEpsgs_1[_g];
-                            fetchEpsgs.push({ epsg: e, mapDef: "" });
+                        for (_h = 0, extraEpsgs_1 = extraEpsgs; _h < extraEpsgs_1.length; _h++) {
+                            e = extraEpsgs_1[_h];
+                            if (!proj4_2.default.defs["EPSG:".concat(e)]) {
+                                fetchEpsgs.push({ epsg: e, mapDef: "" });
+                            }
                         }
-                        return [4 /*yield*/, Promise.all(fetchEpsgs.map(function (f) { return (0, projections_1.resolveProjectionFromEpsgIoAsync)(f.epsg, locale, f.mapDef); }))];
-                    case 12:
-                        epsgs = _l.sent();
+                        return [4 /*yield*/, Promise.all(fetchEpsgs.filter(function (fe) { return !(0, string_1.strIsNullOrEmpty)(fe.epsg); }).map(function (f) { return (0, projections_1.resolveProjectionFromEpsgCodeAsync)(f.epsg, locale, f.mapDef); }))];
+                    case 13:
+                        epsgs = _m.sent();
                         //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
                         //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
                         //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
@@ -1911,12 +2032,12 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                         (0, logger_1.debug)("Register proj4 with OpenLayers");
                         (0, proj4_1.register)(proj4_2.default);
                         mapsByName = {};
-                        for (_h = 0, maps_2 = maps; _h < maps_2.length; _h++) {
-                            map = maps_2[_h];
+                        for (_j = 0, maps_2 = maps; _j < maps_2.length; _j++) {
+                            map = maps_2[_j];
                             mapsByName[map.Name] = map;
                         }
-                        for (_j = 0, mapDefs_3 = mapDefs; _j < mapDefs_3.length; _j++) {
-                            gs = mapDefs_3[_j];
+                        for (_k = 0, mapDefs_3 = mapDefs; _k < mapDefs_3.length; _k++) {
+                            gs = mapDefs_3[_k];
                             if (!(0, init_command_1.isMapDefinition)(gs)) {
                                 mapsByName[gs.name] = gs;
                             }
@@ -1928,9 +2049,9 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
     };
     DefaultViewerInitCommand.prototype.describeRuntimeMapStateless = function (client, siteVersion, m) {
         var _a, _b, _c;
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var name, mapDef, metadata, mdf, rt, groups, layers, tsd, sTileWidth, sTileHeight, _i, _d, bg, _e, _f, lyr, _g, _h, grp, _j, _k, lyr;
-            return (0, tslib_1.__generator)(this, function (_l) {
+            return tslib_1.__generator(this, function (_l) {
                 switch (_l.label) {
                     case 0:
                         name = m.name, mapDef = m.mapDef, metadata = m.metadata;
@@ -2164,25 +2285,48 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
         return dict;
     };
     DefaultViewerInitCommand.prototype.initFromAppDefAsync = function (appDef, session, sessionWasReused) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-            var _a, mapsByName, warnings;
+        var _a, _b;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _i, _c, pd, k, v, epsg, projStr, _d, mapsByName, warnings;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.createRuntimeMapsAsync(session, appDef, (0, init_command_1.isStateless)(appDef), function (fl) { return (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl); }, function (fl) { return _this.getExtraProjectionsFromFlexLayout(fl); }, sessionWasReused)];
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.CustomProjections) === null || _b === void 0 ? void 0 : _b.Projection)) {
+                            for (_i = 0, _c = appDef.Extension.CustomProjections.Projection; _i < _c.length; _i++) {
+                                pd = _c[_i];
+                                k = void 0, v = void 0;
+                                if (typeof (pd.epsg) === 'string' && typeof (pd.text) === 'string') { // appdef json form
+                                    k = pd.epsg;
+                                    v = pd.text;
+                                }
+                                else { // appdef xml translated form
+                                    epsg = pd["@epsg"][0];
+                                    projStr = pd["#text"][0];
+                                    k = epsg;
+                                    v = projStr;
+                                }
+                                if (!(0, string_1.strIsNullOrEmpty)(k) && !(0, string_1.strIsNullOrEmpty)(v)) {
+                                    proj4_2.default.defs("EPSG:".concat(k), v);
+                                    (0, logger_1.debug)("Registered proj4 defn from appdef for EPSG:".concat(k), v);
+                                }
+                            }
+                            (0, proj4_1.register)(proj4_2.default);
+                        }
+                        return [4 /*yield*/, this.createRuntimeMapsAsync(session, appDef, (0, init_command_1.isStateless)(appDef), function (fl) { return (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl); }, function (fl) { return _this.getExtraProjectionsFromFlexLayout(fl); }, sessionWasReused)];
                     case 1:
-                        _a = _b.sent(), mapsByName = _a[0], warnings = _a[1];
+                        _d = _e.sent(), mapsByName = _d[0], warnings = _d[1];
                         return [4 /*yield*/, this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings)];
-                    case 2: return [2 /*return*/, _b.sent()];
+                    case 2: return [2 /*return*/, _e.sent()];
                 }
             });
         });
     };
     DefaultViewerInitCommand.prototype.sessionAcquiredAsync = function (session, sessionWasReused) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var _a, resourceId, locale, cl, fl, e_2, wl, _b, _c, _d, fl, _e, _f, _g, fl, cl, fl;
             var _h, _j;
-            return (0, tslib_1.__generator)(this, function (_k) {
+            return tslib_1.__generator(this, function (_k) {
                 switch (_k.label) {
                     case 0:
                         _a = this.options, resourceId = _a.resourceId, locale = _a.locale;
@@ -2254,10 +2398,10 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
         });
     };
     DefaultViewerInitCommand.prototype.runAsync = function (options) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var sessionWasReused, session, payload, initSelections, _a, _b, _i, mapName, sset, e_3;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_c) {
+            return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         this.options = options;
@@ -2266,9 +2410,9 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                         _c.sent();
                         sessionWasReused = false;
                         if (!this.options.session) {
-                            session = new lazy_1.AsyncLazy(function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () {
+                            session = new lazy_1.AsyncLazy(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var sid;
-                                return (0, tslib_1.__generator)(this, function (_a) {
+                                return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
                                             (0, assert_1.assertIsDefined)(this.client);
@@ -2281,7 +2425,7 @@ var DefaultViewerInitCommand = /** @class */ (function (_super) {
                             }); });
                         }
                         else {
-                            (0, logger_1.info)("Re-using session: " + this.options.session);
+                            (0, logger_1.info)("Re-using session: ".concat(this.options.session));
                             sessionWasReused = true;
                             session = new lazy_1.AsyncLazy(function () { return Promise.resolve(_this.options.session); });
                         }
@@ -2346,7 +2490,7 @@ exports.DefaultViewerInitCommand = DefaultViewerInitCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.acknowledgeInitWarnings = exports.initLayout = exports.processLayerInMapGroup = exports.normalizeInitPayload = exports.applyInitialBaseLayerVisibility = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
@@ -2484,6 +2628,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 });
             }
             break;
+        case "StadiaMaps":
         case "Stamen":
             {
                 //HACK: De-arrayification of arbitrary extension elements
@@ -2491,24 +2636,35 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
                 var _c = map.Extension.Options, name_3 = _c.name, type = _c.type;
                 var sName_3 = Array.isArray(name_3) ? name_3[0] : name_3;
                 var sType = Array.isArray(type) ? type[0] : type;
-                externalBaseLayers.push({
-                    name: sName_3,
-                    kind: "Stamen",
-                    options: {
-                        layer: sType
-                    }
-                });
+                var options = {
+                    layer: sType
+                };
+                var bAdd = true;
+                if (appDef.Extension.StadiaMapsKey) {
+                    options.key = appDef.Extension.StadiaMapsKey;
+                }
+                else {
+                    bAdd = false;
+                    warnings.push((0, i18n_1.tr)("INIT_WARNING_STADIAMAPS_API_KEY_REQD", config.locale));
+                }
+                if (bAdd) {
+                    externalBaseLayers.push({
+                        name: sName_3,
+                        kind: map.Type,
+                        options: options
+                    });
+                }
             }
             break;
         case "UTFGrid":
             {
                 externalBaseLayers.push({
-                    name: "UTFGridSource" + _counter++,
+                    name: "UTFGridSource".concat(_counter++),
                     kind: "UTFGrid",
                     options: {
                         tileJSON: {
                             scheme: "xyz",
-                            grids: Array.isArray(map.Extension.UrlTemplate) ? (0, tslib_1.__spreadArray)([], map.Extension.UrlTemplate, true) : [map.Extension.UrlTemplate]
+                            grids: Array.isArray(map.Extension.UrlTemplate) ? tslib_1.__spreadArray([], map.Extension.UrlTemplate, true) : [map.Extension.UrlTemplate]
                         }
                     }
                 });
@@ -2564,7 +2720,7 @@ exports.processLayerInMapGroup = processLayerInMapGroup;
  * @returns {ReduxThunkedAction}
  */
 function initLayout(cmd, options) {
-    var opts = (0, tslib_1.__assign)({}, options);
+    var opts = tslib_1.__assign({}, options);
     return function (dispatch, getState) {
         var args = getState().config;
         //TODO: Fetch and init the string bundle earlier if "locale" is present
@@ -2575,9 +2731,10 @@ function initLayout(cmd, options) {
             cmd.attachClient(client);
         }
         cmd.runAsync(options).then(function (payload) {
+            var _a, _b;
             var initPayload = payload;
             if (opts.initialView) {
-                initPayload.initialView = (0, tslib_1.__assign)({}, opts.initialView);
+                initPayload.initialView = tslib_1.__assign({}, opts.initialView);
             }
             if (opts.initialActiveMap) {
                 initPayload.activeMapName = opts.initialActiveMap;
@@ -2587,6 +2744,14 @@ function initLayout(cmd, options) {
             initPayload.initialShowGroups = opts.initialShowGroups;
             initPayload.initialShowLayers = opts.initialShowLayers;
             initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+            // Merge in appSettings from loaded appDef, any setting in appDef
+            // already specified at viewer mount will be overwritten
+            var appSettings = (_a = opts.appSettings) !== null && _a !== void 0 ? _a : {};
+            var inAppSettings = (_b = payload.appSettings) !== null && _b !== void 0 ? _b : {};
+            for (var k in inAppSettings) {
+                appSettings[k] = inAppSettings[k];
+            }
+            initPayload.appSettings = appSettings;
             dispatch({
                 type: actions_1.ActionType.INIT_APP,
                 payload: payload
@@ -2623,7 +2788,7 @@ exports.acknowledgeInitWarnings = acknowledgeInitWarnings;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.refresh = exports.setLayerSelectable = exports.setGroupExpanded = exports.setLayerVisibility = exports.setGroupVisibility = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
 var request_builder_1 = __webpack_require__(/*! ../api/request-builder */ "./src/api/request-builder.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
@@ -2639,7 +2804,7 @@ var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants
 function setGroupVisibility(mapName, options) {
     return {
         type: actions_1.ActionType.LEGEND_SET_GROUP_VISIBILITY,
-        payload: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), { mapName: mapName })
+        payload: tslib_1.__assign(tslib_1.__assign({}, options), { mapName: mapName })
     };
 }
 exports.setGroupVisibility = setGroupVisibility;
@@ -2654,7 +2819,7 @@ exports.setGroupVisibility = setGroupVisibility;
 function setLayerVisibility(mapName, options) {
     return {
         type: actions_1.ActionType.LEGEND_SET_LAYER_VISIBILITY,
-        payload: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), { mapName: mapName })
+        payload: tslib_1.__assign(tslib_1.__assign({}, options), { mapName: mapName })
     };
 }
 exports.setLayerVisibility = setLayerVisibility;
@@ -2669,7 +2834,7 @@ exports.setLayerVisibility = setLayerVisibility;
 function setGroupExpanded(mapName, options) {
     return {
         type: actions_1.ActionType.LEGEND_SET_GROUP_EXPANDABLE,
-        payload: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), { mapName: mapName })
+        payload: tslib_1.__assign(tslib_1.__assign({}, options), { mapName: mapName })
     };
 }
 exports.setGroupExpanded = setGroupExpanded;
@@ -2684,7 +2849,7 @@ exports.setGroupExpanded = setGroupExpanded;
 function setLayerSelectable(mapName, options) {
     return {
         type: actions_1.ActionType.LEGEND_SET_LAYER_SELECTABLE,
-        payload: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), { mapName: mapName })
+        payload: tslib_1.__assign(tslib_1.__assign({}, options), { mapName: mapName })
     };
 }
 exports.setLayerSelectable = setLayerSelectable;
@@ -2735,50 +2900,28 @@ exports.refresh = refresh;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.clearClientSelection = exports.addClientSelectedFeature = exports.removeMapLayerBusyWorker = exports.addMapLayerBusyWorker = exports.setMapLayerVectorStyle = exports.setMapLayerVisibility = exports.setHeatmapLayerRadius = exports.setHeatmapLayerBlur = exports.setMapLayerOpacity = exports.setMapLayerIndex = exports.removeMapLayer = exports.externalLayersReady = exports.mapLayerAdded = exports.showSelectedFeature = exports.setViewRotationEnabled = exports.setViewRotation = exports.setManualFeatureTooltipsEnabled = exports.enableSelectDragPan = exports.setFeatureTooltipsEnabled = exports.setActiveMap = exports.setActiveTool = exports.nextView = exports.previousView = exports.setViewSizeUnits = exports.setLayerTransparency = exports.setMouseCoordinates = exports.setScale = exports.setBaseLayer = exports.setBusyCount = exports.invokeCommand = exports.setSelection = exports.mapResized = exports.setCurrentView = exports.queryMapFeatures = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+exports.clearClientSelection = exports.addClientSelectedFeature = exports.removeMapLayerBusyWorker = exports.addMapLayerBusyWorker = exports.setMapLayerVectorStyle = exports.setMapLayerVisibility = exports.setHeatmapLayerRadius = exports.setHeatmapLayerBlur = exports.setMapLayerOpacity = exports.setMapLayerIndex = exports.removeMapLayer = exports.externalLayersReady = exports.mapLayerAdded = exports.showSelectedFeature = exports.setViewRotationEnabled = exports.setViewRotation = exports.setManualFeatureTooltipsEnabled = exports.enableSelectDragPan = exports.setFeatureTooltipsEnabled = exports.setActiveMap = exports.setActiveTool = exports.nextView = exports.previousView = exports.setViewSizeUnits = exports.setLayerTransparency = exports.setMouseCoordinates = exports.setScale = exports.setBaseLayer = exports.setBusyCount = exports.invokeCommand = exports.setSelection = exports.mapResized = exports.setCurrentView = exports.queryMapFeatures = exports.combineSelections = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 var client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
+var request_builder_1 = __webpack_require__(/*! ../api/request-builder */ "./src/api/request-builder.ts");
 var deArrayify_1 = __webpack_require__(/*! ../api/builders/deArrayify */ "./src/api/builders/deArrayify.ts");
-var array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var session_store_1 = __webpack_require__(/*! ../api/session-store */ "./src/api/session-store.ts");
 var site_version_1 = __webpack_require__(/*! ../utils/site-version */ "./src/utils/site-version.ts");
 var viewer_state_1 = __webpack_require__(/*! ../utils/viewer-state */ "./src/utils/viewer-state.ts");
+var lodash_xor_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.xor */ "./node_modules/lodash.xor/index.js"));
+var lodash_xorby_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.xorby */ "./node_modules/lodash.xorby/index.js"));
+var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
 function combineSelectedFeatures(oldRes, newRes) {
-    var merged = [];
-    for (var _i = 0, oldRes_1 = oldRes; _i < oldRes_1.length; _i++) {
-        var feat = oldRes_1[_i];
-        merged.push(feat);
-    }
-    var _loop_1 = function (feat) {
-        //NOTE: Due to lack of identity property information, we have to
-        //check all property values
-        var matches = merged.filter(function (f) {
-            for (var _i = 0, _a = f.Property; _i < _a.length; _i++) {
-                var p = _a[_i];
-                for (var _b = 0, _c = feat.Property; _b < _c.length; _b++) {
-                    var np = _c[_b];
-                    if (p.Name == np.Name) {
-                        if (p.Value != np.Value) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        });
-        if (matches.length == 0) {
-            merged.push(feat);
-        }
-    };
-    for (var _a = 0, newRes_1 = newRes; _a < newRes_1.length; _a++) {
-        var feat = newRes_1[_a];
-        _loop_1(feat);
-    }
-    return merged;
+    // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
+    // attributes on the first QUERYMAPFEATURES call and use the save merged selection XML QUERYMAPFEATURES call as an 
+    // opportunity to get back the full attribute set of the merged selection), but if we ever do hit here we are totally
+    // assuming a v4 QUERYMAPFEATURES response and the selected features will be having a SelectionKey set so we can easily 
+    // xorby the 2 arrays
+    return (0, lodash_xorby_1.default)(oldRes, newRes, function (f) { return f.SelectionKey; });
 }
 function combineSelectedFeatureSets(oldRes, newRes) {
     if (oldRes == null) {
@@ -2792,7 +2935,7 @@ function combineSelectedFeatureSets(oldRes, newRes) {
         merged.SelectedLayer.push(layer);
     }
     if (newRes) {
-        var _loop_2 = function (layer) {
+        var _loop_1 = function (layer) {
             var layerId = layer["@id"];
             var layerName = layer["@name"];
             var existing = merged.SelectedLayer.filter(function (l) { return l["@id"] == layerId && l["@name"] == layerName; });
@@ -2805,7 +2948,7 @@ function combineSelectedFeatureSets(oldRes, newRes) {
         };
         for (var _b = 0, _c = newRes.SelectedLayer; _b < _c.length; _b++) {
             var layer = _c[_b];
-            _loop_2(layer);
+            _loop_1(layer);
         }
     }
     return merged;
@@ -2822,23 +2965,26 @@ function combineFeatureSets(oldRes, newRes) {
         merged.Layer.push(layer);
     }
     if (newRes) {
-        var _loop_3 = function (layer) {
+        var _loop_2 = function (layer) {
             var layerId = layer["@id"];
             var existing = merged.Layer.filter(function (l) { return l["@id"] == layerId; });
             if (existing.length == 0) {
                 merged.Layer.push(layer);
             }
             else {
-                existing[0].Class.ID = (0, array_1.makeUnique)(existing[0].Class.ID.concat(layer.Class.ID));
+                existing[0].Class.ID = (0, lodash_xor_1.default)(existing[0].Class.ID, layer.Class.ID);
             }
         };
         for (var _b = 0, _c = newRes.Layer; _b < _c.length; _b++) {
             var layer = _c[_b];
-            _loop_3(layer);
+            _loop_2(layer);
         }
     }
     return merged;
 }
+/**
+ * @hidden Exported just to be unit testable
+ */
 function combineSelections(oldRes, newRes) {
     if (oldRes) {
         var merged = {
@@ -2852,6 +2998,70 @@ function combineSelections(oldRes, newRes) {
     else {
         return newRes;
     }
+}
+exports.combineSelections = combineSelections;
+function queryMapFeaturesHelper(map, client, opts, selectionSet, dispatch) {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
+        var mapName, sv, isV4, queryOp, isAppendingWithAttributesOnOldMapGuide, res, combined, mergedXml, opts2, res2;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    mapName = map.Name;
+                    sv = (0, site_version_1.getSiteVersion)(map);
+                    isV4 = (0, site_version_1.canUseQueryMapFeaturesV4)(sv);
+                    queryOp = isV4
+                        ? function (opts) { return client.queryMapFeatures_v4(opts); }
+                        : function (opts) { return client.queryMapFeatures(opts); };
+                    isAppendingWithAttributesOnOldMapGuide = !isV4
+                        && opts.append === true
+                        && opts.options.persist === 1
+                        && opts.options.requestdata !== undefined
+                        && (opts.options.requestdata & request_builder_1.QueryFeaturesSet.Attributes);
+                    if (isAppendingWithAttributesOnOldMapGuide) {
+                        (0, logger_1.debug)("Not asking for attributes in first QUERYMAPFEATURES");
+                        // Momentarily stop requesting for attributes
+                        opts.options.requestdata &= ~request_builder_1.QueryFeaturesSet.Attributes;
+                    }
+                    return [4 /*yield*/, queryOp(opts.options)];
+                case 1:
+                    res = _a.sent();
+                    if (!(opts.options.persist === 1)) return [3 /*break*/, 5];
+                    if (!(opts.append === true)) return [3 /*break*/, 3];
+                    combined = combineSelections(selectionSet, res);
+                    mergedXml = (0, deArrayify_1.buildSelectionXml)(combined.FeatureSet);
+                    opts2 = {
+                        session: map.SessionId,
+                        mapname: map.Name,
+                        persist: 1,
+                        featurefilter: mergedXml
+                    };
+                    // If appending with attributes, we can now also include attributes of the merged result
+                    if (isAppendingWithAttributesOnOldMapGuide) {
+                        (0, logger_1.debug)("Now asking for attributes in second QUERYMAPFEATURES");
+                        opts2.requestdata = request_builder_1.QueryFeaturesSet.Attributes;
+                    }
+                    return [4 /*yield*/, queryOp(opts2)];
+                case 2:
+                    res2 = _a.sent();
+                    // If appending with attributes, res2 represents the attributes of the merged result, so accept
+                    // it as the new combined without having to do any stitching
+                    if (isAppendingWithAttributesOnOldMapGuide) {
+                        (0, logger_1.debug)("Accepting second QUERYMAPFEATURES as new combined selection response");
+                        combined = res2;
+                    }
+                    (0, session_store_1.persistSelectionSetToLocalStorage)(map.SessionId, mapName, combined); // set and forget
+                    dispatch(setSelection(mapName, combined));
+                    return [2 /*return*/, combined];
+                case 3:
+                    (0, session_store_1.persistSelectionSetToLocalStorage)(map.SessionId, mapName, res); // set and forget
+                    dispatch(setSelection(mapName, res));
+                    return [2 /*return*/, res];
+                case 4: return [3 /*break*/, 6];
+                case 5: return [2 /*return*/, res];
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
 }
 /**
  * Queries map features
@@ -2868,49 +3078,19 @@ function queryMapFeatures(mapName, opts) {
         var map = (0, common_1.getRuntimeMap)(state);
         var selectionSet = (0, common_1.getSelectionSet)(state);
         if (map && args.agentKind && args.agentUri) {
-            var client_2 = new client_1.Client(args.agentUri, args.agentKind);
+            var client = new client_1.Client(args.agentUri, args.agentKind);
             var success_1 = function (res) {
                 if (opts.callback != null) {
                     opts.callback(res);
                 }
             };
-            var failure = function (err) {
+            var failure_1 = function (err) {
                 if (opts.errBack != null) {
                     opts.errBack(err);
                 }
             };
-            //We want v4.0.0 QUERYMAPFEATURES if available
-            var sv = (0, site_version_1.getSiteVersion)(map);
-            var queryOp_1 = (0, site_version_1.canUseQueryMapFeaturesV4)(sv)
-                ? function (opts) { return client_2.queryMapFeatures_v4(opts); }
-                : function (opts) { return client_2.queryMapFeatures(opts); };
-            queryOp_1(opts.options).then(function (res) {
-                if (opts.options.persist === 1) {
-                    if (opts.append === true) {
-                        var combined_1 = combineSelections(selectionSet, res);
-                        var mergedXml = (0, deArrayify_1.buildSelectionXml)(combined_1.FeatureSet);
-                        //Need to update the server-side selection with the merged result
-                        queryOp_1({
-                            session: map.SessionId,
-                            mapname: map.Name,
-                            persist: 1,
-                            featurefilter: mergedXml
-                        }).then(function () {
-                            (0, session_store_1.persistSelectionSetToLocalStorage)(map.SessionId, mapName, combined_1); // set and forget
-                            dispatch(setSelection(mapName, combined_1));
-                            success_1(combined_1);
-                        });
-                    }
-                    else {
-                        (0, session_store_1.persistSelectionSetToLocalStorage)(map.SessionId, mapName, res); // set and forget
-                        dispatch(setSelection(mapName, res));
-                        success_1(res);
-                    }
-                }
-                else {
-                    success_1(res);
-                }
-            }).catch(failure);
+            queryMapFeaturesHelper(map, client, opts, selectionSet, dispatch).then(function (r) { return success_1(r); })
+                .catch(function (e) { return failure_1(e); });
         }
     };
 }
@@ -2936,7 +3116,7 @@ function setCurrentView(view) {
         // previous one
         var state = getState();
         var currentView = (0, common_1.getCurrentView)(state);
-        var newView = (0, tslib_1.__assign)({}, view);
+        var newView = tslib_1.__assign({}, view);
         var mapName = state.config.activeMapName;
         var dispatchThis = true;
         if (currentView && mapName) {
@@ -3540,8 +3720,8 @@ exports.clearClientSelection = clearClientSelection;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.hideModal = exports.showModalUrl = exports.showModalComponent = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+exports.updateModal = exports.hideModal = exports.showModalUrl = exports.showModalComponent = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 /**
  * Displays the specified component in a modal dialog
@@ -3553,7 +3733,7 @@ var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants
 function showModalComponent(options) {
     return {
         type: actions_1.ActionType.MODAL_SHOW_COMPONENT,
-        payload: (0, tslib_1.__assign)({}, options)
+        payload: tslib_1.__assign({}, options)
     };
 }
 exports.showModalComponent = showModalComponent;
@@ -3567,7 +3747,7 @@ exports.showModalComponent = showModalComponent;
 function showModalUrl(options) {
     return {
         type: actions_1.ActionType.MODAL_SHOW_URL,
-        payload: (0, tslib_1.__assign)({}, options)
+        payload: tslib_1.__assign({}, options)
     };
 }
 exports.showModalUrl = showModalUrl;
@@ -3585,6 +3765,23 @@ function hideModal(name) {
     };
 }
 exports.hideModal = hideModal;
+/**
+ * Update settings of the given modal
+ *
+ * @param name The name of the modal to update
+ * @param args
+ * @since 0.14.8
+ */
+function updateModal(name, args) {
+    return {
+        type: actions_1.ActionType.MODAL_UPDATE,
+        payload: {
+            name: name,
+            args: args
+        }
+    };
+}
+exports.updateModal = updateModal;
 
 
 /***/ }),
@@ -3676,7 +3873,7 @@ exports.pushUrl = pushUrl;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setLegendVisibility = exports.setSelectionPanelVisibility = exports.setTaskPaneVisibility = exports.setElementStates = void 0;
+exports.setTemplateCustomData = exports.setLegendVisibility = exports.setSelectionPanelVisibility = exports.setTaskPaneVisibility = exports.setElementStates = void 0;
 /**
  * template.ts
  *
@@ -3719,6 +3916,24 @@ function setLegendVisibility(visible) {
     };
 }
 exports.setLegendVisibility = setLegendVisibility;
+/**
+ *
+ * @param name
+ * @param value
+ * @returns
+ *
+ * @since 0.14.8
+ */
+function setTemplateCustomData(name, value) {
+    return {
+        type: actions_1.ActionType.FUSION_SET_TEMPLATE_CUSTOM_DATA,
+        payload: {
+            name: name,
+            value: value
+        }
+    };
+}
+exports.setTemplateCustomData = setTemplateCustomData;
 
 
 /***/ }),
@@ -3737,8 +3952,8 @@ exports.setLegendVisibility = setLegendVisibility;
  */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseLayerSetOL = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var olHas = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/has */ "./node_modules/ol/has.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var olHas = tslib_1.__importStar(__webpack_require__(/*! ol/has */ "./node_modules/ol/has.js"));
 /**
  * @hidden
  */
@@ -4019,7 +4234,9 @@ function deArrayifyRuntimeMap(json) {
         Extents: deArrayifyExtents(root.Extents),
         Group: deArrayifyGroups(root.Group),
         Layer: deArrayifyLayers(root.Layer),
-        FiniteDisplayScale: deArrayifyFiniteDisplayScales(root.FiniteDisplayScale)
+        FiniteDisplayScale: deArrayifyFiniteDisplayScales(root.FiniteDisplayScale),
+        TilePixelRatio: getter(root, "TilePixelRatio", "int"),
+        TileSetProvider: getter(root, "TileSetProvider")
     };
     return rtMap;
 }
@@ -4881,7 +5098,7 @@ function deArrayify(json) {
     for (var k in json) {
         keys.push(k);
     }
-    throw new error_1.MgError("Unsure how to process JSON response. Root elements are: (" + keys.join(", ") + ")");
+    throw new error_1.MgError("Unsure how to process JSON response. Root elements are: (".concat(keys.join(", "), ")"));
 }
 exports.deArrayify = deArrayify;
 /**
@@ -4893,6 +5110,7 @@ exports.deArrayify = deArrayify;
  * @returns {string} The selection XML string
  */
 function buildSelectionXml(selection, layerIds) {
+    var idCount = 0;
     var xml = '<?xml version="1.0" encoding="utf-8"?>';
     xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
     if (selection) {
@@ -4903,19 +5121,24 @@ function buildSelectionXml(selection, layerIds) {
             if (layerIds != null && layerIds.indexOf(layerId) < 0) {
                 continue;
             }
-            xml += "<Layer id=\"" + layerId + "\">";
             var cls = layer.Class;
-            xml += "<Class id=\"" + cls["@id"] + "\">";
+            if (cls.ID.length === 0) { // Don't bother writing out empty Layer/Class elements
+                continue;
+            }
+            xml += "<Layer id=\"".concat(layerId, "\">");
+            xml += "<Class id=\"".concat(cls["@id"], "\">");
             for (var _a = 0, _b = cls.ID; _a < _b.length; _a++) {
                 var id = _b[_a];
-                xml += "<ID>" + id + "</ID>";
+                xml += "<ID>".concat(id, "</ID>");
+                idCount++;
             }
             xml += '</Class>';
             xml += '</Layer>';
         }
     }
     xml += '</FeatureSet>';
-    return xml;
+    // If we didn't write any ids, just return an empty string instead
+    return idCount > 0 ? xml : '';
 }
 exports.buildSelectionXml = buildSelectionXml;
 /**
@@ -4932,9 +5155,9 @@ function getActiveSelectedFeatureXml(selection, feat) {
             var key = feat.selectionKey;
             var xml = '<?xml version="1.0" encoding="utf-8"?>';
             xml += '<FeatureSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FeatureSet-1.0.0.xsd">';
-            xml += "<Layer id=\"" + layerId + "\">";
-            xml += "<Class id=\"" + layer.Class["@id"] + "\">";
-            xml += "<ID>" + key + "</ID>";
+            xml += "<Layer id=\"".concat(layerId, "\">");
+            xml += "<Class id=\"".concat(layer.Class["@id"], "\">");
+            xml += "<ID>".concat(key, "</ID>");
             xml += '</Class>';
             xml += '</Layer>';
             xml += '</FeatureSet>';
@@ -4981,7 +5204,7 @@ function createRequestBuilder(agentUri, kind) {
     if (_builders[kind]) {
         return _builders[kind](agentUri);
     }
-    throw new error_1.MgError("Unknown or unsupported client kind: " + kind);
+    throw new error_1.MgError("Unknown or unsupported client kind: ".concat(kind));
 }
 exports.createRequestBuilder = createRequestBuilder;
 
@@ -4998,7 +5221,7 @@ exports.createRequestBuilder = createRequestBuilder;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapAgentRequestBuilder = exports.serialize = exports.isErrorResponse = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var error_1 = __webpack_require__(/*! ../error */ "./src/api/error.ts");
 var deArrayify_1 = __webpack_require__(/*! ./deArrayify */ "./src/api/builders/deArrayify.ts");
 var i18n_1 = __webpack_require__(/*! ../i18n */ "./src/api/i18n.ts");
@@ -5037,7 +5260,7 @@ exports.serialize = serialize;
  * @extends {RequestBuilder}
  */
 var MapAgentRequestBuilder = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(MapAgentRequestBuilder, _super);
+    tslib_1.__extends(MapAgentRequestBuilder, _super);
     function MapAgentRequestBuilder(agentUri, locale) {
         if (locale === void 0) { locale = i18n_1.DEFAULT_LOCALE; }
         var _this = _super.call(this, agentUri) || this;
@@ -5045,9 +5268,9 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
         return _this;
     }
     MapAgentRequestBuilder.prototype.get = function (url) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, json;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, fetch(url, {
                             headers: {
@@ -5069,9 +5292,9 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
         });
     };
     MapAgentRequestBuilder.prototype.post = function (url, data) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, json;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!data.format) {
@@ -5110,19 +5333,19 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
         var bFirst = true;
         for (var key in options) {
             if (bFirst) {
-                url += "?" + key.toUpperCase() + "=" + options[key];
+                url += "?".concat(key.toUpperCase(), "=").concat(options[key]);
                 bFirst = false;
             }
             else {
-                url += "&" + key.toUpperCase() + "=" + options[key];
+                url += "&".concat(key.toUpperCase(), "=").concat(options[key]);
             }
         }
         return url;
     };
     MapAgentRequestBuilder.prototype.createSession = function (username, password) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var url, data, response;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = this.agentUri;
@@ -5145,9 +5368,9 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
         });
     };
     MapAgentRequestBuilder.prototype.getServerSessionTimeout = function (session) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var url, data, response, val;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         url = this.agentUri;
@@ -5174,7 +5397,7 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
     MapAgentRequestBuilder.prototype.getResource = function (resourceId, args) {
         if (args != null) {
             var p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
-            var url = this.stringifyGetUrl((0, tslib_1.__assign)((0, tslib_1.__assign)({}, args), p1));
+            var url = this.stringifyGetUrl(tslib_1.__assign(tslib_1.__assign({}, args), p1));
             return this.get(url);
         }
         else {
@@ -5184,30 +5407,42 @@ var MapAgentRequestBuilder = /** @class */ (function (_super) {
     };
     MapAgentRequestBuilder.prototype.getSiteVersion = function () {
         var p1 = { operation: "GETSITEVERSION", version: "1.0.0", username: "Anonymous" };
-        var url = this.stringifyGetUrl((0, tslib_1.__assign)({}, p1));
+        var url = this.stringifyGetUrl(tslib_1.__assign({}, p1));
         return this.get(url);
     };
     MapAgentRequestBuilder.prototype.createRuntimeMap = function (options) {
         var p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
-        var url = this.stringifyGetUrl((0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), p1));
+        var url = this.stringifyGetUrl(tslib_1.__assign(tslib_1.__assign({}, options), p1));
+        return this.get(url);
+    };
+    MapAgentRequestBuilder.prototype.createRuntimeMap_v4 = function (options) {
+        var p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0" };
+        var url = this.stringifyGetUrl(tslib_1.__assign(tslib_1.__assign({}, options), p1));
         return this.get(url);
     };
     MapAgentRequestBuilder.prototype.queryMapFeatures = function (options) {
         var p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
-        return this.post(this.agentUri, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), p1));
+        return this.post(this.agentUri, tslib_1.__assign(tslib_1.__assign({}, options), p1));
     };
     MapAgentRequestBuilder.prototype.queryMapFeatures_v4 = function (options) {
         var p1 = { operation: "QUERYMAPFEATURES", version: "4.0.0" };
-        return this.post(this.agentUri, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), p1));
+        return this.post(this.agentUri, tslib_1.__assign(tslib_1.__assign({}, options), p1));
     };
     MapAgentRequestBuilder.prototype.describeRuntimeMap = function (options) {
         var p1 = { operation: "DESCRIBERUNTIMEMAP", version: "3.0.0" };
-        var url = this.stringifyGetUrl((0, tslib_1.__assign)((0, tslib_1.__assign)({}, options), p1));
+        var url = this.stringifyGetUrl(tslib_1.__assign(tslib_1.__assign({}, options), p1));
         return this.get(url);
     };
-    MapAgentRequestBuilder.prototype.getTileTemplateUrl = function (resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder) {
-        var urlTemplate = this.agentUri + "?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=" + resourceId + "&BASEMAPLAYERGROUPNAME=" + groupName + "&TILECOL=" + xPlaceholder + "&TILEROW=" + yPlaceholder + "&SCALEINDEX=" + zPlaceholder;
-        return urlTemplate;
+    MapAgentRequestBuilder.prototype.describeRuntimeMap_v4 = function (options) {
+        var p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0" };
+        var url = this.stringifyGetUrl(tslib_1.__assign(tslib_1.__assign({}, options), p1));
+        return this.get(url);
+    };
+    MapAgentRequestBuilder.prototype.getTileTemplateUrl = function (resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ) {
+        if (isXYZ)
+            return "".concat(this.agentUri, "?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=").concat(resourceId, "&BASEMAPLAYERGROUPNAME=").concat(groupName, "&TILECOL=").concat(yPlaceholder, "&TILEROW=").concat(xPlaceholder, "&SCALEINDEX=").concat(zPlaceholder);
+        else
+            return "".concat(this.agentUri, "?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=").concat(resourceId, "&BASEMAPLAYERGROUPNAME=").concat(groupName, "&TILECOL=").concat(xPlaceholder, "&TILEROW=").concat(yPlaceholder, "&SCALEINDEX=").concat(zPlaceholder);
     };
     return MapAgentRequestBuilder;
 }(request_builder_1.RequestBuilder));
@@ -5226,7 +5461,7 @@ exports.MapAgentRequestBuilder = MapAgentRequestBuilder;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Client = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var error_1 = __webpack_require__(/*! ./error */ "./src/api/error.ts");
 var mapagent_1 = __webpack_require__(/*! ./builders/mapagent */ "./src/api/builders/mapagent.ts");
 var factory_1 = __webpack_require__(/*! ./builders/factory */ "./src/api/builders/factory.ts");
@@ -5242,9 +5477,9 @@ var Client = /** @class */ (function () {
         this.builder = (0, factory_1.createRequestBuilder)(agentUri, kind);
     }
     Client.prototype.getText = function (url) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var r, text;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, fetch(url)];
                     case 1:
@@ -5370,7 +5605,7 @@ var Client = /** @class */ (function () {
         return this.builder.getResource(resourceId, args);
     };
     /**
-     * Creates a runtime map from the specified map definition
+     * Creates a runtime map from the specified map definition. Issues a v3.0.0 request
      *
      * @param {ICreateRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
@@ -5381,7 +5616,19 @@ var Client = /** @class */ (function () {
         return this.builder.createRuntimeMap(options);
     };
     /**
-     * Describes a runtime map
+     * Creates a runtime map from the specified map definition. Issues a v4.0.0 request
+     *
+     * @param {ICreateRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
+     *
+     * @memberOf Client
+     * @since 0.14.8
+     */
+    Client.prototype.createRuntimeMap_v4 = function (options) {
+        return this.builder.createRuntimeMap_v4(options);
+    };
+    /**
+     * Describes a runtime map. Issues a v3.0.0 request
      *
      * @param {IDescribeRuntimeMapOptions} options
      * @returns {Promise<RuntimeMap>}
@@ -5390,6 +5637,18 @@ var Client = /** @class */ (function () {
      */
     Client.prototype.describeRuntimeMap = function (options) {
         return this.builder.describeRuntimeMap(options);
+    };
+    /**
+     * Describes a runtime map. Issues a v4.0.0 request
+     *
+     * @param {IDescribeRuntimeMapOptions} options
+     * @returns {Promise<RuntimeMap>}
+     *
+     * @memberOf Client
+     * @since 0.14.8
+     */
+    Client.prototype.describeRuntimeMap_v4 = function (options) {
+        return this.builder.describeRuntimeMap_v4(options);
     };
     /**
      * Performs a map selection query on the current map
@@ -5425,9 +5684,10 @@ var Client = /** @class */ (function () {
      * @returns {string}
      *
      * @memberOf Client
+     * @since 0.14.8 added isXYZ parameter
      */
-    Client.prototype.getTileTemplateUrl = function (resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder) {
-        return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder);
+    Client.prototype.getTileTemplateUrl = function (resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ) {
+        return this.builder.getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ);
     };
     return Client;
 }());
@@ -5445,7 +5705,7 @@ exports.Client = Client;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MgBuiltInLayers = exports.MG_BASE_LAYER_GROUP_NAME = exports.MG_LAYER_TYPE_NAME = exports.MgLayerType = exports.SourceProperty = exports.LayerProperty = exports.getExternalBaseLayers = exports.getCurrentView = exports.getRuntimeMap = exports.getSelectionSet = exports.getMapGuideSubState = exports.getInitialView = exports.ALWAYS_TRUE = exports.ALWAYS_FALSE = exports.NOOP = exports.KC_U = exports.KC_ESCAPE = exports.DEFAULT_MODAL_SIZE = exports.RefreshMode = exports.ActiveMapTool = exports.UnitOfMeasure = exports.BLANK_SIZE = void 0;
+exports.MgBuiltInLayers = exports.MG_BASE_LAYER_GROUP_NAME = exports.MG_LAYER_TYPE_NAME = exports.MgLayerType = exports.SourceProperty = exports.LayerProperty = exports.getExternalBaseLayers = exports.isVisualBaseLayer = exports.getCurrentView = exports.getRuntimeMap = exports.getSelectionSet = exports.getMapGuideSubState = exports.getInitialView = exports.ALWAYS_TRUE = exports.ALWAYS_FALSE = exports.NOOP = exports.KC_U = exports.KC_ESCAPE = exports.DEFAULT_MODAL_POSITION = exports.DEFAULT_MODAL_SIZE = exports.RefreshMode = exports.ActiveMapTool = exports.UnitOfMeasure = exports.BLANK_SIZE = void 0;
 /**
  * The default blank size
  */
@@ -5556,6 +5816,11 @@ var RefreshMode;
  */
 exports.DEFAULT_MODAL_SIZE = [350, 500];
 /**
+ * The default modal dialog position
+ * @since 0.14.8
+ */
+exports.DEFAULT_MODAL_POSITION = [500, 80];
+/**
  * Keyboard code for ESCAPE
  */
 exports.KC_ESCAPE = 27;
@@ -5654,25 +5919,30 @@ function getCurrentView(state) {
 }
 exports.getCurrentView = getCurrentView;
 /**
+ * Determines if the given external base layer is one with a visual representation
+ *
+ * @param layer
+ * @returns
+ * @since 0.14.9
+ */
+function isVisualBaseLayer(layer) {
+    return layer.kind != "UTFGrid";
+}
+exports.isVisualBaseLayer = isVisualBaseLayer;
+/**
  * Helper function to get the current set of available external base layers from the application state
  *
  * @remarks This does not include "non-visual" base layers such as UTFGrid tilesets
  *
  * @export
  * @param {Readonly<IApplicationState>} state
- * @param includeNonVisual Include "non-visual" base layers like UTFGrid tile sets
  * @returns {(IExternalBaseLayer[] | undefined)}
+ *
+ * @since 0.14.9 Removed includeNonVisual parameter
  */
-function getExternalBaseLayers(state, includeNonVisual) {
+function getExternalBaseLayers(state) {
     if (state.config.activeMapName) {
-        if (includeNonVisual) {
-            return state.mapState[state.config.activeMapName].externalBaseLayers;
-        }
-        else {
-            // UTFGrid may exist as a "base layer", but it has no visual representation so it is not a switchable candidate, so
-            // exclude it from the list if present
-            return state.mapState[state.config.activeMapName].externalBaseLayers.filter(function (ebl) { return ebl.kind != "UTFGrid"; });
-        }
+        return state.mapState[state.config.activeMapName].externalBaseLayers;
     }
     return undefined;
 }
@@ -5693,6 +5963,10 @@ var LayerProperty;
     LayerProperty["IS_GROUP"] = "is_group";
     LayerProperty["IS_EXTERNAL"] = "is_external";
     LayerProperty["IS_SELECTABLE"] = "is_selectable";
+    /**
+     * @since 0.14.5
+     */
+    LayerProperty["DISABLE_HOVER"] = "disable_hover";
     LayerProperty["IS_SCRATCH"] = "is_scratch";
     LayerProperty["HAS_WMS_LEGEND"] = "has_wms_legend";
     LayerProperty["VECTOR_STYLE"] = "vector_style";
@@ -6023,7 +6297,7 @@ exports.isSearchCommand = isSearchCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.initDefaultCommands = exports.buildTargetedCommand = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var command_1 = __webpack_require__(/*! ./registry/command */ "./src/api/registry/command.ts");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -6033,8 +6307,8 @@ var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var modal_1 = __webpack_require__(/*! ../actions/modal */ "./src/actions/modal.ts");
 var legend_1 = __webpack_require__(/*! ../actions/legend */ "./src/actions/legend.ts");
 var template_1 = __webpack_require__(/*! ../actions/template */ "./src/actions/template.ts");
-var react_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var react_dom_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var react_dom_1 = tslib_1.__importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 function panMap(dispatch, viewer, value) {
     var settings = {
         "right": [2, 1],
@@ -6192,8 +6466,7 @@ function initDefaultCommands() {
             dispatch((0, modal_1.showModalComponent)({
                 modal: {
                     title: (0, i18n_1.tr)("ABOUT", getState().config.locale),
-                    backdrop: true,
-                    size: common_1.DEFAULT_MODAL_SIZE
+                    backdrop: true
                 },
                 name: component_1.DefaultComponentNames.About,
                 component: component_1.DefaultComponentNames.About
@@ -6209,8 +6482,7 @@ function initDefaultCommands() {
             dispatch((0, modal_1.showModalUrl)({
                 modal: {
                     title: (0, i18n_1.tr)("HELP", getState().config.locale),
-                    backdrop: true,
-                    size: common_1.DEFAULT_MODAL_SIZE
+                    backdrop: true
                 },
                 name: command_1.DefaultCommands.Help,
                 url: "help/index.html"
@@ -6322,7 +6594,7 @@ function initDefaultCommands() {
                 navigator.geolocation.getCurrentPosition(function (pos) {
                     var proj = viewer.getProjection();
                     var txCoord = fact_1.transformCoordinateFromLonLat([pos.coords.longitude, pos.coords.latitude], proj);
-                    var testCoord = fact_1.transformCoordinateFromLonLat([pos.coords.longitude, pos.coords.latitude], "EPSG:" + rtMap.CoordinateSystem.EpsgCode);
+                    var testCoord = fact_1.transformCoordinateFromLonLat([pos.coords.longitude, pos.coords.latitude], "EPSG:".concat(rtMap.CoordinateSystem.EpsgCode));
                     viewer.zoomToView(txCoord[0], txCoord[1], zoomScale_1);
                     var extents = [
                         rtMap.Extents.LowerLeftCoordinate.X,
@@ -6352,7 +6624,7 @@ function initDefaultCommands() {
         enabled: function () { return true; },
         invoke: function (dispatch, getState, _viewer, parameters) {
             var config = getState().config;
-            var url = "component://CoordinateTracker?" + (parameters.Projection || []).map(function (p) { return "projections=" + p; }).join("&");
+            var url = "component://CoordinateTracker?".concat((parameters.Projection || []).map(function (p) { return "projections=" + p; }).join("&"));
             var cmdDef = buildTargetedCommand(config, parameters);
             (0, command_1.openUrlInTarget)(command_1.DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, (0, i18n_1.tr)("COORDTRACKER", config.locale));
         }
@@ -6364,7 +6636,7 @@ function initDefaultCommands() {
         enabled: function () { return true; },
         invoke: function (dispatch, getState, _viewer, parameters) {
             var config = getState().config;
-            var url = "component://" + component_1.DefaultComponentNames.AddManageLayers;
+            var url = "component://".concat(component_1.DefaultComponentNames.AddManageLayers);
             var cmdDef = buildTargetedCommand(config, parameters);
             (0, command_1.openUrlInTarget)(command_1.DefaultCommands.AddManageLayers, cmdDef, config.capabilities.hasTaskPane, dispatch, url, (0, i18n_1.tr)("ADD_MANAGE_LAYERS", config.locale));
         }
@@ -6450,8 +6722,8 @@ exports.initDefaultCommands = initDefaultCommands;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.registerDefaultComponents = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var mouse_coordinates_1 = __webpack_require__(/*! ../containers/mouse-coordinates */ "./src/containers/mouse-coordinates.tsx");
 var navigator_1 = __webpack_require__(/*! ../containers/navigator */ "./src/containers/navigator.tsx");
 var scale_display_1 = __webpack_require__(/*! ../containers/scale-display */ "./src/containers/scale-display.tsx");
@@ -6471,18 +6743,18 @@ var share_link_to_view_1 = __webpack_require__(/*! ../containers/share-link-to-v
  * @export
  */
 function registerDefaultComponents() {
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Navigator, function (props) { return React.createElement(navigator_1.NavigatorContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.MouseCoordinates, function (props) { return React.createElement(mouse_coordinates_1.MouseCoordinatesContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ScaleDisplay, function (props) { return React.createElement(scale_display_1.ScaleDisplayContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.TaskPane, function (props) { return React.createElement(task_pane_1.TaskPaneContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.About, function (props) { return React.createElement(about_1.About, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Measure, function (props) { return React.createElement(measure_1.MeasureContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.BaseMapSwitcher, function (props) { return React.createElement(base_layer_switcher_1.BaseLayerSwitcherContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.MapMenu, function (props) { return React.createElement(map_menu_1.MapMenuContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ViewSize, function (props) { return React.createElement(view_size_1.ViewSizeContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.CoordinateTracker, function (props) { return React.createElement(coordinate_tracker_1.CoordinateTrackerContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.AddManageLayers, function (props) { return React.createElement(add_manage_layers_1.AddManageLayersContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ShareLinkToView, function (props) { return React.createElement(share_link_to_view_1.ShareLinkToViewContainer, (0, tslib_1.__assign)({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Navigator, function (props) { return React.createElement(navigator_1.NavigatorContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.MouseCoordinates, function (props) { return React.createElement(mouse_coordinates_1.MouseCoordinatesContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ScaleDisplay, function (props) { return React.createElement(scale_display_1.ScaleDisplayContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.TaskPane, function (props) { return React.createElement(task_pane_1.TaskPaneContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.About, function (props) { return React.createElement(about_1.About, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Measure, function (props) { return React.createElement(measure_1.MeasureContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.BaseMapSwitcher, function (props) { return React.createElement(base_layer_switcher_1.BaseLayerSwitcherContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.MapMenu, function (props) { return React.createElement(map_menu_1.MapMenuContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ViewSize, function (props) { return React.createElement(view_size_1.ViewSizeContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.CoordinateTracker, function (props) { return React.createElement(coordinate_tracker_1.CoordinateTrackerContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.AddManageLayers, function (props) { return React.createElement(add_manage_layers_1.AddManageLayersContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ShareLinkToView, function (props) { return React.createElement(share_link_to_view_1.ShareLinkToViewContainer, tslib_1.__assign({}, props)); });
 }
 exports.registerDefaultComponents = registerDefaultComponents;
 
@@ -6499,7 +6771,7 @@ exports.registerDefaultComponents = registerDefaultComponents;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.isSessionExpiredError = exports.MgError = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 /**
  * The base of any viewer-related error
  *
@@ -6508,7 +6780,7 @@ var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.j
  * @extends {Error}
  */
 var MgError = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(MgError, _super);
+    tslib_1.__extends(MgError, _super);
     function MgError(message) {
         var _this = _super.call(this, message) || this;
         _this.message = message;
@@ -6650,10 +6922,10 @@ exports.ExprEvalContext = ExprEvalContext;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GenericLayerSetOL = exports.DEFAULT_METERS_PER_UNIT = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var base_layer_set_1 = __webpack_require__(/*! ./base-layer-set */ "./src/api/base-layer-set.ts");
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 exports.DEFAULT_METERS_PER_UNIT = 1.0;
@@ -6663,7 +6935,7 @@ var DEFAULT_DPI = 96;
  * @hidden
  */
 var GenericLayerSetOL = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(GenericLayerSetOL, _super);
+    tslib_1.__extends(GenericLayerSetOL, _super);
     function GenericLayerSetOL(view, subjectLayer, extent, externalBaseLayersGroup, projection, metersPerUnit, dpi) {
         if (metersPerUnit === void 0) { metersPerUnit = exports.DEFAULT_METERS_PER_UNIT; }
         if (dpi === void 0) { dpi = DEFAULT_DPI; }
@@ -6777,7 +7049,7 @@ function fmt(format, args) {
     if (args != null) {
         for (var p in args) {
             //str = str.replace(new RegExp(`\{${p}\}`, "g"), `${args[p]}`);
-            str = str.split("{" + p + "}").join(args[p]);
+            str = str.split("{".concat(p, "}")).join(args[p]);
         }
         return str;
     }
@@ -6798,13 +7070,13 @@ function tr(key, locale, args) {
     if (locale === void 0) { locale = exports.DEFAULT_LOCALE; }
     var bundle = STRINGS[locale];
     if (!bundle) {
-        (0, logger_1.warn)("No such string bundle for locale: " + locale);
+        (0, logger_1.warn)("No such string bundle for locale: ".concat(locale));
         return key;
     }
     else {
         var str = bundle[key];
         if (!str) {
-            (0, logger_1.warn)("String bundle for locale (" + locale + ") is missing localized string for key: " + key);
+            (0, logger_1.warn)("String bundle for locale (".concat(locale, ") is missing localized string for key: ").concat(key));
             return key;
         }
         else {
@@ -6830,21 +7102,21 @@ exports.tr = tr;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LayerManager = exports.getLayerInfo = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
 var ol_style_helpers_1 = __webpack_require__(/*! ./ol-style-helpers */ "./src/api/ol-style-helpers.ts");
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
-var ImageWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
-var TileWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Heatmap_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Heatmap */ "./node_modules/ol/layer/Heatmap.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var ImageWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
+var TileWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Heatmap_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Heatmap */ "./node_modules/ol/layer/Heatmap.js"));
 var driver_registry_1 = __webpack_require__(/*! ./layer-manager/driver-registry */ "./src/api/layer-manager/driver-registry.ts");
 var i18n_1 = __webpack_require__(/*! ./i18n */ "./src/api/i18n.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ./ol-style-contracts */ "./src/api/ol-style-contracts.ts");
 var external_layer_factory_1 = __webpack_require__(/*! ../components/external-layer-factory */ "./src/components/external-layer-factory.ts");
-var colorbrewer_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! colorbrewer */ "./node_modules/colorbrewer/index.es.js"));
+var colorbrewer_1 = tslib_1.__importDefault(__webpack_require__(/*! colorbrewer */ "./node_modules/colorbrewer/index.es.js"));
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var color_brewer_1 = __webpack_require__(/*! ../components/layer-manager/color-brewer */ "./src/components/layer-manager/color-brewer.tsx");
 function cloneObject(obj) {
@@ -7006,9 +7278,9 @@ var LayerManager = /** @class */ (function () {
             var reader = new FileReader();
             var handler = function (e) {
                 var _a;
-                return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+                return tslib_1.__awaiter(this, void 0, void 0, function () {
                     var result, formats, loadedType, bLoaded, i, ii, format, e_1;
-                    return (0, tslib_1.__generator)(this, function (_b) {
+                    return tslib_1.__generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
                                 result = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result;
@@ -7066,9 +7338,9 @@ var LayerManager = /** @class */ (function () {
     };
     LayerManager.prototype.addLayerFromParsedFeatures = function (options) {
         var _a, _b, _c;
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var features, projection, defaultStyle, extraOptions, labelOnProperty, selectedPopupTemplate, metadata, defn, proj, view, source, csArgs, layer, clusterSettings, k, bStyle, values, baseTemplatePoint, baseTemplateLine, baseTemplatePoly, th, ramp, chosenRamp, ruleCount, palette, i, v, filter, style, layerInfo;
-            return (0, tslib_1.__generator)(this, function (_d) {
+            return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         features = options.features, projection = options.projection, defaultStyle = options.defaultStyle, extraOptions = options.extraOptions, labelOnProperty = options.labelOnProperty, selectedPopupTemplate = options.selectedPopupTemplate, metadata = options.metadata, defn = options.defn;
@@ -7126,7 +7398,7 @@ var LayerManager = /** @class */ (function () {
                             };
                             if (!(0, string_1.strIsNullOrEmpty)(labelOnProperty)) {
                                 for (k in clusterSettings.style) {
-                                    ensureLabelTextForStyle(clusterSettings.style[k], { expr: "if (arr_size(features) == 1, feat_property(features[0], '" + labelOnProperty + "'), '')" });
+                                    ensureLabelTextForStyle(clusterSettings.style[k], { expr: "if (arr_size(features) == 1, feat_property(features[0], '".concat(labelOnProperty, "'), '')") });
                                 }
                             }
                         }
@@ -7163,7 +7435,7 @@ var LayerManager = /** @class */ (function () {
                         palette = ramp[ruleCount];
                         for (i = 0; i < ruleCount; i++) {
                             v = values[i];
-                            filter = extraOptions.themeOnProperty + " == '" + v + "'";
+                            filter = "".concat(extraOptions.themeOnProperty, " == '").concat(v, "'");
                             style = {
                                 label: v,
                                 point: clonePointWithFill(baseTemplatePoint, palette[i]),
@@ -7203,8 +7475,8 @@ exports.LayerManager = LayerManager;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CSV_COLUMN_ALIASES = exports.CsvFormatDriver = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
 var parsed_features_1 = __webpack_require__(/*! ./parsed-features */ "./src/api/layer-manager/parsed-features.ts");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 var Papa = __webpack_require__(/*! papaparse */ "./node_modules/papaparse/papaparse.min.js");
@@ -7277,7 +7549,7 @@ var CsvFormatDriver = /** @class */ (function () {
                                                 propNames.push(k);
                                             }
                                         }
-                                        var pfs = function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () { return (0, tslib_1.__generator)(this, function (_a) {
+                                        var pfs = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
                                             return [2 /*return*/, features_1];
                                         }); }); };
                                         parsed = new parsed_features_1.ParsedFeatures(type, size, pfs, features_1.length > 0, ["Point"], propNames);
@@ -7352,7 +7624,7 @@ exports.addFormatDriver = addFormatDriver;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FormatDriver = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var parsed_features_1 = __webpack_require__(/*! ./parsed-features */ "./src/api/layer-manager/parsed-features.ts");
 /**
  * A default format driver implementation primarily for interfacing with any
@@ -7371,10 +7643,10 @@ var FormatDriver = /** @class */ (function () {
         this.defaultProjection = defaultProjection;
     }
     FormatDriver.prototype.tryParse = function (size, text) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var fs, bHasPoint, bHasLine, bHasPoly, _i, fs_1, f, g, geomTypes, propNames, first, _a, _b, k, features;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_c) {
+            return tslib_1.__generator(this, function (_c) {
                 fs = this.format.readFeatures(text);
                 bHasPoint = false;
                 bHasLine = false;
@@ -7433,7 +7705,7 @@ var FormatDriver = /** @class */ (function () {
                         propNames.push(k);
                     }
                 }
-                features = function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () { return (0, tslib_1.__generator)(this, function (_a) {
+                features = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () { return tslib_1.__generator(this, function (_a) {
                     return [2 /*return*/, fs];
                 }); }); };
                 return [2 /*return*/, new parsed_features_1.ParsedFeatures(this.type, size, features, fs.length > 0, geomTypes, propNames, this.defaultProjection)];
@@ -7457,7 +7729,7 @@ exports.FormatDriver = FormatDriver;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ParsedFeatures = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 var ParsedFeatures = /** @class */ (function () {
     function ParsedFeatures(type, size, features, hasFeaturesFlag, geometryTypes, propertyNames, projection) {
@@ -7472,9 +7744,9 @@ var ParsedFeatures = /** @class */ (function () {
     }
     ParsedFeatures.prototype.hasFeatures = function () { return this.hasFeaturesFlag; };
     ParsedFeatures.prototype.addTo = function (source, mapProjection, dataProjection) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var features, _i, features_1, f, g, tg;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.features()];
                     case 1:
@@ -7496,9 +7768,9 @@ var ParsedFeatures = /** @class */ (function () {
         });
     };
     ParsedFeatures.prototype.getDistinctValues = function (propertyName) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var values, features, _i, features_2, f, v;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         values = [];
@@ -7533,28 +7805,28 @@ exports.ParsedFeatures = ParsedFeatures;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LayerSetGroupBase = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
 var ol_mapguide_source_factory_1 = __webpack_require__(/*! ./ol-mapguide-source-factory */ "./src/api/ol-mapguide-source-factory.ts");
 var layer_manager_1 = __webpack_require__(/*! ./layer-manager */ "./src/api/layer-manager.ts");
 var error_1 = __webpack_require__(/*! ./error */ "./src/api/error.ts");
 var i18n_1 = __webpack_require__(/*! ./i18n */ "./src/api/i18n.ts");
 var ol_style_helpers_1 = __webpack_require__(/*! ./ol-style-helpers */ "./src/api/ol-style-helpers.ts");
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Image */ "./node_modules/ol/source/Image.js"));
-var TileImage_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileImage */ "./node_modules/ol/source/TileImage.js"));
-var View_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Image */ "./node_modules/ol/source/Image.js"));
+var TileImage_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileImage */ "./node_modules/ol/source/TileImage.js"));
+var View_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
 var external_layer_factory_1 = __webpack_require__(/*! ../components/external-layer-factory */ "./src/components/external-layer-factory.ts");
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var UrlTile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/UrlTile */ "./node_modules/ol/source/UrlTile.js"));
-var Image_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var UrlTile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/UrlTile */ "./node_modules/ol/source/UrlTile.js"));
+var Image_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
-var Fill_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
-var Stroke_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
-var Style_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
-var Text_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
-var Heatmap_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Heatmap */ "./node_modules/ol/layer/Heatmap.js"));
+var Fill_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
+var Stroke_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
+var Style_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
+var Text_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
+var Heatmap_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Heatmap */ "./node_modules/ol/layer/Heatmap.js"));
 var HIGHLIGHT_STYLE = new Style_1.default({
     stroke: new Stroke_1.default({
         color: '#f00',
@@ -7611,16 +7883,18 @@ var LayerSetGroupBase = /** @class */ (function () {
         this.hoverHighlightLayer.set(common_1.LayerProperty.IS_HOVER_HIGHLIGHT, true);
     }
     LayerSetGroupBase.prototype.addHighlightedFeature = function (feature) {
-        this.hoverHighlightLayer.getSource().addFeature(feature);
+        var _a;
+        (_a = this.hoverHighlightLayer.getSource()) === null || _a === void 0 ? void 0 : _a.addFeature(feature);
     };
     LayerSetGroupBase.prototype.removeHighlightedFeature = function (feature) {
         var hs = this.hoverHighlightLayer.getSource();
-        if (hs.hasFeature(feature)) {
+        if (hs === null || hs === void 0 ? void 0 : hs.hasFeature(feature)) {
             hs.removeFeature(feature);
         }
     };
     LayerSetGroupBase.prototype.clearHighlightedFeatures = function () {
-        this.hoverHighlightLayer.getSource().clear();
+        var _a;
+        (_a = this.hoverHighlightLayer.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
     /**
      * @virtual
@@ -7629,16 +7903,20 @@ var LayerSetGroupBase = /** @class */ (function () {
      */
     LayerSetGroupBase.prototype.tryGetSubjectLayer = function () { return undefined; };
     LayerSetGroupBase.prototype.addWmsSelectionOverlay = function (feat) {
-        this.wmsSelOverlayLayer.getSource().addFeature(feat);
+        var _a;
+        (_a = this.wmsSelOverlayLayer.getSource()) === null || _a === void 0 ? void 0 : _a.addFeature(feat);
     };
     LayerSetGroupBase.prototype.clearWmsSelectionOverlay = function () {
-        this.wmsSelOverlayLayer.getSource().clear();
+        var _a;
+        (_a = this.wmsSelOverlayLayer.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
     LayerSetGroupBase.prototype.addScratchFeature = function (feat) {
-        this.scratchLayer.getSource().addFeature(feat);
+        var _a;
+        (_a = this.scratchLayer.getSource()) === null || _a === void 0 ? void 0 : _a.addFeature(feat);
     };
     LayerSetGroupBase.prototype.clearScratchLayer = function () {
-        this.scratchLayer.getSource().clear();
+        var _a;
+        (_a = this.scratchLayer.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
     LayerSetGroupBase.prototype.registerSourceEvents = function (source) {
         if (source instanceof Image_1.default) {
@@ -7743,7 +8021,7 @@ var LayerSetGroupBase = /** @class */ (function () {
         var larr = map.getLayers().getArray();
         var layers = larr
             .filter(function (l) { return _this._customLayers[l.get(common_1.LayerProperty.LAYER_NAME)] != null; })
-            .map(function (l) { return ((0, tslib_1.__assign)((0, tslib_1.__assign)({}, (0, layer_manager_1.getLayerInfo)(l, true)), { 
+            .map(function (l) { return (tslib_1.__assign(tslib_1.__assign({}, (0, layer_manager_1.getLayerInfo)(l, true)), { 
             //Smuggle these values out for debugging purposes
             isSelectable: _this._customLayers[l.get(common_1.LayerProperty.LAYER_NAME)].layer.get(common_1.LayerProperty.IS_SELECTABLE) == true, order: _this._customLayers[l.get(common_1.LayerProperty.LAYER_NAME)].order })); });
         return layers.reverse();
@@ -7788,7 +8066,7 @@ var LayerSetGroupBase = /** @class */ (function () {
                     var source = layer_1.getSource();
                     if (source instanceof UrlTile_1.default) {
                         source.setTileLoadFunction(func);
-                        (0, logger_1.debug)("Added custom tile loader for layer: " + k);
+                        (0, logger_1.debug)("Added custom tile loader for layer: ".concat(k));
                     } /* else {
                         warn(`Layer has a source is not a valid candidate for adding a custom tile loader: ${k}`);
                     }*/
@@ -7806,7 +8084,7 @@ var LayerSetGroupBase = /** @class */ (function () {
                     var source = layer_2.getSource();
                     if (typeof (source.setImageLoadFunction) == 'function') {
                         source.setImageLoadFunction(func);
-                        (0, logger_1.debug)("Added custom tile loader for layer: " + k);
+                        (0, logger_1.debug)("Added custom tile loader for layer: ".concat(k));
                     } /* else {
                         warn(`Layer has a source is not a valid candidate for adding a custom tile loader: ${k}`);
                     }*/
@@ -7815,7 +8093,7 @@ var LayerSetGroupBase = /** @class */ (function () {
                 }*/
             }
         }
-        return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, (0, layer_manager_1.getLayerInfo)(layer, true)), {
+        return tslib_1.__assign(tslib_1.__assign({}, (0, layer_manager_1.getLayerInfo)(layer, true)), {
             isSelectable: this._customLayers[name].layer.get(common_1.LayerProperty.IS_SELECTABLE) == true,
             order: this._customLayers[name].order
         });
@@ -7991,25 +8269,27 @@ exports.LayerSetGroupBase = LayerSetGroupBase;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MgInnerLayerSetFactory = exports.MgLayerSetOL = exports.MgLayerSetMode = exports.mockMapGuideImageLoadFunction = exports.blankImageLoadFunction = exports.toProjUnit = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
-var Group_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
-var TileGrid_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/tilegrid/TileGrid */ "./node_modules/ol/tilegrid/TileGrid.js"));
-var TileImage_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileImage */ "./node_modules/ol/source/TileImage.js"));
+var Group_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
+var TileGrid_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/tilegrid/TileGrid */ "./node_modules/ol/tilegrid/TileGrid.js"));
+var tilegrid_1 = __webpack_require__(/*! ol/tilegrid */ "./node_modules/ol/tilegrid.js");
+var TileImage_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileImage */ "./node_modules/ol/source/TileImage.js"));
+var XYZ_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/XYZ */ "./node_modules/ol/source/XYZ.js"));
 var ol_mapguide_source_factory_1 = __webpack_require__(/*! ./ol-mapguide-source-factory */ "./src/api/ol-mapguide-source-factory.ts");
-var ImageStatic_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageStatic */ "./node_modules/ol/source/ImageStatic.js"));
+var ImageStatic_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageStatic */ "./node_modules/ol/source/ImageStatic.js"));
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
-var View_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var View_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
 var external_layer_factory_1 = __webpack_require__(/*! ../components/external-layer-factory */ "./src/components/external-layer-factory.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var i18n_1 = __webpack_require__(/*! ./i18n */ "./src/api/i18n.ts");
-var olHas = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/has */ "./node_modules/ol/has.js"));
+var olHas = tslib_1.__importStar(__webpack_require__(/*! ol/has */ "./node_modules/ol/has.js"));
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
-var UrlTile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/UrlTile */ "./node_modules/ol/source/UrlTile.js"));
+var UrlTile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/UrlTile */ "./node_modules/ol/source/UrlTile.js"));
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var generic_layer_set_1 = __webpack_require__(/*! ./generic-layer-set */ "./src/api/generic-layer-set.ts");
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
@@ -8025,7 +8305,46 @@ var DEFAULT_BOUNDS_3857 = [
 var DEFAULT_BOUNDS_4326 = [-180, -90, 180, 90];
 function getMetersPerUnit(projection) {
     var proj = (0, proj_1.get)(projection);
-    return proj.getMetersPerUnit();
+    return proj === null || proj === void 0 ? void 0 : proj.getMetersPerUnit();
+}
+function toMetersPerUnit(unit) {
+    var u = toProjUnit(unit);
+    // Use OL-provided mpu if available
+    var mpu = proj_1.METERS_PER_UNIT[u];
+    if (mpu) {
+        return mpu;
+    }
+    else {
+        // Otherwise, compute ourselves
+        switch (unit) {
+            case common_1.UnitOfMeasure.Centimeters:
+                return 0.01;
+            case common_1.UnitOfMeasure.DMS:
+            case common_1.UnitOfMeasure.DecimalDegrees:
+            case common_1.UnitOfMeasure.Degrees:
+                return (2 * Math.PI * 6370997) / 360;
+            case common_1.UnitOfMeasure.Feet:
+                return 0.3048;
+            case common_1.UnitOfMeasure.Inches:
+                return 0.0254;
+            case common_1.UnitOfMeasure.Kilometers:
+                return 1000;
+            case common_1.UnitOfMeasure.Meters:
+                return 1;
+            case common_1.UnitOfMeasure.Miles:
+                return 1609.344;
+            case common_1.UnitOfMeasure.Millimeters:
+                return 0.001;
+            case common_1.UnitOfMeasure.NauticalMiles:
+                return 1852;
+            case common_1.UnitOfMeasure.Pixels:
+                return 1;
+            case common_1.UnitOfMeasure.Unknown:
+                return 1;
+            case common_1.UnitOfMeasure.Yards:
+                return 0.9144;
+        }
+    }
 }
 function toProjUnit(unit) {
     switch (unit) {
@@ -8049,6 +8368,8 @@ function toProjUnit(unit) {
             return "nm";
         case common_1.UnitOfMeasure.Pixels:
             return "px";
+        default:
+            throw new error_1.MgError("Unsupported unit");
     }
 }
 exports.toProjUnit = toProjUnit;
@@ -8070,7 +8391,7 @@ function mockMapGuideImageLoadFunction(image, src) {
         var strings = [];
         var parsed = (0, url_1.parseUrl)(src);
         strings.push("[Mock MapGuide Map Image Request]");
-        strings.push("Agent: " + parsed.url);
+        strings.push("Agent: ".concat(parsed.url));
         var xoff = 10;
         var yoff = 30;
         var fontSize = 14;
@@ -8084,7 +8405,7 @@ function mockMapGuideImageLoadFunction(image, src) {
             var k = keys_1[_i];
             if (k == "MAPNAME" || k == "SETDISPLAYWIDTH" || k == "SETDISPLAYHEIGHT" || k == "SETVIEWCENTERX" || k == "SETVIEWCENTERY" || k == "SETVIEWSCALE") {
                 if (!(0, string_1.strIsNullOrEmpty)(parsed.query[k])) {
-                    var s = k + ": " + parsed.query[k];
+                    var s = "".concat(k, ": ").concat(parsed.query[k]);
                     strings.push(s);
                     maxSize = Math.max(tCtx.measureText(s).width + xoff, maxSize);
                     ch += (fontSize + 2);
@@ -8097,7 +8418,7 @@ function mockMapGuideImageLoadFunction(image, src) {
         tCtx.fillRect(0, 0, maxSize, ch);
         tCtx.fillStyle = "rgba(255, 255, 0, 1.0)";
         //console.log(`Canvas size: [${tCtx.canvas.width}, ${tCtx.canvas.height}]`);
-        tCtx.font = fontSize + "px sans-serif";
+        tCtx.font = "".concat(fontSize, "px sans-serif");
         var y = yoff;
         for (var _a = 0, strings_1 = strings; _a < strings_1.length; _a++) {
             var str = strings_1[_a];
@@ -8150,14 +8471,26 @@ var MgLayerSetOL = /** @class */ (function () {
             }
         }
         for (var i = this.mgTiledLayers.length - 1; i >= 0; i--) {
-            sources.push(this.mgTiledLayers[i].getSource());
+            var s = this.mgTiledLayers[i].getSource();
+            if (s) {
+                sources.push();
+            }
         }
-        sources.push(this.overlay.getSource());
+        var ovs = this.overlay.getSource();
+        if (ovs) {
+            sources.push(ovs);
+        }
         if (this.selectionOverlay) {
-            sources.push(this.selectionOverlay.getSource());
+            var sovs = this.selectionOverlay.getSource();
+            if (sovs) {
+                sources.push(sovs);
+            }
         }
         if (this.activeSelectedFeatureOverlay) {
-            sources.push(this.activeSelectedFeatureOverlay.getSource());
+            var asovs = this.activeSelectedFeatureOverlay.getSource();
+            if (asovs) {
+                sources.push(asovs);
+            }
         }
         return sources;
     };
@@ -8250,16 +8583,21 @@ var MgLayerSetOL = /** @class */ (function () {
                 this.externalBaseLayersGroup.setOpacity(1.0);
             }
         }
+        if (constants_1.LAYER_ID_MG_DYNAMIC_OVERLAY in trans) {
+            var opacity = (0, number_1.restrictToRange)(trans[constants_1.LAYER_ID_MG_DYNAMIC_OVERLAY], 0, 1.0);
+            this.overlay.setOpacity(opacity);
+        }
+        else {
+            this.overlay.setOpacity(1.0);
+        }
         if (constants_1.LAYER_ID_MG_BASE in trans) {
             var opacity = (0, number_1.restrictToRange)(trans[constants_1.LAYER_ID_MG_BASE], 0, 1.0);
-            this.overlay.setOpacity(opacity);
             for (var _i = 0, _a = this.mgTiledLayers; _i < _a.length; _i++) {
                 var group = _a[_i];
                 group.setOpacity(opacity);
             }
         }
         else {
-            this.overlay.setOpacity(1.0);
             for (var _b = 0, _c = this.mgTiledLayers; _b < _c.length; _b++) {
                 var group = _c[_b];
                 group.setOpacity(1.0);
@@ -8337,7 +8675,7 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
         }
     }
     MgInnerLayerSetFactory.prototype.getTileUrlFunctionForGroup = function (resourceId, groupName, zOrigin) {
-        var urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}');
+        var urlTemplate = this.callback.getClient().getTileTemplateUrl(resourceId, groupName, '{x}', '{y}', '{z}', false);
         return function (tileCoord) {
             var z = tileCoord[0];
             var x = tileCoord[1];
@@ -8386,19 +8724,15 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
             if (parsedArb) {
                 projection = new proj_1.Projection({
                     code: parsedArb.code,
-                    units: toProjUnit(parsedArb.units)
+                    units: toProjUnit(parsedArb.units),
+                    metersPerUnit: toMetersPerUnit(parsedArb.units)
                 });
             }
             else {
                 if (map.CoordinateSystem.EpsgCode.length > 0) {
-                    projection = "EPSG:" + map.CoordinateSystem.EpsgCode;
+                    projection = "EPSG:".concat(map.CoordinateSystem.EpsgCode);
                 }
             }
-            var tileGrid = new TileGrid_1.default({
-                origin: olExtent.getTopLeft(extent),
-                resolutions: resolutions,
-                tileSize: [tileWidth, tileHeight]
-            });
             var zOrigin = finiteScales.length - 1;
             var mgTiledLayers = [];
             //const groupLayers = [] as TileLayer[];
@@ -8408,16 +8742,43 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
                     if (group.Type != 2 && group.Type != 3) { //BaseMap or LinkedTileSet
                         continue;
                     }
-                    var tileSource = new TileImage_1.default({
-                        tileGrid: tileGrid,
-                        projection: projection,
-                        tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-                        wrapX: false
-                    });
-                    var tileLayer = new Tile_1.default({
-                        //name: group.Name,
-                        source: tileSource
-                    });
+                    var tileLayer = void 0;
+                    if (group.Type === 3 && map.TileSetProvider === "XYZ") {
+                        var retinaScale = 1;
+                        if (typeof (map.TilePixelRatio) != 'undefined') {
+                            retinaScale = map.TilePixelRatio;
+                        }
+                        var tileSource = new XYZ_1.default({
+                            tileSize: [256 * retinaScale, 256 * retinaScale],
+                            tileGrid: (0, tilegrid_1.createXYZ)({ tileSize: [256, 256] }),
+                            projection: projection,
+                            // TODO: Should use tileUrlFunction for consistency with MG tiled layers below and to also faciliate 
+                            // something like client-side tile caching in the future
+                            url: this.callback.getClient().getTileTemplateUrl(resourceId, group.Name, '{x}', '{y}', '{z}', true),
+                            wrapX: false
+                        });
+                        tileLayer = new Tile_1.default({
+                            //name: group.Name,
+                            source: tileSource
+                        });
+                    }
+                    else {
+                        var tileGrid = new TileGrid_1.default({
+                            origin: olExtent.getTopLeft(extent),
+                            resolutions: resolutions,
+                            tileSize: [tileWidth, tileHeight]
+                        });
+                        var tileSource = new TileImage_1.default({
+                            tileGrid: tileGrid,
+                            projection: projection,
+                            tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+                            wrapX: false
+                        });
+                        tileLayer = new Tile_1.default({
+                            //name: group.Name,
+                            source: tileSource
+                        });
+                    }
                     tileLayer.set(common_1.LayerProperty.LAYER_NAME, group.ObjectId);
                     tileLayer.set(common_1.LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
                     tileLayer.set(common_1.LayerProperty.LAYER_TYPE, common_1.MgLayerType.Tiled);
@@ -8493,7 +8854,7 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
                 externalBaseLayersGroup.set(common_1.LayerProperty.IS_EXTERNAL, false);
                 externalBaseLayersGroup.set(common_1.LayerProperty.IS_GROUP, true);
             }
-            (0, logger_1.debug)("Creating OL view with projection " + projection + " and " + resolutions.length + " resolutions");
+            (0, logger_1.debug)("Creating OL view with projection ".concat(projection, " and ").concat(resolutions.length, " resolutions"));
             var view = void 0;
             if (resolutions.length == 0) {
                 view = new View_1.default({
@@ -8527,8 +8888,8 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
                 externalBaseLayersGroup.set(common_1.LayerProperty.LAYER_NAME, common_1.MG_BASE_LAYER_GROUP_NAME);
                 externalBaseLayersGroup.set(common_1.LayerProperty.IS_EXTERNAL, false);
                 externalBaseLayersGroup.set(common_1.LayerProperty.IS_GROUP, true);
-                projection = "EPSG:3857";
-                bounds = DEFAULT_BOUNDS_3857;
+                //projection = "EPSG:3857";
+                //bounds = DEFAULT_BOUNDS_3857;
             }
             var subjectLayer = void 0;
             if (map) {
@@ -8548,6 +8909,7 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
                 projection = new proj_1.Projection({
                     code: parsedArb.code,
                     units: toProjUnit(parsedArb.units),
+                    metersPerUnit: toMetersPerUnit(parsedArb.units),
                     extent: bounds
                 });
             }
@@ -8593,7 +8955,10 @@ var MgInnerLayerSetFactory = /** @class */ (function () {
             // really low quality map images. For such devices, the DPI should be some
             // function of the device pixel ratio reported. As this value can be fractional
             // round it down to the nearest integer
-            displayDpi: Math.floor(olHas.DEVICE_PIXEL_RATIO) * 96
+            //
+            // UPDATE 18/07/2023: But cap it to a minimum of 1, otherwise a sub-1 ratio floors to 0, making the
+            // final DPI 0, which breaks everything
+            displayDpi: Math.max(Math.floor(olHas.DEVICE_PIXEL_RATIO), 1) * 96
         });
         overlaySource.setAttributions((0, i18n_1.tr)("PBMG", locale !== null && locale !== void 0 ? locale : i18n_1.DEFAULT_LOCALE));
         var layer = new Image_1.default({
@@ -8664,7 +9029,7 @@ exports.AsyncLazy = AsyncLazy;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.initMapGuideCommands = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var command_1 = __webpack_require__(/*! ./registry/command */ "./src/api/registry/command.ts");
 var assets_1 = __webpack_require__(/*! ../constants/assets */ "./src/constants/assets.ts");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
@@ -8674,7 +9039,7 @@ var runtime_1 = __webpack_require__(/*! ./runtime */ "./src/api/runtime.ts");
 var i18n_1 = __webpack_require__(/*! ./i18n */ "./src/api/i18n.ts");
 var default_commands_1 = __webpack_require__(/*! ./default-commands */ "./src/api/default-commands.ts");
 var viewer_shim_1 = __webpack_require__(/*! ../containers/viewer-shim */ "./src/containers/viewer-shim.tsx");
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
 var composite_selection_1 = __webpack_require__(/*! ./composite-selection */ "./src/api/composite-selection.ts");
 function initMapGuideCommands() {
     //Feature Tooltips
@@ -8792,7 +9157,7 @@ function initMapGuideCommands() {
             var map = (0, common_1.getRuntimeMap)(state);
             var config = state.config;
             if (map) {
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/BufferPanel/BufferPanel.php", map.Name, map.SessionId, config.locale, false);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/BufferPanel/BufferPanel.php"), map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false&us=0";
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.Buffer, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
@@ -8809,7 +9174,7 @@ function initMapGuideCommands() {
             var map = (0, common_1.getRuntimeMap)(state);
             var config = state.config;
             if (map) {
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/SelectWithin/SelectWithinPanel.php", map.Name, map.SessionId, config.locale, false);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/SelectWithin/SelectWithinPanel.php"), map.Name, map.SessionId, config.locale, false);
                 url += "&popup=false";
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.SelectWithin, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
@@ -8856,14 +9221,14 @@ function initMapGuideCommands() {
                     }
                 }
                 (0, viewer_shim_1.enableRedlineMessagePrompt)(parameters.UseMapMessage == "true");
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/Redline/markupmain.php", map.Name, map.SessionId, config.locale, true);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/Redline/markupmain.php"), map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false";
                 if (defaultDataStoreFormat != null && defaultRedlineGeometryType > 0) {
-                    url += "&REDLINEFORMAT=" + defaultDataStoreFormat;
-                    url += "&REDLINEGEOMTYPE=" + defaultRedlineGeometryType;
-                    url += "&AUTOCREATE=" + (bCreateOnStartup ? "1" : "0");
+                    url += "&REDLINEFORMAT=".concat(defaultDataStoreFormat);
+                    url += "&REDLINEGEOMTYPE=".concat(defaultRedlineGeometryType);
+                    url += "&AUTOCREATE=".concat(bCreateOnStartup ? "1" : "0");
                 }
-                url += "&REDLINESTYLIZATION=" + (bUseAdvancedStylization ? "ADVANCED" : "BASIC");
+                url += "&REDLINESTYLIZATION=".concat(bUseAdvancedStylization ? "ADVANCED" : "BASIC");
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.Redline, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
@@ -8879,7 +9244,7 @@ function initMapGuideCommands() {
             var map = (0, common_1.getRuntimeMap)(state);
             var config = state.config;
             if (map) {
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/FeatureInfo/featureinfomain.php", map.Name, map.SessionId, config.locale, true);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/FeatureInfo/featureinfomain.php"), map.Name, map.SessionId, config.locale, true);
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.FeatureInfo, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
@@ -8895,7 +9260,7 @@ function initMapGuideCommands() {
             var map = (0, common_1.getRuntimeMap)(state);
             var config = state.config;
             if (map) {
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/Query/querymain.php", map.Name, map.SessionId, config.locale, true);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/Query/querymain.php"), map.Name, map.SessionId, config.locale, true);
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.Query, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
@@ -8911,7 +9276,7 @@ function initMapGuideCommands() {
             var map = (0, common_1.getRuntimeMap)(state);
             var config = state.config;
             if (map) {
-                var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/Theme/thememain.php", map.Name, map.SessionId, config.locale, true);
+                var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/Theme/thememain.php"), map.Name, map.SessionId, config.locale, true);
                 var cmdDef = (0, default_commands_1.buildTargetedCommand)(config, parameters);
                 (0, command_1.openUrlInTarget)(command_1.DefaultCommands.Theme, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
             }
@@ -8968,8 +9333,8 @@ exports.initMapGuideCommands = initMapGuideCommands;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.registerMapGuideComponents = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var legend_1 = __webpack_require__(/*! ../containers/legend */ "./src/containers/legend.tsx");
 var selected_feature_count_1 = __webpack_require__(/*! ../containers/selected-feature-count */ "./src/containers/selected-feature-count.tsx");
 var selection_panel_1 = __webpack_require__(/*! ../containers/selection-panel */ "./src/containers/selection-panel.tsx");
@@ -8979,13 +9344,13 @@ var viewer_options_1 = __webpack_require__(/*! ../containers/viewer-options */ "
 var quick_plot_1 = __webpack_require__(/*! ../containers/quick-plot */ "./src/containers/quick-plot.tsx");
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 function registerMapGuideComponents() {
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Legend, function (props) { return React.createElement(legend_1.LegendContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SelectionPanel, function (props) { return React.createElement(selection_panel_1.SelectionPanelContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SelectedFeatureCount, function (props) { return React.createElement(selected_feature_count_1.SelectedFeatureCountContainer, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.PoweredByMapGuide, function (props) { return React.createElement(pbmg_1.PoweredByMapGuide, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SessionExpired, function (props) { return React.createElement(session_expired_1.SessionExpired, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ViewerOptions, function (props) { return React.createElement(viewer_options_1.ViewerOptions, (0, tslib_1.__assign)({}, props)); });
-    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.QuickPlot, function (props) { return React.createElement(quick_plot_1.QuickPlotContainer, (0, tslib_1.__assign)({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Legend, function (props) { return React.createElement(legend_1.LegendContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SelectionPanel, function (props) { return React.createElement(selection_panel_1.SelectionPanelContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SelectedFeatureCount, function (props) { return React.createElement(selected_feature_count_1.SelectedFeatureCountContainer, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.PoweredByMapGuide, function (props) { return React.createElement(pbmg_1.PoweredByMapGuide, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.SessionExpired, function (props) { return React.createElement(session_expired_1.SessionExpired, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.ViewerOptions, function (props) { return React.createElement(viewer_options_1.ViewerOptions, tslib_1.__assign({}, props)); });
+    (0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.QuickPlot, function (props) { return React.createElement(quick_plot_1.QuickPlotContainer, tslib_1.__assign({}, props)); });
 }
 exports.registerMapGuideComponents = registerMapGuideComponents;
 
@@ -9002,11 +9367,11 @@ exports.registerMapGuideComponents = registerMapGuideComponents;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MgLayerSetGroup = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ./common */ "./src/api/common.ts");
 var Image_1 = __webpack_require__(/*! ol/source/Image */ "./node_modules/ol/source/Image.js");
-var ImageMapGuide_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageMapGuide */ "./node_modules/ol/source/ImageMapGuide.js"));
-var Image_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var ImageMapGuide_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageMapGuide */ "./node_modules/ol/source/ImageMapGuide.js"));
+var Image_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
 var never_1 = __webpack_require__(/*! ../utils/never */ "./src/utils/never.ts");
 var layer_set_group_base_1 = __webpack_require__(/*! ./layer-set-group-base */ "./src/api/layer-set-group-base.ts");
 var layer_set_1 = __webpack_require__(/*! ./layer-set */ "./src/api/layer-set.ts");
@@ -9015,12 +9380,12 @@ var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var error_1 = __webpack_require__(/*! ./error */ "./src/api/error.ts");
 var generic_layer_set_1 = __webpack_require__(/*! ./generic-layer-set */ "./src/api/generic-layer-set.ts");
-var Image_3 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var TileWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
-var ImageWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
+var Image_3 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var TileWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
+var ImageWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
 var MgLayerSetGroup = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(MgLayerSetGroup, _super);
+    tslib_1.__extends(MgLayerSetGroup, _super);
     function MgLayerSetGroup(props, callback) {
         var _this = _super.call(this, callback) || this;
         _this.updateSelectionColor = function (color) { return _this.mainSet.updateSelectionColor(color); };
@@ -9132,39 +9497,39 @@ exports.MgLayerSetGroup = MgLayerSetGroup;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OLFactory = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var Point_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
-var LineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
-var Circle_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Circle */ "./node_modules/ol/geom/Circle.js"));
-var Polygon_1 = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
-var LinearRing_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/LinearRing */ "./node_modules/ol/geom/LinearRing.js"));
-var MultiLineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/MultiLineString */ "./node_modules/ol/geom/MultiLineString.js"));
-var MultiPoint_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/MultiPoint */ "./node_modules/ol/geom/MultiPoint.js"));
-var MultiPolygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/MultiPolygon */ "./node_modules/ol/geom/MultiPolygon.js"));
-var GeometryCollection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/GeometryCollection */ "./node_modules/ol/geom/GeometryCollection.js"));
-var Overlay_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
-var olProj = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
-var Projection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/proj/Projection */ "./node_modules/ol/proj/Projection.js"));
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
-var Collection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Collection */ "./node_modules/ol/Collection.js"));
-var Feature_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
-var Extent_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Extent */ "./node_modules/ol/interaction/Extent.js"));
-var Snap_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Snap */ "./node_modules/ol/interaction/Snap.js"));
-var Draw_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Draw */ "./node_modules/ol/interaction/Draw.js"));
-var Translate_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Translate */ "./node_modules/ol/interaction/Translate.js"));
-var Modify_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Modify */ "./node_modules/ol/interaction/Modify.js"));
-var Select_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Select */ "./node_modules/ol/interaction/Select.js"));
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
-var WKT_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
-var Style_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
-var Icon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Icon */ "./node_modules/ol/style/Icon.js"));
-var RegularShape_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/RegularShape */ "./node_modules/ol/style/RegularShape.js"));
-var Text_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
-var Fill_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
-var Stroke_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
-var Circle_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Circle */ "./node_modules/ol/style/Circle.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var Point_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
+var LineString_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
+var Circle_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Circle */ "./node_modules/ol/geom/Circle.js"));
+var Polygon_1 = tslib_1.__importStar(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
+var LinearRing_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/LinearRing */ "./node_modules/ol/geom/LinearRing.js"));
+var MultiLineString_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/MultiLineString */ "./node_modules/ol/geom/MultiLineString.js"));
+var MultiPoint_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/MultiPoint */ "./node_modules/ol/geom/MultiPoint.js"));
+var MultiPolygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/MultiPolygon */ "./node_modules/ol/geom/MultiPolygon.js"));
+var GeometryCollection_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/GeometryCollection */ "./node_modules/ol/geom/GeometryCollection.js"));
+var Overlay_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var olProj = tslib_1.__importStar(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
+var Projection_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/proj/Projection */ "./node_modules/ol/proj/Projection.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Collection_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Collection */ "./node_modules/ol/Collection.js"));
+var Feature_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
+var Extent_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Extent */ "./node_modules/ol/interaction/Extent.js"));
+var Snap_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Snap */ "./node_modules/ol/interaction/Snap.js"));
+var Draw_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Draw */ "./node_modules/ol/interaction/Draw.js"));
+var Translate_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Translate */ "./node_modules/ol/interaction/Translate.js"));
+var Modify_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Modify */ "./node_modules/ol/interaction/Modify.js"));
+var Select_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Select */ "./node_modules/ol/interaction/Select.js"));
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
+var WKT_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
+var Style_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
+var Icon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Icon */ "./node_modules/ol/style/Icon.js"));
+var RegularShape_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/RegularShape */ "./node_modules/ol/style/RegularShape.js"));
+var Text_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
+var Fill_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
+var Stroke_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
+var Circle_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Circle */ "./node_modules/ol/style/Circle.js"));
 /**
  * Creates various OpenLayers types used by the viewer
  *
@@ -9309,9 +9674,9 @@ exports.OLFactory = OLFactory;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createMapGuideSource = exports.isMapGuideImageSource = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 //import { MapGuideImageSource } from "./ol-mapguide-source";
-var ImageMapGuide_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageMapGuide */ "./node_modules/ol/source/ImageMapGuide.js"));
+var ImageMapGuide_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageMapGuide */ "./node_modules/ol/source/ImageMapGuide.js"));
 /**
  * @hidden
  */
@@ -9343,11 +9708,11 @@ exports.createMapGuideSource = createMapGuideSource;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.tryBuildTextStyle = exports.buildFill = exports.buildStroke = exports.evalFeature = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var ol_style_contracts_1 = __webpack_require__(/*! ./ol-style-contracts */ "./src/api/ol-style-contracts.ts");
-var Text_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
-var Stroke_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
-var Fill_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
+var Text_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Text */ "./node_modules/ol/style/Text.js"));
+var Stroke_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Stroke */ "./node_modules/ol/style/Stroke.js"));
+var Fill_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Fill */ "./node_modules/ol/style/Fill.js"));
 var color_1 = __webpack_require__(/*! ol/color */ "./node_modules/ol/color.js");
 function toOLColor(color, alpha) {
     var c = (0, color_1.asArray)(color);
@@ -9406,7 +9771,7 @@ function tryBuildTextStyle(style, feat, context) {
         setIfNotUndefined(textOpts, "scale", evalFeature(label.scale, feat, context));
         var txt = evalFeature(label.text, feat, context);
         if (typeof (txt) != 'undefined') {
-            textOpts.text = "" + txt; //Need to stringify this
+            textOpts.text = "".concat(txt); //Need to stringify this
         }
         setIfNotUndefined(textOpts, "textAlign", evalFeature(label.textAlign, feat, context));
         setIfNotUndefined(textOpts, "textBaseline", evalFeature(label.textBaseline, feat, context));
@@ -9672,16 +10037,17 @@ exports.getOLStyleFunction = getOLStyleFunction;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OLStyleMapSet = exports.vectorStyleToStyleMap = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var ol_style_helpers_1 = __webpack_require__(/*! ./ol-style-helpers */ "./src/api/ol-style-helpers.ts");
 var expr_eval_context_1 = __webpack_require__(/*! ./expr-eval-context */ "./src/api/expr-eval-context.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ./ol-style-contracts */ "./src/api/ol-style-contracts.ts");
-var Style_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
-var Circle_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Circle */ "./node_modules/ol/style/Circle.js"));
+var Style_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Style */ "./node_modules/ol/style/Style.js"));
+var Circle_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Circle */ "./node_modules/ol/style/Circle.js"));
 var ol_style_builders_1 = __webpack_require__(/*! ./ol-style-builders */ "./src/api/ol-style-builders.ts");
-var Icon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/style/Icon */ "./node_modules/ol/style/Icon.js"));
-var shortid = (0, tslib_1.__importStar)(__webpack_require__(/*! shortid */ "./node_modules/shortid/index.js"));
+var Icon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/style/Icon */ "./node_modules/ol/style/Icon.js"));
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
+var scoped_id_1 = __webpack_require__(/*! ../utils/scoped-id */ "./src/utils/scoped-id.ts");
+var scopedId = new scoped_id_1.ScopedId();
 function isDynamicStroke(stroke) {
     if (!stroke) {
         return false;
@@ -9749,7 +10115,7 @@ function buildStyleMap(pts, lns, pls) {
         fill: cpls.getFill()
     });
     return {
-        id: shortid.generate(),
+        id: "".concat(scopedId.next()),
         Point: pts,
         MultiPoint: pts,
         LineString: lns,
@@ -9908,9 +10274,8 @@ exports.OLStyleMapSet = OLStyleMapSet;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.prepareSubMenus = exports.parseCommandsInWebLayout = exports.parseWidgetsInAppDef = exports.convertWebLayoutUIItems = exports.convertFlexLayoutUIItems = exports.isFlyoutSpec = exports.isUIWidget = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var command_1 = __webpack_require__(/*! ./command */ "./src/api/registry/command.ts");
-var shortid = (0, tslib_1.__importStar)(__webpack_require__(/*! shortid */ "./node_modules/shortid/index.js"));
 var component_1 = __webpack_require__(/*! ./component */ "./src/api/registry/component.tsx");
 var i18n_1 = __webpack_require__(/*! ../i18n */ "./src/api/i18n.ts");
 var never_1 = __webpack_require__(/*! ../../utils/never */ "./src/utils/never.ts");
@@ -9920,6 +10285,8 @@ var weblayout_1 = __webpack_require__(/*! ../contracts/weblayout */ "./src/api/c
 var init_command_1 = __webpack_require__(/*! ../../actions/init-command */ "./src/actions/init-command.ts");
 var assets_1 = __webpack_require__(/*! ../../constants/assets */ "./src/constants/assets.ts");
 var constants_1 = __webpack_require__(/*! ../../constants */ "./src/constants.ts");
+var scoped_id_1 = __webpack_require__(/*! ../../utils/scoped-id */ "./src/utils/scoped-id.ts");
+var scopedId = new scoped_id_1.ScopedId();
 function isCommandSpec(cmd) {
     return !(0, string_1.strIsNullOrEmpty)(cmd.command);
 }
@@ -9991,7 +10358,7 @@ function convertWidget(widget, locale, noToolbarLabels) {
         case "Maptip":
             return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.MapTip);
         case "MapMenu":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.MapMenu, flyoutId: component_1.DefaultComponentNames.MapMenu + "_" + shortid.generate(), parameters: widget.Extension };
+            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.MapMenu, flyoutId: "".concat(component_1.DefaultComponentNames.MapMenu, "_").concat(scopedId.next()), parameters: widget.Extension };
         case "Query":
             return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Query);
         case "QuickPlot":
@@ -10022,7 +10389,7 @@ function convertWidget(widget, locale, noToolbarLabels) {
         case "Print":
             return makeCommand(widget, noToolbarLabels, command_1.DefaultCommands.Print);
         case "BasemapSwitcher":
-            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.BaseMapSwitcher, flyoutId: component_1.DefaultComponentNames.BaseMapSwitcher + "_" + shortid.generate(), parameters: widget.Extension };
+            return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: component_1.DefaultComponentNames.BaseMapSwitcher, flyoutId: "".concat(component_1.DefaultComponentNames.BaseMapSwitcher, "_").concat(scopedId.next()), parameters: widget.Extension };
         case "InvokeScript":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, command: widget.Name, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, parameters: widget.Extension };
         default:
@@ -10049,7 +10416,7 @@ function convertFlexLayoutUIItems(isStateless, items, widgetsByKey, locale, noTo
                     if (widget && isUIWidget(widget)) {
                         var cmd = convertWidget(widget, locale, noToolbarLabels);
                         if (isStateless && isCommandSpec(cmd) && !(0, command_1.isSupportedCommandInStatelessMode)(cmd.command)) {
-                            console.warn("The widget (" + widget.Name + ") references a command (" + cmd.command + ") that is not supported in stateless mode. This widget will always be disabled");
+                            console.warn("The widget (".concat(widget.Name, ") references a command (").concat(cmd.command, ") that is not supported in stateless mode. This widget will always be disabled"));
                         }
                         return cmd;
                     }
@@ -10097,7 +10464,7 @@ function convertWebLayoutUIItems(items, cmdsByKey, locale, noToolbarLabels) {
         if ((0, weblayout_1.isCommandItem)(item)) {
             var cmdDef = cmdsByKey[item.Command];
             if (!cmdDef) {
-                (0, logger_1.warn)("Invalid reference to command: " + item.Command);
+                (0, logger_1.warn)("Invalid reference to command: ".concat(item.Command));
                 return { error: (0, i18n_1.tr)("UNKNOWN_COMMAND_REFERENCE", locale, { command: item.Command }) };
             }
             else if (cmdDef.TargetViewer != "Dwf") {
@@ -10124,7 +10491,7 @@ function convertWebLayoutUIItems(items, cmdsByKey, locale, noToolbarLabels) {
                     else if (action == "Refresh") {
                         action = command_1.DefaultCommands.RefreshMap;
                     }
-                    return (0, tslib_1.__assign)({ command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams }, icon);
+                    return tslib_1.__assign({ command: action, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams }, icon);
                 }
                 else {
                     switch (cmdDef["@xsi:type"]) {
@@ -10141,7 +10508,7 @@ function convertWebLayoutUIItems(items, cmdsByKey, locale, noToolbarLabels) {
                         case "GetPrintablePageCommandType":
                             return { command: command_1.DefaultCommands.QuickPlot, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams };
                         default:
-                            return (0, tslib_1.__assign)({ command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams }, icon);
+                            return tslib_1.__assign({ command: cmdDef.Name, label: (noToolbarLabels ? null : cmdDef.Label), tooltip: cmdDef.Tooltip, parameters: commonParams }, icon);
                     }
                 }
             }
@@ -10230,7 +10597,7 @@ function parseWidgetsInAppDef(appDef, cmdRegister) {
                         targetFrame: cmd.Target
                     });
                     if (isStatelessAppDef) {
-                        console.warn("The search command (" + widget.Name + ") is not supported in stateless mode. This widget will always be disabled");
+                        console.warn("The search command (".concat(widget.Name, ") is not supported in stateless mode. This widget will always be disabled"));
                     }
                     break;
                 case "InvokeURL":
@@ -10338,7 +10705,7 @@ function prepareSubMenus(tbConf) {
                 var item = _a[_i];
                 //Special case: contextmenu is all inline
                 if (isFlyoutSpec(item) && key != constants_1.WEBLAYOUT_CONTEXTMENU) {
-                    var flyoutId = item.label + "_" + shortid.generate();
+                    var flyoutId = "".concat(item.label, "_").concat(scopedId.next());
                     prepared.toolbars[key].items.push({
                         label: item.label,
                         tooltip: item.tooltip,
@@ -10386,7 +10753,7 @@ var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger
 var FUSION_ICON_REGEX = /images\/icons\/[a-zA-Z\-]*.png/;
 function fixIconPath(path) {
     if (FUSION_ICON_REGEX.test(path)) {
-        return ((0, asset_1.getAssetRoot)() + "/" + path).replace(/\/\//g, "/");
+        return "".concat((0, asset_1.getAssetRoot)(), "/").concat(path).replace(/\/\//g, "/");
     }
     return path;
 }
@@ -10683,7 +11050,6 @@ function openModalUrl(name, dispatch, url, modalTitle) {
         modal: {
             title: modalTitle || (0, i18n_1.tr)(name),
             backdrop: false,
-            size: common_1.DEFAULT_MODAL_SIZE,
             overflowYScroll: true
         },
         name: name,
@@ -10692,13 +11058,10 @@ function openModalUrl(name, dispatch, url, modalTitle) {
 }
 function isSupportedCommandInStatelessMode(name) {
     switch (name) {
-        case DefaultCommands.Select:
         case DefaultCommands.MapTip:
         case DefaultCommands.QuickPlot:
         case DefaultCommands.SelectRadius:
         case DefaultCommands.SelectPolygon:
-        case DefaultCommands.ClearSelection:
-        case DefaultCommands.ZoomToSelection:
         case DefaultCommands.Buffer:
         case DefaultCommands.SelectWithin:
         case DefaultCommands.Redline:
@@ -10751,11 +11114,11 @@ function openUrlInTarget(name, cmdDef, hasTaskPane, dispatch, url, modalTitle) {
                 }
             }
             if (!bInvoked) {
-                (0, logger_1.error)("Frame not found: " + cmdDef.targetFrame);
+                (0, logger_1.error)("Frame not found: ".concat(cmdDef.targetFrame));
             }
         }
         else {
-            (0, logger_1.error)("Command " + name + " has a target of \"SpecifiedFrame\", but does not specify a target frame");
+            (0, logger_1.error)("Command ".concat(name, " has a target of \"SpecifiedFrame\", but does not specify a target frame"));
         }
     }
     else {
@@ -10806,17 +11169,17 @@ function registerCommand(name, cmdDef) {
                 var config = state.config;
                 var map = (0, common_1.getRuntimeMap)(state);
                 if (map) {
-                    var url = (0, url_1.ensureParameters)((0, runtime_1.getFusionRoot)() + "/widgets/Search/SearchPrompt.php", map.Name, map.SessionId, config.locale, false)
+                    var url = (0, url_1.ensureParameters)("".concat((0, runtime_1.getFusionRoot)(), "/widgets/Search/SearchPrompt.php"), map.Name, map.SessionId, config.locale, false)
                         + "&popup=0"
                         + "&target=TaskPane"
-                        + ("&title=" + encodeURIComponent(cmdDef.title))
-                        + ("&prompt=" + encodeURIComponent(cmdDef.prompt))
-                        + ("&layer=" + encodeURIComponent(cmdDef.layer))
-                        + ("&pointZoomLevel=" + parameters.PointZoomLevel)
-                        + (cmdDef.filter ? "&filter=" + encodeURIComponent(cmdDef.filter) : '')
-                        + ("&limit=" + cmdDef.matchLimit)
-                        + ("&properties=" + (cmdDef.resultColumns.Column || []).map(function (col) { return col.Property; }).join(","))
-                        + ("&propNames=" + (cmdDef.resultColumns.Column || []).map(function (col) { return col.Name; }).join(","));
+                        + "&title=".concat(encodeURIComponent(cmdDef.title))
+                        + "&prompt=".concat(encodeURIComponent(cmdDef.prompt))
+                        + "&layer=".concat(encodeURIComponent(cmdDef.layer))
+                        + "&pointZoomLevel=".concat(parameters.PointZoomLevel)
+                        + (cmdDef.filter ? "&filter=".concat(encodeURIComponent(cmdDef.filter)) : '')
+                        + "&limit=".concat(cmdDef.matchLimit)
+                        + "&properties=".concat((cmdDef.resultColumns.Column || []).map(function (col) { return col.Property; }).join(","))
+                        + "&propNames=".concat((cmdDef.resultColumns.Column || []).map(function (col) { return col.Name; }).join(","));
                     openUrlInTarget(name, cmdDef, config.capabilities.hasTaskPane, dispatch, url, cmd.title);
                 }
             }
@@ -10853,8 +11216,8 @@ exports.getCommand = getCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PlaceholderComponent = exports.getComponentFactory = exports.registerComponentFactory = exports.DefaultComponentNames = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var error_1 = __webpack_require__(/*! ../../components/error */ "./src/components/error.tsx");
 var i18n_1 = __webpack_require__(/*! ../i18n */ "./src/api/i18n.ts");
 /**
@@ -10917,7 +11280,7 @@ exports.getComponentFactory = getComponentFactory;
  * @extends {React.Component<IPlaceholderComponentProps, any>}
  */
 var PlaceholderComponent = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(PlaceholderComponent, _super);
+    tslib_1.__extends(PlaceholderComponent, _super);
     function PlaceholderComponent(props) {
         return _super.call(this, props) || this;
     }
@@ -11055,16 +11418,16 @@ exports.getLayout = getLayout;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ensureProjection = exports.resolveProjectionFromEpsgIoAsync = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var proj4_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
+exports.ensureProjection = exports.resolveProjectionFromEpsgCodeAsync = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var proj4_1 = tslib_1.__importDefault(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
 var error_1 = __webpack_require__(/*! ../error */ "./src/api/error.ts");
 var i18n_1 = __webpack_require__(/*! ../i18n */ "./src/api/i18n.ts");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 var proj4_2 = __webpack_require__(/*! ol/proj/proj4 */ "./node_modules/ol/proj/proj4.js");
 var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger.ts");
 /**
- * Performs a projection definititon lookup at epsg.io for the given EPSG code
+ * Performs a projection definititon lookup for the given EPSG code
  *
  * @export
  * @param {string | number} epsg
@@ -11072,53 +11435,50 @@ var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger
  * @param {string} mapDef
  * @returns {Promise<any>}
  * @since 0.13
+ * @since 0.14.10 - Renamed to resolveProjectionFromEpsgCodeAsync from resolveProjectionFromEpsgIoAsync as this no longer hits epsg.io
  */
-function resolveProjectionFromEpsgIoAsync(epsg, locale, mapDef) {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
-        var r, resp;
-        return (0, tslib_1.__generator)(this, function (_a) {
+function resolveProjectionFromEpsgCodeAsync(epsg, locale, mapDef) {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
+        var r, defn;
+        return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch("//epsg.io?format=json&q=" + epsg)];
+                case 0: return [4 /*yield*/, fetch("https://spatialreference.org/ref/epsg/".concat(epsg, "/proj4.txt"))];
                 case 1:
                     r = _a.sent();
-                    return [4 /*yield*/, r.json()];
+                    if (!r.ok) return [3 /*break*/, 3];
+                    return [4 /*yield*/, r.text()];
                 case 2:
-                    resp = _a.sent();
-                    if (resp.results && resp.results.length > 0) {
-                        proj4_1.default.defs("EPSG:" + epsg, resp.results[0].proj4);
-                        (0, logger_1.debug)("Registered projection EPSG:" + epsg + " from epsg.io");
-                        return [2 /*return*/, proj4_1.default.defs["EPSG:" + epsg]];
-                    }
-                    else {
-                        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNREGISTERED_EPSG_CODE", locale, { epsg: epsg, mapDefinition: mapDef }));
-                    }
-                    return [2 /*return*/];
+                    defn = _a.sent();
+                    proj4_1.default.defs("EPSG:".concat(epsg), defn);
+                    (0, logger_1.debug)("Registered projection EPSG:".concat(epsg, " from spatialreference.org"));
+                    return [2 /*return*/, proj4_1.default.defs["EPSG:".concat(epsg)]];
+                case 3: throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNREGISTERED_EPSG_CODE", locale, { epsg: epsg, mapDefinition: mapDef }));
             }
         });
     });
 }
-exports.resolveProjectionFromEpsgIoAsync = resolveProjectionFromEpsgIoAsync;
+exports.resolveProjectionFromEpsgCodeAsync = resolveProjectionFromEpsgCodeAsync;
 /**
- * Ensures the given projection (by EPSG code) exists and if not invokes the given factory function (or does an epsg.io lookup)
+ * Ensures the given projection (by EPSG code) exists and if not invokes the given factory function (or does an epsg lookup)
  * to fetch the definition to be registered.
  *
  * Once registered, it will update the projection set within OpenLayers
  *
  * @export
  * @param {number} epsgCode
- * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, a lookup to epsg.io will be done instead
+ * @param {() => Promise<string>} [factoryIfNotFound] A custom factory function to provide the required proj4js string for this projection. If not specified, an external epsg lookup will be done instead
  * @param {string} alias
  * @returns {Promise<string>}
  * @since 0.13
  */
 function ensureProjection(epsgCode, locale, alias, factoryIfNotFound) {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var resolvedName, bAdded, name;
-        return (0, tslib_1.__generator)(this, function (_a) {
+        return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     bAdded = false;
-                    name = "EPSG:" + epsgCode;
+                    name = "EPSG:".concat(epsgCode);
                     if (!proj4_1.default.defs[name]) return [3 /*break*/, 1];
                     resolvedName = name;
                     return [3 /*break*/, 4];
@@ -11128,7 +11488,7 @@ function ensureProjection(epsgCode, locale, alias, factoryIfNotFound) {
                     bAdded = true;
                     resolvedName = name;
                     return [3 /*break*/, 4];
-                case 2: return [4 /*yield*/, resolveProjectionFromEpsgIoAsync(epsgCode, locale, "")];
+                case 2: return [4 /*yield*/, resolveProjectionFromEpsgCodeAsync(epsgCode, locale, "")];
                 case 3:
                     _a.sent();
                     resolvedName = name;
@@ -11249,7 +11609,7 @@ var _viewer;
  */
 function setFusionRoot(root) {
     _fusionRoot = root;
-    (0, logger_1.debug)("Fusion root set to: " + root + ". Access to Fusion backend services and widget content will be relative to this value");
+    (0, logger_1.debug)("Fusion root set to: ".concat(root, ". Access to Fusion backend services and widget content will be relative to this value"));
 }
 exports.setFusionRoot = setFusionRoot;
 /**
@@ -11358,7 +11718,7 @@ exports.countSelection = countSelection;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.retrieveSelectionSetFromLocalStorage = exports.persistSelectionSetToLocalStorage = exports.clearSessionStore = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 /**
  * session-store.ts
@@ -11369,9 +11729,9 @@ var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts
  * @since 0.12
  */
 function clearSessionStore() {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var key;
-        return (0, tslib_1.__generator)(this, function (_a) {
+        return tslib_1.__generator(this, function (_a) {
             try {
                 for (key in window.localStorage) {
                     if ((0, string_1.strStartsWith)(key, "selection_")) {
@@ -11387,12 +11747,12 @@ function clearSessionStore() {
 }
 exports.clearSessionStore = clearSessionStore;
 function encodeKey(sessionId, mapName) {
-    return "selection_" + sessionId + "_" + mapName;
+    return "selection_".concat(sessionId, "_").concat(mapName);
 }
 function persistSelectionSetToLocalStorage(sessionId, mapName, resp) {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var key, value;
-        return (0, tslib_1.__generator)(this, function (_a) {
+        return tslib_1.__generator(this, function (_a) {
             key = encodeKey(sessionId, mapName);
             value = JSON.stringify(resp);
             try {
@@ -11406,9 +11766,9 @@ function persistSelectionSetToLocalStorage(sessionId, mapName, resp) {
 }
 exports.persistSelectionSetToLocalStorage = persistSelectionSetToLocalStorage;
 function retrieveSelectionSetFromLocalStorage(sessionId, mapName) {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var key, _a, content;
-        return (0, tslib_1.__generator)(this, function (_b) {
+        return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _a = encodeKey;
@@ -11439,8 +11799,8 @@ exports.retrieveSelectionSetFromLocalStorage = retrieveSelectionSetFromLocalStor
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.About = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 /**
  * The About component displays information about this viewer
  * @param props
@@ -11451,7 +11811,7 @@ var About = function (props) {
         React.createElement("hr", null),
         React.createElement("p", null,
             "Hash: ",
-            "9ba843ebe95dcf3ac9771d7556189003a442ca9b"),
+            "5f4a0954f25b3962f2a5ed0aad9e5a7dd979bf26"),
         React.createElement("hr", null),
         React.createElement("p", null,
             React.createElement("a", { target: "_blank", href: "https://github.com/jumpinjackie/mapguide-react-layout" }, "GitHub")),
@@ -11476,8 +11836,8 @@ exports.About = About;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Accordion = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var PANEL_HEADER_HEIGHT = 24;
 function validatePanelId(panels, id) {
@@ -11494,7 +11854,7 @@ function validatePanelId(panels, id) {
  * A generic, reusable Accordion component
  * @param props
  */
-var Accordion = function (props) {
+exports.Accordion = React.memo(function (props) {
     var style = props.style, panels = props.panels, isResizing = props.isResizing, onActivePanelChanged = props.onActivePanelChanged;
     var activeId = validatePanelId(props.panels, props.activePanelId);
     var _a = React.useState({
@@ -11525,8 +11885,7 @@ var Accordion = function (props) {
                     p.title),
                 React.createElement(core_1.Collapse, { isOpen: isOpen }, p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)));
         })));
-};
-exports.Accordion = Accordion;
+});
 
 
 /***/ }),
@@ -11541,8 +11900,9 @@ exports.Accordion = Accordion;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseLayerSwitcher = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 /**
@@ -11569,8 +11929,8 @@ var BaseLayerSwitcher = function (props) {
                 React.createElement("input", { className: "base-layer-switcher-option", type: "radio", value: string_1.STR_EMPTY, checked: (0, string_1.strIsNullOrEmpty)(selected), onChange: onBaseLayerChanged }),
                 React.createElement("span", { className: "bp3-control-indicator" }),
                 (0, i18n_1.tr)("NONE", locale))),
-        externalBaseLayers.map(function (layer) {
-            return React.createElement("div", { className: "base-layer-switcher-item-container", key: "base-layer-" + layer.name },
+        externalBaseLayers.filter(function (ebl) { return (0, common_1.isVisualBaseLayer)(ebl); }).map(function (layer) {
+            return React.createElement("div", { className: "base-layer-switcher-item-container", key: "base-layer-".concat(layer.name) },
                 React.createElement("label", { className: "bp3-control bp3-radio" },
                     React.createElement("input", { className: "base-layer-switcher-option", type: "radio", value: layer.name, checked: layer.name === selected, onChange: onBaseLayerChanged }),
                     React.createElement("span", { className: "bp3-control-indicator" }),
@@ -11592,13 +11952,13 @@ exports.BaseLayerSwitcher = BaseLayerSwitcher;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ColorPicker = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
-var react_colorful_1 = __webpack_require__(/*! react-colorful */ "./node_modules/react-colorful/dist/index.module.js");
+var react_colorful_1 = __webpack_require__(/*! react-colorful */ "./node_modules/react-colorful/dist/index.js");
 /**
  * A basic color picker component
  *
@@ -11625,33 +11985,50 @@ exports.ColorPicker = ColorPicker;
 
 /***/ }),
 
-/***/ "./src/components/context.ts":
-/*!***********************************!*\
-  !*** ./src/components/context.ts ***!
-  \***********************************/
+/***/ "./src/components/context.tsx":
+/*!************************************!*\
+  !*** ./src/components/context.tsx ***!
+  \************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ToolbarContext = exports.LegendContext = exports.AppContext = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+exports.ToolbarContext = exports.LegendContext = exports.AppContextProvider = exports.AppContext = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 /**
  * context.ts
  *
  * This module holds various React component contexts and validation maps
  */
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var VOID_NOOP = function () { };
 exports.AppContext = React.createContext({
     allowHtmlValuesInSelection: function () { return false; },
-    getHTMLCleaner: function () { return function (v) { return v; }; }
+    getHTMLCleaner: function () { return function (v) { return v; }; },
+    getLegendLayerExtraIconsProvider: function () { return []; },
+    getLegendGroupExtraIconsProvider: function () { return []; }
 });
+/**
+ * @since 0.14.9
+ */
+var AppContextProvider = function (_a) {
+    var mapguide = _a.mapguide, children = _a.children;
+    var providerImpl = React.useMemo(function () { return ({
+        allowHtmlValuesInSelection: function () { var _a, _b; return (_b = (_a = mapguide === null || mapguide === void 0 ? void 0 : mapguide.selectionSettings) === null || _a === void 0 ? void 0 : _a.allowHtmlValues) !== null && _b !== void 0 ? _b : false; },
+        getHTMLCleaner: function () { var _a, _b; return (_b = (_a = mapguide === null || mapguide === void 0 ? void 0 : mapguide.selectionSettings) === null || _a === void 0 ? void 0 : _a.cleanHtml) !== null && _b !== void 0 ? _b : (function (v) { return v; }); },
+        getLegendLayerExtraIconsProvider: function (options) { var _a, _b, _c; return (_c = (_b = (_a = mapguide === null || mapguide === void 0 ? void 0 : mapguide.legendSettings) === null || _a === void 0 ? void 0 : _a.provideExtraLayerIconsHtml) === null || _b === void 0 ? void 0 : _b.call(_a, options)) !== null && _c !== void 0 ? _c : []; },
+        getLegendGroupExtraIconsProvider: function (options) { var _a, _b, _c; return (_c = (_b = (_a = mapguide === null || mapguide === void 0 ? void 0 : mapguide.legendSettings) === null || _a === void 0 ? void 0 : _a.provideExtraGroupIconsHtml) === null || _b === void 0 ? void 0 : _b.call(_a, options)) !== null && _c !== void 0 ? _c : []; }
+    }); }, [mapguide]);
+    return React.createElement(exports.AppContext.Provider, { value: providerImpl }, children);
+};
+exports.AppContextProvider = AppContextProvider;
 exports.LegendContext = React.createContext({
     stateless: false,
     getMapName: function () { return undefined; },
+    getSessionId: function () { return undefined; },
     isFiltering: function () { return false; },
     getFilterText: function () { return string_1.STR_EMPTY; },
     getLocale: function () { return i18n_1.DEFAULT_LOCALE; },
@@ -11670,6 +12047,8 @@ exports.LegendContext = React.createContext({
     setGroupExpanded: VOID_NOOP,
     getLayerExpanded: function () { return false; },
     setLayerExpanded: VOID_NOOP,
+    provideExtraGroupIconsHtml: function () { return []; },
+    provideExtraLayerIconsHtml: function () { return []; }
 });
 exports.ToolbarContext = React.createContext({
     openFlyout: VOID_NOOP,
@@ -11691,8 +12070,8 @@ exports.ToolbarContext = React.createContext({
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Error = exports.normalizeStack = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 /**
@@ -11731,7 +12110,7 @@ var Error = function (props) {
             var stack = normalizeStack(err);
             return React.createElement(core_1.Callout, { intent: core_1.Intent.DANGER, icon: "error" },
                 React.createElement("h5", { className: "error-header" }, err.message),
-                React.createElement("ul", { className: "error-stack" }, stack.map(function (ln, i) { return React.createElement("li", { key: "stack-line-" + i }, ln); })));
+                React.createElement("ul", { className: "error-stack" }, stack.map(function (ln, i) { return React.createElement("li", { key: "stack-line-".concat(i) }, ln); })));
         }
     }
     else {
@@ -11754,44 +12133,45 @@ exports.Error = Error;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createExternalSource = exports.createOLLayerFromSubjectDefn = exports.clusterSourceIfRequired = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var defs_1 = __webpack_require__(/*! ../actions/defs */ "./src/actions/defs.ts");
-var XYZ_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/XYZ */ "./node_modules/ol/source/XYZ.js"));
-var OSM_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/OSM */ "./node_modules/ol/source/OSM.js"));
-var TileDebug_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileDebug */ "./node_modules/ol/source/TileDebug.js"));
-var Stamen_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Stamen */ "./node_modules/ol/source/Stamen.js"));
-var BingMaps_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/BingMaps */ "./node_modules/ol/source/BingMaps.js"));
-var UTFGrid_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/UTFGrid */ "./node_modules/ol/source/UTFGrid.js"));
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var TileWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
-var Cluster_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Cluster */ "./node_modules/ol/source/Cluster.js"));
-var VectorTile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/VectorTile */ "./node_modules/ol/source/VectorTile.js"));
-var VectorTile_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/VectorTile */ "./node_modules/ol/layer/VectorTile.js"));
+var XYZ_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/XYZ */ "./node_modules/ol/source/XYZ.js"));
+var OSM_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/OSM */ "./node_modules/ol/source/OSM.js"));
+var TileDebug_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileDebug */ "./node_modules/ol/source/TileDebug.js"));
+var BingMaps_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/BingMaps */ "./node_modules/ol/source/BingMaps.js"));
+var UTFGrid_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/UTFGrid */ "./node_modules/ol/source/UTFGrid.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var TileWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Cluster_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Cluster */ "./node_modules/ol/source/Cluster.js"));
+var VectorTile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/VectorTile */ "./node_modules/ol/source/VectorTile.js"));
+var VectorTile_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/VectorTile */ "./node_modules/ol/layer/VectorTile.js"));
 var csv_driver_1 = __webpack_require__(/*! ../api/layer-manager/csv-driver */ "./src/api/layer-manager/csv-driver.ts");
-var KML_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/KML */ "./node_modules/ol/format/KML.js"));
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
-var MVT_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/MVT */ "./node_modules/ol/format/MVT.js"));
+var KML_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/KML */ "./node_modules/ol/format/KML.js"));
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
+var MVT_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/MVT */ "./node_modules/ol/format/MVT.js"));
 var external_layer_1 = __webpack_require__(/*! ../api/registry/external-layer */ "./src/api/registry/external-layer.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
-var GeometryType_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/GeometryType */ "./node_modules/ol/geom/GeometryType.js"));
 var ol_style_helpers_1 = __webpack_require__(/*! ../api/ol-style-helpers */ "./src/api/ol-style-helpers.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
-var Feature_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
-var geojson_vt_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! geojson-vt */ "./node_modules/geojson-vt/src/index.js"));
-var Projection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/proj/Projection */ "./node_modules/ol/proj/Projection.js"));
+var Feature_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
+var geojson_vt_1 = tslib_1.__importDefault(__webpack_require__(/*! geojson-vt */ "./node_modules/geojson-vt/src/index.js"));
+var Projection_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/proj/Projection */ "./node_modules/ol/proj/Projection.js"));
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
-var ImageStatic_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageStatic */ "./node_modules/ol/source/ImageStatic.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var ImageStatic_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageStatic */ "./node_modules/ol/source/ImageStatic.js"));
 function sameProjectionAs(proj1, proj2) {
     var nproj1 = (0, proj_1.get)(proj1);
     var nproj2 = (0, proj_1.get)(proj2);
-    return (0, proj_1.equivalent)(nproj1, nproj2);
+    if (nproj1 && nproj2)
+        return (0, proj_1.equivalent)(nproj1, nproj2);
+    else
+        return true; // null == null, so yeah
 }
 // Converts geojson-vt data to GeoJSON
 var geoJsonVt2GeoJSON = function (key, value) {
@@ -11833,12 +12213,77 @@ var geoJsonVt2GeoJSON = function (key, value) {
         return value;
     }
 };
+function getRawGeoJson(defn) {
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
+        var url, resp, json;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = defn.sourceParams.url;
+                    if (!(typeof (url) == 'string')) return [3 /*break*/, 3];
+                    (0, logger_1.debug)("Fetching url: ".concat(url));
+                    return [4 /*yield*/, fetch(url)];
+                case 1:
+                    resp = _a.sent();
+                    return [4 /*yield*/, resp.json()];
+                case 2:
+                    json = _a.sent();
+                    return [2 /*return*/, json];
+                case 3:
+                    if (typeof (url) == 'object' && !(0, string_1.strIsNullOrEmpty)(url.var_source)) {
+                        if (!window[url.var_source]) {
+                            throw new Error("No such global var (".concat(url.var_source, ")"));
+                        }
+                        return [2 /*return*/, window[url.var_source]];
+                    }
+                    else {
+                        throw new Error("Don't know how to process URL source");
+                    }
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+function createGeoJsonVectorSource(defn, mapProjection) {
+    var _a = defn.sourceParams, url = _a.url, attributions = _a.attributions;
+    if (typeof (url) == 'string') {
+        var source = new Vector_2.default({
+            url: url,
+            format: new GeoJSON_1.default(),
+            attributions: attributions
+        });
+        return source;
+    }
+    else if (typeof (url) == 'object' && !(0, string_1.strIsNullOrEmpty)(url.var_source)) {
+        if (!window[url.var_source]) {
+            throw new Error("No such global var (".concat(url.var_source, ")"));
+        }
+        var vectorSource_1 = new Vector_2.default({
+            loader: function (_extent, _resolution, projection) {
+                var _a;
+                var format = new GeoJSON_1.default({
+                    dataProjection: (_a = defn.meta) === null || _a === void 0 ? void 0 : _a.projection,
+                    featureProjection: mapProjection
+                });
+                var features = format.readFeatures(window[url.var_source]);
+                vectorSource_1.addFeatures(features);
+            },
+            attributions: attributions
+        });
+        return vectorSource_1;
+    }
+    else {
+        throw new Error("Don't know how to process URL source");
+    }
+}
 function applyVectorLayerProperties(defn, layer, isExternal) {
     layer.set(common_1.LayerProperty.LAYER_NAME, defn.name);
     layer.set(common_1.LayerProperty.LAYER_DESCRIPTION, defn.description);
     layer.set(common_1.LayerProperty.LAYER_DISPLAY_NAME, defn.displayName);
     layer.set(common_1.LayerProperty.LAYER_TYPE, defn.type);
     layer.set(common_1.LayerProperty.IS_SELECTABLE, defn.selectable);
+    layer.set(common_1.LayerProperty.DISABLE_HOVER, defn.disableHover);
     layer.set(common_1.LayerProperty.IS_EXTERNAL, isExternal);
     layer.set(common_1.LayerProperty.SELECTED_POPUP_CONFIGURATION, defn.popupTemplate);
     layer.set(common_1.LayerProperty.IS_GROUP, false);
@@ -11854,7 +12299,7 @@ function clusterSourceIfRequired(source, def) {
             distance: def.cluster.distance,
             geometryFunction: function (feature) {
                 var geometry = feature.getGeometry();
-                if (geometry && geometry.getType() == GeometryType_1.default.POINT) {
+                if (geometry && geometry.getType() == "Point") {
                     return geometry;
                 }
                 return undefined;
@@ -11867,11 +12312,11 @@ function clusterSourceIfRequired(source, def) {
 exports.clusterSourceIfRequired = clusterSourceIfRequired;
 function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettings) {
     var _this = this;
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     switch (defn.type) {
         case defs_1.GenericSubjectLayerType.StaticImage:
             {
-                var sourceArgs = (0, tslib_1.__assign)({ crossOrigin: "anonymous" }, defn.sourceParams);
+                var sourceArgs = tslib_1.__assign({}, defn.sourceParams);
                 if (!sourceArgs.imageExtent)
                     sourceArgs.imageExtent = (_a = defn.meta) === null || _a === void 0 ? void 0 : _a.extents;
                 var layer = new Image_1.default({
@@ -11889,7 +12334,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
             }
         case defs_1.GenericSubjectLayerType.XYZ:
             {
-                var sourceArgs = (0, tslib_1.__assign)({ crossOrigin: "anonymous" }, defn.sourceParams);
+                var sourceArgs = tslib_1.__assign({}, defn.sourceParams);
                 var layer = new Tile_1.default({
                     source: new XYZ_1.default(sourceArgs)
                 });
@@ -11910,7 +12355,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     features: features,
                     attributions: defn.sourceParams.attributions
                 });
-                var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
+                var layer = new Vector_1.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
                 (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_c = defn.vectorStyle) !== null && _c !== void 0 ? _c : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
@@ -11920,18 +12365,13 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                 var isWebM = sameProjectionAs(mapProjection, "EPSG:3857");
                 var asVT = ((_d = defn.meta) === null || _d === void 0 ? void 0 : _d.geojson_as_vt) == true;
                 if (asVT && isWebM) {
-                    var lazyTileIndex_1 = new lazy_1.AsyncLazy(function () { return (0, tslib_1.__awaiter)(_this, void 0, void 0, function () {
-                        var resp, json, gj, features, tileIndex;
+                    var lazyTileIndex_1 = new lazy_1.AsyncLazy(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                        var json, gj, features, tileIndex;
                         var _a, _b;
-                        return (0, tslib_1.__generator)(this, function (_c) {
+                        return tslib_1.__generator(this, function (_c) {
                             switch (_c.label) {
-                                case 0:
-                                    (0, logger_1.debug)("Fetching url: " + defn.sourceParams.url);
-                                    return [4 /*yield*/, fetch(defn.sourceParams.url)];
+                                case 0: return [4 /*yield*/, getRawGeoJson(defn)];
                                 case 1:
-                                    resp = _c.sent();
-                                    return [4 /*yield*/, resp.json()];
-                                case 2:
                                     json = _c.sent();
                                     if (((_a = defn.meta) === null || _a === void 0 ? void 0 : _a.projection) != "EPSG:4326") {
                                         gj = new GeoJSON_1.default({
@@ -11958,7 +12398,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                             extent: [0, 0, 4096, 4096],
                         }),
                     });
-                    var vectorSource_1 = new VectorTile_1.default({
+                    var vectorSource_2 = new VectorTile_1.default({
                         projection: mapProjection,
                         tileUrlFunction: function (tileCoord) {
                             // Use the tile coordinate as a pseudo URL for caching purposes
@@ -11973,16 +12413,19 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                                     type: 'FeatureCollection',
                                     features: data ? data.features : [],
                                 }, geoJsonVt2GeoJSON);
-                                var features = format_1.readFeatures(geojson, {
-                                    extent: vectorSource_1.getTileGrid().getTileCoordExtent(tileCoord),
-                                    featureProjection: mapProjection,
-                                });
-                                tile.setFeatures(features);
+                                var grid = vectorSource_2.getTileGrid();
+                                if (grid) {
+                                    var features = format_1.readFeatures(geojson, {
+                                        extent: grid.getTileCoordExtent(tileCoord),
+                                        featureProjection: mapProjection,
+                                    });
+                                    tile.setFeatures(features);
+                                }
                             });
                         }
                     });
                     var vectorLayer = new VectorTile_2.default({
-                        source: vectorSource_1,
+                        source: vectorSource_2,
                     });
                     (0, ol_style_helpers_1.setOLVectorLayerStyle)(vectorLayer, (_e = defn.vectorStyle) !== null && _e !== void 0 ? _e : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                     applyVectorLayerProperties(defn, vectorLayer, isExternal);
@@ -11992,12 +12435,8 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     if (asVT) {
                         console.warn("The geojson_as_vt meta option only applies if the MapGuide map or Primary Subject Layer is in EPSG:3857. This layer will be loaded as a regular GeoJSON layer");
                     }
-                    var source = new Vector_2.default({
-                        url: defn.sourceParams.url,
-                        format: new GeoJSON_1.default(),
-                        attributions: defn.sourceParams.attributions
-                    });
-                    var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
+                    var source = createGeoJsonVectorSource(defn, mapProjection);
+                    var layer = new Vector_1.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
                     (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_f = defn.vectorStyle) !== null && _f !== void 0 ? _f : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                     applyVectorLayerProperties(defn, layer, isExternal);
                     return layer;
@@ -12034,25 +12473,25 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                         });
                     }
                 });
-                var layer = new VectorTile_2.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: source }));
+                var layer = new VectorTile_2.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: source }));
                 (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_g = defn.vectorStyle) !== null && _g !== void 0 ? _g : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case defs_1.GenericSubjectLayerType.CSV:
             {
-                var vectorSource_2 = new Vector_2.default({
+                var vectorSource_3 = new Vector_2.default({
                     loader: function (_extent, _resolution, projection) {
                         var xhr = new XMLHttpRequest();
                         xhr.open("GET", defn.sourceParams.url);
-                        var onError = function () { return vectorSource_2.clear(); };
+                        var onError = function () { return vectorSource_3.clear(); };
                         xhr.onerror = onError;
                         xhr.onload = function () {
                             if (xhr.status == 200) {
                                 var driver = new csv_driver_1.CsvFormatDriver(csv_driver_1.CSV_COLUMN_ALIASES);
                                 driver.tryParse(xhr.responseText.length, xhr.responseText).then(function (pf) {
                                     var _a;
-                                    pf.addTo(vectorSource_2, projection, (_a = defn.meta) === null || _a === void 0 ? void 0 : _a.projection);
+                                    pf.addTo(vectorSource_3, projection, (_a = defn.meta) === null || _a === void 0 ? void 0 : _a.projection);
                                 }).catch(function (e) { return onError(); });
                             }
                             else {
@@ -12063,7 +12502,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     },
                     attributions: defn.sourceParams.attributions
                 });
-                var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(vectorSource_2, defn) }));
+                var layer = new Vector_1.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: clusterSourceIfRequired(vectorSource_3, defn) }));
                 (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_h = defn.vectorStyle) !== null && _h !== void 0 ? _h : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
@@ -12075,13 +12514,13 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                     format: new KML_1.default(),
                     attributions: defn.sourceParams.attributions
                 });
-                var layer = new Vector_1.default((0, tslib_1.__assign)((0, tslib_1.__assign)({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
+                var layer = new Vector_1.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: clusterSourceIfRequired(source, defn) }));
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         case defs_1.GenericSubjectLayerType.TileWMS:
             {
-                var sourceArgs = (0, tslib_1.__assign)({ crossOrigin: "anonymous" }, defn.sourceParams);
+                var sourceArgs = tslib_1.__assign({}, defn.sourceParams);
                 var layer = new Tile_1.default({
                     source: new TileWMS_1.default(sourceArgs)
                 });
@@ -12096,6 +12535,17 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                 layer.setVisible(defn.initiallyVisible);
                 return layer;
             }
+        case defs_1.GenericSubjectLayerType.WFS:
+            {
+                var sourceArgs = tslib_1.__assign({}, defn.sourceParams);
+                var layer = new Vector_1.default(tslib_1.__assign(tslib_1.__assign({}, defn.layerOptions), { source: new Vector_2.default(tslib_1.__assign(tslib_1.__assign({}, sourceArgs), { format: new GeoJSON_1.default({
+                            dataProjection: (_j = defn.meta) === null || _j === void 0 ? void 0 : _j.projection,
+                            featureProjection: mapProjection
+                        }) })) }));
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_k = defn.vectorStyle) !== null && _k !== void 0 ? _k : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                applyVectorLayerProperties(defn, layer, isExternal);
+                return layer;
+            }
         case defs_1.GenericSubjectLayerType.CustomVector:
             {
                 if ((0, string_1.strIsNullOrEmpty)(defn.driverName)) {
@@ -12104,26 +12554,35 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
                 var reg = external_layer_1.ExternalLayerFactoryRegistry.getInstance();
                 var factory = reg.getExternalVectorLayerCreator(defn.driverName);
                 if (!factory) {
-                    throw new Error("Could not resolve an approriate factory for the given driver: " + defn.driverName);
+                    throw new Error("Could not resolve an approriate factory for the given driver: ".concat(defn.driverName));
                 }
                 var layer = factory(defn.sourceParams, defn.meta, defn.layerOptions, appSettings);
                 var source = clusterSourceIfRequired(layer.getSource(), defn);
                 layer.setSource(source);
-                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_j = defn.vectorStyle) !== null && _j !== void 0 ? _j : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
+                (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, (_l = defn.vectorStyle) !== null && _l !== void 0 ? _l : ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, defn.cluster);
                 applyVectorLayerProperties(defn, layer, isExternal);
                 return layer;
             }
         default:
-            throw new Error("Unknown subject layer type: " + defn.type);
+            throw new Error("Unknown subject layer type: ".concat(defn.type));
     }
 }
 exports.createOLLayerFromSubjectDefn = createOLLayerFromSubjectDefn;
+function convertStamenLayerName(name) {
+    switch (name) {
+        case 'toner-lite':
+            return 'toner_lite';
+        default:
+            return name;
+    }
+}
 /**
  * Creates an OpenLayers source based on the given external base layer definition
  *
  * @export
  * @param {IExternalBaseLayer} layer
  * @returns
+ * @since 0.14.10 - Stamen now creates a XYZ layer and a StadiaMaps API key is required
  */
 function createExternalSource(layer) {
     var sourceCtor;
@@ -12137,9 +12596,20 @@ function createExternalSource(layer) {
         case "OSM":
             sourceCtor = OSM_1.default;
             break;
+        case "StadiaMaps":
+            //TODO: This XYZ tile layer approach is a workaround until we upgrade OpenLayers to latest
+            return new XYZ_1.default({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/" + layer.options.layer + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "Stamen":
-            sourceCtor = Stamen_1.default;
-            break;
+            //TODO: Re-activate original code path when we update OpenLayers to latest. This XYZ tile layer approach
+            //is a workaround until then
+            //sourceCtor = Stamen;
+            return new XYZ_1.default({
+                crossOrigin: "Anonymous",
+                url: "https://tiles.stadiamaps.com/tiles/stamen_" + convertStamenLayerName(layer.options.layer) + "/{z}/{x}/{y}.png?api_key=" + layer.options.key
+            });
         case "BingMaps":
             sourceCtor = BingMaps_1.default;
             break;
@@ -12147,10 +12617,10 @@ function createExternalSource(layer) {
             sourceCtor = UTFGrid_1.default;
             break;
         default:
-            throw new error_1.MgError("Unknown external base layer provider: " + layer.kind);
+            throw new error_1.MgError("Unknown external base layer provider: ".concat(layer.kind));
     }
     if (typeof (layer.options) != 'undefined')
-        return new sourceCtor((0, tslib_1.__assign)({ crossOrigin: "Anonymous" }, layer.options));
+        return new sourceCtor(tslib_1.__assign({ crossOrigin: "Anonymous" }, layer.options));
     else
         return new sourceCtor({ crossOrigin: "Anonymous" });
 }
@@ -12169,8 +12639,8 @@ exports.createExternalSource = createExternalSource;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FlyoutRegion = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var menu_1 = __webpack_require__(/*! ./menu */ "./src/components/menu.tsx");
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
@@ -12265,8 +12735,8 @@ exports.FlyoutRegion = FlyoutRegion;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FormFrameShim = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 /**
  * The FormFrameShim component provides a compatibility shim for the AJAX viewer form frame
  *
@@ -12275,7 +12745,7 @@ var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_m
  * @extends {React.Component<FormFrameShimProps, any>}
  */
 var FormFrameShim = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(FormFrameShim, _super);
+    tslib_1.__extends(FormFrameShim, _super);
     function FormFrameShim(props) {
         var _this = _super.call(this, props) || this;
         _this.onFormMounted = function (form) {
@@ -12306,7 +12776,7 @@ var FormFrameShim = /** @class */ (function (_super) {
         return React.createElement("form", { style: { visibility: "hidden", width: 0, height: 0 }, ref: this.onFormMounted, method: "post", id: "Frm", target: target, action: action, encType: "application/x-www-form-urlencoded" }, (function () {
             var fields = [];
             for (var i = 0; i < params.length; i += 2) {
-                fields.push(React.createElement("input", { id: "f" + i, key: "f" + i, type: "hidden", name: params[i], value: params[i + 1] }));
+                fields.push(React.createElement("input", { id: "f".concat(i), key: "f".concat(i), type: "hidden", name: params[i], value: params[i + 1] }));
             }
             return fields;
         })());
@@ -12328,16 +12798,16 @@ exports.FormFrameShim = FormFrameShim;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ImageIcon = exports.Icon = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var asset_1 = __webpack_require__(/*! ../utils/asset */ "./src/utils/asset.ts");
 var assets_1 = __webpack_require__(/*! ../constants/assets */ "./src/constants/assets.ts");
 var Icon = function (props) {
-    var spStyle = (0, tslib_1.__assign)({}, (props.style || {}));
+    var spStyle = tslib_1.__assign({}, (props.style || {}));
     if (!spStyle.display) {
         spStyle.display = "inline-block";
     }
-    return React.createElement("div", (0, tslib_1.__assign)({ style: spStyle, onClick: props.onClick }, props.otherProps), props.children(props.baseSize));
+    return React.createElement("div", tslib_1.__assign({ style: spStyle, onClick: props.onClick }, props.otherProps), props.children(props.baseSize));
 };
 exports.Icon = Icon;
 /**
@@ -12356,13 +12826,13 @@ var ImageIcon = function (props) {
         spriteClass = undefined;
     }
     if (spriteClass) {
-        var spStyle = (0, tslib_1.__assign)({}, (props.style || {}));
+        var spStyle = tslib_1.__assign({}, (props.style || {}));
         if (!spStyle.display) {
             spStyle.display = "inline-block";
         }
-        return React.createElement("div", (0, tslib_1.__assign)({ style: spStyle, onClick: props.onClick, className: "icon " + spriteClass }, props.otherProps));
+        return React.createElement("div", tslib_1.__assign({ style: spStyle, onClick: props.onClick, className: "icon ".concat(spriteClass) }, props.otherProps));
     }
-    return React.createElement("img", (0, tslib_1.__assign)({ className: "icon", style: props.style, src: url, onClick: props.onClick }, props.otherProps, { onError: function (e) { return e.currentTarget.src = assets_1.ICON_ERROR; } }));
+    return React.createElement("img", tslib_1.__assign({ className: "icon", style: props.style, src: url, onClick: props.onClick }, props.otherProps, { onError: function (e) { return e.currentTarget.src = assets_1.ICON_ERROR; } }));
 };
 exports.ImageIcon = ImageIcon;
 
@@ -12379,8 +12849,8 @@ exports.ImageIcon = ImageIcon;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AddLayer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var add_wms_layer_1 = __webpack_require__(/*! ./add-wms-layer */ "./src/components/layer-manager/add-wms-layer.tsx");
 var add_wfs_layer_1 = __webpack_require__(/*! ./add-wfs-layer */ "./src/components/layer-manager/add-wfs-layer.tsx");
@@ -12393,14 +12863,15 @@ var add_manage_layers_1 = __webpack_require__(/*! ../../containers/add-manage-la
 var color_brewer_1 = __webpack_require__(/*! ./color-brewer */ "./src/components/layer-manager/color-brewer.tsx");
 var ol_style_contracts_1 = __webpack_require__(/*! ../../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
 var never_1 = __webpack_require__(/*! ../../utils/never */ "./src/utils/never.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var ADD_URL_LAYER_TYPES = {
     "WMS": {
         label: "WMS",
-        content: function (props) { return React.createElement(add_wms_layer_1.AddWmsLayer, (0, tslib_1.__assign)({}, props)); }
+        content: function (props) { return React.createElement(add_wms_layer_1.AddWmsLayer, tslib_1.__assign({}, props)); }
     },
     "WFS": {
         label: "WFS",
-        content: function (props) { return React.createElement(add_wfs_layer_1.AddWfsLayer, (0, tslib_1.__assign)({}, props)); }
+        content: function (props) { return React.createElement(add_wfs_layer_1.AddWfsLayer, tslib_1.__assign({}, props)); }
     }
 };
 var AddLayerKind;
@@ -12473,9 +12944,9 @@ var AddFileLayer = function (props) {
             parsedFeaturesRef.current = undefined;
         }
     };
-    var onFileDropped = function (file) { return (0, tslib_1.__awaiter)(void 0, void 0, void 0, function () {
+    var onFileDropped = function (file) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var viewer, layerMgr, parsed, e_1;
-        return (0, tslib_1.__generator)(this, function (_a) {
+        return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     viewer = (0, runtime_1.getViewer)();
@@ -12509,9 +12980,9 @@ var AddFileLayer = function (props) {
     var onCancelAddFile = function () {
         setParsedFile(undefined);
     };
-    var onAddFileLayer = React.useCallback(function (layerProjection) { return (0, tslib_1.__awaiter)(void 0, void 0, void 0, function () {
+    var onAddFileLayer = React.useCallback(function (layerProjection) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var viewer, _a, _1, layerProj, layerMgr, extraOpts, labelProp, layer, e_2;
-        return (0, tslib_1.__generator)(this, function (_b) {
+        return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     viewer = (0, runtime_1.getViewer)();
@@ -12598,7 +13069,7 @@ var AddFileLayer = function (props) {
             React.createElement(core_1.Switch, { label: (0, i18n_1.tr)("ENABLE_LABELS", locale), checked: enableLabels, onChange: function (e) { return setEnableLabels(e.target.checked); } }),
             enableLabels && React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("LABEL_USING_PROPERTY", locale) },
                 React.createElement(core_1.HTMLSelect, { value: labelOnProperty, onChange: function (e) { return setLabelOnProperty(e.target.value); } }, themableProperties.map(function (th, i) { return React.createElement("option", { key: th, value: th }, th); }))));
-        var colorBrewerLabel = React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("COLORBREWER_THEME", locale) } });
+        var colorBrewerLabel = React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("COLORBREWER_THEME", locale)) } });
         var themeEl_1 = React.createElement(React.Fragment, null,
             React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("THEME_ON_PROPERTY", locale) },
                 React.createElement(core_1.HTMLSelect, { value: themeOnProperty, onChange: function (e) { return setThemeOnProperty(e.target.value); } }, themableProperties.map(function (th, i) { return React.createElement("option", { key: th, value: th }, th); }))),
@@ -12616,7 +13087,7 @@ var AddFileLayer = function (props) {
                 addLayerError && React.createElement(core_1.Callout, { intent: core_1.Intent.DANGER, title: (0, i18n_1.tr)("ADDING_LAYER_ERROR", locale) }, addLayerError.message),
                 React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("ADD_LAYER_PROJECTION", locale) }, loadedFile.defaultProjection ? React.createElement("strong", null,
                     "EPSG:",
-                    addProjection) : React.createElement(core_1.FormGroup, { label: React.createElement("a", { href: "https://epsg.io", target: "_blank" }, "EPSG:"), inline: true },
+                    addProjection) : React.createElement(core_1.FormGroup, { label: React.createElement("a", { href: "https://spatialreference.org/", target: "_blank" }, "EPSG:"), inline: true },
                     React.createElement(core_1.NumericInput, { style: { width: 60 }, min: 0, value: addProjection, onValueChange: function (v) { return setAddProjection(v); } }))),
                 React.createElement(core_1.FormGroup, { label: "Create Layer As" },
                     React.createElement(core_1.HTMLSelect, { value: createLayerAs, onChange: function (e) { return setCreateLayerAs(e.target.value); } }, createOptions.map(function (kind, i) { return React.createElement("option", { key: kind.value, value: kind.value }, kind.label); }))),
@@ -12692,9 +13163,9 @@ var AddLayer = function (props) {
         (function () {
             switch (addLayerKind) {
                 case AddLayerKind.File:
-                    return React.createElement(AddFileLayer, (0, tslib_1.__assign)({}, props));
+                    return React.createElement(AddFileLayer, tslib_1.__assign({}, props));
                 case AddLayerKind.Url:
-                    return React.createElement(AddUrlLayer, (0, tslib_1.__assign)({}, props));
+                    return React.createElement(AddUrlLayer, tslib_1.__assign({}, props));
             }
         })());
 };
@@ -12713,8 +13184,8 @@ exports.AddLayer = AddLayer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AddWfsLayer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var common_1 = __webpack_require__(/*! ../../api/common */ "./src/api/common.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
@@ -12722,9 +13193,9 @@ var error_1 = __webpack_require__(/*! ../error */ "./src/components/error.tsx");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
 var wfs_capabilities_parser_1 = __webpack_require__(/*! ./wfs-capabilities-parser */ "./src/components/layer-manager/wfs-capabilities-parser.ts");
 var wfs_capabilities_panel_1 = __webpack_require__(/*! ./wfs-capabilities-panel */ "./src/components/layer-manager/wfs-capabilities-panel.tsx");
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
 var url_1 = __webpack_require__(/*! ../../utils/url */ "./src/utils/url.ts");
 var projections_1 = __webpack_require__(/*! ../../api/registry/projections */ "./src/api/registry/projections.ts");
 var layer_manager_1 = __webpack_require__(/*! ../../api/layer-manager */ "./src/api/layer-manager.ts");
@@ -12755,7 +13226,7 @@ var AddWfsLayer = function (props) {
                 if (version == "2.0.0") { //WFS 2.0.0 want typename(s) over typename
                     typeNameKey = "typenames";
                 }
-                var urlTemplate = parsed.url + "?service=WFS&version=" + version + "&request=GetFeature&" + typeNameKey + "=" + encodeURIComponent(name) + "&outputFormat=" + encodeURIComponent(format) + "&srsName=" + encodeURIComponent(origCrs);
+                var urlTemplate = "".concat(parsed.url, "?service=WFS&version=").concat(version, "&request=GetFeature&").concat(typeNameKey, "=").concat(encodeURIComponent(name), "&outputFormat=").concat(encodeURIComponent(format), "&srsName=").concat(encodeURIComponent(origCrs));
                 var sourceUrl;
                 var strategy;
                 var vectorFmt = new GeoJSON_1.default({
@@ -12852,18 +13323,18 @@ exports.AddWfsLayer = AddWfsLayer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AddWmsLayer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var common_1 = __webpack_require__(/*! ../../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var error_1 = __webpack_require__(/*! ../error */ "./src/components/error.tsx");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
 var wms_capabilities_panel_1 = __webpack_require__(/*! ./wms-capabilities-panel */ "./src/components/layer-manager/wms-capabilities-panel.tsx");
-var WMSCapabilities_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/WMSCapabilities */ "./node_modules/ol/format/WMSCapabilities.js"));
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
-var ImageWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
-var TileWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
+var WMSCapabilities_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/WMSCapabilities */ "./node_modules/ol/format/WMSCapabilities.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var ImageWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
+var TileWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 var layer_manager_1 = __webpack_require__(/*! ../../api/layer-manager */ "./src/api/layer-manager.ts");
@@ -13007,15 +13478,15 @@ exports.AddWmsLayer = AddWmsLayer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ColorBrewerSwatch = exports.getMaxRamp = exports.getColorBrewerRamps = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var colorbrewer_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! colorbrewer */ "./node_modules/colorbrewer/index.es.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var colorbrewer_1 = tslib_1.__importDefault(__webpack_require__(/*! colorbrewer */ "./node_modules/colorbrewer/index.es.js"));
 function getColorBrewerRamps() {
     var ramps = [];
     for (var cat in colorbrewer_1.default.schemeGroups) {
         for (var _i = 0, _a = colorbrewer_1.default.schemeGroups[cat]; _i < _a.length; _i++) {
             var scheme = _a[_i];
-            ramps.push({ displayName: cat + " - " + scheme, category: cat, scheme: scheme, ramp: getMaxRamp(scheme) });
+            ramps.push({ displayName: "".concat(cat, " - ").concat(scheme), category: cat, scheme: scheme, ramp: getMaxRamp(scheme) });
         }
     }
     return ramps;
@@ -13038,9 +13509,9 @@ var ColorBrewerSwatch = function (props) {
     var ramp = getMaxRamp(colorbrewer_1.default[props.theme]);
     if (ramp) {
         return React.createElement("table", null,
-            React.createElement("colgroup", null, ramp.map(function (r, i) { return React.createElement("col", { key: "ramp-col-" + i, span: 1, style: { width: 12 } }); })),
+            React.createElement("colgroup", null, ramp.map(function (r, i) { return React.createElement("col", { key: "ramp-col-".concat(i), span: 1, style: { width: 12 } }); })),
             React.createElement("tbody", null,
-                React.createElement("tr", null, ramp.map(function (r, i) { return React.createElement("td", { key: "ramp-" + i, style: { border: "1px solid black", backgroundColor: r } }, "\u00A0"); }))));
+                React.createElement("tr", null, ramp.map(function (r, i) { return React.createElement("td", { key: "ramp-".concat(i), style: { border: "1px solid black", backgroundColor: r } }, "\u00A0"); }))));
     }
     ;
     return React.createElement(React.Fragment, null);
@@ -13060,9 +13531,9 @@ exports.ColorBrewerSwatch = ColorBrewerSwatch;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ColorExprEditor = exports.BooleanExprEditor = exports.StringExprEditor = exports.SliderExprEditor = exports.NumberExprEditor = exports.contrast = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ../../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
@@ -13101,7 +13572,7 @@ function stringifyExpr(expr, locale) {
     if ((0, ol_style_contracts_1.isEvaluatable)(expr)) {
         return "Expr: " + expr.expr;
     }
-    return "" + (expr !== null && expr !== void 0 ? expr : string_1.STR_EMPTY);
+    return "".concat(expr !== null && expr !== void 0 ? expr : string_1.STR_EMPTY);
 }
 function isStrTrue(s) {
     switch (s === null || s === void 0 ? void 0 : s.toLowerCase()) {
@@ -13119,7 +13590,7 @@ function stringifyExprIf(expr, mode) {
         case "edit-expr":
             return (0, ol_style_contracts_1.isEvaluatable)(expr) ? expr.expr : string_1.STR_EMPTY;
         case "edit-value":
-            return (0, ol_style_contracts_1.isEvaluatable)(expr) ? string_1.STR_EMPTY : "" + (expr !== null && expr !== void 0 ? expr : string_1.STR_EMPTY);
+            return (0, ol_style_contracts_1.isEvaluatable)(expr) ? string_1.STR_EMPTY : "".concat(expr !== null && expr !== void 0 ? expr : string_1.STR_EMPTY);
     }
 }
 function useExprEditor(props) {
@@ -13268,13 +13739,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLegendImage = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var has_1 = __webpack_require__(/*! ol/has */ "./node_modules/ol/has.js");
 var render_1 = __webpack_require__(/*! ol/render */ "./node_modules/ol/render.js");
-var Feature_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
-var Point_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
-var LineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
-var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
+var Feature_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
+var Point_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
+var LineString_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
+var Polygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
 var extent_1 = __webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js");
 var DEFAULT_SIZE = [16, 16];
 /**
@@ -13432,8 +13903,8 @@ exports.getLegendImage = getLegendImage;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ManageLayers = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
@@ -13584,7 +14055,7 @@ var ManageLayers = function (props) {
         return React.createElement("div", null, layers.map(function (lyr, i) {
             var cannotMoveUp = (i == 0 || layers.length <= 1);
             var cannotMoveDown = (i >= layers.length - 1 || layers.length <= 1);
-            return React.createElement(ManageLayerItem, { key: "manage-layer-" + i, layer: lyr, locale: locale, canMoveUp: !cannotMoveUp, canMoveDown: !cannotMoveDown, currentResolution: currentResolution, onSetOpacity: onSetOpacity, onSetHeatmapBlur: onSetHeatmapBlur, onSetHeatmapRadius: onSetHeatmapRadius, onRemoveLayer: onRemoveLayer, onMoveLayerUp: onMoveLayerUp, onMoveLayerDown: onMoveLayerDown, onZoomToBounds: onZoomToBounds, onSetVisibility: onSetVisibility, onVectorStyleChanged: onVectorStyleChanged });
+            return React.createElement(ManageLayerItem, { key: "manage-layer-".concat(i), layer: lyr, locale: locale, canMoveUp: !cannotMoveUp, canMoveDown: !cannotMoveDown, currentResolution: currentResolution, onSetOpacity: onSetOpacity, onSetHeatmapBlur: onSetHeatmapBlur, onSetHeatmapRadius: onSetHeatmapRadius, onRemoveLayer: onRemoveLayer, onMoveLayerUp: onMoveLayerUp, onMoveLayerDown: onMoveLayerDown, onZoomToBounds: onZoomToBounds, onSetVisibility: onSetVisibility, onVectorStyleChanged: onVectorStyleChanged });
         }));
     }
     else {
@@ -13606,8 +14077,8 @@ exports.ManageLayers = ManageLayers;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WfsCapabilitiesPanel = exports.parseEpsgCodeFromCRS = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 /**
@@ -13637,7 +14108,8 @@ function isGeoJsonMimeType(mimeType) {
     var _a;
     var lmt = (_a = mimeType === null || mimeType === void 0 ? void 0 : mimeType.toLowerCase()) !== null && _a !== void 0 ? _a : "";
     if (lmt.indexOf("application/vnd.geo+json") >= 0 ||
-        lmt.indexOf("application/json") >= 0) {
+        lmt.indexOf("application/json") >= 0 ||
+        lmt.indexOf("geojson") >= 0) {
         return true;
     }
     return false;
@@ -13697,7 +14169,7 @@ var WfsCapabilitiesPanel = function (props) {
                             " ",
                             layer.name),
                         React.createElement("p", null, (0, i18n_1.tr)("OWS_LAYER_TITLE", locale, { title: layer.title })),
-                        React.createElement("p", null, (0, i18n_1.tr)("OWS_LAYER_CRS", locale, { crs: "EPSG:" + epsgCode })),
+                        React.createElement("p", null, (0, i18n_1.tr)("OWS_LAYER_CRS", locale, { crs: "EPSG:".concat(epsgCode) })),
                         React.createElement(core_1.ButtonGroup, { fill: true },
                             React.createElement(core_1.Button, { onClick: function () { return onAddLayer(layer.name, info.version, geoJsonFmt, origCrs, epsgCode, layer.wgs84Bounds); }, intent: core_1.Intent.PRIMARY, icon: "new-layer" }, (0, i18n_1.tr)("ADD_LAYER", locale)),
                             otherActions));
@@ -13719,7 +14191,7 @@ exports.WfsCapabilitiesPanel = WfsCapabilitiesPanel;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WfsCapabilitiesParser = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 function tryGetElementContent(el) {
     var _a;
@@ -13730,7 +14202,7 @@ function tryGetElementContent(el) {
 function getElements(root, tagName, ns) {
     var els;
     if (ns) {
-        els = root.getElementsByTagName(ns + ":" + tagName);
+        els = root.getElementsByTagName("".concat(ns, ":").concat(tagName));
         if (els.length == 0) {
             //Try un-qualified
             els = root.getElementsByTagName(tagName);
@@ -13838,7 +14310,7 @@ var WfsCapabilitiesParser = /** @class */ (function () {
             var os = getElements(el, "OtherSRS", "wfs")
                 .map(function (fel) { return tryGetElementContent(fel); })
                 .filter(function (s) { return !(0, string_1.strIsNullOrEmpty)(s); });
-            info.otherCrs = (0, tslib_1.__spreadArray)((0, tslib_1.__spreadArray)([], oc, true), os, true);
+            info.otherCrs = tslib_1.__spreadArray(tslib_1.__spreadArray([], oc, true), os, true);
             var fmts = getElements(el, "Format", "wfs")
                 .map(function (fel) { return tryGetElementContent(fel); })
                 .filter(function (s) { return !(0, string_1.strIsNullOrEmpty)(s); });
@@ -13882,14 +14354,14 @@ exports.WfsCapabilitiesParser = WfsCapabilitiesParser;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WmsCapabilitiesPanel = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 function extractWmsLayers(caps) {
     var _a, _b;
     var layers = [];
-    var _c = caps.Capability.Layer, Layer = _c.Layer, rootLayer = (0, tslib_1.__rest)(_c, ["Layer"]);
+    var _c = caps.Capability.Layer, Layer = _c.Layer, rootLayer = tslib_1.__rest(_c, ["Layer"]);
     if (rootLayer.Name) { //Must have name to be considered
         layers.push([rootLayer, (_a = rootLayer.Style) !== null && _a !== void 0 ? _a : []]);
     }
@@ -13956,9 +14428,9 @@ exports.WmsCapabilitiesPanel = WmsCapabilitiesPanel;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Legend = exports.GroupNode = exports.LayerNode = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var context_1 = __webpack_require__(/*! ./context */ "./src/components/context.ts");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var context_1 = __webpack_require__(/*! ./context */ "./src/components/context.tsx");
 var base_layer_switcher_1 = __webpack_require__(/*! ./base-layer-switcher */ "./src/components/base-layer-switcher.tsx");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var icon_1 = __webpack_require__(/*! ./icon */ "./src/components/icon.tsx");
@@ -13969,6 +14441,7 @@ var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var context_2 = __webpack_require__(/*! ./map-providers/context */ "./src/components/map-providers/context.tsx");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var ICON_LEGEND_LAYER = "layer";
 var ICON_SELECT = "select";
 var ICON_LC_UNSELECT = "disable";
@@ -13982,8 +14455,9 @@ var ICON_SEARCH = "search";
 var UL_LIST_STYLE = function (baseSize) { return ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 }); };
 var LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
 var ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
-var CHK_STYLE = function (baseSize) { return ({ margin: 0, width: baseSize - 2 + "px", height: baseSize - 2 + "px", padding: 1, verticalAlign: "middle" }); };
-var EMPTY_STYLE = function (baseSize) { return ({ display: "inline-block", margin: 0, width: baseSize + "px", height: baseSize + "px", verticalAlign: "middle" }); };
+var CHK_STYLE = function (baseSize) { return ({ margin: 0, width: "".concat(baseSize - 2, "px"), height: "".concat(baseSize - 2, "px"), padding: 1, verticalAlign: "middle" }); };
+var EMPTY_STYLE = function (baseSize) { return ({ display: "inline-block", margin: 0, width: "".concat(baseSize, "px"), height: "".concat(baseSize, "px"), verticalAlign: "middle" }); };
+var EXTRAS_STYLE = function (baseSize) { return ({ display: "inline-block", margin: 0, width: "".concat(baseSize, "px"), height: "".concat(baseSize, "px"), verticalAlign: "middle" }); };
 var LegendLabel = function (props) {
     var _a;
     var legendCtx = React.useContext(context_1.LegendContext);
@@ -13993,7 +14467,7 @@ var LegendLabel = function (props) {
         var idx = props.text.toLocaleLowerCase().indexOf(ft);
         if (idx >= 0) {
             inner = props.text.substring(0, idx);
-            inner += "<span class='legend-label-highlight-text'>" + props.text.substring(idx, idx + ft.length) + "</span>";
+            inner += "<span class='legend-label-highlight-text'>".concat(props.text.substring(idx, idx + ft.length), "</span>");
             inner += props.text.substring(idx + ft.length, props.text.length);
         }
         else {
@@ -14003,11 +14477,11 @@ var LegendLabel = function (props) {
     else {
         inner = props.text;
     }
-    return React.createElement("span", { className: "legend-label", style: { lineHeight: props.baseSize + "px", verticalAlign: "middle" }, dangerouslySetInnerHTML: { __html: inner } });
+    return React.createElement("span", { className: "legend-label", style: { lineHeight: "".concat(props.baseSize, "px"), verticalAlign: "middle" }, dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)(inner) } });
 };
 function getIconUri(iconMimeType, iconBase64) {
     if (iconMimeType && iconBase64) {
-        return "data:" + iconMimeType + ";base64," + iconBase64;
+        return "data:".concat(iconMimeType, ";base64,").concat(iconBase64);
     }
     else {
         return undefined;
@@ -14027,9 +14501,10 @@ var RuleNode = function (props) {
         React.createElement(LegendLabel, { baseSize: props.baseSize, text: label }));
 };
 var LayerNode = function (props) {
+    var _a, _b;
     var layer = props.layer;
     var legendCtx = React.useContext(context_1.LegendContext);
-    var _a = React.useState(legendCtx.getLayerVisibility(props.layer)), layerVisible = _a[0], setLayerVisible = _a[1];
+    var _c = React.useState(legendCtx.getLayerVisibility(props.layer)), layerVisible = _c[0], setLayerVisible = _c[1];
     var label = layer.LegendLabel ? layer.LegendLabel : "";
     var iconMimeType = legendCtx.getIconMimeType();
     var onVisibilityChanged = function (e) {
@@ -14071,7 +14546,7 @@ var LayerNode = function (props) {
     }
     var tooltip = label;
     var nodeClassName = "layer-node";
-    var nodeStyle = (0, tslib_1.__assign)({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
+    var nodeStyle = tslib_1.__assign({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
     if (layer.ScaleRange) {
         var _loop_1 = function (scaleRange) {
             if (scaleRange.FeatureStyle && scaleRange.FeatureStyle.length > 0) {
@@ -14081,8 +14556,8 @@ var LayerNode = function (props) {
                 var body = void 0;
                 var isExpanded_1 = getExpanded();
                 var totalRuleCount = 0;
-                for (var _c = 0, _d = scaleRange.FeatureStyle; _c < _d.length; _c++) {
-                    var fts = _d[_c];
+                for (var _e = 0, _f = scaleRange.FeatureStyle; _e < _f.length; _e++) {
+                    var fts = _f[_e];
                     totalRuleCount += fts.Rule.length;
                 }
                 if (isExpanded_1 && totalRuleCount > 1) {
@@ -14096,15 +14571,15 @@ var LayerNode = function (props) {
                             bCompressed = !(fts.Rule[1].Icon);
                         }
                         if (bCompressed) {
-                            ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-" + layer.ObjectId + "-style-" + fi + "-rule-first", iconMimeType: iconMimeType, rule: fts.Rule[0] }));
-                            ruleElements.push(React.createElement("li", { style: LI_LIST_STYLE, key: "layer-" + layer.ObjectId + "-style-" + fi + "-rule-compressed" },
+                            ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-".concat(layer.ObjectId, "-style-").concat(fi, "-rule-first"), iconMimeType: iconMimeType, rule: fts.Rule[0] }));
+                            ruleElements.push(React.createElement("li", { style: LI_LIST_STYLE, key: "layer-".concat(layer.ObjectId, "-style-").concat(fi, "-rule-compressed") },
                                 React.createElement(LegendLabel, { baseSize: legendCtx.getBaseIconSize(), text: (0, i18n_1.tr)("OTHER_THEME_RULE_COUNT", legendCtx.getLocale(), { count: ftsRuleCount - 2 }) })));
-                            ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-" + layer.ObjectId + "-style-" + fi + "-rule-last", iconMimeType: iconMimeType, rule: fts.Rule[ftsRuleCount - 1] }));
+                            ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-".concat(layer.ObjectId, "-style-").concat(fi, "-rule-last"), iconMimeType: iconMimeType, rule: fts.Rule[ftsRuleCount - 1] }));
                         }
                         else {
                             for (var i = 0; i < ftsRuleCount; i++) {
                                 var rule = fts.Rule[i];
-                                ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-" + layer.ObjectId + "-style-" + fi + "-rule-" + i, iconMimeType: iconMimeType, rule: rule }));
+                                ruleElements.push(React.createElement(RuleNode, { baseSize: legendCtx.getBaseIconSize(), key: "layer-".concat(layer.ObjectId, "-style-").concat(fi, "-rule-").concat(i), iconMimeType: iconMimeType, rule: rule }));
                             }
                         }
                     }
@@ -14130,12 +14605,21 @@ var LayerNode = function (props) {
                 else {
                     expanded = React.createElement(EmptyNode, { baseSize: legendCtx.getBaseIconSize() });
                 }
+                var mapName = legendCtx.getMapName();
+                var session = legendCtx.getSessionId();
+                var extras = void 0;
+                if (mapName && session) {
+                    extras = ((_b = (_a = legendCtx.provideExtraLayerIconsHtml) === null || _a === void 0 ? void 0 : _a.call(legendCtx, { item: layer, mapName: mapName, session: session, sanitize: dompurify_1.sanitize, elementSize: legendCtx.getBaseIconSize() })) !== null && _b !== void 0 ? _b : [])
+                        .map(function (html, i) { return React.createElement("div", { style: EXTRAS_STYLE(legendCtx.getBaseIconSize()), key: "layer-".concat(layer.ObjectId, "-extras-").concat(i), dangerouslySetInnerHTML: { __html: html } }); });
+                }
                 return { value: React.createElement("li", { title: tooltip, style: nodeStyle, className: nodeClassName },
                         expanded,
                         " ",
                         chkbox,
                         " ",
                         selectable,
+                        " ",
+                        extras,
                         " ",
                         icon,
                         " ",
@@ -14147,8 +14631,8 @@ var LayerNode = function (props) {
                 icon = React.createElement(icon_1.Icon, { baseSize: legendCtx.getBaseIconSize(), style: ROW_ITEM_ELEMENT_STYLE }, function (bs) { return React.createElement(core_1.Icon, { icon: ICON_LEGEND_RASTER, iconSize: bs }); });
             }
         };
-        for (var _i = 0, _b = layer.ScaleRange; _i < _b.length; _i++) {
-            var scaleRange = _b[_i];
+        for (var _i = 0, _d = layer.ScaleRange; _i < _d.length; _i++) {
+            var scaleRange = _d[_i];
             var state_1 = _loop_1(scaleRange);
             if (typeof state_1 === "object")
                 return state_1.value;
@@ -14170,7 +14654,7 @@ var ExternalLayerNode = function (_a) {
     var layer = _a.layer;
     var legendCtx = React.useContext(context_1.LegendContext);
     var nodeClassName = "layer-node";
-    var nodeStyle = (0, tslib_1.__assign)({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
+    var nodeStyle = tslib_1.__assign({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
     var dispatch = (0, context_2.useReduxDispatch)();
     var onVisibilityChanged = function (visible) {
         var activeMapName = legendCtx.getMapName();
@@ -14200,19 +14684,19 @@ var ExternalLayersGroupNode = function (_a) {
     else {
         var nodeClassName = "group-node";
         var icon = React.createElement(icon_1.Icon, { baseSize: legendCtx.getBaseIconSize(), style: ROW_ITEM_ELEMENT_STYLE }, function (bs) { return React.createElement(core_1.Icon, { icon: ICON_FOLDER_HORIZONTAL, iconSize: bs }); });
-        var nodeStyle = (0, tslib_1.__assign)({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
+        var nodeStyle = tslib_1.__assign({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
         return React.createElement("li", { style: nodeStyle, className: nodeClassName },
             React.createElement("span", null,
                 icon,
                 " ",
                 React.createElement(LegendLabel, { baseSize: legendCtx.getBaseIconSize(), text: (0, i18n_1.tr)("EXTERNAL_LAYERS", legendCtx.getLocale()) })),
-            React.createElement("ul", { style: UL_LIST_STYLE(legendCtx.getBaseIconSize()) }, layers.map(function (layer, i) { return React.createElement(ExternalLayerNode, { key: "external-layer=" + layer.name, layer: layer }); })));
+            React.createElement("ul", { style: UL_LIST_STYLE(legendCtx.getBaseIconSize()) }, layers.map(function (layer, i) { return React.createElement(ExternalLayerNode, { key: "external-layer=".concat(layer.name), layer: layer }); })));
     }
 };
 var GroupNode = function (props) {
+    var _a, _b;
     var group = props.group;
     var legendCtx = React.useContext(context_1.LegendContext);
-    var _a = React.useState(legendCtx.getGroupVisibility(group)), groupVisible = _a[0], setGroupVisible = _a[1];
     var getExpanded = function () {
         var expanded = legendCtx.getGroupExpanded(group.ObjectId);
         if (expanded == null)
@@ -14224,7 +14708,6 @@ var GroupNode = function (props) {
         legendCtx.setGroupExpanded(group.ObjectId, !expanded);
     };
     var onVisibilityChanged = function (e) {
-        setGroupVisible(e.target.checked);
         legendCtx.setGroupVisibility(group.ObjectId, e.target.checked);
     };
     var currentScale = legendCtx.getCurrentScale();
@@ -14232,15 +14715,24 @@ var GroupNode = function (props) {
     var icon = React.createElement(icon_1.Icon, { baseSize: legendCtx.getBaseIconSize(), style: ROW_ITEM_ELEMENT_STYLE }, function (bs) { return React.createElement(core_1.Icon, { icon: ICON_FOLDER_HORIZONTAL, iconSize: bs }); });
     var isExpanded = getExpanded();
     var expanded = React.createElement(icon_1.Icon, { baseSize: legendCtx.getBaseIconSize(), style: ROW_ITEM_ELEMENT_STYLE, onClick: onToggleExpansion }, function (bs) { return React.createElement(core_1.Icon, { icon: isExpanded ? ICON_LEGEND_TOGGLE : ICON_LEGEND_TOGGLE_EXPAND, iconSize: bs }); });
-    var chkbox = React.createElement("input", { type: 'checkbox', className: 'group-checkbox', style: CHK_STYLE(legendCtx.getBaseIconSize()), value: group.ObjectId, onChange: onVisibilityChanged, checked: (groupVisible) });
+    var chkbox = React.createElement("input", { type: 'checkbox', className: 'group-checkbox', style: CHK_STYLE(legendCtx.getBaseIconSize()), value: group.ObjectId, onChange: onVisibilityChanged, checked: legendCtx.getGroupVisibility(group) });
     var tooltip = group.LegendLabel;
     var nodeClassName = "group-node";
-    var nodeStyle = (0, tslib_1.__assign)({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
+    var nodeStyle = tslib_1.__assign({ whiteSpace: "nowrap", overflow: "hidden" }, LI_LIST_STYLE);
+    var mapName = legendCtx.getMapName();
+    var session = legendCtx.getSessionId();
+    var extras;
+    if (mapName && session) {
+        extras = ((_b = (_a = legendCtx.provideExtraGroupIconsHtml) === null || _a === void 0 ? void 0 : _a.call(legendCtx, { item: group, mapName: mapName, session: session, sanitize: dompurify_1.sanitize, elementSize: legendCtx.getBaseIconSize() })) !== null && _b !== void 0 ? _b : [])
+            .map(function (html, i) { return React.createElement("div", { style: EXTRAS_STYLE(legendCtx.getBaseIconSize()), key: "group-".concat(group.ObjectId, "-extras-").concat(i), dangerouslySetInnerHTML: { __html: html } }); });
+    }
     return React.createElement("li", { title: tooltip, style: nodeStyle, className: nodeClassName },
         React.createElement("span", null,
             expanded,
             " ",
             chkbox,
+            " ",
+            extras,
             " ",
             icon,
             " ",
@@ -14418,35 +14910,36 @@ function setupTree(map) {
     return state;
 }
 var DEFAULT_ICON_SIZE = 16;
+var FILTER_BUTTON_STYLE = { position: "absolute", right: 0, top: 0 };
 /**
  * The Legend component provides a component to view the layer structure, its styles and thematics and
  * the ability to toggle the group/layer visibility of the current map
  * @param props
  */
 var Legend = function (props) {
-    var _a;
-    var _b = React.useState(setupTree(props.map)), state = _b[0], setState = _b[1];
+    var _a, _b;
+    var showGroups = props.showGroups, hideGroups = props.hideGroups, showLayers = props.showLayers, hideLayers = props.hideLayers, currentScale = props.currentScale, externalBaseLayers = props.externalBaseLayers, onBaseLayerChanged = props.onBaseLayerChanged, maxHeight = props.maxHeight, map = props.map;
+    var _c = React.useState(setupTree(map)), state = _c[0], setState = _c[1];
     var _tree = state.tree;
-    var currentScale = props.currentScale, externalBaseLayers = props.externalBaseLayers, onBaseLayerChanged = props.onBaseLayerChanged, maxHeight = props.maxHeight;
-    var _c = React.useState(false), isFiltering = _c[0], setIsFiltering = _c[1];
-    var _d = React.useState(""), filterText = _d[0], setFilterText = _d[1];
-    var _e = React.useState(undefined), filteredTree = _e[0], setFilteredTree = _e[1];
+    var _d = React.useState(false), isFiltering = _d[0], setIsFiltering = _d[1];
+    var _e = React.useState(""), filterText = _e[0], setFilterText = _e[1];
+    var _f = React.useState(undefined), filteredTree = _f[0], setFilteredTree = _f[1];
     React.useEffect(function () {
         onExitFilterMode();
-        var tree = setupTree(props.map);
+        var tree = setupTree(map);
         setState(tree);
-    }, [props.map]);
-    var onEnterFilterMode = function () {
+    }, [map]);
+    var onEnterFilterMode = React.useCallback(function () {
         setIsFiltering(true);
         setFilterText("");
         setFilteredTree(_tree);
-    };
-    var onExitFilterMode = function () {
+    }, []);
+    var onExitFilterMode = React.useCallback(function () {
         setIsFiltering(false);
         setFilterText("");
         setFilteredTree(undefined);
-    };
-    var onFilterUpdate = function (text) {
+    }, []);
+    var onFilterUpdate = React.useCallback(function (text) {
         setFilterText(text);
         if ((0, string_1.strIsNullOrEmpty)(text)) {
             setFilteredTree(_tree);
@@ -14454,33 +14947,35 @@ var Legend = function (props) {
         else {
             setFilteredTree(buildFilteredTree(_tree, text.toLocaleLowerCase()));
         }
-    };
-    var getLayerSelectability = function (layerId) {
-        var items = props.overrideSelectableLayers || {};
+    }, [_tree]);
+    var getLayerSelectability = React.useCallback(function (layerId) {
+        var _a;
+        var items = (_a = props.overrideSelectableLayers) !== null && _a !== void 0 ? _a : {};
         return items[layerId];
-    };
-    var setLayerSelectability = function (layerId, selectable) {
+    }, [props.overrideSelectableLayers]);
+    var setLayerSelectability = React.useCallback(function (layerId, selectable) {
         var _a;
         (_a = props.onLayerSelectabilityChanged) === null || _a === void 0 ? void 0 : _a.call(props, layerId, selectable);
-    };
-    var getGroupExpanded = function (groupId) {
-        var items = props.overrideExpandedItems || {};
+    }, [props.onLayerSelectabilityChanged]);
+    var getGroupExpanded = React.useCallback(function (groupId) {
+        var _a;
+        var items = (_a = props.overrideExpandedItems) !== null && _a !== void 0 ? _a : {};
         return items[groupId];
-    };
-    var setGroupExpanded = function (groupId, expanded) {
+    }, [props.overrideExpandedItems]);
+    var setGroupExpanded = React.useCallback(function (groupId, expanded) {
         var _a;
         (_a = props.onGroupExpansionChanged) === null || _a === void 0 ? void 0 : _a.call(props, groupId, expanded);
-    };
-    var getLayerExpanded = function (layerId) {
-        var items = props.overrideExpandedItems || {};
+    }, [props.onGroupExpansionChanged]);
+    var getLayerExpanded = React.useCallback(function (layerId) {
+        var _a;
+        var items = (_a = props.overrideExpandedItems) !== null && _a !== void 0 ? _a : {};
         return items[layerId];
-    };
-    var setLayerExpanded = function (layerId, expanded) {
+    }, [props.overrideExpandedItems]);
+    var setLayerExpanded = React.useCallback(function (layerId, expanded) {
         var _a;
         (_a = props.onGroupExpansionChanged) === null || _a === void 0 ? void 0 : _a.call(props, layerId, expanded);
-    };
-    var getGroupVisibility = function (group) {
-        var showGroups = props.showGroups, hideGroups = props.hideGroups;
+    }, [props.onGroupExpansionChanged]);
+    var getGroupVisibility = React.useCallback(function (group) {
         var visible = group.Visible;
         if (showGroups && showGroups.indexOf(group.ObjectId) >= 0) {
             visible = true;
@@ -14489,9 +14984,8 @@ var Legend = function (props) {
             visible = false;
         }
         return visible;
-    };
-    var getLayerVisibility = function (layer) {
-        var showLayers = props.showLayers, hideLayers = props.hideLayers;
+    }, [showGroups, hideGroups]);
+    var getLayerVisibility = React.useCallback(function (layer) {
         var visible = layer.Visible;
         if (showLayers && showLayers.indexOf(layer.ObjectId) >= 0) {
             visible = true;
@@ -14500,24 +14994,25 @@ var Legend = function (props) {
             visible = false;
         }
         return visible;
-    };
-    var setGroupVisibility = function (groupId, visible) {
+    }, [showLayers, hideLayers]);
+    var setGroupVisibility = React.useCallback(function (groupId, visible) {
         var _a;
         (_a = props.onGroupVisibilityChanged) === null || _a === void 0 ? void 0 : _a.call(props, groupId, visible);
-    };
-    var setLayerVisibility = function (layerId, visible) {
+    }, [props.onGroupVisibilityChanged]);
+    var setLayerVisibility = React.useCallback(function (layerId, visible) {
         var _a;
         (_a = props.onLayerVisibilityChanged) === null || _a === void 0 ? void 0 : _a.call(props, layerId, visible);
-    };
-    var getIconMimeType = function () {
+    }, [props.onLayerVisibilityChanged]);
+    var getIconMimeType = React.useCallback(function () {
         var _a;
         return ((_a = props.map) === null || _a === void 0 ? void 0 : _a.IconMimeType)
-            ? "" + props.map.IconMimeType
+            ? "".concat(props.map.IconMimeType)
             : undefined;
-    };
-    var getChildren = function (objectId) {
-        return state.tree.groupChildren[objectId] || [];
-    };
+    }, [(_a = props.map) === null || _a === void 0 ? void 0 : _a.IconMimeType]);
+    var getChildren = React.useCallback(function (objectId) {
+        var _a;
+        return (_a = _tree.groupChildren[objectId]) !== null && _a !== void 0 ? _a : [];
+    }, [_tree]);
     var rootStyle = {
         position: "relative"
     };
@@ -14530,6 +15025,7 @@ var Legend = function (props) {
         getFilterText: function () { return filterText; },
         getLocale: function () { return props.locale; },
         getMapName: function () { return props.activeMapName; },
+        getSessionId: function () { var _a; return (_a = props.map) === null || _a === void 0 ? void 0 : _a.SessionId; },
         getBaseIconSize: function () { var _a; return (_a = props.baseIconSize) !== null && _a !== void 0 ? _a : DEFAULT_ICON_SIZE; },
         getIconMimeType: getIconMimeType,
         getChildren: getChildren,
@@ -14544,7 +15040,9 @@ var Legend = function (props) {
         getGroupExpanded: getGroupExpanded,
         setGroupExpanded: setGroupExpanded,
         getLayerExpanded: getLayerExpanded,
-        setLayerExpanded: setLayerExpanded
+        setLayerExpanded: setLayerExpanded,
+        provideExtraGroupIconsHtml: props.provideExtraGroupIconsHtml,
+        provideExtraLayerIconsHtml: props.provideExtraLayerIconsHtml
     };
     var daTree = providerImpl.getTree();
     var rootItems = daTree.root;
@@ -14562,13 +15060,13 @@ var Legend = function (props) {
             })(),
             (function () {
                 if (isFiltering) {
-                    return React.createElement(core_1.InputGroup, { round: true, autoFocus: true, leftIcon: ICON_SEARCH, placeholder: (0, i18n_1.tr)("LEGEND_FILTER_LAYERS", props.locale), onChange: function (e) { return onFilterUpdate(e.target.value); }, rightElement: React.createElement(core_1.Button, { minimal: true, icon: ICON_CLEAR, onClick: function () { return onExitFilterMode(); } }) });
+                    return React.createElement(core_1.InputGroup, { round: true, autoFocus: true, leftIcon: ICON_SEARCH, placeholder: (0, i18n_1.tr)("LEGEND_FILTER_LAYERS", props.locale), onChange: function (e) { return onFilterUpdate(e.target.value); }, rightElement: React.createElement(core_1.Button, { minimal: true, icon: ICON_CLEAR, onClick: onExitFilterMode }) });
                 }
                 else {
-                    return React.createElement(core_1.Button, { onClick: function () { return onEnterFilterMode(); }, title: (0, i18n_1.tr)("LEGEND_FILTER_LAYERS", props.locale), icon: ICON_SEARCH, style: { position: "absolute", right: 0, top: 0 } });
+                    return React.createElement(core_1.Button, { onClick: onEnterFilterMode, title: (0, i18n_1.tr)("LEGEND_FILTER_LAYERS", props.locale), icon: ICON_SEARCH, style: FILTER_BUTTON_STYLE });
                 }
             })(),
-            React.createElement("ul", { style: UL_LIST_STYLE((_a = props.baseIconSize) !== null && _a !== void 0 ? _a : DEFAULT_ICON_SIZE) },
+            React.createElement("ul", { style: UL_LIST_STYLE((_b = props.baseIconSize) !== null && _b !== void 0 ? _b : DEFAULT_ICON_SIZE) },
                 rootItems.map(function (item) {
                     if (item.DisplayInLegend === true) {
                         if ((0, type_guards_1.isLayer)(item)) {
@@ -14596,7 +15094,43 @@ var Legend = function (props) {
                     }
                 }),
                 props.externalLayers && React.createElement(ExternalLayersGroupNode, { layers: props.externalLayers }))));
-};
+}; /*, (a, b) => {
+    const equals = [];
+    equals.push(a.activeMapName === b.activeMapName);
+    equals.push(a.baseIconSize === b.baseIconSize);
+    equals.push(a.currentScale === b.currentScale);
+    equals.push(a.externalBaseLayers === b.externalBaseLayers);
+    equals.push(a.externalLayers === b.externalLayers);
+    equals.push(a.hideGroups === b.hideGroups);
+    equals.push(a.hideLayers === b.hideLayers);
+    //equals.push(!areArraysDifferent(a.externalBaseLayers, b.externalBaseLayers));
+    //equals.push(!areArraysDifferent(a.externalLayers, b.externalLayers));
+    //equals.push(!areArraysDifferent(a.hideGroups, b.hideGroups));
+    //equals.push(!areArraysDifferent(a.hideLayers, b.hideLayers));
+    equals.push(a.inlineBaseLayerSwitcher === b.inlineBaseLayerSwitcher);
+    equals.push(a.locale === b.locale);
+    equals.push(a.map == b.map);
+    equals.push(a.maxHeight === b.maxHeight);
+    equals.push(a.onBaseLayerChanged === b.onBaseLayerChanged);
+    equals.push(a.onGroupExpansionChanged === b.onGroupExpansionChanged);
+    equals.push(a.onGroupVisibilityChanged === b.onGroupVisibilityChanged);
+    equals.push(a.onLayerSelectabilityChanged === b.onLayerSelectabilityChanged);
+    equals.push(a.onLayerVisibilityChanged === b.onLayerVisibilityChanged);
+    equals.push(a.overrideExpandedItems === b.overrideExpandedItems);
+    equals.push(a.overrideSelectableLayers === b.overrideSelectableLayers);
+    equals.push(a.provideExtraGroupIconsHtml === b.provideExtraGroupIconsHtml);
+    equals.push(a.provideExtraLayerIconsHtml === b.provideExtraLayerIconsHtml);
+    equals.push(a.showGroups === b.showGroups);
+    equals.push(a.showLayers === b.showLayers);
+    //equals.push(!areArraysDifferent(a.showGroups, b.showGroups));
+    //equals.push(!areArraysDifferent(a.showLayers, b.showLayers));
+    equals.push(a.stateless === b.stateless);
+    const bChanged = equals.some(s => !s);
+    if (bChanged) {
+        console.log("Legend changed", equals);
+    }
+    return bChanged;
+});*/
 exports.Legend = Legend;
 
 
@@ -14612,8 +15146,8 @@ exports.Legend = Legend;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapLoadIndicator = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var MapLoadIndicator = function (props) {
     var loaded = props.loaded, loading = props.loading, color = props.color, position = props.position;
     var visibility = "visible";
@@ -14656,8 +15190,8 @@ exports.MapLoadIndicator = MapLoadIndicator;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapMenu = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 /**
  * The MapMenu component provides the ability to switch between active maps
  * @param props
@@ -14671,7 +15205,7 @@ var MapMenu = function (props) {
         (_a = props.onActiveMapChanged) === null || _a === void 0 ? void 0 : _a.call(props, value);
     };
     return React.createElement("div", null, props.maps.map(function (layer) {
-        return React.createElement("div", { className: "map-menu-item-container", key: "base-layer-" + layer.mapName },
+        return React.createElement("div", { className: "map-menu-item-container", key: "base-layer-".concat(layer.mapName) },
             React.createElement("label", { className: "bp3-control bp3-radio" },
                 React.createElement("input", { className: "map-menu-option", type: "radio", value: layer.mapName, checked: layer.mapName === props.selectedMap, onChange: onActiveMapChanged }),
                 React.createElement("span", { className: "bp3-control-indicator" }),
@@ -14693,42 +15227,41 @@ exports.MapMenu = MapMenu;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseMapProviderContext = exports.useViewerSideEffects = exports.isMiddleMouseDownEvent = exports.recursiveFindLayer = exports.inflateBoundsByMeters = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var ReactDOM = tslib_1.__importStar(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var common_1 = __webpack_require__(/*! ../../api/common */ "./src/api/common.ts");
 var mouse_1 = __webpack_require__(/*! ../tooltips/mouse */ "./src/components/tooltips/mouse.ts");
-var Map_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Map */ "./node_modules/ol/Map.js"));
-var OverviewMap_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/control/OverviewMap */ "./node_modules/ol/control/OverviewMap.js"));
-var DragBox_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/DragBox */ "./node_modules/ol/interaction/DragBox.js"));
-var Select_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Select */ "./node_modules/ol/interaction/Select.js"));
-var Draw_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Draw */ "./node_modules/ol/interaction/Draw.js"));
+var Map_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Map */ "./node_modules/ol/Map.js"));
+var OverviewMap_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/control/OverviewMap */ "./node_modules/ol/control/OverviewMap.js"));
+var DragBox_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/DragBox */ "./node_modules/ol/interaction/DragBox.js"));
+var Select_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Select */ "./node_modules/ol/interaction/Select.js"));
+var Draw_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Draw */ "./node_modules/ol/interaction/Draw.js"));
 var selected_features_1 = __webpack_require__(/*! ../tooltips/selected-features */ "./src/components/tooltips/selected-features.ts");
-var Feature_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
-var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
-var Attribution_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/control/Attribution */ "./node_modules/ol/control/Attribution.js"));
-var Rotate_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/control/Rotate */ "./node_modules/ol/control/Rotate.js"));
-var DragRotate_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/DragRotate */ "./node_modules/ol/interaction/DragRotate.js"));
-var DragPan_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/DragPan */ "./node_modules/ol/interaction/DragPan.js"));
-var PinchRotate_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/PinchRotate */ "./node_modules/ol/interaction/PinchRotate.js"));
-var PinchZoom_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/PinchZoom */ "./node_modules/ol/interaction/PinchZoom.js"));
-var KeyboardPan_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/KeyboardPan */ "./node_modules/ol/interaction/KeyboardPan.js"));
-var KeyboardZoom_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/KeyboardZoom */ "./node_modules/ol/interaction/KeyboardZoom.js"));
-var MouseWheelZoom_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/MouseWheelZoom */ "./node_modules/ol/interaction/MouseWheelZoom.js"));
-var View_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
-var GeometryType_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/GeometryType */ "./node_modules/ol/geom/GeometryType.js"));
+var Feature_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
+var Polygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
+var Attribution_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/control/Attribution */ "./node_modules/ol/control/Attribution.js"));
+var Rotate_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/control/Rotate */ "./node_modules/ol/control/Rotate.js"));
+var DragRotate_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/DragRotate */ "./node_modules/ol/interaction/DragRotate.js"));
+var DragPan_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/DragPan */ "./node_modules/ol/interaction/DragPan.js"));
+var PinchRotate_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/PinchRotate */ "./node_modules/ol/interaction/PinchRotate.js"));
+var PinchZoom_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/PinchZoom */ "./node_modules/ol/interaction/PinchZoom.js"));
+var KeyboardPan_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/KeyboardPan */ "./node_modules/ol/interaction/KeyboardPan.js"));
+var KeyboardZoom_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/KeyboardZoom */ "./node_modules/ol/interaction/KeyboardZoom.js"));
+var MouseWheelZoom_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/MouseWheelZoom */ "./node_modules/ol/interaction/MouseWheelZoom.js"));
+var View_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var layer_manager_1 = __webpack_require__(/*! ../../api/layer-manager */ "./src/api/layer-manager.ts");
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
-var olEasing = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/easing */ "./node_modules/ol/easing.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var olEasing = tslib_1.__importStar(__webpack_require__(/*! ol/easing */ "./node_modules/ol/easing.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var assert_1 = __webpack_require__(/*! ../../utils/assert */ "./src/utils/assert.ts");
 var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger.ts");
 var map_1 = __webpack_require__(/*! ../../actions/map */ "./src/actions/map.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var ol_factory_1 = __webpack_require__(/*! ../../api/ol-factory */ "./src/api/ol-factory.ts");
-var ismobilejs_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/esm/index.js"));
-var Group_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
+var ismobilejs_1 = tslib_1.__importDefault(__webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/esm/index.js"));
+var Group_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
 var ol_style_contracts_1 = __webpack_require__(/*! ../../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
 var ol_style_helpers_1 = __webpack_require__(/*! ../../api/ol-style-helpers */ "./src/api/ol-style-helpers.ts");
 var runtime_1 = __webpack_require__(/*! ../../api/runtime */ "./src/api/runtime.ts");
@@ -14788,9 +15321,9 @@ function useViewerSideEffects(context, appSettings, isReady, mapName, layers, in
     React.useEffect(function () {
         if (isReady) {
             if (mapName && !layers) {
-                (0, logger_1.debug)("React.useEffect - Change of initial external layers for [" + mapName + "] (change should only happen once per mapName!)");
+                (0, logger_1.debug)("React.useEffect - Change of initial external layers for [".concat(mapName, "] (change should only happen once per mapName!)"));
                 if (initialExternalLayers && initialExternalLayers.length > 0) {
-                    (0, logger_1.debug)("React.useEffect - First-time loading of external layers for [" + mapName + "]");
+                    (0, logger_1.debug)("React.useEffect - First-time loading of external layers for [".concat(mapName, "]"));
                     var layerManager = context.getLayerManager(mapName);
                     for (var _i = 0, initialExternalLayers_1 = initialExternalLayers; _i < initialExternalLayers_1.length; _i++) {
                         var extLayer = initialExternalLayers_1[_i];
@@ -14804,7 +15337,7 @@ function useViewerSideEffects(context, appSettings, isReady, mapName, layers, in
                     //Even if no initial external layers were loaded, the layers state still needs to be set
                     //otherwise components that depend on this state (eg. External Layer Manager) will assume
                     //this is still not ready yet
-                    (0, logger_1.debug)("React.useEffect - Signal that external layers are ready for [" + mapName + "]");
+                    (0, logger_1.debug)("React.useEffect - Signal that external layers are ready for [".concat(mapName, "]"));
                     dispatch((0, map_1.externalLayersReady)(mapName));
                 }
             }
@@ -14839,8 +15372,8 @@ function useViewerSideEffects(context, appSettings, isReady, mapName, layers, in
 exports.useViewerSideEffects = useViewerSideEffects;
 var BaseMapProviderContext = /** @class */ (function () {
     function BaseMapProviderContext(olFactory) {
-        var _this = this;
         if (olFactory === void 0) { olFactory = new ol_factory_1.OLFactory(); }
+        var _this = this;
         this.olFactory = olFactory;
         this.onBeginDigitization = function (callback) {
             var _a;
@@ -14875,11 +15408,12 @@ var BaseMapProviderContext = /** @class */ (function () {
             locale: i18n_1.DEFAULT_LOCALE,
             cancelDigitizationKey: common_1.KC_ESCAPE,
             undoLastPointKey: common_1.KC_U,
+            busyWorkers: 0,
             mapName: undefined,
             externalBaseLayers: undefined,
             initialExternalLayers: []
         };
-        this._state = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, baseInitialState), this.getInitialProviderState());
+        this._state = tslib_1.__assign(tslib_1.__assign({}, baseInitialState), this.getInitialProviderState());
     }
     /**
      * Exports an image of the current map view
@@ -14909,14 +15443,14 @@ var BaseMapProviderContext = /** @class */ (function () {
                 if (mapContext) {
                     var canvasSelector = '.ol-layer canvas, .external-vector-layer canvas';
                     Array.prototype.forEach.call(document.querySelectorAll(canvasSelector), function (canvas) {
-                        var _a, _b, _c, _d, _e, _f;
+                        var _a, _b, _c, _d, _e;
                         if (canvas.width > 0) {
                             var parentNode = canvas.parentNode;
-                            var opacity = (_c = (_b = (_a = parentNode) === null || _a === void 0 ? void 0 : _a.style) === null || _b === void 0 ? void 0 : _b.opacity) !== null && _c !== void 0 ? _c : "";
+                            var opacity = (_b = (_a = parentNode === null || parentNode === void 0 ? void 0 : parentNode.style) === null || _a === void 0 ? void 0 : _a.opacity) !== null && _b !== void 0 ? _b : "";
                             mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
                             var transform = canvas.style.transform;
                             // Get the transform parameters from the style's transform matrix
-                            var matrix = (_f = (_e = (_d = transform.match(/^matrix\(([^\(]*)\)$/)) === null || _d === void 0 ? void 0 : _d[1]) === null || _e === void 0 ? void 0 : _e.split(',')) === null || _f === void 0 ? void 0 : _f.map(Number);
+                            var matrix = (_e = (_d = (_c = transform.match(/^matrix\(([^\(]*)\)$/)) === null || _c === void 0 ? void 0 : _c[1]) === null || _d === void 0 ? void 0 : _d.split(',')) === null || _e === void 0 ? void 0 : _e.map(Number);
                             if (matrix) {
                                 // Apply the transform to the export map context
                                 CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
@@ -15116,16 +15650,16 @@ var BaseMapProviderContext = /** @class */ (function () {
         (_a = this._comp) === null || _a === void 0 ? void 0 : _a.onDispatch(action);
     };
     BaseMapProviderContext.prototype.getDefaultPointCircleStyle = function () {
-        return (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_POINT_CIRCLE_STYLE);
+        return tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_POINT_CIRCLE_STYLE);
     };
     BaseMapProviderContext.prototype.getDefaultPointIconStyle = function () {
-        return (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_POINT_ICON_STYLE);
+        return tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_POINT_ICON_STYLE);
     };
     BaseMapProviderContext.prototype.getDefaultLineStyle = function () {
-        return (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_LINE_STYLE);
+        return tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_LINE_STYLE);
     };
     BaseMapProviderContext.prototype.getDefaultPolygonStyle = function () {
-        return (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_POLY_STYLE);
+        return tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_POLY_STYLE);
     };
     BaseMapProviderContext.prototype.getBaseTileSourceLoaders = function (mapName) {
         var _a, _b;
@@ -15384,11 +15918,16 @@ var BaseMapProviderContext = /** @class */ (function () {
         return !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_HOVER_HIGHLIGHT)) == true)
             && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_WMS_SELECTION_OVERLAY)) == true)
             && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_HEATMAP)) == true)
-            && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_MEASURE)) == true);
+            && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_MEASURE)) == true)
+            && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.DISABLE_HOVER)) == true);
     };
     BaseMapProviderContext.prototype.handleHighlightHover = function (e) {
         var _this = this;
         if (e.dragging) {
+            return;
+        }
+        if (this._state.busyWorkers > 0) {
+            //console.log("Skip highlight hover due to busyWorkers > 0");
             return;
         }
         if (this._state.mapName && this._map) {
@@ -15427,10 +15966,10 @@ var BaseMapProviderContext = /** @class */ (function () {
         (_a = this._selectTooltip) === null || _a === void 0 ? void 0 : _a.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     };
     BaseMapProviderContext.prototype.queryWmsFeatures = function (mapName, coord, bAppendMode) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var activeLayerSet, layerMgr, res;
             var _this = this;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(mapName && this._map)) return [3 /*break*/, 2];
@@ -15477,7 +16016,7 @@ var BaseMapProviderContext = /** @class */ (function () {
             else {
                 theFeature = f;
             }
-            var p = (0, tslib_1.__assign)({}, theFeature.getProperties());
+            var p = tslib_1.__assign({}, theFeature.getProperties());
             delete p[theFeature.getGeometryName()];
             var feat = {
                 bounds: (_a = theFeature.getGeometry()) === null || _a === void 0 ? void 0 : _a.getExtent(),
@@ -15864,14 +16403,14 @@ var BaseMapProviderContext = /** @class */ (function () {
     BaseMapProviderContext.prototype.digitizePoint = function (handler, prompt) {
         (0, assert_1.assertIsDefined)(this._comp);
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.POINT
+            type: "Point"
         });
         this.pushDrawInteraction("Point", draw, handler, prompt || (0, i18n_1.tr)("DIGITIZE_POINT_PROMPT", this._state.locale));
     };
     BaseMapProviderContext.prototype.digitizeLine = function (handler, prompt) {
         (0, assert_1.assertIsDefined)(this._comp);
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.LINE_STRING,
+            type: "LineString",
             minPoints: 2,
             maxPoints: 2
         });
@@ -15881,7 +16420,7 @@ var BaseMapProviderContext = /** @class */ (function () {
         var _a;
         (0, assert_1.assertIsDefined)(this._comp);
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.LINE_STRING,
+            type: "LineString",
             minPoints: 2
         });
         this.pushDrawInteraction("LineString", draw, handler, prompt || (0, i18n_1.tr)("DIGITIZE_LINESTRING_PROMPT", this._state.locale, {
@@ -15891,7 +16430,7 @@ var BaseMapProviderContext = /** @class */ (function () {
     BaseMapProviderContext.prototype.digitizeCircle = function (handler, prompt) {
         (0, assert_1.assertIsDefined)(this._comp);
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.CIRCLE
+            type: "Circle"
         });
         this.pushDrawInteraction("Circle", draw, handler, prompt || (0, i18n_1.tr)("DIGITIZE_CIRCLE_PROMPT", this._state.locale));
     };
@@ -15909,7 +16448,7 @@ var BaseMapProviderContext = /** @class */ (function () {
             return geometry;
         };
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.LINE_STRING,
+            type: "LineString",
             maxPoints: 2,
             geometryFunction: geomFunc
         });
@@ -15919,7 +16458,7 @@ var BaseMapProviderContext = /** @class */ (function () {
         var _a;
         (0, assert_1.assertIsDefined)(this._comp);
         var draw = new Draw_1.default({
-            type: GeometryType_1.default.POLYGON
+            type: "Polygon"
         });
         this.pushDrawInteraction("Polygon", draw, handler, prompt || (0, i18n_1.tr)("DIGITIZE_POLYGON_PROMPT", this._state.locale, {
             key: String.fromCharCode((_a = this._state.undoLastPointKey) !== null && _a !== void 0 ? _a : common_1.KC_U) //Pray that a sane (printable) key was bound
@@ -16032,8 +16571,8 @@ exports.BaseMapProviderContext = BaseMapProviderContext;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapContextProvider = exports.useMapProviderContext = exports.MapProviderContextProvider = exports.useAppState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 var MapProviderContext = React.createContext({});
 /**
@@ -16107,15 +16646,15 @@ exports.MapContextProvider = MapContextProvider;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapGuideMapProviderContext = exports.isMapGuideProviderState = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
 var session_keep_alive_1 = __webpack_require__(/*! ../session-keep-alive */ "./src/components/session-keep-alive.tsx");
 var common_1 = __webpack_require__(/*! ../../api/common */ "./src/api/common.ts");
-var WKT_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
+var WKT_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
 var Polygon_1 = __webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js");
 var map_1 = __webpack_require__(/*! ../../actions/map */ "./src/actions/map.ts");
-var View_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
-var lodash_debounce_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js"));
+var View_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/View */ "./node_modules/ol/View.js"));
+var lodash_debounce_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js"));
 var viewer_state_1 = __webpack_require__(/*! ../../utils/viewer-state */ "./src/utils/viewer-state.ts");
 var array_1 = __webpack_require__(/*! ../../utils/array */ "./src/utils/array.ts");
 var mg_layer_set_group_1 = __webpack_require__(/*! ../../api/mg-layer-set-group */ "./src/api/mg-layer-set-group.ts");
@@ -16134,8 +16673,8 @@ var hooks_1 = __webpack_require__(/*! ../../containers/hooks */ "./src/container
 var hooks_mapguide_1 = __webpack_require__(/*! ../../containers/hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var context_1 = __webpack_require__(/*! ./context */ "./src/components/map-providers/context.tsx");
 var utfgrid_1 = __webpack_require__(/*! ../tooltips/utfgrid */ "./src/components/tooltips/utfgrid.ts");
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var UTFGrid_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/UTFGrid */ "./node_modules/ol/source/UTFGrid.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var UTFGrid_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/UTFGrid */ "./node_modules/ol/source/UTFGrid.js"));
 var hooks_generic_1 = __webpack_require__(/*! ../../containers/hooks-generic */ "./src/containers/hooks-generic.ts");
 var type_guards_1 = __webpack_require__(/*! ../../utils/type-guards */ "./src/utils/type-guards.ts");
 function isMapGuideProviderState(arg) {
@@ -16150,12 +16689,13 @@ function useMapGuideViewerState() {
     var viewRotationEnabled = (0, hooks_1.useViewerViewRotationEnabled)();
     var mapName = (0, hooks_1.useActiveMapName)();
     var locale = (0, hooks_1.useViewerLocale)();
-    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)(true);
+    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)();
     var cancelDigitizationKey = (0, hooks_1.useConfiguredCancelDigitizationKey)();
     var undoLastPointKey = (0, hooks_1.useConfiguredUndoLastPointKey)();
     var layers = (0, hooks_1.useActiveMapLayers)();
     var initialExternalLayers = (0, hooks_1.useActiveMapInitialExternalLayers)();
     var dispatch = (0, context_1.useReduxDispatch)();
+    var busyWorkers = (0, hooks_1.useViewerBusyCount)();
     var appSettings = (0, hooks_1.useCustomAppSettings)();
     // ============== Generic ============== //
     var subject = (0, hooks_generic_1.useActiveMapSubjectLayer)();
@@ -16182,7 +16722,7 @@ function useMapGuideViewerState() {
     var selection = (0, hooks_1.useActiveMapSelectionSet)();
     var bgColor;
     if (map) {
-        bgColor = "#" + map.BackgroundColor.substring(2);
+        bgColor = "#".concat(map.BackgroundColor.substring(2));
     }
     var activeSelectedFeatureXml;
     if (activeSelectedFeature && selection && selection.FeatureSet) {
@@ -16213,6 +16753,7 @@ function useMapGuideViewerState() {
     var nextState = {
         stateless: stateless,
         activeTool: activeTool,
+        busyWorkers: busyWorkers,
         view: view,
         viewRotation: viewRotation,
         viewRotationEnabled: viewRotationEnabled,
@@ -16251,7 +16792,7 @@ function useMapGuideViewerState() {
     return nextState;
 }
 var MapGuideMapProviderContext = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(MapGuideMapProviderContext, _super);
+    tslib_1.__extends(MapGuideMapProviderContext, _super);
     // ============================================================= //
     function MapGuideMapProviderContext(mockMode) {
         if (mockMode === void 0) { mockMode = undefined; }
@@ -16380,7 +16921,9 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
         var _a, _b;
         if (this._comp) {
             this.handleMouseTooltipMouseMove(e);
-            this.handleHighlightHover(e);
+            if (this._state.activeTool == common_1.ActiveMapTool.Select) {
+                this.handleHighlightHover(e);
+            }
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
@@ -16415,9 +16958,9 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
         layerSet === null || layerSet === void 0 ? void 0 : layerSet.refreshMap(mode);
     };
     MapGuideMapProviderContext.prototype.showSelectedFeature = function (mapExtent, size, map, selectionColor, featureXml) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var sv, layerSet, r, dataUri, e_1;
-            return (0, tslib_1.__generator)(this, function (_a) {
+            return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         sv = (0, site_version_1.getSiteVersion)(map);
@@ -16443,7 +16986,7 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
                     case 2:
                         r = _a.sent();
                         if (r.InlineSelectionImage) {
-                            dataUri = "data:" + r.InlineSelectionImage.MimeType + ";base64," + r.InlineSelectionImage.Content;
+                            dataUri = "data:".concat(r.InlineSelectionImage.MimeType, ";base64,").concat(r.InlineSelectionImage.Content);
                             layerSet === null || layerSet === void 0 ? void 0 : layerSet.showActiveSelectedFeature(mapExtent, size, dataUri);
                         }
                         else {
@@ -16821,7 +17364,7 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
             maxfeatures: -1,
             requestdata: reqQueryFeatures
         };
-        var queryOptions = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, qOrig), queryOpts);
+        var queryOptions = tslib_1.__assign(tslib_1.__assign({}, qOrig), queryOpts);
         var action = (0, map_1.queryMapFeatures)(mapName, {
             options: queryOptions,
             callback: function (res) {
@@ -16874,7 +17417,7 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
             selectionformat: (_b = this._state.selectionImageFormat) !== null && _b !== void 0 ? _b : "PNG8",
             maxfeatures: -1
         };
-        var queryOptions = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, qOrig), queryOpts);
+        var queryOptions = tslib_1.__assign(tslib_1.__assign({}, qOrig), queryOpts);
         var action = (0, map_1.queryMapFeatures)(mapName, {
             options: queryOptions,
             callback: function (res) {
@@ -16888,7 +17431,8 @@ var MapGuideMapProviderContext = /** @class */ (function (_super) {
                 if (failure) {
                     failure(err);
                 }
-            }
+            },
+            append: this._comp.isShiftKeyDown()
         });
         this._comp.onDispatch(action);
     };
@@ -16909,8 +17453,8 @@ exports.MapGuideMapProviderContext = MapGuideMapProviderContext;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapDebugContext = exports.MapGuideMockMode = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 /**
  * @since 0.13
  */
@@ -16940,8 +17484,8 @@ exports.MapDebugContext = React.createContext({});
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MenuComponent = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var toolbar_1 = __webpack_require__(/*! ./toolbar */ "./src/components/toolbar.tsx");
 var icon_1 = __webpack_require__(/*! ./icon */ "./src/components/icon.tsx");
@@ -16985,7 +17529,7 @@ var MenuComponent = function (props) {
                     enabled = item.enabled;
                 }
             }
-            var imgStyle = (0, tslib_1.__assign)({ marginRight: 5 }, (0, toolbar_1.getIconStyle)(enabled, height));
+            var imgStyle = tslib_1.__assign({ marginRight: 5 }, (0, toolbar_1.getIconStyle)(enabled, height));
             var text = item.label || "";
             //NOTE: Not using MenuItem here as we want fine control over the item content
             return React.createElement("li", { key: index },
@@ -17011,8 +17555,8 @@ exports.MenuComponent = MenuComponent;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RndModalDialog = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var react_rnd_1 = __webpack_require__(/*! react-rnd */ "./node_modules/react-rnd/lib/index.js");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -17035,11 +17579,11 @@ var RndModalDialog = function (props) {
     var ZINDEX = {
         zIndex: 1980 //So flyouts will appear above it
     };
-    var modalStyle = (0, tslib_1.__assign)({ width: diagWidth, height: diagHeight, 
+    var modalStyle = tslib_1.__assign({ width: diagWidth, height: diagHeight, 
         //bp defaults this to 30, which invisibly offsets the 
         //position of expected rnd drag/resize handles
         marginTop: 0 }, ZINDEX);
-    var rndStyle = (0, tslib_1.__assign)({}, ZINDEX);
+    var rndStyle = tslib_1.__assign({}, ZINDEX);
     var diagSize = [diagWidth, diagHeight - DIAG_HEADER_HEIGHT];
     //console.log(`Resizing: ${isResizing}, Dragging: ${isDragging}`);
     return React.createElement(react_rnd_1.Rnd, { style: rndStyle, enableResizing: {
@@ -17048,20 +17592,38 @@ var RndModalDialog = function (props) {
             topLeft: true,
             topRight: true
         }, enableUserSelectHack: false, onDragStart: function () { return setIsDragging(true); }, onDragStop: function (e, d) {
+            var _a;
             setDiagX(d.x);
             setDiagY(d.y);
             setIsDragging(false);
+            var args = {
+                x: d.x,
+                y: d.y,
+                width: diagWidth,
+                height: diagHeight
+            };
+            //console.log("Modal Change", args);
+            (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, args);
         }, onResizeStart: function () { return setIsResizing(true); }, onResize: function (e, direction, ref, delta, position) {
             setDiagWidth(ref.offsetWidth);
             setDiagHeight(ref.offsetHeight);
             setDiagX(position.x);
             setDiagY(position.y);
         }, onResizeStop: function (e, direction, ref, delta, position) {
+            var _a;
             setDiagWidth(ref.offsetWidth);
             setDiagHeight(ref.offsetHeight);
             setDiagX(position.x);
             setDiagY(position.y);
             setIsResizing(false);
+            var args = {
+                x: position.x,
+                y: position.y,
+                width: ref.offsetWidth,
+                height: ref.offsetHeight
+            };
+            //console.log("Modal Change", args);
+            (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, args);
         }, dragHandleClassName: "bp3-heading", default: { x: props.x, y: props.y, width: props.width, height: props.height } },
         React.createElement("div", { className: "bp3-dialog-container" },
             React.createElement("div", { className: "bp3-dialog", style: modalStyle },
@@ -17097,10 +17659,11 @@ exports.RndModalDialog = RndModalDialog;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MouseCoordinates = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 function formatCoordinates(props) {
     var coords = props.coords, decimals = props.decimals, format = props.format, units = props.units;
     if (coords == null) {
@@ -17109,11 +17672,11 @@ function formatCoordinates(props) {
     var x = coords[0], y = coords[1];
     var sfmt = format || "X: {x}, Y: {y} {units}";
     var str = (0, i18n_1.fmt)(sfmt, {
-        x: "" + (decimals != null ? x.toFixed(decimals) : x),
-        y: "" + (decimals != null ? y.toFixed(decimals) : y),
+        x: "".concat(decimals != null ? x.toFixed(decimals) : x),
+        y: "".concat(decimals != null ? y.toFixed(decimals) : y),
         units: units || ""
     });
-    return React.createElement("span", { dangerouslySetInnerHTML: { __html: (0, string_1.strTrim)(str) } });
+    return React.createElement("span", { dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)((0, string_1.strTrim)(str)) } });
 }
 /**
  * Displays tracked mouse coordinates
@@ -17137,12 +17700,12 @@ exports.MouseCoordinates = MouseCoordinates;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Navigator = exports.PanDirection = exports.ZoomDirection = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 // According to this (https://github.com/mzabriskie/react-draggable/issues/246#issuecomment-299698481), typings
 // only works if module type is "es6". This is not the case for us, so just use untyped require()
-var react_draggable_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-draggable */ "./node_modules/react-draggable/build/cjs/cjs.js"));
+var react_draggable_1 = tslib_1.__importDefault(__webpack_require__(/*! react-draggable */ "./node_modules/react-draggable/build/cjs/cjs.js"));
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 var assets_1 = __webpack_require__(/*! ../constants/assets */ "./src/constants/assets.ts");
 var ZoomDirection;
@@ -17273,15 +17836,15 @@ exports.Navigator = Navigator;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.PoweredByMapGuide = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var icon_1 = __webpack_require__(/*! ./icon */ "./src/components/icon.tsx");
 /**
  * "Powered by MapGuide" logo
  * @param props
  */
 var PoweredByMapGuide = function (props) {
-    return React.createElement("div", (0, tslib_1.__assign)({ className: "status-bar-component component-pbmg" }, props),
+    return React.createElement("div", tslib_1.__assign({ className: "status-bar-component component-pbmg" }, props),
         React.createElement(icon_1.ImageIcon, { style: { display: "block" }, spriteClass: "PoweredBy_en" }));
 };
 exports.PoweredByMapGuide = PoweredByMapGuide;
@@ -17299,8 +17862,8 @@ exports.PoweredByMapGuide = PoweredByMapGuide;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ScaleDisplay = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 /**
@@ -17358,8 +17921,8 @@ exports.ScaleDisplay = ScaleDisplay;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectedFeatureCount = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 /**
  * Displays the number of selected features on the map
@@ -17387,12 +17950,13 @@ exports.SelectedFeatureCount = SelectedFeatureCount;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionPanel = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var toolbar_1 = __webpack_require__(/*! ./toolbar */ "./src/components/toolbar.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var DefaultSelectedFeature = function (props) {
     var selectedFeature = props.selectedFeature, selectedLayer = props.selectedLayer, locale = props.locale, allowHtmlValues = props.allowHtmlValues, cleanHTML = props.cleanHTML;
     var featureProps = [];
@@ -17427,6 +17991,9 @@ var DefaultSelectedFeature = function (props) {
                     if (allowHtmlValues && !(0, string_1.strIsNullOrEmpty)(value)) {
                         if (cleanHTML) {
                             value = cleanHTML(value);
+                        }
+                        else {
+                            value = (0, dompurify_1.sanitize)(value);
                         }
                         return React.createElement("td", { className: "property-value-cell", "data-property-value-for": prop.Name, dangerouslySetInnerHTML: { __html: value } });
                     }
@@ -17467,7 +18034,7 @@ var FloatClear = function () { return React.createElement("div", { style: { clea
  * Displays attributes of selected features with the ability to zoom in on selected features
  * @param props
  */
-var SelectionPanel = function (props) {
+exports.SelectionPanel = React.memo(function (props) {
     var maxHeight = props.maxHeight, selection = props.selection, selectedFeatureRenderer = props.selectedFeatureRenderer, allowHtmlValues = props.allowHtmlValues, cleanHTML = props.cleanHTML, onShowSelectedFeature = props.onShowSelectedFeature, onRequestZoomToFeature = props.onRequestZoomToFeature;
     var _a = React.useState(-1), selectedLayerIndex = _a[0], setSelectedLayerIndex = _a[1];
     var _b = React.useState(-1), featureIndex = _b[0], setFeatureIndex = _b[1];
@@ -17596,7 +18163,7 @@ var SelectionPanel = function (props) {
                             var lkey = lid !== null && lid !== void 0 ? lid : index;
                             var label = lid ? ((_b = (_a = props === null || props === void 0 ? void 0 : props.onResolveLayerLabel) === null || _a === void 0 ? void 0 : _a.call(props, lid, lname)) !== null && _b !== void 0 ? _b : lname)
                                 : lname;
-                            return React.createElement("option", { key: "selected-layer-" + lkey, value: "" + index }, label);
+                            return React.createElement("option", { key: "selected-layer-".concat(lkey), value: "".concat(index) }, label);
                         }))),
                     React.createElement(toolbar_1.Toolbar, { childItems: selectionToolbarItems, containerStyle: SELECTION_TOOLBAR_STYLE }),
                     React.createElement(FloatClear, null));
@@ -17616,8 +18183,7 @@ var SelectionPanel = function (props) {
                     React.createElement("p", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
             }
         })()));
-};
-exports.SelectionPanel = SelectionPanel;
+});
 
 
 /***/ }),
@@ -17632,8 +18198,8 @@ exports.SelectionPanel = SelectionPanel;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SessionExpired = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 function reload(e) {
     e.preventDefault();
@@ -17720,9 +18286,9 @@ exports.SessionKeepAlive = SessionKeepAlive;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TaskPane = exports.TASK_PANE_OVERLAY_BGCOLOR = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var ReactDOM = tslib_1.__importStar(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var toolbar_1 = __webpack_require__(/*! ./toolbar */ "./src/components/toolbar.tsx");
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -17734,7 +18300,7 @@ function currentUrlDoesNotMatchMapName(currentUrl, mapName) {
     var normUrl = currentUrl.toLowerCase();
     //Only invalidate if url has mapname and it doesn't match our current one
     if (normUrl.indexOf("mapname=") >= 0 && mapName) {
-        return normUrl.indexOf("mapname=" + mapName.toLowerCase()) < 0;
+        return normUrl.indexOf("mapname=".concat(mapName.toLowerCase())) < 0;
     }
     else {
         return false;
@@ -17756,7 +18322,7 @@ function currentUrlDoesNotMatchMapName(currentUrl, mapName) {
  * @extends {React.Component<ITaskPaneProps, any>}
  */
 var TaskPane = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(TaskPane, _super);
+    tslib_1.__extends(TaskPane, _super);
     function TaskPane(props) {
         var _this = _super.call(this, props) || this;
         _this.onCloseFlyout = function (id) { var _a, _b; return (_b = (_a = _this.props).onCloseFlyout) === null || _b === void 0 ? void 0 : _b.call(_a, id); };
@@ -17920,10 +18486,10 @@ exports.TaskPane = TaskPane;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Toolbar = exports.FlyoutMenuChildItem = exports.getIconStyle = exports.getEnabled = exports.TOOLBAR_BACKGROUND_COLOR = exports.DEFAULT_TOOLBAR_SIZE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
-var context_1 = __webpack_require__(/*! ./context */ "./src/components/context.ts");
+var context_1 = __webpack_require__(/*! ./context */ "./src/components/context.tsx");
 var string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 var icon_1 = __webpack_require__(/*! ./icon */ "./src/components/icon.tsx");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
@@ -17962,6 +18528,10 @@ function getEnabled(item) {
     return true;
 }
 exports.getEnabled = getEnabled;
+var OpacityIcon = React.memo(function (_a) {
+    var opacity = _a.opacity, icon = _a.icon, iconSize = _a.iconSize;
+    return React.createElement(core_1.Icon, { style: { opacity: opacity }, icon: icon, iconSize: iconSize });
+});
 function getIconElement(item, enabled, size) {
     var iconStyle = getIconStyle(enabled, size);
     if (item.iconClass || item.icon) {
@@ -17969,7 +18539,7 @@ function getIconElement(item, enabled, size) {
     }
     else if (item.bpIconName) {
         var opacity = iconStyle.opacity; //For SVG, we only care about opacity
-        return React.createElement(core_1.Icon, { style: { opacity: opacity }, icon: item.bpIconName, iconSize: size * SVG_SIZE_RATIO });
+        return React.createElement(OpacityIcon, { opacity: opacity, icon: item.bpIconName, iconSize: size * SVG_SIZE_RATIO });
     }
     else {
         return React.createElement(React.Fragment, null);
@@ -18125,8 +18695,8 @@ var ComponentFlyoutItem = function (props) {
     }
     var ttip = getTooltip(item);
     var iconEl = getIconElement(item, enabled, size);
-    return React.createElement("div", { className: "noselect toolbar-flyout-btn " + (selected ? "selected-item" : "") + " " + (isMouseOver ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
-        React.createElement("div", { "data-flyout-id": "flyout-" + item.flyoutId },
+    return React.createElement("div", { className: "noselect toolbar-flyout-btn ".concat(selected ? "selected-item" : "", " ").concat(isMouseOver ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
+        React.createElement("div", { "data-flyout-id": "flyout-".concat(item.flyoutId) },
             iconEl,
             " ",
             label,
@@ -18176,8 +18746,8 @@ var FlyoutMenuReferenceItem = function (props) {
     }
     var ttip = getTooltip(menu);
     var iconEl = getIconElement(menu, enabled, size);
-    return React.createElement("div", { className: "noselect toolbar-flyout-btn " + (selected ? "selected-item" : "") + " " + (isMouseOver ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
-        React.createElement("div", { "data-flyout-id": "flyout-" + menu.flyoutId },
+    return React.createElement("div", { className: "noselect toolbar-flyout-btn ".concat(selected ? "selected-item" : "", " ").concat(isMouseOver ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
+        React.createElement("div", { "data-flyout-id": "flyout-".concat(menu.flyoutId) },
             iconEl,
             " ",
             label,
@@ -18225,7 +18795,7 @@ var ToolbarButton = function (props) {
         style.opacity = 0.3;
     }
     var iconEl = getIconElement(item, enabled, height);
-    return React.createElement("div", { className: "noselect toolbar-btn " + (selected ? "selected-item" : "") + " " + ((isMouseOver && enabled) ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, style: style, title: ttip, onClick: onClick },
+    return React.createElement("div", { className: "noselect toolbar-btn ".concat(selected ? "selected-item" : "", " ").concat((isMouseOver && enabled) ? "mouse-over" : ""), onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, style: style, title: ttip, onClick: onClick },
         iconEl,
         " ",
         (vertical == true && hideVerticalLabels == true) ? null : item.label);
@@ -18254,7 +18824,7 @@ var Toolbar = function (props) {
         closeComponent: closeComponent
     };
     return React.createElement(context_1.ToolbarContext.Provider, { value: providerImpl },
-        React.createElement("div", { style: containerStyle, className: "has-flyout noselect " + containerClass }, childItems.map(function (item, index) {
+        React.createElement("div", { style: containerStyle, className: "has-flyout noselect ".concat(containerClass) }, childItems.map(function (item, index) {
             if ((0, type_guards_1.isComponentFlyout)(item)) {
                 var isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
                 return React.createElement(ComponentFlyoutItem, { key: index, size: height, item: item, vertical: vertical, isFlownOut: isFlownOut });
@@ -18286,14 +18856,13 @@ exports.Toolbar = Toolbar;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FeatureQueryTooltip = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
-var lodash_debounce_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js"));
-var Overlay_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
-var WKT_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var lodash_debounce_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js"));
+var Overlay_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
+var WKT_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/WKT */ "./node_modules/ol/format/WKT.js"));
 var Polygon_1 = __webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
 var error_1 = __webpack_require__(/*! ../../api/error */ "./src/api/error.ts");
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger.ts");
@@ -18319,7 +18888,7 @@ var FeatureQueryTooltip = /** @class */ (function () {
         this.featureTooltip = new Overlay_1.default({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning_1.default.CENTER_LEFT
+            positioning: "center-left"
         });
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
@@ -18340,7 +18909,7 @@ var FeatureQueryTooltip = /** @class */ (function () {
     FeatureQueryTooltip.prototype.raiseQueryFromPoint = function (pixel) {
         var box = this.callback.getPointSelectionBox(pixel);
         var geom = (0, Polygon_1.fromExtent)(box);
-        (0, logger_1.debug)("[" + new Date() + "] FeatureTooltip - onMouseMove (" + box[0] + ", " + box[1] + ") (" + box[2] + ", " + box[3] + ")");
+        (0, logger_1.debug)("[".concat(new Date(), "] FeatureTooltip - onMouseMove (").concat(box[0], ", ").concat(box[1], ") (").concat(box[2], ", ").concat(box[3], ")"));
         this.sendTooltipQuery(geom);
     };
     FeatureQueryTooltip.prototype.onMouseMove = function (e) {
@@ -18381,7 +18950,7 @@ var FeatureQueryTooltip = /** @class */ (function () {
         //this.featureTooltipElement.classList.remove("tooltip-hidden");
         var coords = olExtent.getCenter(geom.getExtent());
         this.featureTooltip.setPosition(coords);
-        this.callback.incrementBusyWorker();
+        //this.callback.incrementBusyWorker();
         client.queryMapFeatures({
             mapname: this.callback.getMapName(),
             session: this.callback.getSessionId(),
@@ -18395,10 +18964,10 @@ var FeatureQueryTooltip = /** @class */ (function () {
         }).then(function (res) {
             var html = "";
             if (res.Tooltip) {
-                html += "<div class='feature-tooltip-body'>" + res.Tooltip.replace(/\\n/g, "<br/>") + "</div>";
+                html += "<div class='feature-tooltip-body'>".concat(res.Tooltip.replace(/\\n/g, "<br/>"), "</div>");
             }
             if (res.Hyperlink) {
-                html += "<div><a id='feature-tooltip-link' href='" + res.Hyperlink + "'>" + (0, i18n_1.tr)("FEATURE_TOOLTIP_URL_HELP_TEXT", _this.callback.getLocale()) + "</a></div>";
+                html += "<div><a id='feature-tooltip-link' href='".concat(res.Hyperlink, "'>").concat((0, i18n_1.tr)("FEATURE_TOOLTIP_URL_HELP_TEXT", _this.callback.getLocale()), "</a></div>");
             }
             _this.featureTooltipElement.innerHTML = html;
             _this.linkElement = document.getElementById("feature-tooltip-link");
@@ -18412,10 +18981,9 @@ var FeatureQueryTooltip = /** @class */ (function () {
             else {
                 _this.featureTooltipElement.classList.remove("tooltip-hidden");
             }
-        }).then(function () {
-            _this.callback.decrementBusyWorker();
+            //this.callback.decrementBusyWorker();
         }).catch(function (err) {
-            _this.callback.decrementBusyWorker();
+            //this.callback.decrementBusyWorker();
             if ((0, error_1.isSessionExpiredError)(err)) {
                 _this.callback.onSessionExpired();
             }
@@ -18438,9 +19006,8 @@ exports.FeatureQueryTooltip = FeatureQueryTooltip;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MouseTrackingTooltip = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var Overlay_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
-var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var Overlay_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
 var HIDDEN_CLASS_NAME = "tooltip-hidden";
 var MouseTrackingTooltip = /** @class */ (function () {
     function MouseTrackingTooltip(map, contextMenuTest) {
@@ -18452,7 +19019,7 @@ var MouseTrackingTooltip = /** @class */ (function () {
         this.tooltip = new Overlay_1.default({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning_1.default.CENTER_LEFT
+            positioning: "center-left"
         });
         this.map.addOverlay(this.tooltip);
         this.text = null;
@@ -18503,21 +19070,21 @@ exports.MouseTrackingTooltip = MouseTrackingTooltip;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectedFeaturesTooltip = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var Overlay_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
-var Image_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
-var Tile_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
-var ImageWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
-var TileWMS_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
-var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var Overlay_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
+var Image_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Image */ "./node_modules/ol/layer/Image.js"));
+var Tile_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Tile */ "./node_modules/ol/layer/Tile.js"));
+var ImageWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/ImageWMS */ "./node_modules/ol/source/ImageWMS.js"));
+var TileWMS_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/TileWMS */ "./node_modules/ol/source/TileWMS.js"));
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
 var i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 var common_1 = __webpack_require__(/*! ../../api/common */ "./src/api/common.ts");
 var client_1 = __webpack_require__(/*! ../../api/client */ "./src/api/client.ts");
 var wfs_capabilities_panel_1 = __webpack_require__(/*! ../layer-manager/wfs-capabilities-panel */ "./src/components/layer-manager/wfs-capabilities-panel.tsx");
 var string_1 = __webpack_require__(/*! ../../utils/string */ "./src/utils/string.ts");
 var ol_style_helpers_1 = __webpack_require__(/*! ../../api/ol-style-helpers */ "./src/api/ol-style-helpers.ts");
-var stickybits_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! stickybits */ "./node_modules/stickybits/dist/stickybits.es.js"));
+var stickybits_1 = tslib_1.__importDefault(__webpack_require__(/*! stickybits */ "./node_modules/stickybits/dist/stickybits.es.js"));
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 function defaultPopupContentRenderer(feat, locale, popupConfig) {
     var _a, _b, _c, _d;
     var html = "";
@@ -18528,8 +19095,8 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
     if (bClustered && size > 1) {
         title = (_d = (_c = popupConfig === null || popupConfig === void 0 ? void 0 : popupConfig.clusteredTitle) === null || _c === void 0 ? void 0 : _c.call(popupConfig, size)) !== null && _d !== void 0 ? _d : (0, i18n_1.tr)("SEL_CLUSTER_PROPERTIES", locale, { size: size });
     }
-    html += "<div class='selected-popup-header'><div>" + title + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
-    var renderForMultiple = function (subFeatures) {
+    html += "<div class='selected-popup-header'><div>" + (0, dompurify_1.sanitize)(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
+    var renderForMultipleSanitized = function (subFeatures) {
         var table = "<table class='selected-popup-cluster-table'>";
         var fheadings = (popupConfig === null || popupConfig === void 0 ? void 0 : popupConfig.propertyMappings)
             ? popupConfig.propertyMappings.filter(function (pm) { return pm.name != subFeatures[0].getGeometryName(); }).map(function (pm) { return pm.value; })
@@ -18540,7 +19107,7 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
         table += "<thead><tr>";
         for (var _i = 0, fheadings_1 = fheadings; _i < fheadings_1.length; _i++) {
             var heading = fheadings_1[_i];
-            table += "<th>" + heading + "</th>";
+            table += "<th>".concat((0, dompurify_1.sanitize)(heading), "</th>");
         }
         table += "</tr></thead>";
         table += "<tbody>";
@@ -18549,7 +19116,8 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
             table += "<tr>";
             for (var _b = 0, fprops_1 = fprops; _b < fprops_1.length; _b++) {
                 var property = fprops_1[_b];
-                table += "<td>" + f.get(property) + "</td>";
+                var val = f.get(property);
+                table += "<td>".concat((0, dompurify_1.sanitize)(val), "</td>");
             }
             table += "</tr>";
         }
@@ -18557,7 +19125,7 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
         table += "</table>";
         return table;
     };
-    var renderForSingle = function (feature) {
+    var renderForSingleSanitized = function (feature) {
         var _a, _b, _c;
         var linkFragment;
         var table = "<table class='selected-popup-single-properties-table'>";
@@ -18571,8 +19139,8 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + pm.value + "</td>";
-                table += "<td class='property-value-cell'>" + f[pm.name] + "</td>";
+                table += "<td class='property-name-cell'>" + (0, dompurify_1.sanitize)(pm.value) + "</td>";
+                table += "<td class='property-value-cell'>" + (0, dompurify_1.sanitize)(f[pm.name]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -18583,8 +19151,8 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
                     continue;
                 }
                 table += "<tr>";
-                table += "<td class='property-name-cell'>" + key + "</td>";
-                table += "<td class='property-value-cell'>" + f[key] + "</td>";
+                table += "<td class='property-name-cell'>" + (0, dompurify_1.sanitize)(key) + "</td>";
+                table += "<td class='property-value-cell'>" + (0, dompurify_1.sanitize)(f[key]) + "</td>";
                 table += "</tr>";
                 pc++;
             }
@@ -18606,23 +19174,23 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
                 for (var _f = 0, tokens_1 = tokens; _f < tokens_1.length; _f++) {
                     var t = tokens_1[_f];
                     var al = encodeURIComponent((_c = f[t]) !== null && _c !== void 0 ? _c : "");
-                    url = (0, string_1.strReplaceAll)(url, "" + pBegin + t + pEnd, al);
+                    url = (0, string_1.strReplaceAll)(url, "".concat(pBegin).concat(t).concat(pEnd), al);
                 }
                 linkHref = url;
             }
             if (!(0, string_1.strIsNullOrEmpty)(linkHref)) {
-                linkFragment = "<div class='select-popup-single-link-wrapper'><a href=\"" + linkHref + "\" target='" + linkTarget + "'>" + label + "</a></div>";
+                linkFragment = "<div class='select-popup-single-link-wrapper'><a href=\"".concat((0, dompurify_1.sanitize)(linkHref), "\" target='").concat((0, dompurify_1.sanitize)(linkTarget), "'>").concat((0, dompurify_1.sanitize)(label), "</a></div>");
             }
         }
         return [table, pc, linkFragment];
     };
     var singlePopupContentRender = function (feature, appendHtml) {
-        var _a = renderForSingle(feature), table = _a[0], pc = _a[1], linkFragment = _a[2];
+        var _a = renderForSingleSanitized(feature), table = _a[0], pc = _a[1], linkFragment = _a[2];
         if (pc > 0) {
-            appendHtml("<div class='selected-popup-content-wrapper'>" + table + "</div>");
+            appendHtml("<div class='selected-popup-content-wrapper'>".concat(table, "</div>"));
         }
         else {
-            appendHtml("<div class='selected-popup-content-none'>" + (0, i18n_1.tr)("SEL_FEATURE_PROPERTIES_NONE", locale) + "</div>");
+            appendHtml("<div class='selected-popup-content-none'>" + (0, dompurify_1.sanitize)((0, i18n_1.tr)("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
         }
         if (!(0, string_1.strIsNullOrEmpty)(linkFragment)) {
             appendHtml(linkFragment);
@@ -18634,8 +19202,8 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
             singlePopupContentRender(subFeatures[0], function (h) { return html += h; });
         }
         else {
-            var table = renderForMultiple(subFeatures);
-            html += "<div class='selected-popup-content-wrapper'>" + table + "</div>";
+            var table = renderForMultipleSanitized(subFeatures);
+            html += "<div class='selected-popup-content-wrapper'>".concat(table, "</div>");
         }
     }
     else {
@@ -18667,7 +19235,7 @@ var SelectedFeaturesTooltip = /** @class */ (function () {
         this.featureTooltip = new Overlay_1.default({
             element: this.featureTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning_1.default.CENTER_LEFT
+            positioning: "center-left"
         });
         this.map = map;
         this.map.addOverlay(this.featureTooltip);
@@ -18698,9 +19266,9 @@ var SelectedFeaturesTooltip = /** @class */ (function () {
     };
     SelectedFeaturesTooltip.prototype.queryWmsFeatures = function (currentLayerSet, layerMgr, coord, resolution, bAppendMode, callback) {
         var _a, _b, _c;
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var selected, client, format, wmsSources, currentWmsSource, layers, _i, layers_1, layer, wmsLayer, source, _d, wmsSources_1, pair, layer, source, url, layerName, augs, resp, json, srcProj, epsg, features, popupConf, html;
-            return (0, tslib_1.__generator)(this, function (_e) {
+            return tslib_1.__generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
                         selected = 0;
@@ -18746,7 +19314,10 @@ var SelectedFeaturesTooltip = /** @class */ (function () {
                             if (!srcProj) {
                                 epsg = (0, wfs_capabilities_panel_1.parseEpsgCodeFromCRS)((_c = (_b = json.crs) === null || _b === void 0 ? void 0 : _b.properties) === null || _c === void 0 ? void 0 : _c.name);
                                 if (epsg) {
-                                    srcProj = "EPSG:" + epsg;
+                                    srcProj = "EPSG:".concat(epsg);
+                                }
+                                else { //Type narrowing hack
+                                    srcProj = undefined;
                                 }
                             }
                             features = format.readFeatures(resp, {
@@ -18850,9 +19421,9 @@ exports.SelectedFeaturesTooltip = SelectedFeaturesTooltip;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UTFGridTrackingTooltip = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var Overlay_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
-var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var Overlay_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Overlay */ "./node_modules/ol/Overlay.js"));
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var UTFGridTrackingTooltip = /** @class */ (function () {
     function UTFGridTrackingTooltip(map, gridSource, isContextMenuOpen) {
         this.map = map;
@@ -18864,7 +19435,7 @@ var UTFGridTrackingTooltip = /** @class */ (function () {
         this.tooltip = new Overlay_1.default({
             element: this.tooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning_1.default.CENTER_LEFT
+            positioning: 'center-left'
         });
         this.map.addOverlay(this.tooltip);
         this.text = null;
@@ -18885,16 +19456,9 @@ var UTFGridTrackingTooltip = /** @class */ (function () {
                 //
                 //mapElement.style.cursor = data ? 'pointer' : '';
                 if (data) {
-                    /*
-                    var html = "<table>";
-                    for (var key in data) {
-                        html += "<tr><td>" + key + "</td><td>" + data[key] + "</td></tr>";
-                    }
-                    html += "</table>";
-                    */
                     var html = "";
                     if (data.MG_TOOLTIP)
-                        html += data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />');
+                        html += (0, dompurify_1.sanitize)(data.MG_TOOLTIP.replace(/(\\n)+/g, '<br />'));
                     if (data.MG_URL) {
                         html += "<br/><br/>";
                         html += "<strong>CTRL + Click for more information</strong>";
@@ -18937,8 +19501,8 @@ exports.UTFGridTrackingTooltip = UTFGridTrackingTooltip;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.VectorLayerStyleEditor = exports.VectorStyleEditor = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var ol_style_contracts_1 = __webpack_require__(/*! ../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
@@ -18956,22 +19520,22 @@ function ExprEditor(props) {
     assertValue(props.expr);
     return React.createElement(React.Fragment, null,
         "Expr: ",
-        React.createElement("input", { type: "text", value: "" + props.expr, onChange: function (e) { return props.onExprChanged(props.converter(e.target.value)); } }));
+        React.createElement("input", { type: "text", value: "".concat(props.expr), onChange: function (e) { return props.onExprChanged(props.converter(e.target.value)); } }));
 }
 var DynamicSwitch = function (props) {
     if ((0, ol_style_contracts_1.isEvaluatable)(props.expr)) {
-        return React.createElement(ExprEditor, (0, tslib_1.__assign)({}, props, { converter: function (v) { return (v === null || v === void 0 ? void 0 : v.toLowerCase()) == "true"; } }));
+        return React.createElement(ExprEditor, tslib_1.__assign({}, props, { converter: function (v) { return (v === null || v === void 0 ? void 0 : v.toLowerCase()) == "true"; } }));
     }
     else {
-        var expr = props.expr, onExprChanged = props.onExprChanged, rest = (0, tslib_1.__rest)(props, ["expr", "onExprChanged"]);
-        var innerProps = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, rest), { checked: props.expr, onChange: function (e) { return props.onExprChanged(e.target.checked); } });
-        return React.createElement(core_1.Switch, (0, tslib_1.__assign)({}, innerProps));
+        var expr = props.expr, onExprChanged = props.onExprChanged, rest = tslib_1.__rest(props, ["expr", "onExprChanged"]);
+        var innerProps = tslib_1.__assign(tslib_1.__assign({}, rest), { checked: props.expr, onChange: function (e) { return props.onExprChanged(e.target.checked); } });
+        return React.createElement(core_1.Switch, tslib_1.__assign({}, innerProps));
     }
 };
 //TODO: Either surface the font as another editable property or offload to configuration
 var buildFont = function (size, bold, italic, font) {
     if (font === void 0) { font = "sans-serif"; }
-    return (bold ? "bold" : string_1.STR_EMPTY) + " " + (italic ? "italic" : string_1.STR_EMPTY) + " " + size + "px " + font;
+    return "".concat(bold ? "bold" : string_1.STR_EMPTY, " ").concat(italic ? "italic" : string_1.STR_EMPTY, " ").concat(size, "px ").concat(font);
 };
 function coalesceExpr(expr, defaultVal) {
     if ((0, ol_style_contracts_1.isEvaluatable)(expr)) {
@@ -18990,36 +19554,36 @@ var LabelStyleEditor = function (props) {
     var _s = React.useState((_j = (_h = (_g = style.label) === null || _g === void 0 ? void 0 : _g.stroke) === null || _h === void 0 ? void 0 : _h.color) !== null && _j !== void 0 ? _j : "#ffffff"), localStrokeColor = _s[0], setLocalStrokeColor = _s[1];
     var _t = React.useState((_m = (_l = (_k = style.label) === null || _k === void 0 ? void 0 : _k.stroke) === null || _l === void 0 ? void 0 : _l.width) !== null && _m !== void 0 ? _m : 1), localStrokeWidth = _t[0], setLocalStrokeWidth = _t[1];
     var _u = React.useState(DEFAULT_FONT_SIZE), localFontSize = _u[0], setLocalFontSize = _u[1];
-    var _v = React.useState((0, tslib_1.__assign)({ font: buildFont(localFontSize, bold, italic) }, style.label)), localLabel = _v[0], setLocalLabel = _v[1];
+    var _v = React.useState(tslib_1.__assign({ font: buildFont(localFontSize, bold, italic) }, style.label)), localLabel = _v[0], setLocalLabel = _v[1];
     var _w = React.useState(style.label != null), hasLabel = _w[0], setHasLabel = _w[1];
     var onToggleLinePlacement = React.useCallback(function () {
         if (localLabel.placement == "line") {
-            var placement = localLabel.placement, rest = (0, tslib_1.__rest)(localLabel, ["placement"]);
+            var placement = localLabel.placement, rest = tslib_1.__rest(localLabel, ["placement"]);
             setLocalLabel(rest);
         }
         else {
-            setLocalLabel((0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel), { placement: "line" }));
+            setLocalLabel(tslib_1.__assign(tslib_1.__assign({}, localLabel), { placement: "line" }));
         }
     }, [localLabel]);
     React.useEffect(function () {
         if (hasLabel) {
-            onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { label: localLabel }));
+            onChange(tslib_1.__assign(tslib_1.__assign({}, style), { label: localLabel }));
         }
         else {
-            var label = style.label, rest = (0, tslib_1.__rest)(style, ["label"]);
+            var label = style.label, rest = tslib_1.__rest(style, ["label"]);
             onChange(rest);
         }
     }, [localLabel, hasLabel]);
     React.useEffect(function () {
-        setLocalLabel((0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel), { font: buildFont(localFontSize, bold, italic) }));
+        setLocalLabel(tslib_1.__assign(tslib_1.__assign({}, localLabel), { font: buildFont(localFontSize, bold, italic) }));
     }, [localFontSize, bold, italic]);
     React.useEffect(function () {
-        setLocalLabel((0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel), { fill: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel.fill), { color: localBgColor, alpha: localBgColorAlpha }), stroke: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel.stroke), { color: localStrokeColor, width: localStrokeWidth }) }));
+        setLocalLabel(tslib_1.__assign(tslib_1.__assign({}, localLabel), { fill: tslib_1.__assign(tslib_1.__assign({}, localLabel.fill), { color: localBgColor, alpha: localBgColorAlpha }), stroke: tslib_1.__assign(tslib_1.__assign({}, localLabel.stroke), { color: localStrokeColor, width: localStrokeWidth }) }));
     }, [localStrokeColor, localStrokeWidth, localBgColorAlpha, localBgColor]);
     return React.createElement(React.Fragment, null,
         React.createElement(core_1.Switch, { checked: hasLabel, onChange: function (e) { return setHasLabel(e.target.checked); }, label: (0, i18n_1.tr)("ENABLE_LABELS", locale) }),
         hasLabel && React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("LABEL_TEXT", locale) },
-            React.createElement(common_1.StringExprEditor, { locale: locale, value: localLabel.text, onChange: function (t) { return setLocalLabel((0, tslib_1.__assign)((0, tslib_1.__assign)({}, localLabel), { text: t })); } })),
+            React.createElement(common_1.StringExprEditor, { locale: locale, value: localLabel.text, onChange: function (t) { return setLocalLabel(tslib_1.__assign(tslib_1.__assign({}, localLabel), { text: t })); } })),
         hasLabel && React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("LABEL_SIZE", locale) },
             React.createElement(common_1.NumberExprEditor, { locale: locale, value: localFontSize, onChange: function (t) { return setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE)); } })),
         hasLabel && React.createElement(core_1.ButtonGroup, null,
@@ -19040,7 +19604,7 @@ var PointIconStyleEditor = function (_a) {
         setLocalSrc(style.src);
     }, [style.src]);
     var onSrcChange = function (e) {
-        onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { src: localSrc }));
+        onChange(tslib_1.__assign(tslib_1.__assign({}, style), { src: localSrc }));
     };
     return React.createElement("div", null,
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_SRC", locale) },
@@ -19049,31 +19613,31 @@ var PointIconStyleEditor = function (_a) {
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_ANCHOR", locale) },
             (0, i18n_1.tr)("VSED_PT_ICON_ANCHOR_H", locale),
             " ",
-            React.createElement(core_1.NumericInput, { value: style.anchor[0], min: 0, onValueChange: function (e) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { anchor: [e, style.anchor[1]] })); } }),
+            React.createElement(core_1.NumericInput, { value: style.anchor[0], min: 0, onValueChange: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { anchor: [e, style.anchor[1]] })); } }),
             (0, i18n_1.tr)("VSED_PT_ICON_ANCHOR_V", locale),
             " ",
-            React.createElement(core_1.NumericInput, { value: style.anchor[1], min: 0, onValueChange: function (e) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { anchor: [style.anchor[0], e] })); } })),
-        React.createElement(DynamicSwitch, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATE_WITH_VIEW", locale), expr: style.rotateWithView, onExprChanged: function (e) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { rotateWithView: e })); } }),
+            React.createElement(core_1.NumericInput, { value: style.anchor[1], min: 0, onValueChange: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { anchor: [style.anchor[0], e] })); } })),
+        React.createElement(DynamicSwitch, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATE_WITH_VIEW", locale), expr: style.rotateWithView, onExprChanged: function (e) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { rotateWithView: e })); } }),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATION", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 360, labelStepSize: 360, value: style.rotation, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { rotation: n })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 360, labelStepSize: 360, value: style.rotation, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { rotation: n })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_SCALE", locale) },
-            React.createElement(common_1.NumberExprEditor, { value: style.scale, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { scale: n })); }, locale: locale })));
+            React.createElement(common_1.NumberExprEditor, { value: style.scale, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { scale: n })); }, locale: locale })));
 };
 var PointCircleStyleEditor = function (_a) {
     var style = _a.style, onChange = _a.onChange, locale = _a.locale;
     return React.createElement("div", null,
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_FILL_COLOR", locale) },
-            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.fill.color, onChange: function (c) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { fill: { color: c, alpha: style.fill.alpha } })); } })),
+            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.fill.color, onChange: function (c) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { fill: { color: c, alpha: style.fill.alpha } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_FILL_COLOR_ALPHA", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.fill.alpha, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { fill: { color: style.fill.color, alpha: n } })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.fill.alpha, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { fill: { color: style.fill.color, alpha: n } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_RADIUS", locale) },
-            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.radius, min: 1, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { radius: n })); } })),
+            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.radius, min: 1, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { radius: n })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_OUTLINE_COLOR", locale) },
-            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.stroke.color, onChange: function (c) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })); } })),
+            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.stroke.color, onChange: function (c) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_OUTLINE_COLOR_ALPHA", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.stroke.alpha, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.stroke.alpha, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PT_OUTLINE_WIDTH", locale) },
-            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.stroke.width, min: 1, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })); } })));
+            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.stroke.width, min: 1, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })); } })));
 };
 var PointStyleEditor = function (_a) {
     var style = _a.style, onChange = _a.onChange, locale = _a.locale;
@@ -19099,7 +19663,7 @@ var PointStyleEditor = function (_a) {
                     onChange(circleStyle);
                 }
                 else {
-                    var s = (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_POINT_CIRCLE_STYLE);
+                    var s = tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_POINT_CIRCLE_STYLE);
                     setCircleStyle(s);
                     setCurrentStyle(s);
                     onChange(s);
@@ -19111,7 +19675,7 @@ var PointStyleEditor = function (_a) {
                     onChange(iconStyle);
                 }
                 else {
-                    var s = (0, tslib_1.__assign)({}, ol_style_contracts_1.DEFAULT_POINT_ICON_STYLE);
+                    var s = tslib_1.__assign({}, ol_style_contracts_1.DEFAULT_POINT_ICON_STYLE);
                     setIconStyle(s);
                     setCurrentStyle(s);
                     onChange(s);
@@ -19134,26 +19698,26 @@ var LineStyleEditor = function (_a) {
     var style = _a.style, onChange = _a.onChange, locale = _a.locale;
     return React.createElement("div", null,
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_LN_OUTLINE_COLOR", locale) },
-            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.color, onChange: function (c) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { color: c, width: style.width, alpha: style.alpha })); } })),
+            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.color, onChange: function (c) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { color: c, width: style.width, alpha: style.alpha })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_LN_OUTLINE_COLOR_ALPHA", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.alpha, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { color: style.color, width: style.width, alpha: n })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.alpha, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { color: style.color, width: style.width, alpha: n })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_LN_OUTLINE_THICKNESS", locale) },
-            React.createElement(common_1.NumberExprEditor, { locale: locale, min: 1, value: style.width, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { color: style.color, width: n, alpha: style.alpha })); } })),
+            React.createElement(common_1.NumberExprEditor, { locale: locale, min: 1, value: style.width, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { color: style.color, width: n, alpha: style.alpha })); } })),
         React.createElement(LabelStyleEditor, { style: style, locale: locale, onChange: onChange, isLine: true }));
 };
 var PolygonStyleEditor = function (_a) {
     var style = _a.style, onChange = _a.onChange, locale = _a.locale;
     return React.createElement("div", null,
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PL_FILL_COLOR", locale) },
-            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.fill.color, onChange: function (c) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { fill: { color: c, alpha: style.fill.alpha } })); } })),
+            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.fill.color, onChange: function (c) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { fill: { color: c, alpha: style.fill.alpha } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PL_FILL_COLOR_ALPHA", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.fill.alpha, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { fill: { color: style.fill.color, alpha: n } })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.fill.alpha, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { fill: { color: style.fill.color, alpha: n } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PL_OUTLINE_COLOR", locale) },
-            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.stroke.color, onChange: function (c) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })); } })),
+            React.createElement(common_1.ColorExprEditor, { locale: locale, value: style.stroke.color, onChange: function (c) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: c, width: style.stroke.width, alpha: style.stroke.alpha } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PL_OUTLINE_COLOR_ALPHA", locale) },
-            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.stroke.alpha, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })); } })),
+            React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 255, labelStepSize: 255, value: style.stroke.alpha, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: style.stroke.color, width: style.stroke.width, alpha: n } })); } })),
         React.createElement(core_1.FormGroup, { label: (0, i18n_1.tr)("VSED_PL_OUTLINE_THICKNESS", locale) },
-            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.stroke.width, min: 1, onChange: function (n) { return onChange((0, tslib_1.__assign)((0, tslib_1.__assign)({}, style), { stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })); } })),
+            React.createElement(common_1.NumberExprEditor, { locale: locale, value: style.stroke.width, min: 1, onChange: function (n) { return onChange(tslib_1.__assign(tslib_1.__assign({}, style), { stroke: { color: style.stroke.color, width: n, alpha: style.stroke.alpha } })); } })),
         React.createElement(LabelStyleEditor, { style: style, locale: locale, onChange: onChange }));
 };
 /**
@@ -19329,12 +19893,12 @@ var VectorLayerStyleEditor = function (props) {
     var _a = React.useState({}), openStyleEditors = _a[0], setOpenStyleEditors = _a[1];
     var onFeatureStyleChanged = function (filter, style) {
         var _a;
-        var updatedStyle = (0, tslib_1.__assign)({}, props.style);
+        var updatedStyle = tslib_1.__assign({}, props.style);
         updatedStyle[filter] = style;
         (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, updatedStyle);
     };
     var onToggleStyleEditor = function (index, visible) {
-        var opEds = (0, tslib_1.__assign)({}, openStyleEditors);
+        var opEds = tslib_1.__assign({}, openStyleEditors);
         if (!visible) {
             delete opEds[index];
         }
@@ -19351,7 +19915,7 @@ var VectorLayerStyleEditor = function (props) {
             React.createElement("col", { span: 1 }),
             React.createElement("col", { span: 1, style: { width: 32 } })),
         React.createElement("tbody", null,
-            filters.map(function (f, i) { return React.createElement(FilterItem, { key: "filter-" + i, filter: f, isDefault: false, onChange: function (f, s) { return onFeatureStyleChanged(f, s); }, featureStyle: props.style[filters[i]], isStyleEditorOpen: openStyleEditors[f] === true, onToggleStyleEditor: function (isVisible) { return onToggleStyleEditor(f, isVisible); }, locale: props.locale, enableLine: props.enableLine, enablePoint: props.enablePoint, enablePolygon: props.enablePolygon }); }),
+            filters.map(function (f, i) { return React.createElement(FilterItem, { key: "filter-".concat(i), filter: f, isDefault: false, onChange: function (f, s) { return onFeatureStyleChanged(f, s); }, featureStyle: props.style[filters[i]], isStyleEditorOpen: openStyleEditors[f] === true, onToggleStyleEditor: function (isVisible) { return onToggleStyleEditor(f, isVisible); }, locale: props.locale, enableLine: props.enableLine, enablePoint: props.enablePoint, enablePolygon: props.enablePolygon }); }),
             React.createElement(FilterItem, { isDefault: true, onChange: function (f, s) { return onFeatureStyleChanged(ol_style_helpers_1.DEFAULT_STYLE_KEY, s); }, featureStyle: props.style.default, isStyleEditorOpen: openStyleEditors[ol_style_helpers_1.DEFAULT_STYLE_KEY] === true, onToggleStyleEditor: function (isVisible) { return onToggleStyleEditor(ol_style_helpers_1.DEFAULT_STYLE_KEY, isVisible); }, locale: props.locale, enableLine: props.enableLine, enablePoint: props.enablePoint, enablePolygon: props.enablePolygon })));
 };
 exports.VectorLayerStyleEditor = VectorLayerStyleEditor;
@@ -19369,14 +19933,15 @@ exports.VectorLayerStyleEditor = VectorLayerStyleEditor;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewSize = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var ViewSizeContent = function (_a) {
     var gw = _a.gw, gh = _a.gh, unit = _a.unit;
     var str = (0, i18n_1.fmt)("{gw} x {gh} ({unit})", { gw: gw, gh: gh, unit: unit });
-    return React.createElement("span", { dangerouslySetInnerHTML: { __html: str } });
+    return React.createElement("span", { dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)(str) } });
 };
 var ViewSize = function (props) {
     var width = props.width, height = props.height, view = props.view, metersPerUnit = props.metersPerUnit, units = props.units, precision = props.precision, locale = props.locale;
@@ -19400,7 +19965,7 @@ exports.ViewSize = ViewSize;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BLANK_GIF_DATA_URI = exports.LAYER_ID_MG_SEL_OVERLAY = exports.LAYER_ID_MG_BASE = exports.LAYER_ID_BASE = exports.FUSION_REDLINE_NAME = exports.FUSION_MAP_NAME = exports.FUSION_TASKPANE_NAME = exports.WEBLAYOUT_CONTEXTMENU = exports.WEBLAYOUT_TASKMENU = exports.WEBLAYOUT_TOOLBAR = exports.MDF_INFINITY = exports.EMPTY_OBJECT = exports.DEG = exports.NBSP = void 0;
+exports.BLANK_GIF_DATA_URI = exports.LAYER_ID_MG_SEL_OVERLAY = exports.LAYER_ID_MG_DYNAMIC_OVERLAY = exports.LAYER_ID_MG_BASE = exports.LAYER_ID_BASE = exports.FUSION_REDLINE_NAME = exports.FUSION_MAP_NAME = exports.FUSION_TASKPANE_NAME = exports.WEBLAYOUT_CONTEXTMENU = exports.WEBLAYOUT_TASKMENU = exports.WEBLAYOUT_TOOLBAR = exports.MDF_INFINITY = exports.EMPTY_OBJECT = exports.DEG = exports.NBSP = void 0;
 /**
  * Non-breaking space
  */
@@ -19416,6 +19981,10 @@ exports.FUSION_MAP_NAME = "Map";
 exports.FUSION_REDLINE_NAME = "Redline";
 exports.LAYER_ID_BASE = "LAYER_ID_BASE";
 exports.LAYER_ID_MG_BASE = "LAYER_ID_MG_BASE";
+/**
+ * @since 0.14.8
+ */
+exports.LAYER_ID_MG_DYNAMIC_OVERLAY = "LAYER_ID_MG_DYNAMIC_OVERLAY";
 exports.LAYER_ID_MG_SEL_OVERLAY = "LAYER_ID_MG_SEL_OVERLAY";
 exports.BLANK_GIF_DATA_URI = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
@@ -19489,6 +20058,10 @@ var ActionType;
     ActionType["FUSION_SET_LEGEND_VISIBILITY"] = "Fusion/SET_LEGEND_VISIBILITY";
     ActionType["FUSION_SET_SELECTION_PANEL_VISIBILITY"] = "Fusion/SET_SELECTION_PANEL_VISIBILITY";
     //FUSION_SET_OVERVIEW_MAP_VISIBILITY = 'Fusion/SET_OVERVIEW_MAP_VISIBILITY',
+    /**
+     * @since 0.14.8
+     */
+    ActionType["FUSION_SET_TEMPLATE_CUSTOM_DATA"] = "Fusion/SET_TEMPLATE_CUSTOM_DATA";
     ActionType["FLYOUT_OPEN"] = "Flyout/OPEN";
     ActionType["FLYOUT_CLOSE"] = "Flyout/CLOSE";
     ActionType["CONTEXT_MENU_OPEN"] = "ContextMenu/OPEN";
@@ -19499,6 +20072,10 @@ var ActionType;
     ActionType["MODAL_SHOW_COMPONENT"] = "Modal/SHOW_COMPONENT";
     ActionType["MODAL_SHOW_URL"] = "Modal/SHOW_URL";
     ActionType["MODAL_CLOSE"] = "Modal/CLOSE";
+    /**
+     * @since 0.14.8
+     */
+    ActionType["MODAL_UPDATE"] = "Modal/UPDATE";
     /**
      * @since 0.13
      */
@@ -19543,6 +20120,10 @@ var ActionType;
      * @since 0.14
      */
     ActionType["SET_HEATMAP_LAYER_RADIUS"] = "Map/SET_HEATMAP_LAYER_RADIUS";
+    /**
+     * @since 0.14.8
+     */
+    ActionType["SET_APP_SETTING"] = "MapGuide/SET_APP_SETTING";
 })(ActionType = exports.ActionType || (exports.ActionType = {}));
 
 
@@ -19831,21 +20412,22 @@ exports.MAP_MARKER_ICON = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAA
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AddManageLayersContainer = exports.zoomToLayerExtents = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var manage_layers_1 = __webpack_require__(/*! ../components/layer-manager/manage-layers */ "./src/components/layer-manager/manage-layers.tsx");
 var add_layer_1 = __webpack_require__(/*! ../components/layer-manager/add-layer */ "./src/components/layer-manager/add-layer.tsx");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Cluster_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Cluster */ "./node_modules/ol/source/Cluster.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Cluster_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Cluster */ "./node_modules/ol/source/Cluster.js"));
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 function zoomToLayerExtents(layerName, viewer) {
+    var _a;
     var layer = viewer.getLayerManager().getLayer(layerName);
     // If the layer has a WGS84 bbox, we'll use that
     var ll_bbox = layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.WGS84_BBOX);
@@ -19857,7 +20439,7 @@ function zoomToLayerExtents(layerName, viewer) {
         var source = layer.getSource();
         var bounds = void 0;
         if (source instanceof Cluster_1.default) {
-            bounds = source.getSource().getExtent();
+            bounds = (_a = source.getSource()) === null || _a === void 0 ? void 0 : _a.getExtent();
         }
         else {
             bounds = source.getExtent();
@@ -19874,7 +20456,7 @@ function zoomToLayerExtents(layerName, viewer) {
             viewer.zoomToExtent(bounds);
         }
         else {
-            console.warn("Attempted to zoom to invalid bounds for layer: " + layerName);
+            console.warn("Attempted to zoom to invalid bounds for layer: ".concat(layerName));
         }
     }
 }
@@ -19989,23 +20571,24 @@ exports.AddManageLayersContainer = AddManageLayersContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.App = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var layout_1 = __webpack_require__(/*! ../api/registry/layout */ "./src/api/registry/layout.ts");
 var init_1 = __webpack_require__(/*! ../actions/init */ "./src/actions/init.ts");
 var error_1 = __webpack_require__(/*! ../components/error */ "./src/components/error.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var asset_1 = __webpack_require__(/*! ../utils/asset */ "./src/utils/asset.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
-var context_1 = __webpack_require__(/*! ../components/context */ "./src/components/context.ts");
+var context_1 = __webpack_require__(/*! ../components/context */ "./src/components/context.tsx");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var url_state_1 = __webpack_require__(/*! ./url-state */ "./src/containers/url-state.ts");
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
 var template_1 = __webpack_require__(/*! ../actions/template */ "./src/actions/template.ts");
 var context_2 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var AppInner = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(AppInner, _super);
+    tslib_1.__extends(AppInner, _super);
     function AppInner(props) {
         var _this = _super.call(this, props) || this;
         _this.initErrorRenderer = function (err) {
@@ -20023,17 +20606,9 @@ var AppInner = /** @class */ (function (_super) {
         };
         return _this;
     }
-    AppInner.prototype.allowHtmlValuesInSelection = function () {
-        var _a, _b, _c;
-        return (_c = (_b = (_a = this.props.mapguide) === null || _a === void 0 ? void 0 : _a.selectionSettings) === null || _b === void 0 ? void 0 : _b.allowHtmlValues) !== null && _c !== void 0 ? _c : false;
-    };
-    AppInner.prototype.getHtmlCleaner = function () {
-        var _a, _b, _c;
-        return (_c = (_b = (_a = this.props.mapguide) === null || _a === void 0 ? void 0 : _a.selectionSettings) === null || _b === void 0 ? void 0 : _b.cleanHtml) !== null && _c !== void 0 ? _c : (function (v) { return v; });
-    };
     AppInner.prototype.componentDidMount = function () {
         var _a;
-        var _b = this.props, onInit = _b.onInit, setElementVisibility = _b.setElementVisibility, mapguide = _b.mapguide, initLayout = _b.initLayout, locale = _b.locale, resourceId = _b.resourceId, externalBaseLayers = _b.externalBaseLayers, initCommand = _b.initCommand;
+        var _b = this.props, onInit = _b.onInit, setElementVisibility = _b.setElementVisibility, mapguide = _b.mapguide, initLayout = _b.initLayout, locale = _b.locale, resourceId = _b.resourceId, externalBaseLayers = _b.externalBaseLayers, initCommand = _b.initCommand, appSettings = _b.appSettings;
         var _c = (0, url_state_1.getStateFromUrl)(this.props.urlPropsIgnore), urlLocale = _c.locale, urlResource = _c.resource, urlSession = _c.session, urlX = _c.x, urlY = _c.y, urlFeatureTooltip = _c.ft, urlScale = _c.scale, urlMap = _c.map, urlShowLayers = _c.sl, urlHideLayers = _c.hl, urlShowGroups = _c.sg, urlHideGroups = _c.hg;
         if (setElementVisibility && (mapguide === null || mapguide === void 0 ? void 0 : mapguide.initialElementVisibility)) {
             var _d = mapguide.initialElementVisibility, taskpane = _d.taskpane, legend = _d.legend, selection = _d.selection;
@@ -20044,7 +20619,7 @@ var AppInner = /** @class */ (function (_super) {
             };
             setElementVisibility(states);
         }
-        (0, logger_1.debug)("Asset root is: " + (0, asset_1.getAssetRoot)());
+        (0, logger_1.debug)("Asset root is: ".concat((0, asset_1.getAssetRoot)()));
         if (mapguide === null || mapguide === void 0 ? void 0 : mapguide.fusionRoot) {
             (0, runtime_1.setFusionRoot)(mapguide.fusionRoot);
         }
@@ -20074,34 +20649,35 @@ var AppInner = /** @class */ (function (_super) {
             var slArgs = void 0;
             if (urlShowLayers) {
                 slArgs = {
-                    initialShowLayers: (0, tslib_1.__spreadArray)([], urlShowLayers, true)
+                    initialShowLayers: tslib_1.__spreadArray([], urlShowLayers, true)
                 };
             }
             var hlArgs = void 0;
             if (urlHideLayers) {
                 hlArgs = {
-                    initialHideLayers: (0, tslib_1.__spreadArray)([], urlHideLayers, true)
+                    initialHideLayers: tslib_1.__spreadArray([], urlHideLayers, true)
                 };
             }
             var sgArgs = void 0;
             if (urlShowGroups) {
                 sgArgs = {
-                    initialShowGroups: (0, tslib_1.__spreadArray)([], urlShowGroups, true)
+                    initialShowGroups: tslib_1.__spreadArray([], urlShowGroups, true)
                 };
             }
             var hgArgs = void 0;
             if (urlHideGroups) {
                 hgArgs = {
-                    initialHideGroups: (0, tslib_1.__spreadArray)([], urlHideGroups, true)
+                    initialHideGroups: tslib_1.__spreadArray([], urlHideGroups, true)
                 };
             }
-            var args = (0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({
+            var args = tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({
                 resourceId: urlResource !== null && urlResource !== void 0 ? urlResource : resourceId,
                 locale: (_a = urlLocale !== null && urlLocale !== void 0 ? urlLocale : locale) !== null && _a !== void 0 ? _a : i18n_1.DEFAULT_LOCALE,
                 externalBaseLayers: externalBaseLayers,
                 session: urlSession !== null && urlSession !== void 0 ? urlSession : mapguide === null || mapguide === void 0 ? void 0 : mapguide.session,
                 onInit: onInit,
-                layout: typeof (this.props.layout) == 'string' ? this.props.layout : undefined
+                layout: typeof (this.props.layout) == 'string' ? this.props.layout : undefined,
+                appSettings: appSettings
             }, (ftArgs !== null && ftArgs !== void 0 ? ftArgs : {})), (amArgs !== null && amArgs !== void 0 ? amArgs : {})), (ivArgs !== null && ivArgs !== void 0 ? ivArgs : {})), (slArgs !== null && slArgs !== void 0 ? slArgs : {})), (hlArgs !== null && hlArgs !== void 0 ? hlArgs : {})), (sgArgs !== null && sgArgs !== void 0 ? sgArgs : {})), (hgArgs !== null && hgArgs !== void 0 ? hgArgs : {}));
             initLayout(initCommand, args);
         }
@@ -20179,7 +20755,10 @@ var AppInner = /** @class */ (function (_super) {
                 }
             }
         }
-        (0, url_state_1.updateUrl)(nextUrlState);
+        if (!(0, url_state_1.areStatesEqual)(curUrlState, nextUrlState))
+            (0, url_state_1.updateUrl)(nextUrlState, undefined, nextProps.urlPropsIgnore);
+        //else
+        //    console.log("Skip pointless url state update");
     };
     AppInner.prototype.renderErrorMessage = function (err, locale, args) {
         var _this = this;
@@ -20187,22 +20766,22 @@ var AppInner = /** @class */ (function (_super) {
         switch (msg) {
             case "MgConnectionFailedException":
                 {
-                    var arg = { __html: (0, i18n_1.tr)("INIT_ERROR_NO_CONNECTION", locale) };
+                    var arg = { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("INIT_ERROR_NO_CONNECTION", locale)) };
                     return React.createElement("div", { dangerouslySetInnerHTML: arg });
                 }
             case "MgResourceNotFoundException":
                 {
-                    var arg = { __html: (0, i18n_1.tr)("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId }) };
+                    var arg = { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) };
                     return React.createElement("div", { dangerouslySetInnerHTML: arg });
                 }
             case "MgSessionExpiredException":
                 {
-                    var arg = { __html: (0, i18n_1.tr)("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session }) };
+                    var arg = { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) };
                     return React.createElement("div", { dangerouslySetInnerHTML: arg });
                 }
             default:
                 {
-                    var arg = { __html: msg };
+                    var arg = { __html: (0, dompurify_1.sanitize)(msg) };
                     var stack_1 = (0, error_1.normalizeStack)(err);
                     return React.createElement("div", null,
                         React.createElement("div", { dangerouslySetInnerHTML: arg }),
@@ -20210,16 +20789,16 @@ var AppInner = /** @class */ (function (_super) {
                             if (_this.props.includeStack === true && stack_1.length > 0) {
                                 return React.createElement("div", null,
                                     React.createElement("p", null, "Stack Trace"),
-                                    React.createElement("ul", null, stack_1.map(function (ln, i) { return React.createElement("li", { key: "stack-line-" + i }, ln); })));
+                                    React.createElement("ul", null, stack_1.map(function (ln, i) { return React.createElement("li", { key: "stack-line-".concat(i) }, ln); })));
                             }
                         })());
                 }
         }
     };
     AppInner.prototype.render = function () {
-        var _this = this;
         var _a = this.props, layout = _a.layout, configuredLocale = _a.configuredLocale, error = _a.error;
         var isLoading = this.state.isLoading;
+        this.props.mapguide;
         if (error) {
             return React.createElement(error_1.Error, { error: error, errorRenderer: this.initErrorRenderer });
         }
@@ -20232,11 +20811,7 @@ var AppInner = /** @class */ (function (_super) {
             else {
                 var layoutEl = typeof (layout) == 'string' ? (0, layout_1.getLayout)(layout) : layout.factory;
                 if (layoutEl) {
-                    var providerImpl = {
-                        allowHtmlValuesInSelection: function () { return _this.allowHtmlValuesInSelection(); },
-                        getHTMLCleaner: function () { return _this.getHtmlCleaner(); }
-                    };
-                    return React.createElement(context_1.AppContext.Provider, { value: providerImpl }, layoutEl());
+                    return React.createElement(context_1.AppContextProvider, { mapguide: this.props.mapguide }, layoutEl());
                 }
                 else {
                     return React.createElement(error_1.Error, { error: (0, i18n_1.tr)("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout }) });
@@ -20257,7 +20832,7 @@ var App = function (props) {
     var dispatch = (0, context_2.useReduxDispatch)();
     var initLayoutAction = function (cmd, args) { return dispatch((0, init_1.initLayout)(cmd, args)); };
     var setElementVisibility = function (state) { return dispatch((0, template_1.setElementStates)(state)); };
-    return React.createElement(AppInner, (0, tslib_1.__assign)({ error: error, includeStack: includeStack, initOptions: initOptions, featureTooltipsEnabled: ftEnabled, configuredLocale: configuredLocale, map: map, activeMapName: activeMapName, initLayout: initLayoutAction, setElementVisibility: setElementVisibility }, props));
+    return React.createElement(AppInner, tslib_1.__assign({ error: error, includeStack: includeStack, initOptions: initOptions, featureTooltipsEnabled: ftEnabled, configuredLocale: configuredLocale, map: map, activeMapName: activeMapName, initLayout: initLayoutAction, setElementVisibility: setElementVisibility }, props));
 };
 exports.App = App;
 
@@ -20274,8 +20849,8 @@ exports.App = App;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseLayerSwitcherContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var base_layer_switcher_1 = __webpack_require__(/*! ../components/base-layer-switcher */ "./src/components/base-layer-switcher.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
@@ -20283,7 +20858,7 @@ var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "
 var BaseLayerSwitcherContainer = function () {
     var mapName = (0, hooks_1.useActiveMapName)();
     var locale = (0, hooks_1.useViewerLocale)();
-    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)(false);
+    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)();
     var dispatch = (0, context_1.useReduxDispatch)();
     var setBaseLayerAction = function (mapName, layerName) { return dispatch((0, map_1.setBaseLayer)(mapName, layerName)); };
     var onBaseLayerChanged = function (layerName) {
@@ -20313,22 +20888,23 @@ exports.BaseLayerSwitcherContainer = BaseLayerSwitcherContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CoordinateTrackerContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
-var olProj = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
+var olProj = tslib_1.__importStar(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var CoordinateTrackerContainer = function (props) {
     var projections = props.projections;
+    var aProjections = Array.isArray(projections) ? projections : [projections];
     var locale = (0, hooks_1.useViewerLocale)();
     var mouse = (0, hooks_1.useCurrentMouseCoordinates)();
     var proj = (0, hooks_mapguide_1.useActiveMapProjection)();
-    if (projections && projections.length) {
+    if (aProjections && aProjections.length) {
         return React.createElement("div", { style: { margin: 8 } },
             React.createElement("h4", { className: "bp3-heading" }, (0, i18n_1.tr)("COORDTRACKER", locale)),
-            projections.map(function (p) {
+            aProjections.map(function (p) {
                 var _a;
                 var x = NaN;
                 var y = NaN;
@@ -20371,8 +20947,8 @@ exports.CoordinateTrackerContainer = CoordinateTrackerContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FlyoutRegionContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var flyout_region_1 = __webpack_require__(/*! ../components/flyout-region */ "./src/components/flyout-region.tsx");
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -20489,7 +21065,7 @@ function useActiveMapProjection() {
             var map = (_a = state.mapState[state.config.activeMapName].mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap;
             var subject = (_b = state.mapState[state.config.activeMapName].generic) === null || _b === void 0 ? void 0 : _b.subject;
             if (map) {
-                proj = "EPSG:" + map.CoordinateSystem.EpsgCode;
+                proj = "EPSG:".concat(map.CoordinateSystem.EpsgCode);
             }
             else if (subject) {
                 proj = (_c = subject.meta) === null || _c === void 0 ? void 0 : _c.projection;
@@ -20594,8 +21170,8 @@ exports.useActiveMapState = useActiveMapState;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.useTemplateSelectionVisible = exports.useTemplateTaskPaneVisible = exports.useTemplateLegendVisible = exports.useConfiguredCapabilities = exports.useConfiguredUndoLastPointKey = exports.useConfiguredCancelDigitizationKey = exports.useConfiguredLoadIndicatorColor = exports.useConfiguredLoadIndicatorPositioning = exports.useConfiguredManualFeatureTooltips = exports.useViewerSelectCanDragPan = exports.useViewerFeatureTooltipsEnabled = exports.useViewerPointSelectionBuffer = exports.useViewerActiveFeatureSelectionColor = exports.useViewerSelectionColor = exports.useViewerSelectionImageFormat = exports.useViewerImageFormat = exports.useViewerIsStateless = exports.useIsContextMenuOpen = exports.useConfiguredAgentKind = exports.useConfiguredAgentUri = exports.useConfiguredCoordinateFormat = exports.useConfiguredCoordinateDecimals = exports.useConfiguredCoordinateProjection = exports.useViewerViewRotationEnabled = exports.useViewerActiveTool = exports.useViewerViewRotation = exports.useViewerBusyCount = exports.useAvailableMaps = exports.useActiveMapInitialView = exports.useActiveMapClientSelectionSet = exports.useCustomAppSettings = exports.useActiveMapSelectionSet = exports.useActiveMapBranch = exports.getActiveMapBranch = exports.useInitErrorOptions = exports.useInitErrorStack = exports.useInitError = exports.useInitWarnings = exports.useViewerFlyouts = exports.useCurrentMouseCoordinates = exports.useActiveMapExternalBaseLayers = exports.useViewerSizeUnits = exports.useActiveMapHeight = exports.useActiveMapWidth = exports.useActiveMapView = exports.useViewerLocale = exports.useActiveMapLayers = exports.useActiveMapInitialExternalLayers = exports.useActiveMapName = exports.usePrevious = void 0;
-exports.useReducedToolbarAppState = exports.useLastDispatchedAction = exports.useTaskPaneNavigationStack = exports.useTaskPaneLastUrlPushed = exports.useTaskPaneNavigationIndex = exports.useTaskPaneInitialUrl = exports.useTemplateInitialTaskPaneWidth = exports.useTemplateInitialInfoPaneWidth = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+exports.useReducedToolbarAppState = exports.useLastDispatchedAction = exports.useTaskPaneNavigationStack = exports.useTaskPaneLastUrlPushed = exports.useTaskPaneNavigationIndex = exports.useTaskPaneInitialUrl = exports.useTemplateCustomData = exports.useTemplateInitialTaskPaneWidth = exports.useTemplateInitialInfoPaneWidth = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
@@ -20676,12 +21252,12 @@ exports.useViewerSizeUnits = useViewerSizeUnits;
 /**
  * Gets the current set of available external base layers
  *
- * @param includeNonVisual Include "non-visual" base layers like UTFGrid tile sets
  * @returns The current set of available external base layers
  * @since 0.14 New required includeNonVisual parameter
+ * @since 0.14.9 Removed includeNonVisual parameter. Let the hook caller determine themselves if non-visual base layers should be omitted
  */
-function useActiveMapExternalBaseLayers(includeNonVisual) {
-    return (0, context_1.useAppState)(function (state) { return (0, common_1.getExternalBaseLayers)(state, includeNonVisual); });
+function useActiveMapExternalBaseLayers() {
+    return (0, context_1.useAppState)(function (state) { return (0, common_1.getExternalBaseLayers)(state); });
 }
 exports.useActiveMapExternalBaseLayers = useActiveMapExternalBaseLayers;
 function useCurrentMouseCoordinates() {
@@ -20880,6 +21456,16 @@ function useTemplateInitialTaskPaneWidth() {
     return (0, context_1.useAppState)(function (state) { return state.template.initialTaskPaneWidth; });
 }
 exports.useTemplateInitialTaskPaneWidth = useTemplateInitialTaskPaneWidth;
+/**
+ *
+ * @param key
+ * @returns
+ * @since 0.14.8
+ */
+function useTemplateCustomData(key) {
+    return (0, context_1.useAppState)(function (state) { return state.template.templateData[key]; });
+}
+exports.useTemplateCustomData = useTemplateCustomData;
 function useTaskPaneInitialUrl() {
     return (0, context_1.useAppState)(function (state) { return state.taskpane.initialUrl; });
 }
@@ -20924,7 +21510,7 @@ function useReducedToolbarAppState() {
     if (clientSelection && clientSelection.layers.length > 0) {
         hasClientSelection = true;
     }
-    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, tbState), { hasClientSelection: hasClientSelection, hasSelection: hasSelection });
+    return tslib_1.__assign(tslib_1.__assign({}, tbState), { hasClientSelection: hasClientSelection, hasSelection: hasSelection });
 }
 exports.useReducedToolbarAppState = useReducedToolbarAppState;
 
@@ -20941,8 +21527,8 @@ exports.useReducedToolbarAppState = useReducedToolbarAppState;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InitWarningDisplay = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var init_1 = __webpack_require__(/*! ../actions/init */ "./src/actions/init.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
@@ -20981,8 +21567,8 @@ exports.InitWarningDisplay = InitWarningDisplay;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LegendContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var legend_1 = __webpack_require__(/*! ../components/legend */ "./src/components/legend.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -20990,7 +21576,15 @@ var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var legend_2 = __webpack_require__(/*! ../actions/legend */ "./src/actions/legend.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+var context_2 = __webpack_require__(/*! ../components/context */ "./src/components/context.tsx");
 var LegendContainer = function (props) {
+    /**
+     * TODO: Although we've nailed down the majority of excessive re-renders on un-related events, there are still one case
+     * where it should not re-render but currently does: Panning
+     *
+     * Panning does not alter zoom/scale or layer/group structure, things that the Legend does not care about, so what is it?
+     * Another mis-behaving hook? Something else?
+     */
     var maxHeight = props.maxHeight, inlineBaseLayerSwitcher = props.inlineBaseLayerSwitcher;
     var dispatch = (0, context_1.useReduxDispatch)();
     var activeMapName = (0, hooks_1.useActiveMapName)();
@@ -21003,43 +21597,44 @@ var LegendContainer = function (props) {
     var hideLayers = (0, hooks_mapguide_1.useActiveMapHideLayers)();
     var expandedGroups = (0, hooks_mapguide_1.useActiveMapExpandedGroups)();
     var selectableLayers = (0, hooks_mapguide_1.useActiveMapSelectableLayers)();
-    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)(false);
+    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)();
     var stateless = (0, hooks_1.useViewerIsStateless)();
-    var setBaseLayerAction = function (mapName, layerName) { return dispatch((0, map_1.setBaseLayer)(mapName, layerName)); };
-    var setGroupVisibilityAction = function (mapName, options) { return dispatch((0, legend_2.setGroupVisibility)(mapName, options)); };
-    var setLayerVisibilityAction = function (mapName, options) { return dispatch((0, legend_2.setLayerVisibility)(mapName, options)); };
-    var setLayerSelectableAction = function (mapName, options) { return dispatch((0, legend_2.setLayerSelectable)(mapName, options)); };
-    var setGroupExpandedAction = function (mapName, options) { return dispatch((0, legend_2.setGroupExpanded)(mapName, options)); };
+    var appContext = React.useContext(context_2.AppContext);
+    var setBaseLayerAction = React.useCallback(function (mapName, layerName) { return dispatch((0, map_1.setBaseLayer)(mapName, layerName)); }, [dispatch]);
+    var setGroupVisibilityAction = React.useCallback(function (mapName, options) { return dispatch((0, legend_2.setGroupVisibility)(mapName, options)); }, [dispatch]);
+    var setLayerVisibilityAction = React.useCallback(function (mapName, options) { return dispatch((0, legend_2.setLayerVisibility)(mapName, options)); }, [dispatch]);
+    var setLayerSelectableAction = React.useCallback(function (mapName, options) { return dispatch((0, legend_2.setLayerSelectable)(mapName, options)); }, [dispatch]);
+    var setGroupExpandedAction = React.useCallback(function (mapName, options) { return dispatch((0, legend_2.setGroupExpanded)(mapName, options)); }, [dispatch]);
     var layers = (0, hooks_1.useActiveMapLayers)();
-    var onLayerSelectabilityChanged = function (id, selectable) {
+    var onLayerSelectabilityChanged = React.useCallback(function (id, selectable) {
         if (activeMapName) {
             setLayerSelectableAction === null || setLayerSelectableAction === void 0 ? void 0 : setLayerSelectableAction(activeMapName, { id: id, value: selectable });
         }
-    };
-    var onGroupExpansionChanged = function (id, expanded) {
+    }, [setLayerSelectableAction]);
+    var onGroupExpansionChanged = React.useCallback(function (id, expanded) {
         if (setGroupExpandedAction && activeMapName) {
             setGroupExpandedAction(activeMapName, { id: id, value: expanded });
         }
-    };
-    var onGroupVisibilityChanged = function (groupId, visible) {
+    }, [setGroupExpandedAction]);
+    var onGroupVisibilityChanged = React.useCallback(function (groupId, visible) {
         if (setGroupVisibilityAction && activeMapName) {
             setGroupVisibilityAction(activeMapName, { id: groupId, value: visible });
         }
-    };
-    var onLayerVisibilityChanged = function (layerId, visible) {
+    }, [setGroupVisibilityAction]);
+    var onLayerVisibilityChanged = React.useCallback(function (layerId, visible) {
         if (setLayerVisibilityAction && activeMapName) {
             setLayerVisibilityAction(activeMapName, { id: layerId, value: visible });
         }
-    };
-    var onBaseLayerChanged = function (layerName) {
+    }, [setLayerVisibilityAction]);
+    var onBaseLayerChanged = React.useCallback(function (layerName) {
         if (setBaseLayerAction && activeMapName) {
             setBaseLayerAction(activeMapName, layerName);
         }
-    };
+    }, [setBaseLayerAction]);
     if ((map || layers) && view) {
         var scale = view.scale;
         if (scale || layers) {
-            return React.createElement(legend_1.Legend, { map: map, activeMapName: activeMapName, stateless: stateless, maxHeight: maxHeight, currentScale: scale, externalLayers: layers, showLayers: showLayers, showGroups: showGroups, hideLayers: hideLayers, hideGroups: hideGroups, locale: locale, inlineBaseLayerSwitcher: !!inlineBaseLayerSwitcher, externalBaseLayers: externalBaseLayers, onBaseLayerChanged: onBaseLayerChanged, overrideSelectableLayers: selectableLayers, overrideExpandedItems: expandedGroups, onLayerSelectabilityChanged: onLayerSelectabilityChanged, onGroupExpansionChanged: onGroupExpansionChanged, onGroupVisibilityChanged: onGroupVisibilityChanged, onLayerVisibilityChanged: onLayerVisibilityChanged });
+            return React.createElement(legend_1.Legend, { map: map, activeMapName: activeMapName, stateless: stateless, maxHeight: maxHeight, currentScale: scale, externalLayers: layers, showLayers: showLayers, showGroups: showGroups, hideLayers: hideLayers, hideGroups: hideGroups, locale: locale, inlineBaseLayerSwitcher: !!inlineBaseLayerSwitcher, externalBaseLayers: externalBaseLayers, onBaseLayerChanged: onBaseLayerChanged, overrideSelectableLayers: selectableLayers, overrideExpandedItems: expandedGroups, onLayerSelectabilityChanged: onLayerSelectabilityChanged, onGroupExpansionChanged: onGroupExpansionChanged, onGroupVisibilityChanged: onGroupVisibilityChanged, onLayerVisibilityChanged: onLayerVisibilityChanged, provideExtraLayerIconsHtml: appContext.getLegendLayerExtraIconsProvider, provideExtraGroupIconsHtml: appContext.getLegendGroupExtraIconsProvider });
         }
         else {
             return React.createElement("div", null, (0, i18n_1.tr)("LOADING_MSG", locale));
@@ -21064,15 +21659,15 @@ exports.LegendContainer = LegendContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapCapturerContext = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
-var olExtent = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
-var Feature_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
-var Collection_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/Collection */ "./node_modules/ol/Collection.js"));
-var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
-var Vector_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
-var Vector_2 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
-var Translate_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/interaction/Translate */ "./node_modules/ol/interaction/Translate.js"));
+var olExtent = tslib_1.__importStar(__webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js"));
+var Feature_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Feature */ "./node_modules/ol/Feature.js"));
+var Collection_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/Collection */ "./node_modules/ol/Collection.js"));
+var Polygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
+var Vector_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/source/Vector */ "./node_modules/ol/source/Vector.js"));
+var Vector_2 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Vector */ "./node_modules/ol/layer/Vector.js"));
+var Translate_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/interaction/Translate */ "./node_modules/ol/interaction/Translate.js"));
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
 var MapCapturerContext = /** @class */ (function () {
     function MapCapturerContext(viewer, mapName, rotation) {
@@ -21091,7 +21686,7 @@ var MapCapturerContext = /** @class */ (function () {
             features: this.features
         });
         this.intTranslate.on("translateend", this.onTranslateEnd.bind(this));
-        this.layerName = mapName + "_MapCapturer";
+        this.layerName = "".concat(mapName, "_MapCapturer");
     }
     MapCapturerContext.prototype.getRing = function (origin, paperSize, scaleDenominator) {
         var ring = [];
@@ -21107,13 +21702,13 @@ var MapCapturerContext = /** @class */ (function () {
             var box = this.features.item(0);
             var poly = box.getGeometry();
             var coords = poly.getCoordinates()[0];
-            var boxCoords = coords.map(function (c) { return c[0] + "," + c[1]; }).join(",");
+            var boxCoords = coords.map(function (c) { return "".concat(c[0], ",").concat(c[1]); }).join(",");
             //Process normalized one
             var npoly = poly.clone();
             var ncenter = olExtent.getCenter(npoly.getExtent());
             npoly.rotate((0, number_1.deg2rad)(this.rotation), ncenter);
             var ncoords = npoly.getCoordinates()[0];
-            var nBoxCoords = ncoords.map(function (c) { return c[0] + "," + c[1]; }).join(",");
+            var nBoxCoords = ncoords.map(function (c) { return "".concat(c[0], ",").concat(c[1]); }).join(",");
             this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     };
@@ -21137,13 +21732,13 @@ var MapCapturerContext = /** @class */ (function () {
                 poly.rotate(-(0, number_1.deg2rad)(this.rotation), center);
             }
             var coords = poly.getCoordinates()[0];
-            var boxCoords = coords.map(function (c) { return c[0] + "," + c[1]; }).join(",");
+            var boxCoords = coords.map(function (c) { return "".concat(c[0], ",").concat(c[1]); }).join(",");
             //Process normalized one
             var npoly = poly.clone();
             var ncenter = olExtent.getCenter(npoly.getExtent());
             npoly.rotate((0, number_1.deg2rad)(this.rotation), ncenter);
             var ncoords = npoly.getCoordinates()[0];
-            var nBoxCoords = ncoords.map(function (c) { return c[0] + "," + c[1]; }).join(",");
+            var nBoxCoords = ncoords.map(function (c) { return "".concat(c[0], ",").concat(c[1]); }).join(",");
             this.activeCallback.updateBoxCoords(boxCoords, nBoxCoords);
         }
     };
@@ -21160,14 +21755,14 @@ var MapCapturerContext = /** @class */ (function () {
     MapCapturerContext.prototype.getMapName = function () { return this.mapName; };
     MapCapturerContext.prototype.activate = function (callback, paperSize, scaleDenominator, rotation) {
         this.activeCallback = callback;
-        (0, logger_1.debug)("Activating map capturer context for " + this.mapName);
+        (0, logger_1.debug)("Activating map capturer context for ".concat(this.mapName));
         this.viewer.getLayerManager().addLayer(this.layerName, this.mapCapturerLayer, true);
         this.updateBox(paperSize, scaleDenominator, rotation);
         this.viewer.addInteraction(this.intTranslate);
     };
     MapCapturerContext.prototype.deactivate = function () {
         this.activeCallback = undefined;
-        (0, logger_1.debug)("De-activating map capturer context for " + this.mapName);
+        (0, logger_1.debug)("De-activating map capturer context for ".concat(this.mapName));
         this.features.clear();
         this.viewer.getLayerManager().removeLayer(this.layerName);
         this.viewer.removeInteraction(this.intTranslate);
@@ -21189,8 +21784,8 @@ exports.MapCapturerContext = MapCapturerContext;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapMenuContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var map_menu_1 = __webpack_require__(/*! ../components/map-menu */ "./src/components/map-menu.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
@@ -21228,15 +21823,14 @@ exports.MapMenuContainer = MapMenuContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MeasureContext = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
-var olObservable = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/Observable */ "./node_modules/ol/Observable.js"));
-var olSphere = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/sphere */ "./node_modules/ol/sphere.js"));
-var LineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
-var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
-var OverlayPositioning_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/OverlayPositioning */ "./node_modules/ol/OverlayPositioning.js"));
+var olObservable = tslib_1.__importStar(__webpack_require__(/*! ol/Observable */ "./node_modules/ol/Observable.js"));
+var olSphere = tslib_1.__importStar(__webpack_require__(/*! ol/sphere */ "./node_modules/ol/sphere.js"));
+var LineString_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
+var Polygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
 var logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
 var proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 var LAYER_NAME = "measure-layer";
@@ -21326,7 +21920,7 @@ var MeasureContext = /** @class */ (function () {
         this.viewer = viewer;
         this.mapName = mapName;
         this.parent = parent;
-        this.layerName = LAYER_NAME + "-" + mapName;
+        this.layerName = "".concat(LAYER_NAME, "-").concat(mapName);
         this.olFactory = viewer.getOLFactory();
         this.measureLayer = this.olFactory.createVectorLayer({
             source: this.olFactory.createVectorSource()
@@ -21398,7 +21992,7 @@ var MeasureContext = /** @class */ (function () {
         }
         var output;
         if (isArbitrary && sourceProj instanceof proj_1.Projection) {
-            output = (0, number_1.roundTo)(length, 2) + " " + sourceProj.getUnits();
+            output = "".concat((0, number_1.roundTo)(length, 2), " ").concat(sourceProj.getUnits());
         }
         else {
             if (length > 100) {
@@ -21430,28 +22024,32 @@ var MeasureContext = /** @class */ (function () {
                 area = geom.getArea();
                 // Do euclidean distance
                 var ring = geom.getLinearRing(0);
-                var coordinates = ring.getCoordinates();
-                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                    var c1 = coordinates[i];
-                    var c2 = coordinates[i + 1];
-                    var a = c1[0] - c2[0];
-                    var b = c1[1] - c2[1];
-                    var dist = Math.sqrt(a * a + b * b);
-                    segments.push({ segment: (i + 1), length: dist });
+                if (ring) {
+                    var coordinates = ring.getCoordinates();
+                    for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                        var c1 = coordinates[i];
+                        var c2 = coordinates[i + 1];
+                        var a = c1[0] - c2[0];
+                        var b = c1[1] - c2[1];
+                        var dist = Math.sqrt(a * a + b * b);
+                        segments.push({ segment: (i + 1), length: dist });
+                    }
                 }
             }
             else {
                 area = olSphere.getArea(geom, { projection: sourceProj });
-                (0, logger_1.debug)("Polygon area: " + area);
+                (0, logger_1.debug)("Polygon area: ".concat(area));
                 var ring = geom.getLinearRing(0);
-                var coordinates = ring.getCoordinates();
-                for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-                    // Unlike getArea(), getDistance() requires that our input coordinates are in
-                    // EPSG:4326 first
-                    var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
-                    var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
-                    var dist = olSphere.getDistance(c1, c2);
-                    segments.push({ segment: (i + 1), length: dist });
+                if (ring) {
+                    var coordinates = ring.getCoordinates();
+                    for (var i = 0, ii = coordinates.length - 1; i < ii; ++i) {
+                        // Unlike getArea(), getDistance() requires that our input coordinates are in
+                        // EPSG:4326 first
+                        var c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, 'EPSG:4326');
+                        var c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, 'EPSG:4326');
+                        var dist = olSphere.getDistance(c1, c2);
+                        segments.push({ segment: (i + 1), length: dist });
+                    }
                 }
             }
         }
@@ -21460,7 +22058,7 @@ var MeasureContext = /** @class */ (function () {
         }
         var output;
         if (isArbitrary && sourceProj instanceof proj_1.Projection) {
-            output = (0, number_1.roundTo)(area, 2) + " " + sourceProj.getUnits() + "<sup>2</sup>";
+            output = "".concat((0, number_1.roundTo)(area, 2), " ").concat(sourceProj.getUnits(), "<sup>2</sup>");
         }
         else {
             //TODO: The dynamic switch in display of measurement unit based on size of value may prove to be
@@ -21468,12 +22066,12 @@ var MeasureContext = /** @class */ (function () {
             //display regardless of the size of value
             if (area > 10000) {
                 output = (0, i18n_1.tr)("UNIT_FMT_SQKM", locale, {
-                    value: "" + ((0, number_1.roundTo)(area / 1000000, 2))
+                    value: "".concat(((0, number_1.roundTo)(area / 1000000, 2)))
                 });
             }
             else {
                 output = (0, i18n_1.tr)("UNIT_FMT_SQM", locale, {
-                    value: "" + ((0, number_1.roundTo)(area, 2))
+                    value: "".concat(((0, number_1.roundTo)(area, 2)))
                 });
             }
         }
@@ -21501,7 +22099,7 @@ var MeasureContext = /** @class */ (function () {
         var source = this.measureLayer.getSource();
         return this.olFactory.createInteractionDraw({
             source: source,
-            type: /** @type {ol.geom.GeometryType} */ (type),
+            type: type,
             style: this.olFactory.createStyle({
                 fill: this.olFactory.createStyleFill({
                     color: 'rgba(255, 255, 255, 0.2)'
@@ -21538,7 +22136,7 @@ var MeasureContext = /** @class */ (function () {
         this.helpTooltip = this.olFactory.createOverlay({
             element: this.helpTooltipElement,
             offset: [15, 0],
-            positioning: OverlayPositioning_1.default.CENTER_LEFT
+            positioning: "center-left"
         });
         this.viewer.addOverlay(this.helpTooltip);
     };
@@ -21556,7 +22154,7 @@ var MeasureContext = /** @class */ (function () {
         this.measureTooltip = this.olFactory.createOverlay({
             element: this.measureTooltipElement,
             offset: [0, -15],
-            positioning: OverlayPositioning_1.default.BOTTOM_CENTER
+            positioning: "bottom-center"
         });
         this.viewer.addOverlay(this.measureTooltip);
     };
@@ -21595,9 +22193,10 @@ var MeasureContext = /** @class */ (function () {
         this.removeElement(this.helpTooltipElement);
     };
     MeasureContext.prototype.clearMeasurements = function () {
-        this.measureLayer.getSource().clear();
-        for (var _i = 0, _a = this.measureOverlays; _i < _a.length; _i++) {
-            var ov = _a[_i];
+        var _a;
+        (_a = this.measureLayer.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
+        for (var _i = 0, _b = this.measureOverlays; _i < _b.length; _i++) {
+            var ov = _b[_i];
             this.viewer.removeOverlay(ov);
         }
         this.measureOverlays.length = 0; //Clear
@@ -21622,7 +22221,7 @@ var MeasureContext = /** @class */ (function () {
      */
     MeasureContext.prototype.activate = function (mapName, callback) {
         this.callback = callback;
-        (0, logger_1.debug)("Activating measure context for " + this.mapName);
+        (0, logger_1.debug)("Activating measure context for ".concat(this.mapName));
         for (var _i = 0, _a = this.measureOverlays; _i < _a.length; _i++) {
             var ov = _a[_i];
             this.viewer.addOverlay(ov);
@@ -21637,7 +22236,7 @@ var MeasureContext = /** @class */ (function () {
      */
     MeasureContext.prototype.deactivate = function (mapName) {
         this.callback = undefined;
-        (0, logger_1.debug)("De-activating measure context for " + this.mapName);
+        (0, logger_1.debug)("De-activating measure context for ".concat(this.mapName));
         this.endMeasure();
         for (var _i = 0, _a = this.measureOverlays; _i < _a.length; _i++) {
             var ov = _a[_i];
@@ -21662,8 +22261,8 @@ exports.MeasureContext = MeasureContext;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MeasureContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -21671,14 +22270,14 @@ var measure_context_1 = __webpack_require__(/*! ./measure-context */ "./src/cont
 var number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
-var GeometryType_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/GeometryType */ "./node_modules/ol/geom/GeometryType.js"));
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var layer_set_1 = __webpack_require__(/*! ../api/layer-set */ "./src/api/layer-set.ts");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 var _measurements = [];
 var MeasureContainerInner = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(MeasureContainerInner, _super);
+    tslib_1.__extends(MeasureContainerInner, _super);
     function MeasureContainerInner(props) {
         var _this = _super.call(this, props) || this;
         _this.onTypeChanged = function (e) {
@@ -21712,7 +22311,7 @@ var MeasureContainerInner = /** @class */ (function (_super) {
         };
         _this.state = {
             measuring: false,
-            drawType: GeometryType_1.default.LINE_STRING // "LineString"
+            drawType: "LineString"
         };
         return _this;
     }
@@ -21839,10 +22438,10 @@ var MeasureContainerInner = /** @class */ (function (_super) {
                                                 React.createElement("th", null, (0, i18n_1.tr)("MEASURE_LENGTH", locale)))),
                                         React.createElement("tbody", null,
                                             _this.state.segments.map(function (s) {
-                                                return React.createElement("tr", { key: "segment-" + s.segment },
+                                                return React.createElement("tr", { key: "segment-".concat(s.segment) },
                                                     React.createElement("td", null, (0, i18n_1.tr)("MEASURE_SEGMENT_PART", locale, { segment: s.segment })),
                                                     measureUnits
-                                                        ? React.createElement("td", null, (0, number_1.roundTo)(s.length, 2) + " " + (0, layer_set_1.toProjUnit)(measureUnits))
+                                                        ? React.createElement("td", null, "".concat((0, number_1.roundTo)(s.length, 2), " ").concat((0, layer_set_1.toProjUnit)(measureUnits)))
                                                         : React.createElement("td", null, (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: (0, number_1.roundTo)(s.length, 2) })));
                                             }),
                                             (function () {
@@ -21853,16 +22452,16 @@ var MeasureContainerInner = /** @class */ (function (_super) {
                                                                 React.createElement("td", null,
                                                                     React.createElement("strong", null, (0, i18n_1.tr)("MEASURE_TOTAL_AREA", locale))),
                                                                 React.createElement("td", null, measureUnits
-                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, number_1.roundTo)(_this.state.segmentTotal, 4) + " " + (0, layer_set_1.toProjUnit)(measureUnits) + " <sup>2</sup>" } })
-                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_SQM", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
+                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: "".concat((0, number_1.roundTo)(_this.state.segmentTotal, 4), " ").concat((0, layer_set_1.toProjUnit)(measureUnits), " <sup>2</sup>") } })
+                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("UNIT_FMT_SQM", locale, { value: "".concat((0, number_1.roundTo)(_this.state.segmentTotal, 4)) })) } })));
                                                         }
                                                         else {
                                                             return React.createElement(React.Fragment, null,
                                                                 React.createElement("td", null,
                                                                     React.createElement("strong", null, (0, i18n_1.tr)("MEASURE_TOTAL_LENGTH", locale))),
                                                                 React.createElement("td", null, measureUnits
-                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, number_1.roundTo)(_this.state.segmentTotal, 4) + " " + (0, layer_set_1.toProjUnit)(measureUnits) } })
-                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, i18n_1.tr)("UNIT_FMT_M", locale, { value: "" + (0, number_1.roundTo)(_this.state.segmentTotal, 4) }) } })));
+                                                                    ? React.createElement("div", { dangerouslySetInnerHTML: { __html: "".concat((0, number_1.roundTo)(_this.state.segmentTotal, 4), " ").concat((0, layer_set_1.toProjUnit)(measureUnits)) } })
+                                                                    : React.createElement("div", { dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)((0, i18n_1.tr)("UNIT_FMT_M", locale, { value: "".concat((0, number_1.roundTo)(_this.state.segmentTotal, 4)) })) } })));
                                                         }
                                                     })());
                                                 }
@@ -21883,7 +22482,7 @@ var MeasureContainer = function (props) {
     var setActiveToolAction = function (tool) { return dispatch((0, map_1.setActiveTool)(tool)); };
     var isArbitrary = (0, hooks_mapguide_1.useActiveMapIsArbitraryCoordSys)();
     var projUnits = (0, hooks_mapguide_1.useActiveMapProjectionUnits)();
-    return React.createElement(MeasureContainerInner, (0, tslib_1.__assign)({ activeMapName: activeMapName, locale: locale, mapNames: mapNames, setActiveTool: setActiveToolAction, measureUnits: isArbitrary ? projUnits : undefined }, props));
+    return React.createElement(MeasureContainerInner, tslib_1.__assign({ activeMapName: activeMapName, locale: locale, mapNames: mapNames, setActiveTool: setActiveToolAction, measureUnits: isArbitrary ? projUnits : undefined }, props));
 };
 exports.MeasureContainer = MeasureContainer;
 
@@ -21900,12 +22499,13 @@ exports.MeasureContainer = MeasureContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ModalLauncher = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var modal_dialog_1 = __webpack_require__(/*! ../components/modal-dialog */ "./src/components/modal-dialog.tsx");
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var error_1 = __webpack_require__(/*! ../components/error */ "./src/components/error.tsx");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var never_1 = __webpack_require__(/*! ../utils/never */ "./src/utils/never.ts");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
@@ -21929,19 +22529,23 @@ var ModalLauncher = function (props) {
     var onCloseModal = function (name) { return hideModalAction(name); };
     var modal = (0, context_1.useAppState)(function (state) { return state.modal; });
     var locale = (0, hooks_1.useViewerLocale)();
-    var MODAL_INIT_X = 500;
-    var MODAL_INIT_Y = 80;
+    var onModalChanged = function (name, args) {
+        dispatch((0, modal_1.updateModal)(name, args));
+    };
     if (!modal) {
         return React.createElement("noscript", null);
     }
     return React.createElement("div", null,
         Object.keys(modal).map(function (key) {
+            var _a, _b;
             var diag = modal[key];
+            var pos = (_a = diag.modal.position) !== null && _a !== void 0 ? _a : common_1.DEFAULT_MODAL_POSITION;
+            var size = (_b = diag.modal.size) !== null && _b !== void 0 ? _b : common_1.DEFAULT_MODAL_SIZE;
             if ((0, type_guards_1.isModalComponentDisplayOptions)(diag) || ((0, type_guards_1.isModalDisplayOptions)(diag) && (0, url_1.isComponentUri)(diag.url))) {
                 var componentId_1 = getComponentId(diag);
                 if (componentId_1) {
                     var componentRenderer_1 = (0, component_1.getComponentFactory)(componentId_1.name);
-                    return React.createElement(modal_dialog_1.RndModalDialog, { title: diag.modal.title, x: MODAL_INIT_X, y: MODAL_INIT_Y, locale: locale, enableInteractionMask: true, width: diag.modal.size[0], height: diag.modal.size[1], disableYOverflow: !diag.modal.overflowYScroll, isOpen: true, key: key, onClose: function () { return onCloseModal(key); } }, function (_a) {
+                    return React.createElement(modal_dialog_1.RndModalDialog, { title: diag.modal.title, x: pos[0], y: pos[1], locale: locale, enableInteractionMask: true, width: size[0], height: size[1], disableYOverflow: !diag.modal.overflowYScroll, isOpen: true, key: key, onChange: function (args) { return onModalChanged(key, args); }, onClose: function () { return onCloseModal(key); } }, function (_a) {
                         if (componentRenderer_1) {
                             if ((0, type_guards_1.isModalComponentDisplayOptions)(diag))
                                 return componentRenderer_1(diag.componentProps);
@@ -21958,14 +22562,13 @@ var ModalLauncher = function (props) {
                 }
             }
             else if ((0, type_guards_1.isModalDisplayOptions)(diag)) {
-                return React.createElement(modal_dialog_1.RndModalDialog, { title: diag.modal.title, isOpen: true, key: key, x: MODAL_INIT_X, y: MODAL_INIT_Y, locale: locale, enableInteractionMask: false, width: diag.modal.size[0], height: diag.modal.size[1], onClose: function () { return onCloseModal(key); } }, function (_a) {
+                return React.createElement(modal_dialog_1.RndModalDialog, { title: diag.modal.title, isOpen: true, key: key, x: pos[0], y: pos[1], locale: locale, enableInteractionMask: false, width: size[0], height: size[1], onChange: function (args) { return onModalChanged(key, args); }, onClose: function () { return onCloseModal(key); } }, function (_a) {
                     var w = _a[0], h = _a[1];
                     return React.createElement("iframe", { frameBorder: 0, src: diag.url, width: w, height: h });
                 });
-            }
-            else {
-                (0, never_1.assertNever)(diag);
-            }
+            } /* else {
+                assertNever(diag);
+            }*/
         }),
         props.children);
 };
@@ -21984,11 +22587,11 @@ exports.ModalLauncher = ModalLauncher;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MouseCoordinatesContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var mouse_coordinates_1 = __webpack_require__(/*! ../components/mouse-coordinates */ "./src/components/mouse-coordinates.tsx");
-var olProj = (0, tslib_1.__importStar)(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
+var olProj = tslib_1.__importStar(__webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js"));
 var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
@@ -22051,8 +22654,8 @@ exports.MouseCoordinatesContainer = MouseCoordinatesContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.NavigatorContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var navigator_1 = __webpack_require__(/*! ../components/navigator */ "./src/components/navigator.tsx");
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -22130,9 +22733,9 @@ exports.NavigatorContainer = NavigatorContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapViewer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var ReactDOM = tslib_1.__importStar(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var base_1 = __webpack_require__(/*! ../components/map-providers/base */ "./src/components/map-providers/base.ts");
 var assets_1 = __webpack_require__(/*! ../constants/assets */ "./src/constants/assets.ts");
 var map_load_indicator_1 = __webpack_require__(/*! ../components/map-load-indicator */ "./src/components/map-load-indicator.tsx");
@@ -22147,10 +22750,11 @@ var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var flyout_1 = __webpack_require__(/*! ../actions/flyout */ "./src/actions/flyout.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var CoreMapViewer = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(CoreMapViewer, _super);
+    tslib_1.__extends(CoreMapViewer, _super);
     function CoreMapViewer(props) {
         var _this = _super.call(this, props) || this;
         //#region IViewerComponent
+        _this.isShiftKeyDown = function () { return _this.state.shiftKey; };
         _this.selectCanDragPan = function () { return _this.props.selectCanDragPan; };
         _this.isContextMenuOpen = function () { return _this.props.isContextMenuOpen; };
         _this.setDigitizingType = function (digitizingType) { return _this.setState({ digitizingType: digitizingType }); };
@@ -22159,7 +22763,7 @@ var CoreMapViewer = /** @class */ (function (_super) {
         _this.onOpenTooltipLink = function (url) { };
         _this.onDispatch = function (action) { return _this.props.onDispatch(action); };
         _this.addSubscribers = function (props) {
-            var subscribers = (0, tslib_1.__spreadArray)((0, tslib_1.__spreadArray)([], _this.state.subscribers, true), props, true);
+            var subscribers = tslib_1.__spreadArray(tslib_1.__spreadArray([], _this.state.subscribers, true), props, true);
             _this.setState({ subscribers: subscribers });
             return props.map(function (p) { return p.name; });
         };
@@ -22254,58 +22858,60 @@ var CoreMapViewer = /** @class */ (function (_super) {
         this.mounted = false;
     };
     CoreMapViewer.prototype.render = function () {
-        var _a = this.props, context = _a.context, backgroundColor = _a.backgroundColor;
+        var _a = this.props, context = _a.context, backgroundColor = _a.backgroundColor, disableCursors = _a.disableCursors;
         var isMouseDown = this.state.isMouseDown;
         var tool = context.getActiveTool();
         var style = {
             width: "100%",
             height: "100%"
         };
-        if (context.isDigitizing()) {
-            var dtype = this.state.digitizingType;
-            switch (dtype) {
-                case "Point":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_POINT + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Line":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_LINE + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "LineString":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_LINESTRING + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Rectangle":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_RECT + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Polygon":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_POLYGON + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
-                case "Circle":
-                    style.cursor = "url(" + assets_1.CURSOR_DIGITIZE_CIRCLE + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
+        if (!disableCursors) {
+            if (context.isDigitizing()) {
+                var dtype = this.state.digitizingType;
+                switch (dtype) {
+                    case "Point":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_POINT, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Line":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_LINE, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "LineString":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_LINESTRING, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Rectangle":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_RECT, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Polygon":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_POLYGON, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                    case "Circle":
+                        style.cursor = "url(".concat(assets_1.CURSOR_DIGITIZE_CIRCLE, "), auto");
+                        //console.log(`cursor: ${style.cursor}`);
+                        break;
+                }
             }
-        }
-        else {
-            switch (tool) {
-                case common_1.ActiveMapTool.Pan:
-                    if (isMouseDown) {
-                        style.cursor = "url(" + assets_1.CURSOR_GRABBING + "), auto";
+            else {
+                switch (tool) {
+                    case common_1.ActiveMapTool.Pan:
+                        if (isMouseDown) {
+                            style.cursor = "url(".concat(assets_1.CURSOR_GRABBING, "), auto");
+                            //console.log(`cursor: ${style.cursor}`);
+                        }
+                        else {
+                            style.cursor = "url(".concat(assets_1.CURSOR_GRAB, "), auto");
+                            //console.log(`cursor: ${style.cursor}`);
+                        }
+                        break;
+                    case common_1.ActiveMapTool.Zoom:
+                        style.cursor = "url(".concat(assets_1.CURSOR_ZOOM_IN, "), auto");
                         //console.log(`cursor: ${style.cursor}`);
-                    }
-                    else {
-                        style.cursor = "url(" + assets_1.CURSOR_GRAB + "), auto";
-                        //console.log(`cursor: ${style.cursor}`);
-                    }
-                    break;
-                case common_1.ActiveMapTool.Zoom:
-                    style.cursor = "url(" + assets_1.CURSOR_ZOOM_IN + "), auto";
-                    //console.log(`cursor: ${style.cursor}`);
-                    break;
+                        break;
+                }
             }
         }
         if (backgroundColor) {
@@ -22315,7 +22921,7 @@ var CoreMapViewer = /** @class */ (function (_super) {
         var _b = this.state, loading = _b.loading, loaded = _b.loaded, subscribers = _b.subscribers;
         return React.createElement("div", { className: "map-viewer-component", style: style, onContextMenu: this.onContextMenu, onMouseDown: this.onMouseDown, onMouseUp: this.onMouseUp },
             React.createElement(map_load_indicator_1.MapLoadIndicator, { loaded: loaded || 0, loading: loading || 0, position: this.props.loadIndicatorPosition, color: this.props.loadIndicatorColor }),
-            subscribers.map(function (s, i) { return React.createElement(subscriber_1.Subscriber, (0, tslib_1.__assign)({ key: "subscriber-" + i + "-" + s.name }, s)); }),
+            subscribers.map(function (s, i) { return React.createElement(subscriber_1.Subscriber, tslib_1.__assign({ key: "subscriber-".concat(i, "-").concat(s.name) }, s)); }),
             this.props.children);
     };
     return CoreMapViewer;
@@ -22360,7 +22966,7 @@ var MapViewer = function (_a) {
     if (nextState.isReady) {
         return React.createElement(React.Fragment, null,
             React.createElement(core_1.Toaster, { usePortal: false, position: core_1.Position.TOP, ref: toasterRef }),
-            React.createElement(CoreMapViewer, { context: context, onDispatch: dispatch, backgroundColor: bgColor, onContextMenu: onContextMenu, onHideContextMenu: hideContextMenuAction, isContextMenuOpen: bContextMenuOpen, selectCanDragPan: bSelectCanDragPan, loadIndicatorPosition: loadIndicatorPositioning, loadIndicatorColor: loadIndicatorColor }, children));
+            React.createElement(CoreMapViewer, { context: context, onDispatch: dispatch, backgroundColor: bgColor, onContextMenu: onContextMenu, disableCursors: (appSettings === null || appSettings === void 0 ? void 0 : appSettings["DISABLE_CURSORS"]) == "1", onHideContextMenu: hideContextMenuAction, isContextMenuOpen: bContextMenuOpen, selectCanDragPan: bSelectCanDragPan, loadIndicatorPosition: loadIndicatorPositioning, loadIndicatorColor: loadIndicatorColor }, children));
     }
     else {
         return React.createElement("div", null, (0, i18n_1.tr)("LOADING_MSG", locale));
@@ -22381,10 +22987,11 @@ exports.MapViewer = MapViewer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.QuickPlotContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var map_capturer_context_1 = __webpack_require__(/*! ./map-capturer-context */ "./src/containers/map-capturer-context.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -22494,29 +23101,29 @@ function toggleMapCapturerLayer(locale, mapNames, activeMapName, showAdvanced, p
     }
 }
 var QuickPlotContainer = function () {
-    var _a;
-    var _b = React.useState(""), title = _b[0], setTitle = _b[1];
+    var _a, _b;
+    var _c = React.useState(""), title = _c[0], setTitle = _c[1];
     "";
-    var _c = React.useState(""), subTitle = _c[0], setSubTitle = _c[1];
-    var _d = React.useState(false), showLegend = _d[0], setShowLegend = _d[1];
-    var _e = React.useState(false), showNorthBar = _e[0], setShowNorthBar = _e[1];
-    var _f = React.useState(false), showCoordinates = _f[0], setShowCoordinates = _f[1];
-    var _g = React.useState(false), showScaleBar = _g[0], setShowScaleBar = _g[1];
-    var _h = React.useState(false), showDisclaimer = _h[0], setShowDisclaimer = _h[1];
-    var _j = React.useState(false), showAdvanced = _j[0], setShowAdvanced = _j[1];
-    var _k = React.useState("P"), orientation = _k[0], setOrientation = _k[1];
-    var _l = React.useState("210.0,297.0,A4"), paperSize = _l[0], setPaperSize = _l[1];
-    var _m = React.useState("5000"), scale = _m[0], setScale = _m[1];
-    var _o = React.useState("96"), dpi = _o[0], setDpi = _o[1];
-    var _p = React.useState(0), rotation = _p[0], setRotation = _p[1];
-    var _q = React.useState(""), box = _q[0], setBox = _q[1];
-    var _r = React.useState(""), normalizedBox = _r[0], setNormalizedBox = _r[1];
+    var _d = React.useState(""), subTitle = _d[0], setSubTitle = _d[1];
+    var _e = React.useState(false), showLegend = _e[0], setShowLegend = _e[1];
+    var _f = React.useState(false), showNorthBar = _f[0], setShowNorthBar = _f[1];
+    var _g = React.useState(false), showCoordinates = _g[0], setShowCoordinates = _g[1];
+    var _h = React.useState(false), showScaleBar = _h[0], setShowScaleBar = _h[1];
+    var _j = React.useState(false), showDisclaimer = _j[0], setShowDisclaimer = _j[1];
+    var _k = React.useState(false), showAdvanced = _k[0], setShowAdvanced = _k[1];
+    var _l = React.useState("P"), orientation = _l[0], setOrientation = _l[1];
+    var _m = React.useState("210.0,297.0,A4"), paperSize = _m[0], setPaperSize = _m[1];
+    var _o = React.useState("5000"), scale = _o[0], setScale = _o[1];
+    var _p = React.useState("96"), dpi = _p[0], setDpi = _p[1];
+    var _q = React.useState(0), rotation = _q[0], setRotation = _q[1];
+    var _r = React.useState(""), box = _r[0], setBox = _r[1];
+    var _s = React.useState(""), normalizedBox = _s[0], setNormalizedBox = _s[1];
     var locale = (0, hooks_1.useViewerLocale)();
     var activeMapName = (0, hooks_1.useActiveMapName)();
     var mapNames = (_a = (0, hooks_1.useAvailableMaps)()) === null || _a === void 0 ? void 0 : _a.map(function (m) { return m.value; });
     var map = (0, hooks_mapguide_1.useActiveMapState)();
     var view = (0, hooks_1.useActiveMapView)();
-    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)(false);
+    var externalBaseLayers = (_b = (0, hooks_1.useActiveMapExternalBaseLayers)()) === null || _b === void 0 ? void 0 : _b.filter(function (ebl) { return (0, common_1.isVisualBaseLayer)(ebl); });
     var dispatch = (0, context_1.useReduxDispatch)();
     var setViewRotationAction = function (rotation) { return dispatch((0, map_1.setViewRotation)(rotation)); };
     var setViewRotationEnabledAction = function (enabled) { return dispatch((0, map_1.setViewRotationEnabled)(enabled)); };
@@ -22575,7 +23182,7 @@ var QuickPlotContainer = function () {
                     var activeMapName_1 = mapNames_2[_i];
                     var activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName_1);
                     if (activeCapturer) {
-                        (0, logger_1.debug)("De-activating map capturer for: " + activeMapName_1);
+                        (0, logger_1.debug)("De-activating map capturer for: ".concat(activeMapName_1));
                         activeCapturer.deactivate();
                     }
                 }
@@ -22598,7 +23205,7 @@ var QuickPlotContainer = function () {
                     var capturer = getActiveCapturer(v, mapNames, activeMapName);
                     if (capturer) {
                         var ppSize_1 = getPrintSize(v, showAdvanced, paperSize, orientation);
-                        (0, logger_1.debug)("Updating map capturer for: " + activeMapName);
+                        (0, logger_1.debug)("Updating map capturer for: ".concat(activeMapName));
                         capturer.updateBox(ppSize_1, parseFloat(scale), rotation);
                     }
                 }
@@ -22617,24 +23224,24 @@ var QuickPlotContainer = function () {
     var theBox = box;
     if (!showAdvanced) {
         var extent = viewer.getCurrentExtent();
-        theBox = extent[0] + ", " + extent[1] + ", " + extent[2] + ", " + extent[1] + ", " + extent[2] + ", " + extent[3] + ", " + extent[0] + ", " + extent[3] + ", " + extent[0] + ", " + extent[1];
+        theBox = "".concat(extent[0], ", ").concat(extent[1], ", ").concat(extent[2], ", ").concat(extent[1], ", ").concat(extent[2], ", ").concat(extent[3], ", ").concat(extent[0], ", ").concat(extent[3], ", ").concat(extent[0], ", ").concat(extent[1]);
         normBox = theBox;
     }
     var ppSize;
     var prSize;
     var tokens = paperSize.split(",");
     if (orientation === "L") {
-        prSize = tokens[1] + "," + tokens[0];
-        ppSize = prSize + "," + tokens[2];
+        prSize = "".concat(tokens[1], ",").concat(tokens[0]);
+        ppSize = "".concat(prSize, ",").concat(tokens[2]);
     }
     else { // P
-        prSize = tokens[0] + "," + tokens[1];
-        ppSize = prSize + "," + tokens[2];
+        prSize = "".concat(tokens[0], ",").concat(tokens[1]);
+        ppSize = "".concat(prSize, ",").concat(tokens[2]);
     }
-    var url = (0, runtime_1.getFusionRoot)() + "/widgets/QuickPlot/PlotAsPDF.php";
+    var url = "".concat((0, runtime_1.getFusionRoot)(), "/widgets/QuickPlot/PlotAsPDF.php");
     return React.createElement("div", { className: "component-quick-plot" },
         React.createElement("form", { id: "Form1", name: "Form1", target: "_blank", method: "post", action: url },
-            React.createElement("input", { type: "hidden", id: "printId", name: "printId", value: "" + Math.random() * 1000 }),
+            React.createElement("input", { type: "hidden", id: "printId", name: "printId", value: "".concat(Math.random() * 1000) }),
             React.createElement("div", { className: "Title FixWidth" }, (0, i18n_1.tr)("QUICKPLOT_HEADER", locale)),
             React.createElement("label", { className: "bp3-label" },
                 (0, i18n_1.tr)("QUICKPLOT_TITLE", locale),
@@ -22713,7 +23320,7 @@ var QuickPlotContainer = function () {
                 }
                 else {
                     return React.createElement("div", null,
-                        React.createElement("input", { type: "hidden", id: "scaleDenominator", name: "scaleDenominator", value: "" + view.scale }),
+                        React.createElement("input", { type: "hidden", id: "scaleDenominator", name: "scaleDenominator", value: "".concat(view.scale) }),
                         React.createElement("input", { type: "hidden", id: "dpi", name: "dpi", value: dpi }));
                 }
             })(),
@@ -22748,8 +23355,8 @@ exports.QuickPlotContainer = QuickPlotContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ScaleDisplayContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var scale_display_1 = __webpack_require__(/*! ../components/scale-display */ "./src/components/scale-display.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
@@ -22790,8 +23397,8 @@ exports.ScaleDisplayContainer = ScaleDisplayContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectedFeatureCountContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var selection_count_1 = __webpack_require__(/*! ../api/selection-count */ "./src/api/selection-count.ts");
 var selected_feature_count_1 = __webpack_require__(/*! ../components/selected-feature-count */ "./src/components/selected-feature-count.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -22823,13 +23430,13 @@ exports.SelectedFeatureCountContainer = SelectedFeatureCountContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionPanelContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var selection_panel_1 = __webpack_require__(/*! ../components/selection-panel */ "./src/components/selection-panel.tsx");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-var context_1 = __webpack_require__(/*! ../components/context */ "./src/components/context.ts");
+var context_1 = __webpack_require__(/*! ../components/context */ "./src/components/context.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 var map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
@@ -22870,7 +23477,9 @@ var SelectionPanelContainer = function (props) {
     };
     var compSel = new composite_selection_1.CompositeSelection(selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures, clientSelection);
     if ((selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures) != null || clientSelection) {
-        return React.createElement(selection_panel_1.SelectionPanel, { locale: locale, onResolveLayerLabel: resolveLayerLabel, allowHtmlValues: appContext.allowHtmlValuesInSelection(), cleanHTML: appContext.getHTMLCleaner(), selection: compSel, onRequestZoomToFeature: onZoomToSelectedFeature, onShowSelectedFeature: onShowSelectedFeature, selectedFeatureRenderer: selectedFeatureRenderer, maxHeight: maxHeight });
+        var allowHtmlValues = appContext.allowHtmlValuesInSelection();
+        var cleaner = appContext.getHTMLCleaner();
+        return React.createElement(selection_panel_1.SelectionPanel, { locale: locale, onResolveLayerLabel: resolveLayerLabel, allowHtmlValues: allowHtmlValues, cleanHTML: cleaner, selection: compSel, onRequestZoomToFeature: onZoomToSelectedFeature, onShowSelectedFeature: onShowSelectedFeature, selectedFeatureRenderer: selectedFeatureRenderer, maxHeight: maxHeight });
     }
     else {
         return React.createElement(core_1.Callout, { intent: core_1.Intent.PRIMARY, icon: "info-sign" },
@@ -22892,11 +23501,11 @@ exports.SelectionPanelContainer = SelectionPanelContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ShareLinkToViewContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
-var react_copy_to_clipboard_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-copy-to-clipboard */ "./node_modules/react-copy-to-clipboard/lib/index.js"));
+var react_copy_to_clipboard_1 = tslib_1.__importDefault(__webpack_require__(/*! react-copy-to-clipboard */ "./node_modules/react-copy-to-clipboard/lib/index.js"));
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -22913,11 +23522,11 @@ var ShareLinkToViewContainer = function () {
             v.toastSuccess("clipboard", (0, i18n_1.tr)("SHARE_LINK_COPIED", locale));
         }
     };
-    var parsed = (0, url_1.parseUrl)("" + window.location);
+    var parsed = (0, url_1.parseUrl)("".concat(window.location));
     if (!showSession) {
         delete parsed.query.session;
     }
-    var shareUrl = parsed.url + "?" + (0, url_1.stringifyQuery)(parsed.query);
+    var shareUrl = "".concat(parsed.url, "?").concat((0, url_1.stringifyQuery)(parsed.query));
     return React.createElement("div", null,
         React.createElement(core_1.TextArea, { fill: true, rows: 16, readOnly: true, value: shareUrl, onChange: NOOP }),
         React.createElement("br", null),
@@ -22941,8 +23550,8 @@ exports.ShareLinkToViewContainer = ShareLinkToViewContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Subscriber = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 /**
  *
@@ -22971,8 +23580,8 @@ exports.Subscriber = Subscriber;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TaskPaneContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var task_pane_1 = __webpack_require__(/*! ../components/task-pane */ "./src/components/task-pane.tsx");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
@@ -22983,7 +23592,7 @@ var taskpane_1 = __webpack_require__(/*! ../actions/taskpane */ "./src/actions/t
 var flyout_1 = __webpack_require__(/*! ../actions/flyout */ "./src/actions/flyout.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 var TaskPaneContainerInner = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(TaskPaneContainerInner, _super);
+    tslib_1.__extends(TaskPaneContainerInner, _super);
     function TaskPaneContainerInner(props) {
         var _this = _super.call(this, props) || this;
         _this.onCloseFlyout = function (id) { var _a, _b; return (_b = (_a = _this.props).closeFlyout) === null || _b === void 0 ? void 0 : _b.call(_a, id); };
@@ -23082,7 +23691,7 @@ var TaskPaneContainer = function (props) {
     var pushUrlAction = function (url, silent) { return dispatch((0, taskpane_1.pushUrl)(url, silent)); };
     var openFlyoutAction = function (id, metrics) { return dispatch((0, flyout_1.openFlyout)(id, metrics)); };
     var closeFlyoutAction = function (id) { return dispatch((0, flyout_1.closeFlyout)(id)); };
-    return React.createElement(TaskPaneContainerInner, (0, tslib_1.__assign)({ map: map, locale: locale, flyouts: flyouts, initialUrl: initialUrl, lastUrlPushed: lastUrlPushed, navIndex: navIndex, navigationStack: navigationStack, invokeCommand: invokeCommandAction, hasTaskBar: hasTaskBar, goHome: goHomeAction, goForward: goForwardAction, goBack: goBackAction, pushUrl: pushUrlAction, openFlyout: openFlyoutAction, closeFlyout: closeFlyoutAction }, props));
+    return React.createElement(TaskPaneContainerInner, tslib_1.__assign({ map: map, locale: locale, flyouts: flyouts, initialUrl: initialUrl, lastUrlPushed: lastUrlPushed, navIndex: navIndex, navigationStack: navigationStack, invokeCommand: invokeCommandAction, hasTaskBar: hasTaskBar, goHome: goHomeAction, goForward: goForwardAction, goBack: goBackAction, pushUrl: pushUrlAction, openFlyout: openFlyoutAction, closeFlyout: closeFlyoutAction }, props));
 };
 exports.TaskPaneContainer = TaskPaneContainer;
 
@@ -23099,8 +23708,8 @@ exports.TaskPaneContainer = TaskPaneContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ToolbarContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var menu_1 = __webpack_require__(/*! ../utils/menu */ "./src/utils/menu.ts");
@@ -23131,7 +23740,7 @@ var ToolbarContainer = function (props) {
             flyoutStates[fid] = !!flyouts[fid].open;
         }
     }
-    var tbContainerStyle = (0, tslib_1.__assign)({}, (containerStyle || {}));
+    var tbContainerStyle = tslib_1.__assign({}, (containerStyle || {}));
     if (toolbar && toolbar.items && invokeCommandAction) {
         if (vertical === true) {
             tbContainerStyle.width = toolbar_1.DEFAULT_TOOLBAR_SIZE;
@@ -23162,10 +23771,15 @@ exports.ToolbarContainer = ToolbarContainer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getStateFromUrl = exports.updateUrl = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+exports.areStatesEqual = exports.getStateFromUrl = exports.updateUrl = void 0;
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var lodash_debounce_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.debounce */ "./node_modules/lodash.debounce/index.js"));
+var array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
 var url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 var S_DELIM = "_"; //This is the current layer/group name delimiter
+// Firefox does not like us hammering window.history.replaceState() willy-nilly, so wrap it in a debounced version
+// 100ms should be sufficient breathing space
+var debouncedReplaceState = (0, lodash_debounce_1.default)(function (state, _, url) { return window.history.replaceState(state, _, url); }, 100);
 /**
  * Updates the main URL with the given application state. If passing extra custom state,
  * this extra custom state is also included when getStateFromUrl() is called.
@@ -23179,13 +23793,17 @@ var S_DELIM = "_"; //This is the current layer/group name delimiter
  * @export
  * @param {IAppUrlState} state
  * @param {*} [extraState] Any extra state to include into the main URL
- * @rem
+ * @param {string[] | undefined} ignoreProps Do not write the following properties to the URL
+ *
  * @since 0.13
  * @since 0.14 - New optional extraState argument
+ * @since 0.14.9 - New optional ignoreProps argument
  */
-function updateUrl(state, extraState) {
-    var st = (0, tslib_1.__assign)({}, extraState);
+function updateUrl(state, extraState, ignoreProps) {
+    var st = tslib_1.__assign({}, extraState);
     for (var k in state) {
+        if (ignoreProps && ignoreProps.indexOf(k) >= 0)
+            continue;
         var val = state[k];
         switch (k) {
             case "ft":
@@ -23208,8 +23826,9 @@ function updateUrl(state, extraState) {
                 break;
         }
     }
-    var url = (0, url_1.appendParameters)(window.location.href, st, true, false);
-    window.history.replaceState(st, "", url);
+    var url = (0, url_1.appendParameters)(window.location.href, st, true, false, ignoreProps != null);
+    //window.history.replaceState(st, "", url);
+    debouncedReplaceState(st, "", url);
 }
 exports.updateUrl = updateUrl;
 /**
@@ -23284,6 +23903,29 @@ function getStateFromUrl(ignoreKeys) {
     return state;
 }
 exports.getStateFromUrl = getStateFromUrl;
+/**
+ * Determines if the 2 url state are equal
+ * @param a
+ * @param b
+ * @returns true if both states are equal. false otherwise
+ *
+ * @since 0.14.5
+ */
+function areStatesEqual(a, b) {
+    return a.ft == b.ft
+        && !(0, array_1.areArraysDifferent)(a.hg, b.hg) // We trust this is fast enough for the kinds of arrays we're expecting
+        && !(0, array_1.areArraysDifferent)(a.hl, b.hl)
+        && a.locale == b.locale
+        && a.map == b.map
+        && a.resource == b.resource
+        && a.scale == b.scale
+        && a.session == b.session
+        && !(0, array_1.areArraysDifferent)(a.sg, b.sg)
+        && !(0, array_1.areArraysDifferent)(a.sl, b.sl)
+        && a.x == b.x
+        && a.y == b.y;
+}
+exports.areStatesEqual = areStatesEqual;
 
 
 /***/ }),
@@ -23298,8 +23940,8 @@ exports.getStateFromUrl = getStateFromUrl;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewSizeContainer = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var view_size_1 = __webpack_require__(/*! ../components/view-size */ "./src/components/view-size.tsx");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -23333,8 +23975,9 @@ exports.ViewSizeContainer = ViewSizeContainer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewerOptions = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
@@ -23344,7 +23987,8 @@ var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/contai
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 var ViewerOptions = function () {
-    var externalBaseLayers = (0, hooks_1.useActiveMapExternalBaseLayers)(false);
+    var _a, _b, _c;
+    var externalBaseLayers = (_a = (0, hooks_1.useActiveMapExternalBaseLayers)()) === null || _a === void 0 ? void 0 : _a.filter(function (ebl) { return (0, common_1.isVisualBaseLayer)(ebl); });
     var mapName = (0, hooks_1.useActiveMapName)();
     var layerTransparency = (0, hooks_mapguide_1.useActiveMapLayerTransparency)();
     var featureTooltipsEnabled = (0, hooks_1.useViewerFeatureTooltipsEnabled)();
@@ -23368,6 +24012,9 @@ var ViewerOptions = function () {
     var onBaseOpacityChanged = function (value) {
         onMgLayerOpacityChanged(mapName, constants_1.LAYER_ID_BASE, value);
     };
+    var onMgDynamicOverlayOpacityChanged = function (value) {
+        onMgLayerOpacityChanged(mapName, constants_1.LAYER_ID_MG_DYNAMIC_OVERLAY, value);
+    };
     var onMgOpacityChanged = function (value) {
         onMgLayerOpacityChanged(mapName, constants_1.LAYER_ID_MG_BASE, value);
     };
@@ -23390,6 +24037,7 @@ var ViewerOptions = function () {
     var opBase = 1.0;
     var opMgBase = 1.0;
     var opMgSelOverlay = 1.0;
+    var opMgDynamicOverlay = 1.0;
     if (layerTransparency) {
         if (constants_1.LAYER_ID_BASE in layerTransparency) {
             opBase = layerTransparency[constants_1.LAYER_ID_BASE];
@@ -23397,13 +24045,20 @@ var ViewerOptions = function () {
         if (constants_1.LAYER_ID_MG_BASE in layerTransparency) {
             opMgBase = layerTransparency[constants_1.LAYER_ID_MG_BASE];
         }
+        if (constants_1.LAYER_ID_MG_DYNAMIC_OVERLAY in layerTransparency) {
+            opMgDynamicOverlay = layerTransparency[constants_1.LAYER_ID_MG_DYNAMIC_OVERLAY];
+        }
         if (constants_1.LAYER_ID_MG_SEL_OVERLAY in layerTransparency) {
             opMgSelOverlay = layerTransparency[constants_1.LAYER_ID_MG_SEL_OVERLAY];
         }
     }
+    var hasMgBaseLayers = false;
     var isStateless = stateless;
     if (!map) {
         isStateless = true;
+    }
+    else {
+        hasMgBaseLayers = ((_c = (_b = map.FiniteDisplayScale) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0) > 0;
     }
     return React.createElement("div", { className: "component-viewer-options" },
         React.createElement("h5", null, (0, i18n_1.tr)("VIEWER_OPTIONS", locale)),
@@ -23434,10 +24089,14 @@ var ViewerOptions = function () {
                             React.createElement(core_1.Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opBase, onChange: onBaseOpacityChanged })));
                 }
             })(),
+            hasMgBaseLayers && React.createElement("label", { className: "bp3-label noselect" },
+                (0, i18n_1.tr)("LAYER_ID_MG_BASE_LAYERS", locale),
+                React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
+                    React.createElement(core_1.Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgBase, onChange: onMgOpacityChanged }))),
             React.createElement("label", { className: "bp3-label noselect" },
                 map ? (0, i18n_1.tr)("LAYER_ID_MG_BASE", locale) : (0, i18n_1.tr)("LAYER_ID_SUBJECT", locale),
                 React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
-                    React.createElement(core_1.Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgBase, onChange: onMgOpacityChanged }))),
+                    React.createElement(core_1.Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgDynamicOverlay, onChange: onMgDynamicOverlayOpacityChanged }))),
             !isStateless && React.createElement("label", { className: "bp3-label noselect" },
                 (0, i18n_1.tr)("LAYER_ID_MG_SEL_OVERLAY", locale),
                 React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
@@ -23466,12 +24125,12 @@ exports.ViewerOptions = ViewerOptions;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewerApiShim = exports.AjaxViewerMapActionCode = exports.AjaxViewerLineStringOrPolygon = exports.enableRedlineMessagePrompt = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var extent_1 = __webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js");
-var Point_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
-var LineString_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
-var Polygon_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
+var Point_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Point */ "./node_modules/ol/geom/Point.js"));
+var LineString_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/LineString */ "./node_modules/ol/geom/LineString.js"));
+var Polygon_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/geom/Polygon */ "./node_modules/ol/geom/Polygon.js"));
 var client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
 var error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
@@ -23490,6 +24149,7 @@ var taskpane_1 = __webpack_require__(/*! ../actions/taskpane */ "./src/actions/t
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 var hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 var context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+var dompurify_1 = __webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.js");
 function isEmptySelection(selection) {
     if (selection && selection.FeatureSet) {
         var count = 0;
@@ -23524,7 +24184,7 @@ var FusionApiShim = /** @class */ (function () {
         }
     };
     FusionApiShim.prototype.ajaxRequest = function (url, options) {
-        var reqUrl = (0, runtime_1.getFusionRoot)() + "/" + url;
+        var reqUrl = "".concat((0, runtime_1.getFusionRoot)(), "/").concat(url);
         var client = this.parent.getClient();
         var resolve = options.onSuccess || (function () { return (0, logger_1.debug)("No success handler defined for this operation"); });
         var fail = options.onFailure || options.onException || (function (_r, res) { return (0, logger_1.error)(res); });
@@ -23711,9 +24371,12 @@ var OL2Geom = /** @class */ (function () {
             });
         }
         else if (g instanceof Polygon_1.default) {
-            return g.getLinearRing(0).getCoordinates().map(function (c) {
-                return { x: c[0], y: c[1] };
-            });
+            var ring = g.getLinearRing(0);
+            if (ring) {
+                return ring.getCoordinates().map(function (c) {
+                    return { x: c[0], y: c[1] };
+                });
+            }
         }
         return [];
     };
@@ -23953,19 +24616,19 @@ var FusionWidgetApiShim = /** @class */ (function () {
     FusionWidgetApiShim.prototype.info = function (msg) {
         var viewer = (0, runtime_1.getViewer)();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("info-sign", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: msg } }));
+            this._activeToast = viewer.toastPrimary("info-sign", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)(msg) } }));
         }
     };
     FusionWidgetApiShim.prototype.warn = function (msg) {
         var viewer = (0, runtime_1.getViewer)();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("warning-sign", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: msg } }));
+            this._activeToast = viewer.toastPrimary("warning-sign", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)(msg) } }));
         }
     };
     FusionWidgetApiShim.prototype.error = function (msg) {
         var viewer = (0, runtime_1.getViewer)();
         if (viewer) {
-            this._activeToast = viewer.toastPrimary("error", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: msg } }));
+            this._activeToast = viewer.toastPrimary("error", React.createElement("div", { className: "mg-fusion-message", dangerouslySetInnerHTML: { __html: (0, dompurify_1.sanitize)(msg) } }));
         }
     };
     FusionWidgetApiShim.prototype.clear = function () {
@@ -24151,7 +24814,7 @@ var AjaxViewerMapActionCode;
  * @extends {React.Component<ViewerApiShimProps, any>}
  */
 var ViewerApiShimInner = /** @class */ (function (_super) {
-    (0, tslib_1.__extends)(ViewerApiShimInner, _super);
+    tslib_1.__extends(ViewerApiShimInner, _super);
     function ViewerApiShimInner(props) {
         var _this = _super.call(this, props) || this;
         _this.onFormFrameMounted = function (form) {
@@ -24179,25 +24842,25 @@ var ViewerApiShimInner = /** @class */ (function (_super) {
         return this.fusionAPI;
     };
     ViewerApiShimInner.prototype.registerForEvent = function (eventID, callback) {
-        (0, logger_1.debug)("Fusion registerForEvent - " + eventID);
+        (0, logger_1.debug)("Fusion registerForEvent - ".concat(eventID));
         if (!this.fusionEventHandlers[eventID]) {
             this.fusionEventHandlers[eventID] = [];
         }
         this.fusionEventHandlers[eventID].push(callback);
     };
     ViewerApiShimInner.prototype.deregisterForEvent = function (eventID, callback) {
-        (0, logger_1.debug)("Fusion deregisterForEvent - " + eventID);
+        (0, logger_1.debug)("Fusion deregisterForEvent - ".concat(eventID));
         if (this.fusionEventHandlers[eventID]) {
             var funcs = this.fusionEventHandlers[eventID].filter(function (f) { return f != callback; });
             this.fusionEventHandlers[eventID] = funcs;
         }
         else {
-            (0, logger_1.debug)("No callbacks registered for fusion event - " + eventID);
+            (0, logger_1.debug)("No callbacks registered for fusion event - ".concat(eventID));
         }
     };
     ViewerApiShimInner.prototype.triggerFusionEvent = function (eventID) {
         if (this.fusionEventHandlers[eventID]) {
-            (0, logger_1.debug)("Trigger Fusion Event ID - " + eventID);
+            (0, logger_1.debug)("Trigger Fusion Event ID - ".concat(eventID));
             for (var _i = 0, _a = this.fusionEventHandlers[eventID]; _i < _a.length; _i++) {
                 var cb = _a[_i];
                 cb.apply(null, arguments);
@@ -24284,7 +24947,7 @@ var ViewerApiShimInner = /** @class */ (function (_super) {
                 cmdName = command_1.DefaultCommands.ZoomToSelection;
                 break;
             default:
-                (0, logger_1.warn)("Unknown command code: " + code);
+                (0, logger_1.warn)("Unknown command code: ".concat(code));
                 return;
         }
         var cmd = (0, command_1.getCommand)(cmdName);
@@ -24342,13 +25005,15 @@ var ViewerApiShimInner = /** @class */ (function (_super) {
                 //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
                 //is what we're after
                 var ring = poly.getLinearRing(0);
-                var coords = ring.getCoordinates().map(function (coord) {
-                    return {
-                        X: coord[0],
-                        Y: coord[1]
-                    };
-                });
-                handler(new AjaxViewerLineStringOrPolygon(coords));
+                if (ring) {
+                    var coords = ring.getCoordinates().map(function (coord) {
+                        return {
+                            X: coord[0],
+                            Y: coord[1]
+                        };
+                    });
+                    handler(new AjaxViewerLineStringOrPolygon(coords));
+                }
             });
         }
     };
@@ -24694,9 +25359,9 @@ exports.ViewerApiShim = ViewerApiShim;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ApplicationViewModel = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var ReactDOM = tslib_1.__importStar(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var app_1 = __webpack_require__(/*! ../containers/app */ "./src/containers/app.tsx");
 var configure_store_1 = __webpack_require__(/*! ../store/configure-store */ "./src/store/configure-store.ts");
 var config_1 = __webpack_require__(/*! ../reducers/config */ "./src/reducers/config.ts");
@@ -24757,7 +25422,7 @@ var ApplicationViewModel = /** @class */ (function () {
             agentUri: (_b = props.mapguide) === null || _b === void 0 ? void 0 : _b.agentUri,
             agentKind: (_d = (_c = props.mapguide) === null || _c === void 0 ? void 0 : _c.agentKind) !== null && _d !== void 0 ? _d : "mapagent"
         };
-        var initState = (0, tslib_1.__assign)({ config: (0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, config_1.CONFIG_INITIAL_STATE), agentConf), (props.initialConfig || {})) }, this.getExtraInitialState());
+        var initState = tslib_1.__assign({ config: tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, config_1.CONFIG_INITIAL_STATE), agentConf), (props.initialConfig || {})) }, this.getExtraInitialState());
         var extraReducers = this.getExtraReducers();
         this._store = (0, configure_store_1.configureStore)(initState, extraReducers);
         var initCommand;
@@ -24766,8 +25431,8 @@ var ApplicationViewModel = /** @class */ (function () {
         else
             initCommand = new init_mapguide_1.DefaultViewerInitCommand(this._store.dispatch);
         ReactDOM.render(React.createElement(context_1.ReduxProvider, { store: this._store },
-            React.createElement(app_1.App, (0, tslib_1.__assign)({}, props, { initCommand: initCommand })),
-            subs.map(function (s, i) { return React.createElement(subscriber_1.Subscriber, (0, tslib_1.__assign)({ key: "subscriber-" + i + "-" + s.name }, s)); })), node);
+            React.createElement(app_1.App, tslib_1.__assign({}, props, { initCommand: initCommand })),
+            subs.map(function (s, i) { return React.createElement(subscriber_1.Subscriber, tslib_1.__assign({ key: "subscriber-".concat(i, "-").concat(s.name) }, s)); })), node);
     };
     /**
      * Dispatches the given action
@@ -24818,9 +25483,21 @@ exports.ApplicationViewModel = ApplicationViewModel;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Actions = exports.getStateFromUrl = exports.updateUrl = exports.MapGuideViewerInitCommand = exports.setAssetRoot = exports.Application = exports.Externals = exports.Registry = exports.__BRANCH__ = exports.__COMMITHASH__ = exports.__VERSION__ = exports.__DEV__ = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-var ReactDOM = (0, tslib_1.__importStar)(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js")); // Can't use import * as React as wdyr cannot hook into that imported form of React
+/*
+if (process.env.NODE_ENV === 'development') {
+    const whyDidYouRender = require('@welldone-software/why-did-you-render');
+    // react-redux/lib because:
+    // https://github.com/welldone-software/why-did-you-render/issues/154#issuecomment-773905769
+    const ReactRedux = require("react-redux/lib");
+    whyDidYouRender(React, {
+        trackAllPureComponents: true,
+        trackExtraHooks: [[ReactRedux, "useSelector"]]
+    });
+}
+*/
+var ReactDOM = tslib_1.__importStar(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var default_commands_1 = __webpack_require__(/*! ../api/default-commands */ "./src/api/default-commands.ts");
 var ajax_viewer_1 = __webpack_require__(/*! ../layouts/ajax-viewer */ "./src/layouts/ajax-viewer.tsx");
@@ -24835,23 +25512,24 @@ var command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/re
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var default_components_1 = __webpack_require__(/*! ../api/default-components */ "./src/api/default-components.tsx");
 var bootstrap_1 = __webpack_require__(/*! ../api/bootstrap */ "./src/api/bootstrap.ts");
-var proj4_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
-var MapActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/map */ "./src/actions/map.ts"));
-var LegendActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/legend */ "./src/actions/legend.ts"));
-var FlyoutActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/flyout */ "./src/actions/flyout.ts"));
-var ModalActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/modal */ "./src/actions/modal.ts"));
-var TaskPaneActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/taskpane */ "./src/actions/taskpane.ts"));
-var TemplateActions = (0, tslib_1.__importStar)(__webpack_require__(/*! ../actions/template */ "./src/actions/template.ts"));
+var proj4_1 = tslib_1.__importDefault(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
+var MapActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/map */ "./src/actions/map.ts"));
+var LegendActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/legend */ "./src/actions/legend.ts"));
+var FlyoutActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/flyout */ "./src/actions/flyout.ts"));
+var ModalActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/modal */ "./src/actions/modal.ts"));
+var TaskPaneActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/taskpane */ "./src/actions/taskpane.ts"));
+var TemplateActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/template */ "./src/actions/template.ts"));
+var AppActions = tslib_1.__importStar(__webpack_require__(/*! ../actions/app */ "./src/actions/app.ts"));
 var factory_1 = __webpack_require__(/*! ../api/builders/factory */ "./src/api/builders/factory.ts");
 var mapagent_1 = __webpack_require__(/*! ../api/builders/mapagent */ "./src/api/builders/mapagent.ts");
 var driver_registry_1 = __webpack_require__(/*! ../api/layer-manager/driver-registry */ "./src/api/layer-manager/driver-registry.ts");
 var csv_driver_1 = __webpack_require__(/*! ../api/layer-manager/csv-driver */ "./src/api/layer-manager/csv-driver.ts");
 var format_driver_1 = __webpack_require__(/*! ../api/layer-manager/format-driver */ "./src/api/layer-manager/format-driver.ts");
-var GeoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
-var TopoJSON_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/TopoJSON */ "./node_modules/ol/format/TopoJSON.js"));
-var KML_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/KML */ "./node_modules/ol/format/KML.js"));
-var GPX_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/GPX */ "./node_modules/ol/format/GPX.js"));
-var IGC_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ol/format/IGC */ "./node_modules/ol/format/IGC.js"));
+var GeoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GeoJSON */ "./node_modules/ol/format/GeoJSON.js"));
+var TopoJSON_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/TopoJSON */ "./node_modules/ol/format/TopoJSON.js"));
+var KML_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/KML */ "./node_modules/ol/format/KML.js"));
+var GPX_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/GPX */ "./node_modules/ol/format/GPX.js"));
+var IGC_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/format/IGC */ "./node_modules/ol/format/IGC.js"));
 var mapguide_commands_1 = __webpack_require__(/*! ../api/mapguide-commands */ "./src/api/mapguide-commands.ts");
 var mapguide_components_1 = __webpack_require__(/*! ../api/mapguide-components */ "./src/api/mapguide-components.tsx");
 var mapguide_1 = __webpack_require__(/*! ../components/map-providers/mapguide */ "./src/components/map-providers/mapguide.ts");
@@ -24873,14 +25551,14 @@ var external_layer_1 = __webpack_require__(/*! ../api/registry/external-layer */
 var DEFAULT_CAPS = {
     hasTaskPane: true
 };
-(0, layout_1.registerLayout)("ajax-viewer", function () { return React.createElement(ajax_viewer_1.AjaxViewerLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("sidebar", function () { return React.createElement(sidebar_1.SidebarLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("aqua", function () { return React.createElement(aqua_1.AquaTemplateLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("turquoise-yellow", function () { return React.createElement(turquoise_yellow_1.TurquoiseYellowTemplateLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("limegold", function () { return React.createElement(limegold_1.LimeGoldTemplateLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("slate", function () { return React.createElement(slate_1.SlateTemplateLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("maroon", function () { return React.createElement(maroon_1.MaroonTemplateLayout, null); }, DEFAULT_CAPS);
-(0, layout_1.registerLayout)("generic", function () { return React.createElement(generic_1.GenericLayout, null); }, {
+(0, layout_1.registerLayout)("ajax-viewer", function () { return react_1.default.createElement(ajax_viewer_1.AjaxViewerLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("sidebar", function () { return react_1.default.createElement(sidebar_1.SidebarLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("aqua", function () { return react_1.default.createElement(aqua_1.AquaTemplateLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("turquoise-yellow", function () { return react_1.default.createElement(turquoise_yellow_1.TurquoiseYellowTemplateLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("limegold", function () { return react_1.default.createElement(limegold_1.LimeGoldTemplateLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("slate", function () { return react_1.default.createElement(slate_1.SlateTemplateLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("maroon", function () { return react_1.default.createElement(maroon_1.MaroonTemplateLayout, null); }, DEFAULT_CAPS);
+(0, layout_1.registerLayout)("generic", function () { return react_1.default.createElement(generic_1.GenericLayout, null); }, {
     hasTaskPane: false
 });
 (0, default_commands_1.initDefaultCommands)();
@@ -24889,8 +25567,8 @@ var DEFAULT_CAPS = {
 (0, mapguide_components_1.registerMapGuideComponents)();
 // Register our MapGuide-specific viewer implementation
 var PROVIDER_IMPL = new mapguide_1.MapGuideMapProviderContext();
-(0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Map, function (props) { return React.createElement(context_1.MapProviderContextProvider, { value: PROVIDER_IMPL },
-    React.createElement(neo_map_viewer_1.MapViewer, (0, tslib_1.__assign)({}, props))); });
+(0, component_1.registerComponentFactory)(component_1.DefaultComponentNames.Map, function (props) { return react_1.default.createElement(context_1.MapProviderContextProvider, { value: PROVIDER_IMPL },
+    react_1.default.createElement(neo_map_viewer_1.MapViewer, tslib_1.__assign({}, props))); });
 //Register the default mapagent request builder (that can be replaced later on if desired)
 (0, factory_1.registerRequestBuilder)("mapagent", function (agentUri, locale) { return new mapagent_1.MapAgentRequestBuilder(agentUri, locale); });
 /**
@@ -24981,7 +25659,7 @@ exports.Externals = {
     /**
      * The exported public API for React
      */
-    React: React,
+    React: react_1.default,
     /**
      * The exported public API for ReactDOM
      */
@@ -25005,7 +25683,8 @@ exports.Actions = {
     Flyout: FlyoutActions,
     Modal: ModalActions,
     TaskPane: TaskPaneActions,
-    Template: TemplateActions
+    Template: TemplateActions,
+    App: AppActions
 };
 
 
@@ -25021,8 +25700,8 @@ exports.Actions = {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AjaxViewerLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -25030,11 +25709,12 @@ var flyout_region_1 = __webpack_require__(/*! ../containers/flyout-region */ "./
 var viewer_shim_1 = __webpack_require__(/*! ../containers/viewer-shim */ "./src/containers/viewer-shim.tsx");
 var modal_launcher_1 = __webpack_require__(/*! ../containers/modal-launcher */ "./src/containers/modal-launcher.tsx");
 var init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
-var react_splitter_layout_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
+var react_splitter_layout_1 = tslib_1.__importDefault(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var hooks_2 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 /**
  * A viewer template that resembles the MapGuide AJAX viewer
  */
@@ -25081,7 +25761,7 @@ var AjaxViewerLayout = function () {
                                                     React.createElement("div", { className: "ajax-sidebar-panel-heading" },
                                                         React.createElement("p", null, (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale))),
                                                     React.createElement("div", { className: "ajax-sidebar-panel-body" },
-                                                        React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: { inlineBaseLayerSwitcher: true } })));
+                                                        React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS })));
                                             }
                                         })(),
                                         (function () {
@@ -25137,8 +25817,8 @@ exports.AjaxViewerLayout = AjaxViewerLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AquaTemplateLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -25165,7 +25845,7 @@ function aquaTemplateReducer(origState, state, action) {
                 var selection = action.payload.selection;
                 if (selection && selection.SelectedFeatures) {
                     if (selection.SelectedFeatures.SelectedLayer.length && origState.autoDisplaySelectionPanelOnSelection) {
-                        return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true });
+                        return tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true });
                     }
                 }
                 return state; //No action taken: Return "current" state
@@ -25178,7 +25858,7 @@ function aquaTemplateReducer(origState, state, action) {
                 //template reducer has done against this action.
                 var feature = action.payload.feature;
                 if (feature === null || feature === void 0 ? void 0 : feature.properties) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true });
+                    return tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true });
                 }
                 return state; //No action taken: Return "current" state
             }
@@ -25187,7 +25867,7 @@ function aquaTemplateReducer(origState, state, action) {
                 var data = action.payload;
                 if (typeof (data) == "boolean") {
                     var state1 = { legendVisible: data };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -25195,20 +25875,20 @@ function aquaTemplateReducer(origState, state, action) {
                 var data = action.payload;
                 if (typeof (data) == "boolean") {
                     var state1 = { selectionPanelVisible: data };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
                 var data = action.payload;
                 if (typeof (data) == "boolean") {
                     var state1 = { taskPaneVisible: data };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
     }
@@ -25223,6 +25903,12 @@ var STATUS_BAR_HEIGHT = 18;
  */
 var AquaTemplateLayout = function () {
     var _a = (0, hooks_1.useCommonTemplateState)(aquaTemplateReducer), locale = _a.locale, capabilities = _a.capabilities, showSelection = _a.showSelection, showLegend = _a.showLegend, showTaskPane = _a.showTaskPane, dispatch = _a.dispatch;
+    var posLegend = (0, hooks_2.useTemplateCustomData)("AQUA_LEGEND_POS");
+    var sizeLegend = (0, hooks_2.useTemplateCustomData)("AQUA_LEGEND_SIZE");
+    var posSelection = (0, hooks_2.useTemplateCustomData)("AQUA_SELECTION_POS");
+    var sizeSelection = (0, hooks_2.useTemplateCustomData)("AQUA_SELECTION_SIZE");
+    var posTaskPane = (0, hooks_2.useTemplateCustomData)("AQUA_TASKPANE_POS");
+    var sizeTaskPane = (0, hooks_2.useTemplateCustomData)("AQUA_TASKPANE_SIZE");
     var map = (0, hooks_mapguide_1.useActiveMapState)();
     var subject = (0, hooks_generic_1.useActiveMapSubjectLayer)();
     var hideLegend = function () { return dispatch((0, template_1.setLegendVisibility)(false)); };
@@ -25289,7 +25975,12 @@ var AquaTemplateLayout = function () {
         React.createElement(modal_launcher_1.ModalLauncher, null,
             (function () {
                 if (hasSelectionPanel) {
-                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "th", locale: locale, isOpen: !!showSelection, onClose: onHideSelection, title: (0, i18n_1.tr)("TPL_TITLE_SELECTION_PANEL", locale), x: 40, y: 500, width: initInfoPaneWidth, height: SELECTION_DIALOG_HEIGHT, disableYOverflow: true, enableInteractionMask: true }, function (_a) {
+                    var pos = posSelection !== null && posSelection !== void 0 ? posSelection : [40, 500];
+                    var size = sizeSelection !== null && sizeSelection !== void 0 ? sizeSelection : [initInfoPaneWidth, SELECTION_DIALOG_HEIGHT];
+                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "th", locale: locale, isOpen: !!showSelection, onClose: onHideSelection, title: (0, i18n_1.tr)("TPL_TITLE_SELECTION_PANEL", locale), onChange: function (args) {
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_SELECTION_POS", [args.x, args.y]));
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_SELECTION_SIZE", [args.width, args.height]));
+                        }, x: pos[0], y: pos[1], width: size[0], height: size[1], disableYOverflow: true, enableInteractionMask: true }, function (_a) {
                         var h = _a[1];
                         return React.createElement(component_1.PlaceholderComponent, { locale: locale, id: component_1.DefaultComponentNames.SelectionPanel, componentProps: { maxHeight: h } });
                     });
@@ -25297,7 +25988,12 @@ var AquaTemplateLayout = function () {
             })(),
             (function () {
                 if (hasLegend) {
-                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "layers", locale: locale, isOpen: !!showLegend, onClose: onHideLegend, title: (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale), x: 40, y: 70, width: initInfoPaneWidth, height: LEGEND_DIALOG_HEIGHT, enableInteractionMask: true }, function (_a) {
+                    var pos = posLegend !== null && posLegend !== void 0 ? posLegend : [40, 70];
+                    var size = sizeLegend !== null && sizeLegend !== void 0 ? sizeLegend : [initInfoPaneWidth, LEGEND_DIALOG_HEIGHT];
+                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "layers", locale: locale, isOpen: !!showLegend, onClose: onHideLegend, title: (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale), onChange: function (args) {
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_LEGEND_POS", [args.x, args.y]));
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_LEGEND_SIZE", [args.width, args.height]));
+                        }, x: pos[0], y: pos[1], width: size[0], height: size[1], enableInteractionMask: true }, function (_a) {
                         var h = _a[1];
                         return React.createElement(component_1.PlaceholderComponent, { locale: locale, id: component_1.DefaultComponentNames.Legend, componentProps: { inlineBaseLayerSwitcher: false, maxHeight: h } });
                     });
@@ -25305,7 +26001,12 @@ var AquaTemplateLayout = function () {
             })(),
             (function () {
                 if (hasTaskPane) {
-                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "application", locale: locale, isOpen: !!showTaskPane, onClose: onHideTaskPane, width: initTaskPaneWidth, height: TASK_DIALOG_HEIGHT, title: (0, i18n_1.tr)("TPL_TITLE_TASKPANE", locale), x: document.body.clientWidth - initTaskPaneWidth - 70, y: 80, disableYOverflow: true, enableInteractionMask: false }, function (_a) {
+                    var pos = posTaskPane !== null && posTaskPane !== void 0 ? posTaskPane : [document.body.clientWidth - initTaskPaneWidth - 70, 80];
+                    var size = sizeTaskPane !== null && sizeTaskPane !== void 0 ? sizeTaskPane : [initTaskPaneWidth, TASK_DIALOG_HEIGHT];
+                    return React.createElement(modal_dialog_1.RndModalDialog, { icon: "application", locale: locale, isOpen: !!showTaskPane, onClose: onHideTaskPane, onChange: function (args) {
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_TASKPANE_POS", [args.x, args.y]));
+                            dispatch((0, template_1.setTemplateCustomData)("AQUA_TASKPANE_SIZE", [args.width, args.height]));
+                        }, width: size[0], height: size[1], title: (0, i18n_1.tr)("TPL_TITLE_TASKPANE", locale), x: pos[0], y: pos[1], disableYOverflow: true, enableInteractionMask: false }, function (_a) {
                         var h = _a[1];
                         return React.createElement(component_1.PlaceholderComponent, { locale: locale, id: component_1.DefaultComponentNames.TaskPane, componentProps: { maxHeight: h - 15 /* some height breathing space */ } });
                     });
@@ -25329,8 +26030,8 @@ exports.AquaTemplateLayout = AquaTemplateLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.GenericLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var viewer_shim_1 = __webpack_require__(/*! ../containers/viewer-shim */ "./src/containers/viewer-shim.tsx");
 var modal_launcher_1 = __webpack_require__(/*! ../containers/modal-launcher */ "./src/containers/modal-launcher.tsx");
@@ -25436,8 +26137,8 @@ exports.GenericLayout = GenericLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.useCommonTemplateState = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var hooks_1 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var runtime_1 = __webpack_require__(/*! ../api/runtime */ "./src/api/runtime.ts");
@@ -25457,7 +26158,7 @@ function useCommonTemplateState(templateReducer) {
     var showLegend = (0, hooks_1.useTemplateLegendVisible)();
     var showTaskPane = (0, hooks_1.useTemplateTaskPaneVisible)();
     var dispatch = (0, context_1.useReduxDispatch)();
-    var setElementStatesAction = function (states) { return dispatch((0, template_2.setElementStates)(states)); };
+    var setElementStatesAction = React.useCallback(function (states) { return dispatch((0, template_2.setElementStates)(states)); }, [dispatch]);
     var onDragStart = function () { return setIsResizing(true); };
     var onDragEnd = function () { return setIsResizing(false); };
     //componentDidMount
@@ -25475,7 +26176,7 @@ function useCommonTemplateState(templateReducer) {
             viewer.updateSize();
         }
     };
-    var onActiveElementChanged = function (id) {
+    var onActiveElementChanged = React.useCallback(function (id) {
         var states = {
             legendVisible: false,
             taskPaneVisible: false,
@@ -25495,7 +26196,7 @@ function useCommonTemplateState(templateReducer) {
         //One of these must be true
         if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible)
             setElementStatesAction(states);
-    };
+    }, [setElementStatesAction]);
     return {
         isResizing: isResizing,
         setIsResizing: setIsResizing,
@@ -25526,8 +26227,8 @@ exports.useCommonTemplateState = useCommonTemplateState;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LimeGoldTemplateLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -25537,7 +26238,7 @@ var flyout_region_1 = __webpack_require__(/*! ../containers/flyout-region */ "./
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
-var react_splitter_layout_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
+var react_splitter_layout_1 = tslib_1.__importDefault(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
@@ -25555,7 +26256,7 @@ function limegoldTemplateReducer(origState, state, action) {
                     else {
                         state1 = { legendVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -25569,13 +26270,13 @@ function limegoldTemplateReducer(origState, state, action) {
                     else {
                         state1 = { selectionPanelVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
@@ -25588,14 +26289,14 @@ function limegoldTemplateReducer(origState, state, action) {
                     else {
                         state1 = { taskPaneVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 var data = action.payload;
                 if ((0, template_1.isElementState)(data)) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), data);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), data);
                 }
             }
     }
@@ -25605,6 +26306,7 @@ var SIDEBAR_PADDING = 0;
 var TOP_BAR_HEIGHT = 35;
 var TAB_BAR_HEIGHT = 30;
 var STATUS_BAR_HEIGHT = 18;
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 /**
  * A viewer template that resembles the LimeGold Fusion template
  */
@@ -25664,7 +26366,7 @@ var LimeGoldTemplateLayout = function () {
                 (function () {
                     if (showSelection || showTaskPane || showLegend) {
                         return React.createElement("div", { className: "limegold-sidebar", style: { position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 } },
-                            React.createElement(core_1.Tabs, (0, tslib_1.__assign)({ className: "limegold-sidebar-tabs", id: "SidebarTabs", onChange: onActiveElementChanged }, extraTabsProps),
+                            React.createElement(core_1.Tabs, tslib_1.__assign({ className: "limegold-sidebar-tabs", id: "SidebarTabs", onChange: onActiveElementChanged }, extraTabsProps),
                                 (function () {
                                     if (hasTaskPane) {
                                         var panel = React.createElement("div", { style: tabPanelStyle },
@@ -25675,8 +26377,8 @@ var LimeGoldTemplateLayout = function () {
                                 (function () {
                                     if (hasLegend) {
                                         var p1 = { overflow: "auto" };
-                                        var panel = React.createElement("div", { style: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, tabPanelStyle), p1) },
-                                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: { inlineBaseLayerSwitcher: false } }));
+                                        var panel = React.createElement("div", { style: tslib_1.__assign(tslib_1.__assign({}, tabPanelStyle), p1) },
+                                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS }));
                                         return React.createElement(core_1.Tab, { id: "Legend", title: legendTitle, panel: panel });
                                     }
                                 })(),
@@ -25719,8 +26421,8 @@ exports.LimeGoldTemplateLayout = LimeGoldTemplateLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MaroonTemplateLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -25731,7 +26433,7 @@ var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var accordion_1 = __webpack_require__(/*! ../components/accordion */ "./src/components/accordion.tsx");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
-var react_splitter_layout_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
+var react_splitter_layout_1 = tslib_1.__importDefault(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var hooks_2 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
@@ -25748,7 +26450,7 @@ function maroonTemplateReducer(origState, state, action) {
                     else {
                         state1 = { legendVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -25762,13 +26464,13 @@ function maroonTemplateReducer(origState, state, action) {
                     else {
                         state1 = { selectionPanelVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
@@ -25781,14 +26483,14 @@ function maroonTemplateReducer(origState, state, action) {
                     else {
                         state1 = { taskPaneVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 var data = action.payload;
                 if ((0, template_1.isElementState)(data)) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), data);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), data);
                 }
             }
     }
@@ -25796,6 +26498,8 @@ function maroonTemplateReducer(origState, state, action) {
 }
 var STATUS_BAR_HEIGHT = 18;
 var OUTER_PADDING = 3;
+var ACCORDION_STYLE = { position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 };
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 /**
  * A viewer template that resembles the Maroon Fusion template
  */
@@ -25809,13 +26513,13 @@ var MaroonTemplateLayout = function () {
     }
     var bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     var topOffset = (toolbar_1.DEFAULT_TOOLBAR_SIZE * 2) + OUTER_PADDING;
-    var panels = [
+    var panels = React.useMemo(function () { return [
         {
             id: "Legend",
             title: (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale),
             contentRenderer: function (dim) {
                 return React.createElement("div", { style: { width: dim.width, height: dim.height, overflowY: "auto" } },
-                    React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: { inlineBaseLayerSwitcher: false } }));
+                    React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS }));
             }
         },
         {
@@ -25834,7 +26538,7 @@ var MaroonTemplateLayout = function () {
                     React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.TaskPane, locale: locale, componentProps: { isResizing: isResizing } }));
             }
         }
-    ];
+    ]; }, [locale]);
     var activeId;
     var states = [
         { id: "Selection", visible: showSelection },
@@ -25866,7 +26570,7 @@ var MaroonTemplateLayout = function () {
                 (function () {
                     if (showSelection || showTaskPane || showLegend) {
                         return React.createElement("div", null,
-                            React.createElement(accordion_1.Accordion, { style: { position: "absolute", top: OUTER_PADDING, bottom: 0, right: OUTER_PADDING, left: 0 }, onActivePanelChanged: onActiveElementChanged, activePanelId: activeId, panels: panels, isResizing: isResizing }));
+                            React.createElement(accordion_1.Accordion, { style: ACCORDION_STYLE, onActivePanelChanged: onActiveElementChanged, activePanelId: activeId, panels: panels, isResizing: isResizing }));
                     }
                 })())),
         (function () {
@@ -25899,8 +26603,8 @@ exports.MaroonTemplateLayout = MaroonTemplateLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SidebarLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
 var viewer_shim_1 = __webpack_require__(/*! ../containers/viewer-shim */ "./src/containers/viewer-shim.tsx");
@@ -25914,8 +26618,9 @@ var hooks_1 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/h
 var hooks_2 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
-var ismobilejs_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/esm/index.js"));
+var ismobilejs_1 = tslib_1.__importDefault(__webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/esm/index.js"));
 var template_2 = __webpack_require__(/*! ../actions/template */ "./src/actions/template.ts");
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 function sidebarTemplateReducer(origState, state, action) {
     switch (action.type) {
         case actions_1.ActionType.MAP_SET_SELECTION:
@@ -25932,7 +26637,7 @@ function sidebarTemplateReducer(origState, state, action) {
                         return origState; //Take no action on mobile
                     }
                     if (selection.SelectedFeatures.SelectedLayer.length && autoExpandSelectionPanel) {
-                        return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false });
+                        return tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false });
                     }
                 }
                 return state; //No action taken: Return "current" state
@@ -25951,7 +26656,7 @@ function sidebarTemplateReducer(origState, state, action) {
                         return origState; //Take no action on mobile
                     }
                     if (autoExpandSelectionPanel) {
-                        return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false });
+                        return tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true, taskPaneVisible: false, legendVisible: false });
                     }
                 }
             }
@@ -25966,7 +26671,7 @@ function sidebarTemplateReducer(origState, state, action) {
                     else {
                         state1 = { legendVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -25980,13 +26685,13 @@ function sidebarTemplateReducer(origState, state, action) {
                     else {
                         state1 = { selectionPanelVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
@@ -25999,14 +26704,14 @@ function sidebarTemplateReducer(origState, state, action) {
                     else {
                         state1 = { taskPaneVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 var data = action.payload;
                 if ((0, template_1.isElementState)(data)) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), data);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), data);
                 }
             }
     }
@@ -26072,7 +26777,7 @@ var Sidebar = function (props) {
         }
     }, [lastAction]);
     var position = props.position, busy = props.busy, collapsed = props.collapsed, activeTab = props.activeTab;
-    return React.createElement("div", { className: "sidebar " + (collapsed ? "collapsed" : "") + " sidebar-" + position },
+    return React.createElement("div", { className: "sidebar ".concat(collapsed ? "collapsed" : "", " sidebar-").concat(position) },
         React.createElement("div", { className: "sidebar-tabs" },
             React.createElement("ul", { role: "tablist" },
                 React.createElement("li", null, (function () {
@@ -26117,7 +26822,7 @@ var Sidebar = function (props) {
         React.createElement("div", { className: "sidebar-content" },
             (function () {
                 if (props.taskpane) {
-                    return React.createElement("div", { className: "sidebar-pane " + (activeTab == "tasks" ? "active" : "") },
+                    return React.createElement("div", { className: "sidebar-pane ".concat(activeTab == "tasks" ? "active" : "") },
                         React.createElement(SidebarHeader, { text: (0, i18n_1.tr)("TPL_TITLE_TASKPANE", props.locale), onCloseClick: onClickCollapse }),
                         React.createElement("div", { style: { position: "absolute", top: 40, bottom: 0, right: 0, left: 0 } },
                             React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.TaskPane, locale: props.locale })));
@@ -26125,15 +26830,15 @@ var Sidebar = function (props) {
             })(),
             (function () {
                 if (props.legend) {
-                    return React.createElement("div", { className: "sidebar-pane " + (activeTab == "legend" ? "active" : "") },
+                    return React.createElement("div", { className: "sidebar-pane ".concat(activeTab == "legend" ? "active" : "") },
                         React.createElement(SidebarHeader, { text: (0, i18n_1.tr)("TPL_TITLE_LEGEND", props.locale), onCloseClick: onClickCollapse }),
                         React.createElement("div", { style: { position: "absolute", top: 40, bottom: 0, right: 0, left: 0, overflow: "auto" } },
-                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: props.locale, componentProps: { inlineBaseLayerSwitcher: true } })));
+                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: props.locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS })));
                 }
             })(),
             (function () {
                 if (props.selection) {
-                    return React.createElement("div", { className: "sidebar-pane " + (activeTab == "selection" ? "active" : "") },
+                    return React.createElement("div", { className: "sidebar-pane ".concat(activeTab == "selection" ? "active" : "") },
                         React.createElement(SidebarHeader, { text: (0, i18n_1.tr)("TPL_TITLE_SELECTION_PANEL", props.locale), onCloseClick: onClickCollapse }),
                         React.createElement("div", { style: { position: "absolute", top: 40, bottom: 0, right: 0, left: 0 } },
                             React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.SelectionPanel, locale: props.locale })));
@@ -26285,8 +26990,8 @@ exports.SidebarLayout = SidebarLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SlateTemplateLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -26297,7 +27002,7 @@ var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var accordion_1 = __webpack_require__(/*! ../components/accordion */ "./src/components/accordion.tsx");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
-var react_splitter_layout_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
+var react_splitter_layout_1 = tslib_1.__importDefault(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 var hooks_2 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
@@ -26314,7 +27019,7 @@ function slateTemplateReducer(origState, state, action) {
                     else {
                         state1 = { legendVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -26328,13 +27033,13 @@ function slateTemplateReducer(origState, state, action) {
                     else {
                         state1 = { selectionPanelVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
@@ -26347,20 +27052,22 @@ function slateTemplateReducer(origState, state, action) {
                     else {
                         state1 = { taskPaneVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 var data = action.payload;
                 if ((0, template_1.isElementState)(data)) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), data);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), data);
                 }
             }
     }
     return state;
 }
 var STATUS_BAR_HEIGHT = 18;
+var ACCORDION_STYLE = { position: "absolute", top: 0, bottom: 0, left: 0, right: 0 };
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 /**
  * A viewer template that resembles the Slate Fusion template
  */
@@ -26377,13 +27084,13 @@ var SlateTemplateLayout = function () {
     var sbWidth = Math.max(initInfoPaneWidth, initTaskPaneWidth);
     var bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
     var topOffset = (toolbar_1.DEFAULT_TOOLBAR_SIZE * 3);
-    var panels = [
+    var panels = React.useMemo(function () { return [
         {
             id: "Legend",
             title: (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale),
             contentRenderer: function (dim) {
                 return React.createElement("div", { style: { width: dim.width, height: dim.height, overflowY: "auto" } },
-                    React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: { inlineBaseLayerSwitcher: false } }));
+                    React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS }));
             }
         },
         {
@@ -26402,7 +27109,7 @@ var SlateTemplateLayout = function () {
                     React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.TaskPane, locale: locale, componentProps: { isResizing: isResizing } }));
             }
         }
-    ];
+    ]; }, [locale]);
     var activeId;
     var states = [
         { id: "Selection", visible: showSelection },
@@ -26420,7 +27127,7 @@ var SlateTemplateLayout = function () {
                 (function () {
                     if (showSelection || showTaskPane || showLegend) {
                         return React.createElement("div", null,
-                            React.createElement(accordion_1.Accordion, { style: { position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }, onActivePanelChanged: onActiveElementChanged, activePanelId: activeId, panels: panels, isResizing: isResizing }));
+                            React.createElement(accordion_1.Accordion, { style: ACCORDION_STYLE, onActivePanelChanged: onActiveElementChanged, activePanelId: activeId, panels: panels, isResizing: isResizing }));
                     }
                 })(),
                 React.createElement("div", null,
@@ -26464,8 +27171,8 @@ exports.SlateTemplateLayout = SlateTemplateLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TurquoiseYellowTemplateLayout = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var React = (0, tslib_1.__importStar)(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 var component_1 = __webpack_require__(/*! ../api/registry/component */ "./src/api/registry/component.tsx");
 var toolbar_1 = __webpack_require__(/*! ../components/toolbar */ "./src/components/toolbar.tsx");
 var toolbar_2 = __webpack_require__(/*! ../containers/toolbar */ "./src/containers/toolbar.tsx");
@@ -26475,7 +27182,7 @@ var flyout_region_1 = __webpack_require__(/*! ../containers/flyout-region */ "./
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var template_1 = __webpack_require__(/*! ../reducers/template */ "./src/reducers/template.ts");
 var init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
-var react_splitter_layout_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
+var react_splitter_layout_1 = tslib_1.__importDefault(__webpack_require__(/*! react-splitter-layout */ "./node_modules/react-splitter-layout/lib/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 var hooks_1 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
@@ -26493,7 +27200,7 @@ function turquoiseYellowTemplateReducer(origState, state, action) {
                     else {
                         state1 = { legendVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_SELECTION_PANEL_VISIBILITY:
@@ -26507,13 +27214,13 @@ function turquoiseYellowTemplateReducer(origState, state, action) {
                     else {
                         state1 = { selectionPanelVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
             {
                 var state1 = { taskPaneVisible: true, selectionPanelVisible: false, legendVisible: false };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.FUSION_SET_TASK_PANE_VISIBILITY:
             {
@@ -26526,14 +27233,14 @@ function turquoiseYellowTemplateReducer(origState, state, action) {
                     else {
                         state1 = { taskPaneVisible: data };
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
             {
                 var data = action.payload;
                 if ((0, template_1.isElementState)(data)) {
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), data);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), data);
                 }
             }
     }
@@ -26543,6 +27250,7 @@ var SIDEBAR_PADDING = 3;
 var TOP_BAR_HEIGHT = 35;
 var TAB_BAR_HEIGHT = 30;
 var STATUS_BAR_HEIGHT = 18;
+var DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
 /**
  * A viewer template that resembles the TurquoiseYellow Fusion template
  */
@@ -26591,7 +27299,7 @@ var TurquoiseYellowTemplateLayout = function () {
                 (function () {
                     if (showSelection || showTaskPane || showLegend) {
                         return React.createElement("div", { className: "turquoise-yellow-sidebar", style: { position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 } },
-                            React.createElement(core_1.Tabs, (0, tslib_1.__assign)({ className: "turquoise-yellow-sb-tabs", id: "SidebarTabs", onChange: onActiveElementChanged }, extraTabsProps),
+                            React.createElement(core_1.Tabs, tslib_1.__assign({ className: "turquoise-yellow-sb-tabs", id: "SidebarTabs", onChange: onActiveElementChanged }, extraTabsProps),
                                 (function () {
                                     if (hasTaskPane) {
                                         var panel = React.createElement("div", { style: tabPanelStyle },
@@ -26602,8 +27310,8 @@ var TurquoiseYellowTemplateLayout = function () {
                                 (function () {
                                     if (hasLegend) {
                                         var p1 = { overflow: "auto" };
-                                        var panel = React.createElement("div", { style: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, tabPanelStyle), p1) },
-                                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: { inlineBaseLayerSwitcher: false } }));
+                                        var panel = React.createElement("div", { style: tslib_1.__assign(tslib_1.__assign({}, tabPanelStyle), p1) },
+                                            React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS }));
                                         return React.createElement(core_1.Tab, { id: "Legend", title: legendTitle, panel: panel });
                                     }
                                 })(),
@@ -26657,7 +27365,7 @@ exports.TurquoiseYellowTemplateLayout = TurquoiseYellowTemplateLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configReducer = exports.CONFIG_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
@@ -26702,16 +27410,22 @@ exports.CONFIG_INITIAL_STATE = {
     }
 };
 function configReducer(state, action) {
-    var _a, _b;
+    var _a, _b, _c;
     if (state === void 0) { state = exports.CONFIG_INITIAL_STATE; }
     switch (action.type) {
         case actions_1.ActionType.SET_LOCALE:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { locale: action.payload });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { locale: action.payload });
+            }
+        case actions_1.ActionType.SET_APP_SETTING:
+            {
+                var settings = tslib_1.__assign({}, ((_a = state.appSettings) !== null && _a !== void 0 ? _a : {}));
+                settings[action.payload.key] = action.payload.value;
+                return tslib_1.__assign(tslib_1.__assign({}, state), { appSettings: settings });
             }
         case actions_1.ActionType.INIT_APP:
             {
-                var payload = (_a = action.payload) !== null && _a !== void 0 ? _a : {};
+                var payload = (_b = action.payload) !== null && _b !== void 0 ? _b : {};
                 var maps = payload.maps;
                 var availableMaps = [];
                 var am = payload.activeMapName;
@@ -26721,19 +27435,20 @@ function configReducer(state, action) {
                     availableMaps.push({ name: maps[mapName].mapGroupId, value: mapName });
                 }
                 if (mapNames.indexOf(am) < 0) {
-                    (0, logger_1.warn)("Invalid initial active map name: " + am + ". Probably because we haven't properly implemented recovery of runtime maps on reload yet");
+                    (0, logger_1.warn)("Invalid initial active map name: ".concat(am, ". Probably because we haven't properly implemented recovery of runtime maps on reload yet"));
                     am = mapNames[0];
                 }
                 var state1 = {
+                    appSettings: payload.appSettings,
                     locale: payload.locale || i18n_1.DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: am,
                     availableMaps: availableMaps
                 };
-                var newState = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                var newState = tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
-                    var coordConfig = (0, tslib_1.__assign)({}, state.coordinates);
-                    var viewerConfig = (0, tslib_1.__assign)({}, state.viewer);
+                    var coordConfig = tslib_1.__assign({}, state.coordinates);
+                    var viewerConfig = tslib_1.__assign({}, state.viewer);
                     if (payload.config.isStateless != null) {
                         viewerConfig.isStateless = payload.config.isStateless;
                     }
@@ -26771,7 +27486,7 @@ function configReducer(state, action) {
                                 arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
                             }
                             else {
-                                arbCs = (0, units_1.tryParseArbitraryCs)((_b = m === null || m === void 0 ? void 0 : m.meta) === null || _b === void 0 ? void 0 : _b.projection);
+                                arbCs = (0, units_1.tryParseArbitraryCs)((_c = m === null || m === void 0 ? void 0 : m.meta) === null || _c === void 0 ? void 0 : _c.projection);
                             }
                             // If arbitrary, infer units from it
                             if (arbCs) {
@@ -26779,7 +27494,7 @@ function configReducer(state, action) {
                             }
                         }
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, newState), state2);
+                    return tslib_1.__assign(tslib_1.__assign({}, newState), state2);
                 }
                 else {
                     return newState;
@@ -26787,15 +27502,15 @@ function configReducer(state, action) {
             }
         case actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { selectCanDragPan: action.payload });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { selectCanDragPan: action.payload });
             }
         case actions_1.ActionType.MAP_SET_VIEW_ROTATION:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { viewRotation: action.payload });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { viewRotation: action.payload });
             }
         case actions_1.ActionType.MAP_SET_VIEW_ROTATION_ENABLED:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { viewRotationEnabled: action.payload });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { viewRotationEnabled: action.payload });
             }
         case actions_1.ActionType.MAP_SET_ACTIVE_MAP:
             {
@@ -26804,7 +27519,7 @@ function configReducer(state, action) {
                     var state1 = {
                         activeMapName: data
                     };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
         case actions_1.ActionType.MAP_SET_VIEW_SIZE_UNITS:
@@ -26812,11 +27527,11 @@ function configReducer(state, action) {
                 //HACK: Huh? It's typed UnitOfMeasure on both ends, so where is the string coming from that causes
                 //the RHS type to be string | UnitOfMeasure?
                 var state1 = { viewSizeUnits: action.payload };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.MAP_SET_MANUAL_MAPTIP:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { manualFeatureTooltips: action.payload });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { manualFeatureTooltips: action.payload });
             }
     }
     return state;
@@ -26836,7 +27551,7 @@ exports.configReducer = configReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.initErrorReducer = exports.INIT_ERROR_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 exports.INIT_ERROR_INITIAL_STATE = {
@@ -26850,11 +27565,11 @@ function initErrorReducer(state, action) {
     switch (action.type) {
         case actions_1.ActionType.INIT_ACKNOWLEDGE_WARNINGS:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { warnings: [] });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { warnings: [] });
             }
         case actions_1.ActionType.INIT_APP:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), { warnings: (0, array_1.makeUnique)(action.payload.warnings) });
+                return tslib_1.__assign(tslib_1.__assign({}, state), { warnings: (0, array_1.makeUnique)(action.payload.warnings) });
             }
         case actions_1.ActionType.INIT_ERROR:
             {
@@ -26926,7 +27641,7 @@ exports.lastAction = lastAction;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.mapStateReducer = exports.MAP_STATE_INITIAL_SUB_STATE = exports.MG_INITIAL_SUB_STATE = exports.MAP_STATE_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
@@ -26966,8 +27681,8 @@ function applyMapGuideSubState(state, mapName, applyFn) {
         var mgSubState = subState.mapguide;
         if (mgSubState) {
             var toApply = applyFn(mgSubState);
-            var mgSubState1 = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, mgSubState), toApply);
-            return mergeSubState(state, mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), { mapguide: mgSubState1 }));
+            var mgSubState1 = tslib_1.__assign(tslib_1.__assign({}, mgSubState), toApply);
+            return mergeSubState(state, mapName, tslib_1.__assign(tslib_1.__assign({}, subState), { mapguide: mgSubState1 }));
         }
     }
     return state;
@@ -26977,7 +27692,7 @@ function setLayerAction(state, mapName, layerName, selector) {
     if (subState && subState.layers) {
         var layers = subState.layers.map(function (l) {
             if (l.name == layerName) {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, l), (selector(l)));
+                return tslib_1.__assign(tslib_1.__assign({}, l), (selector(l)));
             }
             else {
                 return l;
@@ -26986,14 +27701,14 @@ function setLayerAction(state, mapName, layerName, selector) {
         var state1 = {
             layers: layers
         };
-        return mergeSubState(state, mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+        return mergeSubState(state, mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
     }
     return state;
 }
 function mergeSubState(state, mapName, subState) {
     var state1 = {};
-    state1[mapName] = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state[mapName]), subState);
-    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+    state1[mapName] = tslib_1.__assign(tslib_1.__assign({}, state[mapName]), subState);
+    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
 }
 function mapStateReducer(state, action) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
@@ -27022,7 +27737,7 @@ function mapStateReducer(state, action) {
                     var cv = void 0;
                     if (payload.initialView && mapName == mapNameToApplyInitialState) {
                         cv = {
-                            currentView: (0, tslib_1.__assign)({}, payload.initialView)
+                            currentView: tslib_1.__assign({}, payload.initialView)
                         };
                     }
                     var isel = void 0;
@@ -27030,7 +27745,7 @@ function mapStateReducer(state, action) {
                         isel = {
                             selectionSet: payload.initialSelections[mapName]
                         };
-                        (0, logger_1.debug)("Restoring client-side selection set for: " + mapName);
+                        (0, logger_1.debug)("Restoring client-side selection set for: ".concat(mapName));
                     }
                     var sl = [];
                     var sg = [];
@@ -27045,7 +27760,7 @@ function mapStateReducer(state, action) {
                             mrtm = { runtimeMap: rtm, isArbitraryCs: arbCs != null };
                         }
                         else {
-                            mgeneric = { subject: (0, tslib_1.__assign)({}, rtm) };
+                            mgeneric = { subject: tslib_1.__assign({}, rtm) };
                         }
                     }
                     if (mapName == mapNameToApplyInitialState) {
@@ -27079,18 +27794,18 @@ function mapStateReducer(state, action) {
                                     }
                                 }
                             }
-                            (0, logger_1.debug)("Initially showing layers: " + isl.join("|"));
-                            (0, logger_1.debug)("Initially showing groups: " + isg.join("|"));
-                            (0, logger_1.debug)("Initially hiding layers: " + ihl.join("|"));
-                            (0, logger_1.debug)("Initially hiding groups: " + ihg.join("|"));
-                            (0, logger_1.debug)("Initially showing layer ids: " + sl.join("|"));
-                            (0, logger_1.debug)("Initially showing group ids: " + sg.join("|"));
-                            (0, logger_1.debug)("Initially hiding layer ids: " + hl.join("|"));
-                            (0, logger_1.debug)("Initially hiding group ids: " + hg.join("|"));
+                            (0, logger_1.debug)("Initially showing layers: ".concat(isl.join("|")));
+                            (0, logger_1.debug)("Initially showing groups: ".concat(isg.join("|")));
+                            (0, logger_1.debug)("Initially hiding layers: ".concat(ihl.join("|")));
+                            (0, logger_1.debug)("Initially hiding groups: ".concat(ihg.join("|")));
+                            (0, logger_1.debug)("Initially showing layer ids: ".concat(sl.join("|")));
+                            (0, logger_1.debug)("Initially showing group ids: ".concat(sg.join("|")));
+                            (0, logger_1.debug)("Initially hiding layer ids: ".concat(hl.join("|")));
+                            (0, logger_1.debug)("Initially hiding group ids: ".concat(hg.join("|")));
                         }
                     }
-                    var newMgSubState = (0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, exports.MG_INITIAL_SUB_STATE), mrtm), (isel || {})), (sl.length > 0 ? { showLayers: (0, tslib_1.__spreadArray)([], sl, true) } : {})), (sg.length > 0 ? { showGroups: (0, tslib_1.__spreadArray)([], sg, true) } : {})), (hl.length > 0 ? { hideLayers: (0, tslib_1.__spreadArray)([], hl, true) } : {})), (hg.length > 0 ? { hideGroups: (0, tslib_1.__spreadArray)([], hg, true) } : {}));
-                    var newMapState = (0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, exports.MAP_STATE_INITIAL_SUB_STATE), { generic: mgeneric }), { externalBaseLayers: maps[mapName].externalBaseLayers }), { initialExternalLayers: maps[mapName].initialExternalLayers }), { initialView: maps[mapName].initialView }), (cv || {})), { mapguide: newMgSubState });
+                    var newMgSubState = tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, exports.MG_INITIAL_SUB_STATE), mrtm), (isel || {})), (sl.length > 0 ? { showLayers: tslib_1.__spreadArray([], sl, true) } : {})), (sg.length > 0 ? { showGroups: tslib_1.__spreadArray([], sg, true) } : {})), (hl.length > 0 ? { hideLayers: tslib_1.__spreadArray([], hl, true) } : {})), (hg.length > 0 ? { hideGroups: tslib_1.__spreadArray([], hg, true) } : {}));
+                    var newMapState = tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, exports.MAP_STATE_INITIAL_SUB_STATE), { generic: mgeneric }), { externalBaseLayers: maps[mapName].externalBaseLayers }), { initialExternalLayers: maps[mapName].initialExternalLayers }), { initialView: maps[mapName].initialView }), (cv || {})), { mapguide: newMgSubState });
                     // As INIT_APP does not establish a currentView, if a currentView was
                     // somehow established as part of the initial app state, we will keep
                     // it instead of it being discarded
@@ -27099,12 +27814,13 @@ function mapStateReducer(state, action) {
                     }
                     newState[mapName] = newMapState;
                 }
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newState);
             }
         case actions_1.ActionType.MAP_PREVIOUS_VIEW:
             {
                 var payload = action.payload;
                 var subState = state[payload.mapName];
+                var rs = state;
                 if (subState) {
                     var index = subState.historyIndex - 1;
                     if (index >= 0) {
@@ -27112,15 +27828,17 @@ function mapStateReducer(state, action) {
                             historyIndex: index,
                             currentView: subState.history[index]
                         };
-                        return mergeSubState(state, payload.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                        rs = mergeSubState(state, payload.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                     }
                 }
-                return state;
+                (0, logger_1.debug)("Next navigation stack:", rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case actions_1.ActionType.MAP_NEXT_VIEW:
             {
                 var payload = action.payload;
                 var subState = state[payload.mapName];
+                var rs = state;
                 if (subState) {
                     var index = subState.historyIndex + 1;
                     if (index < subState.history.length) {
@@ -27128,10 +27846,11 @@ function mapStateReducer(state, action) {
                             historyIndex: index,
                             currentView: subState.history[index]
                         };
-                        return mergeSubState(state, payload.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                        rs = mergeSubState(state, payload.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                     }
                 }
-                return state;
+                (0, logger_1.debug)("Next navigation stack:", rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case actions_1.ActionType.MAP_SET_SCALE:
             {
@@ -27142,13 +27861,13 @@ function mapStateReducer(state, action) {
                     var scale = payload.scale;
                     if (typeof view === 'object' && typeof scale === 'number') {
                         var view1 = { scale: scale, resolution: payload.resolution };
-                        view = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, view), view1);
+                        view = tslib_1.__assign(tslib_1.__assign({}, view), view1);
                     }
                     var state1 = {
                         currentView: view
                     };
-                    var newSubState = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state1), { historyIndex: subState.historyIndex });
-                    newSubState.history = (0, tslib_1.__spreadArray)([], subState.history, true);
+                    var newSubState = tslib_1.__assign(tslib_1.__assign({}, state1), { historyIndex: subState.historyIndex });
+                    newSubState.history = tslib_1.__spreadArray([], subState.history, true);
                     if (view && newSubState.history && newSubState.historyIndex != null) {
                         newSubState.historyIndex++;
                         newSubState.history[newSubState.historyIndex] = view;
@@ -27166,14 +27885,15 @@ function mapStateReducer(state, action) {
             {
                 var payload = action.payload;
                 var subState = state[payload.mapName];
+                var rs = state;
                 if (subState) {
                     var data = payload.view;
                     if ((0, type_guards_1.isMapView)(data)) {
                         var state1 = {
                             currentView: data
                         };
-                        var newSubState = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state1), { historyIndex: subState.historyIndex });
-                        newSubState.history = (0, tslib_1.__spreadArray)([], subState.history, true);
+                        var newSubState = tslib_1.__assign(tslib_1.__assign({}, state1), { historyIndex: subState.historyIndex });
+                        newSubState.history = tslib_1.__spreadArray([], subState.history, true);
                         if (newSubState.history && newSubState.historyIndex != null) {
                             newSubState.historyIndex++;
                             newSubState.history[newSubState.historyIndex] = data;
@@ -27183,17 +27903,18 @@ function mapStateReducer(state, action) {
                                 newSubState.history.splice(newSubState.historyIndex + 1);
                             }
                         }
-                        return mergeSubState(state, payload.mapName, newSubState);
+                        rs = mergeSubState(state, payload.mapName, newSubState);
                     }
                 }
-                return state;
+                (0, logger_1.debug)("Next navigation stack:", rs[payload.mapName].historyIndex, rs[payload.mapName].history);
+                return rs;
             }
         case actions_1.ActionType.MAP_SET_LAYER_TRANSPARENCY:
             {
                 //TODO: Move state to non-MG branch for next major release
                 var payload_2 = action.payload;
                 return applyMapGuideSubState(state, payload_2.mapName, function (mgSubState) {
-                    var trans = (0, tslib_1.__assign)({}, mgSubState.layerTransparency);
+                    var trans = tslib_1.__assign({}, mgSubState.layerTransparency);
                     trans[payload_2.layerName] = payload_2.opacity;
                     return {
                         layerTransparency: trans
@@ -27204,7 +27925,7 @@ function mapStateReducer(state, action) {
             {
                 var payload_3 = action.payload;
                 return applyMapGuideSubState(state, payload_3.mapName, function (mgSubState) {
-                    var layers = (0, tslib_1.__assign)({}, mgSubState.selectableLayers);
+                    var layers = tslib_1.__assign({}, mgSubState.selectableLayers);
                     layers[payload_3.id] = payload_3.value;
                     return {
                         selectableLayers: layers
@@ -27215,7 +27936,7 @@ function mapStateReducer(state, action) {
             {
                 var payload_4 = action.payload;
                 return applyMapGuideSubState(state, payload_4.mapName, function (mgSubState) {
-                    var groups = (0, tslib_1.__assign)({}, mgSubState.expandedGroups);
+                    var groups = tslib_1.__assign({}, mgSubState.expandedGroups);
                     groups[payload_4.id] = payload_4.value;
                     return {
                         expandedGroups: groups
@@ -27226,8 +27947,8 @@ function mapStateReducer(state, action) {
             {
                 var payload_5 = action.payload;
                 return applyMapGuideSubState(state, payload_5.mapName, function (mgSubState) {
-                    var showGroups = (0, tslib_1.__spreadArray)([], mgSubState.showGroups, true);
-                    var hideGroups = (0, tslib_1.__spreadArray)([], mgSubState.hideGroups, true);
+                    var showGroups = tslib_1.__spreadArray([], mgSubState.showGroups, true);
+                    var hideGroups = tslib_1.__spreadArray([], mgSubState.hideGroups, true);
                     if (payload_5.value === true) { //Show it
                         showGroups.push(payload_5.id);
                         showGroups = (0, array_1.makeUnique)(showGroups);
@@ -27250,8 +27971,8 @@ function mapStateReducer(state, action) {
             {
                 var payload_6 = action.payload;
                 return applyMapGuideSubState(state, payload_6.mapName, function (mgSubState) {
-                    var showLayers = (0, tslib_1.__spreadArray)([], mgSubState.showLayers, true);
-                    var hideLayers = (0, tslib_1.__spreadArray)([], mgSubState.hideLayers, true);
+                    var showLayers = tslib_1.__spreadArray([], mgSubState.showLayers, true);
+                    var hideLayers = tslib_1.__spreadArray([], mgSubState.hideLayers, true);
                     if (payload_6.value === true) { //Show it
                         showLayers.push(payload_6.id);
                         showLayers = (0, array_1.makeUnique)(showLayers);
@@ -27297,7 +28018,7 @@ function mapStateReducer(state, action) {
                         cs.layers.push(lyr);
                     }
                     lyr.features.push(payload_8.feature);
-                    return mergeSubState(state, payload_8.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), { clientSelection: cs }));
+                    return mergeSubState(state, payload_8.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), { clientSelection: cs }));
                 }
                 return state;
             }
@@ -27306,7 +28027,7 @@ function mapStateReducer(state, action) {
                 var payload = action.payload;
                 var subState = state[payload.mapName];
                 if (subState) {
-                    return mergeSubState(state, payload.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), { clientSelection: undefined }));
+                    return mergeSubState(state, payload.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), { clientSelection: undefined }));
                 }
                 return state;
             }
@@ -27339,7 +28060,7 @@ function mapStateReducer(state, action) {
                     var state1 = {
                         externalBaseLayers: baseLayers
                     };
-                    return mergeSubState(state, payload_10.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                    return mergeSubState(state, payload_10.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                 }
                 return state;
             }
@@ -27352,7 +28073,7 @@ function mapStateReducer(state, action) {
                     var state1 = {
                         layers: layers
                     };
-                    return mergeSubState(state, payload.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                    return mergeSubState(state, payload.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                 }
                 return state;
             }
@@ -27361,11 +28082,11 @@ function mapStateReducer(state, action) {
                 var payload_11 = action.payload;
                 var subState = state[payload_11.mapName];
                 if (subState) {
-                    var layers = (0, tslib_1.__spreadArray)([payload_11.layer], ((_h = subState.layers) !== null && _h !== void 0 ? _h : []), true);
+                    var layers = tslib_1.__spreadArray([payload_11.layer], ((_h = subState.layers) !== null && _h !== void 0 ? _h : []), true);
                     var state1 = {
                         layers: layers
                     };
-                    var ss = mergeSubState(state, payload_11.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                    var ss = mergeSubState(state, payload_11.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                     if (payload_11.defaultStyle) {
                         var ss1 = setLayerAction(ss, payload_11.mapName, payload_11.layer.name, function () { return ({ vectorStyle: payload_11.defaultStyle }); });
                         return ss1;
@@ -27383,7 +28104,7 @@ function mapStateReducer(state, action) {
                     var state1 = {
                         layers: layers
                     };
-                    return mergeSubState(state, payload.mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                    return mergeSubState(state, payload.mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                 }
                 return state;
             }
@@ -27405,7 +28126,7 @@ function mapStateReducer(state, action) {
                 var state1 = setLayerAction(state, mapName, layerName, function (layer) {
                     var _a;
                     return ({
-                        heatmap: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, ((_a = layer.heatmap) !== null && _a !== void 0 ? _a : { blur: 15, radius: 5 })), { blur: blur_1 })
+                        heatmap: tslib_1.__assign(tslib_1.__assign({}, ((_a = layer.heatmap) !== null && _a !== void 0 ? _a : { blur: 15, radius: 5 })), { blur: blur_1 })
                     });
                 });
                 return state1;
@@ -27416,7 +28137,7 @@ function mapStateReducer(state, action) {
                 var state1 = setLayerAction(state, mapName, layerName, function (layer) {
                     var _a;
                     return ({
-                        heatmap: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, ((_a = layer.heatmap) !== null && _a !== void 0 ? _a : { blur: 15, radius: 5 })), { radius: radius_1 })
+                        heatmap: tslib_1.__assign(tslib_1.__assign({}, ((_a = layer.heatmap) !== null && _a !== void 0 ? _a : { blur: 15, radius: 5 })), { radius: radius_1 })
                     });
                 });
                 return state1;
@@ -27426,7 +28147,7 @@ function mapStateReducer(state, action) {
                 var _s = action.payload, mapName = _s.mapName, index = _s.index, layerName = _s.layerName;
                 var subState = state[mapName];
                 if (subState && subState.layers) {
-                    var layers = (0, tslib_1.__spreadArray)([], subState.layers, true);
+                    var layers = tslib_1.__spreadArray([], subState.layers, true);
                     var currentIdx = -1;
                     for (var i = 0; i < layers.length; i++) {
                         if (layers[i].name == layerName) {
@@ -27441,7 +28162,7 @@ function mapStateReducer(state, action) {
                         var state1 = {
                             layers: layers
                         };
-                        return mergeSubState(state, mapName, (0, tslib_1.__assign)((0, tslib_1.__assign)({}, subState), state1));
+                        return mergeSubState(state, mapName, tslib_1.__assign(tslib_1.__assign({}, subState), state1));
                     }
                 }
                 return state;
@@ -27455,7 +28176,7 @@ function mapStateReducer(state, action) {
                     }
                     else if (which_1 == ol_style_contracts_1.VectorStyleSource.Cluster) {
                         return {
-                            cluster: (0, tslib_1.__assign)((0, tslib_1.__assign)({}, current.cluster), { style: (0, tslib_1.__assign)({}, style_1) })
+                            cluster: tslib_1.__assign(tslib_1.__assign({}, current.cluster), { style: tslib_1.__assign({}, style_1) })
                         };
                     }
                     else {
@@ -27494,32 +28215,75 @@ exports.mapStateReducer = mapStateReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.modalReducer = exports.MODAL_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
+var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
+var immutability_helper_1 = tslib_1.__importDefault(__webpack_require__(/*! immutability-helper */ "./node_modules/immutability-helper/index.js"));
+function tryRestoreModalSizeAndPosition(modal, prevModal) {
+    if (prevModal === null || prevModal === void 0 ? void 0 : prevModal.position) {
+        modal.position = prevModal.position;
+    }
+    else if (!modal.position) {
+        modal.position = common_1.DEFAULT_MODAL_POSITION;
+    }
+    if (prevModal === null || prevModal === void 0 ? void 0 : prevModal.size) {
+        modal.size = prevModal.size;
+    }
+    else if (!modal.size) {
+        modal.size = common_1.DEFAULT_MODAL_SIZE;
+    }
+}
 exports.MODAL_INITIAL_STATE = {};
 function modalReducer(state, action) {
+    var _a, _b;
     if (state === void 0) { state = exports.MODAL_INITIAL_STATE; }
     switch (action.type) {
         case actions_1.ActionType.MODAL_SHOW_COMPONENT:
             {
+                var newModal = action.payload.modal;
+                tryRestoreModalSizeAndPosition(newModal, (_a = state[action.payload.name]) === null || _a === void 0 ? void 0 : _a.modal);
                 var newData = {};
                 newData[action.payload.name] = {
-                    modal: action.payload.modal,
+                    modal: newModal,
                     component: action.payload.component,
                     componentProps: action.payload.componentProps
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newData);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newData);
+            }
+        case actions_1.ActionType.MODAL_UPDATE:
+            {
+                var newData = {};
+                newData[action.payload.name] = {
+                    modal: {
+                        "$merge": {
+                            size: [action.payload.args.width, action.payload.args.height],
+                            position: [action.payload.args.x, action.payload.args.y]
+                        }
+                    }
+                };
+                var newState = (0, immutability_helper_1.default)(state, newData);
+                return newState;
             }
         case actions_1.ActionType.MODAL_SHOW_URL:
             {
+                var _c = action.payload, newModal = _c.modal, rest = tslib_1.__rest(_c, ["modal"]);
+                tryRestoreModalSizeAndPosition(newModal, (_b = state[action.payload.name]) === null || _b === void 0 ? void 0 : _b.modal);
                 var newData = {};
-                newData[action.payload.name] = (0, tslib_1.__assign)({}, action.payload);
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newData);
+                newData[action.payload.name] = tslib_1.__assign({ modal: newModal }, rest);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newData);
             }
         case actions_1.ActionType.MODAL_CLOSE:
             {
-                var newState = (0, tslib_1.__assign)({}, state);
-                delete newState[action.payload];
+                var newState = tslib_1.__assign({}, state);
+                delete newState[action.payload].modal.backdrop;
+                delete newState[action.payload].modal.overflowYScroll;
+                delete newState[action.payload].modal.title;
+                // Delete all non-modal properties
+                for (var k in newState[action.payload]) {
+                    if (k != "modal") {
+                        delete newState[action.payload][k];
+                    }
+                }
                 return newState;
             }
     }
@@ -27540,7 +28304,7 @@ exports.modalReducer = modalReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.mouseReducer = exports.MOUSE_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 exports.MOUSE_INITIAL_STATE = {
@@ -27554,7 +28318,7 @@ function mouseReducer(state, action) {
                 var data = action.payload.coord;
                 if ((0, type_guards_1.isCoordinate)(data)) {
                     var state1 = { coords: data };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
             }
     }
@@ -27611,7 +28375,7 @@ exports.rootReducer = {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.taskPaneReducer = exports.TASK_PANE_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 exports.TASK_PANE_INITIAL_STATE = {
     navIndex: -1,
@@ -27636,7 +28400,7 @@ function mergeNavigatedUrl(state, url) {
         navigation: nav,
         lastUrlPushed: false
     };
-    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+    return tslib_1.__assign(tslib_1.__assign({}, state), newState);
 }
 function taskPaneReducer(state, action) {
     if (state === void 0) { state = exports.TASK_PANE_INITIAL_STATE; }
@@ -27649,7 +28413,7 @@ function taskPaneReducer(state, action) {
                     navIndex: 0,
                     navigation: [payload.initialUrl]
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newState);
             }
         case actions_1.ActionType.TASK_PANE_HOME:
             {
@@ -27668,7 +28432,7 @@ function taskPaneReducer(state, action) {
                     navigation: nav,
                     lastUrlPushed: false
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newState);
             }
         case actions_1.ActionType.TASK_PANE_FORWARD:
             {
@@ -27680,7 +28444,7 @@ function taskPaneReducer(state, action) {
                     navigation: nav,
                     lastUrlPushed: false
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                return tslib_1.__assign(tslib_1.__assign({}, state), newState);
             }
         case actions_1.ActionType.TASK_PANE_PUSH_URL:
             {
@@ -27700,7 +28464,7 @@ function taskPaneReducer(state, action) {
                     var newState = {
                         navigation: nav
                     };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), newState);
                 }
                 else {
                     var newState = {
@@ -27708,7 +28472,7 @@ function taskPaneReducer(state, action) {
                         navigation: nav,
                         lastUrlPushed: true
                     };
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), newState);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), newState);
                 }
             }
         case actions_1.ActionType.TASK_INVOKE_URL:
@@ -27733,7 +28497,7 @@ exports.taskPaneReducer = taskPaneReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.templateReducer = exports.setCustomTemplateReducer = exports.isElementState = exports.TEMPLATE_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 exports.TEMPLATE_INITIAL_STATE = {
     initialInfoPaneWidth: 250,
@@ -27741,7 +28505,8 @@ exports.TEMPLATE_INITIAL_STATE = {
     taskPaneVisible: true,
     selectionPanelVisible: true,
     legendVisible: true,
-    autoDisplaySelectionPanelOnSelection: true
+    autoDisplaySelectionPanelOnSelection: true,
+    templateData: {}
 };
 /**
  * Checks if the given payload is an element state
@@ -27778,15 +28543,20 @@ function templateReducer(origState, action) {
         var selection = action.payload.selection;
         if (selection && selection.SelectedFeatures) {
             if (selection.SelectedFeatures.SelectedLayer.length && origState.autoDisplaySelectionPanelOnSelection) {
-                state = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false });
+                state = tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false });
             }
         }
     }
     if (action.type == actions_1.ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE) {
         var feature = action.payload.feature;
         if (feature === null || feature === void 0 ? void 0 : feature.properties) {
-            state = (0, tslib_1.__assign)((0, tslib_1.__assign)({}, origState), { selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false });
+            state = tslib_1.__assign(tslib_1.__assign({}, origState), { selectionPanelVisible: true, legendVisible: false, taskPaneVisible: false });
         }
+    }
+    if (action.type == actions_1.ActionType.FUSION_SET_TEMPLATE_CUSTOM_DATA) {
+        var state1 = tslib_1.__assign({}, state);
+        state1.templateData[action.payload.name] = action.payload.value;
+        return state1;
     }
     if (typeof (_ovReducer) == 'function') {
         return _ovReducer(origState, state, action);
@@ -27798,7 +28568,7 @@ function templateReducer(origState, action) {
             case actions_1.ActionType.FUSION_SET_ELEMENT_STATE:
                 {
                     if (isElementState(action.payload)) {
-                        return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), action.payload);
+                        return tslib_1.__assign(tslib_1.__assign({}, state), action.payload);
                     }
                     return state;
                 }
@@ -27811,7 +28581,7 @@ function templateReducer(origState, action) {
                     if (action.payload.initialInfoPaneWidth) {
                         state1.initialInfoPaneWidth = action.payload.initialInfoPaneWidth;
                     }
-                    return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                    return tslib_1.__assign(tslib_1.__assign({}, state), state1);
                 }
         }
     }
@@ -27832,8 +28602,8 @@ exports.templateReducer = templateReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.toolbarReducer = exports.TOOLBAR_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var immutability_helper_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! immutability-helper */ "./node_modules/immutability-helper/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var immutability_helper_1 = tslib_1.__importDefault(__webpack_require__(/*! immutability-helper */ "./node_modules/immutability-helper/index.js"));
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 var template_1 = __webpack_require__(/*! ./template */ "./src/reducers/template.ts");
 var constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
@@ -27880,7 +28650,7 @@ function toolbarReducer(state, action) {
     switch (action.type) {
         case actions_1.ActionType.INIT_APP:
             {
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), action.payload.toolbars);
+                return tslib_1.__assign(tslib_1.__assign({}, state), action.payload.toolbars);
             }
         case actions_1.ActionType.COMPONENT_OPEN:
             {
@@ -27980,7 +28750,7 @@ exports.toolbarReducer = toolbarReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.viewerReducer = exports.VIEWER_INITIAL_STATE = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 exports.VIEWER_INITIAL_STATE = {
@@ -28008,42 +28778,42 @@ function viewerReducer(state, action) {
                         featureTooltipsEnabled: ft
                     };
                 }
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1), state2);
+                return tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, state), state1), state2);
             }
         case actions_1.ActionType.MAP_SET_ACTIVE_TOOL:
             {
                 var state1 = {
                     tool: action.payload
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.MAP_SET_MAPTIP:
             {
                 var state1 = {
                     featureTooltipsEnabled: action.payload
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN:
             {
                 var state1 = {
                     selectCanDragPan: action.payload
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.MAP_SET_BUSY_COUNT:
             {
                 var state1 = {
                     busyCount: action.payload
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
         case actions_1.ActionType.MAP_RESIZED:
             {
                 var state1 = {
                     size: [action.payload.width, action.payload.height]
                 };
-                return (0, tslib_1.__assign)((0, tslib_1.__assign)({}, state), state1);
+                return tslib_1.__assign(tslib_1.__assign({}, state), state1);
             }
     }
     return state;
@@ -28063,15 +28833,15 @@ exports.viewerReducer = viewerReducer;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configureStore = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 var redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
-var redux_thunk_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js"));
+var redux_thunk_1 = tslib_1.__importDefault(__webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js"));
 var promise_middleware_1 = __webpack_require__(/*! ./promise-middleware */ "./src/store/promise-middleware.ts");
 var logger_1 = __webpack_require__(/*! ./logger */ "./src/store/logger.ts");
 var root_1 = __webpack_require__(/*! ../reducers/root */ "./src/reducers/root.ts");
 function configureStore(initialState, extraReducers) {
-    var root = extraReducers ? (0, redux_1.combineReducers)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, root_1.rootReducer), extraReducers)) : (0, redux_1.combineReducers)(root_1.rootReducer);
-    var store = redux_1.compose.apply(void 0, (0, tslib_1.__spreadArray)([//HACK: Something bogus about the compose() declaration
+    var root = extraReducers ? (0, redux_1.combineReducers)(tslib_1.__assign(tslib_1.__assign({}, root_1.rootReducer), extraReducers)) : (0, redux_1.combineReducers)(root_1.rootReducer);
+    var store = redux_1.compose.apply(void 0, tslib_1.__spreadArray([//HACK: Something bogus about the compose() declaration
         _getMiddleware()], _getEnhancers(), false))(redux_1.createStore)(root, initialState);
     return store;
 }
@@ -28082,14 +28852,14 @@ function _getMiddleware() {
         redux_thunk_1.default,
     ];
     if (true) {
-        middleware = (0, tslib_1.__spreadArray)((0, tslib_1.__spreadArray)([], middleware, true), [logger_1.logger], false);
+        middleware = tslib_1.__spreadArray(tslib_1.__spreadArray([], middleware, true), [logger_1.logger], false);
     }
     return redux_1.applyMiddleware.apply(void 0, middleware);
 }
 function _getEnhancers() {
     var enhancers = [];
     if ( true && window.__REDUX_DEVTOOLS_EXTENSION__) {
-        enhancers = (0, tslib_1.__spreadArray)((0, tslib_1.__spreadArray)([], enhancers, true), [window.__REDUX_DEVTOOLS_EXTENSION__()], false);
+        enhancers = tslib_1.__spreadArray(tslib_1.__spreadArray([], enhancers, true), [window.__REDUX_DEVTOOLS_EXTENSION__()], false);
     }
     return enhancers;
 }
@@ -28108,7 +28878,7 @@ function _getEnhancers() {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.logger = void 0;
 var actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
-var createLogger = __webpack_require__(/*! redux-logger */ "./node_modules/redux-logger/dist/redux-logger.es.js").createLogger;
+var createLogger = (__webpack_require__(/*! redux-logger */ "./node_modules/redux-logger/dist/redux-logger.js").createLogger);
 exports.logger = createLogger({
     collapsed: true,
     stateTransformer: function (state) {
@@ -28142,7 +28912,7 @@ exports.logger = createLogger({
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.promiseMiddleware = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 /**
  * Returns whether the provided value is a promise
  *
@@ -28173,7 +28943,7 @@ function promiseMiddleware(_a) {
         /**
          * Dispatch the pending action
          */
-        dispatch((0, tslib_1.__assign)((0, tslib_1.__assign)((0, tslib_1.__assign)({}, p1), p2), p3));
+        dispatch(tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, p1), p2), p3));
         /**
          * If successful, dispatch the fulfilled action, otherwise dispatch
          * rejected action.
@@ -28216,6 +28986,7 @@ exports.STRINGS_EN = {
     "WARNING": "Warning",
     "PBMG": "Powered by <a href='https://mapguide.osgeo.org' target='_blank'>MapGuide</a>",
     "INIT_WARNINGS_FOUND": "The following warnings were encountered loading the viewer",
+    "INIT_WARNING_STADIAMAPS_API_KEY_REQD": "A StadiaMaps API key is required. Sign up for an API key at https://stadiamaps.com/",
     "INIT_WARNING_BING_API_KEY_REQD": "A Bing Maps API key is required. Sign up for an API key at http://www.bingmapsportal.com/",
     "INIT_WARNING_BING_UNKNOWN_LAYER": "Unknown bing maps layer type {type}. This layer was skipped",
     "INIT_WARNING_UNSUPPORTED_GOOGLE_MAPS": "This viewer does not support Google Maps base layers",
@@ -28225,6 +28996,7 @@ exports.STRINGS_EN = {
     "LAYER_ID_MG_BASE": "MapGuide Map",
     "LAYER_ID_SUBJECT": "Subject Layer",
     "LAYER_ID_MG_SEL_OVERLAY": "MapGuide Selection Overlay",
+    "LAYER_ID_MG_BASE_LAYERS": "MapGuide Base Layers",
     "UNKNOWN_WIDGET": "This button references an unknown or unsupported widget: {widget}",
     "UNKNOWN_COMMAND_REFERENCE": "This button references an unknown command or unsupported: {command}",
     "INIT": "Initializing",
@@ -28233,7 +29005,7 @@ exports.STRINGS_EN = {
     "INIT_ERROR_UNKNOWN_RESOURCE_TYPE": "<p>Unknown or unsupported resource type for resource: <strong>{resourceId}</strong></p>",
     "INIT_ERROR_MISSING_RESOURCE_PARAM": "<p>No <strong>resource</strong> parameter found. This viewer assumes this parameter to be set in the query string and must refer to a valid Web Layout or Application Definition. If not specified, it will try to init from a Application Definition document at <strong>appdef.json</strong></p>",
     "INIT_ERROR_UNSUPPORTED_COORD_SYS": "<p>The Map Definition <strong>{mapDefinition}</strong>, uses a coordinate system that does not resolve to a valid EPSG code and cannot be loaded in this viewer</p><p>Solution:</p><ul><li>Change the coordinate system of this Map Definition to one that resolves to an EPSG code</li><li>Please note: There will be a small performance overhead for server-side re-projection as a result of doing this</li></ul>",
-    "INIT_ERROR_UNREGISTERED_EPSG_CODE": "<p>The Map Definition <strong>{mapDefinition}</strong>, uses a coordinate system that resolves to a valid EPSG code (<strong>EPSG:{epsg}</strong>), but no projection for this EPSG code has been registered</p><p>Solution:</p><ol><li>Search for the matching proj4js definition at <a href='http://epsg.io/'>http://epsg.io/</a></li><li>Register this projection to the viewer before mounting it</li></ol>",
+    "INIT_ERROR_UNREGISTERED_EPSG_CODE": "<p>The Map Definition <strong>{mapDefinition}</strong>, uses a coordinate system that resolves to a valid EPSG code (<strong>EPSG:{epsg}</strong>), but no projection for this EPSG code has been registered</p><p>Solution:</p><ol><li>Search for the matching proj4js definition at <a href='https://spatialreference.org/'>https://spatialreference.org/</a></li><li>Register this projection to the viewer before mounting it</li></ol>",
     "INIT_ERROR_EXPIRED_SESSION": "<p>The session id given has expired: <strong>{sessionId}</strong></p><p>Reload the viewer without the <strong>session</strong> parameter, or supply a valid session id for the <strong>session</strong> parameter</p>",
     "INIT_ERROR_RESOURCE_NOT_FOUND": "Attempted to load the following resource, but it was not found: <strong>{resourceId}</strong>",
     "INIT_ERROR_NO_CONNECTION": "<p>There is no connection between the MapGuide Web Tier and the MapGuide Server.</p><p>Possible causes:</p><ul><li>MapGuide Server is not running or is no longer responding</li><li>Internet connection problems</li></ul><p>Possible solutions:</p><ul><li>Restart the MapGuide Server Service</li><li>Contact your server administrator</li></ul>",
@@ -28577,7 +29349,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.assertIsDefined = void 0;
 function assertIsDefined(val) {
     if (val === undefined || val === null) {
-        throw new Error("Expected 'val' to be defined, but received " + val);
+        throw new Error("Expected 'val' to be defined, but received ".concat(val));
     }
 }
 exports.assertIsDefined = assertIsDefined;
@@ -28615,7 +29387,7 @@ function setAssetRoot(root) {
 }
 exports.setAssetRoot = setAssetRoot;
 function getRelativeIconPath(iconName) {
-    return "images/icons/" + iconName + ".png";
+    return "images/icons/".concat(iconName, ".png");
 }
 exports.getRelativeIconPath = getRelativeIconPath;
 
@@ -28938,6 +29710,29 @@ exports.roundTo = roundTo;
 
 /***/ }),
 
+/***/ "./src/utils/scoped-id.ts":
+/*!********************************!*\
+  !*** ./src/utils/scoped-id.ts ***!
+  \********************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ScopedId = void 0;
+var ScopedId = /** @class */ (function () {
+    function ScopedId(counter) {
+        if (counter === void 0) { counter = 0; }
+        this.counter = counter;
+    }
+    ScopedId.prototype.next = function () { return this.counter++; };
+    return ScopedId;
+}());
+exports.ScopedId = ScopedId;
+
+
+/***/ }),
+
 /***/ "./src/utils/site-version.ts":
 /*!***********************************!*\
   !*** ./src/utils/site-version.ts ***!
@@ -28947,21 +29742,31 @@ exports.roundTo = roundTo;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.canUseQueryMapFeaturesV4 = exports.getSiteVersion = void 0;
+exports.canUseQueryMapFeaturesV4 = exports.parseSiteVersion = exports.getSiteVersion = void 0;
 /**
  * Gets the MapGuide site version from the runtime map response
  * @param map
  * @since 0.12
  */
 function getSiteVersion(map) {
-    var _a = map.SiteVersion.split("."), sMaj = _a[0], sMin = _a[1], sPatch = _a[2], sRev = _a[3];
+    return parseSiteVersion(map.SiteVersion);
+}
+exports.getSiteVersion = getSiteVersion;
+/**
+ * Parses the given version string
+ *
+ * @param ver The version string
+ * @since 0.14.8
+ */
+function parseSiteVersion(ver) {
+    var _a = ver.split("."), sMaj = _a[0], sMin = _a[1], sPatch = _a[2], sRev = _a[3];
     var vMaj = parseInt(sMaj, 10);
     var vMin = parseInt(sMin, 10);
     var vPatch = parseInt(sPatch, 10);
     var vRev = parseInt(sRev, 10);
     return [vMaj, vMin, vPatch, vRev];
 }
-exports.getSiteVersion = getSiteVersion;
+exports.parseSiteVersion = parseSiteVersion;
 /**
  * Tests if QUERYMAPFEATURES 4.0.0 API can be used with this version of MapGuide
  * @param version The site version
@@ -29074,7 +29879,7 @@ exports.strTrim = strTrim;
  */
 function extractPlaceholderTokens(expr, delimBegin, delimEnd) {
     var _a;
-    var regex = new RegExp(delimBegin + "(.*?)" + delimEnd, "g");
+    var regex = new RegExp("".concat(delimBegin, "(.*?)").concat(delimEnd), "g");
     var matches = expr.match(regex);
     return (_a = matches === null || matches === void 0 ? void 0 : matches.map(function (m) { return m.replace(delimBegin, "").replace(delimEnd, ""); })) !== null && _a !== void 0 ? _a : [];
 }
@@ -29413,8 +30218,8 @@ exports.tryParseArbitraryCs = tryParseArbitraryCs;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseUrlParameters = exports.appendParameters = exports.stringifyQuery = exports.parseUrl = exports.ensureParameters = exports.parseComponentUri = exports.isComponentUri = exports.areUrlsSame = void 0;
-var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-var qs_1 = (0, tslib_1.__importDefault)(__webpack_require__(/*! qs */ "./node_modules/qs/lib/index.js"));
+var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+var qs_1 = tslib_1.__importDefault(__webpack_require__(/*! qs */ "./node_modules/qs/lib/index.js"));
 var string_1 = __webpack_require__(/*! ./string */ "./src/utils/string.ts");
 var parse = __webpack_require__(/*! url-parse */ "./node_modules/url-parse/index.js");
 var DEFAULT_PARSE_OPTIONS = { ignoreQueryPrefix: true };
@@ -29945,13 +30750,16 @@ const IconSvgPaths20 = {
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -30077,6 +30885,15 @@ const IconSvgPaths20 = {
 /******/ 		};
 /******/ 	}();
 /******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	!function() {
+/******/ 		__webpack_require__.nmd = function(module) {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
 /******/ 	!function() {
 /******/ 		// no baseURI
@@ -30122,7 +30939,7 @@ const IconSvgPaths20 = {
 /******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
 /******/ 					installedChunks[chunkId][0]();
 /******/ 				}
-/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 				installedChunks[chunkId] = 0;
 /******/ 			}
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}

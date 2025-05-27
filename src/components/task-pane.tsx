@@ -218,7 +218,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                             </iframe>
                         ];
                         if (frameContentLoaded == false) {
-                            components.push(<TaskFrameLoadingOverlay locale={locale} />);
+                            components.push(<TaskFrameLoadingOverlay key="loading-overlay" locale={locale} />);
                         }
                         return components;
                     }

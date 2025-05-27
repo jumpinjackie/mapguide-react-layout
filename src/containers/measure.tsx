@@ -8,7 +8,7 @@ import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
-import { ButtonGroup } from '@blueprintjs/core';
+import { ControlGroup } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
@@ -59,11 +59,11 @@ const MeasureControls: React.FC<{
     onClearMeasurements: (e: GenericEvent) => void;
 }> = ({ measuring, locale, onStartMeasure, onEndMeasure, onClearMeasurements }) => {
     const { Button } = useElementContext();
-    return <ButtonGroup>
+    return <ControlGroup>
         <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
         <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
         <Button type="button" icon="cross" onClick={onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
-    </ButtonGroup>;
+    </ControlGroup>;
 }
 
 class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {

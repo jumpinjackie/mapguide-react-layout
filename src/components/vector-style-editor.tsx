@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tabs, Tab, FormGroup, RadioGroup, Intent, ButtonGroup } from '@blueprintjs/core';
+import { Tabs, Tab, FormGroup, Intent, ControlGroup } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -115,11 +115,11 @@ const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
         {hasLabel && <FormGroup label={tr("LABEL_SIZE", locale)}>
             <NumberExprEditor locale={locale} value={localFontSize} onChange={t => setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE))} />
         </FormGroup>}
-        {hasLabel && <ButtonGroup>
+        {hasLabel && <ControlGroup>
             <Button variant="primary" active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
             <Button variant="primary" active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
             {isLine && <Button variant="primary" active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
-        </ButtonGroup>}
+        </ControlGroup>}
         {hasLabel && <FormGroup label={tr("LABEL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={localBgColor} onChange={(c: any) => setLocalBgColor(c)} />
         </FormGroup>}

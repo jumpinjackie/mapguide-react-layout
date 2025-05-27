@@ -1,10 +1,10 @@
-import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ExprOr, isEvaluatable } from "../../api/ol-style-contracts";
 import { strIsNullOrEmpty, STR_EMPTY } from "../../utils/string";
 import { ColorPicker } from "../color-picker";
 import { useElementContext } from "../elements/element-context";
+import { ControlGroup } from "@blueprintjs/core";
 
 interface RGB {
     b: number;
@@ -160,10 +160,10 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 <Radio name="edit-mode" label="Expression" value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
                 <input disabled={editMode != "edit-expr"} type="text" className="bp3-input" value={stringifyExprIf(localValue, "edit-expr")} onChange={e => onUpdateLocalValue({ expr: e.target.value })} />
                 <br /><br />
-                <ButtonGroup>
+                <ControlGroup>
                     <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>Apply</Button>
                     <Button variant="danger" onClick={(e: any) => onCancelEditing()}>Cancel</Button>
-                </ButtonGroup>
+                </ControlGroup>
             </Card>
         </Collapsible>
     </>;

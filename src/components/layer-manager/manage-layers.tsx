@@ -1,7 +1,7 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { ButtonGroup, FormGroup } from '@blueprintjs/core';
+import { ControlGroup, FormGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
@@ -143,13 +143,13 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     }
     return <Card key={layer.name}>
         <Switch style={LAYER_SWITCH_STYLE} checked={layer.visible} onChange={() => onSetVisibility(layer.name, !layer.visible)} labelElement={<span title={layerLabel}><Icon icon={iconName} /> {layerLabel}</span>} />
-        <ButtonGroup>
+        <ControlGroup>
             <Button disabled={!canMoveUp} title={tr("LAYER_MANAGER_TT_MOVE_UP", locale)} variant="primary" icon="caret-up" onClick={() => onMoveLayerUp(layer.name)} />
             <Button disabled={!canMoveDown} title={tr("LAYER_MANAGER_TT_MOVE_DOWN", locale)} variant="primary" icon="caret-down" onClick={() => onMoveLayerDown(layer.name)} />
             <Button disabled={!canZoom} title={tr("LAYER_MANAGER_TT_ZOOM_EXTENTS", locale)} variant="success" icon="zoom-to-fit" onClick={() => onZoomToBounds(layer.name)} />
             <Button title={tr("LAYER_MANAGER_TT_REMOVE", locale)} variant="danger" icon="trash" onClick={() => onRemoveLayer(layer.name)} />
             {extraActions}
-        </ButtonGroup>
+        </ControlGroup>
         <Collapsible isOpen={openPanel == OpenPanel.MoreLayerOptions}>
             <Card>
                 <h5 className="bp3-heading"><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></h5>

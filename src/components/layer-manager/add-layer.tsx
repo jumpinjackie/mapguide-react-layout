@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { EditableText, ButtonGroup, FormGroup, FileInput } from '@blueprintjs/core';
+import { EditableText, FormGroup, FileInput, ControlGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -300,10 +300,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                             assertNever(createLayerAs);
                     }
                 })()}
-                <ButtonGroup>
+                <ControlGroup>
                     <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} variant="primary">{tr("ADD_LAYER", locale)}</Button>
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} variant="danger">{tr("CANCEL", locale)}</Button>
-                </ButtonGroup>
+                </ControlGroup>
             </>} />
     } else if (isProcessingFile) {
         return <NonIdealState
@@ -325,13 +325,13 @@ const AddFileLayer = (props: IAddLayerProps) => {
 
 const AddUrlLayer = (props: IAddLayerProps) => {
     const { locale } = props;
-    const { Select } = useElementContext();
     const [selectedUrlType, setSelectedUrlType] = React.useState<string | undefined>(undefined);
     const items = Object.keys(ADD_URL_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_URL_LAYER_TYPES[lt].label }));
     return <div>
         <div style={{ marginBottom: 16 }}>
             <p>{tr("LAYER_TYPE", locale)}</p>
-            <Select fill value={selectedUrlType || ""}
+            <TypedSelect<string, true> fill value={selectedUrlType || ""}
+                placeholder={tr("SELECT_LAYER_TYPE", locale)}
                 onChange={e => setSelectedUrlType(e)}
                 items={items.map(i => ({ value: i.value, label: i.value }))} />
         </div>

@@ -14,7 +14,7 @@ import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
-import { useElementContext } from "../elements/element-context";
+import { TypedSelect, useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
@@ -262,9 +262,9 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 <NumericInput min={1} value={clusterDistance} onChange={v => setClusterDistance(v)} />
             </FormGroup>
             <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
-                {/* HACK: any type band-id to workaround abstraction typing limitation */}
-                <Select value={clusterActions as any}
-                    onChange={e => setClusterClickAction(e as any)}
+                <TypedSelect<ClusterClickAction, false>
+                    value={clusterClickAction}
+                    onChange={e => setClusterClickAction(e)}
                     items={clusterActions} />
             </FormGroup>
         </>;

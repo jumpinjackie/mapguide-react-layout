@@ -5,7 +5,7 @@ export interface IColorBrewerRamp {
     displayName: string;
     category: string;
     scheme: string;
-    ramp: string[];
+    ramp: string[] | undefined;
 }
 
 export function getColorBrewerRamps(): IColorBrewerRamp[] {
@@ -13,9 +13,7 @@ export function getColorBrewerRamps(): IColorBrewerRamp[] {
     for (const cat in colorbrewer.schemeGroups) {
         for (const scheme of colorbrewer.schemeGroups[cat]) {
             const ramp = getMaxRamp(scheme);
-            if (ramp) {
-                ramps.push({ displayName: `${cat} - ${scheme}`, category: cat, scheme: scheme, ramp: ramp });
-            }
+            ramps.push({ displayName: `${cat} - ${scheme}`, category: cat, scheme: scheme, ramp: ramp });
         }
     }
     return ramps;

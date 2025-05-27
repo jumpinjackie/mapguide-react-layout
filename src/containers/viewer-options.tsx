@@ -18,7 +18,7 @@ export interface IViewerOptionsProps {
 }
 
 export const ViewerOptions = () => {
-    const { Slider } = useElementContext();
+    const { Slider, Select } = useElementContext();
     const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
@@ -145,14 +145,9 @@ export const ViewerOptions = () => {
         </fieldset>
         <label className="bp3-label">
             {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
-            <div className="bp3-select">
-                <select value={viewSizeUnits} onChange={onViewSizeUnitsChanged}>
-                    {units.map(uom => {
-                        const ui = getUnitOfMeasure(uom);
-                        return <option key={uom} value={uom}>{ui.localizedName(locale)}</option>;
-                    })}
-                </select>
-            </div>
+            <Select value={`${viewSizeUnits}`}
+                onChange={onViewSizeUnitsChanged}
+                items={units.map(uom => ({ value: `${uom}`, label: getUnitOfMeasure(uom).localizedName(locale) }))} />
         </label>
     </div>;
 };

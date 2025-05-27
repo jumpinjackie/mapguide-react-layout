@@ -16,7 +16,7 @@ import { useReduxDispatch } from "../components/map-providers/context";
 import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
 import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
-import { useElementContext } from "../components/elements/element-context";
+import { TypedSelect, useElementContext } from "../components/elements/element-context";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -75,8 +75,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
             drawType: "LineString"
         }
     }
-    private onTypeChanged = (e: GenericEvent) => {
-        const newType = e.target.value;
+    private onTypeChanged = (newType: OLGeometryType) => {
         this.setState({ drawType: newType }, () => {
             const { activeMapName } = this.props;
             if (activeMapName && this.state.measuring === true) {
@@ -196,16 +195,18 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         const { measuring, drawType: type } = this.state;
         const { measureUnits } = this.props;
         const locale = this.getLocale();
+        const measurementTypes = [
+            { value: "LineString" as OLGeometryType, label: tr("MEASUREMENT_TYPE_LENGTH", locale) },
+            { value: "Polygon" as OLGeometryType, label: tr("MEASUREMENT_TYPE_AREA", locale) }
+        ]
         return <div className="component-measure">
             <form className="form-inline">
                 <label className="bp3-label">
                     {tr("MEASUREMENT_TYPE", locale)}
-                    <div className="bp3-select">
-                        <select value={type} onChange={this.onTypeChanged}>
-                            <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
-                            <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
-                        </select>
-                    </div>
+                    <TypedSelect<OLGeometryType, false> 
+                        value={type}
+                        onChange={this.onTypeChanged}
+                        items={measurementTypes} />
                 </label>
                 <MeasureControls measuring={measuring} locale={locale} onStartMeasure={this.onStartMeasure} onEndMeasure={this.onEndMeasure} onClearMeasurements={this.onClearMeasurements} />
                 {(() => {

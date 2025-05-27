@@ -110,6 +110,19 @@ export type SwitchProps = {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+export type SelectProps<TValue = string, TAllowPlaceholder extends true | false = true> = {
+    id?: string;
+    name?: string;
+    fill?: boolean;
+    style?: React.CSSProperties;
+    placeholder?: TAllowPlaceholder extends true ? string : never;
+    value?: TAllowPlaceholder extends true ? TValue | undefined : TValue;
+    extraClassNames?: string;
+    keyFunc?: (item: { value: TValue, label: string }) => React.Key;
+    onChange?: (value: TAllowPlaceholder extends true ? TValue | undefined : TValue) => void;
+    items: { value: TValue, label: string }[]
+}
+
 /**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
@@ -130,6 +143,7 @@ export interface IElementContext {
     NonIdealState: React.ComponentType<NonIdealStateProps>;
     Spinner: React.ComponentType<SpinnerProps>;
     Switch: React.ComponentType<SwitchProps>;
+    Select: React.ComponentType<SelectProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);
@@ -140,3 +154,17 @@ export const useElementContext = () => {
 };
 
 export const ElementProvider = ElementContext.Provider;
+
+export function TypedSelect<TValue, TAllowPlaceholder extends true | false>(props: SelectProps<TValue, TAllowPlaceholder>) {
+    const { id, name, value, onChange, items, fill, placeholder, keyFunc, style } = props;
+    const { Select } = useElementContext();
+    return <Select id={id}
+        name={name}
+        value={value as any}
+        onChange={onChange as any}
+        items={items as any}
+        fill={fill}
+        style={style}
+        placeholder={placeholder}
+        keyFunc={keyFunc as any} />
+}

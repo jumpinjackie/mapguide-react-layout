@@ -6,7 +6,7 @@ import { GenericEvent, ICompositeSelection } from "../api/common";
 
 import { strIsNullOrEmpty } from "../utils/string";
 import DOMPurify from "dompurify";
-import { useElementContext } from "./elements/element-context";
+import { TypedSelect, useElementContext } from "./elements/element-context";
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
@@ -140,7 +140,7 @@ const FloatClear = () => <div style={{ clear: "both" }} />;
  * @param props 
  */
 export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
-    const { Callout } = useElementContext();
+    const { Callout, Select } = useElementContext();
     const {
         maxHeight,
         selection,
@@ -223,8 +223,8 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
             onRequestZoomToFeature(feat);
         }
     };
-    const onSelectedLayerChanged = (e: GenericEvent) => {
-        setSelectedLayerIndex(e.target.value);
+    const onSelectedLayerChanged = (index: number) => {
+        setSelectedLayerIndex(index);
         setFeatureIndex(0);
     };
     const locale = props.locale || DEFAULT_LOCALE;
@@ -264,18 +264,20 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
                     zoomSelectedFeature
                 });
                 return <div className="selection-panel-toolbar" style={SELECTION_PANEL_TOOLBAR_STYLE}>
-                    <div className="bp3-select selection-panel-layer-selector">
-                        <select value={selectedLayerIndex} style={LAYER_COMBO_STYLE} onChange={onSelectedLayerChanged}>
-                            {selection.getLayers().map((layer, index) => {
-                                const lid = layer.getLayerId();
-                                const lname = layer.getName();
-                                const lkey = lid ?? index;
-                                const label = lid ? (props?.onResolveLayerLabel?.(lid, lname) ?? lname)
-                                    : lname;
-                                return <option key={`selected-layer-${lkey}`} value={`${index}`}>{label}</option>
-                            })}
-                        </select>
-                    </div>
+                    <TypedSelect<number, false> extraClassNames="selection-panel-layer-selector"
+                        value={selectedLayerIndex}
+                        style={LAYER_COMBO_STYLE}
+                        onChange={onSelectedLayerChanged}
+                        keyFunc={item => `selected-layer-${item.value}`}
+                        items={selection.getLayers().map((layer, index) => {
+                            const lid = layer.getLayerId();
+                            const lname = layer.getName();
+                            const lkey = lid ?? index;
+                            const label = lid ? (props?.onResolveLayerLabel?.(lid, lname) ?? lname)
+                                : lname;
+                            return { value: index, label };
+                        })}
+                    />
                     <Toolbar childItems={selectionToolbarItems} containerStyle={SELECTION_TOOLBAR_STYLE} />
                     <FloatClear />
                 </div>;

@@ -241,13 +241,9 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
         applyCurrentStyle(style);
     }, [style]);
     return <div>
-        <RadioGroup inline
-            label={tr("VSED_PT_TYPE", locale)}
-            onChange={(e: any) => onStyleTypeChange(e.target.value)}
-            selectedValue={currentStyle.type}>
-            <Radio label={tr("VSED_PT_TYPE_CIRCLE", locale)} value="Circle" />
-            <Radio label={tr("VSED_PT_TYPE_ICON", locale)} value="Icon" />
-        </RadioGroup>
+        <p>{tr("VSED_PT_TYPE", locale)}</p>
+        <Radio label={tr("VSED_PT_TYPE_CIRCLE", locale)} value="Circle" checked={currentStyle.type === "Circle"} onChange={(e: any) => onStyleTypeChange(e.target.value)} />
+        <Radio label={tr("VSED_PT_TYPE_ICON", locale)} value="Icon" checked={currentStyle.type === "Icon"} onChange={(e: any) => onStyleTypeChange(e.target.value)} />
         {currentStyle.type == "Icon" && <PointIconStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
         {currentStyle.type == "Circle" && <PointCircleStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
         <LabelStyleEditor style={currentStyle} locale={locale} onChange={onChange} />

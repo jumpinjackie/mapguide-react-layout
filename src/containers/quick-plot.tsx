@@ -17,7 +17,29 @@ import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
 import { useActiveMapState } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
-import { useElementContext } from "../components/elements/element-context";
+import { TypedSelect, useElementContext } from "../components/elements/element-context";
+
+const PAPER_SIZES = [
+    { value: "210.0,297.0,A4", label: "A4 (210x297 mm; 8.27x11.69 In) " },
+    { value: "297.0,420.0,A3", label: "A3 (297x420 mm; 11.69x16.54 In) " },
+    { value: "148.0,210.0,A5", label: "A5 (148x210 mm; 5.83x8.27 in) " },
+    { value: "216.0,279.0,Letter", label: "Letter (216x279 mm; 8.50x11.00 In) " },
+    { value: "216.0,356.0,Legal", label: "Legal (216x356 mm; 8.50x14.00 In) " }
+];
+
+const DPIS = [
+    { value: "96", label: "96" },
+    { value: "150", label: "150" },
+    { value: "300", label: "300" },
+    { value: "600", label: "600" }
+];
+
+const SCALES = [
+    { value: "500", label: "1: 500" },
+    { value: "1000", label: "1: 1000" },
+    { value: "2500", label: "1: 2500" },
+    { value: "5000", label: "1: 5000" }
+]
 
 function getMargin() {
     /*
@@ -35,7 +57,7 @@ function getMargin() {
     return { top: 25.4, buttom: 12.7, left: 12.7, right: 12.7 };
 }
 
-function getPrintSize(viewer: IMapViewer, showAdvanced: boolean, paperSize: string, orientation: "P" | "L"): Size {
+function getPrintSize(viewer: IMapViewer, showAdvanced: boolean, paperSize: string, orientation: Orientation): Size {
     const value = paperSize.split(",");
     let size: Size;
     if (orientation === "P") {
@@ -102,7 +124,7 @@ function toggleMapCapturerLayer(locale: string,
     activeMapName: string,
     showAdvanced: boolean,
     paperSize: string,
-    orientation: "P" | "L",
+    orientation: Orientation,
     scale: string,
     rotation: number,
     updateBoxCoords: (box: string, normalizedBox: string) => void,
@@ -149,6 +171,11 @@ export interface IQuickPlotContainerDispatch {
     setViewRotationEnabled: (enabled: boolean) => void;
 }
 
+/**
+ * @since 0.15
+ */
+export type Orientation = "L" | "P";
+
 export interface IQuickPlotContainerState {
     title: string;
     subTitle: string;
@@ -158,7 +185,7 @@ export interface IQuickPlotContainerState {
     showScaleBar: boolean;
     showDisclaimer: boolean;
     showAdvanced: boolean;
-    orientation: "P" | "L";
+    orientation: Orientation;
     paperSize: string;
     scale: string;
     dpi: string;
@@ -168,7 +195,7 @@ export interface IQuickPlotContainerState {
 }
 
 export const QuickPlotContainer = () => {
-    const { Slider, Callout, Button } = useElementContext();
+    const { Slider, Callout, Button, Select } = useElementContext();
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
     const [showLegend, setShowLegend] = React.useState(false);
@@ -177,7 +204,7 @@ export const QuickPlotContainer = () => {
     const [showScaleBar, setShowScaleBar] = React.useState(false);
     const [showDisclaimer, setShowDisclaimer] = React.useState(false);
     const [showAdvanced, setShowAdvanced] = React.useState(false);
-    const [orientation, setOrientation] = React.useState<"L" | "P">("P");
+    const [orientation, setOrientation] = React.useState<Orientation>("P");
     const [paperSize, setPaperSize] = React.useState("210.0,297.0,A4");
     const [scale, setScale] = React.useState("5000");
     const [dpi, setDpi] = React.useState("96");
@@ -216,20 +243,8 @@ export const QuickPlotContainer = () => {
     const onShowDisclaimerChanged = () => {
         setShowDisclaimer(!showDisclaimer);
     };
-    const onDpiChanged = (e: GenericEvent) => {
-        setDpi(e.target.value);
-    };
     const onAdvancedOptionsChanged = () => {
         setShowAdvanced(!showAdvanced);
-    };
-    const onScaleChanged = (e: GenericEvent) => {
-        setScale(e.target.value);
-    };
-    const onPaperSizeChanged = (e: GenericEvent) => {
-        setPaperSize(e.target.value);
-    };
-    const onOrientationChanged = (e: GenericEvent) => {
-        setOrientation(e.target.value);
     };
     const onRotationChanged = (value: number) => {
         setRotation(value);
@@ -314,7 +329,11 @@ export const QuickPlotContainer = () => {
         prSize = `${tokens[0]},${tokens[1]}`;
         ppSize = `${prSize},${tokens[2]}`;
     }
-    const url = `${getFusionRoot()}/widgets/QuickPlot/PlotAsPDF.php`
+    const url = `${getFusionRoot()}/widgets/QuickPlot/PlotAsPDF.php`;
+    const ORIENTATIONS = [
+        { value: "P" as Orientation, label: xlate("QUICKPLOT_ORIENTATION_P", locale) },
+        { value: "L" as Orientation, label: xlate("QUICKPLOT_ORIENTATION_L", locale) }
+    ];
     return <div className="component-quick-plot">
         <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
             <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
@@ -329,31 +348,29 @@ export const QuickPlotContainer = () => {
             </label>
             <label className="bp3-label">
                 {xlate("QUICKPLOT_PAPER_SIZE", locale)}
-                <div className="bp3-select bp3-fill">
-                    {/*
-                            The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
-                            We can change the html code to add more paper size or remove some ones.
-                        */}
-                    <select className="FixWidth" id="paperSizeSelect" name="paperSizeSelect" value={paperSize} onChange={onPaperSizeChanged}>
-                        <option value="210.0,297.0,A4">A4 (210x297 mm; 8.27x11.69 In) </option>
-                        <option value="297.0,420.0,A3">A3 (297x420 mm; 11.69x16.54 In) </option>
-                        <option value="148.0,210.0,A5">A5 (148x210 mm; 5.83x8.27 in) </option>
-                        <option value="216.0,279.0,Letter">Letter (216x279 mm; 8.50x11.00 In) </option>
-                        <option value="216.0,356.0,Legal">Legal (216x356 mm; 8.50x14.00 In) </option>
-                    </select>
-                </div>
+                {/*
+                    The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
+                    We can change the html code to add more paper size or remove some ones.
+                */}
+                <TypedSelect<string, false> fill
+                    id="paperSizeSelect"
+                    name="paperSizeSelect"
+                    value={paperSize}
+                    onChange={e => setPaperSize(e)}
+                    items={PAPER_SIZES} />
             </label>
             <label className="bp3-label">
                 {xlate("QUICKPLOT_ORIENTATION", locale)}
                 {/*
-                        The pre-defined paper orientations
-                    */}
-                <div className="bp3-select bp3-fill">
-                    <select className="FixWidth" id="orientation" name="orientation" value={orientation} onChange={onOrientationChanged}>
-                        <option value="P">{xlate("QUICKPLOT_ORIENTATION_P", locale)}</option>
-                        <option value="L">{xlate("QUICKPLOT_ORIENTATION_L", locale)}</option>
-                    </select>
-                </div>
+                    The pre-defined paper orientations
+                */}
+                <TypedSelect<Orientation, false>
+                    fill
+                    id="orientation"
+                    name="orientation"
+                    value={orientation}
+                    onChange={e => setOrientation(e)}
+                    items={ORIENTATIONS} />
             </label>
             <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
             <input type="hidden" id="printSize" name="printSize" value={prSize} />
@@ -399,32 +416,27 @@ export const QuickPlotContainer = () => {
                         <label className="bp3-label">
                             {xlate("QUICKPLOT_SCALING", locale)}
                             {/*
-                                    The pre-defined scales. The value for each "option" item is the scale denominator.
-                                    We can change the html code to extend the pre-defined scales
-                                */}
-                            <div className="bp3-select bp3-fill">
-                                <select className="FixWidth" id="scaleDenominator" name="scaleDenominator" value={scale} onChange={onScaleChanged}>
-                                    <option value="500">1: 500</option>
-                                    <option value="1000">1: 1000</option>
-                                    <option value="2500">1: 2500</option>
-                                    <option value="5000">1: 5000</option>
-                                </select>
-                            </div>
+                                The pre-defined scales. The value for each "option" item is the scale denominator.
+                                We can change the html code to extend the pre-defined scales
+                            */}
+                            <TypedSelect<string, false> fill
+                                id="scaleDenominator"
+                                name="scaleDenominator"
+                                value={scale}
+                                onChange={e => setScale(e)}
+                                items={SCALES} />
                         </label>
                         <label className="bp3-label">
                             {xlate("QUICKPLOT_DPI", locale)}
                             {/*
-                                    The pre-defined print DPI.
-                                    We can change the html code to extend the pre-defined values
-                                */}
-                            <div className="bp3-select bp3-fill">
-                                <select className="FixWidth" id="dpi" name="dpi" value={dpi} onChange={onDpiChanged}>
-                                    <option value="96">96</option>
-                                    <option value="150">150</option>
-                                    <option value="300">300</option>
-                                    <option value="600">600</option>
-                                </select>
-                            </div>
+                                The pre-defined print DPI.
+                                We can change the html code to extend the pre-defined values
+                            */}
+                            <TypedSelect<string, false> fill
+                                id="dpi"
+                                name="dpi"
+                                onChange={e => setDpi(e)}
+                                items={DPIS} />
                         </label>
                         <label className="bp3-label noselect">
                             {xlate("QUICKPLOT_BOX_ROTATION", locale)}

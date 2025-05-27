@@ -13,6 +13,7 @@ import { BpInputGroup } from "./input-group";
 import { BpNonIdealState } from "./non-ideal-state";
 import { BpSpinner } from "./spinner";
 import { BpSwitch } from "./switch";
+import { BpSelect } from "./select";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -27,7 +28,8 @@ const provider: IElementContext = {
     InputGroup: BpInputGroup,
     NonIdealState: BpNonIdealState,
     Spinner: BpSpinner,
-    Switch: BpSwitch
+    Switch: BpSwitch,
+    Select: BpSelect
 };
 
 export default provider;

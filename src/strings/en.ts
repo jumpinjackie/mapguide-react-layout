@@ -286,6 +286,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "THEME_ON_PROPERTY": "Theme On Property",
     "COLORBREWER_THEME": "<a href='https://colorbrewer2.org/' target='_blank'>ColorBrewer</a> theme",
     "LABEL_USING_PROPERTY": "Label Using Property",
+    "CREATE_LAYER_AS": "Create Layer As",
     "CLUSTER_CLICK_ACTION": "Action to perform when cluster is clicked",
     "CLUSTER_CLICK_ACTION_SHOW_POPUP": "Display attributes of points in a popup",
     "CLUSTER_CLICK_ACTION_ZOOM_EXTENTS": "Zoom into selected cluster",

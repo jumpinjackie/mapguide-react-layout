@@ -91,7 +91,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
-    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch } = useElementContext();
+    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
@@ -233,36 +233,39 @@ const AddFileLayer = (props: IAddLayerProps) => {
         const labelEl = <>
             <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
             {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
-                <select value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
-                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </select>
+                <Select value={labelOnProperty}
+                    onChange={s => setLabelOnProperty(s)}
+                    items={themableProperties.map(th => ({ label: th, value: th }))} />
             </FormGroup>}
         </>;
 
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("COLORBREWER_THEME", locale)) }} />;
         const themeEl = <>
             <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
-                <select value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
-                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </select>
+                <Select value={themeOnProperty}
+                    onChange={s => setThemeOnProperty(s)}
+                    items={themableProperties.map(th => ({ label: th, value: th }))} />
             </FormGroup>
             <FormGroup label={colorBrewerLabel}>
-                <select value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
-                    {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
-                </select>
+                <Select value={themeToUse}
+                    onChange={s => setThemeToUse(s!)}
+                    items={themableRamps.map(th => ({ label: th.displayName, value: th.scheme }))} />
             </FormGroup>
             {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
         </>;
-
+        const clusterActions = [
+            { value: ClusterClickAction.ShowPopup, label: tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale) },
+            { value: ClusterClickAction.ZoomToClusterExtents, label: tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale) }
+        ];
         const clusterEl = <>
             <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
                 <NumericInput min={1} value={clusterDistance} onChange={v => setClusterDistance(v)} />
             </FormGroup>
             <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
-                <select value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
-                    <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
-                    <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
-                </select>
+                {/* HACK: any type band-id to workaround abstraction typing limitation */}
+                <Select value={clusterActions as any}
+                    onChange={e => setClusterClickAction(e as any)}
+                    items={clusterActions} />
             </FormGroup>
         </>;
         return <NonIdealState
@@ -278,10 +281,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                         <NumericInput style={{ width: 60 }} min={0} value={addProjection} onChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
-                <FormGroup label="Create Layer As">
-                    <select value={createLayerAs} onChange={e => setCreateLayerAs(e.target.value as CreateVectorLayerAs)}>
-                        {createOptions.map((kind, i) => <option key={kind.value} value={kind.value}>{kind.label}</option>)}
-                    </select>
+                <FormGroup label={tr("CREATE_LAYER_AS", locale)}>
+                    <Select value={createLayerAs}
+                        onChange={e => setCreateLayerAs(e as CreateVectorLayerAs)}
+                        items={createOptions} />
                 </FormGroup>
                 {(() => {
                     switch (createLayerAs) {
@@ -322,20 +325,15 @@ const AddFileLayer = (props: IAddLayerProps) => {
 
 const AddUrlLayer = (props: IAddLayerProps) => {
     const { locale } = props;
+    const { Select } = useElementContext();
     const [selectedUrlType, setSelectedUrlType] = React.useState<string | undefined>(undefined);
-    const onUrlLayerTypeChanged = (e: GenericEvent) => {
-        setSelectedUrlType(e.target.value);
-    };
     const items = Object.keys(ADD_URL_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_URL_LAYER_TYPES[lt].label }));
     return <div>
         <div style={{ marginBottom: 16 }}>
             <p>{tr("LAYER_TYPE", locale)}</p>
-            <div className="bp3-select bp3-fill">
-                <select value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
-                    <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
-                    {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
-                </select>
-            </div>
+            <Select fill value={selectedUrlType || ""}
+                onChange={e => setSelectedUrlType(e)}
+                items={items.map(i => ({ value: i.value, label: i.value }))} />
         </div>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {

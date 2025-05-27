@@ -1,8 +1,14 @@
 import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
 
+/**
+ * @since 0.15
+ */
 export type ElementVariant = 'primary' | 'danger' | 'success' | 'warning';
 
+/**
+ * @since 0.15
+ */
 export type ButtonProps = {
     type?: "submit" | "reset" | "button";
     icon?: string;
@@ -17,6 +23,9 @@ export type ButtonProps = {
     className?: string;
 };
 
+/**
+ * @since 0.15
+ */
 export type RadioProps = {
     name?: string;
     label?: string;
@@ -25,6 +34,9 @@ export type RadioProps = {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
+/**
+ * @since 0.15
+ */
 export type SliderProps = {
     min?: number;
     max?: number;
@@ -36,16 +48,25 @@ export type SliderProps = {
     labelValues?: number[];
 };
 
+/**
+ * @since 0.15
+ */
 export type CollapsibleProps = {
     isOpen: boolean;
 };
 
+/**
+ * @since 0.15
+ */
 export type CalloutProps = {
     variant?: ElementVariant;
     title?: string;
     icon?: string;
 };
 
+/**
+ * @since 0.15
+ */
 export type CheckboxProps = {
     checked?: boolean;
     label?: string;
@@ -53,16 +74,25 @@ export type CheckboxProps = {
     disabled?: boolean;
 };
 
+/**
+ * @since 0.15
+ */
 export type IconProps = {
     icon?: string;
     style?: React.CSSProperties;
     iconSize?: number;
 };
 
+/**
+ * @since 0.15
+ */
 export type CardProps = {
     style?: React.CSSProperties;
 };
 
+/**
+ * @since 0.15
+ */
 export type NumericInputProps = {
     style?: React.CSSProperties;
     min?: number;
@@ -72,8 +102,14 @@ export type NumericInputProps = {
     onChange?: (value: number) => void;
 };
 
+/**
+ * @since 0.15
+ */
 export type MenuProps = {};
 
+/**
+ * @since 0.15
+ */
 export type InputGroupProps = {
     style?: React.CSSProperties;
     round?: boolean;
@@ -87,6 +123,9 @@ export type InputGroupProps = {
     onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
+/**
+ * @since 0.15
+ */
 export type NonIdealStateProps = {
     icon?: string | JSX.Element;
     title?: string | JSX.Element;
@@ -94,13 +133,22 @@ export type NonIdealStateProps = {
     action?: JSX.Element;
 }
 
+/**
+ * @since 0.15
+ */
 export type SpinnerSize = "small" | "standard" | "large";
 
+/**
+ * @since 0.15
+ */
 export type SpinnerProps = {
     variant?: ElementVariant;
     sizePreset?: SpinnerSize;
 }
 
+/**
+ * @since 0.15
+ */
 export type SwitchProps = {
     style?: React.CSSProperties;
     disabled?: boolean;
@@ -110,6 +158,9 @@ export type SwitchProps = {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+/**
+ * @since 0.15
+ */
 export type SelectProps<TValue = string, TAllowPlaceholder extends true | false = true> = {
     id?: string;
     name?: string;
@@ -190,6 +241,9 @@ export function TypedSelect<TValue, TAllowPlaceholder extends true | false>(prop
         keyFunc={keyFunc as any} />
 }
 
+/**
+ * @since 0.15
+ */
 export type ElementGroupProps = {
     vertical?: boolean;
 };

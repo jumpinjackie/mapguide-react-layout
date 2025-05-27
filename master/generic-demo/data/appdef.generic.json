@@ -117,16 +117,6 @@
                                 "type": "Mapnik"
                             }
                         }
-                    },
-                    {
-                        "Type": "Stamen",
-                        "SingleTile": true,
-                        "Extension": {
-                            "Options": {
-                                "name": "Stamen (Toner)",
-                                "type": "toner"
-                            }
-                        }
                     }
                 ]
             },
@@ -169,16 +159,6 @@
                             "meta_geojson_as_vt": true,
                             "initially_visible": false,
                             "__comments": "This will cause the layer to be loaded as vector tiles"
-                        }
-                    },
-                    {
-                        "Type": "Stamen",
-                        "SingleTile": true,
-                        "Extension": {
-                            "Options": {
-                                "name": "Stamen (Toner)",
-                                "type": "toner"
-                            }
                         }
                     },
                     {
@@ -1345,5 +1325,12 @@
                 }
             ]
         }
-    ]
+    ],
+    "Extension": {
+        "CustomProjections": {
+            "Projection": [
+                { "epsg": "28355", "text": "+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs" }
+            ]
+        }
+    }
 }

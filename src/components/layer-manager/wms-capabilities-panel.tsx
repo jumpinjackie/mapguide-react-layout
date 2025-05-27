@@ -6,7 +6,14 @@ import { useElementContext } from "../elements/element-context";
 
 type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
 
-function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
+/**
+ * Extracts WMS layers from the given parsed capabilities document
+ * 
+ * @hidden
+ * @param caps 
+ * @returns 
+ */
+export function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
     const layers = [] as WMSLayerStylePair[];
     const { Layer, ...rootLayer } = caps.Capability.Layer;
     if (rootLayer.Name) { //Must have name to be considered

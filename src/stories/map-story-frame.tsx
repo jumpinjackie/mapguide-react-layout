@@ -7,7 +7,7 @@ import { MapGuideMapProviderContext } from "../components/map-providers/mapguide
 import { MapDebugContext } from "../components/mapguide-debug-context";
 import { useReducedToolbarAppState, useActiveMapName } from "../containers/hooks";
 import { MapViewer } from "../containers/neo-map-viewer";
-import { MapDependentContainer, getQueryMapFeaturesResponse } from "./1.map.stories";
+import { MapDependentContainer, getQueryMapFeaturesResponse } from "./map.stories";
 
 export const MapStoryFrame = (props: MapDependentContainer) => {
     const SB_WIDTH = 350;

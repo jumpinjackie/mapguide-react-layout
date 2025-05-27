@@ -30,8 +30,8 @@ export type SliderProps = {
     max?: number;
     stepSize?: number;
     labelStepSize?: number;
-    value: number;
-    onChange: (value: number) => void;
+    value?: number;
+    onChange?: (value: number) => void;
     disabled?: boolean;
     labelValues?: number[];
 };
@@ -128,6 +128,8 @@ export type SelectProps<TValue = string, TAllowPlaceholder extends true | false 
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
  * requested elements.
+ * 
+ * @since 0.15
  */
 export interface IElementContext {
     Button: React.ComponentType<ButtonProps>;
@@ -148,13 +150,32 @@ export interface IElementContext {
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);
 
+/**
+ * Accesses the UI element context
+ * 
+ * @returns 
+ * @since 0.15
+ */
 export const useElementContext = () => {
     const context = React.useContext(ElementContext);
     return context;
 };
 
+/**
+ * The UI element provider component. To override the default UI element set, mount
+ * this component near the top with a custom UI element provider
+ * 
+ * @since 0.15
+ */
 export const ElementProvider = ElementContext.Provider;
 
+/**
+ * Provides a type-safe wrapper over the abstract Select UI element
+ * 
+ * @param props 
+ * @returns 
+ * @since 0.15
+ */
 export function TypedSelect<TValue, TAllowPlaceholder extends true | false>(props: SelectProps<TValue, TAllowPlaceholder>) {
     const { id, name, value, onChange, items, fill, placeholder, keyFunc, style } = props;
     const { Select } = useElementContext();
@@ -167,4 +188,21 @@ export function TypedSelect<TValue, TAllowPlaceholder extends true | false>(prop
         style={style}
         placeholder={placeholder}
         keyFunc={keyFunc as any} />
+}
+
+export type ElementGroupProps = {
+    vertical?: boolean;
+};
+
+/**
+ * A inline flex row wrapper that can form the basis of button groups or toolbars
+ * 
+ * @param param0 
+ * @returns 
+ * @since 0.15
+ */
+export const ElementGroup: React.FC<ElementGroupProps> = ({ vertical, children }) => {
+    return <div className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : ''}`}>
+        {children}
+    </div>
 }

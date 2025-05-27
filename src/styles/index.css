@@ -81,6 +81,34 @@
     top: auto;
 }
 
+/* ElementGroup */
+
+.mrl-element-group {
+    display: inline-flex;
+}
+.mrl-element-group-horizonal > :first-child {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.mrl-element-group-horizonal > :last-child {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+.mrl-element-group > :not(:first-child):not(:last-child) {
+    border-radius: 0;
+}
+.mrl-element-group-vertical {
+    flex-direction: column;
+}
+.mrl-element-group-vertical > :first-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.mrl-element-group-vertical > :last-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 /* Accordion */
 .component-accordion-panel-header {
     padding: 3px;

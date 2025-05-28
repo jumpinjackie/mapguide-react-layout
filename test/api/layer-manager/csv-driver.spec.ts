@@ -51,19 +51,19 @@ describe("CsvFormatDriver", () => {
 1,foo
 2,bar`;
             const driver = new CsvFormatDriver(CSV_COLUMN_ALIASES);
-            expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
+            await expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
         });
         it("invalid content", async () => {
             const csv = `this is not
 a valid
 csv file`;
             const driver = new CsvFormatDriver(CSV_COLUMN_ALIASES);
-            expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
+            await expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
         });
         it("empty", async () => {
             const csv = ``;
             const driver = new CsvFormatDriver(CSV_COLUMN_ALIASES);
-            expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
+            await expect(async () => await driver.tryParse(-1, csv)).rejects.toThrow();
         });
     });
     it("with custom alias", async () => {

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { LayerProperty, GenericEvent, Bounds } from '../../api/common';
-import { ControlGroup } from '@blueprintjs/core';
 import { tr } from "../../api/i18n";
 import { Error } from "../error";
 import { Client } from "../../api/client";
@@ -52,23 +51,23 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                 });
                 // FIXME: I can't seem to get bbox strategy working in general :(
                 if (false) {
-                /*if (repsg == 4326 || repsg == 3857) {
-                    urlTemplate += `&bbox={view_extent}`;
-                    sourceUrl = function (extent) {
-                        const xfextent = transformExtent(extent, sourceProj, resolvedProj);
-                        const reqUrl = strReplaceAll(urlTemplate, "{view_extent}", xfextent.join(','));
-                        return reqUrl;
-                    }
-                    strategy = bbox;
-                    // We need to "decorate" the underlying loadFeaturesXhr loader so that
-                    // we have the means to call busy worker incrementing/decrementing
-                    innerLoader = loadFeaturesXhr(sourceUrl, vectorFmt, () => { //success
-                        viewer.addImageLoaded();
-                        props.onRemoveLayerBusyWorker(name);
-                    }, () => { //failure
-                        viewer.addImageLoaded();
-                        props.onRemoveLayerBusyWorker(name);
-                    });*/
+                    /*if (repsg == 4326 || repsg == 3857) {
+                        urlTemplate += `&bbox={view_extent}`;
+                        sourceUrl = function (extent) {
+                            const xfextent = transformExtent(extent, sourceProj, resolvedProj);
+                            const reqUrl = strReplaceAll(urlTemplate, "{view_extent}", xfextent.join(','));
+                            return reqUrl;
+                        }
+                        strategy = bbox;
+                        // We need to "decorate" the underlying loadFeaturesXhr loader so that
+                        // we have the means to call busy worker incrementing/decrementing
+                        innerLoader = loadFeaturesXhr(sourceUrl, vectorFmt, () => { //success
+                            viewer.addImageLoaded();
+                            props.onRemoveLayerBusyWorker(name);
+                        }, () => { //failure
+                            viewer.addImageLoaded();
+                            props.onRemoveLayerBusyWorker(name);
+                        });*/
                 } else {
                     sourceUrl = urlTemplate;
                 }
@@ -122,15 +121,12 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
         setWfsUrl(e.target.value);
     };
     return <div>
-        <ControlGroup fill>
-            <InputGroup leftIcon="geosearch"
-                placeholder={tr("ADD_WFS_LAYER_URL", locale)}
-                value={wfsUrl}
-                onChange={onWmsUrlChange}
-                readOnly={loadingCapabilities}
-                rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
-        </ControlGroup>
-        <br />
+        <InputGroup leftIcon="geosearch"
+            placeholder={tr("ADD_WFS_LAYER_URL", locale)}
+            value={wfsUrl}
+            onChange={onWmsUrlChange}
+            readOnly={loadingCapabilities}
+            rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
         <div>
             {(() => {
                 if (loadingCapabilities) {

@@ -8,7 +8,6 @@ import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
-import { ControlGroup } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
@@ -16,7 +15,7 @@ import { useReduxDispatch } from "../components/map-providers/context";
 import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
 import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
-import { TypedSelect, useElementContext } from "../components/elements/element-context";
+import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -59,11 +58,11 @@ const MeasureControls: React.FC<{
     onClearMeasurements: (e: GenericEvent) => void;
 }> = ({ measuring, locale, onStartMeasure, onEndMeasure, onClearMeasurements }) => {
     const { Button } = useElementContext();
-    return <ControlGroup>
+    return <ElementGroup>
         <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
         <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
         <Button type="button" icon="cross" onClick={onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
-    </ControlGroup>;
+    </ElementGroup>;
 }
 
 class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {

@@ -3,7 +3,7 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { EditableText, FormGroup, FileInput, ControlGroup } from '@blueprintjs/core';
+import { EditableText, FormGroup, FileInput } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -14,7 +14,7 @@ import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
-import { TypedSelect, useElementContext } from "../elements/element-context";
+import { ElementGroup, TypedSelect, useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
@@ -300,10 +300,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                             assertNever(createLayerAs);
                     }
                 })()}
-                <ControlGroup>
+                <ElementGroup>
                     <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} variant="primary">{tr("ADD_LAYER", locale)}</Button>
                     <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} variant="danger">{tr("CANCEL", locale)}</Button>
-                </ControlGroup>
+                </ElementGroup>
             </>} />
     } else if (isProcessingFile) {
         return <NonIdealState

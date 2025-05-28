@@ -23,8 +23,6 @@ import {
   ColorBrewerSwatch,
   getColorBrewerRamps,
 } from "../components/layer-manager/color-brewer";
-import { ElementGroup, useElementContext } from "../components/elements/element-context";
-import { ButtonGroup } from "@blueprintjs/core";
 
 export default {
   title: "Common Components",

@@ -245,6 +245,7 @@ export function TypedSelect<TValue, TAllowPlaceholder extends true | false>(prop
  * @since 0.15
  */
 export type ElementGroupProps = {
+    style?: React.CSSProperties;
     vertical?: boolean;
 };
 
@@ -255,8 +256,8 @@ export type ElementGroupProps = {
  * @returns 
  * @since 0.15
  */
-export const ElementGroup: React.FC<ElementGroupProps> = ({ vertical, children }) => {
-    return <div className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : 'mrl-element-group-horizontal'}`}>
+export const ElementGroup: React.FC<ElementGroupProps> = ({ style, vertical, children }) => {
+    return <div style={style} className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : 'mrl-element-group-horizontal'}`}>
         {children}
     </div>
 }

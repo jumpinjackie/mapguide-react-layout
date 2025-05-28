@@ -15,7 +15,6 @@ import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
-import { ControlGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
@@ -83,7 +82,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 viewer.addImageLoaded();
                 props.onRemoveLayerBusyWorker(name);
             };
-            if (source instanceof olTiledWmsSource) {  
+            if (source instanceof olTiledWmsSource) {
                 source.on("tileloadstart", started);
                 source.on("tileloadend", finished);
                 source.on("tileloaderror", finished);
@@ -124,15 +123,12 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
         setWmsUrl(e.target.value);
     };
     return <div>
-        <ControlGroup fill>
-            <InputGroup leftIcon="geosearch"
-                placeholder={tr("ADD_WMS_LAYER_URL", locale)}
-                value={wmsUrl}
-                onChange={onWmsUrlChange}
-                readOnly={loadingCapabilities}
-                rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
-        </ControlGroup>
-        <br />
+        <InputGroup leftIcon="geosearch"
+            placeholder={tr("ADD_WMS_LAYER_URL", locale)}
+            value={wmsUrl}
+            onChange={onWmsUrlChange}
+            readOnly={loadingCapabilities}
+            rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
         <div>
             {(() => {
                 if (loadingCapabilities) {

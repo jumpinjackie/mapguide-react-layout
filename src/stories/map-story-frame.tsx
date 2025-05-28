@@ -1,4 +1,4 @@
-import { ButtonGroup, Button, Intent } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import * as React from "react";
 import { setSelection } from "../actions/map";
 import { CommandConditions } from "../api/registry/command";
@@ -8,6 +8,7 @@ import { MapDebugContext } from "../components/mapguide-debug-context";
 import { useReducedToolbarAppState, useActiveMapName } from "../containers/hooks";
 import { MapViewer } from "../containers/neo-map-viewer";
 import { MapDependentContainer, getQueryMapFeaturesResponse } from "./map.stories";
+import { ElementGroup } from "../components/elements/element-context";
 
 export const MapStoryFrame = (props: MapDependentContainer) => {
     const SB_WIDTH = 350;
@@ -35,10 +36,10 @@ export const MapStoryFrame = (props: MapDependentContainer) => {
         <div style={{ position: "absolute", left: SB_WIDTH, top: 0, bottom: 0, right: 0 }}>
             <MapDebugContext.Provider value={{ mock: context.mockMode }}>
                 <MapViewer />
-                {props.includeSelect && <ButtonGroup style={{ position: "absolute", right: 15, top: 15 }}>
+                {props.includeSelect && <ElementGroup style={{ position: "absolute", right: 15, top: 15 }}>
                     <Button intent={Intent.PRIMARY} onClick={() => doTestSelect()}>Test Select</Button>
                     <Button intent={Intent.DANGER} onClick={() => doClearSelection()} disabled={!CommandConditions.hasSelection(state)}>Clear Selection</Button>
-                </ButtonGroup>}
+                </ElementGroup>}
             </MapDebugContext.Provider>
         </div>
     </div>;

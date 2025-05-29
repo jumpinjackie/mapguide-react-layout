@@ -3,7 +3,6 @@ import { ElementGroup, TypedSelect, useElementContext } from "../components/elem
 import { boolean, number, select, text, withKnobs } from "@storybook/addon-knobs";
 import { action } from '@storybook/addon-actions';
 import { strIsNullOrEmpty } from "../utils/string";
-import { Switch } from "@blueprintjs/core";
 import { getIconNames } from "../components/icon-names";
 
 export default {
@@ -258,12 +257,12 @@ export const _NumericInput = {
 
 export const _Switch = {
     render: () => {
-        const { Checkbox } = useElementContext();
+        const { Switch } = useElementContext();
         const [isChecked, setIsChecked] = React.useState(false);
         let label = text("Label", "My Switch");
         const disabled = boolean("Disabled", false);
         const act = action("Value changed");
-        const onChange: React.ComponentProps<typeof Checkbox>["onChange"] = e => {
+        const onChange: React.ComponentProps<typeof Switch>["onChange"] = e => {
             act(e);
             setIsChecked(e.target.checked);
         };

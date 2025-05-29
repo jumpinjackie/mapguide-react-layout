@@ -204,7 +204,7 @@ export type EditableTextProps = {
 /**
  * @since 0.15
  */
-export interface MenuComponentProps {
+export type MenuComponentProps = {
     items: IItem[];
     onInvoked?: () => void;
 }
@@ -222,6 +222,28 @@ export interface TabSetProps {
         title: React.ReactNode,
         content?: JSX.Element
     }[];
+}
+
+/**
+ * @since 0.15
+ */
+export type DrawerProps = {
+    icon?: string;
+    onClose?: (event: React.SyntheticEvent<HTMLElement>) => void;
+    title?: string;
+    position?: Positioning;
+    isOpen?: boolean;
+}
+
+export type Positioning = "left" | "bottom" | "right" | "top";
+
+/**
+ * @since 0.15
+ */
+export type PopoverProps = {
+    usePortal?: boolean;
+    position: Positioning,
+    minimal?: boolean;
 }
 
 /**
@@ -252,6 +274,8 @@ export interface IElementContext {
     EditableText: React.ComponentType<EditableTextProps>;
     MenuComponent: React.ComponentType<MenuComponentProps>;
     TabSet: React.ComponentType<TabSetProps>;
+    Drawer: React.ComponentType<DrawerProps>;
+    Popover: React.ComponentType<PopoverProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

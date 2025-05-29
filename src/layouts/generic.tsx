@@ -4,7 +4,6 @@ import { ViewerApiShim } from '../containers/viewer-shim';
 import { ModalLauncher } from '../containers/modal-launcher';
 import { FlyoutRegionContainer } from '../containers/flyout-region';
 import { InitWarningDisplay } from '../containers/init-warning-display';
-import { Drawer, Position, Popover, DrawerSize } from '@blueprintjs/core';
 import { ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool, setFeatureTooltipsEnabled } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
@@ -31,7 +30,7 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
-    const { Button, Card } = useElementContext();
+    const { Button, Card, Popover, Drawer } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
         <ElementGroup vertical style={{ zIndex: 10, position: "absolute", left: 30, top: 30 }}>
@@ -68,6 +67,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
  * @since 0.14
  */
 export const GenericLayout = () => {
+    const { Drawer } = useElementContext();
     const [isLayerManagerOpen, setIsLayerManagerOpen] = React.useState(false);
     const [isLegendOpen, setIsLegendOpen] = React.useState(false);
     const [isSelectionPanelOpen, setIsSelectionPanelOpen] = React.useState(false);
@@ -109,17 +109,17 @@ export const GenericLayout = () => {
                 onSetActiveTool={onSetActiveTool}
                 onSetFeatureTooltips={onSetFeatureTooltips} />
         }} />
-        <Drawer icon="layers" size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsLayerManagerOpen(false)} title={tr("MANAGE_LAYERS", locale)} position={Position.LEFT} usePortal={false} isOpen={isLayerManagerOpen}>
+        <Drawer icon="layers" onClose={() => setIsLayerManagerOpen(false)} title={tr("MANAGE_LAYERS", locale)} position="left" isOpen={isLayerManagerOpen}>
             <div style={{ overflowY: "auto" }}>
                 <PlaceholderComponent id={DefaultComponentNames.AddManageLayers} locale={locale} />
             </div>
         </Drawer>
-        <Drawer icon="properties" size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsLegendOpen(false)} title={tr("TPL_TITLE_LEGEND", locale)} position={Position.LEFT} usePortal={false} isOpen={isLegendOpen}>
+        <Drawer icon="properties" onClose={() => setIsLegendOpen(false)} title={tr("TPL_TITLE_LEGEND", locale)} position="left" isOpen={isLegendOpen}>
             <div style={{ overflowY: "auto" }}>
                 <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} />
             </div>
         </Drawer>
-        <Drawer icon="th" size={DrawerSize.SMALL} canOutsideClickClose={true} onClose={() => setIsSelectionPanelOpen(false)} title={tr("TPL_TITLE_SELECTION_PANEL", locale)} position={Position.LEFT} usePortal={false} isOpen={isSelectionPanelOpen}>
+        <Drawer icon="th" onClose={() => setIsSelectionPanelOpen(false)} title={tr("TPL_TITLE_SELECTION_PANEL", locale)} position="left" isOpen={isSelectionPanelOpen}>
             <div style={{ width: "100%", height: "100%", position: "relative" }}>
                 <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
             </div>

@@ -21,6 +21,8 @@ import { BpMenuComponent } from "./menu";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
 import { BpTabSet } from "./tab-set";
+import { BpPopover } from "./popover";
+import { BpDrawer } from "./drawer";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -41,7 +43,9 @@ const provider: IElementContext = {
     FormGroup: BpFormGroup,
     EditableText: BpEditableText,
     MenuComponent: BpMenuComponent,
-    TabSet: BpTabSet
+    TabSet: BpTabSet,
+    Drawer: BpDrawer,
+    Popover: BpPopover
 };
 
 export default provider;

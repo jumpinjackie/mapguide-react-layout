@@ -2,6 +2,9 @@ import { Radio } from '@blueprintjs/core';
 import { RadioProps } from '../../element-context';
 import React from 'react';
 
+/**
+ * @hidden
+ */
 export const BpRadio: React.FC<RadioProps> = (props) => {
     return <Radio
         name={props.name}

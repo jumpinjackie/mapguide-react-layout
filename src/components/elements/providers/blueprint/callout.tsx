@@ -3,6 +3,9 @@ import { CalloutProps } from '../../element-context';
 import React from 'react';
 import { iconName, variantToIntent } from './utils';
 
+/**
+ * @hidden
+ */
 export const BpCallout: React.FC<CalloutProps> = (props) => {
     return <Callout
         intent={variantToIntent(props.variant)}

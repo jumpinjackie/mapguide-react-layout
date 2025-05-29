@@ -3,6 +3,9 @@ import { InputGroupProps } from "../../element-context";
 import { iconName } from "./utils";
 import React from "react";
 
+/**
+ * @hidden
+ */
 export const BpInputGroup: React.FC<InputGroupProps> = (props) => {
     return <InputGroup round={props.round}
         autoFocus={props.autoFocus}

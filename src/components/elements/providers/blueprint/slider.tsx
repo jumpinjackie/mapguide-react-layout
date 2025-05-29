@@ -2,6 +2,9 @@ import { Slider } from '@blueprintjs/core';
 import { SliderProps } from '../../element-context';
 import React from 'react';
 
+/**
+ * @hidden
+ */
 export const BpSlider: React.FC<SliderProps> = (props) => {
     return <Slider
         min={props.min}

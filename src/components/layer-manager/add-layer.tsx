@@ -3,7 +3,6 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { EditableText, FormGroup, FileInput } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -15,6 +14,7 @@ import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../elements/element-context";
+import { EditableText } from "@blueprintjs/core";
 
 /**
  * @hidden
@@ -91,7 +91,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
-    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select } = useElementContext();
+    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select, FileInput, FormGroup } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);

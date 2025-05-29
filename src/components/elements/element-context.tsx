@@ -175,6 +175,32 @@ export type SelectProps<TValue = string, TAllowPlaceholder extends true | false 
 }
 
 /**
+ * @since 0.15
+ */
+export type FileInputProps = {
+    fill?: boolean;
+    text?: string;
+    buttonText?: string;
+    onInputChange?: React.FormEventHandler<HTMLInputElement>;
+}
+
+/**
+ * @since 0.15
+ */
+export type FormGroupProps = {
+    label?: React.ReactNode;
+    inline?: boolean;
+}
+
+/**
+ * @since 0.15
+ */
+export type EditableTextProps = {
+    value?: string;
+    onChange?: (value: string) => void;
+}
+
+/**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
@@ -197,6 +223,9 @@ export interface IElementContext {
     Spinner: React.ComponentType<SpinnerProps>;
     Switch: React.ComponentType<SwitchProps>;
     Select: React.ComponentType<SelectProps>;
+    FileInput: React.ComponentType<FileInputProps>;
+    FormGroup: React.ComponentType<FormGroupProps>;
+    EditableText: React.ComponentType<EditableTextProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

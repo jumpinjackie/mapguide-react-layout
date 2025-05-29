@@ -14,6 +14,9 @@ import { BpNonIdealState } from "./non-ideal-state";
 import { BpSpinner } from "./spinner";
 import { BpSwitch } from "./switch";
 import { BpSelect } from "./select";
+import { BpFileInput } from "./file-input";
+import { BpFormGroup } from "./form-group";
+import { BpEditableText } from "./editable-text";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -29,7 +32,10 @@ const provider: IElementContext = {
     NonIdealState: BpNonIdealState,
     Spinner: BpSpinner,
     Switch: BpSwitch,
-    Select: BpSelect
+    Select: BpSelect,
+    FileInput: BpFileInput,
+    FormGroup: BpFormGroup,
+    EditableText: BpEditableText
 };
 
 export default provider;

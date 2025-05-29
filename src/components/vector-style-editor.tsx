@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tabs, Tab, FormGroup, Intent } from '@blueprintjs/core';
+import { Tabs, Tab, Intent } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -62,7 +62,7 @@ function coalesceExpr<T>(expr: ExprOr<T> | undefined, defaultVal: T): T {
 const DEFAULT_FONT_SIZE = 14;
 
 const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
-    const { Button, Switch } = useElementContext();
+    const { Button, Switch, FormGroup } = useElementContext();
     const { style, locale, onChange, isLine } = props;
     const [bold, setBold] = React.useState(false);
     const [italic, setItalic] = React.useState(false);
@@ -139,7 +139,7 @@ interface ISubStyleEditorProps<TStyle> {
 }
 
 const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IPointIconStyle>) => {
-    const { NumericInput } = useElementContext();
+    const { NumericInput, FormGroup } = useElementContext();
     const [localSrc, setLocalSrc] = React.useState(style.src);
     React.useEffect(() => {
         setLocalSrc(style.src);
@@ -173,6 +173,7 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
 };
 
 const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicPointCircleStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
@@ -251,6 +252,7 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
 }
 
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.color} onChange={(c: any) => onChange({ ...style, color: c, width: style.width, alpha: style.alpha })} />
@@ -266,6 +268,7 @@ const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasi
 }
 
 const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_PL_FILL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />

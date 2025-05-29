@@ -15,6 +15,9 @@ function presetToSize(preset: SpinnerSize | undefined) {
     return undefined;
 }
 
+/**
+ * @hidden
+ */
 export const BpSpinner: React.FC<SpinnerProps> = (props) => {
     return <Spinner intent={variantToIntent(props.variant)} size={presetToSize(props.sizePreset)} />;
 }

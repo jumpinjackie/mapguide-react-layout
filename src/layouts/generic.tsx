@@ -4,17 +4,16 @@ import { ViewerApiShim } from '../containers/viewer-shim';
 import { ModalLauncher } from '../containers/modal-launcher';
 import { FlyoutRegionContainer } from '../containers/flyout-region';
 import { InitWarningDisplay } from '../containers/init-warning-display';
-import { ButtonGroup, Drawer, Position, Popover, Elevation, DrawerSize, Card } from '@blueprintjs/core';
+import { Drawer, Position, Popover, DrawerSize } from '@blueprintjs/core';
 import { ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool, setFeatureTooltipsEnabled } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
 import { useReducedToolbarAppState, useViewerActiveTool } from '../containers/hooks';
-import { useMapProviderContext } from '../components/map-providers/context';
 import { useActiveMapState } from "../containers/hooks-mapguide";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
-import { useElementContext } from "../components/elements/element-context";
+import { ElementGroup, useElementContext } from "../components/elements/element-context";
 
 type MapToolbarProps = {
     locale: string;
@@ -32,12 +31,10 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
-    const { Button } = useElementContext();
+    const { Button, Card } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
-    const context = useMapProviderContext();
-    const [isExportingImage, setIsExportingImage] = React.useState(false);
     return <>
-        <ButtonGroup vertical style={{ position: "absolute", left: 30, top: 30 }}>
+        <ElementGroup vertical style={{ zIndex: 10, position: "absolute", left: 30, top: 30 }}>
             <Button icon="plus" title={tr("NAVIGATOR_ZOOM_IN")} onClick={() => onInvokeCommand(DefaultCommands.ZoomIn)} />
             <Button icon="minus" title={tr("NAVIGATOR_ZOOM_OUT")} onClick={() => onInvokeCommand(DefaultCommands.ZoomOut)} />
             <Button icon="hand" variant={activeTool == ActiveMapTool.Pan ? "primary" : undefined} onClick={() => onInvokeCommand(DefaultCommands.Pan)} />
@@ -49,7 +46,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
             {map && <Button icon="properties" title={tr("TPL_TITLE_LEGEND", locale)} onClick={() => setIsLegendOpen(true)} />}
             <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="map" />
-                <Card interactive={true} elevation={Elevation.TWO} style={{ minWidth: 200 }}>
+                <Card style={{ minWidth: 200 }}>
                     <h5 className="bp3-heading"><a href="#">Active Base Layer</a></h5>
                     <PlaceholderComponent id={DefaultComponentNames.BaseMapSwitcher} locale={locale} />
                     <h5 className="bp3-heading"><a href="#">Current Map</a></h5>
@@ -61,7 +58,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
                 <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
             </Popover>
             <Button icon="print" onClick={() => onInvokeCommand(DefaultCommands.Print)} />
-        </ButtonGroup>
+        </ElementGroup>
     </>
 }
 

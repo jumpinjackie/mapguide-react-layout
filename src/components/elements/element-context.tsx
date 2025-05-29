@@ -219,7 +219,7 @@ export interface TabSetProps {
     onTabChanged?: (tabId: string | number) => void;
     tabs: {
         id: string | number,
-        title: string,
+        title: React.ReactNode,
         content?: JSX.Element
     }[];
 }

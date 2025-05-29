@@ -1,7 +1,6 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ILayerInfo } from "../../api/common";
-import { FormGroup } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
@@ -45,7 +44,7 @@ const HEATMAP_SLIDER_RAMP = [0, 10, 20, 30, 40, 50];
 const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
-    const { Card, Button, Collapsible, Slider, Icon, Spinner, Switch } = useElementContext();
+    const { Card, Button, Collapsible, Slider, Icon, Spinner, Switch, FormGroup } = useElementContext();
     const {
         layer,
         locale,

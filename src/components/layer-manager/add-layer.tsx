@@ -14,7 +14,6 @@ import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../elements/element-context";
-import { EditableText } from "@blueprintjs/core";
 
 /**
  * @hidden
@@ -91,7 +90,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
-    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select, FileInput, FormGroup } = useElementContext();
+    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select, FileInput, FormGroup, EditableText } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);

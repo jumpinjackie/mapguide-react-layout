@@ -210,6 +210,21 @@ export interface MenuComponentProps {
 }
 
 /**
+ * @since 0.15
+ */
+export interface TabSetProps {
+    id?: string;
+    activeTabId?: string | number;
+    className?: string;
+    onTabChanged?: (tabId: string | number) => void;
+    tabs: {
+        id: string | number,
+        title: string,
+        content?: JSX.Element
+    }[];
+}
+
+/**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
@@ -236,6 +251,7 @@ export interface IElementContext {
     FormGroup: React.ComponentType<FormGroupProps>;
     EditableText: React.ComponentType<EditableTextProps>;
     MenuComponent: React.ComponentType<MenuComponentProps>;
+    TabSet: React.ComponentType<TabSetProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

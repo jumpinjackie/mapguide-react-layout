@@ -12,9 +12,9 @@ import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
-import { Tabs, Tab } from '@blueprintjs/core';
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { TabSetProps, useElementContext } from "../components/elements/element-context";
 
 function limegoldTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -95,6 +95,7 @@ export const LimeGoldTemplateLayout = () => {
         onSplitterChanged,
         onActiveElementChanged,
     } = useCommonTemplateState(limegoldTemplateReducer);
+    const { TabSet } = useElementContext();
     let hasTaskPane = false;
     let hasStatusBar = false;
     let hasNavigator = false;
@@ -125,9 +126,9 @@ export const LimeGoldTemplateLayout = () => {
         { id: "Legend", visible: showLegend }
     ];
     const active = states.filter(st => st.visible);
-    let extraTabsProps: any = {};
+    let extraTabsProps: Pick<TabSetProps, "activeTabId"> = {};
     if (active.length == 1) {
-        extraTabsProps.selectedTabId = active[0].id;
+        extraTabsProps.activeTabId = active[0].id;
     }
     const taskPaneTitle = tr("TPL_TITLE_TASKPANE", locale);
     const legendTitle = tr("TPL_TITLE_LEGEND", locale);
@@ -149,34 +150,46 @@ export const LimeGoldTemplateLayout = () => {
                 </div>
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
+                        const tabProps: TabSetProps = {
+                            id: "SidebarTabs",
+                            onTabChanged: onActiveElementChanged,
+                            className: "limegold-sidebar-tabs",
+                            tabs: [],
+                            ...extraTabsProps
+                        };
+                        if (hasTaskPane) {
+                            const panel = <div style={tabPanelStyle}>
+                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "TaskPane",
+                                title: taskPaneTitle,
+                                content: panel
+                            });
+                        }
+                        if (hasLegend) {
+                            const p1: React.CSSProperties = { overflow: "auto" };
+                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "Legend",
+                                title: legendTitle,
+                                content: panel
+                            });
+                        }
+                        if (hasSelectionPanel) {
+                            const panel = <div style={tabPanelStyle}>
+                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "Selection",
+                                title: selectionTitle,
+                                content: panel
+                            });
+                        }
                         return <div className="limegold-sidebar" style={{ position: "absolute", right: SIDEBAR_PADDING, top: 0, left: 0, bottom: 0 }}>
-                            <Tabs className="limegold-sidebar-tabs" id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
-                                {(() => {
-                                    if (hasTaskPane) {
-                                        const panel = <div style={tabPanelStyle}>
-                                            <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
-                                        </div>;
-                                        return <Tab id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                                    }
-                                })()}
-                                {(() => {
-                                    if (hasLegend) {
-                                        const p1: React.CSSProperties = { overflow: "auto" };
-                                        const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
-                                        </div>;
-                                        return <Tab id="Legend" title={legendTitle} panel={panel} />;
-                                    }
-                                })()}
-                                {(() => {
-                                    if (hasSelectionPanel) {
-                                        const panel = <div style={tabPanelStyle}>
-                                            <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                        </div>;
-                                        return <Tab id="Selection" title={selectionTitle} panel={panel} />;
-                                    }
-                                })()}
-                            </Tabs>
+                            <TabSet {...tabProps} />
                         </div>;
                     }
                 })()}

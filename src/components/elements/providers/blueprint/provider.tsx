@@ -20,6 +20,7 @@ import { BpEditableText } from "./editable-text";
 import { BpMenuComponent } from "./menu";
 
 import "@blueprintjs/core/lib/css/blueprint.css";
+import { BpTabSet } from "./tab-set";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -39,7 +40,8 @@ const provider: IElementContext = {
     FileInput: BpFileInput,
     FormGroup: BpFormGroup,
     EditableText: BpEditableText,
-    MenuComponent: BpMenuComponent
+    MenuComponent: BpMenuComponent,
+    TabSet: BpTabSet
 };
 
 export default provider;

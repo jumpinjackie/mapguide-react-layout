@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Tabs, Tab, Intent } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -8,7 +7,7 @@ import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor }
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";
 import { vectorStyleToStyleMap } from "../api/ol-style-map-set";
-import { ElementGroup, SwitchProps, useElementContext } from "./elements/element-context";
+import { ElementGroup, SwitchProps, TabSetProps, useElementContext } from "./elements/element-context";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -310,9 +309,9 @@ type TabId = "pointStyle" | "lineStyle" | "polyStyle";
  * @since 0.13
  */
 export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
-    const { NonIdealState } = useElementContext();
+    const { NonIdealState, TabSet } = useElementContext();
     const { locale, style, onChange, enableLine, enablePoint, enablePolygon } = props;
-    const [selectedTab, setSelectedTab] = React.useState<TabId | undefined>(undefined);
+    const [selectedTab, setSelectedTab] = React.useState<string | number | undefined>(undefined);
     const [pointStyle, setPointStyle] = React.useState(style?.point ?? DEFAULT_POINT_CIRCLE_STYLE);
     const [lineStyle, setLineStyle] = React.useState(style?.line ?? DEFAULT_LINE_STYLE);
     const [polyStyle, setPolyStyle] = React.useState(style?.polygon ?? DEFAULT_POLY_STYLE);
@@ -357,11 +356,34 @@ export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
         const onPolygonStyleChanged = (st: IBasicVectorPolygonStyle) => {
             onStyleChanged(pointStyle, lineStyle, st);
         };
-        return <Tabs onChange={(t: any) => setSelectedTab(t)} selectedTabId={selectedTab}>
-            {enablePoint && <Tab id="pointStyle" title={tr("VSED_TAB_POINT", locale)} panel={<PointStyleEditor style={pointStyle} locale={locale} onChange={onPointStyleChanged} />} />}
-            {enableLine && <Tab id="lineStyle" title={tr("VSED_TAB_LINE", locale)} panel={<LineStyleEditor style={lineStyle} locale={locale} onChange={onLineStyleChanged} />} />}
-            {enablePolygon && <Tab id="polyStyle" title={tr("VSED_TAB_POLY", locale)} panel={<PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />} />}
-        </Tabs>
+
+        const tabProps: TabSetProps = {
+            onTabChanged: t => setSelectedTab(t),
+            activeTabId: selectedTab,
+            tabs: []
+        };
+        if (enablePoint) {
+            tabProps.tabs.push({
+                id: "pointStyle",
+                title: tr("VSED_TAB_POINT", locale),
+                content: <PointStyleEditor style={pointStyle} locale={locale} onChange={onPointStyleChanged} />
+            });
+        }
+        if (enableLine) {
+            tabProps.tabs.push({
+                id: "lineStyle",
+                title: tr("VSED_TAB_LINE", locale),
+                content: <LineStyleEditor style={lineStyle} locale={locale} onChange={onLineStyleChanged} />
+            });
+        }
+        if (enablePolygon) {
+            tabProps.tabs.push({
+                id: "polyStyle",
+                title: tr("VSED_TAB_POLY", locale),
+                content: <PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />
+            });
+        }
+        return <TabSet {...tabProps} />;
     }
 }
 
@@ -437,7 +459,7 @@ const FilterItem = (props: IFilterItemProps) => {
         let pos: any;
         let ls: any;
         let pls: any;
-        if (typeof(olstyle) == 'function') {
+        if (typeof (olstyle) == 'function') {
             pos = (feat: any) => olstyle(feat, undefined)["Point"];
             ls = (feat: any) => olstyle(feat, undefined)["LineString"];
             pls = (feat: any) => olstyle(feat, undefined)["Polygon"];
@@ -469,10 +491,6 @@ const FilterItem = (props: IFilterItemProps) => {
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
         onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
     }
-    let outerModifier;
-    if (!isLocalFilterValid) {
-        outerModifier = Intent.DANGER;
-    }
     let colSpan = 5;
     if (!props.enableLine)
         colSpan--;
@@ -480,7 +498,7 @@ const FilterItem = (props: IFilterItemProps) => {
         colSpan--;
     if (!props.enablePolygon)
         colSpan--;
-    const filterExprEd = <span>{featureStyle.label}</span> //<InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />;
+    const filterExprEd = <span>{featureStyle.label}</span>;
     return <>
         <tr>
             {props.enablePoint && <td>{pointStyleUrl && <img src={pointStyleUrl} />}</td>}
@@ -534,7 +552,7 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
                 key={`filter-${i}`}
                 filter={f}
                 isDefault={false}
-                onChange={(f, s) => onFeatureStyleChanged( f, s)}
+                onChange={(f, s) => onFeatureStyleChanged(f, s)}
                 featureStyle={props.style[filters[i]]}
                 isStyleEditorOpen={openStyleEditors[f] === true}
                 onToggleStyleEditor={(isVisible) => onToggleStyleEditor(f, isVisible)}

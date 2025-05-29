@@ -13,6 +13,7 @@ import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
 import { ElementGroup, useElementContext } from "../components/elements/element-context";
+//import { useMapProviderContext } from "../components/map-providers/context";
 
 type MapToolbarProps = {
     locale: string;
@@ -30,7 +31,7 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
-    const { Button, Card, Popover, Drawer } = useElementContext();
+    const { Button, Card, Popover } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
         <ElementGroup vertical style={{ zIndex: 10, position: "absolute", left: 30, top: 30 }}>
@@ -60,6 +61,27 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
         </ElementGroup>
     </>
 }
+
+/*
+const HookTest = () => {
+    const viewer = useMapProviderContext();
+    return <div style={{ position: "absolute", background: "white", padding: 16, zIndex: 10, right: 80, top: 20, width: 300, height: 400, overflowY: "auto" }}>
+        <h3>Hook Test</h3>
+        <p>This component tests that the useMapProviderContext hook works in a sibling or higher level than the map component</p>
+        {(() => {
+            if (viewer.isReady()) {
+                const view = viewer.getCurrentView();
+                return <>
+                    <p>Map Name: {viewer.getMapName()}</p>
+                    <p>Current View: {view.x}, {view.y} @ {view.scale}</p>
+                </>
+            } else {
+                return <p>Map not ready</p>
+            }
+        })()}
+    </div>
+}
+*/
 
 /**
  * A viewer template geared towards general purpose display of maps
@@ -93,6 +115,7 @@ export const GenericLayout = () => {
     };
     return <div style={{ width: "100%", height: "100%" }}>
         <ModalLauncher />
+        {/* <HookTest /> */}
         <PlaceholderComponent id={DefaultComponentNames.Map} locale={locale} componentProps={{
             // MapToolbar has to be a child component, otherwise the map provider context is not accessible
             children: <MapToolbar

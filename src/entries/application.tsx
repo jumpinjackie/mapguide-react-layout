@@ -8,8 +8,9 @@ import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
 import { IViewerInitCommand } from '../actions/init-command';
-import { ReduxProvider } from "../components/map-providers/context";
+import { MapContextProvider, MapProviderContextProvider, ReduxProvider } from "../components/map-providers/context";
 import { DefaultViewerInitCommand } from "../actions/init-mapguide";
+import { MapGuideMapProviderContext } from "../components/map-providers/mapguide";
 
 /**
  * Extra application mount options.
@@ -97,10 +98,12 @@ export class ApplicationViewModel {
             initCommand = props.initCommandFactory(this._store.dispatch)
         else
             initCommand = new DefaultViewerInitCommand(this._store.dispatch);
-        ReactDOM.render(<ReduxProvider store={this._store}>
+        // Register our MapGuide-specific viewer implementation
+        const provider = new MapGuideMapProviderContext();
+        ReactDOM.render(<MapContextProvider value={provider} store={this._store}>
             <App {...props} initCommand={initCommand} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-        </ReduxProvider>, node);
+        </MapContextProvider>, node);
     }
     /**
      * Dispatches the given action

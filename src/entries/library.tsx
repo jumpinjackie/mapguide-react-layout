@@ -83,11 +83,7 @@ initMapGuideCommands();
 registerDefaultComponents();
 registerMapGuideComponents();
 
-// Register our MapGuide-specific viewer implementation
-const PROVIDER_IMPL = new MapGuideMapProviderContext();
-registerComponentFactory(DefaultComponentNames.Map, (props) => <MapProviderContextProvider value={PROVIDER_IMPL}>
-    <MapViewer {...props} />
-</MapProviderContextProvider>);
+registerComponentFactory(DefaultComponentNames.Map, (props) => <MapViewer {...props} />);
 
 //Register the default mapagent request builder (that can be replaced later on if desired)
 registerRequestBuilder("mapagent", (agentUri, locale) => new MapAgentRequestBuilder(agentUri, locale));

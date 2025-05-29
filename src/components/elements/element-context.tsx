@@ -1,5 +1,6 @@
 import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
+import { IItem } from '../toolbar';
 
 /**
  * @since 0.15
@@ -201,6 +202,14 @@ export type EditableTextProps = {
 }
 
 /**
+ * @since 0.15
+ */
+export interface MenuComponentProps {
+    items: IItem[];
+    onInvoked?: () => void;
+}
+
+/**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
@@ -226,6 +235,7 @@ export interface IElementContext {
     FileInput: React.ComponentType<FileInputProps>;
     FormGroup: React.ComponentType<FormGroupProps>;
     EditableText: React.ComponentType<EditableTextProps>;
+    MenuComponent: React.ComponentType<MenuComponentProps>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

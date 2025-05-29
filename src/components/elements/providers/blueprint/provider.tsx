@@ -17,6 +17,7 @@ import { BpSelect } from "./select";
 import { BpFileInput } from "./file-input";
 import { BpFormGroup } from "./form-group";
 import { BpEditableText } from "./editable-text";
+import { BpMenuComponent } from "./menu";
 
 const provider: IElementContext = {
     Button: BpButton,
@@ -35,7 +36,8 @@ const provider: IElementContext = {
     Select: BpSelect,
     FileInput: BpFileInput,
     FormGroup: BpFormGroup,
-    EditableText: BpEditableText
+    EditableText: BpEditableText,
+    MenuComponent: BpMenuComponent
 };
 
 export default provider;

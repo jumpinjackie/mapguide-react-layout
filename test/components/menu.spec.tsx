@@ -1,8 +1,13 @@
 import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
-import { MenuComponent } from "../../src/components/menu";
 import { IItem } from "../../src/components/toolbar";
+import { MenuComponentProps, useElementContext } from "../../src/components/elements/element-context";
+
+const MenuImpl: React.FC<MenuComponentProps> = (props) => {
+    const { MenuComponent } = useElementContext();
+    return <MenuComponent {...props} />;
+}
 
 describe("components/menu", () => {
     it("Renders", () => {
@@ -11,7 +16,7 @@ describe("components/menu", () => {
             { label: "Bar" }
         ];
         const fnInvoke = vi.fn();
-        const { container } = render(<MenuComponent items={items} onInvoked={fnInvoke} />);
+        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
         const eItems = container.querySelectorAll("a.bp3-menu-item");
         expect(eItems).toHaveLength(2);
     });
@@ -20,7 +25,7 @@ describe("components/menu", () => {
             { label: "Foo" }
         ];
         const fnInvoke = vi.fn();
-        const { container } = render(<MenuComponent items={items} onInvoked={fnInvoke} />);
+        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
         const eItems = container.querySelectorAll("a.bp3-menu-item");
         fireEvent.click(eItems[0]);
         expect(fnInvoke.mock.calls).toHaveLength(1);
@@ -31,7 +36,7 @@ describe("components/menu", () => {
         const items: IItem[] = [
             { label: "Foo", invoke: fnInvoke2 }
         ];
-        const { container } = render(<MenuComponent items={items} onInvoked={fnInvoke} />);
+        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
         const eItems = container.querySelectorAll("a.bp3-menu-item");
         fireEvent.click(eItems[0]);
         expect(fnInvoke.mock.calls).toHaveLength(1);

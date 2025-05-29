@@ -1,9 +1,9 @@
 import * as React from "react";
-import { MenuComponent } from "./menu";
 import { IDOMElementMetrics } from "../api/common";
 import { PlaceholderComponent } from "../api/registry/component";
 import { IItem } from "../components/toolbar";
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from '../constants';
+import { useElementContext } from "./elements/element-context";
 
 export interface IFlyoutConfiguration {
     open?: boolean;
@@ -32,6 +32,7 @@ export interface IFlyoutRegionProps {
  * A FlyoutRegion component defines a region where flyout menus can be displayed
  */
 export const FlyoutRegion = (props: IFlyoutRegionProps) => {
+    const { MenuComponent } = useElementContext();
     return <div>
         {(() => {
             const children = [] as JSX.Element[];

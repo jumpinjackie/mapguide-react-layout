@@ -3,7 +3,6 @@ import { tr } from "../../api/i18n";
 import { AddVectorLayerExtraOptions, GenericEvent, ILayerInfo } from "../../api/common";
 import { AddWmsLayer } from "./add-wms-layer";
 import { AddWfsLayer } from "./add-wfs-layer";
-import { HTMLSelect, Label, RadioGroup, Radio, NonIdealState, Button, Intent, EditableText, ButtonGroup, FormGroup, Callout, NumericInput, FileInput, Switch, Spinner, SpinnerSize } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
@@ -14,6 +13,7 @@ import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
+import { ElementGroup, TypedSelect, useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
@@ -90,6 +90,7 @@ function getCreateVectorLayerOptions(geomTypes: GeomTypeList, locale: string) {
 }
 
 const AddFileLayer = (props: IAddLayerProps) => {
+    const { Button, Callout, NumericInput, NonIdealState, Spinner, Switch, Select, FileInput, FormGroup, EditableText } = useElementContext();
     const { locale } = props;
     const [isProcessingFile, setIsProcessingFile] = React.useState(false);
     const [isAddingLayer, setIsAddingLayer] = React.useState(false);
@@ -231,36 +232,39 @@ const AddFileLayer = (props: IAddLayerProps) => {
         const labelEl = <>
             <Switch label={tr("ENABLE_LABELS", locale)} checked={enableLabels} onChange={(e: any) => setEnableLabels(e.target.checked)} />
             {enableLabels && <FormGroup label={tr("LABEL_USING_PROPERTY", locale)}>
-                <HTMLSelect value={labelOnProperty} onChange={e => setLabelOnProperty(e.target.value)}>
-                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </HTMLSelect>
+                <Select value={labelOnProperty}
+                    onChange={s => setLabelOnProperty(s)}
+                    items={themableProperties.map(th => ({ label: th, value: th }))} />
             </FormGroup>}
         </>;
 
         const colorBrewerLabel = <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("COLORBREWER_THEME", locale)) }} />;
         const themeEl = <>
             <FormGroup label={tr("THEME_ON_PROPERTY", locale)}>
-                <HTMLSelect value={themeOnProperty} onChange={e => setThemeOnProperty(e.target.value)}>
-                    {themableProperties.map((th, i) => <option key={th} value={th}>{th}</option>)}
-                </HTMLSelect>
+                <Select value={themeOnProperty}
+                    onChange={s => setThemeOnProperty(s)}
+                    items={themableProperties.map(th => ({ label: th, value: th }))} />
             </FormGroup>
             <FormGroup label={colorBrewerLabel}>
-                <HTMLSelect value={themeToUse} onChange={e => setThemeToUse(e.target.value)}>
-                    {themableRamps.map((th, i) => <option key={th.displayName} value={th.scheme}>{th.displayName}</option>)}
-                </HTMLSelect>
+                <Select value={themeToUse}
+                    onChange={s => setThemeToUse(s!)}
+                    items={themableRamps.map(th => ({ label: th.displayName, value: th.scheme }))} />
             </FormGroup>
             {themeToUse && <ColorBrewerSwatch theme={themeToUse} />}
         </>;
-
+        const clusterActions = [
+            { value: ClusterClickAction.ShowPopup, label: tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale) },
+            { value: ClusterClickAction.ZoomToClusterExtents, label: tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale) }
+        ];
         const clusterEl = <>
             <FormGroup label={tr("POINT_CLUSTER_DISTANCE", locale)}>
-                <NumericInput min={1} value={clusterDistance} onValueChange={v => setClusterDistance(v)} />
+                <NumericInput min={1} value={clusterDistance} onChange={v => setClusterDistance(v)} />
             </FormGroup>
             <FormGroup label={tr("CLUSTER_CLICK_ACTION", locale)}>
-                <HTMLSelect value={clusterClickAction} onChange={(e: any) => setClusterClickAction(e.target.value)}>
-                    <option value={ClusterClickAction.ShowPopup}>{tr("CLUSTER_CLICK_ACTION_SHOW_POPUP", locale)}</option>
-                    <option value={ClusterClickAction.ZoomToClusterExtents}>{tr("CLUSTER_CLICK_ACTION_ZOOM_EXTENTS", locale)}</option>
-                </HTMLSelect>
+                <TypedSelect<ClusterClickAction, false>
+                    value={clusterClickAction}
+                    onChange={e => setClusterClickAction(e)}
+                    items={clusterActions} />
             </FormGroup>
         </>;
         return <NonIdealState
@@ -268,18 +272,18 @@ const AddFileLayer = (props: IAddLayerProps) => {
             icon="upload"
             description={tr("FMT_UPLOADED_FILE", locale, { size: loadedFile.size, type: (strIsNullOrEmpty(loadedFile.type) ? tr("UNKNOWN_FILE_TYPE", locale) : loadedFile.type) })}
             action={<>
-                {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+                {addLayerError && <Callout variant="danger" title={tr("ADDING_LAYER_ERROR", locale)}>
                     {addLayerError.message}
                 </Callout>}
                 <FormGroup label={tr("ADD_LAYER_PROJECTION", locale)}>
                     {loadedFile.defaultProjection ? <strong>EPSG:{addProjection}</strong> : <FormGroup label={<a href="https://spatialreference.org/" target="_blank">EPSG:</a>} inline>
-                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onValueChange={v => setAddProjection(v)} />
+                        <NumericInput style={{ width: 60 }} min={0} value={addProjection} onChange={v => setAddProjection(v)} />
                     </FormGroup>}
                 </FormGroup>
-                <FormGroup label="Create Layer As">
-                    <HTMLSelect value={createLayerAs} onChange={e => setCreateLayerAs(e.target.value as CreateVectorLayerAs)}>
-                        {createOptions.map((kind, i) => <option key={kind.value} value={kind.value}>{kind.label}</option>)}
-                    </HTMLSelect>
+                <FormGroup label={tr("CREATE_LAYER_AS", locale)}>
+                    <Select value={createLayerAs}
+                        onChange={e => setCreateLayerAs(e as CreateVectorLayerAs)}
+                        items={createOptions} />
                 </FormGroup>
                 {(() => {
                     switch (createLayerAs) {
@@ -295,18 +299,18 @@ const AddFileLayer = (props: IAddLayerProps) => {
                             assertNever(createLayerAs);
                     }
                 })()}
-                <ButtonGroup>
-                    <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} intent={Intent.PRIMARY}>{tr("ADD_LAYER", locale)}</Button>
-                    <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} intent={Intent.DANGER}>{tr("CANCEL", locale)}</Button>
-                </ButtonGroup>
+                <ElementGroup>
+                    <Button disabled={!canAdd} loading={isAddingLayer} onClick={(e: any) => onAddFileLayer(addProjection)} variant="primary">{tr("ADD_LAYER", locale)}</Button>
+                    <Button loading={isAddingLayer} onClick={(e: any) => onCancelAddFile()} variant="danger">{tr("CANCEL", locale)}</Button>
+                </ElementGroup>
             </>} />
     } else if (isProcessingFile) {
         return <NonIdealState
-            icon={<Spinner intent={Intent.NONE} size={SpinnerSize.LARGE} />}
+            icon={<Spinner sizePreset="large" />}
             title={tr("ADD_FILE_PROCESSING", locale)} />
     } else {
         return <>
-            {addLayerError && <Callout intent={Intent.DANGER} title={tr("ADDING_LAYER_ERROR", locale)}>
+            {addLayerError && <Callout variant="danger" title={tr("ADDING_LAYER_ERROR", locale)}>
                 {addLayerError.message}
             </Callout>}
             <NonIdealState
@@ -321,18 +325,15 @@ const AddFileLayer = (props: IAddLayerProps) => {
 const AddUrlLayer = (props: IAddLayerProps) => {
     const { locale } = props;
     const [selectedUrlType, setSelectedUrlType] = React.useState<string | undefined>(undefined);
-    const onUrlLayerTypeChanged = (e: GenericEvent) => {
-        setSelectedUrlType(e.target.value);
-    };
     const items = Object.keys(ADD_URL_LAYER_TYPES).map(lt => ({ value: lt, label: ADD_URL_LAYER_TYPES[lt].label }));
     return <div>
-        <Label>
-            {tr("LAYER_TYPE", locale)}
-            <HTMLSelect value={selectedUrlType || ""} onChange={onUrlLayerTypeChanged}>
-                <option>{tr("SELECT_LAYER_TYPE", locale)}</option>
-                {items.map(it => <option key={it.value} value={it.value}>{it.value}</option>)}
-            </HTMLSelect>
-        </Label>
+        <div style={{ marginBottom: 16 }}>
+            <p>{tr("LAYER_TYPE", locale)}</p>
+            <TypedSelect<string, true> fill value={selectedUrlType || ""}
+                placeholder={tr("SELECT_LAYER_TYPE", locale)}
+                onChange={e => setSelectedUrlType(e)}
+                items={items.map(i => ({ value: i.value, label: i.value }))} />
+        </div>
         {(() => {
             if (selectedUrlType && ADD_URL_LAYER_TYPES[selectedUrlType]) {
                 const cprops: IAddLayerContentProps = {
@@ -351,18 +352,15 @@ const AddUrlLayer = (props: IAddLayerProps) => {
  * @hidden
  */
 export const AddLayer = (props: IAddLayerProps) => {
+    const { Radio } = useElementContext();
     const [addLayerKind, setAddLayerKind] = React.useState<AddLayerKind>(AddLayerKind.File);
     const onAddLayerKindChanged = (e: GenericEvent) => {
         setAddLayerKind(parseInt(e.target.value, 10));
     };
     return <div>
-        <RadioGroup
-            label={tr("ADD_LAYER_KIND_PROMPT", props.locale)}
-            onChange={onAddLayerKindChanged}
-            selectedValue={addLayerKind}>
-            <Radio label={tr("LAYER_KIND_FILE", props.locale)} value={AddLayerKind.File} />
-            <Radio label={tr("LAYER_KIND_URL", props.locale)} value={AddLayerKind.Url} />
-        </RadioGroup>
+        <p>{tr("ADD_LAYER_KIND_PROMPT", props.locale)}</p>
+        <Radio label={tr("LAYER_KIND_FILE", props.locale)} checked={addLayerKind == AddLayerKind.File} value={AddLayerKind.File} onChange={onAddLayerKindChanged} />
+        <Radio label={tr("LAYER_KIND_URL", props.locale)} checked={addLayerKind == AddLayerKind.Url} value={AddLayerKind.Url} onChange={onAddLayerKindChanged} />
         <hr />
         {(() => {
             switch (addLayerKind) {

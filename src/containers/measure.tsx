@@ -8,7 +8,6 @@ import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
-import { Callout, Intent, ButtonGroup, Button, HTMLSelect } from '@blueprintjs/core';
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
@@ -16,6 +15,7 @@ import { useReduxDispatch } from "../components/map-providers/context";
 import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
 import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
+import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -43,6 +43,28 @@ type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMe
 
 const _measurements: MeasureContext[] = [];
 
+const MeasuringMessage: React.FC<{ locale: string }> = ({ locale }) => {
+    const { Callout } = useElementContext();
+    return <Callout variant="primary" title={tr("MEASURING", locale)}>
+        {tr("MEASURING_MESSAGE", locale)}
+    </Callout>;
+}
+
+const MeasureControls: React.FC<{
+    measuring?: boolean;
+    locale: string;
+    onStartMeasure: () => void;
+    onEndMeasure: () => void;
+    onClearMeasurements: (e: GenericEvent) => void;
+}> = ({ measuring, locale, onStartMeasure, onEndMeasure, onClearMeasurements }) => {
+    const { Button } = useElementContext();
+    return <ElementGroup>
+        <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
+        <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
+        <Button type="button" icon="cross" onClick={onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
+    </ElementGroup>;
+}
+
 class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {
 
     constructor(props: MeasureProps) {
@@ -52,8 +74,7 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
             drawType: "LineString"
         }
     }
-    private onTypeChanged = (e: GenericEvent) => {
-        const newType = e.target.value;
+    private onTypeChanged = (newType: OLGeometryType) => {
         this.setState({ drawType: newType }, () => {
             const { activeMapName } = this.props;
             if (activeMapName && this.state.measuring === true) {
@@ -173,28 +194,24 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
         const { measuring, drawType: type } = this.state;
         const { measureUnits } = this.props;
         const locale = this.getLocale();
+        const measurementTypes = [
+            { value: "LineString" as OLGeometryType, label: tr("MEASUREMENT_TYPE_LENGTH", locale) },
+            { value: "Polygon" as OLGeometryType, label: tr("MEASUREMENT_TYPE_AREA", locale) }
+        ]
         return <div className="component-measure">
             <form className="form-inline">
                 <label className="bp3-label">
                     {tr("MEASUREMENT_TYPE", locale)}
-                    <div className="bp3-select">
-                        <HTMLSelect value={type} onChange={this.onTypeChanged}>
-                            <option value="LineString">{tr("MEASUREMENT_TYPE_LENGTH", locale)}</option>
-                            <option value="Polygon">{tr("MEASUREMENT_TYPE_AREA", locale)}</option>
-                        </HTMLSelect>
-                    </div>
+                    <TypedSelect<OLGeometryType, false> 
+                        value={type}
+                        onChange={this.onTypeChanged}
+                        items={measurementTypes} />
                 </label>
-                <ButtonGroup>
-                    <Button type="button" icon="play" disabled={measuring} onClick={this.onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
-                    <Button type="button" icon="stop" disabled={!measuring} onClick={this.onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
-                    <Button type="button" icon="cross" onClick={this.onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
-                </ButtonGroup>
+                <MeasureControls measuring={measuring} locale={locale} onStartMeasure={this.onStartMeasure} onEndMeasure={this.onEndMeasure} onClearMeasurements={this.onClearMeasurements} />
                 {(() => {
                     if (this.state.measuring === true) {
                         return <div>
-                            <Callout intent={Intent.PRIMARY} title={tr("MEASURING", locale)}>
-                                {tr("MEASURING_MESSAGE", locale)}
-                            </Callout>
+                            <MeasuringMessage locale={locale} />
                             {(() => {
                                 if (this.state.segments) {
                                     return <table className="bp3-html-table bp3-html-table-condensed">

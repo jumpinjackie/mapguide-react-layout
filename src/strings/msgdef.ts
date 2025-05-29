@@ -299,6 +299,10 @@ export interface ILocalizedMessages {
     THEME_ON_PROPERTY: string;
     COLORBREWER_THEME: string;
     LABEL_USING_PROPERTY: string;
+    /**
+     * @since 0.15
+     */
+    CREATE_LAYER_AS: string;
     CLUSTER_CLICK_ACTION: string;
     CLUSTER_CLICK_ACTION_SHOW_POPUP: string;
     CLUSTER_CLICK_ACTION_ZOOM_EXTENTS: string;

@@ -1,9 +1,10 @@
 import * as React from "react";
 import { acknowledgeInitWarnings } from "../actions/init";
 import { tr } from "../api/i18n";
-import { Dialog, Button, Intent } from '@blueprintjs/core';
+import { Dialog } from '@blueprintjs/core';
 import { useInitWarnings, useViewerLocale } from './hooks';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { useElementContext } from "../components/elements/element-context";
 
 export interface IInitWarningDisplayProps {
 
@@ -11,6 +12,7 @@ export interface IInitWarningDisplayProps {
 
 
 export const InitWarningDisplay = () => {
+    const { Button } = useElementContext();
     const dispatch = useReduxDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
     const warnings = useInitWarnings();
@@ -31,10 +33,8 @@ export const InitWarningDisplay = () => {
             <div className="bp3-dialog-footer">
                 <div className="bp3-dialog-footer-actions">
                     <Button
-                        intent={Intent.PRIMARY}
-                        onClick={acknowledge}
-                        text={tr("OK", locale)}
-                    />
+                        variant="primary"
+                        onClick={acknowledge}>{tr("OK", locale)}</Button>
                 </div>
             </div>
         </Dialog>

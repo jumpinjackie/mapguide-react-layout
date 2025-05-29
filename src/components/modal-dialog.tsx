@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Dialog, Icon, Button, NonIdealState, IconName } from '@blueprintjs/core';
 import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
 import { ModalChangeArgs } from "../actions/defs";
+import { useElementContext } from "./elements/element-context";
 
 export interface IRndModalDialogProps {
     x: number;
@@ -11,7 +11,10 @@ export interface IRndModalDialogProps {
     height: number;
     title: string;
     isOpen: boolean;
-    icon?: IconName;
+    /**
+     * @since 0.15 changed from blueprint IconName to string
+     */
+    icon?: string;
     onClose?: () => void;
     children: (bodyDim: [number, number]) => React.ReactNode;
     locale: string;
@@ -30,6 +33,7 @@ export interface IRndModalDialogProps {
 const DIAG_HEADER_HEIGHT = 40;
 
 export const RndModalDialog = (props: IRndModalDialogProps) => {
+    const { Icon, Button, NonIdealState } = useElementContext();
     if (props.isOpen === false)
         return <div />;
     const modalBodyStyle: React.CSSProperties = {

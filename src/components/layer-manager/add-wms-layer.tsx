@@ -15,16 +15,17 @@ import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
-import { Spinner, NonIdealState, Intent, ControlGroup, InputGroup, Button } from '@blueprintjs/core';
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
 import { getViewer } from '../../api/runtime';
+import { useElementContext } from "../elements/element-context";
 
 /**
  * @hidden
  */
 export const AddWmsLayer = (props: IAddLayerContentProps) => {
+    const { Button, InputGroup, NonIdealState, Spinner } = useElementContext();
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
@@ -81,7 +82,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 viewer.addImageLoaded();
                 props.onRemoveLayerBusyWorker(name);
             };
-            if (source instanceof olTiledWmsSource) {  
+            if (source instanceof olTiledWmsSource) {
                 source.on("tileloadstart", started);
                 source.on("tileloadend", finished);
                 source.on("tileloaderror", finished);
@@ -122,20 +123,17 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
         setWmsUrl(e.target.value);
     };
     return <div>
-        <ControlGroup fill>
-            <InputGroup leftIcon="geosearch"
-                placeholder={tr("ADD_WMS_LAYER_URL", locale)}
-                value={wmsUrl}
-                onChange={onWmsUrlChange}
-                readOnly={loadingCapabilities}
-                rightElement={<Button intent={Intent.PRIMARY} icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
-        </ControlGroup>
-        <br />
+        <InputGroup leftIcon="geosearch"
+            placeholder={tr("ADD_WMS_LAYER_URL", locale)}
+            value={wmsUrl}
+            onChange={onWmsUrlChange}
+            readOnly={loadingCapabilities}
+            rightElement={<Button variant="primary" icon="arrow-right" onClick={onLoadCaps} disabled={loadingCapabilities} />} />
         <div>
             {(() => {
                 if (loadingCapabilities) {
                     return <NonIdealState
-                        icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
+                        icon={<Spinner sizePreset="large" />}
                         title={tr("ADD_WMS_LAYER_LOADING", locale)}
                         description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
                 } else {

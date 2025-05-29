@@ -1,9 +1,9 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 import * as olProj from "ol/proj";
-import { Callout, Intent, Card } from '@blueprintjs/core';
 import { useViewerLocale, useCurrentMouseCoordinates } from './hooks';
 import { useActiveMapProjection } from './hooks-mapguide';
+import { useElementContext } from "../components/elements/element-context";
 
 export interface ICoordinateTrackerContainerProps {
     projections: string | string[];
@@ -11,6 +11,7 @@ export interface ICoordinateTrackerContainerProps {
 
 
 export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
+    const { Callout, Card } = useElementContext();
     const { projections } = props;
     const aProjections = Array.isArray(projections) ? projections : [projections];
     const locale = useViewerLocale();
@@ -37,7 +38,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
             })}
         </div>;
     } else {
-        return <Callout intent={Intent.DANGER} title={tr("ERROR", locale)} icon="error">
+        return <Callout variant="danger" title={tr("ERROR", locale)} icon="error">
             {tr("COORDTRACKER_NO_PROJECTIONS", locale)}
         </Callout>;
     }

@@ -8,7 +8,6 @@ import { MapMenuContainer } from "../containers/map-menu";
 import { BaseLayerSwitcherContainer } from "../containers/base-layer-switcher";
 import { CoordinateTrackerContainer } from "../containers/coordinate-tracker";
 import { AddManageLayersContainer } from "../containers/add-manage-layers";
-import { Card } from "@blueprintjs/core";
 import {
   deArrayify,
   isQueryMapFeaturesResponse,
@@ -18,6 +17,7 @@ import { ViewSizeContainer } from "../containers/view-size";
 import { ViewerOptions } from "../containers/viewer-options";
 import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
+import { useElementContext } from "../components/elements/element-context";
 
 //import MeasureContainer from '../containers/measure';
 
@@ -53,8 +53,9 @@ export default {
   excludeStories: ["MapDependentContainer", "getQueryMapFeaturesResponse"],
 };
 
-export const MapViewer = () => (
-  <Card>
+export const MapViewer = () => {
+  const { Card } = useElementContext();
+  return <Card>
     <h5 className="bp3-heading">
       <a href="#">Map Viewer</a>
     </h5>
@@ -70,13 +71,14 @@ export const MapViewer = () => (
       Some components require selections to be made. Some fake select tools are
       included to trigger such selection actions
     </p>
-  </Card>
-);
+  </Card>;
+};
 
 export const TaskPane = () => <TaskPaneContainer />;
 
-export const MouseCoordinates = () => (
-  <>
+export const MouseCoordinates = () => {
+  const { Card } = useElementContext();
+  return <>
     <Card>
       <h5 className="bp3-heading">
         <a href="#">Mouse Coordinates</a>
@@ -88,10 +90,11 @@ export const MouseCoordinates = () => (
     </Card>
     <MouseCoordinatesContainer />
   </>
-);
+};
 
-export const ViewSize = () => (
-  <>
+export const ViewSize = () => {
+  const { Card } = useElementContext();
+  return <>
     <Card>
       <h5 className="bp3-heading">
         <a href="#">View Size</a>
@@ -102,9 +105,11 @@ export const ViewSize = () => (
     </Card>
     <ViewSizeContainer />
   </>
-);
+};
 
-export const ScaleDisplay = () => (
+export const ScaleDisplay = () => {
+  const { Card } = useElementContext();
+  return
   <>
     <Card>
       <h5 className="bp3-heading">
@@ -114,7 +119,7 @@ export const ScaleDisplay = () => (
     </Card>
     <ScaleDisplayContainer />
   </>
-);
+};
 
 export const Navigator = () => <NavigatorContainer />;
 export const MapMenu = () => <MapMenuContainer />;

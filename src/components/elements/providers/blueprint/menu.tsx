@@ -1,26 +1,17 @@
 import * as React from "react";
-import { isMenu } from "../utils/type-guards";
-import { IItem, getIconStyle, getEnabled } from "./toolbar";
-import { ImageIcon } from "./icon";
+import { isMenu } from "../../../../utils/type-guards";
+import { IItem, getIconStyle, getEnabled } from "../../../toolbar";
+import { ImageIcon } from "../../../icon";
 import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
+import { MenuComponentProps } from "../../element-context";
 
 const MENU_ITEM_HEIGHT = 30;
-
-/**
- * MenuComponent props
- *
- * @interface IMenuComponentProps
- */
-export interface IMenuComponentProps {
-    items: IItem[];
-    onInvoked?: () => void;
-}
 
 /**
  * A generic menu component
  * @param props 
  */
-export const MenuComponent = (props: IMenuComponentProps) => {
+export const BpMenuComponent: React.FC<MenuComponentProps> = (props) => {
     const onClick = (item: IItem) => {
         if (getEnabled(item)) {
             item?.invoke?.();
@@ -39,7 +30,7 @@ export const MenuComponent = (props: IMenuComponentProps) => {
                     text = item.label || "";
                 }
                 return <MenuItem key={index} text={text} icon="menu-open">
-                    <MenuComponent items={item.childItems} onInvoked={props.onInvoked} />
+                    <BpMenuComponent items={item.childItems} onInvoked={props.onInvoked} />
                 </MenuItem>;
             } else {
                 const height = MENU_ITEM_HEIGHT;

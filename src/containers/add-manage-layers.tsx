@@ -3,7 +3,6 @@ import { tr } from "../api/i18n";
 import { ILayerInfo, Bounds, LayerProperty, IMapViewer } from "../api/common";
 import { ManageLayers } from "../components/layer-manager/manage-layers";
 import { AddLayer } from "../components/layer-manager/add-layer";
-import { Tabs, Tab, Icon } from '@blueprintjs/core';
 import { useViewerLocale, useActiveMapName, useActiveMapLayers, useActiveMapView } from './hooks';
 import olVectorLayer from "ol/layer/Vector";
 import olClusterSource from "ol/source/Cluster";
@@ -12,6 +11,7 @@ import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeM
 import { getViewer } from '../api/runtime';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { TabSetProps, useElementContext } from "../components/elements/element-context";
 
 export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
     const layer = viewer.getLayerManager().getLayer(layerName);
@@ -54,6 +54,7 @@ export interface IAddManageLayersContainerProps {
 }
 
 export const AddManageLayersContainer = () => {
+    const { TabSet, Icon } = useElementContext();
     const dispatch = useReduxDispatch();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
@@ -133,22 +134,37 @@ export const AddManageLayersContainer = () => {
         }
     }
     if (layers) {
+        const tabProps: TabSetProps = {
+            id: "tabs",
+            tabs: [
+                {
+                    id: "add_layer",
+                    title: <span><Icon icon="new-layer" /> {tr("ADD_LAYER", locale)}</span>,
+                    content: <AddLayer onLayerAdded={onLayerAdded}
+                        onAddLayerBusyWorker={onAddLayerBusyWorker}
+                        onRemoveLayerBusyWorker={onRemoveLayerBusyWorker}
+                        locale={locale} />
+                },
+                {
+                    id: "manage_layers",
+                    title: <span><Icon icon="layers" /> {tr("MANAGE_LAYERS", locale)}</span>,
+                    content: <ManageLayers layers={layers}
+                        locale={locale}
+                        currentResolution={view?.resolution}
+                        onSetOpacity={setOpacity}
+                        onSetHeatmapBlur={setHeatmapBlur}
+                        onSetHeatmapRadius={setHeatmapRadius}
+                        onSetVisibility={setVisibility}
+                        onZoomToBounds={zoomToBounds}
+                        onMoveLayerDown={downHandler}
+                        onMoveLayerUp={upHandler}
+                        onRemoveLayer={removeHandler}
+                        onVectorStyleChanged={updateVectorStyle} />
+                }
+            ]
+        };
         return <div style={{ padding: 8 }}>
-            <Tabs id="tabs" renderActiveTabPanelOnly={true}>
-                <Tab id="add_layer" title={<span><Icon icon="new-layer" iconSize={Icon.SIZE_STANDARD} /> {tr("ADD_LAYER", locale)}</span>} panel={<AddLayer onLayerAdded={onLayerAdded} onAddLayerBusyWorker={onAddLayerBusyWorker} onRemoveLayerBusyWorker={onRemoveLayerBusyWorker} locale={locale} />} />
-                <Tab id="manage_layers" title={<span><Icon icon="layers" iconSize={Icon.SIZE_STANDARD} /> {tr("MANAGE_LAYERS", locale)}</span>} panel={<ManageLayers layers={layers}
-                    locale={locale}
-                    currentResolution={view?.resolution}
-                    onSetOpacity={setOpacity}
-                    onSetHeatmapBlur={setHeatmapBlur}
-                    onSetHeatmapRadius={setHeatmapRadius}
-                    onSetVisibility={setVisibility}
-                    onZoomToBounds={zoomToBounds}
-                    onMoveLayerDown={downHandler}
-                    onMoveLayerUp={upHandler}
-                    onRemoveLayer={removeHandler}
-                    onVectorStyleChanged={updateVectorStyle} />} />
-            </Tabs>
+            <TabSet {...tabProps} />
         </div>;
     } else {
         return <></>;

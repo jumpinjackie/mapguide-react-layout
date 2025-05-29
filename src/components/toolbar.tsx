@@ -7,8 +7,8 @@ import { ImageIcon } from "./icon";
 import {
     BlueprintSvgIconNames
 } from "../constants/assets";
-import { Icon } from '@blueprintjs/core';
 import { NBSP } from '../constants';
+import { useElementContext } from "./elements/element-context";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -49,6 +49,7 @@ export function getEnabled(item: IItem): boolean {
 type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["bpIconName"], iconSize: number };
 
 const OpacityIcon: React.FC<OpacityIconProps> = React.memo(({ opacity, icon, iconSize }) => {
+    const { Icon } = useElementContext();
     return <Icon style={{ opacity }} icon={icon} iconSize={iconSize} />;
 });
 
@@ -65,6 +66,7 @@ function getIconElement(item: IItem, enabled: boolean, size: number): React.Reac
 }
 
 function getFlyoutIconElement(isFlownOut: boolean | undefined, size: number) {
+    const { Icon } = useElementContext();
     return <Icon icon={isFlownOut ? "chevron-up" : "chevron-down"} iconSize={size * SVG_SIZE_RATIO} />
 }
 

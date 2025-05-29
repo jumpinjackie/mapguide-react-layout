@@ -5,7 +5,6 @@ import { LegendContext, ILegendContext, LegendNodeExtraHTMLProps } from "./conte
 import { BaseLayerSwitcher } from "./base-layer-switcher";
 import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
-import { Card, Icon as BpIcon, Button, InputGroup, IconName } from "@blueprintjs/core";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
 import { BlueprintSvgIconNames } from '../constants/assets';
@@ -14,6 +13,7 @@ import { strIsNullOrEmpty } from '../utils/string';
 import { useReduxDispatch } from "./map-providers/context";
 import { setMapLayerVisibility } from "../actions/map";
 import DOMPurify from "dompurify";
+import { useElementContext } from "./elements/element-context";
 
 const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
 const ICON_SELECT: BlueprintSvgIconNames = "select";
@@ -141,6 +141,7 @@ export interface ILayerNodeProps {
 
 export const LayerNode = (props: ILayerNodeProps) => {
     const { layer } = props;
+    const { Icon: BpIcon } = useElementContext();
     const legendCtx = React.useContext(LegendContext);
     const [layerVisible, setLayerVisible] = React.useState(legendCtx.getLayerVisibility(props.layer));
     const label = layer.LegendLabel ? layer.LegendLabel : "";
@@ -276,6 +277,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
 };
 
 const ExternalLayerNode: React.FC<{ layer: ILayerInfo }> = ({ layer }) => {
+    const { Icon: BpIcon } = useElementContext();
     const legendCtx = React.useContext(LegendContext);
     const nodeClassName = "layer-node";
     const nodeStyle: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", ...LI_LIST_STYLE };
@@ -291,7 +293,7 @@ const ExternalLayerNode: React.FC<{ layer: ILayerInfo }> = ({ layer }) => {
         style={CHK_STYLE(legendCtx.getBaseIconSize())}
         onChange={e => onVisibilityChanged(e.target.checked)}
         checked={layer.visible} />;
-    let iconToUse: IconName = ICON_LEGEND_LAYER;
+    let iconToUse: string = ICON_LEGEND_LAYER;
     if (layer.type == "WMS") {
         iconToUse = ICON_LEGEND_RASTER;
     }
@@ -302,6 +304,7 @@ const ExternalLayerNode: React.FC<{ layer: ILayerInfo }> = ({ layer }) => {
 }
 
 const ExternalLayersGroupNode: React.FC<{ layers: ILayerInfo[] }> = ({ layers }) => {
+    const { Icon: BpIcon } = useElementContext();
     const legendCtx = React.useContext(LegendContext);
     if (layers.length == 0) {
         return <></>;
@@ -326,6 +329,7 @@ export interface IGroupNodeProps {
 }
 
 export const GroupNode = (props: IGroupNodeProps) => {
+    const { Icon: BpIcon } = useElementContext();
     const { group } = props;
     const legendCtx = React.useContext(LegendContext);
     const getExpanded = () => {
@@ -542,6 +546,7 @@ const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 
  * @param props 
  */
 export const Legend = /*React.memo(*/(props: ILegendProps) => {
+    const { Button, Card, InputGroup } = useElementContext();
     const {
         showGroups,
         hideGroups,

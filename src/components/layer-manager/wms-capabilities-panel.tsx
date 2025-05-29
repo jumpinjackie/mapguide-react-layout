@@ -1,11 +1,18 @@
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { WmsCapabilitiesDocument, WMSPublishedLayer, WMSLayerStyle } from "../../api/common";
-import { Tooltip, ITreeNode, Card, Button, Intent, ButtonGroup, Icon } from '@blueprintjs/core';
+import { ElementGroup, useElementContext } from "../elements/element-context";
 
 type WMSLayerStylePair = [WMSPublishedLayer, WMSLayerStyle[]];
 
-function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
+/**
+ * Extracts WMS layers from the given parsed capabilities document
+ * 
+ * @hidden
+ * @param caps 
+ * @returns 
+ */
+export function extractWmsLayers(caps: WmsCapabilitiesDocument): WMSLayerStylePair[] {
     const layers = [] as WMSLayerStylePair[];
     const { Layer, ...rootLayer } = caps.Capability.Layer;
     if (rootLayer.Name) { //Must have name to be considered
@@ -27,6 +34,7 @@ export interface IWmsCapabilitiesPanelProps {
 }
 
 export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
+    const { Card, Button, Icon } = useElementContext();
     const { locale, onAddLayer } = props;
     const { capabilities: caps } = props;
     const layers = extractWmsLayers(caps);
@@ -48,17 +56,17 @@ export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
                     {/*<p>{tr("OWS_LAYER_ABSTRACT", locale, { abstract: layer.Abstract })}</p>*/}
                     {(() => {
                         if (styles.length) {
-                            return styles.map(st => <ButtonGroup key={st.Name} vertical fill alignText="left">
-                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE", locale, { style: st.Name })}</Button>
-                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, st, st.LegendURL?.[0]?.OnlineResource)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE_TILED", locale, { style: st.Name })}</Button>
+                            return styles.map(st => <ElementGroup key={st.Name} vertical>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, st, st.LegendURL?.[0]?.OnlineResource)} variant="primary" icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE", locale, { style: st.Name })}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, st, st.LegendURL?.[0]?.OnlineResource)} variant="primary" icon="new-layer">{tr("ADD_LAYER_WITH_WMS_STYLE_TILED", locale, { style: st.Name })}</Button>
                                 {otherActions}
-                            </ButtonGroup>);
+                            </ElementGroup>);
                         } else {
-                            return <ButtonGroup vertical fill alignText="left">
-                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
-                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, undefined)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER_TILED", locale)}</Button>
+                            return <ElementGroup vertical>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, false, undefined)} variant="primary" icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
+                                <Button onClick={() => onAddLayer(layer.Name, layer.queryable, true, undefined)} variant="primary" icon="new-layer">{tr("ADD_LAYER_TILED", locale)}</Button>
                                 {otherActions}
-                            </ButtonGroup>;
+                            </ElementGroup>;
                         }
                     })()}
                 </Card>

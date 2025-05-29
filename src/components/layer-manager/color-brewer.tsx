@@ -5,14 +5,15 @@ export interface IColorBrewerRamp {
     displayName: string;
     category: string;
     scheme: string;
-    ramp: string[];
+    ramp: string[] | undefined;
 }
 
 export function getColorBrewerRamps(): IColorBrewerRamp[] {
     const ramps = [] as IColorBrewerRamp[];
     for (const cat in colorbrewer.schemeGroups) {
         for (const scheme of colorbrewer.schemeGroups[cat]) {
-            ramps.push({ displayName: `${cat} - ${scheme}`, category: cat, scheme: scheme, ramp: getMaxRamp(scheme) });
+            const ramp = getMaxRamp(scheme);
+            ramps.push({ displayName: `${cat} - ${scheme}`, category: cat, scheme: scheme, ramp: ramp });
         }
     }
     return ramps;
@@ -23,16 +24,18 @@ export function getMaxRamp(scheme: any) {
     let len = 0;
     for (const s in scheme) {
         const arr = scheme[s];
-        if (arr.length > len) {
-            theScheme = arr;
-            len = arr.length;
+        if (Array.isArray(arr)) {
+            if (arr.length > len) {
+                theScheme = arr;
+                len = arr.length;
+            }
         }
     }
     return theScheme;
 }
 
 export const ColorBrewerSwatch: React.FC<{ theme: string }> = props => {
-    const ramp: string[] = getMaxRamp(colorbrewer[props.theme]);
+    const ramp = getMaxRamp(colorbrewer[props.theme]);
     if (ramp) {
         return <table>
             <colgroup>

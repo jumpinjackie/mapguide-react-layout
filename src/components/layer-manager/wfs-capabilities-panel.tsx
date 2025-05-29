@@ -1,8 +1,8 @@
 import * as React from "react";
 import { IWfsServiceCapabilities, IWfsServiceInfo, IWfsLayerInfo } from './wfs-capabilities-parser';
 import { tr } from '../../api/i18n';
-import { Card, Icon, ButtonGroup, Button, Intent } from '@blueprintjs/core';
 import { Bounds } from '../../api/common';
+import { ElementGroup, useElementContext } from "../elements/element-context";
 
 /**
  * Attempts to extract an EPSG code from the given CRS identifier
@@ -77,6 +77,7 @@ export interface IWfsCapabilitiesPanelProps {
  * @hidden
  */
 export const WfsCapabilitiesPanel = (props: IWfsCapabilitiesPanelProps) => {
+    const { Card, Icon, Button } = useElementContext();
     const { locale, capabilities, onAddLayer } = props;
     const { layers, info } = capabilities;
     return <>
@@ -99,10 +100,10 @@ export const WfsCapabilitiesPanel = (props: IWfsCapabilitiesPanelProps) => {
                         <p>{tr("OWS_LAYER_TITLE", locale, { title: layer.title })}</p>
                         <p>{tr("OWS_LAYER_CRS", locale, { crs: `EPSG:${epsgCode}` })}</p>
                         {/*<p>{tr("OWS_LAYER_ABSTRACT", locale, { abstract: layer.abstract })}</p>*/}
-                        <ButtonGroup fill>
-                            <Button onClick={() => onAddLayer(layer.name, info.version, geoJsonFmt, origCrs, epsgCode, layer.wgs84Bounds)} intent={Intent.PRIMARY} icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
+                        <ElementGroup>
+                            <Button onClick={() => onAddLayer(layer.name, info.version, geoJsonFmt, origCrs, epsgCode, layer.wgs84Bounds)} variant="primary" icon="new-layer">{tr("ADD_LAYER", locale)}</Button>
                             {otherActions}
-                        </ButtonGroup>
+                        </ElementGroup>
                     </Card>
                 }
             }).filter(c => c)}

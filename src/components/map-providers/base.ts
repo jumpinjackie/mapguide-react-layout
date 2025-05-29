@@ -41,7 +41,6 @@ import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBu
 import { Toaster, Intent } from '@blueprintjs/core';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import type { ISubscriberProps } from '../../containers/subscriber';
-import isMobile from "ismobilejs";
 import type { IInitialExternalLayer } from '../../actions/defs';
 import { MapGuideMockMode } from '../mapguide-debug-context';
 import LayerBase from 'ol/layer/Base';

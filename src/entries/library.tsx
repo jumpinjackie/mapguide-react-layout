@@ -53,7 +53,7 @@ import { MapViewer } from '../containers/neo-map-viewer';
 
 import "../styles/index.css";
 import "ol/ol.css";
-import "@blueprintjs/core/lib/css/blueprint.css";
+
 import "react-splitter-layout/lib/index.css";
 import { GenericLayout } from "../layouts/generic";
 import { ExternalLayerCreator, ExternalLayerFactoryRegistry } from "../api/registry/external-layer";

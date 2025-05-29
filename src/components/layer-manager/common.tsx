@@ -1,9 +1,9 @@
-import { Button, ButtonGroup, Card, Collapse, InputGroup, Intent, NumericInput, Popover, Radio, Slider, Switch } from "@blueprintjs/core";
 import * as React from "react";
 import { tr } from "../../api/i18n";
 import { ExprOr, isEvaluatable } from "../../api/ol-style-contracts";
 import { strIsNullOrEmpty, STR_EMPTY } from "../../utils/string";
 import { ColorPicker } from "../color-picker";
+import { ElementGroup, useElementContext } from "../elements/element-context";
 
 interface RGB {
     b: number;
@@ -127,6 +127,7 @@ function useExprEditor<T>(props: ExprEditorProps<T>) {
 }
 
 function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
+    const { Button, Collapsible, Card, Radio, InputGroup } = useElementContext();
     const { renderValueEditor, locale, roStyle } = props;
     const {
         isEditValid,
@@ -146,10 +147,10 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
             setIsEditing(true);
         }
     };
-    const editButton = <Button icon="edit" minimal intent={Intent.PRIMARY} style={{ color: "white", backgroundColor: "#137cbd" }} onClick={(e: any) => onEditClick()} />
+    const editButton = <Button icon="edit" minimal variant="primary" style={{ color: "white", backgroundColor: "#137cbd" }} onClick={(e: any) => onEditClick()} />
     return <>
         <InputGroup style={roStyle} readOnly value={stringifyExpr(props.value, locale)} rightElement={editButton} />
-        <Collapse isOpen={isEditing} keepChildrenMounted={false}>
+        <Collapsible isOpen={isEditing}>
             <Card>
                 <h5 className="bp3-heading">Edit Value</h5>
                 <Radio name="edit-mode" label="Value" value="edit-value" checked={editMode == "edit-value"} onChange={(e: any) => setEditMode(e.target.value)} />
@@ -158,25 +159,27 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 <Radio name="edit-mode" label="Expression" value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
                 <input disabled={editMode != "edit-expr"} type="text" className="bp3-input" value={stringifyExprIf(localValue, "edit-expr")} onChange={e => onUpdateLocalValue({ expr: e.target.value })} />
                 <br /><br />
-                <ButtonGroup>
-                    <Button disabled={!isEditValid} intent={Intent.SUCCESS} onClick={(e: any) => onApplyValue()}>Apply</Button>
-                    <Button intent={Intent.DANGER} onClick={(e: any) => onCancelEditing()}>Cancel</Button>
-                </ButtonGroup>
+                <ElementGroup>
+                    <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>Apply</Button>
+                    <Button variant="danger" onClick={(e: any) => onCancelEditing()}>Cancel</Button>
+                </ElementGroup>
             </Card>
-        </Collapse>
+        </Collapsible>
     </>;
 }
 
 export const NumberExprEditor: React.FC<ExprEditorProps<number> & { min?: number, max?: number }> = props => {
+    const { NumericInput } = useElementContext();
     const { min, max } = props;
     return <ExprEditorInner<number>
         locale={props.locale}
         value={props.value}
         onChange={props.onChange}
-        renderValueEditor={(v, oc, loc, disabled) => <NumericInput disabled={disabled} min={min} max={max} value={parseInt(stringifyExprIf(v, "edit-value"), 10)} onValueChange={e => oc(e)} />} />;
+        renderValueEditor={(v, oc, loc, disabled) => <NumericInput disabled={disabled} min={min} max={max} value={parseInt(stringifyExprIf(v, "edit-value"), 10)} onChange={e => oc(e)} />} />;
 }
 
 export const SliderExprEditor: React.FC<ExprEditorProps<number> & { min?: number, max?: number, labelStepSize?: number }> = props => {
+    const { Slider } = useElementContext();
     const { min, max, labelStepSize } = props;
     return <ExprEditorInner<number>
         locale={props.locale}
@@ -194,6 +197,7 @@ export const StringExprEditor: React.FC<ExprEditorProps<string>> = props => {
 }
 
 export const BooleanExprEditor: React.FC<ExprEditorProps<boolean>> = props => {
+    const { Switch } = useElementContext();
     return <ExprEditorInner<boolean>
         locale={props.locale}
         value={props.value}

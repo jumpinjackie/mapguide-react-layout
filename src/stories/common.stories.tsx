@@ -6,7 +6,6 @@ import {
   VectorLayerStyleEditor,
   VectorStyleEditor,
 } from "../components/vector-style-editor";
-import "../styles/index.css";
 import {
   BooleanExprEditor,
   ColorExprEditor,
@@ -34,11 +33,15 @@ export const _StringExprEditor = () => {
   const locale = DEFAULT_LOCALE;
   const act = action("Value changed");
   const [expr, setExpr] = React.useState<ExprOr<string> | undefined>(undefined);
+  const onChange: React.ComponentProps<typeof StringExprEditor>["onChange"] = (e) => {
+    act(e);
+    setExpr(e);
+  }
   return (
     <StringExprEditor
       locale={locale}
       value={expr}
-      onChange={(e) => setExpr(e)}
+      onChange={onChange}
     />
   );
 };
@@ -47,11 +50,15 @@ export const _NumberExprEditor = () => {
   const locale = DEFAULT_LOCALE;
   const act = action("Value changed");
   const [expr, setExpr] = React.useState<ExprOr<number> | undefined>(undefined);
+  const onChange: React.ComponentProps<typeof NumberExprEditor>["onChange"] = (e) => {
+    act(e);
+    setExpr(e);
+  }
   return (
     <NumberExprEditor
       locale={locale}
       value={expr}
-      onChange={(e) => setExpr(e)}
+      onChange={onChange}
     />
   );
 };
@@ -62,6 +69,10 @@ export const _SliderExprEditor = () => {
   const min = number("Min Value", 0);
   const max = number("Max Value", 100);
   const [expr, setExpr] = React.useState<ExprOr<number> | undefined>(undefined);
+  const onChange: React.ComponentProps<typeof SliderExprEditor>["onChange"] = e => {
+    act(e);
+    setExpr(e);
+  }
   return (
     <SliderExprEditor
       min={min}
@@ -69,7 +80,7 @@ export const _SliderExprEditor = () => {
       labelStepSize={max}
       locale={locale}
       value={expr}
-      onChange={(e) => setExpr(e)}
+      onChange={onChange}
     />
   );
 };
@@ -78,11 +89,15 @@ export const _ColorExprEditor = () => {
   const locale = DEFAULT_LOCALE;
   const act = action("Value changed");
   const [expr, setExpr] = React.useState<ExprOr<string> | undefined>(undefined);
+  const onChange: React.ComponentProps<typeof ColorExprEditor>["onChange"] = e => {
+    act(e);
+    setExpr(e);
+  };
   return (
     <ColorExprEditor
       locale={locale}
       value={expr}
-      onChange={(e) => setExpr(e)}
+      onChange={onChange}
     />
   );
 };
@@ -93,11 +108,15 @@ export const _BooleanExprEditor = () => {
   const [expr, setExpr] = React.useState<ExprOr<boolean> | undefined>(
     undefined,
   );
+  const onChange: React.ComponentProps<typeof BooleanExprEditor>["onChange"] = e => {
+    act(e);
+    setExpr(e);
+  };
   return (
     <BooleanExprEditor
       locale={locale}
       value={expr}
-      onChange={(e) => setExpr(e)}
+      onChange={onChange}
     />
   );
 };
@@ -136,7 +155,7 @@ export const _VectorLayerStyleEditor = () => {
   return (
     <VectorLayerStyleEditor
       style={layerStyle}
-      onChange={(st) => setLayerStyle(st)}
+      onChange={onChange}
       enablePoint={boolean("Enable Point", true)}
       enableLine={boolean("Enable Line", true)}
       enablePolygon={boolean("Enable Polygon", true)}

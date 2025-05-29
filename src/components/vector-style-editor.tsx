@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NonIdealState, Tabs, Tab, FormGroup, NumericInput, RadioGroup, Radio, InputGroup, Switch, Button, Intent, ButtonGroup, SwitchProps } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
@@ -8,6 +7,7 @@ import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor }
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";
 import { vectorStyleToStyleMap } from "../api/ol-style-map-set";
+import { ElementGroup, SwitchProps, TabSetProps, useElementContext } from "./elements/element-context";
 
 interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
@@ -26,6 +26,7 @@ function ExprEditor<T>(props: IExprEditorProps<T>) {
 }
 
 const DynamicSwitch = (props: Omit<Omit<SwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
+    const { Switch } = useElementContext();
     if (isEvaluatable(props.expr)) {
         return <ExprEditor<boolean> {...props} converter={v => v?.toLowerCase() == "true"} />
     } else {
@@ -60,6 +61,7 @@ function coalesceExpr<T>(expr: ExprOr<T> | undefined, defaultVal: T): T {
 const DEFAULT_FONT_SIZE = 14;
 
 const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
+    const { Button, Switch, FormGroup } = useElementContext();
     const { style, locale, onChange, isLine } = props;
     const [bold, setBold] = React.useState(false);
     const [italic, setItalic] = React.useState(false);
@@ -112,11 +114,11 @@ const LabelStyleEditor: React.FC<ILabelStyleEditor> = props => {
         {hasLabel && <FormGroup label={tr("LABEL_SIZE", locale)}>
             <NumberExprEditor locale={locale} value={localFontSize} onChange={t => setLocalFontSize(coalesceExpr(t, DEFAULT_FONT_SIZE))} />
         </FormGroup>}
-        {hasLabel && <ButtonGroup>
-            <Button intent={Intent.PRIMARY} active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
-            <Button intent={Intent.PRIMARY} active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
-            {isLine && <Button intent={Intent.PRIMARY} active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
-        </ButtonGroup>}
+        {hasLabel && <ElementGroup>
+            <Button variant="primary" active={bold} onClick={(e: any) => setBold(!bold)}>{tr("LABEL_BOLD", locale)}</Button>
+            <Button variant="primary" active={italic} onClick={(e: any) => setItalic(!italic)}>{tr("LABEL_ITALIC", locale)}</Button>
+            {isLine && <Button variant="primary" active={localLabel.placement == "line"} onClick={(e: any) => onToggleLinePlacement()}>{tr("LABEL_LINE_PLACEMENT", locale)}</Button>}
+        </ElementGroup>}
         {hasLabel && <FormGroup label={tr("LABEL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={localBgColor} onChange={(c: any) => setLocalBgColor(c)} />
         </FormGroup>}
@@ -136,6 +138,7 @@ interface ISubStyleEditorProps<TStyle> {
 }
 
 const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IPointIconStyle>) => {
+    const { NumericInput, FormGroup } = useElementContext();
     const [localSrc, setLocalSrc] = React.useState(style.src);
     React.useEffect(() => {
         setLocalSrc(style.src);
@@ -152,8 +155,8 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
             {!isEvaluatable(style.src) && <img src={style.src} />}
         </FormGroup>
         <FormGroup label={tr("VSED_PT_ICON_ANCHOR", locale)}>
-            {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onValueChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
-            {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onValueChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
+            {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
+            {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
         </FormGroup>
         <DynamicSwitch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} expr={style.rotateWithView} onExprChanged={(e: any) => onChange({ ...style, rotateWithView: e })} />
         <FormGroup label={tr("VSED_PT_ICON_ROTATION", locale)}>
@@ -169,6 +172,7 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
 };
 
 const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicPointCircleStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_PT_FILL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
@@ -192,6 +196,7 @@ const PointCircleStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProp
 };
 
 const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPointStyle>) => {
+    const { Radio } = useElementContext();
     const [iconStyle, setIconStyle] = React.useState<IPointIconStyle | undefined>(undefined);
     const [circleStyle, setCircleStyle] = React.useState<IBasicPointCircleStyle | undefined>(undefined);
     const [currentStyle, setCurrentStyle] = React.useState(style);
@@ -236,13 +241,9 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
         applyCurrentStyle(style);
     }, [style]);
     return <div>
-        <RadioGroup inline
-            label={tr("VSED_PT_TYPE", locale)}
-            onChange={(e: any) => onStyleTypeChange(e.target.value)}
-            selectedValue={currentStyle.type}>
-            <Radio label={tr("VSED_PT_TYPE_CIRCLE", locale)} value="Circle" />
-            <Radio label={tr("VSED_PT_TYPE_ICON", locale)} value="Icon" />
-        </RadioGroup>
+        <p>{tr("VSED_PT_TYPE", locale)}</p>
+        <Radio label={tr("VSED_PT_TYPE_CIRCLE", locale)} value="Circle" checked={currentStyle.type === "Circle"} onChange={(e: any) => onStyleTypeChange(e.target.value)} />
+        <Radio label={tr("VSED_PT_TYPE_ICON", locale)} value="Icon" checked={currentStyle.type === "Icon"} onChange={(e: any) => onStyleTypeChange(e.target.value)} />
         {currentStyle.type == "Icon" && <PointIconStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
         {currentStyle.type == "Circle" && <PointCircleStyleEditor style={currentStyle} onChange={onChange} locale={locale} />}
         <LabelStyleEditor style={currentStyle} locale={locale} onChange={onChange} />
@@ -250,6 +251,7 @@ const PointStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBas
 }
 
 const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorLineStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_LN_OUTLINE_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.color} onChange={(c: any) => onChange({ ...style, color: c, width: style.width, alpha: style.alpha })} />
@@ -265,6 +267,7 @@ const LineStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasi
 }
 
 const PolygonStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<IBasicVectorPolygonStyle>) => {
+    const { FormGroup } = useElementContext();
     return <div>
         <FormGroup label={tr("VSED_PL_FILL_COLOR", locale)}>
             <ColorExprEditor locale={locale} value={style.fill.color} onChange={(c: any) => onChange({ ...style, fill: { color: c, alpha: style.fill.alpha } })} />
@@ -306,8 +309,9 @@ type TabId = "pointStyle" | "lineStyle" | "polyStyle";
  * @since 0.13
  */
 export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
+    const { NonIdealState, TabSet } = useElementContext();
     const { locale, style, onChange, enableLine, enablePoint, enablePolygon } = props;
-    const [selectedTab, setSelectedTab] = React.useState<TabId | undefined>(undefined);
+    const [selectedTab, setSelectedTab] = React.useState<string | number | undefined>(undefined);
     const [pointStyle, setPointStyle] = React.useState(style?.point ?? DEFAULT_POINT_CIRCLE_STYLE);
     const [lineStyle, setLineStyle] = React.useState(style?.line ?? DEFAULT_LINE_STYLE);
     const [polyStyle, setPolyStyle] = React.useState(style?.polygon ?? DEFAULT_POLY_STYLE);
@@ -352,11 +356,34 @@ export const VectorStyleEditor = (props: IVectorStyleEditorProps) => {
         const onPolygonStyleChanged = (st: IBasicVectorPolygonStyle) => {
             onStyleChanged(pointStyle, lineStyle, st);
         };
-        return <Tabs onChange={(t: any) => setSelectedTab(t)} selectedTabId={selectedTab}>
-            {enablePoint && <Tab id="pointStyle" title={tr("VSED_TAB_POINT", locale)} panel={<PointStyleEditor style={pointStyle} locale={locale} onChange={onPointStyleChanged} />} />}
-            {enableLine && <Tab id="lineStyle" title={tr("VSED_TAB_LINE", locale)} panel={<LineStyleEditor style={lineStyle} locale={locale} onChange={onLineStyleChanged} />} />}
-            {enablePolygon && <Tab id="polyStyle" title={tr("VSED_TAB_POLY", locale)} panel={<PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />} />}
-        </Tabs>
+
+        const tabProps: TabSetProps = {
+            onTabChanged: t => setSelectedTab(t),
+            activeTabId: selectedTab,
+            tabs: []
+        };
+        if (enablePoint) {
+            tabProps.tabs.push({
+                id: "pointStyle",
+                title: tr("VSED_TAB_POINT", locale),
+                content: <PointStyleEditor style={pointStyle} locale={locale} onChange={onPointStyleChanged} />
+            });
+        }
+        if (enableLine) {
+            tabProps.tabs.push({
+                id: "lineStyle",
+                title: tr("VSED_TAB_LINE", locale),
+                content: <LineStyleEditor style={lineStyle} locale={locale} onChange={onLineStyleChanged} />
+            });
+        }
+        if (enablePolygon) {
+            tabProps.tabs.push({
+                id: "polyStyle",
+                title: tr("VSED_TAB_POLY", locale),
+                content: <PolygonStyleEditor style={polyStyle} locale={locale} onChange={onPolygonStyleChanged} />
+            });
+        }
+        return <TabSet {...tabProps} />;
     }
 }
 
@@ -385,6 +412,7 @@ interface IFilterItemProps extends Omit<IVectorLayerStyleEditorProps, "onChange"
 const parser = new Parser();
 
 const FilterItem = (props: IFilterItemProps) => {
+    const { Button } = useElementContext();
     const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
     const [localFilter, setLocalFilter] = React.useState(filter ?? "");
     const [isLocalFilterValid, setIsLocalFilterValid] = React.useState(true);
@@ -431,7 +459,7 @@ const FilterItem = (props: IFilterItemProps) => {
         let pos: any;
         let ls: any;
         let pls: any;
-        if (typeof(olstyle) == 'function') {
+        if (typeof (olstyle) == 'function') {
             pos = (feat: any) => olstyle(feat, undefined)["Point"];
             ls = (feat: any) => olstyle(feat, undefined)["LineString"];
             pls = (feat: any) => olstyle(feat, undefined)["Polygon"];
@@ -463,10 +491,6 @@ const FilterItem = (props: IFilterItemProps) => {
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
         onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
     }
-    let outerModifier;
-    if (!isLocalFilterValid) {
-        outerModifier = Intent.DANGER;
-    }
     let colSpan = 5;
     if (!props.enableLine)
         colSpan--;
@@ -474,14 +498,14 @@ const FilterItem = (props: IFilterItemProps) => {
         colSpan--;
     if (!props.enablePolygon)
         colSpan--;
-    const filterExprEd = <span>{featureStyle.label}</span> //<InputGroup intent={outerModifier} fill leftIcon={(isLocalFilterValid ? "tick" : "warning-sign")} title={localFilter} value={localFilter} onChange={e => setLocalFilter(e.target.value)} />;
+    const filterExprEd = <span>{featureStyle.label}</span>;
     return <>
         <tr>
             {props.enablePoint && <td>{pointStyleUrl && <img src={pointStyleUrl} />}</td>}
             {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
             {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
             <td>{isDefault ? <strong>Default Style</strong> : filterExprEd}</td>
-            <td><Button intent={isStyleEditorOpen ? Intent.DANGER : Intent.PRIMARY} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
+            <td><Button variant={isStyleEditorOpen ? "danger" : "primary"} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
         </tr>
         {isStyleEditorOpen && <tr>
             <td colSpan={colSpan}>
@@ -528,7 +552,7 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
                 key={`filter-${i}`}
                 filter={f}
                 isDefault={false}
-                onChange={(f, s) => onFeatureStyleChanged( f, s)}
+                onChange={(f, s) => onFeatureStyleChanged(f, s)}
                 featureStyle={props.style[filters[i]]}
                 isStyleEditorOpen={openStyleEditors[f] === true}
                 onToggleStyleEditor={(isVisible) => onToggleStyleEditor(f, isVisible)}

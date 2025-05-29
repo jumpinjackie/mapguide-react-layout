@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Collapse, Button, Intent, Card } from '@blueprintjs/core';
 import { tr } from "../api/i18n";
 import { NBSP } from '../constants';
 import { DEFAULT_COLOR } from '../api/ol-style-contracts';
 import { HexColorPicker } from "react-colorful";
+import { useElementContext } from "./elements/element-context";
 
 /**
  * Color picker props
@@ -23,17 +23,18 @@ export interface IColorPickerProps {
  * @since 0.13
  */
 export const ColorPicker = (props: IColorPickerProps) => {
+    const { Collapsible, Button, Card } = useElementContext();
     const [isPickerOpen, setIsPickerOpen] = React.useState(false);
     const onPickerToggle = () => {
         setIsPickerOpen(!isPickerOpen);
     };
     return <div>
         <button disabled={props.disabled} style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
-        <Collapse isOpen={isPickerOpen}>
+        <Collapsible isOpen={isPickerOpen}>
             <Card>
                 <HexColorPicker style={{ width: "100%" }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />
-                <Button icon="chevron-up" intent={Intent.PRIMARY} onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", props.locale)}</Button>
+                <Button icon="chevron-up" variant="primary" onClick={() => setIsPickerOpen(false)}>{tr("ACTION_CLOSE", props.locale)}</Button>
             </Card>
-        </Collapse>
+        </Collapsible>
     </div>
 }

@@ -4,9 +4,9 @@ import { FakeApp } from "./fake-app";
 import { LegendContainer } from "../containers/legend";
 import { SelectedFeatureCountContainer } from "../containers/selected-feature-count";
 import { SelectionPanelContainer } from "../containers/selection-panel";
-import { Card } from "@blueprintjs/core";
 import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
+import { useElementContext } from "../components/elements/element-context";
 
 export default {
   title: "Map and Map Interaction Components / MapGuide-specific",
@@ -29,8 +29,9 @@ export const LegendWithBaseLayerSwitcher = {
   name: "Legend - with base layer switcher",
 };
 
-export const SelectedFeatureCount = () => (
-  <>
+export const SelectedFeatureCount = () => {
+  const { Card } = useElementContext();
+  return <>
     <Card>
       <h5 className="bp3-heading">
         <a href="#">Selected Feature Count</a>
@@ -42,6 +43,6 @@ export const SelectedFeatureCount = () => (
     </Card>
     <SelectedFeatureCountContainer />
   </>
-);
+};
 
 export const SelectionPanel = () => <SelectionPanelContainer />;

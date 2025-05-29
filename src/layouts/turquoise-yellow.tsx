@@ -12,9 +12,9 @@ import { InitWarningDisplay } from "../containers/init-warning-display";
 import SplitterLayout from "react-splitter-layout";
 import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
-import { Tabs, Tab } from '@blueprintjs/core';
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { TabSetProps, useElementContext } from "../components/elements/element-context";
 
 function turquoiseYellowTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {
@@ -95,6 +95,7 @@ export const TurquoiseYellowTemplateLayout = () => {
         onSplitterChanged,
         onActiveElementChanged,
     } = useCommonTemplateState(turquoiseYellowTemplateReducer);
+    const { TabSet } = useElementContext();
     let hasTaskPane = false;
     let hasStatusBar = false;
     let hasNavigator = false;
@@ -124,9 +125,9 @@ export const TurquoiseYellowTemplateLayout = () => {
         { id: "Legend", visible: showLegend }
     ];
     const active = states.filter(st => st.visible);
-    let extraTabsProps: any = {};
+    let extraTabsProps: Pick<TabSetProps, "activeTabId"> = {};
     if (active.length == 1) {
-        extraTabsProps.selectedTabId = active[0].id;
+        extraTabsProps.activeTabId = active[0].id;
     }
     const taskPaneTitle = tr("TPL_TITLE_TASKPANE", locale);
     const legendTitle = tr("TPL_TITLE_LEGEND", locale);
@@ -137,34 +138,46 @@ export const TurquoiseYellowTemplateLayout = () => {
             <SplitterLayout customClassName="turquoise-yellow-splitter" primaryIndex={1} secondaryInitialSize={sbWidth} onSecondaryPaneSizeChange={onSplitterChanged} onDragStart={onDragStart} onDragEnd={onDragEnd}>
                 {(() => {
                     if (showSelection || showTaskPane || showLegend) {
+                        const tabProps: TabSetProps = {
+                            id: "SidebarTabs",
+                            onTabChanged: onActiveElementChanged,
+                            className: "turquoise-yellow-sb-tabs",
+                            tabs: [],
+                            ...extraTabsProps
+                        };
+                        if (hasTaskPane) {
+                            const panel = <div style={tabPanelStyle}>
+                                <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "TaskPane",
+                                title: taskPaneTitle,
+                                content: panel
+                            });
+                        }
+                        if (hasLegend) {
+                            const p1: React.CSSProperties = { overflow: "auto" };
+                            const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
+                                <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "Legend",
+                                title: legendTitle,
+                                content: panel
+                            });
+                        }
+                        if (hasSelectionPanel) {
+                            const panel = <div style={tabPanelStyle}>
+                                <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
+                            </div>;
+                            tabProps.tabs.push({
+                                id: "Selection",
+                                title: selectionTitle,
+                                content: panel
+                            });
+                        }
                         return <div className="turquoise-yellow-sidebar" style={{ position: "absolute", left: SIDEBAR_PADDING, top: TOP_BAR_HEIGHT, bottom: SIDEBAR_PADDING, right: 0 }}>
-                            <Tabs className="turquoise-yellow-sb-tabs" id="SidebarTabs" onChange={onActiveElementChanged} {...extraTabsProps}>
-                                {(() => {
-                                    if (hasTaskPane) {
-                                        const panel = <div style={tabPanelStyle}>
-                                            <PlaceholderComponent id={DefaultComponentNames.TaskPane} locale={locale} componentProps={{ isResizing: isResizing }} />
-                                        </div>;
-                                        return <Tab id="TaskPane" title={taskPaneTitle} panel={panel} />;
-                                    }
-                                })()}
-                                {(() => {
-                                    if (hasLegend) {
-                                        const p1: React.CSSProperties = { overflow: "auto" };
-                                        const panel = <div style={{ ...tabPanelStyle, ...p1 }}>
-                                            <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
-                                        </div>;
-                                        return <Tab id="Legend" title={legendTitle} panel={panel} />;
-                                    }
-                                })()}
-                                {(() => {
-                                    if (hasSelectionPanel) {
-                                        const panel = <div style={tabPanelStyle}>
-                                            <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />
-                                        </div>;
-                                        return <Tab id="Selection" title={selectionTitle} panel={panel} />;
-                                    }
-                                })()}
-                            </Tabs>
+                            <TabSet {...tabProps} />
                         </div>;
                     }
                 })()}

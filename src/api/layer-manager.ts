@@ -316,7 +316,7 @@ export class LayerManager implements ILayerManager {
                 ramp = colorbrewer.Blues;
             }
             const chosenRamp = getMaxRamp(ramp);
-            const ruleCount = Math.min(values.length, chosenRamp.length);
+            const ruleCount = Math.min(values.length, chosenRamp?.length ?? 0);
             const palette = ramp[ruleCount];
             for (let i = 0; i < ruleCount; i++) {
                 const v = values[i];

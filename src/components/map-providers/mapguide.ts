@@ -4,11 +4,8 @@ import { SessionKeepAlive } from '../session-keep-alive';
 import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport, Dictionary } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query';
-
 import WKTFormat from "ol/format/WKT";
-
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
-
 import Geometry from 'ol/geom/Geometry';
 import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled } from '../../actions/map';
 import View from 'ol/View';

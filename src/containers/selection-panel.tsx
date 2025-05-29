@@ -1,16 +1,16 @@
 import * as React from "react";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
-import { FeatureProperty, LayerMetadata, SelectedFeature, SelectedFeatureSet, SelectedLayer } from "../api/contracts/query";
+import { SelectedFeature } from "../api/contracts/query";
 import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
-import { ICompositeSelection, ICompositeSelectionLayer, IMapView } from "../api/common";
-import { Callout, Intent } from '@blueprintjs/core';
+import { IMapView } from "../api/common";
 import { AppContext } from '../components/context';
 import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName, useActiveMapClientSelectionSet } from './hooks';
 import { setCurrentView, showSelectedFeature } from '../actions/map';
 import { useActiveMapState } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { CompositeSelection } from "../api/composite-selection";
+import { useElementContext } from "../components/elements/element-context";
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
@@ -18,6 +18,7 @@ export interface ISelectionPanelContainerProps {
 }
 
 export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) => {
+    const { Callout } = useElementContext();
     const { maxHeight, selectedFeatureRenderer } = props;
     const locale = useViewerLocale();
     const map = useActiveMapState();
@@ -63,7 +64,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
             selectedFeatureRenderer={selectedFeatureRenderer}
             maxHeight={maxHeight} />;
     } else {
-        return <Callout intent={Intent.PRIMARY} icon="info-sign">
+        return <Callout variant="primary" icon="info-sign">
             <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>
         </Callout>;
     }

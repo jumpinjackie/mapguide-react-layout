@@ -15,8 +15,8 @@ import {
     FlyoutVisibilitySet
 } from "../api/common";
 import { parseComponentUri } from "../utils/url";
-import { Intent, NonIdealState, Spinner } from '@blueprintjs/core';
 import { FUSION_TASKPANE_NAME, WEBLAYOUT_TASKMENU } from '../constants';
+import { useElementContext } from "./elements/element-context";
 
 export const TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
 
@@ -28,6 +28,16 @@ function currentUrlDoesNotMatchMapName(currentUrl: string, mapName: string | und
     } else {
         return false;
     }
+}
+
+const TaskFrameLoadingOverlay: React.FC<{ locale: string }> = ({ locale }) => {
+    const { NonIdealState, Spinner } = useElementContext();
+    return <div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
+        <NonIdealState
+            icon={<Spinner sizePreset="large" />}
+            title={tr("TASK_PANE_LOADING", locale)}
+            description={tr("TASK_PANE_LOADING_DESC", locale)} />
+    </div>;
 }
 
 /**
@@ -208,12 +218,7 @@ export class TaskPane extends React.Component<ITaskPaneProps, any> {
                             </iframe>
                         ];
                         if (frameContentLoaded == false) {
-                            components.push(<div key="taskPaneFrameLoadingOverlay" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                                <NonIdealState 
-                                    icon={<Spinner intent={Intent.NONE} size={Spinner.SIZE_LARGE} />}
-                                    title={tr("TASK_PANE_LOADING", locale)}
-                                    description={tr("TASK_PANE_LOADING_DESC", locale)} />
-                            </div>);
+                            components.push(<TaskFrameLoadingOverlay key="loading-overlay" locale={locale} />);
                         }
                         return components;
                     }

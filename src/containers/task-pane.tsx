@@ -9,12 +9,21 @@ import { IItem } from "../components/toolbar";
 import { TaskPane, TASK_PANE_OVERLAY_BGCOLOR } from "../components/task-pane";
 import { areUrlsSame, ensureParameters } from "../utils/url";
 import { tr } from "../api/i18n";
-import { NonIdealState } from '@blueprintjs/core';
 import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPaneLastUrlPushed, useTaskPaneNavigationIndex, useTaskPaneNavigationStack, useConfiguredCapabilities, useViewerLocale } from './hooks';
 import { invokeCommand } from '../actions/map';
 import { goHome, goForward, goBack, pushUrl } from '../actions/taskpane';
 import { openFlyout, closeFlyout } from '../actions/flyout';
 import { useReduxDispatch } from "../components/map-providers/context";
+import { useElementContext } from "../components/elements/element-context";
+
+const TaskPaneResizingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
+    const { NonIdealState } = useElementContext();
+    return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
+        <NonIdealState
+            icon="arrows-horizontal"
+            description={tr("TASK_PANE_RESIZING", locale)} />
+    </div>;
+}
 
 export interface ITaskPaneContainerProps {
     maxHeight?: number;
@@ -128,11 +137,7 @@ class TaskPaneContainerInner extends React.Component<TaskPaneProps, any> {
                     locale={this.getLocale()} />
                 {(() => {
                     if (isResizing == true) {
-                        return <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, backgroundColor: TASK_PANE_OVERLAY_BGCOLOR }}>
-                            <NonIdealState
-                                icon="arrows-horizontal"
-                                description={tr("TASK_PANE_RESIZING", this.getLocale())} />
-                        </div>
+                        return <TaskPaneResizingPlaceholder locale={this.getLocale()} />;
                     }
                 })()}
             </div>;

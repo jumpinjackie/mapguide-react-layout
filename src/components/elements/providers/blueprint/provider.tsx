@@ -19,6 +19,8 @@ import { BpFormGroup } from "./form-group";
 import { BpEditableText } from "./editable-text";
 import { BpMenuComponent } from "./menu";
 
+import "@blueprintjs/core/lib/css/blueprint.css";
+
 const provider: IElementContext = {
     Button: BpButton,
     Radio: BpRadio,

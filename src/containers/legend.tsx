@@ -46,27 +46,27 @@ export const LegendContainer = (props: ILegendContainerProps) => {
         if (activeMapName) {
             setLayerSelectableAction?.(activeMapName, { id: id, value: selectable });
         }
-    }, [setLayerSelectableAction]);
+    }, [setLayerSelectableAction, activeMapName]);
     const onGroupExpansionChanged = React.useCallback((id: string, expanded: boolean) => {
         if (setGroupExpandedAction && activeMapName) {
             setGroupExpandedAction(activeMapName, { id: id, value: expanded });
         }
-    }, [setGroupExpandedAction]);
+    }, [setGroupExpandedAction, activeMapName]);
     const onGroupVisibilityChanged = React.useCallback((groupId: string, visible: boolean) => {
         if (setGroupVisibilityAction && activeMapName) {
             setGroupVisibilityAction(activeMapName, { id: groupId, value: visible });
         }
-    }, [setGroupVisibilityAction]);
+    }, [setGroupVisibilityAction, activeMapName]);
     const onLayerVisibilityChanged = React.useCallback((layerId: string, visible: boolean) => {
         if (setLayerVisibilityAction && activeMapName) {
             setLayerVisibilityAction(activeMapName, { id: layerId, value: visible });
         }
-    }, [setLayerVisibilityAction]);
+    }, [setLayerVisibilityAction, activeMapName]);
     const onBaseLayerChanged = React.useCallback((layerName: string) => {
         if (setBaseLayerAction && activeMapName) {
             setBaseLayerAction(activeMapName, layerName);
         }
-    }, [setBaseLayerAction]);
+    }, [setBaseLayerAction, activeMapName]);
     if ((map || layers) && view) {
         let scale = view.scale;
         if (scale || layers) {

@@ -50,7 +50,9 @@ export interface IApplicationContext {
      */
     allowHtmlValuesInSelection: () => boolean;
     /**
-     * Gets a HTML sanitization function (if provided via mount option)
+     * Gets a HTML sanitization function (if provided via mount option). If none provided, request
+     * to sanitize HTML content will go through DOMPurify. If you provide your own sanitization function
+     * that function is wholly responsible (ie. We won't DOMPurify it before or after)
      * 
      * @since 0.11
      */

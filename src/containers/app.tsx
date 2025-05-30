@@ -8,23 +8,24 @@ import {
     IMapViewer,
     Dictionary
 } from "../api/common";
-import { IInitAppLayout, initLayout } from "../actions/init";
+import { type IInitAppLayout, initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
-import { IElementState } from '../actions/defs';
+import type { IElementState } from '../actions/defs';
 import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
-import { areStatesEqual, getStateFromUrl, IAppUrlState, updateUrl } from './url-state';
+import { areStatesEqual, getStateFromUrl, type IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
-import { IViewerInitCommand } from '../actions/init-command';
+import type { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
+import type { ISelectedFeatureProps } from "../components/selection-panel";
 
 const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
     const { NonIdealState, Spinner } = useElementContext();
@@ -36,7 +37,7 @@ const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
-    cleanHtml?: (value: string) => string;
+    cleanHtml?: ISelectedFeatureProps["cleanHTML"]
 }
 
 /**

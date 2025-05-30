@@ -1,8 +1,8 @@
 import * as React from "react";
 import { SelectedFeature, LayerMetadata, FeatureProperty } from "../api/contracts/query";
-import { Toolbar, IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
+import { Toolbar, type IItem, DEFAULT_TOOLBAR_SIZE, TOOLBAR_BACKGROUND_COLOR } from "./toolbar";
 import { tr as xlate, DEFAULT_LOCALE } from "../api/i18n";
-import { GenericEvent, ICompositeSelection } from "../api/common";
+import type { ICompositeSelection } from "../api/common";
 
 import { strIsNullOrEmpty } from "../utils/string";
 import DOMPurify from "dompurify";
@@ -91,7 +91,7 @@ export interface ISelectionPanelProps {
      * 
      * @since 0.11
      */
-    cleanHTML?: (html: string) => string;
+    cleanHTML?: ISelectedFeatureProps["cleanHTML"];
 }
 
 interface ISelectionPanel {
@@ -140,7 +140,7 @@ const FloatClear = () => <div style={{ clear: "both" }} />;
  * @param props 
  */
 export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
-    const { Callout, Select } = useElementContext();
+    const { Callout } = useElementContext();
     const {
         maxHeight,
         selection,

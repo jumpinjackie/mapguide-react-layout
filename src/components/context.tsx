@@ -4,11 +4,12 @@
  * This module holds various React component contexts and validation maps
  */
 import * as React from "react";
-import { IDOMElementMetrics } from "../api/common";
+import type { IDOMElementMetrics } from "../api/common";
 import { MapLayer, MapGroup } from "../api/contracts/runtime-map";
 import { DEFAULT_LOCALE } from '../api/i18n';
 import { STR_EMPTY } from '../utils/string';
-import { IMapGuideAppProps } from "../containers/app";
+import type { IMapGuideAppProps } from "../containers/app";
+import type { ISelectedFeatureProps } from "./selection-panel";
 
 const VOID_NOOP = () => { }
 
@@ -56,7 +57,7 @@ export interface IApplicationContext {
      * 
      * @since 0.11
      */
-    getHTMLCleaner: () => (((value: string) => string) | undefined);
+    getHTMLCleaner: () => (ISelectedFeatureProps["cleanHTML"]);
     /**
      * Provide extra HTML elements to insert before a layer name in a layer legend node
      * 

@@ -13,7 +13,8 @@ import {
     getRuntimeMap,
     getCurrentView,
     ITargetedCommand,
-    IConfigurationReducerState
+    IConfigurationReducerState,
+    CommandTarget
 } from "./common";
 import { tr } from "../api/i18n";
 import { DefaultComponentNames } from "../api/registry/component";
@@ -79,8 +80,11 @@ function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "l
     dispatch(setCurrentView({ x: newPos[0], y: newPos[1], scale: view.scale }));
 }
 
-export function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters: any): ITargetedCommand {
-    const cmdTarget = (parameters || {}).Target;
+/**
+ * @hidden
+ */
+export function buildTargetedCommand(config: Readonly<IConfigurationReducerState>, parameters?: Record<string, unknown>): ITargetedCommand {
+    const cmdTarget = (parameters || {})["Target"] as CommandTarget;
     const cmdDef: ITargetedCommand = {
         target: cmdTarget || "NewWindow"
     };
@@ -89,7 +93,7 @@ export function buildTargetedCommand(config: Readonly<IConfigurationReducerState
     }
     if (cmdTarget == "SpecifiedFrame") {
         cmdDef.target = cmdTarget;
-        cmdDef.targetFrame = (parameters || {}).TargetFrame;
+        cmdDef.targetFrame = (parameters || {})["TargetFrame"] as string | undefined;
     }
     return cmdDef;
 }
@@ -321,17 +325,17 @@ export function initDefaultCommands() {
                 const fact = viewer.getOLFactory();
                 const geoOptions: Partial<PositionOptions> = {};
                 let zoomScale = view.scale;
-                if (parameters.ZoomLevel) {
-                    zoomScale = parseInt(parameters.ZoomLevel, 10);
+                if (parameters?.["ZoomLevel"]) {
+                    zoomScale = parseInt(`${parameters["ZoomLevel"]}`, 10);
                 }
-                if (parameters.EnableHighAccuracy) {
-                    geoOptions.enableHighAccuracy = (parameters.EnableHighAccuracy == "true");
+                if (parameters?.["EnableHighAccuracy"]) {
+                    geoOptions.enableHighAccuracy = (parameters["EnableHighAccuracy"] == "true");
                 }
-                if (parameters.Timeout) {
-                    geoOptions.timeout = parseInt(parameters.Timeout, 10);
+                if (parameters?.["Timeout"]) {
+                    geoOptions.timeout = parseInt(`${parameters["Timeout"]}`, 10);
                 }
-                if (parameters.MaximumAge) {
-                    geoOptions.maximumAge = parseInt(parameters.MaximumAge, 10);
+                if (parameters?.["MaximumAge"]) {
+                    geoOptions.maximumAge = parseInt(`${parameters["MaximumAge"]}`, 10);
                 }
                 navigator.geolocation.getCurrentPosition(pos => {
                     const proj = viewer.getProjection();
@@ -365,7 +369,8 @@ export function initDefaultCommands() {
         enabled: () => true,
         invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
-            const url = `component://CoordinateTracker?${(parameters.Projection || []).map((p: string) => "projections=" + p).join("&")}`;
+            const codes = Array.isArray(parameters?.["Projection"]) ? parameters["Projection"] : [];
+            const url = `component://CoordinateTracker?${codes.map((p: string) => "projections=" + p).join("&")}`;
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.CoordinateTracker, cmdDef, config.capabilities.hasTaskPane, dispatch, url, tr("COORDTRACKER", config.locale));
         }

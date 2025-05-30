@@ -13,11 +13,11 @@ import { parseUrl } from '../../utils/url';
 import { ensureProjection } from '../../api/registry/projections';
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
-import { getViewer } from '../../api/runtime';
 import { setOLVectorLayerStyle } from '../../api/ol-style-helpers';
 import { DEFAULT_VECTOR_LAYER_STYLE } from '../../api/ol-style-contracts';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { useElementContext } from "../elements/element-context";
+import { useMapProviderContext } from "../map-providers/context";
 
 /**
  * @hidden
@@ -29,9 +29,9 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
     const [caps, setCaps] = React.useState<IWfsServiceCapabilities | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
+    const viewer = useMapProviderContext();
     const onAddLayer = (name: string, version: string, format: string, origCrs: string, epsgCode: number, wfsWgs84Bounds?: Bounds) => {
-        const viewer = getViewer();
-        if (caps && viewer) {
+        if (caps && viewer.isReady()) {
             ensureProjection(epsgCode, locale, origCrs).then(([, resolvedProj]) => {
                 const sourceProj = viewer.getProjection();
                 //TODO: For correctness, we should be using the URL from the ows:Get element of the

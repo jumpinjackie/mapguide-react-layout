@@ -13,7 +13,7 @@ import { useActiveMapBranch, useViewerFlyouts, useTaskPaneInitialUrl, useTaskPan
 import { invokeCommand } from '../actions/map';
 import { goHome, goForward, goBack, pushUrl } from '../actions/taskpane';
 import { openFlyout, closeFlyout } from '../actions/flyout';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { useElementContext } from "../components/elements/element-context";
 
 const TaskPaneResizingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
@@ -154,10 +154,11 @@ export const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
     const lastUrlPushed = useTaskPaneLastUrlPushed();
     const navIndex = useTaskPaneNavigationIndex();
     const navigationStack = useTaskPaneNavigationStack();
+    const viewer = useMapProviderContext();
     const hasTaskBar = useConfiguredCapabilities().hasTaskBar;
 
     const dispatch = useReduxDispatch();
-    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, viewer, parameters));
     const goHomeAction = () => dispatch(goHome());
     const goForwardAction = () => dispatch(goForward());
     const goBackAction = () => dispatch(goBack());

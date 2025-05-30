@@ -13,6 +13,7 @@ import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
 import { ElementGroup, useElementContext } from "../components/elements/element-context";
+import { useMapProviderContext } from "../components/map-providers/context";
 //import { useMapProviderContext } from "../components/map-providers/context";
 
 type MapToolbarProps = {
@@ -101,10 +102,11 @@ export const GenericLayout = () => {
     const tbState = useReducedToolbarAppState();
     //console.log("tbState", tbState.hasClientSelection, tbState.hasSelection);
     const activeTool = useViewerActiveTool();
+    const viewer = useMapProviderContext();
     const onInvokeCommand = (name: string) => {
         const cmd = getCommand(name);
         if (cmd) {
-            dispatch(invokeCommand(cmd));
+            dispatch(invokeCommand(cmd, viewer));
         }
     };
     const onSetActiveTool = (tool: ActiveMapTool) => {

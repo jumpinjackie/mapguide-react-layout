@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { IMapSetViewAction } from "../../src/actions/defs";
 import { setGroupExpanded, setGroupVisibility, setLayerSelectable, setLayerVisibility } from "../../src/actions/legend";
 import { addClientSelectedFeature, clearClientSelection, nextView, previousView, setBaseLayer, setCurrentView, setScale, setSelection } from "../../src/actions/map";
@@ -65,7 +65,12 @@ describe("reducers/config", () => {
             const action = createInitAction(map, view, "en");
             const state = mapStateReducer(initialState.mapState, action);
 
-            const action2 = setScale(map.Name, 2000);
+            const viewer = {
+                isReady: () => false,
+                scaleToResolution: vi.fn()
+            };
+
+            const action2 = setScale(viewer, map.Name, 2000);
             const state2 = mapStateReducer(state, action2);
 
             const ms = state2[map.Name];

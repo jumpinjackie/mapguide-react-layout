@@ -18,8 +18,8 @@ import olTiledWmsSource from "ol/source/TileWMS";
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
-import { getViewer } from '../../api/runtime';
 import { useElementContext } from "../elements/element-context";
+import { useMapProviderContext } from "../map-providers/context";
 
 /**
  * @hidden
@@ -31,9 +31,9 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
     const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
+    const viewer = useMapProviderContext();
     const onAddLayer = (name: string, selectable: boolean, isTiled: boolean, style: WMSLayerStyle | undefined) => {
-        const viewer = getViewer();
-        if (caps && viewer) {
+        if (caps && viewer.isReady()) {
             const params: any = {
                 LAYERS: name
             };

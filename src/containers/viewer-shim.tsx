@@ -18,15 +18,16 @@ import { serialize } from "../api/builders/mapagent";
 import { ILocalizedMessages } from "../strings/msgdef";
 import { getUnitOfMeasure } from '../utils/units';
 import { useActiveMapSelectionSet, useConfiguredAgentUri, useConfiguredAgentKind, useViewerBusyCount, useViewerSizeUnits } from './hooks';
-import { getFusionRoot, getViewer } from '../api/runtime';
+import { getFusionRoot } from '../api/runtime';
 import { debug, error, warn } from '../utils/logger';
 import { QueryMapFeatureActionOptions, queryMapFeatures, setSelection, invokeCommand } from '../actions/map';
 import { refresh } from '../actions/legend';
 import { goHome } from '../actions/taskpane';
 import { FUSION_MAP_NAME, FUSION_TASKPANE_NAME, FUSION_REDLINE_NAME } from '../constants';
 import { useActiveMapState } from './hooks-mapguide';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
+import { IMapProviderContext } from "../components/map-providers/base";
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -323,8 +324,8 @@ class FusionWidgetApiShim {
         return this;
     }
     getExtentFromPoint(x: number, y: number, scale: number): OL2Bounds | undefined { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             const view = viewer.getCurrentView();
             if (!scale) {
                 scale = view.scale;
@@ -343,8 +344,8 @@ class FusionWidgetApiShim {
         return undefined;
     }
     setExtents(bounds: OL2Bounds) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
         }
     }
@@ -360,13 +361,13 @@ class FusionWidgetApiShim {
         this.parent.ClearSelection();
     }
     cancelDigitization(): void { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.cancelDigitization();
         }
     }
     query(options: any): void { //Map
-        const viewer = getViewer()?.mapguideSupport();
+        const viewer = this.parent.props.viewer?.isReady() == true ? this.parent.props.viewer.mapguideSupport() : undefined;
         const { map } = this.parent.props;
         if (map && viewer) {
             const mapName = map.Name;
@@ -386,9 +387,9 @@ class FusionWidgetApiShim {
         }
     }
     setSelection(xml: string, zoomTo: boolean): void { //Map
-        const viewer = getViewer();
+        const { viewer } = this.parent.props;
         const mgSupport = viewer?.mapguideSupport();
-        if (viewer && mgSupport) {
+        if (viewer.isReady() && mgSupport) {
             mgSupport.setSelectionXml(xml, {
                 layerattributefilter: 0 //Need to set this in order for requestdata to be respected
             }, (selection) => {
@@ -451,26 +452,26 @@ class FusionWidgetApiShim {
         this.parent.Refresh();
     }
     info(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             this._activeToast = viewer.toastPrimary("info-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg) }} />);
         }
     }
     warn(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             this._activeToast = viewer.toastPrimary("warning-sign", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg) }} />);
         }
     }
     error(msg: string): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             this._activeToast = viewer.toastPrimary("error", <div className="mg-fusion-message" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg) }} />);
         }
     }
     clear(): void { //Map MessageBar
-        const viewer = getViewer();
-        if (viewer && this._activeToast) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady() && this._activeToast) {
             viewer.dismissToast(this._activeToast);
         }
     }
@@ -506,8 +507,8 @@ class FusionWidgetApiShim {
         return null;
     }
     pixToGeoMeasure(tolerance: number) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             const res = viewer.getResolution();
             if (res) {
                 return tolerance * res;
@@ -533,48 +534,48 @@ class FusionWidgetApiShim {
         };
     }
     digitizePoint(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizePoint(pt => {
                 handler(new OL2Geom(pt));
             });
         }
     }
     digitizeLine(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizeLine(ln => {
                 handler(new OL2Geom(ln));
             });
         }
     }
     digitizeLineString(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizeLineString(lstr => {
                 handler(new OL2Geom(lstr));
             });
         }
     }
     digitizeRectangle(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizeRectangle(rect => {
                 handler(new OL2Rect(rect));
             });
         }
     }
     digitizePolygon(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizePolygon(poly => {
                 handler(new OL2Geom(poly));
             });
         }
     }
     digitizeCircle(_options: any, handler: FusionGeomDigitizer) { //Map
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.parent.props;
+        if (viewer.isReady()) {
             viewer.digitizeCircle(circ => {
                 handler(FusionWidgetApiShim.toOL2Circle(circ));
             });
@@ -676,7 +677,7 @@ interface IViewerApiShimDispatch {
     queryMapFeatures: (mapName: string, options: QueryMapFeatureActionOptions) => void;
 }
 
-type ViewerApiShimProps = IViewerApiShimProps & IViewerApiShimState & IViewerApiShimDispatch;
+type ViewerApiShimProps = IViewerApiShimProps & IViewerApiShimState & IViewerApiShimDispatch & { viewer: IMapProviderContext; }
 
 /**
  * This component installs a AJAX/Fusion viewer API compatibility layer when mounted allowing for existing
@@ -825,11 +826,11 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public ClearSelection(): void {
-        getViewer()?.mapguideSupport()?.clearSelection();
+        this.props.viewer?.mapguideSupport()?.clearSelection();
     }
     public DigitizeCircle(handler: (circle: IAjaxViewerCircle) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizeCircle(circle => {
                 const center = circle.getCenter();
                 const radius = circle.getRadius();
@@ -844,8 +845,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeLine(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizeLine(line => {
                 const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
                     return {
@@ -858,8 +859,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizePoint(handler: (geom: IAjaxViewerPoint) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizePoint(pt => {
                 const coords = pt.getCoordinates();
                 handler({ X: coords[0], Y: coords[1] });
@@ -867,8 +868,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizePolygon(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizePolygon(poly => {
                 //Our API isn't expected to allow drawing polygons with holes, so the first (outer) ring
                 //is what we're after
@@ -886,8 +887,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeLineString(handler: (geom: AjaxViewerLineStringOrPolygon) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizeLineString(line => {
                 const coords = line.getCoordinates().map<IAjaxViewerPoint>(coord => {
                     return {
@@ -900,8 +901,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public DigitizeRectangle(handler: (geom: IAjaxViewerRect) => void): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.digitizeRectangle(rect => {
                 const extent = rect.getExtent();
                 handler({
@@ -918,8 +919,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public GetCenter(): IAjaxViewerPoint | null {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const view = viewer.getCurrentView();
             return { X: view.x, Y: view.y };
         }
@@ -947,15 +948,15 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return selLayers;
     }
     public GetMetersPerUnit(): number | null {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             return viewer.getMetersPerUnit();
         }
         return null;
     }
     public GetMapHeight(): number {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const [, gh] = viewer.getSize();
             return gh;
         }
@@ -967,16 +968,16 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return uom.name;
     }
     public GetMapWidth(): number {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const [gw] = viewer.getSize();
             return gw;
         }
         return NaN;
     }
     public GetScale(): number | null {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const view = viewer.getCurrentView();
             return view.scale;
         }
@@ -1050,7 +1051,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         return count;
     }
     public GetSelectedFeatures(): IAjaxViewerSelectionSet | undefined {
-        const viewer = getViewer()?.mapguideSupport();
+        const viewer = this.props.viewer?.isReady() == true ? this.props.viewer.mapguideSupport() : undefined;
         if (viewer) {
             const selection = viewer.getSelection();
             if (selection && selection.SelectedFeatures) {
@@ -1072,8 +1073,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         }
     }
     public IsDigitizing(): boolean {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             return viewer.isDigitizing();
         } else {
             return false;
@@ -1089,13 +1090,15 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         throw new MgError(`Un-implemented AJAX viewer shim API: map_frame.MapUnitsToLatLon(x, y)`);
     }
     public Refresh(): void {
-        const viewer = getViewer();
-        viewer?.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
-        this.props.legendRefresh?.();
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
+            viewer?.refreshMap(RefreshMode.LayersOnly | RefreshMode.SelectionOnly);
+            this.props.legendRefresh?.();
+        }
     }
     public ScreenToMapUnits(x: number, y: number): IAjaxViewerPoint | undefined {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const [sx, sy] = viewer.screenToMapUnits(x, y);
             return { X: sx, Y: sy };
         }
@@ -1107,14 +1110,14 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //This is what the AJAX viewer does
     }
     public SetSelectionXML(xmlSet: string): void {
-        const viewer = getViewer()?.mapguideSupport();
+        const viewer = this.props.viewer?.isReady() == true ? this.props.viewer.mapguideSupport() : undefined;
         if (viewer) {
             viewer.setSelectionXml(xmlSet);
         }
     }
     public ZoomToView(x: number, y: number, scale: number) {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             viewer.zoomToView(x, y, scale);
         }
     }
@@ -1123,8 +1126,8 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
     }
     //This isn't in the AJAX Viewer API reference, but there are samples referencing it!
     public ZoomToScale(scale: number): void {
-        const viewer = getViewer();
-        if (viewer) {
+        const { viewer } = this.props;
+        if (viewer.isReady()) {
             const view = viewer.getCurrentView();
             viewer.zoomToView(view.x, view.y, scale);
         }
@@ -1163,7 +1166,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         browserWindow.GotoHomePage = browserWindow.GotoHomePage || (() => this.goHome());
 
         // ======= Extended Viewer API ========== //
-        browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => getViewer());
+        browserWindow.GetViewerInterface = browserWindow.GetViewerInterface || (() => this.props.viewer);
         browserWindow.RegisterSelectionHandler = browserWindow.RegisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.RegisterSelectionHandler(handler));
         browserWindow.UnregisterSelectionHandler = browserWindow.UnregisterSelectionHandler || ((handler: SelectionHandlerCallback) => this.UnregisterSelectionHandler(handler));
     }
@@ -1204,14 +1207,16 @@ export const ViewerApiShim = () => {
     const busyCount = useViewerBusyCount();
     const sizeUnits = useViewerSizeUnits();
 
+    const viewer = useMapProviderContext();
     const dispatch = useReduxDispatch();
     const goHomeAction = () => dispatch(goHome());
     const legendRefresh = () => dispatch(refresh());
-    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, viewer, parameters));
     const setSelectionAction = (mapName: string, res: any) => dispatch(setSelection(mapName, res));
     const queryMapFeaturesAction = (mapName: string, options: QueryMapFeatureActionOptions) => dispatch(queryMapFeatures(mapName, options));
 
     return <ViewerApiShimInner map={map}
+        viewer={viewer}
         selectionSet={selectionSet}
         agentUri={agentUri}
         agentKind={agentKind}

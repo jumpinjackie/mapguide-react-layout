@@ -5,7 +5,7 @@ import { mapToolbarReference } from "../api/registry/command";
 import { useViewerLocale, useViewerFlyouts, useReducedToolbarAppState } from './hooks';
 import { closeFlyout } from '../actions/flyout';
 import { invokeCommand } from '../actions/map';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
 export interface IFlyoutRegionContainerProps {
 
@@ -14,7 +14,8 @@ export interface IFlyoutRegionContainerProps {
 export const FlyoutRegionContainer = () => {
     const dispatch = useReduxDispatch();
     const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
-    const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));
+    const viewer = useMapProviderContext();
+    const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, viewer, parameters));
     const onCloseFlyout = (id: string) => closeFlyoutAction(id);
     const flyouts = useViewerFlyouts();
     const locale = useViewerLocale();

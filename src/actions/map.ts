@@ -10,7 +10,6 @@ import {
     ILayerInfo,
     ReduxDispatch
 } from "../api/common";
-import { getViewer } from "../api/runtime";
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
@@ -58,6 +57,7 @@ import xor from "lodash.xor";
 import xorby from "lodash.xorby";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { debug } from "../utils/logger";
+import { IMapProviderContext } from "../components/map-providers/base";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
@@ -350,12 +350,15 @@ export function setSelection(mapName: string, selectionSet: QueryMapFeaturesResp
  * Invokes the specified command
  *
  * @param {ICommand} cmd
- * @param {*} [parameters]
+ * @param {IMapProviderContext} viewer
+ * @param {Record<string, unknown>} [parameters]
  * @returns {ReduxThunkedAction}
+ * 
+ * @since 0.15 Added viewer argument and stronger-typed parameters argument
  */
-export function invokeCommand(cmd: ICommand, parameters?: any): ReduxThunkedAction {
+export function invokeCommand(cmd: ICommand, viewer: IMapProviderContext, parameters?: Record<string, unknown>): ReduxThunkedAction {
     return (dispatch, getState) => {
-        return cmd.invoke(dispatch, getState, getViewer(), parameters);
+        return cmd.invoke(dispatch, getState, viewer, parameters);
     };
 }
 
@@ -393,14 +396,16 @@ export function setBaseLayer(mapName: string, layerName: string): IMapSetBaseLay
 /**
  * Sets the view scale
  *
+ * @param {IMapProviderContext} viewer The viewer instance
  * @param {string} mapName The name of the current runtime map
  * @param {number} scale The scale to set
  * @returns
+ * 
+ * @since 0.15 Added viewer parameter
  */
-export function setScale(mapName: string, scale: number): IMapSetScaleAction {
-    const viewer = getViewer();
+export function setScale(viewer: Pick<IMapProviderContext, 'isReady' | 'scaleToResolution'>, mapName: string, scale: number): IMapSetScaleAction {
     let resolution;
-    if (viewer) {
+    if (viewer.isReady()) {
         resolution = viewer.scaleToResolution(scale);
     }
     return {

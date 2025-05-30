@@ -7,13 +7,13 @@ import { strIsNullOrEmpty } from "../../utils/string";
 import { ensureProjection } from '../../api/registry/projections';
 import { IParsedFeatures } from '../../api/layer-manager/parsed-features';
 import { parseEpsgCodeFromCRS } from './wfs-capabilities-panel';
-import { getViewer } from '../../api/runtime';
 import { zoomToLayerExtents } from "../../containers/add-manage-layers";
 import { getColorBrewerRamps, ColorBrewerSwatch } from "./color-brewer";
 import { ClusterClickAction } from "../../api/ol-style-contracts";
 import { assertNever } from "../../utils/never";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../elements/element-context";
+import { useMapProviderContext } from "../map-providers/context";
 
 /**
  * @hidden
@@ -109,6 +109,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
     const [themableRamps, _] = React.useState(getColorBrewerRamps());
     const [clusterClickAction, setClusterClickAction] = React.useState(ClusterClickAction.ShowPopup);
     const parsedFeaturesRef = React.useRef<IParsedFeatures | undefined>(undefined);
+    const viewer = useMapProviderContext();
     const setParsedFile = (parsed: IParsedFeatures | undefined) => {
         setEnableLabels(false);
         setCreateOptions(getCreateVectorLayerOptions([], locale));
@@ -139,8 +140,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
         }
     };
     const onFileDropped = async (file: File) => {
-        const viewer = getViewer();
-        if (viewer) {
+        if (viewer.isReady()) {
             setIsProcessingFile(true);
             setAddLayerError(undefined);
             const layerMgr = viewer.getLayerManager();
@@ -161,8 +161,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
         setParsedFile(undefined);
     };
     const onAddFileLayer = React.useCallback(async (layerProjection: number) => {
-        const viewer = getViewer();
-        if (viewer && parsedFeaturesRef?.current) {
+        if (viewer.isReady() && parsedFeaturesRef?.current) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
             try {

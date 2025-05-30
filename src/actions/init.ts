@@ -12,11 +12,11 @@ import {
 import { strIsNullOrEmpty, strReplaceAll } from "../utils/string";
 import { IAcknowledgeStartupWarningsAction, IInitAppActionPayload } from './defs';
 import { ActionType } from '../constants/actions';
-import { getViewer } from '../api/runtime';
 import { tr } from '../api/i18n';
 import { IViewerInitCommand } from './init-command';
 import { getLayoutCapabilities } from "../api/registry/layout";
 import { debug } from "../utils/logger";
+import { IMapProviderContext } from "../components/map-providers/base";
 
 export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBaseLayer[]) {
     if (externalBaseLayers.length > 0) {
@@ -298,10 +298,13 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
  * Initializes the viewer
  *
  * @param {IViewerInitCommand} cmd
+ * @param {IMapProviderContext} viewer
  * @param {IInitAppLayout} options
  * @returns {ReduxThunkedAction}
+ * 
+ * @since 0.15 Added viewer parameter
  */
-export function initLayout(cmd: IViewerInitCommand, options: IInitAppLayout): ReduxThunkedAction {
+export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
     const opts: IInitAsyncOptions = { ...options };
     return (dispatch, getState) => {
         const args = getState().config;
@@ -340,7 +343,6 @@ export function initLayout(cmd: IViewerInitCommand, options: IInitAppLayout): Re
                 payload
             });
             if (options.onInit) {
-                const viewer = getViewer();
                 if (viewer) {
                     options.onInit(viewer);
                 }

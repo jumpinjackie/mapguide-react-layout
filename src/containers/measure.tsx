@@ -4,18 +4,18 @@ import {
     ActiveMapTool,
     UnitOfMeasure
 } from "../api/common";
-import { getViewer } from "../api/runtime";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { IMeasureCallback, MeasureSegment, MeasureContext, IMeasureComponent } from "./measure-context";
 import { roundTo } from "../utils/number";
 import { useActiveMapName, useViewerLocale, useAvailableMaps } from './hooks';
 import { setActiveTool } from '../actions/map';
 import { OLGeometryType } from '../api/ol-types';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./hooks-mapguide";
 import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
+import { IMapProviderContext } from "../components/map-providers/base";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -39,7 +39,7 @@ interface IMeasureContainerState {
     segments: MeasureSegment[];
 }
 
-type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMeasureContainerDispatch;
+type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMeasureContainerDispatch & { viewer: IMapProviderContext };
 
 const _measurements: MeasureContext[] = [];
 
@@ -139,9 +139,8 @@ class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasu
     componentDidMount() {
         let activeMeasure: MeasureContext | undefined;
         if (_measurements.length == 0) {
-            const { mapNames, activeMapName } = this.props;
-            const viewer = getViewer();
-            if (viewer && mapNames && mapNames.length) {
+            const { mapNames, activeMapName, viewer } = this.props;
+            if (viewer.isReady() && mapNames && mapNames.length) {
                 for (const mapName of mapNames) {
                     const context = new MeasureContext(viewer, mapName, this);
                     _measurements.push(context);
@@ -277,10 +276,12 @@ export const MeasureContainer = (props: IMeasureContainerProps) => {
     const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool));
     const isArbitrary = useActiveMapIsArbitraryCoordSys();
     const projUnits = useActiveMapProjectionUnits();
+    const viewer = useMapProviderContext();
     return <MeasureContainerInner
         activeMapName={activeMapName}
         locale={locale}
         mapNames={mapNames}
+        viewer={viewer}
         setActiveTool={setActiveToolAction}
         measureUnits={isArbitrary ? projUnits : undefined}
         {...props} />;

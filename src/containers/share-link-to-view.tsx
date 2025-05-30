@@ -1,11 +1,11 @@
 import * as React from "react";
 import { tr } from '../api/i18n';
-import { getViewer } from '../api/runtime';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { parseUrl, stringifyQuery } from "../utils/url";
 import { useViewerLocale } from './hooks';
 import { useActiveMapState } from "./hooks-mapguide";
 import { useElementContext } from "../components/elements/element-context";
+import { useMapProviderContext } from "../components/map-providers/context";
 
 /**
  * 
@@ -24,9 +24,9 @@ export const ShareLinkToViewContainer = () => {
     const locale = useViewerLocale();
     const map = useActiveMapState();
     const onShowSessionChanged = () => setShowSession(!showSession);
+    const v = useMapProviderContext();
     const onCopied = () => {
-        const v = getViewer();
-        if (v) {
+        if (v.isReady()) {
             v.toastSuccess("clipboard", tr("SHARE_LINK_COPIED", locale));
         }
     };

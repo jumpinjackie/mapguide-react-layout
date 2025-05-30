@@ -5,7 +5,7 @@ import { getCommand, DefaultCommands } from "../api/registry/command";
 import { useViewerLocale, useActiveMapView, useActiveMapName, useViewerBusyCount } from './hooks';
 import { invokeCommand, setScale } from '../actions/map';
 import { useActiveMapFiniteScales } from './hooks-mapguide';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
 export interface INavigatorContainerProps {
     style?: React.CSSProperties;
@@ -19,8 +19,9 @@ export const NavigatorContainer = (props: INavigatorContainerProps) => {
     const view = useActiveMapView();
     const busyCount = useViewerBusyCount();
     const activeMapName = useActiveMapName();
-    const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(mapName, scale));
-    const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, parameters));
+    const viewer = useMapProviderContext();
+    const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(viewer, mapName, scale));
+    const invokeCommandAction = (cmd: ICommand, parameters?: any) => dispatch(invokeCommand(cmd, viewer, parameters));
     const onZoom = (direction: ZoomDirection) => {
         let cmd: ICommand | undefined;
         switch (direction) {

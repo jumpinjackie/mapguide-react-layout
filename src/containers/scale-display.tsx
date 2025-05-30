@@ -3,7 +3,7 @@ import { ScaleDisplay } from "../components/scale-display";
 import { useActiveMapView, useActiveMapName, useViewerLocale } from './hooks';
 import { setScale } from '../actions/map';
 import { useActiveMapFiniteScales } from './hooks-mapguide';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
 export interface IScaleDisplayContainerProps {
     style?: React.CSSProperties;
@@ -16,7 +16,8 @@ export const ScaleDisplayContainer = (props: IScaleDisplayContainerProps) => {
     const activeMapName = useActiveMapName();
     const view = useActiveMapView();
     const finiteScales = useActiveMapFiniteScales();
-    const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(mapName, scale))
+    const viewer = useMapProviderContext();
+    const setScaleAction = (mapName: string, scale: number) => dispatch(setScale(viewer, mapName, scale))
     const onScaleChanged = (scale: number) => {
         if (activeMapName) {
             setScaleAction(activeMapName, scale);

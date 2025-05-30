@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getViewer, getFusionRoot } from "../api/runtime";
+import { getFusionRoot } from "../api/runtime";
 import { tr as xlate, tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import {
@@ -16,8 +16,9 @@ import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, use
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
 import { useActiveMapState } from './hooks-mapguide';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { TypedSelect, useElementContext } from "../components/elements/element-context";
+import { IMapProviderContext } from "../components/map-providers/base";
 
 const PAPER_SIZES = [
     { value: "210.0,297.0,A4", label: "A4 (210x297 mm; 8.27x11.69 In) " },
@@ -120,6 +121,7 @@ function getActiveCapturer(viewer: IMapViewer, mapNames: string[], activeMapName
 }
 
 function toggleMapCapturerLayer(locale: string,
+    viewer: IMapProviderContext,
     mapNames: string[] | undefined,
     activeMapName: string,
     showAdvanced: boolean,
@@ -131,8 +133,7 @@ function toggleMapCapturerLayer(locale: string,
     setViewRotationEnabled: (flag: boolean) => void,
     setViewRotation: (rot: number) => void) {
     const bVisible: boolean = showAdvanced;
-    const viewer = getViewer();
-    if (viewer && mapNames) {
+    if (viewer.isReady() && mapNames) {
         const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
         if (activeCapturer) {
             if (bVisible) {
@@ -212,6 +213,7 @@ export const QuickPlotContainer = () => {
     const [box, setBox] = React.useState("");
     const [normalizedBox, setNormalizedBox] = React.useState("");
 
+    const viewer = useMapProviderContext();
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const mapNames = useAvailableMaps()?.map(m => m.value);
@@ -259,8 +261,7 @@ export const QuickPlotContainer = () => {
     React.useEffect(() => {
         return () => {
             //Tear down all active capture box layers
-            const viewer = getViewer();
-            if (viewer && mapNames) {
+            if (viewer.isReady() && mapNames) {
                 for (const activeMapName of mapNames) {
                     const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
                     if (activeCapturer) {
@@ -280,6 +281,7 @@ export const QuickPlotContainer = () => {
         if (activeMapName && mapNames) {
             if (showAdvanced != prevShowAdvanced) {
                 toggleMapCapturerLayer(locale,
+                    viewer,
                     mapNames,
                     activeMapName,
                     showAdvanced,
@@ -292,11 +294,10 @@ export const QuickPlotContainer = () => {
                     setViewRotationAction);
             }
             if (showAdvanced) {
-                const v = getViewer();
-                if (v) {
-                    const capturer = getActiveCapturer(v, mapNames, activeMapName);
+                if (viewer.isReady()) {
+                    const capturer = getActiveCapturer(viewer, mapNames, activeMapName);
                     if (capturer) {
-                        const ppSize = getPrintSize(v, showAdvanced, paperSize, orientation);
+                        const ppSize = getPrintSize(viewer, showAdvanced, paperSize, orientation);
                         debug(`Updating map capturer for: ${activeMapName}`);
                         capturer.updateBox(ppSize, parseFloat(scale), rotation);
                     }
@@ -304,8 +305,7 @@ export const QuickPlotContainer = () => {
             }
         }
     }, [mapNames, activeMapName, showAdvanced, scale, paperSize, orientation, rotation, locale]);
-    const viewer = getViewer();
-    if (!viewer || !map || !view) {
+    if (!viewer.isReady() || !map || !view) {
         return <noscript />;
     }
     let hasExternalBaseLayers = false;

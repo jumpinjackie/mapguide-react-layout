@@ -10,7 +10,7 @@ import { processMenuItems } from "../utils/menu";
 import { useReducedToolbarAppState } from './hooks';
 import { invokeCommand } from '../actions/map';
 import { openFlyout, closeFlyout, openComponent, closeComponent } from "../actions/flyout";
-import { useAppState, useReduxDispatch } from "../components/map-providers/context";
+import { useAppState, useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
 export interface IToolbarContainerProps {
     id: string;
@@ -26,8 +26,9 @@ export const ToolbarContainer = (props: IToolbarContainerProps) => {
     const flyouts = useAppState<any>(state => state.toolbar.flyouts);
     const toolbar = useAppState<any>(state => state.toolbar.toolbars[props.id]);
     const tbState = useReducedToolbarAppState();
+    const viewer = useMapProviderContext();
 
-    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, parameters));
+    const invokeCommandAction = (cmd: ICommand, parameters: any) => dispatch(invokeCommand(cmd, viewer, parameters));
     const openFlyoutAction = (id: string, metrics: IDOMElementMetrics) => dispatch(openFlyout(id, metrics));
     const closeFlyoutAction = (id: string) => dispatch(closeFlyout(id));
     const openComponentAction = (id: string, metrics: IDOMElementMetrics, name: string, props?: any) => dispatch(openComponent(id, metrics, name, props));

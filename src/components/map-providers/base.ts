@@ -51,7 +51,6 @@ import { IBasicPointCircleStyle, DEFAULT_POINT_CIRCLE_STYLE, IPointIconStyle, DE
 import { isClusteredFeature, getClusterSubFeatures } from '../../api/ol-style-helpers';
 import type { OLStyleMapSet } from '../../api/ol-style-map-set';
 import { QueryMapFeaturesResponse } from '../../api/contracts/query';
-import { setViewer, getViewer } from '../../api/runtime';
 import { Client } from '../../api/client';
 import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
@@ -148,9 +147,8 @@ export function useViewerSideEffects(context: IMapProviderContext,
     // Should only happen once.
     React.useEffect(() => {
         debug(`React.useEffect - Change of context and/or agent URI/kind`);
-        setViewer(context);
         const browserWindow: any = window;
-        browserWindow.getViewer = browserWindow.getViewer || getViewer;
+        browserWindow.getViewer = browserWindow.getViewer || (() => context);
         if (agentUri && agentKind) {
             browserWindow.getClient = browserWindow.getClient || (() => new Client(agentUri, agentKind));
         }

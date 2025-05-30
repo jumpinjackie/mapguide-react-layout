@@ -4,9 +4,8 @@ import { IElementState } from '../actions/defs';
 import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
 import { Dispatch } from 'redux';
-import { getViewer } from '../api/runtime';
 import { setElementStates } from '../actions/template';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
 export type CommonTemplateState = {
     isResizing: boolean;
@@ -40,6 +39,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
     const setElementStatesAction = React.useCallback((states: IElementState) => dispatch(setElementStates(states)), [dispatch]);
     const onDragStart = () => setIsResizing(true);
     const onDragEnd = () => setIsResizing(false);
+    const viewer = useMapProviderContext();
     //componentDidMount
     React.useEffect(() => {
         if (templateReducer) {
@@ -50,8 +50,7 @@ export function useCommonTemplateState(templateReducer?: TemplateReducerFunction
         //With the introduction of the splitter, we can no longer rely on a map 
         //filling 100% of its space without needing to manually call updateSize(),
         //so we do it here
-        const viewer = getViewer();
-        if (viewer) {
+        if (viewer.isReady()) {
             viewer.updateSize();
         }
     };

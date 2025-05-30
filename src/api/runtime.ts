@@ -6,11 +6,9 @@
  *
  * Where possible, use actions instead of this module
  */
-import { IMapViewer } from "../api/common";
 import { debug } from '../utils/logger';
 
 let _fusionRoot: string | undefined;
-let _viewer: IMapViewer | undefined;
 
 /**
  * Sets the Fusion base URL
@@ -31,37 +29,4 @@ export function setFusionRoot(root: string): void {
  */
 export function getFusionRoot(): string {
     return _fusionRoot || "../fusion";
-}
-
-/**
- * Sets the viewer instance. Called by the map viewer component when it has mounted.
- *
- * DO NOT CALL DIRECTLY
- *
- * @hidden
- * @param {IMapViewer} viewer
- */
-export function setViewer(viewer: IMapViewer): void {
-    _viewer = viewer;
-}
-
-/**
- * Gets whether the runtime environment is ready
- *
- *
- * @returns {boolean}
- */
-export function isReady(): boolean {
-    return _viewer != null;
-}
-
-/**
- * Gets the map viewer in this runtime environment
- *
- *
- * @returns {IMapViewer}
- * @deprecated You should be using the map provider context accessed via the {@link useMapProviderContext} hook where possible
- */
-export function getViewer(): IMapViewer | undefined {
-    return _viewer;
 }

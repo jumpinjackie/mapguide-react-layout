@@ -21,7 +21,7 @@ import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
 import { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
@@ -500,7 +500,8 @@ export const App = (props: IAppProps) => {
     const ftEnabled = useViewerFeatureTooltipsEnabled();
 
     const dispatch = useReduxDispatch();
-    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, args));
+    const viewer = useMapProviderContext();
+    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, viewer, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
     return <AppInner error={error}
         includeStack={includeStack}

@@ -1,14 +1,13 @@
 import * as React from "react";
 import { SelectionPanel, ISelectedFeatureProps } from "../components/selection-panel";
 import { SelectedFeature } from "../api/contracts/query";
-import { getViewer } from "../api/runtime";
 import { tr } from "../api/i18n";
 import { IMapView } from "../api/common";
 import { AppContext } from '../components/context';
 import { useViewerLocale, useActiveMapSelectionSet, useActiveMapName, useActiveMapClientSelectionSet } from './hooks';
 import { setCurrentView, showSelectedFeature } from '../actions/map';
 import { useActiveMapState } from './hooks-mapguide';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { CompositeSelection } from "../api/composite-selection";
 import { useElementContext } from "../components/elements/element-context";
 
@@ -29,11 +28,11 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     const setCurrentViewAction = (view: IMapView) => dispatch(setCurrentView(view));
     const showSelectedFeatureAction = (mapName: string, layerId: string, selectionKey: string) => dispatch(showSelectedFeature(mapName, layerId, selectionKey));
     const appContext = React.useContext(AppContext);
+    const viewer = useMapProviderContext();
     const onZoomToSelectedFeature = (feature: SelectedFeature) => {
         if (feature.Bounds) {
             const bbox: any = feature.Bounds.split(" ").map(s => parseFloat(s));
-            const viewer = getViewer();
-            if (viewer) {
+            if (viewer.isReady()) {
                 const view = viewer.getViewForExtent(bbox);
                 setCurrentViewAction(view);
             }

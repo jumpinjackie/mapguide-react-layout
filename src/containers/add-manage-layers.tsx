@@ -8,9 +8,8 @@ import olVectorLayer from "ol/layer/Vector";
 import olClusterSource from "ol/source/Cluster";
 import { transformExtent } from "ol/proj";
 import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle, setHeatmapLayerBlur, setHeatmapLayerRadius } from '../actions/map';
-import { getViewer } from '../api/runtime';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
-import { useReduxDispatch } from "../components/map-providers/context";
+import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { TabSetProps, useElementContext } from "../components/elements/element-context";
 
 export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
@@ -60,6 +59,7 @@ export const AddManageLayersContainer = () => {
     const activeMapName = useActiveMapName();
     const layers = useActiveMapLayers();
     const view = useActiveMapView();
+    const viewer = useMapProviderContext();
     const getLayerIndex = (layerName: string) => {
         if (layers) {
             for (let i = 0; i < layers.length; i++) {
@@ -103,8 +103,7 @@ export const AddManageLayersContainer = () => {
         }
     };
     const zoomToBounds = (layerName: string) => {
-        const viewer = getViewer();
-        if (viewer) {
+        if (viewer.isReady()) {
             zoomToLayerExtents(layerName, viewer);
         }
     };

@@ -2,7 +2,7 @@ import { DefaultCommands, registerCommand, openUrlInTarget, CommandConditions } 
 import { SPRITE_MAPTIP, SPRITE_PRINT, SPRITE_OPTIONS, SPRITE_SELECT_RADIUS, SPRITE_SELECT_POLYGON, SPRITE_SELECT_CLEAR, SPRITE_ICON_ZOOMSELECT, SPRITE_BUFFER, SPRITE_SELECT_FEATURES, SPRITE_REDLINE, SPRITE_FEATURE_INFO, SPRITE_QUERY, SPRITE_THEME, SPRITE_SELECT_CENTRE } from '../constants/assets';
 import { setFeatureTooltipsEnabled, setCurrentView, clearClientSelection } from '../actions/map';
 import { ensureParameters } from '../utils/url';
-import { getRuntimeMap, getSelectionSet, Bounds } from './common';
+import { getRuntimeMap, getSelectionSet, Bounds, SelectionVariant } from './common';
 import { getFusionRoot } from './runtime';
 import { tr } from './i18n';
 import { buildTargetedCommand } from './default-commands';
@@ -54,7 +54,7 @@ export function initMapGuideCommands() {
         enabled: state => !state.stateless,
         invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
-                const selMethod = parameters.SelectionType || "INTERSECTS";
+                const selMethod = parameters?.["SelectionType"] as SelectionVariant || "INTERSECTS";
                 viewer.digitizeCircle(circle => {
                     const fact = viewer.getOLFactory();
                     const geom = fact.createGeomPolygonFromCircle(circle);
@@ -70,7 +70,7 @@ export function initMapGuideCommands() {
         enabled: state => !state.stateless,
         invoke: (_dispatch, _getState, viewer, parameters) => {
             if (viewer) {
-                const selMethod = parameters.SelectionType || "INTERSECTS";
+                const selMethod = parameters?.["SelectionType"] as SelectionVariant || "INTERSECTS";
                 viewer.digitizePolygon(geom => {
                     viewer.mapguideSupport()?.selectByGeometry(geom, selMethod);
                 });
@@ -161,35 +161,35 @@ export function initMapGuideCommands() {
                 let defaultDataStoreFormat = null;
                 let defaultRedlineGeometryType = 0;
                 let bCreateOnStartup = false;
-                if (parameters.AutogenerateLayerNames)
+                if (parameters?.["AutogenerateLayerNames"])
 
-                if (parameters.StylizationType)
-                    bUseAdvancedStylization = (parameters.StylizationType == "advanced");
+                if (parameters?.["StylizationType"])
+                    bUseAdvancedStylization = (parameters["StylizationType"] == "advanced");
                 
-                if (parameters.DataStoreFormat && parameters.RedlineGeometryFormat) {
-                    if (parameters.DataStoreFormat == "SDF" ||
-                        parameters.DataStoreFormat == "SHP" ||
-                        parameters.DataStoreFormat == "SQLite") {
+                if (parameters?.["DataStoreFormat"] && parameters?.["RedlineGeometryFormat"]) {
+                    if (parameters["DataStoreFormat"] == "SDF" ||
+                        parameters["DataStoreFormat"] == "SHP" ||
+                        parameters["DataStoreFormat"] == "SQLite") {
                         
-                        var geomTypes = parseInt(parameters.RedlineGeometryFormat);
-                        if (parameters.DataStoreFormat == "SHP") {
+                        var geomTypes = parseInt(`${parameters["RedlineGeometryFormat"]}`);
+                        if (parameters["DataStoreFormat"] == "SHP") {
                             //Only accept if geometry type is singular
                             if (geomTypes == 1 || geomTypes == 2 || geomTypes == 4) {
-                                defaultDataStoreFormat = parameters.DataStoreFormat;
+                                defaultDataStoreFormat = parameters["DataStoreFormat"];
                                 defaultRedlineGeometryType = geomTypes;
-                                if (parameters.AutoCreateOnStartup)
-                                    bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
+                                if (parameters?.["AutoCreateOnStartup"])
+                                    bCreateOnStartup = (parameters["AutoCreateOnStartup"] == "true");
                             }
                         } else {
-                            defaultDataStoreFormat = parameters.DataStoreFormat;
+                            defaultDataStoreFormat = parameters["DataStoreFormat"];
                             defaultRedlineGeometryType = geomTypes;
-                            if (parameters.AutoCreateOnStartup)
-                                bCreateOnStartup = (parameters.AutoCreateOnStartup == "true");
+                            if (parameters?.["AutoCreateOnStartup"])
+                                bCreateOnStartup = (parameters["AutoCreateOnStartup"] == "true");
                         }
                     }
                 }
 
-                enableRedlineMessagePrompt(parameters.UseMapMessage == "true");
+                enableRedlineMessagePrompt(parameters?.["UseMapMessage"] == "true");
                 let url = ensureParameters(`${getFusionRoot()}/widgets/Redline/markupmain.php`, map.Name, map.SessionId, config.locale, true);
                 url += "&POPUP=false";
                 if (defaultDataStoreFormat != null && defaultRedlineGeometryType > 0) {

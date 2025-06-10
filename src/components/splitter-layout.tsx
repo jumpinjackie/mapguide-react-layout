@@ -69,6 +69,9 @@ function clearSelection() {
 
 const DEFAULT_SPLITTER_SIZE = 4;
 
+/**
+ * @hidden
+ */
 export type SplitterLayoutProps = React.PropsWithChildren<{
     customClassName?: string;
     vertical?: boolean;
@@ -82,11 +85,17 @@ export type SplitterLayoutProps = React.PropsWithChildren<{
     onSecondaryPaneSizeChange?: (size: number) => void;
 }>;
 
+/**
+ * @hidden
+ */
 type SplitterLayoutState = {
     resizing: boolean;
     secondaryPaneSize: number;
 };
 
+/**
+ * @hidden
+ */
 export class SplitterLayout extends React.Component<SplitterLayoutProps, SplitterLayoutState> {
     private container: HTMLDivElement | null;
     private splitter: HTMLDivElement | null;

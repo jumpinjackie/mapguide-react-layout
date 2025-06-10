@@ -12,6 +12,7 @@ export default defineConfig({
                 'e2e/**',
                 'mocks/**',
                 'node_modules/**',
+                'lib/**',
                 'package/**',
                 'patches/**',
                 'tools/**',

@@ -2,9 +2,10 @@
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "declaration": true,
-        "outDir": "lib"
+        "outDir": "package/lib"
     },
     "exclude": [
+        "vitest*.ts",
         "lib",
         "package",
         "node_modules",

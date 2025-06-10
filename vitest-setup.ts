@@ -1,6 +1,4 @@
-import { expect } from 'vitest';
-import * as matchers from '@testing-library/jest-dom/matchers';
+import "@testing-library/jest-dom/vitest";
 
-expect.extend(matchers);
 (global as any).__DEV__ = true;
 (global as any).__COMMITHASH__ = "abcd1234";

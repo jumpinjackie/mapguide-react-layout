@@ -7,9 +7,8 @@ import DOMPurify from "dompurify";
  * MouseCoordinates component props
  *
  * @interface IMouseCoordinatesProps
- * @extends {React.Props<any>}
  */
-export interface IMouseCoordinatesProps extends React.Props<any> {
+export interface IMouseCoordinatesProps {
     format?: string;
     coords?: [number, number];
     style?: React.CSSProperties;

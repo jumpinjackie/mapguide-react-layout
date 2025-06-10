@@ -5,6 +5,6 @@ import { CollapsibleProps } from "../../element-context";
 /**
  * @hidden
  */
-export const BpCollapsible: React.FC<CollapsibleProps> = (props) => {
+export const BpCollapsible: React.FC<React.PropsWithChildren<CollapsibleProps>> = (props) => {
     return <Collapse isOpen={props.isOpen}>{props.children}</Collapse>
 };

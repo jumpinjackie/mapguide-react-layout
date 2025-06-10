@@ -221,7 +221,7 @@ export interface IAppDispatch {
 
 type AppInnerProps = IAppProps & IAppState & IAppDispatch;
 
-const AppInitError: React.FC<{ locale: string }> = (props) => {
+const AppInitError: React.FC<React.PropsWithChildren<{ locale: string }>> = (props) => {
     const { Callout } = useElementContext();
     return <Callout variant="danger" title={tr("INIT_ERROR_TITLE", props.locale)} icon="error">
         {props.children}

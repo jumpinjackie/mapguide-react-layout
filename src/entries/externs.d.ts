@@ -37,7 +37,7 @@ declare module "react-splitter-layout" {
         onDragStart?: Function;
         onDragEnd?: Function;
     }
-    export default class SplitterLayout extends React.Component<ISplitterLayoutProps, any> {
+    export default class SplitterLayout extends React.Component<React.PropsWithChildren<ISplitterLayoutProps>, any> {
 
     }
 }

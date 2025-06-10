@@ -6,7 +6,7 @@ import React from "react";
 /**
  * @hidden
  */
-export const BpButton: React.FC<ButtonProps> = (props) => {
+export const BpButton: React.FC<React.PropsWithChildren<ButtonProps>> = (props) => {
     return <Button type={props.type} className={props.className} icon={iconName(props.icon)} loading={props.loading} onClick={props.onClick} active={props.active} title={props.title} style={props.style} minimal={props.minimal} intent={variantToIntent(props.variant)} disabled={props.disabled}>
         {props.children}
     </Button>

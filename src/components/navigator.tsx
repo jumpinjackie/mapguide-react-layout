@@ -41,9 +41,8 @@ const LN9 = Math.log(9);
  * Navigator component props
  *
  * @interface INavigatorProps
- * @extends {React.Props<any>}
  */
-export interface INavigatorProps extends React.Props<any> {
+export interface INavigatorProps {
     style?: React.CSSProperties;
     busy: boolean;
     scale: number;

@@ -5,7 +5,7 @@ import React from "react";
 /**
  * @hidden
  */
-export const BpCard: React.FC<CardProps> = (props) => {
+export const BpCard: React.FC<React.PropsWithChildren<CardProps>> = (props) => {
     return <Card style={props.style}>
         {props.children}
     </Card>;

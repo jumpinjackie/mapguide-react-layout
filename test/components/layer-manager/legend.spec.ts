@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { vi, describe, it, beforeEach, afterEach, expect } from "vitest";
 import { getLegendImage, LegendItemOptions } from "../../../src/components/layer-manager/legend";
 
 describe("getLegendImage", () => {

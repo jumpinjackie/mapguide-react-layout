@@ -1,5 +1,5 @@
 import * as React from "react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../../src/components/accordion";
 

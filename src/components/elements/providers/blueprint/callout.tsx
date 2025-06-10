@@ -6,7 +6,7 @@ import { iconName, variantToIntent } from './utils';
 /**
  * @hidden
  */
-export const BpCallout: React.FC<CalloutProps> = (props) => {
+export const BpCallout: React.FC<React.PropsWithChildren<CalloutProps>> = (props) => {
     return <Callout
         intent={variantToIntent(props.variant)}
         title={props.title}

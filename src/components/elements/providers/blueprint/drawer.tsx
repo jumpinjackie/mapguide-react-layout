@@ -6,7 +6,7 @@ import { iconName } from "./utils"
 /**
  * @hidden
  */
-export const BpDrawer: React.FC<DrawerProps> = ({ icon, onClose, title, position, isOpen, children }) => {
+export const BpDrawer: React.FC<React.PropsWithChildren<DrawerProps>> = ({ icon, onClose, title, position, isOpen, children }) => {
     return <Drawer usePortal={false}
         icon={iconName(icon)}
         size={DrawerSize.SMALL}

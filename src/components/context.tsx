@@ -84,7 +84,7 @@ export const AppContext = React.createContext<IApplicationContext>({
 /**
  * @since 0.14.9
  */
-export const AppContextProvider: React.FC<{ mapguide: IMapGuideAppProps | undefined }> = ({ mapguide, children }) => {
+export const AppContextProvider: React.FC<React.PropsWithChildren<{ mapguide: IMapGuideAppProps | undefined }>> = ({ mapguide, children }) => {
     const providerImpl = React.useMemo<IApplicationContext>(() => ({
         allowHtmlValuesInSelection: () => mapguide?.selectionSettings?.allowHtmlValues ?? false,
         getHTMLCleaner: () => mapguide?.selectionSettings?.cleanHtml ?? (v => v),

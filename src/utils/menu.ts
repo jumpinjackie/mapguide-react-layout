@@ -19,3 +19,13 @@ export function processMenuItems(items: (IItem | IInlineMenu | null)[]): IItem[]
     }
     return processed;
 }
+
+/**
+ * @hidden
+ */
+export function getText(label: string | (() => string) | undefined) {
+    if (typeof(label) === 'function') {
+        return label();
+    }
+    return label;
+}

@@ -10,7 +10,7 @@ const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
  * 
  * @since 0.14
  */
-export const ReduxProvider: React.FC<{ store: ReduxStoreImpl }> = ({ store, children }) => <Provider store={store}>{children}</Provider>
+export const ReduxProvider: React.FC<React.PropsWithChildren<{ store: ReduxStoreImpl }>> = ({ store, children }) => <Provider store={store}>{children}</Provider>
 
 /**
  * Wraps useDispatch from react-redux
@@ -33,7 +33,7 @@ export function useAppState<TState>(selector: (state: IApplicationState) => TSta
 /**
  * @since 0.14
  */
-export const MapProviderContextProvider: React.FC<{ value: IMapProviderContext }> = ({ value, children }) => {
+export const MapProviderContextProvider: React.FC<React.PropsWithChildren<{ value: IMapProviderContext }>> = ({ value, children }) => {
     return <MapProviderContext.Provider value={value}>
         {children}
     </MapProviderContext.Provider>
@@ -56,7 +56,7 @@ export type ReduxStoreImpl = any;
 /**
  * @since 0.14
  */
-export const MapContextProvider: React.FC<{ value: IMapProviderContext, store?: ReduxStoreImpl }> = ({ value, store, children }) => {
+export const MapContextProvider: React.FC<React.PropsWithChildren<{ value: IMapProviderContext, store?: ReduxStoreImpl }>> = ({ value, store, children }) => {
     let inner = children;
     if (store) {
         inner = <ReduxProvider store={store}>

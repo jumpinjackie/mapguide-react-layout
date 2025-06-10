@@ -5,7 +5,7 @@ import React from "react";
 /**
  * @hidden
  */
-export const BpPopover: React.FC<PopoverProps> = ({ usePortal, position, minimal, children }) => {
+export const BpPopover: React.FC<React.PropsWithChildren<PopoverProps>> = ({ usePortal, position, minimal, children }) => {
     return <Popover usePortal={usePortal} position={position} minimal={minimal}>
         {children}
     </Popover>

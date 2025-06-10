@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, it, expect } from "vitest";
 import { CSV_COLUMN_ALIASES, CsvFormatDriver } from "../../../src/api/layer-manager/csv-driver";
 import VectorSource from "ol/source/Vector";
 import type { Point } from "ol/geom";

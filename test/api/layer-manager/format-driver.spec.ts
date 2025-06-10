@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import { FormatDriver } from "../../../src/api/layer-manager/format-driver";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";

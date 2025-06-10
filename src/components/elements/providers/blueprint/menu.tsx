@@ -4,6 +4,7 @@ import { IItem, getIconStyle, getEnabled } from "../../../toolbar";
 import { ImageIcon } from "../../../icon";
 import { Menu, MenuDivider, MenuItem } from '@blueprintjs/core';
 import { MenuComponentProps } from "../../element-context";
+import { getText } from "../../../../utils/menu";
 
 const MENU_ITEM_HEIGHT = 30;
 
@@ -46,10 +47,9 @@ export const BpMenuComponent: React.FC<MenuComponentProps> = (props) => {
                     marginRight: 5,
                     ...getIconStyle(enabled, height)
                 };
-                const text = item.label || "";
                 //NOTE: Not using MenuItem here as we want fine control over the item content
                 return <li key={index}>
-                    <a className="bp3-menu-item" onClick={() => onClick(item)}><ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {text}</a>
+                    <a className="bp3-menu-item" onClick={() => onClick(item)}><ImageIcon style={imgStyle} url={item.icon} spriteClass={item.iconClass} /> {getText(item.label)}</a>
                 </li>;
             }
         })}

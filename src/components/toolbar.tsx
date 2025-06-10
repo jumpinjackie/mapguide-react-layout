@@ -9,6 +9,7 @@ import {
 } from "../constants/assets";
 import { NBSP } from '../constants';
 import { useElementContext } from "./elements/element-context";
+import { getText } from "../utils/menu";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -178,7 +179,7 @@ export const FlyoutMenuChildItem = (props: IFlyoutMenuChildItemProps) => {
     const iconEl = getIconElement(item, enabled, height);
     return <li className="noselect flyout-menu-child-item" title={tt} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
         <div style={style}>
-            {iconEl} {item.label}
+            {iconEl} {getText(item.label)}
         </div>
     </li>;
 }
@@ -226,7 +227,7 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
     const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
     let label: any = item.label;
     if (vertical === true) {
-        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{item.label}</span></div>;
+        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{getText(item.label)}</span></div>;
     }
     const ttip = getTooltip(item);
     const iconEl = getIconElement(item, enabled, size);
@@ -277,7 +278,8 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
     const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
     let label: any = menu.label;
     if (vertical === true) {
-        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{menu.label}</span></div>;
+        const text = typeof(menu.label) === 'function' ? menu.label() : menu.label;
+        label = <div className="rotated-text"><span className="rotated-text__inner rotated-text-ccw">{text}</span></div>;
     }
     let align = menu.flyoutAlign;
     if (!align) {
@@ -345,7 +347,7 @@ const ToolbarButton = (props: IToolbarButtonProps) => {
     }
     const iconEl = getIconElement(item, enabled, height);
     return <div className={`noselect toolbar-btn ${selected ? "selected-item" : ""} ${(isMouseOver && enabled) ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={style} title={ttip} onClick={onClick}>
-        {iconEl} {(vertical == true && hideVerticalLabels == true) ? null : item.label}
+        {iconEl} {(vertical == true && hideVerticalLabels == true) ? null : getText(item.label)}
     </div>;
 }
 

@@ -255,14 +255,14 @@ export type PopoverProps = {
  * @since 0.15
  */
 export interface IElementContext {
-    Button: React.ComponentType<ButtonProps>;
+    Button: React.ComponentType<React.PropsWithChildren<ButtonProps>>;
     Radio: React.ComponentType<RadioProps>;
     Slider: React.ComponentType<SliderProps>;
-    Collapsible: React.ComponentType<CollapsibleProps>;
-    Callout: React.ComponentType<CalloutProps>;
+    Collapsible: React.ComponentType<React.PropsWithChildren<CollapsibleProps>>;
+    Callout: React.ComponentType<React.PropsWithChildren<CalloutProps>>;
     Checkbox: React.ComponentType<CheckboxProps>;
     Icon: React.ComponentType<IconProps>;
-    Card: React.ComponentType<CardProps>;
+    Card: React.ComponentType<React.PropsWithChildren<CardProps>>;
     NumericInput: React.ComponentType<NumericInputProps>;
     InputGroup: React.ComponentType<InputGroupProps>;
     NonIdealState: React.ComponentType<NonIdealStateProps>;
@@ -270,12 +270,12 @@ export interface IElementContext {
     Switch: React.ComponentType<SwitchProps>;
     Select: React.ComponentType<SelectProps>;
     FileInput: React.ComponentType<FileInputProps>;
-    FormGroup: React.ComponentType<FormGroupProps>;
+    FormGroup: React.ComponentType<React.PropsWithChildren<FormGroupProps>>;
     EditableText: React.ComponentType<EditableTextProps>;
     MenuComponent: React.ComponentType<MenuComponentProps>;
     TabSet: React.ComponentType<TabSetProps>;
-    Drawer: React.ComponentType<DrawerProps>;
-    Popover: React.ComponentType<PopoverProps>;
+    Drawer: React.ComponentType<React.PropsWithChildren<DrawerProps>>;
+    Popover: React.ComponentType<React.PropsWithChildren<PopoverProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);
@@ -335,7 +335,7 @@ export type ElementGroupProps = {
  * @returns 
  * @since 0.15
  */
-export const ElementGroup: React.FC<ElementGroupProps> = ({ style, vertical, children }) => {
+export const ElementGroup: React.FC<React.PropsWithChildren<ElementGroupProps>> = ({ style, vertical, children }) => {
     return <div style={style} className={`mrl-element-group ${vertical === true ? 'mrl-element-group-vertical' : 'mrl-element-group-horizontal'}`}>
         {children}
     </div>

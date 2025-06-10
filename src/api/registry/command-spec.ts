@@ -163,8 +163,6 @@ function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolea
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Theme);
         case "ViewOptions":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.ViewerOptions);
-        case "ZoomToSelection":
-            return makeCommand(widget, noToolbarLabels, DefaultCommands.ZoomToSelection);
         case "Measure":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Measure);
         case "Print":

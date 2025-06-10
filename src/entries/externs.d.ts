@@ -24,24 +24,6 @@ declare module "stickybits";
 declare module "colorbrewer";
 declare module "geojson-vt";
 
-declare module "react-splitter-layout" {
-    import * as React from "react";
-
-    export interface ISplitterLayoutProps {
-        customClassName?: string;
-        vertical?: boolean;
-        primaryIndex?: number;
-        primaryMinSize?: number;
-        secondaryInitialSize?: number;
-        onSecondaryPaneSizeChange?: (size: number) => void;
-        onDragStart?: Function;
-        onDragEnd?: Function;
-    }
-    export default class SplitterLayout extends React.Component<React.PropsWithChildren<ISplitterLayoutProps>, any> {
-
-    }
-}
-
 declare module "ismobilejs";
 
 declare module "proj4";

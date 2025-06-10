@@ -9,12 +9,12 @@ import { tr } from "../api/i18n";
 import { ITemplateReducerState } from "../api/common";
 import { isElementState } from "../reducers/template";
 import { InitWarningDisplay } from "../containers/init-warning-display";
-import SplitterLayout from "react-splitter-layout";
 import { ViewerAction } from '../actions/defs';
 import { ActionType } from '../constants/actions';
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { TabSetProps, useElementContext } from "../components/elements/element-context";
+import { SplitterLayout } from "../components/splitter-layout";
 
 function limegoldTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {

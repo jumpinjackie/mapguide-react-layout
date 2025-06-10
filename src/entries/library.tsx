@@ -47,14 +47,11 @@ import GPX from "ol/format/GPX";
 import IGC from "ol/format/IGC";
 import { initMapGuideCommands } from '../api/mapguide-commands';
 import { registerMapGuideComponents } from '../api/mapguide-components';
-import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
-import { MapProviderContextProvider } from '../components/map-providers/context';
 import { MapViewer } from '../containers/neo-map-viewer';
 
 import "../styles/index.css";
 import "ol/ol.css";
 
-import "react-splitter-layout/lib/index.css";
 import { GenericLayout } from "../layouts/generic";
 import { ExternalLayerCreator, ExternalLayerFactoryRegistry } from "../api/registry/external-layer";
 

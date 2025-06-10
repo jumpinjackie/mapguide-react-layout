@@ -10,11 +10,11 @@ import { ITemplateReducerState } from "../api/common";
 import { Accordion, IAccordionPanelSpec, IAccordionPanelContentDimensions } from "../components/accordion";
 import { isElementState } from "../reducers/template";
 import { InitWarningDisplay } from "../containers/init-warning-display";
-import SplitterLayout from "react-splitter-layout";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
+import { SplitterLayout } from "../components/splitter-layout";
 
 function slateTemplateReducer(origState: ITemplateReducerState, state: ITemplateReducerState, action: ViewerAction): ITemplateReducerState {
     switch (action.type) {

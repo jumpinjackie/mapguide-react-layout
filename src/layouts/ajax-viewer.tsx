@@ -6,11 +6,11 @@ import { FlyoutRegionContainer } from "../containers/flyout-region";
 import { ViewerApiShim } from "../containers/viewer-shim";
 import { ModalLauncher } from "../containers/modal-launcher";
 import { InitWarningDisplay } from "../containers/init-warning-display";
-import SplitterLayout from "react-splitter-layout";
 import { tr } from "../api/i18n";
 import { useCommonTemplateState } from './hooks';
 import { useTemplateInitialInfoPaneWidth, useTemplateInitialTaskPaneWidth } from '../containers/hooks';
 import { WEBLAYOUT_TOOLBAR } from '../constants';
+import { SplitterLayout } from "../components/splitter-layout";
 
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: true };
 

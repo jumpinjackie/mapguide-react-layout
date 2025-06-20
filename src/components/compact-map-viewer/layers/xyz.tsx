@@ -4,31 +4,26 @@ import OLXYZSource from 'ol/source/XYZ';
 import React from "react";
 import { CommonLayerProps } from "./contracts";
 import { useMapMessage } from "../messages";
+import { useLayerState } from "./common";
 
 export type XYZLayerProps = CommonLayerProps & {
     urls: string[];
     attributions?: string[];
 };
 
-export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, urls, attributions }) => {
+export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls, attributions }) => {
     const map = useOLMap();
     const messages = useMapMessage();
-    const layer = React.useRef<OLTileLayer | undefined>(undefined);
-    const source = React.useRef<OLXYZSource | undefined>(undefined);
-    React.useEffect(() => {
-        if (layer.current) {
-            layer.current.setVisible(!isHidden);
-        }
-    }, [isHidden]);
+    const layer = useLayerState<OLTileLayer>(name, isHidden, extent);
     React.useEffect(() => {
         messages.addInfo("add xyz layer");
         const tileSource = new OLXYZSource({
             urls: urls,
             attributions: attributions
         });
-        source.current = tileSource;
         const tileLayer = new OLTileLayer({
-            source: source.current
+            extent,
+            source: tileSource
         });
         tileLayer.set("name", name);
         layer.current = tileLayer;

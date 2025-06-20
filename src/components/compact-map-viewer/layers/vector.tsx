@@ -5,6 +5,7 @@ import OLVectorSource from 'ol/source/Vector';
 import { CommonLayerProps } from "./contracts";
 import OLGeoJsonFormat, { type GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMapMessage } from "../messages";
+import { useLayerState } from "./common";
 
 export type VectorLayerProps = CommonLayerProps & {
     fitInitialViewToThisLayer?: boolean;
@@ -12,20 +13,15 @@ export type VectorLayerProps = CommonLayerProps & {
     initialFeatureProjection?: string;
 };
 
-export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer }) => {
+export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer }) => {
     const map = useOLMap();
     const messages = useMapMessage();
-    const layer = React.useRef<OLVectorLayer | undefined>(undefined);
-    const source = React.useRef<OLVectorSource | undefined>(undefined);
-    React.useEffect(() => {
-        if (layer.current) {
-            layer.current.setVisible(!isHidden);
-        }
-    }, [isHidden]);
+    const layer = useLayerState<OLVectorLayer>(name, isHidden, extent);
     React.useEffect(() => {
         messages.addInfo("add vector layer");
         const vecSource = new OLVectorSource();
         const vecLayer = new OLVectorLayer({
+            extent,
             source: vecSource
         });
         vecLayer.set("name", name);
@@ -37,7 +33,6 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, initia
             });
             vecSource.addFeatures(features);
         }
-        source.current = vecSource;
         layer.current = vecLayer;
         map.addLayer(vecLayer);
         if (fitInitialViewToThisLayer) {

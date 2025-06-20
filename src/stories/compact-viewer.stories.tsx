@@ -9,6 +9,7 @@ import Feature from "ol/Feature";
 import { action } from "@storybook/addon-actions";
 import { DrawInteraction } from "../components/compact-map-viewer/interactions/draw";
 import { MapMessages } from "../components/compact-map-viewer/messages";
+import { WMSLayer } from "../components/compact-map-viewer/layers/wms";
 
 export default {
     title: "Compact Viewer",
@@ -1210,6 +1211,20 @@ export const _VectorLayerWithDrawing = {
     }
 }
 
+const BBOX_AU_3857: [number, number, number, number] = [12616951.086509628, -5408361.233223649, 17095334.20112302, -1194704.5302843093];
+const WMS_URL = "https://opendata.maps.vic.gov.au/geoserver/wms?service=wms&request=getcapabilities";
+const WMS_LAYER=  "open-data-platform:ad_locality_area_polygon";
+
+export const _WmsLayer = {
+    render: () => {
+        return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={BBOX_AU_3857}>
+            <MapMessages />
+            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            <WMSLayer name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={true} />
+        </CompactViewer>;
+    }
+}
+
 export const _MountingAndPropsTest = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
@@ -1234,9 +1249,12 @@ export const _MountingAndPropsTest = {
         const enableVectorLayer = boolean('Enable Shapes layer', true);
         const hideVectorLayer = boolean('Shapes layer hidden', false);
         const hideOsmLayer = boolean('OSM layer hidden', false);
+        const hideWmsLayer = boolean('WMS layer hidden', false);
+        const tileWmsLayer = boolean('WMS layer tiled', true);
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer isHidden={hideOsmLayer} name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            <WMSLayer isHidden={hideWmsLayer} name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={tileWmsLayer} />
             {enableVectorLayer && <VectorLayer isHidden={hideVectorLayer} fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
             {enableDraw && <DrawInteraction type={type} layerName="Shapes" snapToLayerObjects={snap} />}
             {enableSelect && <SelectInteraction mode={selMode} features={features.current} />}

@@ -3,6 +3,7 @@ import OLTileLayer from 'ol/layer/Tile';
 import OLXYZSource from 'ol/source/XYZ';
 import React from "react";
 import { CommonLayerProps } from "./contracts";
+import { useMapMessage } from "../messages";
 
 export type XYZLayerProps = CommonLayerProps & {
     urls: string[];
@@ -11,11 +12,11 @@ export type XYZLayerProps = CommonLayerProps & {
 
 export const XYZLayer: React.FC<XYZLayerProps> = ({ name, urls, attributions }) => {
     const map = useOLMap();
+    const messages = useMapMessage();
     const layer = React.useRef<OLTileLayer | undefined>(undefined);
     const source = React.useRef<OLXYZSource | undefined>(undefined);
     React.useEffect(() => {
-        console.log("add xyz layer");
-        
+        messages.addInfo("add xyz layer");
         const tileSource = new OLXYZSource({
             urls: urls,
             attributions: attributions
@@ -29,6 +30,7 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, urls, attributions }) 
         map.addLayer(tileLayer);
         return () => {
             map.removeLayer(tileLayer);
+            messages.addInfo("removed xyz layer");
         }
     }, []);
     return <noscript />;

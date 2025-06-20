@@ -4,8 +4,10 @@ import View from 'ol/View';
 import { OLMapContextProvider } from './context';
 import Attribution from 'ol/control/Attribution';
 import "ol/ol.css";
+import { MapMessageContextProvider } from './messages';
 
 export type CompactViewerProps = {
+    style?: React.CSSProperties;
     projection: string;
     initialBBOX?: [number, number, number, number];
 };
@@ -17,12 +19,11 @@ export type CompactViewerProps = {
  * Use this when you need a basic low-level OpenLayers viewer without the MapGuide-related setup, registration and
  * feature set 
  */
-export const CompactViewer: React.FC<CompactViewerProps> = ({ projection, initialBBOX, children }) => {
+export const CompactViewer: React.FC<CompactViewerProps> = ({ style, projection, initialBBOX, children }) => {
     const [map, setMap] = React.useState<Map | null>(null);
     const mapElement = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
-        console.log("init map");
         const initialMap = new Map({
             target: mapElement.current!,
             layers: [],
@@ -42,9 +43,11 @@ export const CompactViewer: React.FC<CompactViewerProps> = ({ projection, initia
         return () => initialMap.setTarget(undefined);
     }, []);
 
-    return <div style={{ width: 640, height: 480, border: "1px solid black" }} ref={mapElement}>
+    return <div style={style} ref={mapElement}>
         {map && <OLMapContextProvider map={map}>
-            {children}
+            <MapMessageContextProvider>
+                {children}
+            </MapMessageContextProvider>
         </OLMapContextProvider>}
     </div>;
 }

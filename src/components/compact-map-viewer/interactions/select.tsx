@@ -5,6 +5,7 @@ import { click, pointerMove } from 'ol/events/condition';
 import { assertNever } from "../../../utils/never";
 import type Collection from 'ol/Collection';
 import type Feature from 'ol/Feature';
+import { useMapMessage } from "../messages";
 
 export type SelectInteractionProps = {
     mode: 'click' | 'hover';
@@ -21,17 +22,31 @@ function modeToCondition(type: SelectInteractionProps['mode']) {
 
 export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, features }) => {
     const map = useOLMap();
+    const messages = useMapMessage();
     const select = React.useRef<Select | undefined>(undefined);
-    React.useEffect(() => {
+
+    function addInteractions(m: SelectInteractionProps["mode"]) {
         const intSelect = new Select({
-            condition: modeToCondition(mode),
+            condition: modeToCondition(m),
             features: features
         });
         select.current = intSelect;
         map.addInteraction(intSelect);
-        return () => {
-            map.removeInteraction(intSelect);
+        messages.addInfo("added select interaction");
+    }
+
+    function removeInteractions() {
+        if (select.current) {
+            map.removeInteraction(select.current);
+            messages.addInfo("removed select interaction");
         }
-    }, []);
+    }
+
+    React.useEffect(() => {
+        addInteractions(mode);
+        return () => {
+            removeInteractions();
+        }
+    }, [mode]);
     return <noscript />;
 };

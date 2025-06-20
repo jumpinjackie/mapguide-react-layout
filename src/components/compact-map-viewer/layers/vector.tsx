@@ -4,6 +4,7 @@ import OLVectorLayer from 'ol/layer/Vector';
 import OLVectorSource from 'ol/source/Vector';
 import { CommonLayerProps } from "./contracts";
 import OLGeoJsonFormat, { type GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { useMapMessage } from "../messages";
 
 export type VectorLayerProps = CommonLayerProps & {
     fitToThisLayer?: boolean;
@@ -13,10 +14,11 @@ export type VectorLayerProps = CommonLayerProps & {
 
 export const VectorLayer: React.FC<VectorLayerProps> = ({ name, initialFeatures, initialFeatureProjection, fitToThisLayer }) => {
     const map = useOLMap();
+    const messages = useMapMessage();
     const layer = React.useRef<OLVectorLayer | undefined>(undefined);
     const source = React.useRef<OLVectorSource | undefined>(undefined);
     React.useEffect(() => {
-        console.log("add vector layer");
+        messages.addInfo("add vector layer");
         const vecSource = new OLVectorSource();
         const vecLayer = new OLVectorLayer({
             source: vecSource
@@ -41,6 +43,7 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, initialFeatures,
         }
         return () => {
             map.removeLayer(vecLayer);
+            messages.addInfo("removed vector layer");
         }
     }, []);
     return <noscript />;

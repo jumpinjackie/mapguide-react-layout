@@ -20,7 +20,7 @@ function _getMiddleware() {
         thunk,
     ];
 
-    if (__DEV__) {
+    if (typeof(__DEV__) !== 'undefined' && __DEV__) {
         middleware = [...middleware, logger];
     }
 

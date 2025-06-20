@@ -10,6 +10,7 @@ import { action } from "@storybook/addon-actions";
 import { DrawInteraction } from "../components/compact-map-viewer/interactions/draw";
 import { MapMessages } from "../components/compact-map-viewer/messages";
 import { WMSLayer } from "../components/compact-map-viewer/layers/wms";
+import GeoJSONFormat from "ol/format/GeoJSON";
 
 export default {
     title: "Compact Viewer",
@@ -1213,14 +1214,25 @@ export const _VectorLayerWithDrawing = {
 
 const BBOX_AU_3857: [number, number, number, number] = [12616951.086509628, -5408361.233223649, 17095334.20112302, -1194704.5302843093];
 const WMS_URL = "https://opendata.maps.vic.gov.au/geoserver/wms?service=wms&request=getcapabilities";
-const WMS_LAYER=  "open-data-platform:ad_locality_area_polygon";
+const WMS_LAYER = "open-data-platform:ad_locality_area_polygon";
 
-export const _WmsLayer = {
+export const _WmsLayerGetFeatureInfoGeoJSON = {
     render: () => {
+        const features = React.useRef(new Collection<Feature>());
+        const getFeatureInfo = action('GetFeatureInfo response');
+        const onGetFeatureInfo = (content: string) => {
+            getFeatureInfo(content);
+            const format = new GeoJSONFormat();
+            const feature = format.readFeatures(content);
+            for (const f of feature) {
+                features.current.push(f);
+            }
+        };
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={BBOX_AU_3857}>
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <WMSLayer name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={true} />
+            <WMSLayer name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={true} infoFormat="application/json" onGetFeatureInfo={onGetFeatureInfo} />
+            <VectorLayer name="WMS Selection" features={features.current} />
         </CompactViewer>;
     }
 }

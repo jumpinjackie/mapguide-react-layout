@@ -7,16 +7,21 @@ import OLGeoJsonFormat, { type GeoJSONFeatureCollection } from "ol/format/GeoJSO
 import { useMapMessage } from "../messages";
 
 export type VectorLayerProps = CommonLayerProps & {
-    fitToThisLayer?: boolean;
+    fitInitialViewToThisLayer?: boolean;
     initialFeatures?: GeoJSONFeatureCollection;
     initialFeatureProjection?: string;
 };
 
-export const VectorLayer: React.FC<VectorLayerProps> = ({ name, initialFeatures, initialFeatureProjection, fitToThisLayer }) => {
+export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer }) => {
     const map = useOLMap();
     const messages = useMapMessage();
     const layer = React.useRef<OLVectorLayer | undefined>(undefined);
     const source = React.useRef<OLVectorSource | undefined>(undefined);
+    React.useEffect(() => {
+        if (layer.current) {
+            layer.current.setVisible(!isHidden);
+        }
+    }, [isHidden]);
     React.useEffect(() => {
         messages.addInfo("add vector layer");
         const vecSource = new OLVectorSource();
@@ -35,7 +40,7 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, initialFeatures,
         source.current = vecSource;
         layer.current = vecLayer;
         map.addLayer(vecLayer);
-        if (fitToThisLayer) {
+        if (fitInitialViewToThisLayer) {
             const e = vecSource.getExtent();
             if (e) {
                 map.getView().fit(e);

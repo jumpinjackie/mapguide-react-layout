@@ -10,11 +10,16 @@ export type XYZLayerProps = CommonLayerProps & {
     attributions?: string[];
 };
 
-export const XYZLayer: React.FC<XYZLayerProps> = ({ name, urls, attributions }) => {
+export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, urls, attributions }) => {
     const map = useOLMap();
     const messages = useMapMessage();
     const layer = React.useRef<OLTileLayer | undefined>(undefined);
     const source = React.useRef<OLXYZSource | undefined>(undefined);
+    React.useEffect(() => {
+        if (layer.current) {
+            layer.current.setVisible(!isHidden);
+        }
+    }, [isHidden]);
     React.useEffect(() => {
         messages.addInfo("add xyz layer");
         const tileSource = new OLXYZSource({

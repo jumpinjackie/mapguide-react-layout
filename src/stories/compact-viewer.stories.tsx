@@ -1158,7 +1158,7 @@ export const _VectorLayer = {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+            <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
         </CompactViewer>
     }
 }
@@ -1168,7 +1168,7 @@ export const _VectorLayerWithHoverSelection = {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+            <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
             <SelectInteraction mode='hover' />
         </CompactViewer>
     }
@@ -1193,7 +1193,7 @@ export const _VectorLayerWithSelectionTracking = {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+            <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
             <SelectInteraction mode='click' features={features.current} />
         </CompactViewer>
     }
@@ -1204,13 +1204,13 @@ export const _VectorLayerWithDrawing = {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+            <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
             <DrawInteraction type="Circle" layerName="Shapes" snapToLayerObjects />
         </CompactViewer>
     }
 }
 
-export const _MountingTest = {
+export const _MountingAndPropsTest = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
         const selectedFeature = action("Selected Feature");
@@ -1231,11 +1231,13 @@ export const _MountingTest = {
         const selMode = select('Selection mode', ['click', 'hover'], 'click');
         const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
         const snap = boolean('Snap to layer objects', true);
-        const enableVectorLayer = boolean('Show Shapes layer', true);
+        const enableVectorLayer = boolean('Enable Shapes layer', true);
+        const hideVectorLayer = boolean('Shapes layer hidden', false);
+        const hideOsmLayer = boolean('OSM layer hidden', false);
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
-            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            {enableVectorLayer && <VectorLayer fitToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
+            <XYZLayer isHidden={hideOsmLayer} name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            {enableVectorLayer && <VectorLayer isHidden={hideVectorLayer} fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
             {enableDraw && <DrawInteraction type={type} layerName="Shapes" snapToLayerObjects={snap} />}
             {enableSelect && <SelectInteraction mode={selMode} features={features.current} />}
         </CompactViewer>

@@ -58,9 +58,9 @@ export const MapMessages: React.FC<{ style?: React.CSSProperties }> = ({ style }
     const [errorVisible, setErrorVisible] = React.useState(false);
     return <>
         <div style={{ display: 'inline-flex', position: 'absolute', top: 30, left: 30, ...style }}>
-            <button onClick={() => setInfoVisible(true)}>I: {messages.infoMessages.length}</button>
-            <button onClick={() => setWarnVisible(true)}>W: {messages.warningMessages.length}</button>
-            <button onClick={() => setErrorVisible(true)}>E: {messages.errorMessages.length}</button>
+            <button onClick={() => setInfoVisible(!infoVisible)}>I: {messages.infoMessages.length}</button>
+            <button onClick={() => setWarnVisible(!warnVisible)}>W: {messages.warningMessages.length}</button>
+            <button onClick={() => setErrorVisible(!errorVisible)}>E: {messages.errorMessages.length}</button>
         </div>
         {infoVisible && <Messages title="Info Messages" messages={messages.infoMessages} onClose={() => setInfoVisible(false)} />}
         {warnVisible && <Messages title="Warning Messages" messages={messages.warningMessages} onClose={() => setWarnVisible(false)} />}

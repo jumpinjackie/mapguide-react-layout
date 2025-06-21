@@ -15,11 +15,24 @@ import olTileLayer from "ol/layer/Tile";
 import olImageLayer from "ol/layer/Image";
 import olWmsSource from "ol/source/ImageWMS";
 import olTiledWmsSource from "ol/source/TileWMS";
-import { strIsNullOrEmpty } from "../../utils/string";
+import { strIsNullOrEmpty, strStartsWith } from "../../utils/string";
 import { IAddLayerContentProps } from './add-layer';
 import { getLayerInfo } from '../../api/layer-manager';
 import { useElementContext } from "../elements/element-context";
 import { useMapProviderContext } from "../map-providers/context";
+
+function tryUpgradeUrlToHttpsIfNeeded(caps: WmsCapabilitiesDocument, wasHttps: boolean) {
+    const url: string = caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource;
+    // Some WMS services may report http:// for the GET method *despite* the capabilities
+    // being requested through a https:// URL. This will cause havoc if we try to issue
+    // GetFeatureInfo requests because the browser will block such attempts. So if we find
+    // such a mis-configuration, we will upgrade it to a https:// *if and only if* we had
+    // requested the capabilities document through a https:// URL.
+    if (strStartsWith(url, "http://") && wasHttps) {
+        return "https://" + url.substring("http://".length);
+    }
+    return url;
+}
 
 /**
  * @hidden
@@ -29,7 +42,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
     const { locale } = props;
     const [wmsUrl, setWmsUrl] = React.useState("");
     const [loadingCapabilities, setLoadingCapabilities] = React.useState(false);
-    const [caps, setCaps] = React.useState<WmsCapabilitiesDocument | undefined>(undefined);
+    const [caps, setCaps] = React.useState<[WmsCapabilitiesDocument, boolean] | undefined>(undefined);
     const [error, setError] = React.useState<Error | string | undefined>(undefined);
     const viewer = useMapProviderContext();
     const onAddLayer = (name: string, selectable: boolean, isTiled: boolean, style: WMSLayerStyle | undefined) => {
@@ -47,7 +60,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
             let source: olTiledWmsSource | olWmsSource;
             if (isTiled) {
                 source = new olTiledWmsSource({
-                    url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
+                    url: tryUpgradeUrlToHttpsIfNeeded(caps[0], caps[1]),
                     params: params
                 });
                 layer = new olTileLayer({
@@ -55,7 +68,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 });
             } else {
                 source = new olWmsSource({
-                    url: caps.Capability.Request.GetMap.DCPType[0].HTTP.Get.OnlineResource,
+                    url: tryUpgradeUrlToHttpsIfNeeded(caps[0], caps[1]),
                     params: params
                 });
                 layer = new olImageLayer({
@@ -110,7 +123,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 setError(tr("WMS_UNSUPPORTED_VERSION", locale, { version: caps.version }));
             } else {
                 setLoadingCapabilities(false);
-                setCaps(caps);
+                setCaps([caps, strStartsWith(wmsUrl, "https://")]);
                 setError(undefined);
             }
         }).catch(err => {
@@ -138,7 +151,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                         description={tr("ADD_WMS_LAYER_LOADING_DESC", locale)} />;
                 } else {
                     if (caps) {
-                        return <WmsCapabilitiesPanel onAddLayer={onAddLayer} capabilities={caps} locale={locale} />;
+                        return <WmsCapabilitiesPanel onAddLayer={onAddLayer} capabilities={caps[0]} locale={locale} />;
                     } else if (error) {
                         return <Error error={error} />;
                     } else {

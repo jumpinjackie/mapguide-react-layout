@@ -9,13 +9,38 @@ import { useLayerState } from "./common";
 import type Collection from 'ol/Collection';
 import type Feature from 'ol/Feature';
 
+/**
+ * Vector layer component props
+ * 
+ * @since 0.15
+ */
 export type VectorLayerProps = CommonLayerProps & {
+    /**
+     * If true, will try to fit the map's initial view to the extents of this layer. Really needs this
+     * layer to have an initial set of features via initialFeatures or to be assigned 
+     */
     fitInitialViewToThisLayer?: boolean;
+    /**
+     * An initial set of features to load into this layer
+     */
     initialFeatures?: GeoJSONFeatureCollection;
+    /**
+     * The projection of these features
+     */
     initialFeatureProjection?: string;
+    /**
+     * The backing observable collection of features. If not specified, this layer will maintain its
+     * own internal copy. The reason you may want an externally managed feature collection is to share
+     * this layer state with interaction components so they can operate on this layer's features
+     */
     features?: Collection<Feature>;
 };
 
+/**
+ * A layer component that displays vector features
+ * 
+ * @since 0.15
+ */
 export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent, features, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer }) => {
     const map = useOLMap();
     const messages = useMapMessage();

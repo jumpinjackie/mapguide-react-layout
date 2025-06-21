@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ * Provides a context for other compact map viewer components to report messages to
+ * 
+ * @since 0.15
+ */
 export type MapMessageContext = {
     addInfo: (message: string) => void;
     addWarning: (message: string) => void;
@@ -18,6 +23,11 @@ const OLMapMessageContext = React.createContext<MapMessageContext>({
     errorMessages: []
 });
 
+/**
+ * Provides a context for other compact map viewer components to report messages to
+ * 
+ * @since 0.15
+ */
 export const MapMessageContextProvider: React.FC = ({ children }) => {
     const [infoMessages, setInfoMessages] = React.useState<string[]>([]);
     const [warningMessages, setWarningMessages] = React.useState<string[]>([]);
@@ -51,6 +61,11 @@ const Messages: React.FC<{ title: string, messages: string[], onClose: () => voi
     </div>
 };
 
+/**
+ * A component that assists in debugging by displaying any messages reported by other compact map viewer components
+ * 
+ * @since 0.15
+ */
 export const MapMessages: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     const messages = useMapMessage();
     const [infoVisible, setInfoVisible] = React.useState(false);

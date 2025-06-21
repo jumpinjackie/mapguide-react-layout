@@ -3,12 +3,27 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import { OLMapContextProvider } from './context';
 import Attribution from 'ol/control/Attribution';
-import "ol/ol.css";
 import { MapMessageContextProvider } from './messages';
 
+import "ol/ol.css";
+
+/**
+ * Compact viewer properties
+ * 
+ * @since 0.15
+ */
 export type CompactViewerProps = {
+    /**
+     * Optional style to set on the root DOM element
+     */
     style?: React.CSSProperties;
+    /**
+     * The projection of the map view. Any layers you add to this map not in this projection will be re-projected to it.
+     */
     projection: string;
+    /**
+     * The initial view of this map, in the specified projection
+     */
     initialBBOX?: [number, number, number, number];
 };
 
@@ -18,6 +33,8 @@ export type CompactViewerProps = {
  * 
  * Use this when you need a basic low-level OpenLayers viewer without the MapGuide-related setup, registration and
  * feature set 
+ * 
+ * @since 0.15
  */
 export const CompactViewer: React.FC<CompactViewerProps> = ({ style, projection, initialBBOX, children }) => {
     const [map, setMap] = React.useState<Map | null>(null);

@@ -6,12 +6,31 @@ import VectorLayer from "ol/layer/Vector";
 import Snap from "ol/interaction/Snap";
 import { useMapMessage } from "../messages";
 
+/**
+ * Draw component properties
+ * 
+ * @since 0.15
+ */
 export type DrawInteractionProps = {
+    /**
+     * The type of geometry one can draw
+     */
     type: Type;
+    /**
+     * The name of the (vector) layer that drawn features are added to
+     */
     layerName: string;
+    /**
+     * If true, drawing will snap to other features on the specified layer
+     */
     snapToLayerObjects?: boolean;
 };
 
+/**
+ * A component that allows one to draw features on the map
+ * 
+ * @since 0.15
+ */
 export const DrawInteraction: React.FC<DrawInteractionProps> = ({ type, layerName, snapToLayerObjects }) => {
     const map = useOLMap();
     const messages = useMapMessage();

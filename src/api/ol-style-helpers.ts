@@ -30,15 +30,8 @@ export function getClusterSubFeatures(feature: OLFeature): OLFeature[] {
  * and layer can be either a vector layer or a vector tile layer
  */
 export function setOLVectorLayerStyle(layer: OLVectorLayer | VectorTileLayer, style: IVectorLayerStyle, clusterStyle: IClusterSettings | undefined) {
-    const olstyles = new OLStyleMapSet(style, clusterStyle);
+    const [layerStyleFunc, olstyles] = getOLStyleFunction(style, clusterStyle);
     layer.set(LayerProperty.VECTOR_STYLE, olstyles);
-    const layerStyleFunc = function (feature: Feature<Geometry>) {
-        //TODO: Perf opportunity, cache styles by type_filter|default. Of course, if we ever
-        //decide to go for fully dynamic styles (where any property could be an expression to evaluate)
-        //such styles are not candidates for caching.
-        const sset: OLStyleMapSet = this;
-        return sset.evaluateStyle(feature);
-    }.bind(olstyles);
     layer.setStyle(layerStyleFunc);
 }
 
@@ -49,6 +42,7 @@ export function setOLVectorLayerStyle(layer: OLVectorLayer | VectorTileLayer, st
  * @param clusterStyle 
  * @returns 
  * @since 0.14
+ * @since 0.15 Now returns a tuple of [layerStyleFunction, olStyleMapSet]
  */
 export function getOLStyleFunction(style: IVectorLayerStyle, clusterStyle: IClusterSettings | undefined) {
     const olstyles = new OLStyleMapSet(style, clusterStyle);
@@ -59,5 +53,5 @@ export function getOLStyleFunction(style: IVectorLayerStyle, clusterStyle: IClus
         const sset: OLStyleMapSet = this;
         return sset.evaluateStyle(feature);
     }.bind(olstyles);
-    return layerStyleFunc;
+    return [layerStyleFunc, olstyles];
 }

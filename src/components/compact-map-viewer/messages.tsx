@@ -28,7 +28,7 @@ const OLMapMessageContext = React.createContext<MapMessageContext>({
  * 
  * @since 0.15
  */
-export const MapMessageContextProvider: React.FC = ({ children }) => {
+export const MapMessageContextProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     const [infoMessages, setInfoMessages] = React.useState<string[]>([]);
     const [warningMessages, setWarningMessages] = React.useState<string[]>([]);
     const [errorMessages, setErrorMessages] = React.useState<string[]>([]);

@@ -45,7 +45,7 @@ export type WMSLayerProps = CommonLayerProps & {
  * 
  * @since 0.15
  */
-export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url, layerName, tiled, infoFormat: featureInfoFormat, onGetFeatureInfo }) => {
+export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url, layerName, tiled, infoFormat, onGetFeatureInfo }) => {
     const map = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<BaseLayer>(name, isHidden, extent);
@@ -98,7 +98,7 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
             const viewResolution = map.getView().getResolution();
             if (viewResolution) {
                 const url = wmsSource.current.getFeatureInfoUrl(e.coordinate, viewResolution, map.getView().getProjection(), {
-                    'INFO_FORMAT': featureInfoFormat
+                    'INFO_FORMAT': infoFormat
                 });
                 if (url) {
                     fetch(url)

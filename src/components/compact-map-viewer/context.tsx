@@ -8,7 +8,7 @@ const OLMapContext = React.createContext<Map | undefined>(undefined);
  * 
  * @since 0.15
  */
-export const OLMapContextProvider: React.FC<{ map: Map }> = ({ map, children }) => {
+export const OLMapContextProvider: React.FC<React.PropsWithChildren<{ map: Map }>> = ({ map, children }) => {
     return <OLMapContext.Provider value={map}>
         {children}
     </OLMapContext.Provider>

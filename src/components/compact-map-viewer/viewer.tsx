@@ -36,7 +36,7 @@ export type CompactViewerProps = {
  * 
  * @since 0.15
  */
-export const CompactViewer: React.FC<CompactViewerProps> = ({ style, projection, initialBBOX, children }) => {
+export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>> = ({ style, projection, initialBBOX, children }) => {
     const [map, setMap] = React.useState<Map | null>(null);
     const mapElement = React.useRef<HTMLDivElement>(null);
 

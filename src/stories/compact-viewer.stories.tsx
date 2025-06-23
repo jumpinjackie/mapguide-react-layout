@@ -2,7 +2,7 @@ import { boolean, select, withKnobs } from "@storybook/addon-knobs";
 import { CompactViewer } from "../components/compact-map-viewer/viewer";
 import React from "react";
 import { XYZLayer } from "../components/compact-map-viewer/layers/xyz";
-import { VectorLayer } from "../components/compact-map-viewer/layers/vector";
+import { VectorLayer, VectorLayerProps } from "../components/compact-map-viewer/layers/vector";
 import { SelectInteraction } from "../components/compact-map-viewer/interactions/select";
 import Collection, { CollectionEvent } from "ol/Collection";
 import Feature from "ol/Feature";
@@ -11,6 +11,9 @@ import { DrawInteraction } from "../components/compact-map-viewer/interactions/d
 import { MapMessages } from "../components/compact-map-viewer/messages";
 import { WMSLayer } from "../components/compact-map-viewer/layers/wms";
 import GeoJSONFormat from "ol/format/GeoJSON";
+
+// Source: https://data.gov.au/data/dataset/gisborne-futures-data
+const buildings = require("./data/gisborne-futures.json");
 
 export default {
     title: "Compact Viewer",
@@ -1170,6 +1173,49 @@ export const _VectorLayer = {
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+        </CompactViewer>
+    }
+}
+
+/**
+ * This example has a vector layer with an initial set of GeoJSON features and a thematic style
+ */
+export const _VectorLayerThemed = {
+    render: () => {
+        const style: VectorLayerProps['style'] = [
+            {
+                filter: ['==', ['get', 'label'], 'ICA1'],
+                style: {
+                    'fill-color': '#eff3ff',
+                    'stroke-color': '#000000'
+                },
+            },
+            {
+                filter: ['==', ['get', 'label'], 'MCA'],
+                style: {
+                    'fill-color': '#bdd7e7',
+                    'stroke-color': '#000000'
+                },
+            },
+            {
+                filter: ['==', ['get', 'label'], 'ICA2'],
+                style: {
+                    'fill-color': '#6baed6',
+                    'stroke-color': '#000000'
+                },
+            },
+            {
+                filter: ['==', ['get', 'label'], 'DPA'],
+                style: {
+                    'fill-color': '#2171b5',
+                    'stroke-color': '#000000'
+                },
+            }
+        ];
+        return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+            <MapMessages />
+            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            <VectorLayer fitInitialViewToThisLayer style={style} name="Shapes" initialFeatures={buildings} initialFeatureProjection="EPSG:4326" />
         </CompactViewer>
     }
 }

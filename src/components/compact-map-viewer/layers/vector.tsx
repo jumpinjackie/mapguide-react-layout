@@ -1,6 +1,6 @@
 import React from "react";
 import { useOLMap } from "../context";
-import OLVectorLayer from 'ol/layer/Vector';
+import OLVectorLayer, { type Options as OLVectorLayerOptions } from 'ol/layer/Vector';
 import OLVectorSource from 'ol/source/Vector';
 import { CommonLayerProps } from "./contracts";
 import OLGeoJsonFormat, { type GeoJSONFeatureCollection } from "ol/format/GeoJSON";
@@ -34,6 +34,10 @@ export type VectorLayerProps = CommonLayerProps & {
      * this layer state with interaction components so they can operate on this layer's features
      */
     features?: Collection<Feature>;
+    /**
+     * The style of the vector features
+     */
+    style?: OLVectorLayerOptions['style'];
 };
 
 /**
@@ -41,7 +45,7 @@ export type VectorLayerProps = CommonLayerProps & {
  * 
  * @since 0.15
  */
-export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent, features, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer }) => {
+export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent, features, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer, style }) => {
     const map = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<OLVectorLayer>(name, isHidden, extent);
@@ -52,7 +56,8 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
         });
         const vecLayer = new OLVectorLayer({
             extent,
-            source: vecSource
+            source: vecSource,
+            style
         });
         vecLayer.set("name", name);
         if (initialFeatures) {

@@ -76,5 +76,6 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
             messages.addInfo("removed vector layer");
         }
     }, []);
-    return <noscript />;
+    // DOM breadcrumb so you know this component was indeed mounted
+    return <noscript data-map-component="VectorLayer" />;
 };

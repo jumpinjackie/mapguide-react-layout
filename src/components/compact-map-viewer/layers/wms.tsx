@@ -110,11 +110,11 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
     }
 
     React.useEffect(() => {
-        if (onGetFeatureInfo) {
-            map.on('singleclick', mapClickHandler);
-        } else {
+        map.on('singleclick', mapClickHandler);
+        return () => {
             map.un('singleclick', mapClickHandler);
         }
-    }, [onGetFeatureInfo]);
-    return <noscript />;
+    }, []);
+    // DOM breadcrumb so you know this component was indeed mounted
+    return <noscript data-map-component="WMSLayer" />;
 };

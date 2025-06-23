@@ -49,5 +49,6 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls
             messages.addInfo("removed xyz layer");
         }
     }, []);
-    return <noscript />;
+    // DOM breadcrumb so you know this component was indeed mounted
+    return <noscript data-map-component="XYZLayer" />;
 };

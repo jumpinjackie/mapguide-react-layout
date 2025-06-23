@@ -22,6 +22,9 @@ const VIEWER_STYLE: React.CSSProperties = {
     height: 480
 }
 
+/**
+ * This example shows an OSM map with tiles reprojected to EPSG:4326
+ */
 export const _BasicExampleEPSG4326 = {
     render: () => {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:4326" initialBBOX={[-180, 90, 180, 90]}>
@@ -31,6 +34,9 @@ export const _BasicExampleEPSG4326 = {
     }
 };
 
+/**
+ * This example shows an OSM map in its native EPSG:3857 (Web Mercator) projection
+ */
 export const _BasicExampleEPSG3857 = {
     render: () => {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
@@ -1155,6 +1161,9 @@ const TEST_GEOJSON = {
 const OSM_URLS = ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'];
 const OSM_ATTRIBUTIONS = ['(c) OpenStreetMap contributors'];
 
+/**
+ * This example has a vector layer with an initial set of GeoJSON features
+ */
 export const _VectorLayer = {
     render: () => {
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
@@ -1165,23 +1174,30 @@ export const _VectorLayer = {
     }
 }
 
-export const _VectorLayerWithHoverSelection = {
+/**
+ * This example has a selection interaction that operates against the vector layer
+ */
+export const _VectorLayerWithSelection = {
     render: () => {
+        const selMode = select('Selection mode', ['click', 'hover'], 'click');
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
-            <SelectInteraction mode='hover' />
+            <SelectInteraction mode={selMode} />
         </CompactViewer>
     }
 }
 
+/**
+ * This example has a select interaction that propagates selection to an observable feature collection
+ */
 export const _VectorLayerWithSelectionTracking = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
+        const selMode = select('Selection mode', ['click', 'hover'], 'click');
         const selectedFeature = action("Selected Feature");
         const unSelectedFeature = action("UnSelected Feature");
-
         const onSelectedFeature = (e: CollectionEvent<Feature>) => selectedFeature(e);
         const onUnSelectedFeature = (e: CollectionEvent<Feature>) => unSelectedFeature(e);
         React.useEffect(() => {
@@ -1196,18 +1212,52 @@ export const _VectorLayerWithSelectionTracking = {
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
-            <SelectInteraction mode='click' features={features.current} />
+            <SelectInteraction mode={selMode} features={features.current} />
         </CompactViewer>
     }
 }
 
+/**
+ * This example has a draw interaction that draws into the specified vector layer (by name)
+ */
 export const _VectorLayerWithDrawing = {
     render: () => {
+        const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
+        const snap = boolean('Snap to layer objects', true);
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
-            <DrawInteraction type="Circle" layerName="Shapes" snapToLayerObjects />
+            <DrawInteraction type={type} drawTarget="Shapes" snapToLayerObjects={snap} />
+        </CompactViewer>
+    }
+}
+
+/**
+ * This example has both draw interaction and vector layer be backed by the same feature collection
+ */
+export const _VectorLayerWithDrawingToFeatureCollection = {
+    render: () => {
+        const features = React.useRef(new Collection<Feature>());
+        const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
+        const snap = boolean('Snap to layer objects', true);
+        const addedFeature = action("Added Feature");
+        const removedFeature = action("Removed Feature");
+        const onAddedFeature = (e: CollectionEvent<Feature>) => addedFeature(e);
+        const onRemovedFeature = (e: CollectionEvent<Feature>) => removedFeature(e);
+        React.useEffect(() => {
+            features.current.on("add", onAddedFeature);
+            features.current.on("remove", onRemovedFeature);
+            return () => {
+                features.current.un("add", onAddedFeature);
+                features.current.un("remove", onRemovedFeature);
+            }
+        }, []);
+        return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+            <MapMessages />
+            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            <VectorLayer fitInitialViewToThisLayer name="Shapes" features={features.current} initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+            <DrawInteraction type={type} drawTarget={features.current} snapToLayerObjects={snap} />
         </CompactViewer>
     }
 }
@@ -1216,6 +1266,9 @@ const BBOX_AU_3857: [number, number, number, number] = [12616951.086509628, -540
 const WMS_URL = "https://opendata.maps.vic.gov.au/geoserver/wms?service=wms&request=getcapabilities";
 const WMS_LAYER = "open-data-platform:ad_locality_area_polygon";
 
+/**
+ * This example showcases a WMS layer with GetFeatureInfo support that funnels selections to a vector layer
+ */
 export const _WmsLayerGetFeatureInfoGeoJSON = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
@@ -1237,12 +1290,14 @@ export const _WmsLayerGetFeatureInfoGeoJSON = {
     }
 }
 
+/**
+ * This example is a "kitchen sink" that tests all possible prop combinations and component mounting/unmounting
+ */
 export const _MountingAndPropsTest = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
         const selectedFeature = action("Selected Feature");
         const unSelectedFeature = action("UnSelected Feature");
-
         const onSelectedFeature = (e: CollectionEvent<Feature>) => selectedFeature(e);
         const onUnSelectedFeature = (e: CollectionEvent<Feature>) => unSelectedFeature(e);
         React.useEffect(() => {
@@ -1268,7 +1323,7 @@ export const _MountingAndPropsTest = {
             <XYZLayer isHidden={hideOsmLayer} name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             <WMSLayer isHidden={hideWmsLayer} name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={tileWmsLayer} />
             {enableVectorLayer && <VectorLayer isHidden={hideVectorLayer} fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
-            {enableDraw && <DrawInteraction type={type} layerName="Shapes" snapToLayerObjects={snap} />}
+            {enableDraw && <DrawInteraction type={type} drawTarget="Shapes" snapToLayerObjects={snap} />}
             {enableSelect && <SelectInteraction mode={selMode} features={features.current} />}
         </CompactViewer>
     }

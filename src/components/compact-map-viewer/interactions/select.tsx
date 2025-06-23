@@ -64,5 +64,6 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, feat
             removeInteractions();
         }
     }, [mode]);
-    return <noscript />;
+    // DOM breadcrumb so you know this component was indeed mounted
+    return <noscript data-map-component="SelectInteraction" />;
 };

@@ -1413,12 +1413,13 @@ export const _MountingAndPropsTest = {
         const enableVectorLayer = boolean('Enable Shapes layer', true);
         const hideVectorLayer = boolean('Shapes layer hidden', false);
         const hideOsmLayer = boolean('OSM layer hidden', false);
+        const enableWmsLayer = boolean('Enable WMS layer', true);
         const hideWmsLayer = boolean('WMS layer hidden', false);
         const tileWmsLayer = boolean('WMS layer tiled', true);
         return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
             <MapMessages />
             <XYZLayer isHidden={hideOsmLayer} name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <WMSLayer isHidden={hideWmsLayer} name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={tileWmsLayer} />
+            {enableWmsLayer && <WMSLayer isHidden={hideWmsLayer} name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={tileWmsLayer} />}
             {enableVectorLayer && <VectorLayer isHidden={hideVectorLayer} fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
             {enableDraw && <DrawInteraction type={type} drawTarget="Shapes" snapToLayerObjects={snap} />}
             {enableSelect && <SelectInteraction mode={selMode} features={features.current} />}

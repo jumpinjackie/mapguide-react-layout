@@ -2,7 +2,7 @@ import React from "react";
 import { useOLMap } from "../context";
 import OLVectorLayer, { type Options as OLVectorLayerOptions } from 'ol/layer/Vector';
 import OLVectorSource from 'ol/source/Vector';
-import { CommonLayerProps } from "./contracts";
+import type { CommonLayerProps } from "./contracts";
 import OLGeoJsonFormat, { type GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
@@ -50,35 +50,41 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
     const messages = useMapMessage();
     const layer = useLayerState<OLVectorLayer>(name, isHidden, extent);
     React.useEffect(() => {
-        messages.addInfo("add vector layer");
-        const vecSource = new OLVectorSource({
-            features
-        });
-        const vecLayer = new OLVectorLayer({
-            extent,
-            source: vecSource,
-            style
-        });
-        vecLayer.set("name", name);
-        if (initialFeatures) {
-            const format = new OLGeoJsonFormat();
-            const features = format.readFeatures(initialFeatures, {
-                featureProjection: map.getView().getProjection(),
-                dataProjection: initialFeatureProjection ?? "EPSG:4326"
+        if (!layer.current) {
+            messages.addInfo("add vector layer");
+            const vecSource = new OLVectorSource({
+                features
             });
-            vecSource.addFeatures(features);
-        }
-        layer.current = vecLayer;
-        map.addLayer(vecLayer);
-        if (fitInitialViewToThisLayer) {
-            const e = vecSource.getExtent();
-            if (e) {
-                map.getView().fit(e);
+            const vecLayer = new OLVectorLayer({
+                extent,
+                source: vecSource,
+                style
+            });
+            vecLayer.set("name", name);
+            if (initialFeatures) {
+                const format = new OLGeoJsonFormat();
+                const features = format.readFeatures(initialFeatures, {
+                    featureProjection: map.getView().getProjection(),
+                    dataProjection: initialFeatureProjection ?? "EPSG:4326"
+                });
+                vecSource.addFeatures(features);
+            }
+            layer.current = vecLayer;
+            map.addLayer(vecLayer);
+            if (fitInitialViewToThisLayer) {
+                const e = vecSource.getExtent();
+                if (e) {
+                    map.getView().fit(e);
+                }
             }
         }
         return () => {
-            map.removeLayer(vecLayer);
-            messages.addInfo("removed vector layer");
+            if (layer.current) {
+                map.removeLayer(layer.current);
+                messages.addInfo("removed vector layer");
+                layer.current.dispose();
+                layer.current = undefined;
+            }
         }
     }, []);
     // DOM breadcrumb so you know this component was indeed mounted

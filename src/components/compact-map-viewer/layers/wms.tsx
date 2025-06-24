@@ -191,10 +191,10 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
 
     React.useEffect(() => {
         map.on('singleclick', memoizedMapClickHandler);
-        //console.log("attached click handler");
+        messages.addInfo("attached singleclick handler to wms layer");
         return () => {
             map.un('singleclick', memoizedMapClickHandler);
-            //console.log("detached click handler");
+            messages.addInfo("detached singleclick handler from wms layer");
         }
     }, [memoizedMapClickHandler]);
     // DOM breadcrumb so you know this component was indeed mounted

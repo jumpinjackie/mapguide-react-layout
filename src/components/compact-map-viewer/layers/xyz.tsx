@@ -2,7 +2,7 @@ import { useOLMap } from "../context";
 import OLTileLayer from 'ol/layer/Tile';
 import OLXYZSource from 'ol/source/XYZ';
 import React from "react";
-import { CommonLayerProps } from "./contracts";
+import type { CommonLayerProps } from "./contracts";
 import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
 
@@ -32,21 +32,27 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls
     const messages = useMapMessage();
     const layer = useLayerState<OLTileLayer>(name, isHidden, extent);
     React.useEffect(() => {
-        messages.addInfo("add xyz layer");
-        const tileSource = new OLXYZSource({
-            urls: urls,
-            attributions: attributions
-        });
-        const tileLayer = new OLTileLayer({
-            extent,
-            source: tileSource
-        });
-        tileLayer.set("name", name);
-        layer.current = tileLayer;
-        map.addLayer(tileLayer);
+        if (!layer.current) {
+            messages.addInfo("add xyz layer");
+            const tileSource = new OLXYZSource({
+                urls: urls,
+                attributions: attributions
+            });
+            const tileLayer = new OLTileLayer({
+                extent,
+                source: tileSource
+            });
+            tileLayer.set("name", name);
+            layer.current = tileLayer;
+            map.addLayer(tileLayer);
+        }
         return () => {
-            map.removeLayer(tileLayer);
-            messages.addInfo("removed xyz layer");
+            if (layer.current) {
+                map.removeLayer(layer.current);
+                messages.addInfo("removed xyz layer");
+                layer.current.dispose();
+                layer.current = undefined;
+            }
         }
     }, []);
     // DOM breadcrumb so you know this component was indeed mounted

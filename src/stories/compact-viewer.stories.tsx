@@ -1,4 +1,4 @@
-import { boolean, select, withKnobs } from "@storybook/addon-knobs";
+import { boolean, object, select, withKnobs } from "@storybook/addon-knobs";
 import { CompactViewer } from "../components/compact-map-viewer/viewer";
 import React from "react";
 import { XYZLayer } from "../components/compact-map-viewer/layers/xyz";
@@ -17,7 +17,13 @@ const buildings = require("./data/gisborne-futures.json");
 
 export default {
     title: "Compact Viewer",
-    decorators: [withKnobs],
+    decorators: [withKnobs,
+        (storyFn: () => boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined) => (
+            <React.StrictMode>
+                {storyFn()}
+            </React.StrictMode>
+        )
+    ],
 };
 
 const VIEWER_STYLE: React.CSSProperties = {
@@ -1333,6 +1339,51 @@ export const _WmsLayerGetFeatureInfoGeoJSON = {
             <WMSLayer name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={true} infoFormat="application/json" onGetFeatureInfo={onGetFeatureInfo} />
             <VectorLayer name="WMS Selection" features={features.current} />
         </CompactViewer>;
+    }
+}
+
+/**
+ * This example showcases a WMS layer with all props being dynamically observable
+ */
+export const _WmsLayerObservability = {
+    render: () => {
+        const features = React.useRef(new Collection<Feature>());
+        const getFeatureInfo = action('GetFeatureInfo response');
+        const onGetFeatureInfo = (content: string) => {
+            getFeatureInfo(content);
+            const format = new GeoJSONFormat();
+            const feature = format.readFeatures(content);
+            for (const f of feature) {
+                features.current.push(f);
+            }
+        };
+        const layerProps = object("WMS Layer Props", {
+            name: "WMS",
+            url: WMS_URL,
+            layerName: WMS_LAYER,
+            tiled: true,
+            infoFormat: 'application/json'
+        } as Pick<React.ComponentProps<typeof WMSLayer>, 'name' | 'url' | 'layerName' | 'tiled' | 'infoFormat'>);
+
+        return <>
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={BBOX_AU_3857}>
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <WMSLayer {...layerProps} onGetFeatureInfo={onGetFeatureInfo} />
+                <VectorLayer name="WMS Selection" features={features.current} />
+            </CompactViewer>
+            <p>To verify the WMS layer has all observable props, paste this into the <strong>WMS Layer Props</strong></p>
+            <code>
+                {`{
+                    "name": "SLIP WA Regional Parks",
+                    "url": "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Boundaries/MapServer/WMSServer",
+                    "layerName": "50",
+                    "infoFormat": "application/geo+json",
+                    "tiled": true
+                }`}
+            </code>
+            <p>It should immediately switch to the new layer without any reloading/refreshing</p>
+        </>;
     }
 }
 

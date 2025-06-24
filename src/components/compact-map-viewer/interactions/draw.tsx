@@ -46,35 +46,43 @@ export const DrawInteraction: React.FC<DrawInteractionProps> = ({ type, drawTarg
         if (draw.current) {
             map.removeInteraction(draw.current);
             messages.addInfo("removed draw interaction");
+            draw.current.dispose();
+            draw.current = undefined;
         }
         if (snap.current) {
             map.removeInteraction(snap.current);
             messages.addInfo("removed snap interaction");
+            snap.current.dispose();
+            snap.current = undefined;
         }
     }
 
     function addDraw(source: VectorSource | Collection<Feature>, type: Type, doSnap?: boolean) {
-        let dOpts: DrawOptions = { type };
-        if (source instanceof VectorSource) {
-            dOpts.source = source;
-        } else {
-            dOpts.features = source;
-        }
-        const intDraw = new Draw(dOpts);
-        map.addInteraction(intDraw);
-        messages.addInfo("added draw interaction");
-        draw.current = intDraw;
-        if (doSnap) {
-            let sOpts: SnapOptions = {};
+        if (!draw.current) {
+            let dOpts: DrawOptions = { type };
             if (source instanceof VectorSource) {
-                sOpts.source = source;
+                dOpts.source = source;
             } else {
-                sOpts.features = source;
+                dOpts.features = source;
             }
-            const intSnap = new Snap(sOpts);
-            map.addInteraction(intSnap);
-            messages.addInfo("added snap interaction");
-            snap.current = intSnap;
+            const intDraw = new Draw(dOpts);
+            map.addInteraction(intDraw);
+            messages.addInfo("added draw interaction");
+            draw.current = intDraw;
+        }
+        if (doSnap) {
+            if (!snap.current) {
+                let sOpts: SnapOptions = {};
+                if (source instanceof VectorSource) {
+                    sOpts.source = source;
+                } else {
+                    sOpts.features = source;
+                }
+                const intSnap = new Snap(sOpts);
+                map.addInteraction(intSnap);
+                messages.addInfo("added snap interaction");
+                snap.current = intSnap;
+            }
         }
     }
 
@@ -97,7 +105,6 @@ export const DrawInteraction: React.FC<DrawInteractionProps> = ({ type, drawTarg
     }
 
     React.useEffect(() => {
-        removeInteractions();
         addInteractions(type, drawTarget, snapToLayerObjects);
         return () => {
             removeInteractions();

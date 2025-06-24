@@ -42,19 +42,23 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, feat
     const select = React.useRef<Select | undefined>(undefined);
 
     function addInteractions(m: SelectInteractionProps["mode"]) {
-        const intSelect = new Select({
-            condition: modeToCondition(m),
-            features: features
-        });
-        select.current = intSelect;
-        map.addInteraction(intSelect);
-        messages.addInfo("added select interaction");
+        if (!select.current) {
+            const intSelect = new Select({
+                condition: modeToCondition(m),
+                features: features
+            });
+            select.current = intSelect;
+            map.addInteraction(intSelect);
+            messages.addInfo("added select interaction");
+        }
     }
 
     function removeInteractions() {
         if (select.current) {
             map.removeInteraction(select.current);
             messages.addInfo("removed select interaction");
+            select.current.dispose();
+            select.current = undefined;
         }
     }
 

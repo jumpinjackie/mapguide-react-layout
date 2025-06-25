@@ -89,10 +89,10 @@ export const DrawInteraction: React.FC<DrawInteractionProps> = ({
         if (draw.current) {
             if (cancelKey && cancelKey.includes(event.key)) {
                 draw.current.abortDrawing();
-                console.log("Drawing cancelled");
+                //console.log("Drawing cancelled");
             } else if (undoLastPointKey && undoLastPointKey.includes(event.key)) {
                 draw.current.removeLastPoint();
-                console.log("Last point removed");
+                //console.log("Last point removed");
             }
         }
     }

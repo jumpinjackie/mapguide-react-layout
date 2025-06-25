@@ -21,6 +21,10 @@ export type SelectInteractionProps = {
      * An optional observable feature collections where selected objects are added to and removed from
      */
     features?: Collection<Feature>;
+    /**
+     * An optional array of layer names to limit the selection to. If not specified, all layers are considered.
+     */
+    layers?: string[];
 };
 
 function modeToCondition(type: SelectInteractionProps['mode']) {
@@ -36,15 +40,21 @@ function modeToCondition(type: SelectInteractionProps['mode']) {
  * 
  * @since 0.15
  */
-export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, features }) => {
+export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, features, layers }) => {
     useMapInteraction(
         "Select",
-        () =>
+        (map) =>
             new Select({
                 condition: modeToCondition(mode),
                 features: features,
+                layers: (layer) => {
+                    if (Array.isArray(layers)) {
+                        return layers.includes(layer.get('name'));
+                    }
+                    return true;
+                }
             }),
-        [mode, features]
+        [mode, features, layers]
     );
 
     // DOM breadcrumb so you know this component was indeed mounted

@@ -37,3 +37,14 @@ jsonfile.readFile(origPackageJson, function(err, obj) {
         }
     });
 });
+
+console.log("Copying required files");
+copyfiles([
+    "README.md",
+    "src/**",
+    "viewer/**",
+    "stdassets/**",
+    "package"
+], { }, function() {
+    console.log("Files copied");
+});

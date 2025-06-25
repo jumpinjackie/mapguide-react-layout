@@ -1442,8 +1442,9 @@ export const _WmsLayerObservability = {
             url: WMS_URL,
             layerName: WMS_LAYER,
             tiled: true,
-            infoFormat: 'application/json'
-        } as Pick<React.ComponentProps<typeof WMSLayer>, 'name' | 'url' | 'layerName' | 'tiled' | 'infoFormat'>);
+            infoFormat: 'application/json',
+            customParams: {}
+        } as Pick<React.ComponentProps<typeof WMSLayer>, 'name' | 'url' | 'layerName' | 'tiled' | 'customParams' | 'infoFormat'>);
 
         return <>
             <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={BBOX_AU_3857}>
@@ -1459,6 +1460,7 @@ export const _WmsLayerObservability = {
                     "url": "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Boundaries/MapServer/WMSServer",
                     "layerName": "50",
                     "infoFormat": "application/geo+json",
+                    "customParams": {},
                     "tiled": true
                 }`}
             </code>

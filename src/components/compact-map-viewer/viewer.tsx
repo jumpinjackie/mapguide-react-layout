@@ -6,6 +6,7 @@ import Attribution from 'ol/control/Attribution';
 import { MapMessageContextProvider } from './messages';
 
 import "ol/ol.css";
+import { useResourceRefInit } from './hooks';
 
 /**
  * Compact viewer properties
@@ -37,10 +38,8 @@ export type CompactViewerProps = {
  * @since 0.15
  */
 export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>> = ({ style, projection, initialBBOX, children }) => {
-    const [map, setMap] = React.useState<Map | null>(null);
     const mapElement = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
+    const [map, isReady] = useResourceRefInit<Map>(() => {
         const initialMap = new Map({
             target: mapElement.current!,
             layers: [],
@@ -56,12 +55,14 @@ export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>
         if (initialBBOX) {
             initialMap.getView().fit(initialBBOX);
         }
-        setMap(initialMap);
-        return () => initialMap.setTarget(undefined);
-    }, []);
+        return initialMap;
+    }, m => {
+        m.setTarget(undefined);
+        m.dispose();
+    })
 
     return <div style={style} ref={mapElement}>
-        {map && <OLMapContextProvider map={map}>
+        {isReady && map && <OLMapContextProvider map={map} domElement={mapElement.current!}>
             <MapMessageContextProvider>
                 {children}
             </MapMessageContextProvider>

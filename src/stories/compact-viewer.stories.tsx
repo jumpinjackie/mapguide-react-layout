@@ -11,6 +11,9 @@ import { DrawInteraction } from "../components/compact-map-viewer/interactions/d
 import { MapMessages } from "../components/compact-map-viewer/messages";
 import { WMSLayer } from "../components/compact-map-viewer/layers/wms";
 import GeoJSONFormat from "ol/format/GeoJSON";
+import { ModifyInteraction } from "../components/compact-map-viewer/interactions/modify";
+import { SnapInteraction } from "../components/compact-map-viewer/interactions/snap";
+import Snap from "ol/interaction/Snap";
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
 const buildings = require("./data/gisborne-futures.json");
@@ -1276,19 +1279,91 @@ export const _VectorLayerWithDrawing = {
     render: () => {
         const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
         const snap = boolean('Snap to layer objects', true);
-        return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
-            <MapMessages />
-            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
-            <DrawInteraction type={type} drawTarget="Shapes" snapToLayerObjects={snap} />
-        </CompactViewer>
+        return <>
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+                <DrawInteraction type={type} target="Shapes" cancelKey={["Escape"]} undoLastPointKey={["u"]} />
+                {snap && <SnapInteraction target="Shapes" />}
+            </CompactViewer>
+            <p>Press <strong>Escape</strong> to cancel the current drawing operation. Press <strong>U</strong> to undo the last drawn point</p>
+        </>
     }
 }
 
 /**
- * This example has both draw interaction and vector layer be backed by the same feature collection
+ * This example has a draw interaction that draws into the specified vector layer (by name) and can be edited
  */
-export const _VectorLayerWithDrawingToFeatureCollection = {
+export const _VectorLayerWithDrawingAndModify = {
+    render: () => {
+        const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
+        const snap = boolean('Snap to layer objects', true);
+        return <>
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+                <DrawInteraction type={type} target="Shapes" cancelKey={["Escape"]} undoLastPointKey={["u"]} />
+                <ModifyInteraction target="Shapes" />
+                {snap && <SnapInteraction target="Shapes" />}
+            </CompactViewer>
+            <p>Press <strong>Escape</strong> to cancel the current drawing operation. Press <strong>U</strong> to undo the last drawn point</p>
+        </>
+    }
+}
+
+/**
+ * This example has a draw interaction that draws into the specified vector layer (by name) and has a
+ * custom style for the feature being drawn
+ */
+export const _VectorLayerWithDrawingCustomStyle = {
+    render: () => {
+        const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
+        const snap = boolean('Snap to layer objects', true);
+        const drawStyle = {
+            Point: {
+                "circle-radius": 5,
+                "circle-fill-color": "red",
+            },
+            LineString: {
+                "circle-radius": 5,
+                "circle-fill-color": "red",
+                "stroke-color": "yellow",
+                "stroke-width": 2,
+            },
+            Polygon: {
+                "circle-radius": 5,
+                "circle-fill-color": "red",
+                "stroke-color": "yellow",
+                "stroke-width": 2,
+                "fill-color": "blue",
+            },
+            Circle: {
+                "circle-radius": 5,
+                "circle-fill-color": "red",
+                "stroke-color": "blue",
+                "stroke-width": 2,
+                "fill-color": "yellow",
+            },
+        };
+        return <>
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+                <DrawInteraction style={drawStyle[type]} type={type} target="Shapes" cancelKey={["Escape"]} undoLastPointKey={["u"]} />
+                {snap && <SnapInteraction target="Shapes" />}
+            </CompactViewer>
+            <p>Press <strong>Escape</strong> to cancel the current drawing operation. Press <strong>U</strong> to undo the last drawn point</p>
+        </>
+    }
+}
+
+/**
+ * This example has both draw and modify interaction and vector layer be backed by the same feature collection
+ */
+export const _VectorLayerWithDrawingAndModifyToFeatureCollection = {
     render: () => {
         const features = React.useRef(new Collection<Feature>());
         const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
@@ -1305,12 +1380,17 @@ export const _VectorLayerWithDrawingToFeatureCollection = {
                 features.current.un("remove", onRemovedFeature);
             }
         }, []);
-        return <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
-            <MapMessages />
-            <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
-            <VectorLayer fitInitialViewToThisLayer name="Shapes" features={features.current} initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
-            <DrawInteraction type={type} drawTarget={features.current} snapToLayerObjects={snap} />
-        </CompactViewer>
+        return <>
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857">
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <VectorLayer fitInitialViewToThisLayer name="Shapes" features={features.current} initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
+                <DrawInteraction type={type} target={features.current} cancelKey={["Escape"]} undoLastPointKey={["u"]} />
+                <ModifyInteraction target={features.current} />
+                {snap && <SnapInteraction target={features.current} />}
+            </CompactViewer>
+            <p>Press <strong>Escape</strong> to cancel the current drawing operation. Press <strong>U</strong> to undo the last drawn point</p>
+        </>
     }
 }
 
@@ -1407,6 +1487,7 @@ export const _MountingAndPropsTest = {
         }, []);
         const enableDraw = boolean('Enable drawing', false);
         const enableSelect = boolean('Enable select', false);
+        const enableModify = boolean('Enable modify', false);
         const selMode = select('Selection mode', ['click', 'hover'], 'click');
         const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
         const snap = boolean('Snap to layer objects', true);
@@ -1421,8 +1502,10 @@ export const _MountingAndPropsTest = {
             <XYZLayer isHidden={hideOsmLayer} name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
             {enableWmsLayer && <WMSLayer isHidden={hideWmsLayer} name="WMS" url={WMS_URL} layerName={WMS_LAYER} tiled={tileWmsLayer} />}
             {enableVectorLayer && <VectorLayer isHidden={hideVectorLayer} fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />}
-            {enableDraw && <DrawInteraction type={type} drawTarget="Shapes" snapToLayerObjects={snap} />}
+            {enableModify && <ModifyInteraction target="Shapes" />}
+            {enableDraw && <DrawInteraction type={type} target="Shapes" />}
             {enableSelect && <SelectInteraction mode={selMode} features={features.current} />}
+            {snap && <SnapInteraction target="Shapes" />}
         </CompactViewer>
     }
 }

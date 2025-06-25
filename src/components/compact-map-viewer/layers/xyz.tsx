@@ -5,6 +5,7 @@ import React from "react";
 import type { CommonLayerProps } from "./contracts";
 import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
+import { Breadcrumb } from "../breadcrumb";
 
 /**
  * XYZ layer component properties
@@ -28,7 +29,7 @@ export type XYZLayerProps = CommonLayerProps & {
  * @since 0.15
  */
 export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls, attributions }) => {
-    const map = useOLMap();
+    const { map } = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<OLTileLayer>(name, isHidden, extent);
     React.useEffect(() => {
@@ -56,5 +57,5 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls
         }
     }, []);
     // DOM breadcrumb so you know this component was indeed mounted
-    return <noscript data-map-component="XYZLayer" />;
+    return <Breadcrumb component="XYZLayer" />;
 };

@@ -9,6 +9,7 @@ import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
 import type BaseLayer from "ol/layer/Base";
 import type { MapBrowserEvent } from "ol";
+import { Breadcrumb } from "../breadcrumb";
 
 /**
  * WMS layer component properties
@@ -50,7 +51,7 @@ export type WMSLayerProps = CommonLayerProps & {
  * @since 0.15
  */
 export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url, layerName, customParams, tiled, infoFormat, onGetFeatureInfo }) => {
-    const map = useOLMap();
+    const { map } = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<BaseLayer>(name, isHidden, extent);
     const wmsSource = React.useRef<TileWmsSource | ImageWmsSource | undefined>(undefined);
@@ -198,5 +199,5 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
         }
     }, [memoizedMapClickHandler]);
     // DOM breadcrumb so you know this component was indeed mounted
-    return <noscript data-map-component="WMSLayer" />;
+    return <Breadcrumb component="WMSLayer" />;
 };

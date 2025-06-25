@@ -1,11 +1,11 @@
 import React from "react";
-import { useOLMap } from "../context";
 import Select from 'ol/interaction/Select';
 import { click, pointerMove } from 'ol/events/condition';
 import { assertNever } from "../../../utils/never";
 import type Collection from 'ol/Collection';
 import type Feature from 'ol/Feature';
-import { useMapMessage } from "../messages";
+import { Breadcrumb } from "../breadcrumb";
+import { useMapInteraction } from "../hooks";
 
 /**
  * Select component properties
@@ -37,37 +37,16 @@ function modeToCondition(type: SelectInteractionProps['mode']) {
  * @since 0.15
  */
 export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, features }) => {
-    const map = useOLMap();
-    const messages = useMapMessage();
-    const select = React.useRef<Select | undefined>(undefined);
+    useMapInteraction(
+        "Select",
+        () =>
+            new Select({
+                condition: modeToCondition(mode),
+                features: features,
+            }),
+        [mode, features]
+    );
 
-    function addInteractions(m: SelectInteractionProps["mode"]) {
-        if (!select.current) {
-            const intSelect = new Select({
-                condition: modeToCondition(m),
-                features: features
-            });
-            select.current = intSelect;
-            map.addInteraction(intSelect);
-            messages.addInfo("added select interaction");
-        }
-    }
-
-    function removeInteractions() {
-        if (select.current) {
-            map.removeInteraction(select.current);
-            messages.addInfo("removed select interaction");
-            select.current.dispose();
-            select.current = undefined;
-        }
-    }
-
-    React.useEffect(() => {
-        addInteractions(mode);
-        return () => {
-            removeInteractions();
-        }
-    }, [mode]);
     // DOM breadcrumb so you know this component was indeed mounted
-    return <noscript data-map-component="SelectInteraction" />;
+    return <Breadcrumb component="SelectInteraction" />;
 };

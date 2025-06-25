@@ -8,6 +8,7 @@ import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
 import type Collection from 'ol/Collection';
 import type Feature from 'ol/Feature';
+import { Breadcrumb } from "../breadcrumb";
 
 /**
  * Vector layer component props
@@ -46,7 +47,7 @@ export type VectorLayerProps = CommonLayerProps & {
  * @since 0.15
  */
 export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent, features, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer, style }) => {
-    const map = useOLMap();
+    const { map } = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<OLVectorLayer>(name, isHidden, extent);
     React.useEffect(() => {
@@ -63,11 +64,11 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
             vecLayer.set("name", name);
             if (initialFeatures) {
                 const format = new OLGeoJsonFormat();
-                const features = format.readFeatures(initialFeatures, {
+                const parsedFeatures = format.readFeatures(initialFeatures, {
                     featureProjection: map.getView().getProjection(),
                     dataProjection: initialFeatureProjection ?? "EPSG:4326"
                 });
-                vecSource.addFeatures(features);
+                vecSource.addFeatures(parsedFeatures);
             }
             layer.current = vecLayer;
             map.addLayer(vecLayer);
@@ -88,5 +89,5 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
         }
     }, []);
     // DOM breadcrumb so you know this component was indeed mounted
-    return <noscript data-map-component="VectorLayer" />;
+    return <Breadcrumb component="VectorLayer" />;
 };

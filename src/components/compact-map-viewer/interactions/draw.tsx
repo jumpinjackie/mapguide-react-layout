@@ -1,14 +1,15 @@
 import React from "react";
-import { useOLMap } from "../context";
 import Draw, { type Options as DrawOptions } from "ol/interaction/Draw";
 import type { Type } from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
-import Snap, { type Options as SnapOptions } from "ol/interaction/Snap";
-import { useMapMessage } from "../messages";
 import type Collection from "ol/Collection";
 import type Feature from "ol/Feature";
 import VectorSource from "ol/source/Vector";
-
+import { Breadcrumb } from "../breadcrumb";
+import type { VectorLayerProps } from "../layers/vector";
+import { useMapInteraction } from "../hooks";
+import Snap from "ol/interaction/Snap";
+import { addInteractionBefore } from "../helpers";
 
 /**
  * Draw component properties
@@ -24,11 +25,19 @@ export type DrawInteractionProps = {
      * The name of the (vector) layer that drawn features are added to or the observable
      * feature collection to save the drawn features to
      */
-    drawTarget: string | Collection<Feature>;
+    target: string | Collection<Feature>;
     /**
-     * If true, drawing will snap to other features on the specified layer
+     * The style to apply to the features being drawn. If not specified, the default style will be used.
      */
-    snapToLayerObjects?: boolean;
+    style?: VectorLayerProps['style'];
+    /**
+     * The key to press to undo the last point drawn. If not specified, no undo will be available.
+     */
+    undoLastPointKey?: string[];
+    /**
+     * The key to press to cancel the current drawing operation. If not specified, no cancel will be available.
+     */
+    cancelKey?: string[];
 };
 
 /**
@@ -36,80 +45,65 @@ export type DrawInteractionProps = {
  * 
  * @since 0.15
  */
-export const DrawInteraction: React.FC<DrawInteractionProps> = ({ type, drawTarget, snapToLayerObjects }) => {
-    const map = useOLMap();
-    const messages = useMapMessage();
-    const draw = React.useRef<Draw | undefined>(undefined);
-    const snap = React.useRef<Snap | undefined>(undefined);
-
-    function removeInteractions() {
-        if (draw.current) {
-            map.removeInteraction(draw.current);
-            messages.addInfo("removed draw interaction");
-            draw.current.dispose();
-            draw.current = undefined;
-        }
-        if (snap.current) {
-            map.removeInteraction(snap.current);
-            messages.addInfo("removed snap interaction");
-            snap.current.dispose();
-            snap.current = undefined;
-        }
-    }
-
-    function addDraw(source: VectorSource | Collection<Feature>, type: Type, doSnap?: boolean) {
-        if (!draw.current) {
-            let dOpts: DrawOptions = { type };
-            if (source instanceof VectorSource) {
-                dOpts.source = source;
-            } else {
-                dOpts.features = source;
-            }
-            const intDraw = new Draw(dOpts);
-            map.addInteraction(intDraw);
-            messages.addInfo("added draw interaction");
-            draw.current = intDraw;
-        }
-        if (doSnap) {
-            if (!snap.current) {
-                let sOpts: SnapOptions = {};
-                if (source instanceof VectorSource) {
-                    sOpts.source = source;
-                } else {
-                    sOpts.features = source;
-                }
-                const intSnap = new Snap(sOpts);
-                map.addInteraction(intSnap);
-                messages.addInfo("added snap interaction");
-                snap.current = intSnap;
-            }
-        }
-    }
-
-    function addInteractions(t: Type, ln: DrawInteractionProps["drawTarget"], doSnap?: boolean) {
-        if (typeof (ln) === 'string') {
-            const layer = map.getAllLayers().find(l => l.get("name") === ln);
+export const DrawInteraction: React.FC<DrawInteractionProps> = ({ 
+    type,
+    target: drawTarget,
+    style,
+    cancelKey,
+    undoLastPointKey
+}) => {
+    const draw = useMapInteraction("Draw", (map, messages) => {
+        let target: Collection<Feature> | VectorSource | undefined = undefined;
+        if (typeof (drawTarget) === 'string') {
+            const layer = map.getAllLayers().find(l => l.get("name") === drawTarget);
             if (!layer) {
-                messages.addWarning(`Layer not found: ${ln}`);
+                messages.addWarning(`Layer not found: ${drawTarget}`);
             } else {
                 if (layer instanceof VectorLayer) {
-                    const source = layer.getSource();
-                    addDraw(source, t, doSnap);
+                    target = layer.getSource();
                 } else {
-                    messages.addWarning(`Layer is not a vector layer: ${ln}`);
+                    messages.addError(`Layer is not a vector layer: ${drawTarget}`);
                 }
             }
         } else {
-            addDraw(ln, t, doSnap);
+            target = drawTarget;
+        }
+        if (target) {
+            let dOpts: DrawOptions = { type, style: style ?? undefined };
+            if (target instanceof VectorSource) {
+                dOpts.source = target;
+            } else {
+                dOpts.features = target;
+            }
+            return new Draw(dOpts);
+        }
+    }, [type, drawTarget, style], (i, c, messages) => {
+        // Per: https://openlayers.org/en/latest/examples/snap.html
+        // If a snap interaction is present, this interaction must be before it
+        //
+        // Basically Modify > Draw > Snap in terms of order
+        addInteractionBefore(i, c, messages, [Snap]);
+    });
+
+    function handleKeyDown(event: KeyboardEvent) {
+        if (draw.current) {
+            if (cancelKey && cancelKey.includes(event.key)) {
+                draw.current.abortDrawing();
+                console.log("Drawing cancelled");
+            } else if (undoLastPointKey && undoLastPointKey.includes(event.key)) {
+                draw.current.removeLastPoint();
+                console.log("Last point removed");
+            }
         }
     }
 
     React.useEffect(() => {
-        addInteractions(type, drawTarget, snapToLayerObjects);
+        window.addEventListener('keydown', handleKeyDown);
         return () => {
-            removeInteractions();
+            window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [type, drawTarget, snapToLayerObjects]);
+    }, []);
+
     // DOM breadcrumb so you know this component was indeed mounted
-    return <noscript data-map-component="DrawInteraction" />;
+    return <Breadcrumb component="DrawInteraction" />;
 }

@@ -8,6 +8,7 @@ import { useMapMessage } from "../messages";
 import { useLayerState } from "./common";
 import type Collection from 'ol/Collection';
 import type Feature from 'ol/Feature';
+import { isEmpty } from 'ol/extent';
 import { Breadcrumb } from "../breadcrumb";
 
 /**
@@ -74,7 +75,7 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({ name, isHidden, extent
             map.addLayer(vecLayer);
             if (fitInitialViewToThisLayer) {
                 const e = vecSource.getExtent();
-                if (e) {
+                if (e && !isEmpty(e)) {
                     map.getView().fit(e);
                 }
             }

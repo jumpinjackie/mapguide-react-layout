@@ -54,13 +54,15 @@ export function useResourceRefInit<T>(
  * @param createInteraction - A function that takes an OpenLayers `Map` instance and returns an interaction of type `T`.
  * @param dependencies - A list of dependencies that determine when the effect should re-run.
  * @param addInteraction - An optional function to add the interaction to a collection of interactions.
+ * @param teardown - An optional function to clean up the interaction (such as de-registering any event listeners) when it is removed.
  * @returns A mutable ref object containing the current interaction instance, or `undefined` if not set.
  */
 export function useMapInteraction<T extends Interaction>(
     name: string,
     createInteraction: (map: Map, messages: MapMessageContext) => T | undefined,
     dependencies: React.DependencyList,
-    addInteraction?: (interaction: T, collection: Collection<Interaction>, messages: MapMessageContext) => void
+    addInteraction?: (interaction: T, collection: Collection<Interaction>, messages: MapMessageContext) => void,
+    teardown?: (interaction: T) => void
 ) {
     const { map } = useOLMap();
     const messages = useMapMessage();
@@ -82,6 +84,7 @@ export function useMapInteraction<T extends Interaction>(
             if (interactionRef.current) {
                 map.removeInteraction(interactionRef.current);
                 messages.addInfo(`removed interaction: ${name}`);
+                teardown?.(interactionRef.current);
                 interactionRef.current.dispose();
                 interactionRef.current = undefined;
             }

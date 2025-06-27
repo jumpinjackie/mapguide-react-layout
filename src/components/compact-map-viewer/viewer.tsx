@@ -4,9 +4,9 @@ import View from 'ol/View';
 import { OLMapContextProvider } from './context';
 import Attribution from 'ol/control/Attribution';
 import { MapMessageContextProvider } from './messages';
-
-import "ol/ol.css";
 import { useResourceRefInit } from './hooks';
+import { isEmpty } from 'ol/extent';
+import "ol/ol.css";
 
 /**
  * Compact viewer properties
@@ -52,7 +52,7 @@ export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>
                 projection
             })
         });
-        if (initialBBOX) {
+        if (initialBBOX && !isEmpty(initialBBOX)) {
             initialMap.getView().fit(initialBBOX);
         }
         return initialMap;

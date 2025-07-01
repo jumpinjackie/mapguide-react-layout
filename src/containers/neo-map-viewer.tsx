@@ -1,9 +1,8 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { IMapProviderContext, IViewerComponent, useViewerSideEffects } from '../components/map-providers/base';
+import { IViewerComponent, useViewerSideEffects } from '../components/map-providers/base';
 import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING, CURSOR_DIGITIZE_RECT, CURSOR_DIGITIZE_POLYGON, CURSOR_DIGITIZE_CIRCLE, CURSOR_GRABBING, CURSOR_GRAB, CURSOR_ZOOM_IN } from '../constants/assets';
 import { MapLoadIndicator } from '../components/map-load-indicator';
-import { ActiveMapTool, MapLoadIndicatorPositioning, GenericEvent, ReduxDispatch, ClientKind } from '../api/common';
+import { ActiveMapTool, GenericEvent, ClientKind } from '../api/common';
 import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
 import { Toaster, Position } from '@blueprintjs/core';
 import { isMapGuideProviderState } from '../components/map-providers/mapguide';
@@ -16,204 +15,9 @@ import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useCon
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
-
-
-interface ICoreMapViewerProps {
-    context: IMapProviderContext;
-    loadIndicatorPosition: MapLoadIndicatorPositioning;
-    loadIndicatorColor: string;
-    onContextMenu: (pos: [number, number]) => void;
-    onHideContextMenu: () => void;
-    onDispatch: ReduxDispatch;
-    disableCursors?: boolean;
-    backgroundColor?: string;
-    children?: React.ReactNode;
-    isContextMenuOpen: boolean;
-    selectCanDragPan: boolean;
-}
-
-interface ICoreMapViewerState {
-    shiftKey: boolean;
-    isMouseDown: boolean;
-    digitizingType: string | undefined;
-    loading: number;
-    loaded: number;
-    subscribers: ISubscriberProps[];
-}
-
-class CoreMapViewer extends React.Component<ICoreMapViewerProps, ICoreMapViewerState> implements IViewerComponent {
-    private mounted: boolean;
-    constructor(props: ICoreMapViewerProps) {
-        super(props);
-        this.mounted = false;
-        this.state = {
-            shiftKey: false,
-            isMouseDown: false,
-            digitizingType: undefined,
-            loaded: 0,
-            loading: 0,
-            subscribers: []
-        }
-    }
-    //#region IViewerComponent
-    isShiftKeyDown = () => this.state.shiftKey;
-    selectCanDragPan = () => this.props.selectCanDragPan;
-    isContextMenuOpen = () => this.props.isContextMenuOpen;
-    setDigitizingType = (digitizingType: string | undefined) => this.setState({ digitizingType });
-    onBeginDigitization = (callback: (cancelled: boolean) => void) => { };
-    onHideContextMenu = () => this.props.onHideContextMenu?.();
-    onOpenTooltipLink = (url: string) => { };
-    onDispatch = (action: any) => this.props.onDispatch(action);
-    addImageLoading(): void {
-        const { loading } = this.state;
-        const newLoading = (loading || 0) + 1;
-        this.setState({ loading: newLoading });
-        this.props.context.incrementBusyWorker();
-    }
-    addSubscribers = (props: ISubscriberProps[]) => {
-        const subscribers = [...this.state.subscribers, ...props];
-        this.setState({ subscribers });
-        return props.map(p => p.name);
-    }
-    removeSubscribers = (names: string[]) => {
-        const { subscribers } = this.state;
-        const ol = subscribers.length;
-        const ns = subscribers.filter(s => names.indexOf(s.name) < 0);
-        this.setState({ subscribers });
-        return ns.length < ol;
-    }
-    getSubscribers(): string[] {
-        return this.state.subscribers.map(s => s.name);
-    }
-    addImageLoaded(): void {
-        const { loaded, loading } = this.state;
-        const newLoadedCount = (loaded || 0) + 1;
-        if (loading === newLoadedCount) {
-            this.setState({ loaded: 0, loading: 0 });
-        } else {
-            this.setState({ loaded: newLoadedCount });
-        }
-        this.props.context.decrementBusyWorker();
-    }
-    //#endregion
-    private onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!this.mounted)
-            return;
-        if (this.props.context.isMouseOverTooltip()) {
-            return;
-        }
-        e.preventDefault();
-        //console.log(`Open context menu at (${e.clientX}, ${e.clientY})`);
-        this.props.onContextMenu?.([e.clientX, e.clientY]);
-    }
-    private onKeyDown = (e: GenericEvent) => {
-        if (!this.mounted)
-            return;
-        this.props.context.onKeyDown(e);
-        this.setState({ shiftKey: e.shiftKey });
-    }
-    private onKeyUp = (e: GenericEvent) => {
-        if (!this.mounted)
-            return;
-        this.setState({ shiftKey: e.shiftKey });
-    }
-    private onMouseDown = (e: GenericEvent) => {
-        if (!this.mounted)
-            return;
-        if (!this.state.isMouseDown) {
-            this.setState({
-                isMouseDown: true
-            });
-        }
-    }
-    private onMouseUp = (e: GenericEvent) => {
-        if (!this.mounted)
-            return;
-        if (this.state.isMouseDown) {
-            this.setState({
-                isMouseDown: false
-            });
-        }
-    }
-    componentDidMount() {
-        document.addEventListener("keydown", this.onKeyDown);
-        document.addEventListener("keyup", this.onKeyUp);
-        const mapNode: any = ReactDOM.findDOMNode(this);
-        this.props.context.attachToComponent(mapNode, this);
-        this.mounted = true;
-    }
-    componentWillUnmount() {
-        this.props.context.detachFromComponent();
-        this.mounted = false;
-    }
-    render(): JSX.Element {
-        const { context, backgroundColor, disableCursors } = this.props;
-        const { isMouseDown } = this.state;
-        const tool = context.getActiveTool();
-        const style: React.CSSProperties = {
-            width: "100%",
-            height: "100%"
-        };
-        if (!disableCursors) {
-            if (context.isDigitizing()) {
-                const dtype = this.state.digitizingType;
-                switch (dtype) {
-                    case "Point":
-                        style.cursor = `url(${CURSOR_DIGITIZE_POINT}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                    case "Line":
-                        style.cursor = `url(${CURSOR_DIGITIZE_LINE}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                    case "LineString":
-                        style.cursor = `url(${CURSOR_DIGITIZE_LINESTRING}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                    case "Rectangle":
-                        style.cursor = `url(${CURSOR_DIGITIZE_RECT}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                    case "Polygon":
-                        style.cursor = `url(${CURSOR_DIGITIZE_POLYGON}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                    case "Circle":
-                        style.cursor = `url(${CURSOR_DIGITIZE_CIRCLE}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                }
-            } else {
-                switch (tool) {
-                    case ActiveMapTool.Pan:
-                        if (isMouseDown) {
-                            style.cursor = `url(${CURSOR_GRABBING}), auto`;
-                            //console.log(`cursor: ${style.cursor}`);
-                        } else {
-                            style.cursor = `url(${CURSOR_GRAB}), auto`;
-                            //console.log(`cursor: ${style.cursor}`);
-                        }
-                        break;
-                    case ActiveMapTool.Zoom:
-                        style.cursor = `url(${CURSOR_ZOOM_IN}), auto`;
-                        //console.log(`cursor: ${style.cursor}`);
-                        break;
-                }
-            }
-        }
-        if (backgroundColor) {
-            style.backgroundColor = backgroundColor;
-            //style.backgroundColor = `#${map.BackgroundColor.substring(2)}`;
-        }
-        const { loading, loaded, subscribers } = this.state;
-        return <div className="map-viewer-component" style={style} onContextMenu={this.onContextMenu} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
-            <MapLoadIndicator loaded={loaded || 0} loading={loading || 0} position={this.props.loadIndicatorPosition} color={this.props.loadIndicatorColor} />
-            {subscribers.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-            {this.props.children}
-        </div>;
-    }
-}
-
+/**
+ * @hidden
+ */
 export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const context = useMapProviderContext();
     const toasterRef = React.useRef<Toaster>(null);
@@ -232,17 +36,17 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         locale
     } = nextState;
     const flyouts = useViewerFlyouts();
-    React.useEffect(() => {
-        if (!clientSelection) {
-            context.getSelectedFeatures()?.clear();
-        }
-    }, [clientSelection]);
+    const [shiftKey, setShiftKey] = React.useState(false);
+    const [isMouseDown, setIsMouseDown] = React.useState(false);
+    const [digitizingType, setDigitizingType] = React.useState<string | undefined>(undefined);
+    const [loading, setLoading] = React.useState(0);
+    const [loaded, setLoaded] = React.useState(0);
+    const [subscribers, setSubscribers] = React.useState<ISubscriberProps[]>([]);
+    const mapViewerRef = React.useRef<HTMLDivElement>(null);
     const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
     const bSelectCanDragPan = useViewerSelectCanDragPan();
-    const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
-    const hideContextMenuAction = () => dispatch(closeContextMenu());
-    const onContextMenu = (pos: [number, number]) => showContextMenuAction?.(pos);
-    //HACK: Still have some MG-specific state we're needing to check for here. Minor abstraction leakage.
+
+    // HACK: Still have some MG-specific state we're needing to check for here. Minor abstraction leakage.
     let agentUri: string | undefined;
     let agentKind: ClientKind | undefined;
     let selection: QueryMapFeaturesResponse | null = null;
@@ -251,27 +55,187 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         agentKind = nextState.agentKind;
         selection = nextState.selection;
     }
+
+    // Lifecycle: componentDidMount/componentWillUnmount
+    React.useEffect(() => {
+        const onKeyDown = (e: GenericEvent) => {
+            context.onKeyDown(e);
+            setShiftKey(e.shiftKey);
+        };
+        const onKeyUp = (e: GenericEvent) => {
+            setShiftKey(e.shiftKey);
+        };
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keyup", onKeyUp);
+
+        // Attach/detach to context
+        const mapNode = mapViewerRef.current;
+        if (mapNode) {
+            context.attachToComponent(mapNode, viewerComponentApi);
+        }
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            document.removeEventListener("keyup", onKeyUp);
+            context.detachFromComponent();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Clear selection if clientSelection is falsy
+    React.useEffect(() => {
+        if (!clientSelection) {
+            context.getSelectedFeatures()?.clear();
+        }
+    }, [clientSelection, context]);
+
     context.setToasterRef(toasterRef);
     context.setProviderState(nextState);
-    useViewerSideEffects(context, appSettings ?? {}, nextState.isReady, mapName, layers, initialExternalLayers, agentUri, agentKind, selection);
+
+    useViewerSideEffects(
+        context,
+        appSettings ?? {},
+        nextState.isReady,
+        mapName,
+        layers,
+        initialExternalLayers,
+        agentUri,
+        agentKind,
+        selection
+    );
+
+    // IViewerComponent API for context.attachToComponent
+    const viewerComponentApi: IViewerComponent = React.useMemo(() => ({
+        isShiftKeyDown: () => shiftKey,
+        selectCanDragPan: () => bSelectCanDragPan,
+        isContextMenuOpen: () => bContextMenuOpen,
+        setDigitizingType,
+        onBeginDigitization: (_callback: (cancelled: boolean) => void) => { },
+        onHideContextMenu: () => hideContextMenuAction(),
+        onOpenTooltipLink: (_url: string) => { },
+        onDispatch: (action: any) => dispatch(action),
+        addImageLoading: () => {
+            setLoading(l => {
+                context.incrementBusyWorker();
+                return (l || 0) + 1;
+            });
+        },
+        addSubscribers: (props: ISubscriberProps[]) => {
+            setSubscribers(subs => [...subs, ...props]);
+            return props.map(p => p.name);
+        },
+        removeSubscribers: (names: string[]) => {
+            setSubscribers(subs => subs.filter(s => names.indexOf(s.name) < 0));
+            return subscribers.filter(s => names.indexOf(s.name) < 0).length < subscribers.length;
+        },
+        getSubscribers: () => subscribers.map(s => s.name),
+        addImageLoaded: () => {
+            setLoaded(l => {
+                setLoading(loadingVal => {
+                    const newLoadedCount = (l || 0) + 1;
+                    if (loadingVal === newLoadedCount) {
+                        setLoaded(0);
+                        setLoading(0);
+                    } else {
+                        setLoaded(newLoadedCount);
+                    }
+                    context.decrementBusyWorker();
+                    return loadingVal;
+                });
+                return l;
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }), [shiftKey, bSelectCanDragPan, bContextMenuOpen, dispatch, context, subscribers]);
+
+    const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));
+    const hideContextMenuAction = () => dispatch(closeContextMenu());
+    const onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (context.isMouseOverTooltip()) {
+            return;
+        }
+        e.preventDefault();
+        showContextMenuAction([e.clientX, e.clientY]);
+    };
+
+    // Mouse events
+    const onMouseDown = () => {
+        setIsMouseDown(true);
+    };
+    const onMouseUp = () => {
+        setIsMouseDown(false);
+    };
+
+    // Cursor logic
+    const tool = context.getActiveTool();
+    const style: React.CSSProperties = {
+        width: "100%",
+        height: "100%"
+    };
+    if (!(appSettings?.["DISABLE_CURSORS"] == "1")) {
+        if (context.isDigitizing()) {
+            switch (digitizingType) {
+                case "Point":
+                    style.cursor = `url(${CURSOR_DIGITIZE_POINT}), auto`;
+                    break;
+                case "Line":
+                    style.cursor = `url(${CURSOR_DIGITIZE_LINE}), auto`;
+                    break;
+                case "LineString":
+                    style.cursor = `url(${CURSOR_DIGITIZE_LINESTRING}), auto`;
+                    break;
+                case "Rectangle":
+                    style.cursor = `url(${CURSOR_DIGITIZE_RECT}), auto`;
+                    break;
+                case "Polygon":
+                    style.cursor = `url(${CURSOR_DIGITIZE_POLYGON}), auto`;
+                    break;
+                case "Circle":
+                    style.cursor = `url(${CURSOR_DIGITIZE_CIRCLE}), auto`;
+                    break;
+            }
+        } else {
+            switch (tool) {
+                case ActiveMapTool.Pan:
+                    style.cursor = isMouseDown
+                        ? `url(${CURSOR_GRABBING}), auto`
+                        : `url(${CURSOR_GRAB}), auto`;
+                    break;
+                case ActiveMapTool.Zoom:
+                    style.cursor = `url(${CURSOR_ZOOM_IN}), auto`;
+                    break;
+            }
+        }
+    }
+    if (bgColor) {
+        style.backgroundColor = bgColor;
+    }
 
     if (nextState.isReady) {
-        return <>
-            {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
-            <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
-            <CoreMapViewer context={context}
-                onDispatch={dispatch}
-                backgroundColor={bgColor}
-                onContextMenu={onContextMenu}
-                disableCursors={appSettings?.["DISABLE_CURSORS"] == "1"}
-                onHideContextMenu={hideContextMenuAction}
-                isContextMenuOpen={bContextMenuOpen}
-                selectCanDragPan={bSelectCanDragPan}
-                loadIndicatorPosition={loadIndicatorPositioning}
-                loadIndicatorColor={loadIndicatorColor}>
-                {children}
-            </CoreMapViewer>
-        </>;
+        return (
+            <>
+                {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
+                <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
+                <div
+                    className="map-viewer-component"
+                    ref={mapViewerRef}
+                    style={style}
+                    onContextMenu={onContextMenu}
+                    onMouseDown={onMouseDown}
+                    onMouseUp={onMouseUp}
+                >
+                    <MapLoadIndicator
+                        loaded={loaded || 0}
+                        loading={loading || 0}
+                        position={loadIndicatorPositioning}
+                        color={loadIndicatorColor}
+                    />
+                    {subscribers.map((s, i) => (
+                        <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />
+                    ))}
+                    {children}
+                </div>
+            </>
+        );
     } else {
         return <div>{tr("LOADING_MSG", locale)}</div>;
     }

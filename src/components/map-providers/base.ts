@@ -1397,9 +1397,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     public getPointSelectionBox(point: Coordinate2D, ptBuffer: number): Bounds {
         assertIsDefined(this._map);
-        const ll = this._map.getCoordinateFromPixel([point[0] - ptBuffer, point[1] - ptBuffer]);
-        const ur = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
-        return [ll[0], ll[1], ur[0], ur[1]];
+        const pt1 = this._map.getCoordinateFromPixel([point[0] - ptBuffer, point[1] - ptBuffer]);
+        const pt2 = this._map.getCoordinateFromPixel([point[0] + ptBuffer, point[1] + ptBuffer]);
+        const minX = Math.min(pt1[0], pt2[0]);
+        const minY = Math.min(pt1[1], pt2[1]);
+        const maxX = Math.max(pt1[0], pt2[0]);
+        const maxY = Math.min(pt1[1], pt2[1]);
+        return [minX, minY, maxX, maxY];
     }
     public getResolution(): number | undefined {
         assertIsDefined(this._map)

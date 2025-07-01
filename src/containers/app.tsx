@@ -228,25 +228,35 @@ const AppInitError: React.FC<React.PropsWithChildren<{ locale: string }>> = (pro
     </Callout>;
 }
 
-class AppInner extends React.Component<AppInnerProps, any> {
-    constructor(props: AppInnerProps) {
-        super(props);
-        this.state = {
-            isLoading: true
-        };
-    }
-    componentDidMount() {
+export const App = (props: IAppProps) => {
+    const error = useInitError();
+    const includeStack = useInitErrorStack();
+    const initOptions = useInitErrorOptions();
+    const configuredLocale = useViewerLocale();
+    const map = useActiveMapBranch();
+    const activeMapName = useActiveMapName();
+    const ftEnabled = useViewerFeatureTooltipsEnabled();
+
+    const dispatch = useReduxDispatch();
+    const viewer = useMapProviderContext();
+    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, viewer, args));
+    const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
+
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    // --- Begin logic from AppInner ---
+    React.useEffect(() => {
         const {
             onInit,
-            setElementVisibility,
             mapguide,
-            initLayout,
             locale,
             resourceId,
             externalBaseLayers,
             initCommand,
-            appSettings
-        } = this.props;
+            appSettings,
+            layout: layoutProp,
+            urlPropsIgnore
+        } = props;
         const {
             locale: urlLocale,
             resource: urlResource,
@@ -260,7 +270,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
             hl: urlHideLayers,
             sg: urlShowGroups,
             hg: urlHideGroups
-        } = getStateFromUrl(this.props.urlPropsIgnore);
+        } = getStateFromUrl(urlPropsIgnore);
         if (setElementVisibility && mapguide?.initialElementVisibility) {
             const { taskpane, legend, selection } = mapguide.initialElementVisibility;
             const states: IElementState = {
@@ -274,7 +284,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
         if (mapguide?.fusionRoot) {
             setFusionRoot(mapguide.fusionRoot);
         }
-        if (initLayout) {
+        if (initLayoutAction) {
             let ftArgs: Partial<IInitAppLayout> | undefined;
             if (typeof (urlFeatureTooltip) != 'undefined') {
                 ftArgs = {
@@ -328,7 +338,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     externalBaseLayers: externalBaseLayers,
                     session: urlSession ?? mapguide?.session,
                     onInit: onInit,
-                    layout: typeof (this.props.layout) == 'string' ? this.props.layout : undefined,
+                    layout: typeof (layoutProp) == 'string' ? layoutProp : undefined,
                     appSettings: appSettings
                 },
                 ...(ftArgs ?? {}),
@@ -339,38 +349,38 @@ class AppInner extends React.Component<AppInnerProps, any> {
                 ...(sgArgs ?? {}),
                 ...(hgArgs ?? {})
             };
-            initLayout(initCommand, args);
+            initLayoutAction(initCommand, args);
         }
-    }
-    componentDidUpdate(prevProps: AppInnerProps) {
-        const nextProps = this.props;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    React.useEffect(() => {
+        // URL state update logic from componentDidUpdate
         const curUrlState = getStateFromUrl();
-        //Preserve locale/resources/session if already present in url
         const nextUrlState: IAppUrlState = {
-            locale: curUrlState.locale ?? this.props.locale,
-            session: curUrlState.session ?? this.props.mapguide?.session
+            locale: curUrlState.locale ?? props.locale,
+            session: curUrlState.session ?? props.mapguide?.session
         };
-        if (typeof (this.props.resourceId) == 'string') {
-            nextUrlState.resource = curUrlState.resource ?? this.props.resourceId
+        if (typeof (props.resourceId) == 'string') {
+            nextUrlState.resource = curUrlState.resource ?? props.resourceId
         }
-        if (nextProps.featureTooltipsEnabled != prevProps.featureTooltipsEnabled) {
-            nextUrlState.ft = nextProps.featureTooltipsEnabled;
+        if (ftEnabled !== undefined) {
+            nextUrlState.ft = ftEnabled;
         }
-        if (nextProps.map != null && prevProps.map != nextProps.map) {
-            this.setState({ isLoading: false });
+        if (map != null) {
+            setIsLoading(false);
         }
-        if (nextProps.activeMapName) {
-            const am = nextProps.activeMapName;
-            nextUrlState.map = am;
+        if (activeMapName) {
+            nextUrlState.map = activeMapName;
         }
-        if (nextProps.map) {
-            if (nextProps.map.currentView) {
-                const { x, y, scale } = nextProps.map.currentView;
+        if (map) {
+            if (map.currentView) {
+                const { x, y, scale } = map.currentView;
                 nextUrlState.x = x;
                 nextUrlState.y = y;
                 nextUrlState.scale = scale;
             }
-            const mgs = nextProps.map.mapguide;
+            const mgs = map.mapguide;
             if (mgs) {
                 const rtm = mgs.runtimeMap;
                 const { showGroups, showLayers, hideGroups, hideLayers } = mgs;
@@ -411,11 +421,10 @@ class AppInner extends React.Component<AppInnerProps, any> {
             }
         }
         if (!areStatesEqual(curUrlState, nextUrlState))
-            updateUrl(nextUrlState, undefined, nextProps.urlPropsIgnore);
-        //else
-        //    console.log("Skip pointless url state update");
-    }
-    private renderErrorMessage(err: Error | InitError, locale: string, args: any): JSX.Element {
+            updateUrl(nextUrlState, undefined, props.urlPropsIgnore);
+    }, [map, activeMapName, ftEnabled, props]);
+
+    const renderErrorMessage = React.useCallback((err: Error | InitError, locale: string, args: any): JSX.Element => {
         const msg = err.message;
         switch (msg) {
             case "MgConnectionFailedException":
@@ -440,7 +449,7 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     return <div>
                         <div dangerouslySetInnerHTML={arg} />
                         {(() => {
-                            if (this.props.includeStack === true && stack.length > 0) {
+                            if (includeStack === true && stack.length > 0) {
                                 return <div>
                                     <p>Stack Trace</p>
                                     <ul>
@@ -452,66 +461,35 @@ class AppInner extends React.Component<AppInnerProps, any> {
                     </div>;
                 }
         }
-    }
-    private initErrorRenderer = (err: Error | InitError) => {
-        const { configuredLocale, initOptions } = this.props;
+    }, [includeStack]);
+
+    const initErrorRenderer = React.useCallback((err: Error | InitError) => {
         let locale = configuredLocale;
         if (initOptions && initOptions.locale) {
             locale = initOptions.locale;
         }
-        //Not showing stack as the error cases are well-defined here and we know where they
-        //originate from
         return <AppInitError locale={locale}>
-            {this.renderErrorMessage(err, locale, initOptions || {})}
+            {renderErrorMessage(err, locale, initOptions || {})}
         </AppInitError>;
-    }
-    render(): JSX.Element {
-        const { layout, configuredLocale, error } = this.props;
-        const { isLoading } = this.state;
-        this.props.mapguide
+    }, [configuredLocale, initOptions, renderErrorMessage]);
+    // --- End logic from AppInner ---
 
-        if (error) {
-            return <Error error={error} errorRenderer={this.initErrorRenderer} />
+    const { layout } = props;
+    if (error) {
+        return <Error error={error} errorRenderer={initErrorRenderer} />
+    } else {
+        const locale = configuredLocale;
+        if (isLoading) {
+            return <AppLoadingPlaceholder locale={locale} />;
         } else {
-            //NOTE: Locale may not have been set at this point, so use default
-            const locale = configuredLocale;
-            if (isLoading) {
-                return <AppLoadingPlaceholder locale={locale} />;
+            const layoutEl = typeof (layout) == 'string' ? getLayout(layout) : layout.factory;
+            if (layoutEl) {
+                return <AppContextProvider mapguide={props.mapguide}>
+                    {layoutEl()}
+                </AppContextProvider>
             } else {
-                const layoutEl = typeof (layout) == 'string' ? getLayout(layout) : layout.factory;
-                if (layoutEl) {
-                    return <AppContextProvider mapguide={this.props.mapguide}>
-                        {layoutEl()}
-                    </AppContextProvider>
-                } else {
-                    return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
-                }
+                return <Error error={tr("ERR_UNREGISTERED_LAYOUT", locale, { layout: layout })} />;
             }
         }
     }
-}
-
-export const App = (props: IAppProps) => {
-    const error = useInitError();
-    const includeStack = useInitErrorStack();
-    const initOptions = useInitErrorOptions();
-    const configuredLocale = useViewerLocale();
-    const map = useActiveMapBranch();
-    const activeMapName = useActiveMapName();
-    const ftEnabled = useViewerFeatureTooltipsEnabled();
-
-    const dispatch = useReduxDispatch();
-    const viewer = useMapProviderContext();
-    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, viewer, args));
-    const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
-    return <AppInner error={error}
-        includeStack={includeStack}
-        initOptions={initOptions}
-        featureTooltipsEnabled={ftEnabled}
-        configuredLocale={configuredLocale}
-        map={map}
-        activeMapName={activeMapName}
-        initLayout={initLayoutAction}
-        setElementVisibility={setElementVisibility}
-        {...props} />;
-}
+};

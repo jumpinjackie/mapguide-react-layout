@@ -85,24 +85,22 @@ export const DrawInteraction: React.FC<DrawInteractionProps> = ({
         addInteractionBefore(i, c, messages, [Snap]);
     });
 
-    function handleKeyDown(event: KeyboardEvent) {
+    const handleKeyDown = React.useCallback((event: KeyboardEvent) => {
         if (draw.current) {
             if (cancelKey && cancelKey.includes(event.key)) {
                 draw.current.abortDrawing();
-                //console.log("Drawing cancelled");
             } else if (undoLastPointKey && undoLastPointKey.includes(event.key)) {
                 draw.current.removeLastPoint();
-                //console.log("Last point removed");
             }
         }
-    }
+    }, [cancelKey, undoLastPointKey, draw.current]);
 
     React.useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [handleKeyDown]);
 
     // DOM breadcrumb so you know this component was indeed mounted
     return <Breadcrumb component="DrawInteraction" />;

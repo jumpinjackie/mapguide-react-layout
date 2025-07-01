@@ -35,7 +35,7 @@ type PaneProps = {
     percentage?: boolean;
 };
 
-const Pane: React.FC<PaneProps> = (props) => {
+const Pane: React.FC<React.PropsWithChildren<PaneProps>> = (props) => {
     const size = props.size || 0;
     const unit = props.percentage ? '%' : 'px';
     let classes = 'layout-pane';

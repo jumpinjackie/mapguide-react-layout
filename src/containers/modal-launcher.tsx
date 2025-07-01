@@ -31,7 +31,7 @@ function getComponentId(diag: IModalComponentDisplayOptions | IModalDisplayOptio
     }
 }
 
-export const ModalLauncher = (props: { children?: React.ReactNode }) => {
+export const ModalLauncher: React.FC<React.PropsWithChildren<{}>> = (props) => {
     const dispatch = useReduxDispatch();
     const hideModalAction = (name: string) => dispatch(hideModal(name));
     const onCloseModal = (name: string) => hideModalAction(name);

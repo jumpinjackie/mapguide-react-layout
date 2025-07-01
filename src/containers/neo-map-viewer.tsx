@@ -15,6 +15,25 @@ import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useCon
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
 
+function useLoadingCounters() {
+    const [loading, setLoading] = React.useState(0);
+    const [loaded, setLoaded] = React.useState(0);
+    React.useEffect(() => {
+        if (loaded > 0 && loading === loaded) {
+            setTimeout(() => {
+                setLoading(0);
+                setLoaded(0);
+            }, 100);
+        }
+    }, [loaded, loaded]);
+    return {
+        loading,
+        loaded,
+        incrementLoading: () => setLoading(l => l + 1),
+        incrementLoaded: () => setLoaded(l => l + 1)
+    }
+}
+
 /**
  * @hidden
  */
@@ -39,8 +58,12 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const [shiftKey, setShiftKey] = React.useState(false);
     const [isMouseDown, setIsMouseDown] = React.useState(false);
     const [digitizingType, setDigitizingType] = React.useState<string | undefined>(undefined);
-    const [loading, setLoading] = React.useState(0);
-    const [loaded, setLoaded] = React.useState(0);
+    const {
+        loaded,
+        loading,
+        incrementLoaded,
+        incrementLoading
+    } = useLoadingCounters();
     const [subscribers, setSubscribers] = React.useState<ISubscriberProps[]>([]);
     const mapViewerRef = React.useRef<HTMLDivElement>(null);
     const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
@@ -114,10 +137,8 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         onOpenTooltipLink: (_url: string) => { },
         onDispatch: (action: any) => dispatch(action),
         addImageLoading: () => {
-            setLoading(l => {
-                context.incrementBusyWorker();
-                return (l || 0) + 1;
-            });
+            context.incrementBusyWorker();
+            incrementLoading();
         },
         addSubscribers: (props: ISubscriberProps[]) => {
             setSubscribers(subs => [...subs, ...props]);
@@ -129,22 +150,9 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         },
         getSubscribers: () => subscribers.map(s => s.name),
         addImageLoaded: () => {
-            setLoaded(l => {
-                setLoading(loadingVal => {
-                    const newLoadedCount = (l || 0) + 1;
-                    if (loadingVal === newLoadedCount) {
-                        setLoaded(0);
-                        setLoading(0);
-                    } else {
-                        setLoaded(newLoadedCount);
-                    }
-                    context.decrementBusyWorker();
-                    return loadingVal;
-                });
-                return l;
-            });
+            incrementLoaded();
+            context.decrementBusyWorker();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }), [shiftKey, bSelectCanDragPan, bContextMenuOpen, dispatch, context, subscribers]);
 
     const showContextMenuAction = (pos: [number, number]) => dispatch(openContextMenu({ x: pos[0], y: pos[1] }));

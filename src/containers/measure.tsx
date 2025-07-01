@@ -15,32 +15,10 @@ import { useActiveMapIsArbitraryCoordSys, useActiveMapProjectionUnits } from "./
 import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
-import { IMapProviderContext } from "../components/map-providers/base";
-import { useDebugDeps } from "../components/debug-hooks";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
 }
-
-interface IMeasureContainerReducerState {
-    mapNames: string[] | undefined;
-    activeMapName: string | undefined;
-    locale: string;
-}
-
-interface IMeasureContainerDispatch {
-    setActiveTool: (tool: ActiveMapTool) => void;
-}
-
-interface IMeasureContainerState {
-    measuring: boolean;
-    drawType: OLGeometryType;
-    activeType: "LineString" | "Area";
-    segmentTotal: number;
-    segments: MeasureSegment[];
-}
-
-type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMeasureContainerDispatch & { viewer: IMapProviderContext };
 
 const MeasuringMessage: React.FC<{ locale: string }> = ({ locale }) => {
     const { Callout } = useElementContext();
@@ -64,8 +42,17 @@ const MeasureControls: React.FC<{
     </ElementGroup>;
 }
 
-const MeasureContainerInner: React.FC<MeasureProps> = (props) => {
-    const { activeMapName, locale, mapNames, viewer, setActiveTool, measureUnits } = props;
+export const MeasureContainer = (props: IMeasureContainerProps) => {
+    const activeMapName = useActiveMapName();
+    const locale = useViewerLocale();
+    const mapNames = useAvailableMaps()?.map(m => m.value);
+    const dispatch = useReduxDispatch();
+    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool));
+    const isArbitrary = useActiveMapIsArbitraryCoordSys();
+    const projUnits = useActiveMapProjectionUnits();
+    const viewer = useMapProviderContext();
+    const measureUnits = isArbitrary ? projUnits : undefined;
+
     const [measuring, setMeasuring] = React.useState(false);
     const [drawType, setDrawType] = React.useState<OLGeometryType>("LineString");
     const [activeType, setActiveType] = React.useState<"LineString" | "Area">();
@@ -100,14 +87,14 @@ const MeasureContainerInner: React.FC<MeasureProps> = (props) => {
 
     const startMeasure = React.useCallback(() => {
         if (activeMapName && drawType && !measuring) {
-            setActiveTool?.(ActiveMapTool.None);
+            setActiveToolAction?.(ActiveMapTool.None);
             const activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.startMeasure(drawType);
                 setMeasuring(true);
             }
         }
-    }, [activeMapName, drawType, measuring, setActiveTool]);
+    }, [activeMapName, drawType, measuring, setActiveToolAction]);
 
     const endMeasure = React.useCallback(() => {
         if (activeMapName && measuring) {
@@ -181,6 +168,11 @@ const MeasureContainerInner: React.FC<MeasureProps> = (props) => {
         };
     }, []);
 
+    // Stop measuring when active map changes
+    React.useEffect(() => {
+        setMeasuring(false);
+    }, [activeMapName]);
+
     const measurementTypes = [
         { value: "LineString" as OLGeometryType, label: tr("MEASUREMENT_TYPE_LENGTH", locale) },
         { value: "Polygon" as OLGeometryType, label: tr("MEASUREMENT_TYPE_AREA", locale) }
@@ -246,23 +238,4 @@ const MeasureContainerInner: React.FC<MeasureProps> = (props) => {
             )}
         </form>
     </div>;
-};
-
-export const MeasureContainer = (props: IMeasureContainerProps) => {
-    const activeMapName = useActiveMapName();
-    const locale = useViewerLocale();
-    const mapNames = useAvailableMaps()?.map(m => m.value);
-    const dispatch = useReduxDispatch();
-    const setActiveToolAction = (tool: ActiveMapTool) => dispatch(setActiveTool(tool));
-    const isArbitrary = useActiveMapIsArbitraryCoordSys();
-    const projUnits = useActiveMapProjectionUnits();
-    const viewer = useMapProviderContext();
-    return <MeasureContainerInner
-        activeMapName={activeMapName}
-        locale={locale}
-        mapNames={mapNames}
-        viewer={viewer}
-        setActiveTool={setActiveToolAction}
-        measureUnits={isArbitrary ? projUnits : undefined}
-        {...props} />;
 };

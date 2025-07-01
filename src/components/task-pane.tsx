@@ -2,17 +2,17 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
     Toolbar,
-    IItem,
-    IFlyoutMenu,
+    type IItem,
+    type IFlyoutMenu,
     DEFAULT_TOOLBAR_SIZE,
     TOOLBAR_BACKGROUND_COLOR
 } from "./toolbar";
 import { PlaceholderComponent } from "../api/registry/component";
 import { tr } from "../api/i18n";
 import {
-    GenericEvent,
-    IDOMElementMetrics,
-    FlyoutVisibilitySet
+    type GenericEvent,
+    type IDOMElementMetrics,
+    type FlyoutVisibilitySet
 } from "../api/common";
 import { parseComponentUri } from "../utils/url";
 import { FUSION_TASKPANE_NAME, WEBLAYOUT_TASKMENU } from '../constants';
@@ -62,169 +62,181 @@ export interface ITaskPaneProps {
     onCloseFlyout: (id: string) => void;
 }
 
-// HACK:
-//
-// Having the lastUrlPushed props sounds extremely hacky, but we need a way to signal that
-// the url its about to receive was pushed and should not be reloaded into the internal iframe
-//
-// This is because we want internal url transitions (eg. Clicking a link, submitting a form) to
-// be recorded in the navigation stack so we can properly go back/forward just like a web browser.
-// But we don't want these recorded URLs to accidentally trigger a re-load of the same url.
-
 /**
  * A component that serves as a generic container for content or User Interface for custom functionality
  *
- * @class TaskPane
- * @extends {React.Component<ITaskPaneProps, any>}
+ * @hidden
+ * @param props
  */
-export class TaskPane extends React.Component<ITaskPaneProps, any> {
-    private _iframe: HTMLIFrameElement;
-    private taskButtons: IItem[];
-    constructor(props: ITaskPaneProps) {
-        super(props);
-        this.taskButtons = [
-            props.homeAction,
-            { isSeparator: true },
-            props.backAction,
-            props.forwardAction
-        ];
-        this.state = {
-            activeComponent: null,
-            invalidated: false,
-            frameContentLoaded: false
-        };
-    }
-    private onCloseFlyout = (id: string) => this.props.onCloseFlyout?.(id);
-    private onOpenFlyout = (id: string, metrics: IDOMElementMetrics) => this.props.onOpenFlyout?.(id, metrics);
-    private onFrameMounted = (iframe: HTMLIFrameElement) => {
-        this._iframe = iframe;
-        if (this._iframe) {
-            const el = ReactDOM.findDOMNode(this._iframe);
-            //This is needed for backcompat with certain fusion widgets
-            (el as any).taskPaneId = FUSION_TASKPANE_NAME;
+export const TaskPane: React.FC<ITaskPaneProps> = (props) => {
+    const {
+        currentUrl,
+        mapName,
+        locale,
+        homeAction,
+        backAction,
+        forwardAction,
+        onUrlLoaded,
+        lastUrlPushed,
+        showTaskBar,
+        maxHeight,
+        flyoutStates,
+        onOpenFlyout,
+        onCloseFlyout
+    } = props;
+
+    const [activeComponent, setActiveComponent] = React.useState<string | null>(null);
+    const [activeComponentProps, setActiveComponentProps] = React.useState<any>(null);
+    const [invalidated, setInvalidated] = React.useState(false);
+    const [frameContentLoaded, setFrameContentLoaded] = React.useState(false);
+    const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
+
+    const taskButtons: IItem[] = React.useMemo(() => [
+        homeAction,
+        { isSeparator: true },
+        backAction,
+        forwardAction
+    ], [homeAction, backAction, forwardAction]);
+
+    const handleCloseFlyout = React.useCallback((id: string) => {
+        onCloseFlyout?.(id);
+    }, [onCloseFlyout]);
+
+    const handleOpenFlyout = React.useCallback((id: string, metrics: IDOMElementMetrics) => {
+        onOpenFlyout?.(id, metrics);
+    }, [onOpenFlyout]);
+
+    const handleFrameMounted = React.useCallback((iframe: HTMLIFrameElement | null) => {
+        iframeRef.current = iframe;
+        if (iframe) {
+            // This is needed for backcompat with certain fusion widgets
+            (iframe as any).taskPaneId = FUSION_TASKPANE_NAME;
         }
-    }
-    private onFrameLoaded = (e: GenericEvent) => {
-        const frame = e.currentTarget;
+    }, []);
+
+    const handleFrameLoaded = React.useCallback((e: GenericEvent) => {
+        const frame = e.currentTarget as HTMLIFrameElement;
         if (frame.contentWindow) {
-            this.setState({ frameContentLoaded: true });
-            this.props.onUrlLoaded(frame.contentWindow.location.href);
+            setFrameContentLoaded(true);
+            onUrlLoaded(frame.contentWindow.location.href);
         }
-    }
-    componentDidUpdate(prevProps: ITaskPaneProps) {
-        const nextProps = this.props;
-        if (prevProps.currentUrl != nextProps.currentUrl) {
-            if (nextProps.currentUrl && nextProps.lastUrlPushed === false) {
-                this.loadUrl(nextProps.currentUrl);
-            }
+    }, [onUrlLoaded]);
+
+    // Effect for loading URL on mount and when currentUrl changes
+    React.useEffect(() => {
+        if (currentUrl && lastUrlPushed === false) {
+            loadUrl(currentUrl);
         }
-        if (!this.state.invalidated && nextProps.currentUrl && nextProps.currentUrl.indexOf("component://") != 0 && currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName)) {
-            //TODO: If we want to be smart, we could have the TaskPane amend the currentUrl with the new map name
-            this.setState({ invalidated: true });
-        } else if (this.state.invalidated && nextProps.currentUrl && (nextProps.currentUrl.indexOf("component://") == 0 || !currentUrlDoesNotMatchMapName(nextProps.currentUrl, nextProps.mapName))) {
-            this.setState({ invalidated: false });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentUrl, lastUrlPushed]);
+
+    // Effect for invalidation logic
+    React.useEffect(() => {
+        if (!invalidated && currentUrl && currentUrl.indexOf("component://") !== 0 && currentUrlDoesNotMatchMapName(currentUrl, mapName)) {
+            setInvalidated(true);
+        } else if (invalidated && currentUrl && (currentUrl.indexOf("component://") === 0 || !currentUrlDoesNotMatchMapName(currentUrl, mapName))) {
+            setInvalidated(false);
         }
-    }
-    componentDidMount() {
-        if (this.props.currentUrl) {
-            this.loadUrl(this.props.currentUrl);
+    }, [currentUrl, mapName, invalidated]);
+
+    // Effect for initial load
+    React.useEffect(() => {
+        if (currentUrl && activeComponent === null) {
+            loadUrl(currentUrl);
         }
-    }
-    loadUrl(url: string) {
-        //TODO: Can't convert this to functional component with hooks, until this type
-        //of pattern is possible
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const loadUrl = React.useCallback((url: string) => {
         const compUri = parseComponentUri(url);
         if (compUri) {
-            this.setState({ activeComponent: compUri.name, activeComponentProps: compUri.props });
+            setActiveComponent(compUri.name);
+            setActiveComponentProps(compUri.props);
         } else {
-            this.setState({ activeComponent: null, frameContentLoaded: false }, () => {
-                if (this._iframe) {
-                    this._iframe.contentWindow?.location.replace(url);
+            setActiveComponent(null);
+            setFrameContentLoaded(false);
+            setActiveComponentProps(null);
+            setTimeout(() => {
+                if (iframeRef.current) {
+                    iframeRef.current.contentWindow?.location.replace(url);
                 }
-            });
+            }, 0);
         }
+    }, []);
+
+    const taskMenu: IFlyoutMenu = React.useMemo(() => ({
+        label: tr("MENU_TASKS", locale),
+        flyoutAlign: "bottom left",
+        flyoutId: WEBLAYOUT_TASKMENU
+    }), [locale]);
+
+    const rootStyle: React.CSSProperties = {};
+    const taskBarStyle: React.CSSProperties = {
+        height: DEFAULT_TOOLBAR_SIZE,
+        backgroundColor: TOOLBAR_BACKGROUND_COLOR
+    };
+    const taskBodyStyle: React.CSSProperties = {};
+    const taskFrameStyle: React.CSSProperties = {
+        border: "none"
+    };
+    const taskComponentContainerStyle: React.CSSProperties = {
+        border: "none"
+    };
+    if (!maxHeight) {
+        rootStyle.width = "100%";
+        rootStyle.height = "100%";
+
+        taskBarStyle.position = "absolute";
+        taskBarStyle.top = 0;
+        taskBarStyle.left = 0;
+        taskBarStyle.right = 0;
+
+        taskBodyStyle.position = "absolute";
+        taskBodyStyle.top = (showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0);
+        taskBodyStyle.left = 0;
+        taskBodyStyle.right = 0;
+        taskBodyStyle.bottom = 0;
+        taskBodyStyle.overflow = "hidden";
+
+        taskFrameStyle.width = "100%";
+        taskFrameStyle.height = "100%";
+
+        taskComponentContainerStyle.width = "100%";
+        taskComponentContainerStyle.height = "100%";
+    } else {
+        taskFrameStyle.width = "100%";
+        taskFrameStyle.height = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
+
+        taskComponentContainerStyle.width = "100%";
+        taskComponentContainerStyle.maxHeight = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
+        taskComponentContainerStyle.overflowY = "auto";
     }
-    render(): JSX.Element {
-        const { invalidated, activeComponent } = this.state;
-        const { locale, maxHeight, showTaskBar } = this.props;
-        const taskMenu: IFlyoutMenu = {
-            label: tr("MENU_TASKS", locale),
-            flyoutAlign: "bottom left",
-            flyoutId: WEBLAYOUT_TASKMENU
-        };
-        const rootStyle: React.CSSProperties = {};
-        const taskBarStyle: React.CSSProperties = {
-            height: DEFAULT_TOOLBAR_SIZE,
-            backgroundColor: TOOLBAR_BACKGROUND_COLOR
-        };
-        const taskBodyStyle: React.CSSProperties = {};
-        const taskFrameStyle: React.CSSProperties = {
-            border: "none"
-        };
-        const taskComponentContainerStyle: React.CSSProperties = {
-            border: "none"
-        };
-        if (!maxHeight) {
-            rootStyle.width = "100%";
-            rootStyle.height = "100%";
 
-            taskBarStyle.position = "absolute";
-            taskBarStyle.top = 0;
-            taskBarStyle.left = 0;
-            taskBarStyle.right = 0;
-
-            taskBodyStyle.position = "absolute";
-            taskBodyStyle.top = (showTaskBar === true ? DEFAULT_TOOLBAR_SIZE : 0);
-            taskBodyStyle.left = 0;
-            taskBodyStyle.right = 0;
-            taskBodyStyle.bottom = 0;
-            taskBodyStyle.overflow = "hidden";
-
-            taskFrameStyle.width = "100%";
-            taskFrameStyle.height = "100%";
-
-            taskComponentContainerStyle.width = "100%";
-            taskComponentContainerStyle.height = "100%";
-        } else {
-            taskFrameStyle.width = "100%";
-            taskFrameStyle.height = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
-
-            taskComponentContainerStyle.width = "100%";
-            taskComponentContainerStyle.maxHeight = (showTaskBar === true ? (maxHeight - DEFAULT_TOOLBAR_SIZE) : maxHeight);
-            taskComponentContainerStyle.overflowY = "auto";
-        }
-        return <div style={rootStyle}>
-            {(() => {
-                if (showTaskBar === true) {
-                    return <div style={taskBarStyle}>
-                        <Toolbar childItems={this.taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.onCloseFlyout} onOpenFlyout={this.onOpenFlyout} flyoutStates={this.props.flyoutStates} />
-                        <Toolbar childItems={[taskMenu]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={this.onCloseFlyout} onOpenFlyout={this.onOpenFlyout} flyoutStates={this.props.flyoutStates} />
-                        <div style={{ clear: "both" }} />
-                    </div>;
-                }
-            })()}
-            <div style={taskBodyStyle}>
-                {(() => {
-                    if (activeComponent != null) {
-                        const cpp = this.state.activeComponentProps;
-                        taskComponentContainerStyle.overflowY = "auto";
-                        return <div style={taskComponentContainerStyle}>
-                            <PlaceholderComponent id={activeComponent} componentProps={cpp} locale={this.props.locale} />
-                        </div>
-                    } else {
-                        const { frameContentLoaded } = this.state;
-                        const components = [
-                            <iframe key="taskPaneFrame" name="taskPaneFrame" ref={this.onFrameMounted} onLoad={this.onFrameLoaded} style={taskFrameStyle}>
-                            </iframe>
-                        ];
-                        if (frameContentLoaded == false) {
-                            components.push(<TaskFrameLoadingOverlay key="loading-overlay" locale={locale} />);
-                        }
-                        return components;
-                    }
-                })()}
-                <iframe name="scriptFrame" style={{ width: 0, height: 0, visibility: "hidden" }}></iframe>
+    return <div style={rootStyle}>
+        {showTaskBar === true && (
+            <div style={taskBarStyle}>
+                <Toolbar childItems={taskButtons} containerStyle={{ float: "left", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={handleCloseFlyout} onOpenFlyout={handleOpenFlyout} flyoutStates={flyoutStates} />
+                <Toolbar childItems={[taskMenu]} containerStyle={{ float: "right", height: DEFAULT_TOOLBAR_SIZE }} onCloseFlyout={handleCloseFlyout} onOpenFlyout={handleOpenFlyout} flyoutStates={flyoutStates} />
+                <div style={{ clear: "both" }} />
             </div>
-        </div>;
-    }
-}
+        )}
+        <div style={taskBodyStyle}>
+            {activeComponent != null ? (
+                <div style={{ ...taskComponentContainerStyle, overflowY: "auto" }}>
+                    <PlaceholderComponent id={activeComponent} componentProps={activeComponentProps} locale={locale} />
+                </div>
+            ) : (
+                (() => {
+                    const components = [
+                        <iframe key="taskPaneFrame" name="taskPaneFrame" ref={handleFrameMounted} onLoad={handleFrameLoaded} style={taskFrameStyle} />
+                    ];
+                    if (frameContentLoaded === false) {
+                        components.push(<TaskFrameLoadingOverlay key="loading-overlay" locale={locale} />);
+                    }
+                    return components;
+                })()
+            )}
+            <iframe name="scriptFrame" style={{ width: 0, height: 0, visibility: "hidden" }}></iframe>
+        </div>
+    </div>;
+};

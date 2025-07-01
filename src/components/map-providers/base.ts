@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
-import OverviewMap from 'ol/control/OverviewMap';
+import OverviewMap, { type Options as OverviewMapOptions } from 'ol/control/OverviewMap';
 import DragBox from 'ol/interaction/DragBox';
 import Select from 'ol/interaction/Select';
 import Draw, { GeometryFunction } from 'ol/interaction/Draw';
@@ -189,7 +189,7 @@ export interface IMapProviderState {
     externalBaseLayers: IExternalBaseLayer[] | undefined;
     cancelDigitizationKey: number;
     undoLastPointKey: number;
-    overviewMapElementSelector?: () => Element | null;
+    overviewMapElementSelector?: () => HTMLElement | null;
     initialExternalLayers: IInitialExternalLayer[];
 }
 
@@ -978,10 +978,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected abstract initLayerSet(nextState: TState): TLayerSetGroup;
     public abstract getProviderName(): string;
 
-    protected initContext(layerSet: TLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (Element | null)) {
+    protected initContext(layerSet: TLayerSetGroup, locale?: string, overviewMapElementSelector?: () => (HTMLElement | null)) {
         if (this._map) {
-            // HACK: className property not documented. This needs to be fixed in OL api doc.
-            const overviewMapOpts: any = {
+            const overviewMapOpts: OverviewMapOptions = {
                 className: 'ol-overviewmap ol-custom-overviewmap',
                 layers: layerSet.getLayersForOverviewMap(),
                 view: new View({
@@ -995,7 +994,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (overviewMapElementSelector) {
                 const el = overviewMapElementSelector();
                 if (el) {
-                    overviewMapOpts.target = ReactDOM.findDOMNode(el);
+                    overviewMapOpts.target = el;
                     overviewMapOpts.collapsed = false;
                     overviewMapOpts.collapsible = false;
                 }
@@ -1409,13 +1408,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         assertIsDefined(this._map)
         return this._map.getView().getResolution();
     }
-    public updateOverviewMapElement(overviewMapElementSelector: () => (Element | null)) {
+    public updateOverviewMapElement(overviewMapElementSelector: () => (HTMLElement | null)) {
         if (this._ovMap) {
             const el = overviewMapElementSelector();
             if (el) {
                 this._ovMap.setCollapsed(false);
                 this._ovMap.setCollapsible(false);
-                this._ovMap.setTarget(ReactDOM.findDOMNode(el) as any);
+                this._ovMap.setTarget(el);
             } else {
                 this._ovMap.setCollapsed(true);
                 this._ovMap.setCollapsible(true);

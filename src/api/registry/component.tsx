@@ -93,21 +93,15 @@ export interface IPlaceholderComponentProps {
 /**
  * A component placeholder
  *
- *
- * @class PlaceholderComponent
- * @extends {React.Component<IPlaceholderComponentProps, any>}
+ * @hidden
+ * @param props
  */
-export class PlaceholderComponent extends React.Component<IPlaceholderComponentProps, any> {
-    constructor(props: IPlaceholderComponentProps) {
-        super(props);
+export const PlaceholderComponent: React.FC<IPlaceholderComponentProps> = (props) => {
+    const { id, componentProps, locale } = props;
+    const factory = getComponentFactory(id);
+    if (factory) {
+        return factory(componentProps);
+    } else {
+        return <Error error={tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId: id })} />;
     }
-    render(): JSX.Element {
-        const { id, componentProps } = this.props;
-        const factory = getComponentFactory(id);
-        if (factory) {
-            return factory(componentProps);
-        } else {
-            return <Error error={tr("ERR_UNREGISTERED_COMPONENT", this.props.locale, { componentId: id })} />;
-        }
-    }
-}
+};

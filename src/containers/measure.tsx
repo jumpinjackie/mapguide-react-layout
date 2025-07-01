@@ -16,33 +16,8 @@ import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 
-export interface IMeasureContainerProps {
-    measureUnits?: UnitOfMeasure;
-}
-
-const MeasuringMessage: React.FC<{ locale: string }> = ({ locale }) => {
-    const { Callout } = useElementContext();
-    return <Callout variant="primary" title={tr("MEASURING", locale)}>
-        {tr("MEASURING_MESSAGE", locale)}
-    </Callout>;
-}
-
-const MeasureControls: React.FC<{
-    measuring?: boolean;
-    locale: string;
-    onStartMeasure: () => void;
-    onEndMeasure: () => void;
-    onClearMeasurements: (e: GenericEvent) => void;
-}> = ({ measuring, locale, onStartMeasure, onEndMeasure, onClearMeasurements }) => {
-    const { Button } = useElementContext();
-    return <ElementGroup>
-        <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
-        <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
-        <Button type="button" icon="cross" onClick={onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
-    </ElementGroup>;
-}
-
-export const MeasureContainer = (props: IMeasureContainerProps) => {
+export const MeasureContainer = () => {
+    const { Callout, Button } = useElementContext();
     const activeMapName = useActiveMapName();
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
@@ -187,10 +162,16 @@ export const MeasureContainer = (props: IMeasureContainerProps) => {
                     onChange={onTypeChanged}
                     items={measurementTypes} />
             </label>
-            <MeasureControls measuring={measuring} locale={locale} onStartMeasure={onStartMeasure} onEndMeasure={onEndMeasure} onClearMeasurements={onClearMeasurements} />
+            <ElementGroup>
+                <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
+                <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>
+                <Button type="button" icon="cross" onClick={onClearMeasurements}>{tr("MEASUREMENT_CLEAR", locale)}</Button>
+            </ElementGroup>
             {measuring === true && (
                 <div>
-                    <MeasuringMessage locale={locale} />
+                    <Callout variant="primary" title={tr("MEASURING", locale)}>
+                        {tr("MEASURING_MESSAGE", locale)}
+                    </Callout>
                     {segments && (
                         <table className="bp3-html-table bp3-html-table-condensed">
                             <thead>
@@ -208,7 +189,7 @@ export const MeasureContainer = (props: IMeasureContainerProps) => {
                                             : <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>}
                                     </tr>
                                 ))}
-                                {segmentTotal && activeType && (
+                                {segmentTotal !== undefined && activeType && (
                                     <tr>
                                         {activeType === "Area" ? (
                                             <>

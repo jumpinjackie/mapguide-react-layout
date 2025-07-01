@@ -391,15 +391,12 @@ export class MeasureContext {
             this.viewer.addInteraction(this.draw);
         }
     }
-    public startMeasure() {
-        if (this.parent) {
-            const type = this.parent.getCurrentDrawType();
-            if (type) {
-                this.createMeasureTooltip();
-                this.createHelpTooltip();
-                this.setActiveInteraction(type);
-                this.viewer.addHandler('pointermove', this.onMouseMove);
-            }
+    public startMeasure(type: OLGeometryType | undefined) {
+        if (type) {
+            this.createMeasureTooltip();
+            this.createHelpTooltip();
+            this.setActiveInteraction(type);
+            this.viewer.addHandler('pointermove', this.onMouseMove);
         }
     }
     public endMeasure() {
@@ -422,12 +419,9 @@ export class MeasureContext {
             this.callback.clearSegments();
         }
     }
-    public handleDrawTypeChange() {
-        if (this.parent) {
-            const type = this.parent.getCurrentDrawType();
-            if (type) {
-                this.setActiveInteraction(type);
-            }
+    public handleDrawTypeChange(type: OLGeometryType | undefined) {
+        if (type) {
+            this.setActiveInteraction(type);
         }
     }
     /**

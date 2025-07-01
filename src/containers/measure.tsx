@@ -16,6 +16,7 @@ import { toProjUnit } from "../api/layer-set";
 import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 import { IMapProviderContext } from "../components/map-providers/base";
+import { useDebugDeps } from "../components/debug-hooks";
 
 export interface IMeasureContainerProps {
     measureUnits?: UnitOfMeasure;
@@ -41,8 +42,6 @@ interface IMeasureContainerState {
 
 type MeasureProps = IMeasureContainerProps & IMeasureContainerReducerState & IMeasureContainerDispatch & { viewer: IMapProviderContext };
 
-const _measurements: MeasureContext[] = [];
-
 const MeasuringMessage: React.FC<{ locale: string }> = ({ locale }) => {
     const { Callout } = useElementContext();
     return <Callout variant="primary" title={tr("MEASURING", locale)}>
@@ -65,208 +64,189 @@ const MeasureControls: React.FC<{
     </ElementGroup>;
 }
 
-class MeasureContainerInner extends React.Component<MeasureProps, Partial<IMeasureContainerState>> implements IMeasureComponent, IMeasureCallback {
+const MeasureContainerInner: React.FC<MeasureProps> = (props) => {
+    const { activeMapName, locale, mapNames, viewer, setActiveTool, measureUnits } = props;
+    const [measuring, setMeasuring] = React.useState(false);
+    const [drawType, setDrawType] = React.useState<OLGeometryType>("LineString");
+    const [activeType, setActiveType] = React.useState<"LineString" | "Area">();
+    const [segmentTotal, setSegmentTotal] = React.useState<number>();
+    const [segments, setSegments] = React.useState<MeasureSegment[] | undefined>();
+    const measureContexts = React.useRef<MeasureContext[]>([]);
+    const getLocale = React.useCallback(() => locale || DEFAULT_LOCALE, [locale]);
 
-    constructor(props: MeasureProps) {
-        super(props);
-        this.state = {
-            measuring: false,
-            drawType: "LineString"
-        }
-    }
-    private onTypeChanged = (newType: OLGeometryType) => {
-        this.setState({ drawType: newType }, () => {
-            const { activeMapName } = this.props;
-            if (activeMapName && this.state.measuring === true) {
-                const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
-                if (activeMeasure) {
-                    activeMeasure.handleDrawTypeChange();
-                }
+    const onTypeChanged = (newType: OLGeometryType) => {
+        setDrawType(newType);
+    };
+
+    React.useEffect(() => {
+        if (activeMapName && measuring === true) {
+            const activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
+            if (activeMeasure) {
+                activeMeasure.handleDrawTypeChange(drawType);
             }
-        });
-    }
-    private onClearMeasurements = (e: GenericEvent) => {
+        }
+    }, [drawType]);
+
+    const onClearMeasurements = React.useCallback((e: GenericEvent) => {
         e.preventDefault();
-        const { activeMapName } = this.props;
         if (activeMapName) {
-            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
+            const activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.clearMeasurements();
             }
         }
         return false;
-    }
-    private onStartMeasure = () => {
-        this.startMeasure();
-    }
-    private onEndMeasure = () => {
-        this.endMeasure();
-    }
-    private startMeasure() {
-        const { activeMapName } = this.props;
-        const { drawType: type, measuring } = this.state;
-        if (activeMapName && type && !measuring) {
-            //Set to none to prevent select tool interference when measuring
-            this.props.setActiveTool?.(ActiveMapTool.None);
-            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
+    }, [activeMapName]);
+
+    const startMeasure = React.useCallback(() => {
+        if (activeMapName && drawType && !measuring) {
+            setActiveTool?.(ActiveMapTool.None);
+            const activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
-                activeMeasure.startMeasure();
-                this.setState({ measuring: true });
+                activeMeasure.startMeasure(drawType);
+                setMeasuring(true);
             }
         }
-    }
-    private endMeasure() {
-        const { activeMapName } = this.props;
-        const { measuring } = this.state;
+    }, [activeMapName, drawType, measuring, setActiveTool]);
+
+    const endMeasure = React.useCallback(() => {
         if (activeMapName && measuring) {
-            const activeMeasure = _measurements.filter(m => m.getMapName() === activeMapName)[0];
+            const activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
             if (activeMeasure) {
                 activeMeasure.endMeasure();
-                this.setState({ measuring: false });
+                setMeasuring(false);
             }
         }
-    }
-    updateSegments(kind: "LineString" | "Area", total: number, segments: MeasureSegment[] | undefined): void {
-        this.setState({ activeType: kind, segmentTotal: total, segments: segments });
-    }
-    clearSegments(): void {
-        this.setState({ segments: undefined });
-    }
-    getCurrentDrawType(): OLGeometryType | undefined { return this.state.drawType; }
-    getLocale(): string {
-        return this.props.locale || DEFAULT_LOCALE;
-    }
-    componentDidMount() {
+    }, [activeMapName, measuring]);
+
+    const onStartMeasure = React.useCallback(() => startMeasure(), [startMeasure]);
+    const onEndMeasure = React.useCallback(() => endMeasure(), [endMeasure]);
+
+    // IMeasureComponent/IMeasureCallback methods
+    const updateSegments = React.useCallback((kind: "LineString" | "Area", total: number, segs: MeasureSegment[] | undefined) => {
+        setActiveType(kind);
+        setSegmentTotal(total);
+        setSegments(segs);
+    }, []);
+    const clearSegments = React.useCallback(() => setSegments(undefined), []);
+    //const getCurrentDrawType = React.useCallback(() => drawType, [drawType]);
+
+    React.useEffect(() => {
         let activeMeasure: MeasureContext | undefined;
-        if (_measurements.length == 0) {
-            const { mapNames, activeMapName, viewer } = this.props;
+        if (measureContexts.current.length === 0) {
             if (viewer.isReady() && mapNames && mapNames.length) {
                 for (const mapName of mapNames) {
-                    const context = new MeasureContext(viewer, mapName, this);
-                    _measurements.push(context);
-                    if (activeMapName == mapName) {
+                    const context = new MeasureContext(viewer, mapName, {
+                        updateSegments,
+                        clearSegments,
+                        getCurrentDrawType: () => drawType,
+                        getLocale
+                    } as IMeasureComponent);
+                    measureContexts.current.push(context);
+                    if (activeMapName === mapName) {
                         activeMeasure = context;
                     }
                 }
             }
         } else {
-            for (const measure of _measurements) {
-                measure.setParent(this);
+            for (const measure of measureContexts.current) {
+                measure.setParent({
+                    updateSegments,
+                    clearSegments,
+                    getCurrentDrawType: () => drawType,
+                    getLocale
+                } as IMeasureComponent);
             }
+            activeMeasure = measureContexts.current.filter(m => m.getMapName() === activeMapName)[0];
+        }
+        if (activeMeasure && activeMapName) {
+            activeMeasure.activate(activeMapName, {
+                updateSegments,
+                clearSegments,
+                getCurrentDrawType: () => drawType,
+                getLocale
+            } as IMeasureCallback);
+        }
+        // Only run cleanup on unmount
+        return () => {
+            setMeasuring(false);
+            for (const measure of measureContexts.current) {
+                measure.detachParent();
+            }
+            if (activeMapName) {
+                for (const measure of measureContexts.current) {
+                    measure.deactivate(activeMapName);
+                }
+            }
+        };
+    }, []);
 
-            activeMeasure = _measurements.filter(m => m.getMapName() === this.props.activeMapName)[0];
-        }
+    const measurementTypes = [
+        { value: "LineString" as OLGeometryType, label: tr("MEASUREMENT_TYPE_LENGTH", locale) },
+        { value: "Polygon" as OLGeometryType, label: tr("MEASUREMENT_TYPE_AREA", locale) }
+    ];
 
-        if (activeMeasure && this.props.activeMapName) {
-            activeMeasure.activate(this.props.activeMapName, this);
-        }
-    }
-    componentWillUnmount() {
-        const { activeMapName } = this.props;
-        this.setState({ measuring: false });
-        for (const measure of _measurements) {
-            measure.detachParent();
-        }
-        if (activeMapName) {
-            for (const measure of _measurements) {
-                measure.deactivate(activeMapName);
-            }
-        }
-    }
-    componentDidUpdate(prevProps: MeasureProps) {
-        const nextProps = this.props;
-        //Active map changed
-        if (prevProps.activeMapName != nextProps.activeMapName) {
-            const oldMeasure = _measurements.filter(m => m.getMapName() === prevProps.activeMapName)[0];
-            const newMeasure = _measurements.filter(m => m.getMapName() === nextProps.activeMapName)[0];
-            if (oldMeasure) {
-                oldMeasure.deactivate(prevProps.activeMapName!);
-            }
-            if (newMeasure) {
-                newMeasure.activate(nextProps.activeMapName!, this);
-            }
-            //Reset
-            this.setState({ measuring: false });
-        }
-    }
-    render(): JSX.Element {
-        const { measuring, drawType: type } = this.state;
-        const { measureUnits } = this.props;
-        const locale = this.getLocale();
-        const measurementTypes = [
-            { value: "LineString" as OLGeometryType, label: tr("MEASUREMENT_TYPE_LENGTH", locale) },
-            { value: "Polygon" as OLGeometryType, label: tr("MEASUREMENT_TYPE_AREA", locale) }
-        ]
-        return <div className="component-measure">
-            <form className="form-inline">
-                <label className="bp3-label">
-                    {tr("MEASUREMENT_TYPE", locale)}
-                    <TypedSelect<OLGeometryType, false> 
-                        value={type}
-                        onChange={this.onTypeChanged}
-                        items={measurementTypes} />
-                </label>
-                <MeasureControls measuring={measuring} locale={locale} onStartMeasure={this.onStartMeasure} onEndMeasure={this.onEndMeasure} onClearMeasurements={this.onClearMeasurements} />
-                {(() => {
-                    if (this.state.measuring === true) {
-                        return <div>
-                            <MeasuringMessage locale={locale} />
-                            {(() => {
-                                if (this.state.segments) {
-                                    return <table className="bp3-html-table bp3-html-table-condensed">
-                                        <thead>
-                                            <tr>
-                                                <th>{tr("MEASURE_SEGMENT", locale)}</th>
-                                                <th>{tr("MEASURE_LENGTH", locale)}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {this.state.segments.map(s => {
-                                                return <tr key={`segment-${s.segment}`}>
-                                                    <td>{tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment })}</td>
+    return <div className="component-measure">
+        <form className="form-inline">
+            <label className="bp3-label">
+                {tr("MEASUREMENT_TYPE", locale)}
+                <TypedSelect<OLGeometryType, false>
+                    value={drawType}
+                    onChange={onTypeChanged}
+                    items={measurementTypes} />
+            </label>
+            <MeasureControls measuring={measuring} locale={locale} onStartMeasure={onStartMeasure} onEndMeasure={onEndMeasure} onClearMeasurements={onClearMeasurements} />
+            {measuring === true && (
+                <div>
+                    <MeasuringMessage locale={locale} />
+                    {segments && (
+                        <table className="bp3-html-table bp3-html-table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>{tr("MEASURE_SEGMENT", locale)}</th>
+                                    <th>{tr("MEASURE_LENGTH", locale)}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {segments.map(s => (
+                                    <tr key={`segment-${s.segment}`}>
+                                        <td>{tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment })}</td>
+                                        {measureUnits
+                                            ? <td>{`${roundTo(s.length, 2)} ${toProjUnit(measureUnits)}`}</td>
+                                            : <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>}
+                                    </tr>
+                                ))}
+                                {segmentTotal && activeType && (
+                                    <tr>
+                                        {activeType === "Area" ? (
+                                            <>
+                                                <td><strong>{tr("MEASURE_TOTAL_AREA", locale)}</strong></td>
+                                                <td>
                                                     {measureUnits
-                                                        ? <td>{`${roundTo(s.length, 2)} ${toProjUnit(measureUnits)}`}</td>
-                                                        : <td>{tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) })}</td>}
-                                                </tr>
-                                            })}
-                                            {(() => {
-                                                if (this.state.segmentTotal && this.state.activeType) {
-                                                    return <tr>
-                                                        {(() => {
-                                                            if (this.state.activeType == "Area") {
-                                                                return <>
-                                                                    <td><strong>{tr("MEASURE_TOTAL_AREA", locale)}</strong></td>
-                                                                    <td>
-                                                                        {measureUnits
-                                                                            ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` }} />
-                                                                            : <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("UNIT_FMT_SQM", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` })) }} />}
-                                                                    </td>
-                                                                </>
-                                                            } else {
-                                                                return <>
-                                                                    <td><strong>{tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
-                                                                    <td>
-                                                                        {measureUnits
-                                                                            ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(this.state.segmentTotal, 4)} ${toProjUnit(measureUnits)}` }} />
-                                                                            : <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("UNIT_FMT_M", locale, { value: `${roundTo(this.state.segmentTotal, 4)}` })) }} />}
-                                                                    </td>
-                                                                </>
-                                                            }
-                                                        })()}
-                                                    </tr>;
-                                                }
-                                            })()}
-                                        </tbody>
-                                    </table>;
-                                }
-                            })()}
-                        </div>;
-                    }
-                })()}
-            </form>
-        </div>;
-    }
-}
+                                                        ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` }} />
+                                                        : <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("UNIT_FMT_SQM", locale, { value: `${roundTo(segmentTotal, 4)}` })) }} />}
+                                                </td>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <td><strong>{tr("MEASURE_TOTAL_LENGTH", locale)}</strong></td>
+                                                <td>
+                                                    {measureUnits
+                                                        ? <div dangerouslySetInnerHTML={{ __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)}` }} />
+                                                        : <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tr("UNIT_FMT_M", locale, { value: `${roundTo(segmentTotal, 4)}` })) }} />}
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
+        </form>
+    </div>;
+};
 
 export const MeasureContainer = (props: IMeasureContainerProps) => {
     const activeMapName = useActiveMapName();

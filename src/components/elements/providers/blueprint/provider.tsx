@@ -22,7 +22,7 @@ import { BpTabSet } from "./tab-set";
 import { BpPopover } from "./popover";
 import { BpDrawer } from "./drawer";
 import { BpHeading } from "./heading";
-import { BpText } from "../text";
+import { BpText } from "./text";
 
 import "./bp-override.css";
 

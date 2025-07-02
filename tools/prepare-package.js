@@ -47,4 +47,11 @@ copyfiles([
     "package"
 ], { }, function() {
     console.log("Files copied");
+
+    copyfiles([
+        "src/**/*.css",
+        "package/lib"
+    ], { up: 1 }, function() {
+        console.log("Support files copied");
+    });
 });

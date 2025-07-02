@@ -1,5 +1,5 @@
 import React from "react"
-import { TextProps } from "../element-context"
+import { TextProps } from "../../element-context"
 
 export const BpText: React.FC<TextProps> = ({ component, className, style, children }) => {
     const cmp = component || "span";

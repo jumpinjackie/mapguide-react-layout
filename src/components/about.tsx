@@ -1,12 +1,14 @@
 import * as React from "react";
+import { useElementContext } from "./elements/element-context";
 
 /**
  * The About component displays information about this viewer
  * @param props
  */
 export const About: React.FC = () => {
+    const { Heading } = useElementContext();
     return <div className="component-about-dialog-content">
-        <h4>mapguide-react-layout</h4>
+        <Heading level={4}>mapguide-react-layout</Heading>
         <hr />
         <p>Hash: {__COMMITHASH__}</p>
         <hr />

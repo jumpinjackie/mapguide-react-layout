@@ -18,13 +18,17 @@ import { BpFileInput } from "./file-input";
 import { BpFormGroup } from "./form-group";
 import { BpEditableText } from "./editable-text";
 import { BpMenuComponent } from "./menu";
-
-import "@blueprintjs/core/lib/css/blueprint.css";
 import { BpTabSet } from "./tab-set";
 import { BpPopover } from "./popover";
 import { BpDrawer } from "./drawer";
+import { BpHeading } from "./heading";
+import { BpText } from "../text";
+
+import "./bp-override.css";
 
 const provider: IElementContext = {
+    Text: BpText,
+    Heading: BpHeading,
     Button: BpButton,
     Radio: BpRadio,
     Slider: BpSlider,

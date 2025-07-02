@@ -34,24 +34,24 @@ export interface IWmsCapabilitiesPanelProps {
 }
 
 export const WmsCapabilitiesPanel = (props: IWmsCapabilitiesPanelProps) => {
-    const { Card, Button, Icon } = useElementContext();
+    const { Card, Button, Icon, Heading } = useElementContext();
     const { locale, onAddLayer } = props;
     const { capabilities: caps } = props;
     const layers = extractWmsLayers(caps);
     return <>
         <Card>
-            <h5 className="bp3-heading"><a href="#">{tr("WMS_SERVICE_INFO", locale)}</a></h5>
+            <Heading level={5}><a href="#">{tr("WMS_SERVICE_INFO", locale)}</a></Heading>
             <p>{tr("WMS_VERSION", locale, { version: caps.version })}</p>
             <p>{tr("OWS_SERVICE_NAME", locale, { name: caps.Service.Name })}</p>
             <p>{tr("OWS_SERVICE_TITLE", locale, { title: caps.Service.Title })}</p>
             <p>{tr("OWS_SERVICE_ABSTRACT", locale, { abstract: caps.Service.Abstract })}</p>
         </Card>
         <Card style={{ marginBottom: 10 }}>
-            <h5 className="bp3-heading"><a href="#">{tr("WMS_AVAILABLE_LAYERS", locale)}</a></h5>
+            <Heading level={5}><a href="#">{tr("WMS_AVAILABLE_LAYERS", locale)}</a></Heading>
             {layers.map(([layer, styles]) => {
                 const otherActions = <></>;
                 return <Card key={layer.Name} style={{ padding: 15, paddingTop: 5 }}>
-                    <h4><Icon icon="layer" /> {layer.Name}</h4>
+                    <Heading level={4}><Icon icon="layer" /> {layer.Name}</Heading>
                     <p>{tr("OWS_LAYER_TITLE", locale, { title: layer.Title })}</p>
                     {/*<p>{tr("OWS_LAYER_ABSTRACT", locale, { abstract: layer.Abstract })}</p>*/}
                     {(() => {

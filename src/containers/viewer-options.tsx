@@ -18,7 +18,7 @@ export interface IViewerOptionsProps {
 }
 
 export const ViewerOptions = () => {
-    const { Slider, Select } = useElementContext();
+    const { Slider, Select, Heading } = useElementContext();
     const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
@@ -91,7 +91,7 @@ export const ViewerOptions = () => {
         hasMgBaseLayers = (map.FiniteDisplayScale?.length ?? 0) > 0;
     }
     return <div className="component-viewer-options">
-        <h5>{tr("VIEWER_OPTIONS", locale)}</h5>
+        <Heading level={5}>{tr("VIEWER_OPTIONS", locale)}</Heading>
         <hr />
         {!isStateless && <label className="bp3-control bp3-switch">
             <input type="checkbox" checked={featureTooltipsEnabled} onChange={onFeatureTooltipsChanged} />

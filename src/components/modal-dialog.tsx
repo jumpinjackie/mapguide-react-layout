@@ -33,7 +33,7 @@ export interface IRndModalDialogProps {
 const DIAG_HEADER_HEIGHT = 40;
 
 export const RndModalDialog = (props: IRndModalDialogProps) => {
-    const { Icon, Button, NonIdealState } = useElementContext();
+    const { Icon, Button, NonIdealState, Heading } = useElementContext();
     if (props.isOpen === false)
         return <div />;
     const modalBodyStyle: React.CSSProperties = {
@@ -110,13 +110,13 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
             //console.log("Modal Change", args);
             props.onChange?.(args);
         }}
-        dragHandleClassName="bp3-heading"
+        dragHandleClassName="mrl-modal-diag-drag-handle"
         default={{ x: props.x, y: props.y, width: props.width, height: props.height }}>
         <div className="bp3-dialog-container">
             <div className="bp3-dialog" style={modalStyle}>
                 <div className="bp3-dialog-header noselect">
                     {props.icon && <Icon icon={props.icon} />}
-                    <h4 className="bp3-heading">{props.title}</h4>
+                    <Heading level={4} className="mrl-modal-diag-drag-handle">{props.title}</Heading>
                     <Button onClick={props.onClose} aria-label="Close" className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
                 </div>
                 <div className="bp3-dialog-body" style={modalBodyStyle}>

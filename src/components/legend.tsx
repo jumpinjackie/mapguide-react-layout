@@ -546,7 +546,7 @@ const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 
  * @param props 
  */
 export const Legend = /*React.memo(*/(props: ILegendProps) => {
-    const { Button, Card, InputGroup } = useElementContext();
+    const { Button, Card, InputGroup, Heading } = useElementContext();
     const {
         showGroups,
         hideGroups,
@@ -679,7 +679,7 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
                     externalBaseLayers.length > 0 &&
                     props.inlineBaseLayerSwitcher) {
                     return <Card style={{ marginBottom: 10 }}>
-                        <h5 className="bp3-heading"><a href="#">{tr("EXTERNAL_BASE_LAYERS", props.locale)}</a></h5>
+                        <Heading level={5}><a href="#">{tr("EXTERNAL_BASE_LAYERS", props.locale)}</a></Heading>
                         <BaseLayerSwitcher locale={props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </Card>;
                 }

@@ -77,18 +77,18 @@ export interface IWfsCapabilitiesPanelProps {
  * @hidden
  */
 export const WfsCapabilitiesPanel = (props: IWfsCapabilitiesPanelProps) => {
-    const { Card, Icon, Button } = useElementContext();
+    const { Card, Icon, Button, Heading } = useElementContext();
     const { locale, capabilities, onAddLayer } = props;
     const { layers, info } = capabilities;
     return <>
         <Card>
-            <h5 className="bp3-heading"><a href="#">{tr("WFS_SERVICE_INFO", locale)}</a></h5>
+            <Heading level={5}><a href="#">{tr("WFS_SERVICE_INFO", locale)}</a></Heading>
             <p>{tr("WFS_VERSION", locale, { version: info.version })}</p>
             <p>{tr("OWS_SERVICE_TITLE", locale, { title: info.title })}</p>
             <p>{tr("OWS_SERVICE_ABSTRACT", locale, { abstract: info.abstract })}</p>
         </Card>
         <Card style={{ marginBottom: 10 }}>
-            <h5 className="bp3-heading"><a href="#">{tr("WFS_AVAILABLE_LAYERS", locale)}</a></h5>
+            <Heading level={5}><a href="#">{tr("WFS_AVAILABLE_LAYERS", locale)}</a></Heading>
             {layers.map(layer => {
                 const geoJsonFmt = getGeoJsonFormat(info, layer);
                 const [epsgCode, origCrs] = getLayerCrs(layer);
@@ -96,7 +96,7 @@ export const WfsCapabilitiesPanel = (props: IWfsCapabilitiesPanelProps) => {
                 if (epsgCode && geoJsonFmt) {
                     const otherActions = <></>;
                     return <Card key={layer.name} style={{ padding: 15, paddingTop: 5 }}>
-                        <h4><Icon icon="layer" /> {layer.name}</h4>
+                        <Heading level={4}><Icon icon="layer" /> {layer.name}</Heading>
                         <p>{tr("OWS_LAYER_TITLE", locale, { title: layer.title })}</p>
                         <p>{tr("OWS_LAYER_CRS", locale, { crs: `EPSG:${epsgCode}` })}</p>
                         {/*<p>{tr("OWS_LAYER_ABSTRACT", locale, { abstract: layer.abstract })}</p>*/}

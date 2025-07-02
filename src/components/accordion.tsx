@@ -85,12 +85,12 @@ export const Accordion = React.memo((props: IAccordionProps) => {
     }
     return <div ref={target} style={style} className="component-accordion">
         {panels.map(p => {
-            const isOpen = (p.id == openPanel);
-            return <div key={p.id} className="component-accordion-panel">
+            const isPanelOpen = (p.id == openPanel);
+            return <div key={p.id} className={`component-accordion-panel`}>
                 <div className="component-accordion-panel-header" style={{ height: PANEL_HEADER_HEIGHT }} data-accordion-panel-id={p.id} onClick={onTogglePanel}>
-                    <BpIcon icon={isOpen ? "chevron-up" : "chevron-down"} /> {p.title}
+                    <BpIcon icon={isPanelOpen ? "chevron-up" : "chevron-down"} /> {p.title}
                 </div>
-                <Collapsible isOpen={isOpen}>
+                <Collapsible isOpen={isPanelOpen}>
                     {p.contentRenderer({ width: dim.width, height: (dim.height - (panels.length * PANEL_HEADER_HEIGHT)) }, isResizing)}
                 </Collapsible>
             </div>;

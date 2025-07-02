@@ -127,7 +127,7 @@ function useExprEditor<T>(props: ExprEditorProps<T>) {
 }
 
 function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
-    const { Button, Collapsible, Card, Radio, InputGroup } = useElementContext();
+    const { Button, Collapsible, Card, Radio, InputGroup, Heading } = useElementContext();
     const { renderValueEditor, locale, roStyle } = props;
     const {
         isEditValid,
@@ -152,7 +152,7 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
         <InputGroup style={roStyle} readOnly value={stringifyExpr(props.value, locale)} rightElement={editButton} />
         <Collapsible isOpen={isEditing}>
             <Card>
-                <h5 className="bp3-heading">Edit Value</h5>
+                <Heading level={5}>Edit Value</Heading>
                 <Radio name="edit-mode" label="Value" value="edit-value" checked={editMode == "edit-value"} onChange={(e: any) => setEditMode(e.target.value)} />
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
                 <br />

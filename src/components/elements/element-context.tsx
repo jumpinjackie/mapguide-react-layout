@@ -1,6 +1,6 @@
 import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
-import { IItem } from '../toolbar';
+import type { IItem } from '../toolbar';
 
 /**
  * @since 0.15
@@ -247,6 +247,24 @@ export type PopoverProps = {
 }
 
 /**
+ * @since 0.15
+ */
+export type HeadingProps = {
+    level: 1 | 2 | 3 | 4 | 5 | 6;
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * @since 0.15
+ */
+export type TextProps = {
+    component?: "span" | "p" | "div";
+    style?: React.CSSProperties;
+    className?: string;
+}
+
+/**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
@@ -255,6 +273,8 @@ export type PopoverProps = {
  * @since 0.15
  */
 export interface IElementContext {
+    Text: React.ComponentType<React.PropsWithChildren<TextProps>>;
+    Heading: React.ComponentType<React.PropsWithChildren<HeadingProps>>;
     Button: React.ComponentType<React.PropsWithChildren<ButtonProps>>;
     Radio: React.ComponentType<RadioProps>;
     Slider: React.ComponentType<SliderProps>;

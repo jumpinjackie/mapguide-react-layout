@@ -1,10 +1,6 @@
 @charset "UTF-8";
 @import "../../stdassets/sprites/icons.css";
 @import "./splitter-layout.css";
-/*
-@import "~ol/ol.css";
-@import "~@blueprintjs/core/lib/css/blueprint.css";
-*/
 
 /* HACK: Clear out any trace of the font icon as HTMLSelect should be using the SVG counterpart */
 .bp3-select:after {
@@ -110,9 +106,17 @@
 }
 
 /* Accordion */
+.component-accordion-panel {
+    letter-spacing: normal;
+    text-transform: none;
+    box-sizing: border-box;
+}
 .component-accordion-panel-header {
     padding: 3px;
     cursor: pointer;
+    box-sizing: border-box;
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 /* Selection Panel */

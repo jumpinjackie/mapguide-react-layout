@@ -44,7 +44,7 @@ const HEATMAP_SLIDER_RAMP = [0, 10, 20, 30, 40, 50];
 const LAYER_SWITCH_STYLE: React.CSSProperties = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
 
 const ManageLayerItem = (props: IManageLayerItemProps) => {
-    const { Card, Button, Collapsible, Slider, Icon, Spinner, Switch, FormGroup } = useElementContext();
+    const { Card, Button, Collapsible, Slider, Icon, Spinner, Switch, FormGroup, Heading } = useElementContext();
     const {
         layer,
         locale,
@@ -151,7 +151,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         </ElementGroup>
         <Collapsible isOpen={openPanel == OpenPanel.MoreLayerOptions}>
             <Card>
-                <h5 className="bp3-heading"><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></h5>
+                <Heading level={5}><a href="#">{tr("MORE_LAYER_OPTIONS", locale)}</a></Heading>
                 <FormGroup label={tr("LAYER_OPACITY", locale)}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={layer.opacity} onChange={e => onSetOpacity(layer.name, e)} />
                 </FormGroup>
@@ -167,13 +167,13 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         </Collapsible>
         {isWms && <Collapsible isOpen={isWmsLegendOpen}>
             <Card>
-                <h5 className="bp3-heading"><a href="#">{tr("WMS_LEGEND", locale)}</a></h5>
+                <Heading level={5}><a href="#">{tr("WMS_LEGEND", locale)}</a></Heading>
                 <img src={wmsLegendUrl} />
             </Card>
         </Collapsible>}
         {theVectorStyle && <Collapsible isOpen={openPanel == OpenPanel.EditVectorStyle}>
             <div style={{ padding: 5 }}>
-                <h5 className="bp3-heading"><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></h5>
+                <Heading level={5}><a href="#">{tr("VECTOR_LAYER_STYLE", locale)}</a></Heading>
                 <VectorLayerStyleEditor onChange={st => onVectorStyleChanged(layer.name, st, which)}
                     locale={locale}
                     style={theVectorStyle}

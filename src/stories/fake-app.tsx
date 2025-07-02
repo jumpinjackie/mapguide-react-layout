@@ -16,6 +16,9 @@ import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { isRuntimeMap } from "../utils/type-guards";
+
+import "../styles/index.css";
+
 const testMapSheboygan = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
 const testMapRedding = deArrayify(require("./data/test-runtime-map-redding.json"));
 const testMapMelbourne = deArrayify(require("./data/test-runtime-map-melbourne.json"));

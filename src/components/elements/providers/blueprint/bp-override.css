@@ -383,13 +383,13 @@ a > .bp3-code {
 .bp3-dark {
   color: #f5f8fa;
 }
-
+/*
 :focus {
   outline: rgba(19, 124, 189, 0.6) auto 2px;
   outline-offset: 2px;
   -moz-outline-radius: 6px;
 }
-
+*/
 .bp3-focus-disabled :focus {
   outline: none !important;
 }

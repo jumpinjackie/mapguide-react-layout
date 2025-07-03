@@ -5,7 +5,8 @@ import { XYZLayer } from '../components/compact-map-viewer/layers/xyz';
 import { VectorLayer, VectorLayerProps } from '../components/compact-map-viewer/layers/vector';
 import { SelectInteraction } from '../components/compact-map-viewer/interactions/select';
 import Collection, { CollectionEvent } from 'ol/Collection';
-import Feature, { FeatureLike } from 'ol/Feature';
+import Feature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 import { action } from '@storybook/addon-actions';
 import { DrawInteraction } from '../components/compact-map-viewer/interactions/draw';
 import { MapMessages } from '../components/compact-map-viewer/messages';
@@ -21,9 +22,11 @@ import CircleStyle from 'ol/style/Circle';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import Text from 'ol/style/Text';
-import type Map from 'ol/Map';
 import { handleClusterZoomToClick } from '../components/compact-map-viewer/interactions/behaviors';
 import { computeClusterStyleValue } from '../components/compact-map-viewer/helpers';
+import { ContentOverlay } from '../components/compact-map-viewer/overlay';
+
+import './popup.css';
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
 const buildings = require('./data/gisborne-futures.json');
@@ -467,6 +470,57 @@ const OSM_URLS = ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'];
 const OSM_ATTRIBUTIONS = ['(c) OpenStreetMap contributors'];
 
 /**
+ * This example demonstrates the ContentOverlay component, which displays content at the coordinate you clicked or
+ * are hovering over based on the mouse tracking mode.
+ */
+export const _ContentOverlay = {
+    render: () => {
+        const active = boolean('Enable popup content', true);
+        const mode = select('Mouse tracking mode', ['click', 'hover'], 'click');
+        const [coord, setCoord] = React.useState<Coordinate | undefined>(undefined);
+        const popupActive = active && !!coord;
+        return (
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <ContentOverlay isActive={popupActive} onPositionChange={c => setCoord(c)} mouseTrackingMode={mode} className="ol-popup">
+                    <p>
+                        {mode === 'click' ? 'You clicked at' : 'You are hovering over'} ({coord?.[0]}, {coord?.[1]})
+                    </p>
+                </ContentOverlay>
+            </CompactViewer>
+        );
+    }
+};
+
+/**
+ * This example demonstrates the ContentOverlay component used as a prompt for drawing shapes
+ */
+export const _ContentOverlayAsDrawingPrompt = {
+    render: () => {
+        const drawActive = boolean('Enable drawing', true);
+        const type = select('Draw geometry type', ['Circle', 'Polygon'], 'Polygon');
+        const snap = boolean('Snap to layer objects', true);
+        return (
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <VectorLayer name="Shapes" />
+                {drawActive && <DrawInteraction type={type} target="Shapes" cancelKey={['Escape']} undoLastPointKey={['u']} />}
+                {snap && <SnapInteraction target="Shapes" />}
+                <ContentOverlay isActive={drawActive} mouseTrackingMode="hover" className="drawing-prompt">
+                    <p>
+                        {type === 'Circle'
+                            ? 'Click to set the center of the circle. Click again to finish drawing. Press U or ESC to cancel'
+                            : 'Click to start drawing. Click to add vertices. Double-click or click the start point to close the polygon to finish. Press U to undo the last vertex. Press ESC to cancel'}
+                    </p>
+                </ContentOverlay>
+            </CompactViewer>
+        );
+    }
+};
+
+/**
  * This example has a vector layer with an initial set of GeoJSON features
  */
 export const _VectorLayer = {
@@ -526,8 +580,6 @@ export const _VectorLayerThemed = {
     }
 };
 
-
-
 export const _VectorLayerWithClustering = {
     render: () => {
         const [features, isReady] = useResourceRefInit(
@@ -544,7 +596,7 @@ export const _VectorLayerWithClustering = {
 
                 // Add a concentrated cluster at a specific location
                 for (let i = 0; i < 20; i++) {
-                    const f =  new Feature(new Point([12894315.175483, -3755045.451538]));
+                    const f = new Feature(new Point([12894315.175483, -3755045.451538]));
                     f.setId(id++);
                     features.push(f);
                 }
@@ -558,10 +610,22 @@ export const _VectorLayerWithClustering = {
         const clusterMinDistance = number('Cluster minimum distance (in pixels)', 20, { range: true, min: 0, max: 200, step: 1 });
         const enabled = boolean('Enable clustering', true);
         const selFeatures = React.useRef(new Collection<Feature>());
+        // This is a react-observable "proxy" of the above collection. We need this as changes to the above collection will
+        // not trigger re-rendering. We will use collection events to keep this in sync. Even if this wasn't a clustered layer
+        // (which requires "unpacking" the cluster features), this "proxy" copy would still be necessary to trigger re-rendering
+        const [allSelFeatures, setAllSelFeatures] = React.useState<Feature[]>([]);
         const selectedFeature = action('Selected Feature');
         const unSelectedFeature = action('UnSelected Feature');
-        const onSelectedFeature = (e: CollectionEvent<Feature>) => selectedFeature(e);
-        const onUnSelectedFeature = (e: CollectionEvent<Feature>) => unSelectedFeature(e);
+        const onSelectedFeature = (e: CollectionEvent<Feature>) => {
+            selectedFeature(e);
+            const clusterFeatures = e.element.get('features') ?? [];
+            setAllSelFeatures(oldArray => [...oldArray, ...clusterFeatures]);
+        };
+        const onUnSelectedFeature = (e: CollectionEvent<Feature>) => {
+            unSelectedFeature(e);
+            const clusterFeatures = e.element.get('features') ?? [];
+            setAllSelFeatures(oldArray => oldArray.filter(f => !clusterFeatures.includes(f)));
+        };
         React.useEffect(() => {
             selFeatures.current.on('add', onSelectedFeature);
             selFeatures.current.on('remove', onUnSelectedFeature);
@@ -642,6 +706,8 @@ export const _VectorLayerWithClustering = {
         if (!isReady) {
             return null;
         }
+        const popupActive = allSelFeatures.length > 0;
+        //console.log('popupActive', popupActive, 'allSelFeatures', allSelFeatures.length);
         return (
             <>
                 <CompactViewer style={VIEWER_STYLE} maxZoom={20} projection="EPSG:3857">
@@ -656,11 +722,27 @@ export const _VectorLayerWithClustering = {
                         clusterSettings={settings}
                         initialFeatureProjection="EPSG:3857"
                     />
-                    <SelectInteraction mode='click' features={selFeatures.current} />
+                    <SelectInteraction mode="click" features={selFeatures.current} />
+                    <ContentOverlay isActive={popupActive} mouseTrackingMode="click" className="ol-popup">
+                        <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                            <h3>Selection: {allSelFeatures.length}</h3>
+                            <ul>
+                                {allSelFeatures.map(f => (
+                                    <li key={f.getId()}>ID: {f.getId()}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </ContentOverlay>
                 </CompactViewer>
-                <p>Clicking on a cluster of multiple points will automatically zoom into its bounding extent. Clicking on a single point cluster will select it. Clicking on a multi-point cluster at the lowest possible zoom will also select it</p>
+                <p>
+                    Clicking on a cluster of multiple points will automatically zoom into its bounding extent. Clicking on a single point cluster will
+                    select it. Clicking on a multi-point cluster at the lowest possible zoom will also select it
+                </p>
                 <p>The cluster in Perth, Australia will be selectable at the lowest possible zoom</p>
-                <p>The <code>maxZoom</code> for this map has been constrained to 20 (street level) which means any cluster clicks at this level will select instead of trying to zoom any further</p>
+                <p>
+                    The <code>maxZoom</code> for this map has been constrained to 20 (street level) which means any cluster clicks at this level will
+                    select instead of trying to zoom any further
+                </p>
             </>
         );
     }

@@ -15,7 +15,7 @@ import { extend, isEmpty, type Extent } from 'ol/extent';
  * 
  * @since 0.15
  */
-export function handleClusterZoomToClick(map: Map, fs: FeatureLike[]) {
+export function handleClusterZoomToClick(map: Map, fs: FeatureLike[], onBeforeZoom?: () => void): void {
     // Get clustered Coordinates
     const features = fs[0].get('features') as FeatureLike[] | undefined;
     if (features) {
@@ -32,6 +32,7 @@ export function handleClusterZoomToClick(map: Map, fs: FeatureLike[]) {
                 }
             }
             if (extent && !isEmpty(extent)) {
+                onBeforeZoom?.();
                 map.getView().fit(extent, { duration: 1000, padding: [50, 50, 50, 50] });
             }
         }

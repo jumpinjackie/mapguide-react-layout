@@ -5,6 +5,7 @@
 - Use `UPPER_SNAKE_CASE` for constants.
 - Use `kebab-case` for file names.
 - TypeScript interfaces should be prefixed with `I` (e.g., `IUser`).
+- React component prop interfaces should be suffixed with `Props` (e.g., `UserProps`).
 - Use `const` for constants and `let` for variables that may change.
 - Use `async/await` for asynchronous code.
 - Use TypeScript mapped and utility types where possible to avoid creating new types.
@@ -15,6 +16,13 @@
    - Avoid importing from relative directories (implying an index.ts or index.tsx barrel module is present there)
    - If an import can be made a type-only import, use `import type` syntax.
 - Do not use `import *` syntax for importing any of our modules.
+- Tag all generated code with a `@since` tag in the JSDoc comment to indicate the version of the library in which it was introduced.
+   - The value of this tag should be the current version of the library, e.g., `@since 0.15`. This version number can be found in the `version` property of the root `package.json` file.
+   - Only consider the major.version.minor parts of this `version` property, the minor part can be omitted if it is `0`.
+      - e.g., if the `version` property is `0.15.0`, the value of the `@since` tag should be `0.15`.
+      - e.g., if the `version` property is `0.15.3`, the value of the `@since` tag should be `0.15.3`.
+      - e.g., if the `version` property is `0.15.0-pre.1234`, the value of the `@since` tag should be `0.15`.
+      - e.g., if the `version` property is `0.15.4-pre.1234`, the value of the `@since` tag should be `0.15.4`.
 
 # Story generation for Storybook
 
@@ -57,3 +65,11 @@
    - If this means that a test file is empty, then it is acceptable to leave the test file empty.
 - Do not use `import *` syntax for importing any of our modules under test.
 - Do not generate tests for modules that only contains exported types, interfaces or constants.
+
+# Code generation guidelines around React components
+
+- Do not generate `useState` setters that call other `useState` setters in their update callback. This is illegal in React and will raise runtime errors about calling setState on render.
+
+# Review guidelines around React components
+
+- Do not blindly suggest that `useEffect` calls always require full dependency arrays. Many components in this library require code that runs on mount and on unmount and need an empty dependency array for that to happen.

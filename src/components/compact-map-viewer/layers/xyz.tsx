@@ -1,15 +1,15 @@
-import { useOLMap } from "../context";
+import { useOLMap } from '../context';
 import OLTileLayer from 'ol/layer/Tile';
 import OLXYZSource from 'ol/source/XYZ';
-import React from "react";
-import type { CommonLayerProps } from "./contracts";
-import { useMapMessage } from "../messages";
-import { useLayerState } from "./common";
-import { Breadcrumb } from "../breadcrumb";
+import React from 'react';
+import type { CommonLayerProps } from './contracts';
+import { useMapMessage } from '../messages';
+import { useLayerState } from './common';
+import { Breadcrumb } from '../breadcrumb';
 
 /**
  * XYZ layer component properties
- * 
+ *
  * @since 0.15
  */
 export type XYZLayerProps = CommonLayerProps & {
@@ -25,16 +25,16 @@ export type XYZLayerProps = CommonLayerProps & {
 
 /**
  * A layer component that display image tiles from a service with an XYZ tile access scheme
- * 
+ *
  * @since 0.15
  */
 export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls, attributions }) => {
-    const { map } = useOLMap();
+    const { map, renderDomBreadcrumbs } = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<OLTileLayer>(name, isHidden, extent);
     React.useEffect(() => {
         if (!layer.current) {
-            messages.addInfo("add xyz layer");
+            messages.addInfo('add xyz layer');
             const tileSource = new OLXYZSource({
                 urls: urls,
                 attributions: attributions
@@ -43,19 +43,23 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls
                 extent,
                 source: tileSource
             });
-            tileLayer.set("name", name);
+            tileLayer.set('name', name);
             layer.current = tileLayer;
             map.addLayer(tileLayer);
         }
         return () => {
             if (layer.current) {
                 map.removeLayer(layer.current);
-                messages.addInfo("removed xyz layer");
+                messages.addInfo('removed xyz layer');
                 layer.current.dispose();
                 layer.current = undefined;
             }
-        }
+        };
     }, []);
-    // DOM breadcrumb so you know this component was indeed mounted
-    return <Breadcrumb component="XYZLayer" />;
+
+    if (renderDomBreadcrumbs) {
+        // DOM breadcrumb so you know this component was indeed mounted
+        return <Breadcrumb component="XYZLayer" />;
+    }
+    return null;
 };

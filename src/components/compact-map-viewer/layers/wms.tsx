@@ -1,19 +1,19 @@
-import React from "react";
-import type { CommonLayerProps } from "./contracts";
-import { useOLMap } from "../context";
+import React from 'react';
+import type { CommonLayerProps } from './contracts';
+import { useOLMap } from '../context';
 import ImageWmsSource from 'ol/source/ImageWMS';
 import ImageLayer from 'ol/layer/Image';
 import TileWmsSource from 'ol/source/TileWMS';
 import TileLayer from 'ol/layer/Tile';
-import { useMapMessage } from "../messages";
-import { useLayerState } from "./common";
-import type BaseLayer from "ol/layer/Base";
-import type { MapBrowserEvent } from "ol";
-import { Breadcrumb } from "../breadcrumb";
+import { useMapMessage } from '../messages';
+import { useLayerState } from './common';
+import type BaseLayer from 'ol/layer/Base';
+import type { MapBrowserEvent } from 'ol';
+import { Breadcrumb } from '../breadcrumb';
 
 /**
  * WMS layer component properties
- * 
+ *
  * @since 0.15
  */
 export type WMSLayerProps = CommonLayerProps & {
@@ -47,11 +47,11 @@ export type WMSLayerProps = CommonLayerProps & {
 
 /**
  * A layer component that displays features from a WMS service
- * 
+ *
  * @since 0.15
  */
 export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url, layerName, customParams, tiled, infoFormat, onGetFeatureInfo }) => {
-    const { map } = useOLMap();
+    const { map, renderDomBreadcrumbs } = useOLMap();
     const messages = useMapMessage();
     const layer = useLayerState<BaseLayer>(name, isHidden, extent);
     const wmsSource = React.useRef<TileWmsSource | ImageWmsSource | undefined>(undefined);
@@ -59,7 +59,7 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
     function addTiled(wmsUrl: string, ln: string, cParms?: Record<string, string>, ext?: [number, number, number, number], insertAtIndex?: number) {
         const source = new TileWmsSource({
             url: wmsUrl,
-            params: { 'LAYERS': ln, 'TILED': true, ...cParms }
+            params: { LAYERS: ln, TILED: true, ...cParms }
         });
         const wmsLayer = new TileLayer({
             extent: ext,
@@ -68,19 +68,18 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
         layer.current = wmsLayer;
         wmsSource.current = source;
 
-        if (typeof (insertAtIndex) != 'undefined') {
+        if (typeof insertAtIndex != 'undefined') {
             messages.addInfo(`Inserting tiled wms layer at index: ${insertAtIndex}`);
             const layers = map.getLayerGroup().getLayers();
             layers.insertAt(insertAtIndex, layer.current);
         } else {
-            messages.addInfo("add tiled wms layer");
+            messages.addInfo('add tiled wms layer');
             map.addLayer(layer.current);
         }
     }
 
     function shallowCompare(obj1: any, obj2: any) {
-        return Object.keys(obj1).length === Object.keys(obj2).length &&
-            Object.keys(obj1).every(key => obj1[key] === obj2[key]);
+        return Object.keys(obj1).length === Object.keys(obj2).length && Object.keys(obj1).every(key => obj1[key] === obj2[key]);
     }
 
     function updateLayerProperties(wmsUrl: string, ln: string, cParms?: Record<string, string>) {
@@ -89,12 +88,12 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
             const newParms: Record<string, unknown> = {
                 ...cParms,
                 LAYERS: ln
-            }
+            };
             if (wmsSource.current instanceof TileWmsSource) {
                 newParms.TILED = true; // Source will have this value
             }
             if (!shallowCompare(parms, newParms)) {
-                messages.addInfo("Apply new WMS request params");
+                messages.addInfo('Apply new WMS request params');
                 wmsSource.current.setParams(newParms);
             }
 
@@ -102,25 +101,25 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
                 const oldUrls = wmsSource.current.getUrls() as string[];
                 const newUrls = [wmsUrl];
                 if (oldUrls.length !== newUrls.length || !oldUrls.every((url, index) => url === newUrls[index])) {
-                    messages.addInfo("Apply new WMS urls");
+                    messages.addInfo('Apply new WMS urls');
                     wmsSource.current.setUrls(newUrls);
                 }
             } else {
                 const oldUrl = wmsSource.current.getUrl();
                 if (oldUrl != wmsUrl) {
-                    messages.addInfo("Apply new WMS url");
+                    messages.addInfo('Apply new WMS url');
                     wmsSource.current.setUrl(wmsUrl);
                 }
             }
         } else {
-            messages.addWarning("No WMS source attached. Doing nothing");
+            messages.addWarning('No WMS source attached. Doing nothing');
         }
     }
 
     function addUntiled(wmsUrl: string, ln: string, cParms?: Record<string, string>, ext?: [number, number, number, number], insertAtIndex?: number) {
         const source = new ImageWmsSource({
             url: wmsUrl,
-            params: { 'LAYERS': ln, ...cParms }
+            params: { LAYERS: ln, ...cParms }
         });
         const wmsLayer = new ImageLayer({
             extent: ext,
@@ -129,18 +128,19 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
         layer.current = wmsLayer;
         wmsSource.current = source;
 
-        if (typeof (insertAtIndex) != 'undefined') {
+        if (typeof insertAtIndex != 'undefined') {
             messages.addInfo(`Inserting untiled wms layer at index: ${insertAtIndex}`);
             const layers = map.getLayerGroup().getLayers();
             layers.insertAt(insertAtIndex, layer.current);
         } else {
-            messages.addInfo("add untiled wms layer");
+            messages.addInfo('add untiled wms layer');
             map.addLayer(layer.current);
         }
     }
 
     function addOrUpdateLayer(wmsUrl: string, ln: string, cParms?: Record<string, string>, t?: boolean, ext?: [number, number, number, number]) {
-        if (t) { // Tiled
+        if (t) {
+            // Tiled
             if (layer.current) {
                 if (layer.current instanceof ImageLayer && wmsSource.current instanceof ImageWmsSource) {
                     removeLayer();
@@ -168,12 +168,12 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
     function removeLayer() {
         if (layer.current) {
             map.removeLayer(layer.current);
-            messages.addInfo("removed wms layer");
+            messages.addInfo('removed wms layer');
             layer.current = undefined;
         }
         if (wmsSource.current) {
             wmsSource.current.dispose();
-            messages.addInfo("disposed wms source");
+            messages.addInfo('disposed wms source');
             wmsSource.current = undefined;
         }
     }
@@ -185,33 +185,40 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
     React.useEffect(() => {
         return () => {
             removeLayer();
-        }
+        };
     }, []);
 
-    const memoizedMapClickHandler = React.useCallback((e: MapBrowserEvent) => {
-        if (wmsSource.current && onGetFeatureInfo) {
-            const viewResolution = map.getView().getResolution();
-            if (viewResolution) {
-                const url = wmsSource.current.getFeatureInfoUrl(e.coordinate, viewResolution, map.getView().getProjection(), {
-                    'INFO_FORMAT': infoFormat
-                });
-                if (url) {
-                    fetch(url)
-                        .then(r => r.text())
-                        .then(content => onGetFeatureInfo(content));
+    const memoizedMapClickHandler = React.useCallback(
+        (e: MapBrowserEvent) => {
+            if (wmsSource.current && onGetFeatureInfo) {
+                const viewResolution = map.getView().getResolution();
+                if (viewResolution) {
+                    const url = wmsSource.current.getFeatureInfoUrl(e.coordinate, viewResolution, map.getView().getProjection(), {
+                        INFO_FORMAT: infoFormat
+                    });
+                    if (url) {
+                        fetch(url)
+                            .then(r => r.text())
+                            .then(content => onGetFeatureInfo(content));
+                    }
                 }
             }
-        }
-    }, [onGetFeatureInfo, infoFormat]);
+        },
+        [onGetFeatureInfo, infoFormat]
+    );
 
     React.useEffect(() => {
         map.on('singleclick', memoizedMapClickHandler);
-        messages.addInfo("attached singleclick handler to wms layer");
+        messages.addInfo('attached singleclick handler to wms layer');
         return () => {
             map.un('singleclick', memoizedMapClickHandler);
-            messages.addInfo("detached singleclick handler from wms layer");
-        }
+            messages.addInfo('detached singleclick handler from wms layer');
+        };
     }, [memoizedMapClickHandler]);
-    // DOM breadcrumb so you know this component was indeed mounted
-    return <Breadcrumb component="WMSLayer" />;
+
+    if (renderDomBreadcrumbs) {
+        // DOM breadcrumb so you know this component was indeed mounted
+        return <Breadcrumb component="WMSLayer" />;
+    }
+    return null;
 };

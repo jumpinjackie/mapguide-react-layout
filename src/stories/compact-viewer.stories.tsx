@@ -570,7 +570,7 @@ export const _DebugVectorPoints = {
                 </p>
                 <ul>
                     <li>
-                        <code>addDebugPoints(points: [number, number])</code> - adds the given points to the debug layer
+                        <code>addDebugPoints(points: [number, number], label: string)</code> - adds the given points to the debug layer
                     </li>
                     <li>
                         <code>clearDebugPoints()</code> - clears the debug layer
@@ -580,7 +580,7 @@ export const _DebugVectorPoints = {
                     You can add points to this debug layer through your browser console of the <code>storybook-preview-iframe</code>
                 </p>
                 <pre>
-                    window.addDebugPoints([13306157.883883, 3326539.470971]); // Add a single point
+                    window.addDebugPoints([13306157.883883, 3326539.470971], 'Test Point'); // Add a single point
                     <br />
                     window.clearDebugPoints(); // Clear the debug points
                 </pre>

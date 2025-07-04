@@ -3,11 +3,6 @@ import { VectorLayer } from './vector';
 import Collection from 'ol/Collection';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-import Style from 'ol/style/Style';
-import Circle from 'ol/style/Circle';
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
-import Text from 'ol/style/Text';
 
 /**
  * Props for the DebugVectorPointLayer component.

@@ -1,6 +1,8 @@
 import type Map from 'ol/Map';
 import type { FeatureLike } from 'ol/Feature';
-import { extend, isEmpty, type Extent } from 'ol/extent';
+import { extendCoordinate, isEmpty, type Extent } from 'ol/extent';
+import { Coordinate } from 'ol/coordinate';
+import Point from 'ol/geom/Point';
 
 /**
  * Handles the zoom-to action when a clustered feature is clicked.
@@ -20,20 +22,21 @@ export function handleClusterZoomToClick(map: Map, fs: FeatureLike[], onBeforeZo
     const features = fs[0].get('features') as FeatureLike[] | undefined;
     if (features) {
         if (features.length > 1) {
-            let extent: Extent | undefined = undefined;
+            const coords: Coordinate[] = [];
             for (const f of features) {
                 const fg = f.getGeometry();
-                if (fg) {
-                    if (!extent) {
-                        extent = fg.getExtent();
-                    } else {
-                        extend(extent, fg.getExtent());
-                    }
+                if (fg && fg instanceof Point) {
+                    coords.push(fg.getCoordinates());
                 }
             }
-            if (extent && !isEmpty(extent)) {
-                onBeforeZoom?.();
-                map.getView().fit(extent, { duration: 1000, padding: [50, 50, 50, 50] });
+            if (coords.length > 0) {
+                const extent: Extent = [coords[0][0], coords[0][1], coords[0][0], coords[0][1]];
+                for (let i = 1; i < coords.length; i++) {
+                    extendCoordinate(extent, coords[i]);
+                }
+                if (extent && !isEmpty(extent)) {
+                    map.getView().fit(extent, { duration: 1000, padding: [50, 50, 50, 50] });
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 import Interaction from "ol/interaction/Interaction";
+import Control from "ol/control/Control";
 import React from "react";
 import type Map from "ol/Map";
 import { useOLMap } from "./context";
@@ -92,4 +93,55 @@ export function useMapInteraction<T extends Interaction>(
     }, dependencies);
 
     return interactionRef;
+}
+
+/**
+ * A custom React hook for managing the lifecycle of an OpenLayers map control.
+ *
+ * This hook creates, adds, and cleans up a map control instance, handling its addition to the map,
+ * optional custom addition logic, and teardown. It also provides a ref to the control instance.
+ *
+ * @template T - The type of the control, extending `Control`.
+ * @param name - A human-readable name for the control, used in log messages.
+ * @param createControl - A function that creates and returns the control instance, given the map and message context.
+ * @param dependencies - A list of dependencies that determine when the effect should re-run.
+ * @param addControl - (Optional) A function to add the control to the map's control collection, allowing custom logic.
+ * @param teardown - (Optional) A function to perform additional teardown logic when the control is removed.
+ * @returns A React ref object containing the control instance, or `undefined` if not created.
+ */
+export function useMapControl<T extends Control>(
+    name: string,
+    createControl: (map: Map, messages: MapMessageContext) => T | undefined,
+    dependencies: React.DependencyList,
+    addControl?: (control: T, collection: Collection<Control>, messages: MapMessageContext) => void,
+    teardown?: (control: T) => void
+) {
+    const { map } = useOLMap();
+    const messages = useMapMessage();
+    const controlRef = React.useRef<T | undefined>(undefined);
+
+    React.useEffect(() => {
+        const interaction = createControl(map, messages);
+        if (interaction) {
+            controlRef.current = interaction;
+            if (addControl) {
+                addControl(interaction, map.getControls(), messages);
+            } else {
+                map.addControl(interaction);
+            }
+            messages.addInfo(`added control: ${name}`);
+            //console.log("Current interaction list", map.getInteractions());;
+        }
+        return () => {
+            if (controlRef.current) {
+                map.removeControl(controlRef.current);
+                messages.addInfo(`removed control: ${name}`);
+                teardown?.(controlRef.current);
+                controlRef.current.dispose();
+                controlRef.current = undefined;
+            }
+        };
+    }, dependencies);
+
+    return controlRef;
 }

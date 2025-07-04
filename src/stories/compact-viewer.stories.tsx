@@ -25,6 +25,8 @@ import Text from 'ol/style/Text';
 import { handleClusterZoomToClick } from '../components/compact-map-viewer/interactions/behaviors';
 import { computeClusterStyleValue } from '../components/compact-map-viewer/helpers';
 import { ContentOverlay } from '../components/compact-map-viewer/overlay';
+import { MousePositionControl } from '../components/compact-map-viewer/controls/mouse-position';
+import { DebugVectorPointLayer } from '../components/compact-map-viewer/layers/debug-vector-point';
 
 import './popup.css';
 
@@ -69,6 +71,21 @@ export const _BasicExampleEPSG3857 = {
             <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
                 <MapMessages />
                 <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+            </CompactViewer>
+        );
+    }
+};
+
+/**
+ * This example demonstrates the use of the MousePosition component
+ */
+export const _MousePosition = {
+    render: () => {
+        return (
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <MousePositionControl />
             </CompactViewer>
         );
     }
@@ -531,6 +548,46 @@ export const _VectorLayer = {
                 <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
                 <VectorLayer fitInitialViewToThisLayer name="Shapes" initialFeatures={TEST_GEOJSON} initialFeatureProjection="EPSG:4326" />
             </CompactViewer>
+        );
+    }
+};
+
+/**
+ * This example demonstrates the use of the DebugVectorPointLayer component
+ */
+export const _DebugVectorPoints = {
+    render: () => {
+        return (
+            <>
+                <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={[-20037508.34, -20048966.1, 20037508.34, 20048966.1]}>
+                    <MapMessages />
+                    <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                    <DebugVectorPointLayer name="DebugPoints" addFunctionName="addDebugPoints" clearFunctionName="clearDebugPoints" />
+                    <MousePositionControl />
+                </CompactViewer>
+                <p>
+                    A debug vector points layer installs the following functions to the <code>window</code> browser global
+                </p>
+                <ul>
+                    <li>
+                        <code>addDebugPoints(points: [number, number])</code> - adds the given points to the debug layer
+                    </li>
+                    <li>
+                        <code>clearDebugPoints()</code> - clears the debug layer
+                    </li>
+                </ul>
+                <p>
+                    You can add points to this debug layer through your browser console of the <code>storybook-preview-iframe</code>
+                </p>
+                <pre>
+                    window.addDebugPoints([13306157.883883, 3326539.470971]); // Add a single point
+                    <br />
+                    window.clearDebugPoints(); // Clear the debug points
+                </pre>
+                <p>
+                    This layer is for debugging purposes only and should not be included in production code.
+                </p>
+            </>
         );
     }
 };

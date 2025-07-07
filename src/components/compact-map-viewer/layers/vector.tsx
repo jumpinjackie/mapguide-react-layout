@@ -51,7 +51,7 @@ export type VectorLayerProps = CommonLayerProps & {
     /**
      * An optional handler when features from this layer are clicked
      */
-    onFeaturesClicked?: (map: Map, features: FeatureLike[]) => void;
+    onFeaturesClicked?: (e: MapBrowserEvent, map: Map, features: FeatureLike[]) => void;
 };
 
 /**
@@ -115,12 +115,13 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({
 
     function onMapClick(e: MapBrowserEvent) {
         if (layer.current && onFeaturesClicked) {
-            //console.log("onMapClick", e);
-            layer.current.getFeatures(e.pixel).then(clickedFeatures => {
-                if (clickedFeatures.length) {
-                    onFeaturesClicked(map, clickedFeatures);
+            const clickedFeatures: FeatureLike[] = [];
+            map.forEachFeatureAtPixel(e.pixel, (feature, currentLayer) => {
+                if (currentLayer === layer.current) {
+                    clickedFeatures.push(feature);
                 }
             });
+            onFeaturesClicked(e, map, clickedFeatures);
         }
     }
 

@@ -16,6 +16,7 @@
    - Avoid importing from relative directories (implying an index.ts or index.tsx barrel module is present there)
    - If an import can be made a type-only import, use `import type` syntax.
 - Do not use `import *` syntax for importing any of our modules.
+- Ensure that import statements for static content like images, SVG icons or CSS files come after regular import statements.
 - Tag all generated code with a `@since` tag in the JSDoc comment to indicate the version of the library in which it was introduced.
    - The value of this tag should be the current version of the library, e.g., `@since 0.15`. This version number can be found in the `version` property of the root `package.json` file.
    - Only consider the major.version.minor parts of this `version` property, the minor part can be omitted if it is `0`.

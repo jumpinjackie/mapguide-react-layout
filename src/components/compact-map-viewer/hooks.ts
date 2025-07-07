@@ -1,10 +1,11 @@
-import Interaction from "ol/interaction/Interaction";
-import Control from "ol/control/Control";
-import React from "react";
-import type Map from "ol/Map";
-import { useOLMap } from "./context";
-import { MapMessageContext, useMapMessage } from "./messages";
-import type Collection from "ol/Collection";
+import Interaction from 'ol/interaction/Interaction';
+import Control from 'ol/control/Control';
+import React from 'react';
+import type Map from 'ol/Map';
+import { useOLMap } from './context';
+import { MapMessageContext, useMapMessage } from './messages';
+import Collection, { type CollectionEvent } from 'ol/Collection';
+import Feature from 'ol/Feature';
 
 /**
  * A custom React hook that initializes a resource with a setup function and cleans it up with a teardown function.
@@ -20,13 +21,10 @@ import type Collection from "ol/Collection";
  *   () => createResource(),
  *   (res) => cleanupResource(res)
  * );
- * 
+ *
  * @since 0.15
  */
-export function useResourceRefInit<T>(
-    setup: () => T,
-    teardown: (obj: T) => void
-): [T | undefined, boolean] {
+export function useResourceRefInit<T>(setup: () => T, teardown: (obj: T) => void): [T | undefined, boolean] {
     const resourceRef = React.useRef<T | undefined>(undefined);
     const [isReady, setIsReady] = React.useState(false);
     React.useEffect(() => {
@@ -38,9 +36,178 @@ export function useResourceRefInit<T>(
                 setIsReady(false);
                 resourceRef.current = undefined;
             }
-        }
+        };
     }, []);
     return [resourceRef.current, isReady];
+}
+
+/**
+ * Event handler function type for OpenLayers Collection events with Feature items.
+ * 
+ * @param event - The collection event containing information about the added/removed feature.
+ * 
+ * @since 0.15
+ */
+export type CollectionEventHandler = (event: CollectionEvent<Feature>) => void;
+
+/**
+ * Configuration arguments for the useFeatureCollection hook.
+ * 
+ * @since 0.15
+ */
+export type CollectionHookArgs = {
+    /**
+     * Optional array of features to initialize the collection with.
+     */
+    initialFeatures?: Feature[];
+    /**
+     * Event handler function called when features are added to the collection.
+     */
+    addHandler: CollectionEventHandler;
+    /**
+     * Event handler function called when features are removed from the collection.
+     */
+    removeHandler: CollectionEventHandler;
+}
+
+/**
+ * Configuration arguments for the useTrackedFeatureCollection hook.
+ * 
+ * This extends the CollectionHookArgs to include additional properties for tracking features.
+ * 
+ * @since 0.15
+ */
+export type TrackedCollectionHookArgs = CollectionHookArgs & {
+    /**
+     * Function to process features when they are about to be added to the collection.
+     * 
+     * If not specified, the default behavior is to add the feature inside the given event as-is.
+     */
+    processFeatureToAdd?: (event: CollectionEvent<Feature>) => Feature[];
+    /**
+     * Function to process features when they are about to be removed from the collection.
+     * 
+     * If not specified, the default behavior is to remove the feature inside the given event as-is.
+     */
+    processFeatureToRemove?: (event: CollectionEvent<Feature>) => Feature[];
+};
+
+/**
+ * A custom React hook for managing an OpenLayers Feature Collection with event handlers.
+ * 
+ * This hook creates and manages a Collection of OpenLayers Features with automatic event handler
+ * registration and cleanup. It handles the lifecycle of the collection, ensuring proper setup
+ * and teardown of event listeners when the component mounts and unmounts.
+ * 
+ * @param args - Configuration object containing initial features and event handlers.
+ * @returns A tuple containing the Feature Collection (or undefined) and a boolean indicating readiness.
+ * 
+ * @example
+ * ```typescript
+ * const [collection, isReady] = useFeatureCollection({
+ *   initialFeatures: [feature1, feature2],
+ *   addHandler: (event) => console.log('Feature added:', event.element),
+ *   removeHandler: (event) => console.log('Feature removed:', event.element)
+ * });
+ * ```
+ * 
+ * @since 0.15
+ */
+export function useFeatureCollection(args: CollectionHookArgs) {
+    const res = useResourceRefInit(
+        () => {
+            const features = new Collection<Feature>(args.initialFeatures);
+            features.on('add', args.addHandler);
+            features.on('remove', args.removeHandler);
+            return features;
+        },
+        c => {
+            c.un('add', args.addHandler);
+            c.un('remove', args.removeHandler);
+        }
+    );
+    return res;
+}
+
+/**
+ * A custom React hook for managing an OpenLayers Feature Collection with automatic feature tracking.
+ * 
+ * This hook extends the basic feature collection functionality by maintaining a synchronized React state
+ * array of all features in the collection. It provides optional custom processing for features when they
+ * are added or removed, making it useful for scenarios like cluster feature management
+ * 
+ * The hook automatically handles:
+ * - Feature collection lifecycle management
+ * - Event listener registration and cleanup
+ * - State synchronization between OpenLayers collection and React state
+ * - Custom feature processing during add/remove operations
+ * 
+ * @param args - Configuration object containing initial features, event handlers, and optional processors.
+ * @returns A tuple containing the Feature Collection (or undefined), readiness boolean, and tracked features array.
+ * 
+ * @example
+ * ```typescript
+ * // Basic usage with default feature processing
+ * const [collection, isReady, trackedFeatures] = useTrackedFeatureCollection({
+ *   initialFeatures: [feature1, feature2],
+ *   addHandler: (event) => console.log('Feature added:', event.element),
+ *   removeHandler: (event) => console.log('Feature removed:', event.element)
+ * });
+ * 
+ * // Advanced usage with custom feature processing (e.g., for cluster features)
+ * const [collection, isReady, trackedFeatures] = useTrackedFeatureCollection({
+ *   initialFeatures: [],
+ *   addHandler: (event) => console.log('Cluster added'),
+ *   removeHandler: (event) => console.log('Cluster removed'),
+ *   processFeatureToAdd: (event) => {
+ *     // Extract individual features from a cluster
+ *     const clusterFeature = event.element;
+ *     return clusterFeature.get('features') || [clusterFeature];
+ *   },
+ *   processFeatureToRemove: (event) => {
+ *     // Extract individual features from a cluster for removal
+ *     const clusterFeature = event.element;
+ *     return clusterFeature.get('features') || [clusterFeature];
+ *   }
+ * });
+ * 
+ * // Access tracked features in render
+ * console.log(`Currently tracking ${trackedFeatures.length} features`);
+ * ```
+ * 
+ * @since 0.15
+ */
+export function useTrackedFeatureCollection(args: TrackedCollectionHookArgs): [Collection<Feature> | undefined, boolean, Feature[]] {
+    // This is a react-observable "proxy" of the above collection. We need this as changes to the above collection will
+    // not trigger re-rendering. We will use collection events to keep this in sync. Even if this wasn't a clustered layer
+    // (which requires "unpacking" the cluster features), this "proxy" copy would still be necessary to trigger re-rendering
+    const [trackedFeatures, setTrackedFeatures] = React.useState<Feature[]>([]);
+
+    function onFeatureAdded(event: CollectionEvent<Feature>) {
+        const clusterFeatures = args.processFeatureToAdd ? args.processFeatureToAdd(event) : [event.element];
+        args.addHandler?.(event)
+        setTrackedFeatures(oldArray => [...oldArray, ...clusterFeatures]);
+    }
+
+    function onFeatureRemoved(event: CollectionEvent<Feature>) {
+        const clusterFeatures = args.processFeatureToRemove ? args.processFeatureToRemove(event) : [event.element];
+        args.removeHandler?.(event);
+        setTrackedFeatures(oldArray => oldArray.filter(f => !clusterFeatures.includes(f)));
+    }
+
+    const [features, isReady] = useResourceRefInit(
+        () => {
+            const features = new Collection<Feature>(args.initialFeatures);
+            features.on('add', onFeatureAdded);
+            features.on('remove', onFeatureRemoved);
+            return features;
+        },
+        c => {
+            c.un('add', onFeatureAdded);
+            c.un('remove', onFeatureRemoved);
+        }
+    );
+    return [features, isReady, trackedFeatures];
 }
 
 /**

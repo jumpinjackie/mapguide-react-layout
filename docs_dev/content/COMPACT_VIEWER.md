@@ -65,7 +65,7 @@ Another thing to consider is interactions that may operate off of certain layers
     <XYZLayer {...} />
     <WMSLayer {...} />
     <VectorLayer name="Scratch" {...} />
-    <DrawInteraction drawTarget="Scratch" {...} >
+    <DrawInteraction target="Scratch" {...} >
 </CompactViewer>
 ```
 
@@ -84,7 +84,7 @@ All the components that provide the `CompactViewer` layer support or some functi
     * Register these objects with the OL map provided by `useOLMap`
     * Return a callback that de-registers these objects and dispose of them when the component unmounts
 
-Any component that introduces a new layer type or extra functionality should follow the same pattern
+Any component that introduces a new layer type or extra functionality should follow the same pattern.
 
 # Examples
 

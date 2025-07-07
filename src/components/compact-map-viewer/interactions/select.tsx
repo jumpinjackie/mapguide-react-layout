@@ -8,6 +8,12 @@ import { Breadcrumb } from '../breadcrumb';
 import { useMapInteraction } from '../hooks';
 import { useOLMap } from '../context';
 import { FeatureLike } from 'ol/Feature';
+import { MapBrowserEvent } from 'ol';
+import Style, { createEditingStyle, StyleLike } from 'ol/style/Style';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Circle from 'ol/style/Circle';
+import { extend } from 'ol/array';
 
 /**
  * Select component properties
@@ -20,8 +26,9 @@ export type SelectInteractionProps = {
      *
      *  - `'click'`: Select features on mouse click.
      *  - `'hover'`: Select features on mouse hover.
+     *  - `'never'`: Do not select features on user interaction. Use this mode if you want full programmatic control over selection.
      */
-    mode: 'click' | 'hover';
+    mode: 'click' | 'hover' | 'never';
     /**
      * An optional observable feature collections where selected objects are added to and removed from
      */
@@ -42,15 +49,35 @@ export type SelectInteractionProps = {
     style?: SelectOptions['style'];
 };
 
+function neverHandler(e: MapBrowserEvent) {
+    return false;
+}
+
 function modeToCondition(type: Exclude<SelectInteractionProps['mode'], undefined>) {
     switch (type) {
         case 'click':
             return click;
         case 'hover':
             return pointerMove;
+        case 'never':
+            return neverHandler;
         default:
             assertNever(type);
     }
+}
+
+function getDefaultStyleFunction() {
+    const styles = createEditingStyle();
+    extend(styles['Polygon'], styles['LineString']);
+    extend(styles['GeometryCollection'], styles['LineString']);
+
+    return (feature: FeatureLike) => {
+        const fg = feature.getGeometry();
+        if (!fg) {
+            return null;
+        }
+        return styles[fg.getType()];
+    };
 }
 
 /**
@@ -69,36 +96,8 @@ export const SelectInteraction: React.FC<SelectInteractionProps> = ({ mode, feat
         'Select',
         map => {
             const s = new Select({
-                style: style,
-                condition: e => {
-                    const handler = modeToCondition(mode)!;
-                    if (!handler(e)) {
-                        return false;
-                    }
-                    if (e.type === 'click') {
-                        let fs: FeatureLike[] | undefined = undefined;
-                        map.forEachFeatureAtPixel(e.pixel, (f, layer) => {
-                            const featureData = f.get('features') as FeatureLike[] | undefined;
-                            if (featureData) {
-                                fs = featureData;
-                            }
-                        });
-                        // HACK: TypeScript gave up on flow analysis because I set fs inside a forEachFeatureAtPixel callback
-                        const fs2 = fs as FeatureLike[] | undefined;
-                        if (fs2 && fs2.length > 1) {
-                            const view = map.getView();
-                            const currentZoom = view.getZoom();
-                            const maxZoom = view.getMaxZoom();
-                            if (currentZoom === maxZoom) {
-                                // You are at the lowest possible zoom level
-                                return true; // Allow selection at the lowest zoom level
-                            }
-                            return false; // Prevent selection if it's a cluster
-                        }
-                        return true; // Allow selection of individual features
-                    }
-                    return true;
-                },
+                style: style ?? getDefaultStyleFunction(),
+                condition: modeToCondition(mode),
                 features: features,
                 layers: layer => {
                     if (Array.isArray(layers)) {

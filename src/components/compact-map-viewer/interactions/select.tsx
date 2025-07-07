@@ -9,10 +9,7 @@ import { useMapInteraction } from '../hooks';
 import { useOLMap } from '../context';
 import { FeatureLike } from 'ol/Feature';
 import { MapBrowserEvent } from 'ol';
-import Style, { createEditingStyle, StyleLike } from 'ol/style/Style';
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
-import Circle from 'ol/style/Circle';
+import { createEditingStyle } from 'ol/style/Style';
 import { extend } from 'ol/array';
 
 /**

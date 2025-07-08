@@ -72,6 +72,13 @@ export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>
     const mapElement = React.useRef<HTMLDivElement>(null);
     const [map, isReady] = useResourceRefInit<Map>(
         () => {
+            const view = new View({
+                projection,
+                minResolution,
+                maxResolution,
+                minZoom,
+                maxZoom
+            });
             const initialMap = new Map({
                 target: mapElement.current!,
                 layers: [],
@@ -80,13 +87,7 @@ export const CompactViewer: React.FC<React.PropsWithChildren<CompactViewerProps>
                         collapsible: true
                     })
                 ],
-                view: new View({
-                    projection,
-                    minResolution,
-                    maxResolution,
-                    minZoom,
-                    maxZoom
-                })
+                view: view
             });
             if (initialBBOX && !isEmpty(initialBBOX)) {
                 initialMap.getView().fit(initialBBOX);

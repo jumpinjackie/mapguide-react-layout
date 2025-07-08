@@ -16,12 +16,12 @@ import { ModifyInteraction } from '../components/compact-map-viewer/interactions
 import { SnapInteraction } from '../components/compact-map-viewer/interactions/snap';
 import { useFeatureCollection, useTrackedFeatureCollection } from '../components/compact-map-viewer/hooks';
 import { ClusterSettings } from '../components/compact-map-viewer/layers/contracts';
-import { handleClusterZoomToClick, handlerClusterZoomToClickAndSelection } from '../components/compact-map-viewer/interactions/behaviors';
+import { handleClusterZoomToClick, handleClusterZoomToClickAndSelection } from '../components/compact-map-viewer/interactions/behaviors';
 import { ContentOverlay } from '../components/compact-map-viewer/overlay';
 import { MousePositionControl } from '../components/compact-map-viewer/controls/mouse-position';
 import { DebugVectorPointLayer } from '../components/compact-map-viewer/layers/debug-vector-point';
 import { BBOX_WORLD_WEB_MERCATOR, BBOX_WORLD_WGS84, OSM_ATTRIBUTIONS, OSM_URLS, TEST_GEOJSON, useClusteredStyle, useTestClusteredData } from './test-data';
-
+import { ViewListener } from '../components/compact-map-viewer/interactions/view-listener';
 import './popup.css';
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
@@ -69,6 +69,22 @@ export const _BasicExampleEPSG3857 = {
         );
     }
 };
+
+/**
+ * This example demonstrates the ViewListener component, which listens to changes in the map view
+ */
+export const _ViewListener = {
+    render: () => {
+        const viewChanged = action('Map view changed');
+        return (
+            <CompactViewer style={VIEWER_STYLE} projection="EPSG:3857" initialBBOX={BBOX_WORLD_WEB_MERCATOR}>
+                <MapMessages />
+                <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                <ViewListener onMapViewChanged={viewChanged} />
+            </CompactViewer>
+        );
+    }
+}
 
 /**
  * This example demonstrates the use of the MousePosition component
@@ -312,7 +328,7 @@ export const _VectorLayerWithClusteringAndSelection = {
                     <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
                     <VectorLayer
                         fitInitialViewToThisLayer
-                        onFeaturesClicked={handlerClusterZoomToClickAndSelection}
+                        onFeaturesClicked={handleClusterZoomToClickAndSelection}
                         style={style}
                         name="Points"
                         features={features}

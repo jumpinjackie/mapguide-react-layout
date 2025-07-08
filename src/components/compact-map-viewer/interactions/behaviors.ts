@@ -3,12 +3,15 @@ import type { FeatureLike } from 'ol/Feature';
 import { extendCoordinate, isEmpty, type Extent } from 'ol/extent';
 import { Coordinate } from 'ol/coordinate';
 import Point from 'ol/geom/Point';
-import { Collection, type Feature, type MapBrowserEvent } from 'ol';
-import Select, { SelectEvent } from 'ol/interaction/Select';
+import { type Feature, type MapBrowserEvent } from 'ol';
+import Select from 'ol/interaction/Select';
 
 function tryZoomToCluster(map: Map, fs: FeatureLike[]) {
+    if (fs.length === 0) {
+		return false; // No features to zoom to
+	}
     // Get clustered Coordinates
-    const features = fs[0].get('features') as FeatureLike[] | undefined;
+    const features = fs[0]?.get('features') as FeatureLike[] | undefined;
     if (features) {
         if (features.length > 1) {
             const coords: Coordinate[] = [];
@@ -55,7 +58,7 @@ export function handleClusterZoomToClick(e: MapBrowserEvent, map: Map, fs: Featu
     tryZoomToCluster(map, fs);
 }
 
-export function handlerClusterZoomToClickAndSelection(e: MapBrowserEvent, map: Map, fs: FeatureLike[]) {
+export function handleClusterZoomToClickAndSelection(e: MapBrowserEvent, map: Map, fs: FeatureLike[]) {
     const sel = map
         .getInteractions()
         .getArray()
@@ -65,18 +68,11 @@ export function handlerClusterZoomToClickAndSelection(e: MapBrowserEvent, map: M
     }
     const didZoom = tryZoomToCluster(map, fs);
     if (!didZoom) {
-        const features = fs[0].get('features') as Feature[] | undefined;
+        const features = fs[0]?.get('features') as Feature[] | undefined;
         if (features && sel instanceof Select) {
             for (const f of fs) {
                 sel.getFeatures().push(f as Feature);
             }
-            //for (const f of features) {
-            //const cf = f.clone();
-            //cf.setStyle(undefined);
-            //cf.setId(f.getId());
-            //sel.getFeatures().push(cf);
-            //sel.dispatchEvent(new SelectEvent('select', [cf], [], e));
-            //}
         }
     } else if (isAtLowestPossibleZoom(map) && sel instanceof Select) {
         for (const f of fs) {

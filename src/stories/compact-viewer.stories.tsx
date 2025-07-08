@@ -20,7 +20,15 @@ import { handleClusterZoomToClick, handleClusterZoomToClickAndSelection } from '
 import { ContentOverlay } from '../components/compact-map-viewer/overlay';
 import { MousePositionControl } from '../components/compact-map-viewer/controls/mouse-position';
 import { DebugVectorPointLayer } from '../components/compact-map-viewer/layers/debug-vector-point';
-import { BBOX_WORLD_WEB_MERCATOR, BBOX_WORLD_WGS84, OSM_ATTRIBUTIONS, OSM_URLS, TEST_GEOJSON, useClusteredStyle, useTestClusteredData } from './test-data';
+import {
+    BBOX_WORLD_WEB_MERCATOR,
+    BBOX_WORLD_WGS84,
+    OSM_ATTRIBUTIONS,
+    OSM_URLS,
+    TEST_GEOJSON,
+    useClusteredStyle,
+    useTestClusteredData
+} from './test-data';
 import { ViewListener } from '../components/compact-map-viewer/interactions/view-listener';
 import './popup.css';
 
@@ -84,7 +92,7 @@ export const _ViewListener = {
             </CompactViewer>
         );
     }
-}
+};
 
 /**
  * This example demonstrates the use of the MousePosition component
@@ -100,8 +108,6 @@ export const _MousePosition = {
         );
     }
 };
-
-
 
 /**
  * This example demonstrates the ContentOverlay component, which displays content at the coordinate you clicked or
@@ -201,9 +207,7 @@ export const _DebugVectorPoints = {
                     <br />
                     window.clearDebugPoints(); // Clear the debug points
                 </pre>
-                <p>
-                    This layer is for debugging purposes only and should not be included in production code.
-                </p>
+                <p>This layer is for debugging purposes only and should not be included in production code.</p>
             </>
         );
     }
@@ -285,11 +289,10 @@ export const _VectorLayerWithClustering = {
                         initialFeatureProjection="EPSG:3857"
                     />
                 </CompactViewer>
+                <p>Clicking on a cluster of multiple points will automatically zoom into its bounding extent.</p>
                 <p>
-                    Clicking on a cluster of multiple points will automatically zoom into its bounding extent.
-                </p>
-                <p>
-                    The <code>handleClusterZoomToClick</code> function registered to the <code>onFeaturesClicked</code> event of the <code>VectorLayer</code> component will automatically zoom to the bounding extent of the cluster
+                    The <code>handleClusterZoomToClick</code> function registered to the <code>onFeaturesClicked</code> event of the{' '}
+                    <code>VectorLayer</code> component will automatically zoom to the bounding extent of the cluster
                 </p>
             </>
         );
@@ -304,12 +307,19 @@ export const _VectorLayerWithClusteringAndSelection = {
         const enabled = boolean('Enable clustering', true);
         const addHandler = action('Selected Feature');
         const removeHandler = action('UnSelected Feature');
+        const clusterMinZoomSize = number('Cluster zoom size limit', 1, { range: true, min: 1, max: 10, step: 1 });
         const [selFeatures, selReady, selTrackedFeatures] = useTrackedFeatureCollection({
             addHandler: addHandler,
             removeHandler: removeHandler,
             processFeatureToAdd: e => e.element.get('features') ?? [e.element],
             processFeatureToRemove: e => e.element.get('features') ?? [e.element]
         });
+        const handler = React.useCallback(
+            (e, map, fs) => {
+                handleClusterZoomToClickAndSelection(e, map, fs, clusterMinZoomSize);
+            },
+            [clusterMinZoomSize]
+        );
         const settings: ClusterSettings | undefined = enabled
             ? {
                   distance: clusterDistance,
@@ -328,7 +338,7 @@ export const _VectorLayerWithClusteringAndSelection = {
                     <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
                     <VectorLayer
                         fitInitialViewToThisLayer
-                        onFeaturesClicked={handleClusterZoomToClickAndSelection}
+                        onFeaturesClicked={handler}
                         style={style}
                         name="Points"
                         features={features}
@@ -351,30 +361,41 @@ export const _VectorLayerWithClusteringAndSelection = {
                     Clicking on a cluster of multiple points will automatically zoom into its bounding extent. Clicking on a single point cluster will
                     select it. Clicking on a multi-point cluster at the lowest possible zoom will also select it
                 </p>
+                <p>
+                    You can adjust the <code>Cluster zoom size limit</code> to control how many features must be in a cluster at a minimum before it
+                    is zoomed into on click. The default is 1, which means any cluster click will zoom into the cluster extent until you reach the
+                    lowest possible zoom level.
+                </p>
                 <p>The cluster in Perth, Australia will be selectable at the lowest possible zoom</p>
                 <p>
                     The <code>maxZoom</code> for this map has been constrained to 20 (street level) which means any cluster clicks at this level will
                     select instead of trying to zoom any further
                 </p>
                 <p>
-                    The <code>SelectInteraction</code> by default does not play nice with click-driven content overlays like popups due to clashing click event handlers.
+                    The <code>SelectInteraction</code> by default does not play nice with click-driven content overlays like popups due to clashing
+                    click event handlers.
                 </p>
                 <p>
-                    To make this <code>SelectInteraction</code> work with click-driven content overlays, the <code>mode</code> prop has been set to <code>'never'</code>
-                    and selection is completely done programmatically through the <code>onFeaturesClicked</code> event handler of the <code>VectorLayer</code> component.
+                    To make this <code>SelectInteraction</code> work with click-driven content overlays, the <code>mode</code> prop has been set to{' '}
+                    <code>'never'</code>
+                    and selection is completely done programmatically through the <code>onFeaturesClicked</code> event handler of the{' '}
+                    <code>VectorLayer</code> component.
                 </p>
                 <p>
-                    Setting the <code>features</code> prop of the <code>SelectInteraction</code> to an observable feature collection is optional for the purpose of
-                    programmatic selection, we are binding a collection in this example so that you can:
+                    Setting the <code>features</code> prop of the <code>SelectInteraction</code> to an observable feature collection is optional for
+                    the purpose of programmatic selection, we are binding a collection in this example so that you can:
                 </p>
                 <ol>
                     <li>Observe the features being added/removed through the actions addon</li>
-                    <li>Pair it with a react-observable array copy (via the <code>useTrackedFeatureCollection</code> hook) that is used to update the popup content that you see and to control when this popup is displayed</li>
+                    <li>
+                        Pair it with a react-observable array copy (via the <code>useTrackedFeatureCollection</code> hook) that is used to update the
+                        popup content that you see and to control when this popup is displayed
+                    </li>
                 </ol>
             </>
         );
     }
-}
+};
 
 /**
  * This example has a selection interaction that operates against the vector layer

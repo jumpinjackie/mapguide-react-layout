@@ -113,24 +113,30 @@ export const VectorLayer: React.FC<VectorLayerProps> = ({
         }
     }
 
-    function onMapClick(e: MapBrowserEvent) {
-        if (layer.current && onFeaturesClicked) {
-            const clickedFeatures: FeatureLike[] = [];
-            map.forEachFeatureAtPixel(e.pixel, (feature, currentLayer) => {
-                if (currentLayer === layer.current) {
-                    clickedFeatures.push(feature);
-                }
-            });
-            onFeaturesClicked(e, map, clickedFeatures);
-        }
-    }
+    const featureClickedHandler = React.useRef(onFeaturesClicked);
+    React.useEffect(() => {
+        featureClickedHandler.current = onFeaturesClicked;
+    }, [onFeaturesClicked]);
 
     React.useEffect(() => {
         if (layer.current) {
             updateClustering(layer.current, clusterSettings);
         }
     }, [clusterSettings, layer]);
+
     React.useEffect(() => {
+        function onMapClick(e: MapBrowserEvent) {
+            if (layer.current && featureClickedHandler.current) {
+                const clickedFeatures: FeatureLike[] = [];
+                map.forEachFeatureAtPixel(e.pixel, (feature, currentLayer) => {
+                    if (currentLayer === layer.current) {
+                        clickedFeatures.push(feature);
+                    }
+                });
+                featureClickedHandler.current(e, map, clickedFeatures);
+            }
+        }
+
         //console.log("VectorLayer mount", name, extent, features, initialFeatures, initialFeatureProjection, fitInitialViewToThisLayer);
         map.on('click', onMapClick);
         if (!layer.current) {

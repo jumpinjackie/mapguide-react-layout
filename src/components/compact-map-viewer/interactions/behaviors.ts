@@ -6,14 +6,14 @@ import Point from 'ol/geom/Point';
 import { type Feature, type MapBrowserEvent } from 'ol';
 import Select from 'ol/interaction/Select';
 
-function tryZoomToCluster(map: Map, fs: FeatureLike[]) {
+function tryZoomToCluster(map: Map, fs: FeatureLike[], clusterZoomSizeLimit: number) {
     if (fs.length === 0) {
 		return false; // No features to zoom to
 	}
     // Get clustered Coordinates
     const features = fs[0]?.get('features') as FeatureLike[] | undefined;
     if (features) {
-        if (features.length > 1) {
+        if (features.length > clusterZoomSizeLimit) {
             const coords: Coordinate[] = [];
             for (const f of features) {
                 const fg = f.getGeometry();
@@ -51,14 +51,30 @@ function tryZoomToCluster(map: Map, fs: FeatureLike[]) {
  * @param map - The OpenLayers Map instance to operate on.
  * @param fs - An array of features, where the first feature is expected to be a cluster
  *             containing a 'features' property with the clustered features.
- *
+ * @param clusterZoomSizeLimit - The minimum number of features that must be in a cluster to allow zooming on click. Otherwise no zooming takes place. The default size is 1
+ * 
  * @since 0.15
  */
-export function handleClusterZoomToClick(e: MapBrowserEvent, map: Map, fs: FeatureLike[]): void {
-    tryZoomToCluster(map, fs);
+export function handleClusterZoomToClick(e: MapBrowserEvent, map: Map, fs: FeatureLike[], clusterZoomSizeLimit: number = 1): void {
+    tryZoomToCluster(map, fs, clusterZoomSizeLimit);
 }
 
-export function handleClusterZoomToClickAndSelection(e: MapBrowserEvent, map: Map, fs: FeatureLike[]) {
+/**
+ * Handles the zoom-to and selection of features when a clustered feature is clicked.
+ *
+ * If the clicked feature represents a cluster (i.e., contains multiple features),
+ * this function calculates the combined extent of all features in the cluster and
+ * animates the map view to fit that extent with padding.
+ * 
+ * @param e - The MapBrowserEvent triggered by the click.
+ * @param map - The OpenLayers Map instance to operate on.
+ * @param fs - An array of features, where the first feature is expected to be a cluster
+ *             containing a 'features' property with the clustered features.
+ * @param clusterZoomSizeLimit - The minimum number of features that must be in a cluster to allow zooming on click. Otherwise no zooming takes place. The default size is 1
+ * 
+ * @since 0.15
+ */
+export function handleClusterZoomToClickAndSelection(e: MapBrowserEvent, map: Map, fs: FeatureLike[], clusterZoomSizeLimit: number = 1) {
     const sel = map
         .getInteractions()
         .getArray()
@@ -66,7 +82,7 @@ export function handleClusterZoomToClickAndSelection(e: MapBrowserEvent, map: Ma
     if (sel instanceof Select) {
         sel.getFeatures().clear();
     }
-    const didZoom = tryZoomToCluster(map, fs);
+    const didZoom = tryZoomToCluster(map, fs, clusterZoomSizeLimit);
     if (!didZoom) {
         const features = fs[0]?.get('features') as Feature[] | undefined;
         if (features && sel instanceof Select) {

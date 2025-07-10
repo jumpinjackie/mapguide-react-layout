@@ -2,6 +2,7 @@ import * as React from "react";
 import type { IMapProviderContext } from './base';
 import { Provider, useDispatch, useSelector } from "react-redux";
 import type { IApplicationState } from "../../api/common";
+import type { configureStore } from "../../store/configure-store";
 
 const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
 
@@ -50,8 +51,9 @@ export function useMapProviderContext() {
 
 /**
  * @since 0.14
+ * @since 0.15 - No longer an alias of `any`
  */
-export type ReduxStoreImpl = any;
+export type ReduxStoreImpl = ReturnType<typeof configureStore>;
 
 /**
  * @since 0.14

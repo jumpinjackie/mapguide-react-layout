@@ -3,11 +3,19 @@ import thunk from 'redux-thunk';
 import { promiseMiddleware } from './promise-middleware';
 import { logger } from './logger';
 import { rootReducer } from '../reducers/root';
-import type { ReduxStoreImpl } from '../components/map-providers/context';
 
-export function configureStore(initialState: any, extraReducers?: any): ReduxStoreImpl {
+/**
+ * Configures and creates a Redux store with optional initial state and extra reducers.
+ *
+ * @param initialState - The initial state of the Redux store.
+ * @param extraReducers - Optional additional reducers to be combined with the root reducer.
+ * @returns The configured Redux store instance.
+ * 
+ * @since 0.15 - Fixed return type to no longer be `any`
+ */
+export function configureStore(initialState: any, extraReducers?: any) {
     const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
-    const store = (<any>compose)( //HACK: Something bogus about the compose() declaration
+    const store = compose(
         _getMiddleware(),
         ..._getEnhancers()
     )(createStore)(root, initialState);

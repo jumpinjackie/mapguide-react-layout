@@ -243,8 +243,9 @@ export function stringifyQuery(parameters: any): string {
  * @param {boolean} [bConvertToUppercase=false] If true, will ensure all parameter names are uppercase
  * @param {boolean} [bDiscardExistingParams=false] If true, will discard existing query string params before appending
  * @since 0.12
+ * @since 0.15 - Ensured return type is a string
  */
-export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false) {
+export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false): string {
     const parsed = parse(url);
     let currentParams: any;
     if (!bDiscardExistingParams) {

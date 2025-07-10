@@ -36,6 +36,7 @@ export const XYZLayer: React.FC<XYZLayerProps> = ({ name, isHidden, extent, urls
         if (!layer.current) {
             messages.addInfo('add xyz layer');
             const tileSource = new OLXYZSource({
+                crossOrigin: 'anonymous',
                 urls: urls,
                 attributions: attributions
             });

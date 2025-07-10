@@ -58,6 +58,7 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
 
     function addTiled(wmsUrl: string, ln: string, cParms?: Record<string, string>, ext?: [number, number, number, number], insertAtIndex?: number) {
         const source = new TileWmsSource({
+            crossOrigin: 'anonymous',
             url: wmsUrl,
             params: { LAYERS: ln, TILED: true, ...cParms }
         });
@@ -118,6 +119,7 @@ export const WMSLayer: React.FC<WMSLayerProps> = ({ name, isHidden, extent, url,
 
     function addUntiled(wmsUrl: string, ln: string, cParms?: Record<string, string>, ext?: [number, number, number, number], insertAtIndex?: number) {
         const source = new ImageWmsSource({
+            crossOrigin: 'anonymous',
             url: wmsUrl,
             params: { LAYERS: ln, ...cParms }
         });

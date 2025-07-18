@@ -4,7 +4,7 @@ Starting with the `0.15` release, `mapguide-react-layout` offers a new optional 
 
 It does not use redux, it is not driven by Application Definition documents to define viewer maps and features/capabilities, the viewer does not need to be pre-registered with all the commands and components it needs to work with.
 
-The use case for the `CompactViewer` component is when you require a simple viewer without the "batteries included" by the main viewer offering. When you just want to show some vector features over an OpenStreetMap/XYZ backdrop, the `CompactViewer` component is ideal for this scenario.
+The use case for the `CompactViewer` component is when you require a simple viewer that you can embed into your React-based frontend without the "batteries included" by the main viewer offering. When you just want to show some vector features over an OpenStreetMap/XYZ backdrop and don't want to deal with Application Definitions, redux stores and what "batteries" to include before your viewer is initialized, the `CompactViewer` component is ideal for this scenario.
 
 Unlike the main viewer offering however, the `CompactViewer` component is only consumable as a React component from the `mapguide-react-layout` npm module. Unlike the main viewer, it is not delivered as a standalone app with a HTML file + production JS bundle. It is a pre-defined component you integrate with your existing React frontend code.
 

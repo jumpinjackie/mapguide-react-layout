@@ -5969,10 +5969,10 @@ process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
-proj4@2.19.5:
-  version "2.19.5"
-  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.19.5.tgz#a39572788e653e3f3830d60daa66e0edea75e972"
-  integrity sha512-hFn7GJwUZ1YiAAfSfur7VRgiH0swIZFxJb7UZ7C4E9tbqyozSn+SI9ZxFgFKmUldtY3tVTBvylJhwfD+O3pHQw==
+proj4@2.19.7:
+  version "2.19.7"
+  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.19.7.tgz#d7b6418d41d78a2180410688afbd34bb2bd7ef92"
+  integrity sha512-1YdHp6/MyGh6s0T1zCwGnOUiah/ov/8HJYkHMXHD8YuUTpkbo82OuCSivSs4ydCIODZVico5QVTTXi5yoDkMZA==
   dependencies:
     mgrs "1.0.0"
     wkt-parser "^1.5.1"

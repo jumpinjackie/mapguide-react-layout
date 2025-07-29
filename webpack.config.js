@@ -78,14 +78,6 @@ const rules = [
             "css-loader"
         ]
     },
-    { //less
-        test: /\.less$/,
-        use: [
-            'less-loader',
-            'css-loader'
-        ],
-        exclude: /node_modules/
-    },
     { //fonts
         test: /\.(woff|woff2|ttf|eot|svg)$/,
         loader: "file-loader",

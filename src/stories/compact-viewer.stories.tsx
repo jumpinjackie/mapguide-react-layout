@@ -27,13 +27,21 @@ import {
     OSM_URLS,
     TEST_GEOJSON,
     useClusteredStyle,
-    useTestClusteredData
+    useTestPointData
 } from './test-data';
 import { ViewListener } from '../components/compact-map-viewer/interactions/view-listener';
 import './popup.css';
+import Style from 'ol/style/Style';
+import Icon from 'ol/style/Icon';
+import type { Map, View } from 'ol';
+import OLVectorLayer from 'ol/layer/Vector';
+import OLVectorSource from 'ol/source/Vector';
+import { recursiveFindLayer } from '../components/map-providers/base';
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
 const buildings = require('./data/gisborne-futures.json');
+
+const markerIcon = require('./data/marker.png');
 
 export default {
     title: 'Compact Viewer',
@@ -258,9 +266,78 @@ export const _VectorLayerThemed = {
     }
 };
 
+const MARKER_STYLE = new Style({
+    image: new Icon({
+        anchor: [0.5, 1],
+        src: markerIcon
+    })
+});
+
+export const _VectorLayerWithPointMarkers = {
+    render: () => {
+        const [features, isReady] = useTestPointData(100);
+        const addHandler = action('Selected Feature');
+        const removeHandler = action('UnSelected Feature');
+        const [markerCount, setMarkerCount] = React.useState<number | undefined>(undefined);
+        const [selFeatures, selReady, selTrackedFeatures] = useTrackedFeatureCollection({
+            addHandler: addHandler,
+            removeHandler: removeHandler,
+            processFeatureToAdd: e => e.element.get('features') ?? [e.element],
+            processFeatureToRemove: e => e.element.get('features') ?? [e.element]
+        });
+        if (!isReady) {
+            return null;
+        }
+        const popupActive = selTrackedFeatures.length > 0;
+        const viewChanged = (map: Map, view: View) => {
+            const layer = recursiveFindLayer(map.getLayers(), l => l.get('name') === 'Points');
+            if (layer && layer instanceof OLVectorLayer) {
+                const vs = layer.getSource();
+                if (vs instanceof OLVectorSource) {
+                    const extent = map.getView().calculateExtent(map.getSize());
+                    let featureCount = 0;
+                    vs.forEachFeatureInExtent(extent, f => {
+                        featureCount++;
+                    });
+                    setMarkerCount(featureCount);
+                }
+            }
+        };
+        return (
+            <>
+                <CompactViewer style={VIEWER_STYLE} maxZoom={20} projection="EPSG:3857">
+                    <MapMessages />
+                    <XYZLayer name="OSM" urls={OSM_URLS} attributions={OSM_ATTRIBUTIONS} />
+                    <VectorLayer
+                        fitInitialViewToThisLayer
+                        onFeaturesClicked={handleClusterZoomToClickAndSelection}
+                        name="Points"
+                        style={MARKER_STYLE}
+                        features={features}
+                        initialFeatureProjection="EPSG:3857"
+                    />
+                    <ViewListener onMapViewChanged={viewChanged} />
+                    {selReady && <SelectInteraction mode="click" features={selFeatures} />}
+                    <ContentOverlay isActive={popupActive} mouseTrackingMode="click" className="ol-popup">
+                        <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                            <h3>Selection: {selTrackedFeatures.length}</h3>
+                            <ul>
+                                {selTrackedFeatures.map(f => (
+                                    <li key={f.getId()}>ID: {f.getId()}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </ContentOverlay>
+                </CompactViewer>
+                {markerCount != null && <p>Markers in current view: {markerCount}</p>}
+            </>
+        );
+    }
+};
+
 export const _VectorLayerWithClustering = {
     render: () => {
-        const [features, isReady] = useTestClusteredData();
+        const [features, isReady] = useTestPointData();
         const clusterDistance = number('Cluster distance (in pixels)', 40, { range: true, min: 0, max: 200, step: 1 });
         const clusterMinDistance = number('Cluster minimum distance (in pixels)', 20, { range: true, min: 0, max: 200, step: 1 });
         const enabled = boolean('Enable clustering', true);
@@ -301,7 +378,7 @@ export const _VectorLayerWithClustering = {
 
 export const _VectorLayerWithClusteringAndSelection = {
     render: () => {
-        const [features, isReady] = useTestClusteredData();
+        const [features, isReady] = useTestPointData();
         const clusterDistance = number('Cluster distance (in pixels)', 40, { range: true, min: 0, max: 200, step: 1 });
         const clusterMinDistance = number('Cluster minimum distance (in pixels)', 20, { range: true, min: 0, max: 200, step: 1 });
         const enabled = boolean('Enable clustering', true);

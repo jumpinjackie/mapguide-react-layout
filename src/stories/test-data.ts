@@ -409,10 +409,9 @@ export const OSM_ATTRIBUTIONS = ['(c) OpenStreetMap contributors'];
 export const BBOX_WORLD_WGS84 = [-180, 90, 180, 90] as [number, number, number, number];
 export const BBOX_WORLD_WEB_MERCATOR = [-20037508.34, -20048966.1, 20037508.34, 20048966.1] as [number, number, number, number];
 
-export function useTestClusteredData() {
+export function useTestPointData(count: number = 20000) {
     const res = useResourceRefInit(
         () => {
-            const count = 20000;
             const features = new Array(count);
             const e = 4500000;
             let id = 1;

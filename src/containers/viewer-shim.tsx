@@ -1174,7 +1174,14 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
         //Install shims into browser window
         let browserWindow: any = window;
         this.installShims(browserWindow);
-        this.installShims(window.parent);
+        
+        // Try to install shims into parent window, but handle cross-origin restrictions
+        try {
+            this.installShims(window.parent);
+        } catch (e) {
+            // Ignore cross-origin access errors when embedded in iframe from different domain
+            debug("Could not install shims into parent window due to cross-origin restrictions");
+        }
 
         this.RegisterSelectionHandler((_mapName: string, selection: QueryMapFeaturesResponse | undefined) => {
             this.fusionSelectionHandler(selection);

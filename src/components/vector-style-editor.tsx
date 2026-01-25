@@ -2,7 +2,7 @@ import * as React from "react";
 import { tr } from "../api/i18n";
 import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
-import { Parser } from "expr-eval";
+import { Parser } from "expr-eval-fork";
 import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "./layer-manager/common";
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";

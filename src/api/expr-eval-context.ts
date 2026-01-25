@@ -1,6 +1,6 @@
 import Feature from "ol/Feature";
 import Geometry from 'ol/geom/Geometry';
-import { Expression, Parser } from 'expr-eval';
+import { Expression, Parser } from 'expr-eval-fork';
 import { strReplaceAll } from '../utils/string';
 import { isClusteredFeature } from './ol-style-helpers';
 

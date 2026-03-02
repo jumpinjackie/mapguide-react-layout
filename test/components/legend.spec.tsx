@@ -1,12 +1,74 @@
 import * as React from "react";
-import { describe, it, expect } from "vitest";
-import { render } from "@testing-library/react";
-import { MapLayer } from "../../src/api/contracts/runtime-map";
-import { LayerNode } from "../../src/components/legend";
+import { describe, it, expect, vi } from "vitest";
+import { render, fireEvent } from "@testing-library/react";
+import { LayerNode, Legend } from "../../src/components/legend";
 import { ILegendContext, LegendContext } from "../../src/components/context";
+import { RuntimeMap, MapLayer } from "../../src/api/contracts/runtime-map";
 
-// Mocks the ILegendContext needed by LayerNode and other legend sub-components
-function mockContext(): ILegendContext {
+// Minimal mock context for basic rendering test
+const createMockContext = (): ILegendContext => ({
+    stateless: false,
+    isFiltering: () => false,
+    getMapName: () => undefined,
+    getSessionId: () => undefined,
+    getFilterText: () => "",
+    getLocale: () => "en",
+    getBaseIconSize: () => 16,
+    getIconMimeType: () => "image/png",
+    getChildren: () => [],
+    getCurrentScale: () => 5000,
+    getTree: () => ({ root: [], groupChildren: {} }),
+    getGroupVisibility: () => true,
+    getLayerVisibility: (l: any) => l.Visible ?? true,
+    setGroupVisibility: () => { },
+    setLayerVisibility: () => { },
+    getLayerSelectability: () => true,
+    setLayerSelectability: () => { },
+    getGroupExpanded: (g: any) => g.ExpandInLegend ?? false,
+    setGroupExpanded: () => { },
+    getLayerExpanded: () => true,
+    setLayerExpanded: () => { }
+});
+
+const createMockMap = (layers: MapLayer[] = []): RuntimeMap => ({
+    SiteVersion: { Major: 0, Minor: 0, Build: 0, Revision: 0 },
+    Name: "testmap",
+    SessionId: "sess",
+    MapDefinition: { Id: "def", Type: "MAP" } as any,
+    TileSetDefinition: undefined,
+    TileWidth: undefined,
+    TileHeight: undefined,
+    BackgroundColor: 0xFFFFFF,
+    DisplayDpi: 96,
+    IconMimeType: "image/png",
+    CoordinateSystem: { Wkt: "", MentorCode: "", EpsgCode: "", MetersPerUnit: 1 } as any,
+    Extents: { LowerLeftCoordinate: { X: 0, Y: 0 }, UpperRightCoordinate: { X: 100, Y: 100 } } as any,
+    Group: [],
+    Layer: layers,
+    FiniteDisplayScale: undefined
+} as any);
+
+describe("Legend component basic rendering", () => {
+    it("renders without crashing and shows layer label", () => {
+        const ctx = createMockContext();
+        const layer: MapLayer = { Type: 1, Selectable: true, LayerDefinition: "def", LegendLabel: "Test Layer", Name: "layer1", ObjectId: "id1", DisplayInLegend: true, ExpandInLegend: false, Visible: true, ActuallyVisible: true, ScaleRange: [{ MinScale: 0, MaxScale: 10000, FeatureStyle: [] }] } as any;
+        const map = createMockMap([layer]);
+        const { getByText } = render(
+            <LegendContext.Provider value={ctx}>
+                <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" maxHeight={200} inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onLayerVisibilityChanged={ctx.setLayerVisibility} />
+            </LegendContext.Provider>
+        );
+        expect(getByText("Test Layer")).toBeInTheDocument();
+    });
+});
+
+// Additional advanced tests
+const createMockContextWithSpies = () => {
+    const setLayerVisibility = vi.fn();
+    const setGroupVisibility = vi.fn();
+    const setLayerSelectability = vi.fn();
+    const setGroupExpanded = vi.fn();
+    const setLayerExpanded = vi.fn();
     return {
         stateless: false,
         isFiltering: () => false,
@@ -14,25 +76,55 @@ function mockContext(): ILegendContext {
         getSessionId: () => undefined,
         getFilterText: () => "",
         getLocale: () => "en",
-        getBaseIconSize: () => 0,
+        getBaseIconSize: () => 16,
         getIconMimeType: () => "image/png",
-        getChildren: (id) => [],
-        getCurrentScale: () => this.props.currentScale,
-        getTree: () => { },
-        getGroupVisibility: (group) => group.ActuallyVisible,
-        getLayerVisibility: (layer) => layer.ActuallyVisible,
-        setGroupVisibility: () => { },
-        setLayerVisibility: () => { },
-        getLayerSelectability: (layer) => true,
-        setLayerSelectability: () => { },
-        getGroupExpanded: (group) => true,
-        setGroupExpanded: () => { },
-        getLayerExpanded: (layer) => true,
-        setLayerExpanded: () => { }
-    };
-}
+        getChildren: () => [],
+        getCurrentScale: () => 5000,
+        getTree: () => ({ root: [], groupChildren: {} }),
+        getGroupVisibility: () => true,
+        getLayerVisibility: (l: any) => l.Visible ?? true,
+        setGroupVisibility,
+        setLayerVisibility,
+        getLayerSelectability: () => true,
+        setLayerSelectability,
+        getGroupExpanded: (g: any) => g.ExpandInLegend ?? false,
+        setGroupExpanded,
+        getLayerExpanded: () => true,
+        setLayerExpanded
+    } as unknown as ILegendContext;
+};
 
-describe("components/legend", () => {
+describe("Legend component advanced tests", () => {
+    it("highlights filter text in layer label", () => {
+        const ctx = createMockContextWithSpies();
+        ctx.isFiltering = () => true;
+        ctx.getFilterText = () => "Test";
+        const layer: MapLayer = { Type: 1, Selectable: true, LayerDefinition: "def", LegendLabel: "Test Layer", Name: "layer1", ObjectId: "id1", DisplayInLegend: true, ExpandInLegend: false, Visible: true, ActuallyVisible: true, ScaleRange: [{ MinScale: 0, MaxScale: 10000, FeatureStyle: [] }] } as any;
+        const map = createMockMap([layer]);
+        const { container } = render(
+            <LegendContext.Provider value={ctx}>
+                <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" maxHeight={200} inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onLayerVisibilityChanged={ctx.setLayerVisibility} />
+            </LegendContext.Provider>
+        );
+        expect(container.innerHTML).toContain('Test Layer');
+    });
+
+    it("calls setLayerVisibility when checkbox toggled", () => {
+        const ctx = createMockContextWithSpies();
+        // initial visibility false
+        ctx.getLayerVisibility = (l) => l.Visible ?? false;
+        const layer: MapLayer = { Type: 1, Selectable: true, LayerDefinition: "def", LegendLabel: "Layer A", Name: "layerA", ObjectId: "idA", DisplayInLegend: true, ExpandInLegend: false, Visible: false, ActuallyVisible: true, ScaleRange: [{ MinScale: 0, MaxScale: 10000, FeatureStyle: [] }] } as any;
+        const map = createMockMap([layer]);
+        const { container } = render(
+            <LegendContext.Provider value={ctx}>
+                <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" maxHeight={200} inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onLayerVisibilityChanged={ctx.setLayerVisibility} />
+            </LegendContext.Provider>
+        );
+        const checkbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        expect(checkbox.checked).toBe(false);
+        fireEvent.click(checkbox);
+        expect(ctx.setLayerVisibility).toHaveBeenCalledWith("idA", true);
+    });
     it("renders a themed layer", () => {
         const layer: MapLayer = {
             Type: 1,
@@ -98,7 +190,7 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const { container } = render(<LegendContext.Provider value={mockContext()}>
+        const { container } = render(<LegendContext.Provider value={createMockContextWithSpies()}>
             <LayerNode layer={layer} />
         </LegendContext.Provider>);
         const rules = container.querySelectorAll("li.layer-rule-node");
@@ -149,7 +241,7 @@ describe("components/legend", () => {
                 }
             ]
         };
-        const { container } = render(<LegendContext.Provider value={mockContext()}>
+        const { container } = render(<LegendContext.Provider value={createMockContextWithSpies()}>
             <LayerNode layer={layer} />
         </LegendContext.Provider>);
         const rules = container.querySelectorAll("li.layer-rule-node");

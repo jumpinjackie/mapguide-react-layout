@@ -30,9 +30,9 @@
     "postinstall": "patch-package && yarn run build",
     "storybook": "storybook dev -p 4000 -c .storybook",
     "test": "vitest run",
-    "test:appveyor": "vitest run --coverage",
-    "test:gha": "vitest run --coverage && cat ./coverage-report/lcov.info",
-    "ci:appveyor": "yarn run lint && yarn run test:appveyor",
+    "test:coverage": "vitest run --coverage",
+    "test:gha": "yarn run test:coverage && cat ./coverage-report/lcov.info",
+    "ci:appveyor": "yarn run lint && yarn run test:coverage",
     "ci:gha": "yarn run lint && yarn run test:gha"
   },
   "repository": {

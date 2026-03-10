@@ -432,9 +432,12 @@ const FilterItem = (props: IFilterItemProps) => {
     const [pointStyleUrl, setPointStyleUrl] = React.useState<string | undefined>(undefined);
     const [lineStyleUrl, setLineStyleUrl] = React.useState<string | undefined>(undefined);
     const [polyStyleUrl, setPolyStyleUrl] = React.useState<string | undefined>(undefined);
+    // Use JSON string as a stable dependency to avoid spurious effect runs when the
+    // parent re-renders with a new array reference containing the same filter values.
+    const filterKey = filter ? JSON.stringify(filter) : "";
     React.useEffect(() => {
-        setLocalFilterJson(filter ? JSON.stringify(filter) : "");
-    }, [filter]);
+        setLocalFilterJson(filterKey);
+    }, [filterKey]);
     React.useEffect(() => {
         if (isDefault) {
             setIsLocalFilterValid(true);

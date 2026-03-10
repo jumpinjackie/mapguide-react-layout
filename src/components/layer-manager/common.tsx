@@ -140,6 +140,12 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
         onCancelEditing,
         onUpdateLocalValue
     } = useExprEditor(props);
+    // Maintain a separate local text state for the OL expression JSON input so that
+    // intermediate (potentially invalid) typing is reflected in the input field.
+    const [exprText, setExprText] = React.useState(() => stringifyExprIf(localValue, "edit-expr"));
+    React.useEffect(() => {
+        setExprText(stringifyExprIf(localValue, "edit-expr"));
+    }, [localValue, editMode]);
     const onEditClick = () => {
         if (isEditing) {
             onCancelEditing();
@@ -162,15 +168,16 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                     type="text"
                     className="bp3-input"
                     placeholder='e.g. ["get","propertyName"]'
-                    value={stringifyExprIf(localValue, "edit-expr")}
+                    value={exprText}
                     onChange={e => {
+                        setExprText(e.target.value);
                         try {
                             const parsed = JSON.parse(e.target.value);
                             if (Array.isArray(parsed)) {
                                 onUpdateLocalValue({ expr: parsed });
                             }
                         } catch {
-                            // Keep local text state but don't update value until valid JSON
+                            // Keep typing; Apply button disabled until JSON is valid
                         }
                     }} />
                 <br /><br />

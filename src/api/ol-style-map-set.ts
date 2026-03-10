@@ -118,7 +118,7 @@ export function featureStyleToFlatStyle(style: IVectorFeatureStyle): FlatStyle {
             result['icon-anchor'] = pt.anchor;
             result['icon-rotate-with-view'] = toFlatExpr(pt.rotateWithView);
             result['icon-rotation'] = isEvaluatable(pt.rotation)
-                ? ['/', ['*', (pt.rotation as { expr: any[] }).expr, Math.PI], 180]
+                ? ['*', (pt.rotation as { expr: any[] }).expr, Math.PI / 180]
                 : deg2rad(pt.rotation as number);
             result['icon-scale'] = toFlatExpr(pt.scale);
         }

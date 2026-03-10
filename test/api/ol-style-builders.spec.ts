@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import TextStyle from "ol/style/Text";
-import { evalFeature, buildStroke, buildFill, tryBuildTextStyle } from "../../src/api/ol-style-builders";
+import { evalFeature, evalOLExpr, buildStroke, buildFill, tryBuildTextStyle } from "../../src/api/ol-style-builders";
 import type { OLFeature } from "../../src/api/ol-types";
 import type { IBasicStroke, IBasicFill, IVectorLabelSettings } from "../../src/api/ol-style-contracts";
 
@@ -33,6 +33,18 @@ describe("api/ol-style-builders", () => {
             const expr = { expr: ['nonexistent-op', 'VALUE'] };
             const result = evalFeature(expr, feature);
             expect(result).toBeUndefined();
+        });
+
+        it("returns undefined when getProperties throws", () => {
+            const feature = new Feature({ geometry: new Point([0, 0]) }) as OLFeature;
+            const spy = vi.spyOn(feature, 'getProperties').mockImplementation(() => { throw new Error('properties error'); });
+            try {
+                const expr = { expr: ['get', 'VALUE'] };
+                const result = evalFeature(expr, feature);
+                expect(result).toBeUndefined();
+            } finally {
+                spy.mockRestore();
+            }
         });
     });
 
@@ -145,6 +157,111 @@ describe("api/ol-style-builders", () => {
             };
             const result = tryBuildTextStyle(style, undefined);
             expect(result).toBeInstanceOf(TextStyle);
+        });
+
+        it("evaluates dynamic label text from feature property", () => {
+            const feature = new Feature({ geometry: new Point([0, 0]), NAME: "hello" }) as OLFeature;
+            const style: IVectorLabelSettings = {
+                label: { text: { expr: ['get', 'NAME'] } }
+            };
+            const result = tryBuildTextStyle(style, feature);
+            expect(result).toBeInstanceOf(TextStyle);
+            expect(result?.getText()).toBe("hello");
+        });
+    });
+
+    describe("evalOLExpr", () => {
+        it("returns a plain non-array value as-is", () => {
+            expect(evalOLExpr(42, {})).toBe(42);
+            expect(evalOLExpr("hello", {})).toBe("hello");
+        });
+
+        it("['literal', v] returns v", () => {
+            expect(evalOLExpr(['literal', 7], {})).toBe(7);
+        });
+
+        it("['get', prop] retrieves a property value", () => {
+            expect(evalOLExpr(['get', 'foo'], { foo: 99 })).toBe(99);
+        });
+
+        it("['get', prop] returns undefined for missing property", () => {
+            expect(evalOLExpr(['get', 'missing'], {})).toBeUndefined();
+        });
+
+        it("['get', outer, inner] accesses nested property", () => {
+            expect(evalOLExpr(['get', 'arr', 'length'], { arr: [1, 2, 3] })).toBe(3);
+        });
+
+        it("['get', ...] propagates null midway", () => {
+            expect(evalOLExpr(['get', 'a', 'b'], { a: null })).toBeUndefined();
+        });
+
+        it("'+' sums two expressions", () => {
+            expect(evalOLExpr(['+', 3, 4], {})).toBe(7);
+        });
+
+        it("'-' subtracts two expressions", () => {
+            expect(evalOLExpr(['-', ['get', 'n'], 2], { n: 10 })).toBe(8);
+        });
+
+        it("'*' multiplies two expressions", () => {
+            expect(evalOLExpr(['*', 3, 3], {})).toBe(9);
+        });
+
+        it("'/' divides two expressions", () => {
+            expect(evalOLExpr(['/', ['get', 'n'], 4], { n: 20 })).toBe(5);
+        });
+
+        it("['clamp'] clamps to min", () => {
+            expect(evalOLExpr(['clamp', -5, 0, 10], {})).toBe(0);
+        });
+
+        it("['clamp'] clamps to max", () => {
+            expect(evalOLExpr(['clamp', 15, 0, 10], {})).toBe(10);
+        });
+
+        it("['clamp'] returns value when in range", () => {
+            expect(evalOLExpr(['clamp', 5, 0, 10], {})).toBe(5);
+        });
+
+        it("'==' returns true when equal", () => {
+            expect(evalOLExpr(['==', ['get', 'x'], 1], { x: 1 })).toBe(true);
+        });
+
+        it("'==' returns false when not equal", () => {
+            expect(evalOLExpr(['==', ['get', 'x'], 2], { x: 1 })).toBe(false);
+        });
+
+        it("'!=' returns true when not equal", () => {
+            expect(evalOLExpr(['!=', ['get', 'x'], 2], { x: 1 })).toBe(true);
+        });
+
+        it("'!=' returns false when equal", () => {
+            expect(evalOLExpr(['!=', ['get', 'x'], 1], { x: 1 })).toBe(false);
+        });
+
+        it("'>' comparison", () => {
+            expect(evalOLExpr(['>', ['get', 'n'], 5], { n: 10 })).toBe(true);
+            expect(evalOLExpr(['>', ['get', 'n'], 10], { n: 5 })).toBe(false);
+        });
+
+        it("'>=' comparison", () => {
+            expect(evalOLExpr(['>=', ['get', 'n'], 5], { n: 5 })).toBe(true);
+            expect(evalOLExpr(['>=', ['get', 'n'], 6], { n: 5 })).toBe(false);
+        });
+
+        it("'<' comparison", () => {
+            expect(evalOLExpr(['<', ['get', 'n'], 10], { n: 5 })).toBe(true);
+            expect(evalOLExpr(['<', ['get', 'n'], 5], { n: 10 })).toBe(false);
+        });
+
+        it("'<=' comparison", () => {
+            expect(evalOLExpr(['<=', ['get', 'n'], 5], { n: 5 })).toBe(true);
+            expect(evalOLExpr(['<=', ['get', 'n'], 4], { n: 5 })).toBe(false);
+        });
+
+        it("unknown operator returns undefined", () => {
+            expect(evalOLExpr(['unknown-op', 1], {})).toBeUndefined();
         });
     });
 });

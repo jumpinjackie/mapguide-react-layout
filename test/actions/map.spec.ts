@@ -631,4 +631,273 @@ describe("actions/map", () => {
         expect(res3.SelectedFeatures?.SelectedLayer).toHaveLength(1);
         expect(res3.SelectedFeatures?.SelectedLayer[0].Feature).toHaveLength(2);
     });
-})
+});
+
+import {
+    mapResized,
+    setSelection,
+    setBusyCount,
+    setBaseLayer,
+    setMouseCoordinates,
+    setLayerTransparency,
+    setViewSizeUnits,
+    previousView,
+    nextView,
+    setActiveTool,
+    setActiveMap,
+    setFeatureTooltipsEnabled,
+    enableSelectDragPan,
+    setManualFeatureTooltipsEnabled,
+    setViewRotation,
+    setViewRotationEnabled,
+    showSelectedFeature,
+    removeMapLayer,
+    setMapLayerIndex,
+    setMapLayerOpacity,
+    setMapLayerVisibility,
+    setHeatmapLayerBlur,
+    setHeatmapLayerRadius,
+    setMapLayerVectorStyle,
+    addMapLayerBusyWorker,
+    removeMapLayerBusyWorker,
+    addClientSelectedFeature,
+    clearClientSelection,
+    externalLayersReady,
+    mapLayerAdded
+} from "../../src/actions/map";
+import { ActionType } from "../../src/constants/actions";
+import { ActiveMapTool, UnitOfMeasure } from "../../src/api/common";
+import { VectorStyleSource } from "../../src/api/ol-style-contracts";
+import type { IVectorLayerStyle } from "../../src/api/ol-style-contracts";
+import type { ILayerInfo } from "../../src/api/common";
+import type { ClientSelectionFeature } from "../../src/api/contracts/common";
+
+const SIMPLE_VECTOR_STYLE: IVectorLayerStyle = {
+    default: {
+        point: {
+            type: "Circle",
+            radius: 5,
+            fill: { color: "#ff0000", alpha: 255 },
+            stroke: { color: "#000000", width: 1, alpha: 255 }
+        }
+    }
+};
+
+describe("actions/map - action creators", () => {
+    it("mapResized creates correct action", () => {
+        const action = mapResized(800, 600);
+        expect(action.type).toBe(ActionType.MAP_RESIZED);
+        expect(action.payload.width).toBe(800);
+        expect(action.payload.height).toBe(600);
+    });
+
+    it("setSelection creates correct action", () => {
+        const action = setSelection("TestMap", undefined);
+        expect(action.type).toBe(ActionType.MAP_SET_SELECTION);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.selection).toBeUndefined();
+    });
+
+    it("setBusyCount creates correct action", () => {
+        const action = setBusyCount(3);
+        expect(action.type).toBe(ActionType.MAP_SET_BUSY_COUNT);
+        expect(action.payload).toBe(3);
+    });
+
+    it("setBaseLayer creates correct action", () => {
+        const action = setBaseLayer("TestMap", "OSM");
+        expect(action.type).toBe(ActionType.MAP_SET_BASE_LAYER);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("OSM");
+    });
+
+    it("setMouseCoordinates creates correct action", () => {
+        const coord = [100, 200];
+        const action = setMouseCoordinates("TestMap", coord);
+        expect(action.type).toBe(ActionType.UPDATE_MOUSE_COORDINATES);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.coord).toEqual(coord);
+    });
+
+    it("setLayerTransparency creates correct action", () => {
+        const action = setLayerTransparency("TestMap", "Roads", 0.5);
+        expect(action.type).toBe(ActionType.MAP_SET_LAYER_TRANSPARENCY);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.opacity).toBe(0.5);
+    });
+
+    it("setViewSizeUnits creates correct action", () => {
+        const action = setViewSizeUnits(UnitOfMeasure.Meters);
+        expect(action.type).toBe(ActionType.MAP_SET_VIEW_SIZE_UNITS);
+        expect(action.payload).toBe(UnitOfMeasure.Meters);
+    });
+
+    it("previousView creates correct action", () => {
+        const action = previousView("TestMap");
+        expect(action.type).toBe(ActionType.MAP_PREVIOUS_VIEW);
+        expect(action.payload.mapName).toBe("TestMap");
+    });
+
+    it("nextView creates correct action", () => {
+        const action = nextView("TestMap");
+        expect(action.type).toBe(ActionType.MAP_NEXT_VIEW);
+        expect(action.payload.mapName).toBe("TestMap");
+    });
+
+    it("setActiveTool creates correct action", () => {
+        const action = setActiveTool(ActiveMapTool.Select);
+        expect(action.type).toBe(ActionType.MAP_SET_ACTIVE_TOOL);
+        expect(action.payload).toBe(ActiveMapTool.Select);
+    });
+
+    it("setActiveMap creates correct action", () => {
+        const action = setActiveMap("TestMap");
+        expect(action.type).toBe(ActionType.MAP_SET_ACTIVE_MAP);
+        expect(action.payload).toBe("TestMap");
+    });
+
+    it("setFeatureTooltipsEnabled creates correct action", () => {
+        const action = setFeatureTooltipsEnabled(true);
+        expect(action.type).toBe(ActionType.MAP_SET_MAPTIP);
+        expect(action.payload).toBe(true);
+    });
+
+    it("enableSelectDragPan creates correct action", () => {
+        const action = enableSelectDragPan(false);
+        expect(action.type).toBe(ActionType.MAP_ENABLE_SELECT_DRAGPAN);
+        expect(action.payload).toBe(false);
+    });
+
+    it("setManualFeatureTooltipsEnabled creates correct action", () => {
+        const action = setManualFeatureTooltipsEnabled(true);
+        expect(action.type).toBe(ActionType.MAP_SET_MANUAL_MAPTIP);
+        expect(action.payload).toBe(true);
+    });
+
+    it("setViewRotation creates correct action", () => {
+        const action = setViewRotation(45);
+        expect(action.type).toBe(ActionType.MAP_SET_VIEW_ROTATION);
+        expect(action.payload).toBe(45);
+    });
+
+    it("setViewRotationEnabled creates correct action", () => {
+        const action = setViewRotationEnabled(true);
+        expect(action.type).toBe(ActionType.MAP_SET_VIEW_ROTATION_ENABLED);
+        expect(action.payload).toBe(true);
+    });
+
+    it("showSelectedFeature creates correct action", () => {
+        const action = showSelectedFeature("TestMap", "layer1", "key1");
+        expect(action.type).toBe(ActionType.MAP_SHOW_SELECTED_FEATURE);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerId).toBe("layer1");
+        expect(action.payload.selectionKey).toBe("key1");
+    });
+
+    it("removeMapLayer creates correct action", () => {
+        const action = removeMapLayer("TestMap", "Roads");
+        expect(action.type).toBe(ActionType.REMOVE_LAYER);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+    });
+
+    it("setMapLayerIndex creates correct action", () => {
+        const action = setMapLayerIndex("TestMap", "Roads", 2);
+        expect(action.type).toBe(ActionType.SET_LAYER_INDEX);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.index).toBe(2);
+    });
+
+    it("setMapLayerOpacity creates correct action", () => {
+        const action = setMapLayerOpacity("TestMap", "Roads", 0.7);
+        expect(action.type).toBe(ActionType.SET_LAYER_OPACITY);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.opacity).toBe(0.7);
+    });
+
+    it("setMapLayerVisibility creates correct action", () => {
+        const action = setMapLayerVisibility("TestMap", "Roads", true);
+        expect(action.type).toBe(ActionType.SET_LAYER_VISIBILITY);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.visible).toBe(true);
+    });
+
+    it("setHeatmapLayerBlur creates correct action", () => {
+        const action = setHeatmapLayerBlur("TestMap", "HeatLayer", 10);
+        expect(action.type).toBe(ActionType.SET_HEATMAP_LAYER_BLUR);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("HeatLayer");
+        expect(action.payload.blur).toBe(10);
+    });
+
+    it("setHeatmapLayerRadius creates correct action", () => {
+        const action = setHeatmapLayerRadius("TestMap", "HeatLayer", 20);
+        expect(action.type).toBe(ActionType.SET_HEATMAP_LAYER_RADIUS);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("HeatLayer");
+        expect(action.payload.radius).toBe(20);
+    });
+
+    it("setMapLayerVectorStyle creates correct action", () => {
+        const action = setMapLayerVectorStyle("TestMap", "Roads", SIMPLE_VECTOR_STYLE, VectorStyleSource.Base);
+        expect(action.type).toBe(ActionType.SET_LAYER_VECTOR_STYLE);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.style).toEqual(SIMPLE_VECTOR_STYLE);
+        expect(action.payload.which).toBe(VectorStyleSource.Base);
+    });
+
+    it("addMapLayerBusyWorker creates correct action", () => {
+        const action = addMapLayerBusyWorker("TestMap", "Roads");
+        expect(action.type).toBe(ActionType.ADD_LAYER_BUSY_WORKER);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+    });
+
+    it("removeMapLayerBusyWorker creates correct action", () => {
+        const action = removeMapLayerBusyWorker("TestMap", "Roads");
+        expect(action.type).toBe(ActionType.REMOVE_LAYER_BUSY_WORKER);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+    });
+
+    it("addClientSelectedFeature creates correct action", () => {
+        const feature: ClientSelectionFeature = { properties: { id: 1 } };
+        const action = addClientSelectedFeature("TestMap", "Roads", feature);
+        expect(action.type).toBe(ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layerName).toBe("Roads");
+        expect(action.payload.feature).toEqual(feature);
+    });
+
+    it("clearClientSelection creates correct action", () => {
+        const action = clearClientSelection("TestMap");
+        expect(action.type).toBe(ActionType.MAP_CLEAR_CLIENT_SELECTION);
+        expect(action.payload.mapName).toBe("TestMap");
+    });
+
+    it("externalLayersReady creates correct action", () => {
+        const action = externalLayersReady("TestMap");
+        expect(action.type).toBe(ActionType.EXTERNAL_LAYERS_READY);
+        expect(action.payload.mapName).toBe("TestMap");
+    });
+
+    it("mapLayerAdded creates correct action with no style", () => {
+        const layer: ILayerInfo = { name: "Roads", displayName: "Roads", type: "Vector", visible: true, isExternal: true } as unknown as ILayerInfo;
+        const action = mapLayerAdded("TestMap", layer);
+        expect(action.type).toBe(ActionType.LAYER_ADDED);
+        expect(action.payload.mapName).toBe("TestMap");
+        expect(action.payload.layer).toEqual(layer);
+        expect(action.payload.defaultStyle).toBeUndefined();
+    });
+
+    it("mapLayerAdded creates correct action with style", () => {
+        const layer: ILayerInfo = { name: "Roads", displayName: "Roads", type: "Vector", visible: true, isExternal: true } as unknown as ILayerInfo;
+        const action = mapLayerAdded("TestMap", layer, SIMPLE_VECTOR_STYLE);
+        expect(action.payload.defaultStyle).toEqual(SIMPLE_VECTOR_STYLE);
+    });
+});

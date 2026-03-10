@@ -41,6 +41,10 @@ export interface IVectorLayerStyleRule {
 
 /**
  * Defines a style for a vector layer
+ *
+ * @since 0.13
+ * @since 0.15 Replaced the string-indexed filter map with an explicit `{ default, rules? }` structure.
+ * Conditional rules are now expressed as `IVectorLayerStyleRule[]` using OL encoded expressions.
  */
 export interface IVectorLayerStyle {
     /**

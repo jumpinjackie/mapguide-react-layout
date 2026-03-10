@@ -4,14 +4,12 @@ import Geometry from 'ol/geom/Geometry';
 import { DynamicStyleMap, IOlStyleMap, IVectorLayerStyle, IVectorFeatureStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, isEvaluatable, IVectorLabelSettings, IBasicVectorPointStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IClusterSettings, ClusterClickAction, IBasicFill, IBasicStroke } from './ol-style-contracts';
 import Style from 'ol/style/Style';
 import CircleStyle from 'ol/style/Circle';
-import { buildFill, buildStroke, tryBuildTextStyle, evalFeature } from './ol-style-builders';
+import { buildFill, buildStroke, tryBuildTextStyle, evalFeature, evalOLExpr } from './ol-style-builders';
 import IconStyle from "ol/style/Icon";
 import { deg2rad } from '../utils/number';
 import { ScopedId } from '../utils/scoped-id';
 import type { FlatStyle, Rule } from 'ol/style/flat';
 import { asArray } from 'ol/color';
-import { buildExpression, newEvaluationContext } from 'ol/expr/cpu';
-import { newParsingContext, AnyType } from 'ol/expr/expression';
 
 const scopedId = new ScopedId();
 
@@ -309,18 +307,15 @@ export class OLStyleMapSet {
 
 /**
  * Selects the first matching rule style for a feature (for legend/fallback use).
+ * Uses the lightweight built-in OL expression evaluator to evaluate filter expressions.
  */
 function matchRule(styleDef: IVectorLayerStyle, feature: Feature<Geometry>): IVectorFeatureStyle {
     if (styleDef.rules) {
+        const props = feature.getProperties();
         for (const rule of styleDef.rules) {
             if (rule.filter) {
                 try {
-                    const ctx = newParsingContext();
-                    const evaluator = buildExpression(rule.filter, AnyType, ctx);
-                    const evalCtx = newEvaluationContext();
-                    evalCtx.properties = feature.getProperties();
-                    evalCtx.featureId = feature.getId() ?? null;
-                    if (evaluator(evalCtx)) {
+                    if (evalOLExpr(rule.filter, props)) {
                         return rule.style;
                     }
                 } catch {

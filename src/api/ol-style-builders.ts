@@ -4,8 +4,6 @@ import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import { asArray } from 'ol/color';
 import { OLFeature } from "./ol-types";
-import { buildExpression, newEvaluationContext } from 'ol/expr/cpu';
-import { newParsingContext, AnyType } from 'ol/expr/expression';
 
 function toOLColor(color: string, alpha: number | undefined) {
     const c = asArray(color);
@@ -16,9 +14,74 @@ function toOLColor(color: string, alpha: number | undefined) {
 }
 
 /**
+ * Lightweight OL encoded-expression evaluator for legend and fallback rendering.
+ *
+ * Handles the subset of OL expressions used by this library:
+ * - `['get', prop, ...]` — nested property access (e.g. `['get', 'features', 0, 'name']`)
+ * - `['literal', value]` — literal wrapper
+ * - Arithmetic: `+`, `-`, `*`, `/`
+ * - `['clamp', val, min, max]`
+ * - Comparisons: `==`, `!=`, `>`, `>=`, `<`, `<=`
+ * - Plain non-array values are returned as-is.
+ *
+ * Unknown operators return `undefined`.
+ *
+ * @hidden
+ * @since 0.15
+ */
+export function evalOLExpr(expr: any, props: Record<string, any>): any {
+    if (!Array.isArray(expr)) {
+        return expr; // literal value
+    }
+    const [op, ...args] = expr as [string, ...any[]];
+    switch (op) {
+        case 'get': {
+            let val: any = props;
+            for (const key of args) {
+                if (val == null) return undefined;
+                val = val[key];
+            }
+            return val;
+        }
+        case 'literal':
+            return args[0];
+        case '+':
+            return evalOLExpr(args[0], props) + evalOLExpr(args[1], props);
+        case '-':
+            return evalOLExpr(args[0], props) - evalOLExpr(args[1], props);
+        case '*':
+            return evalOLExpr(args[0], props) * evalOLExpr(args[1], props);
+        case '/':
+            return evalOLExpr(args[0], props) / evalOLExpr(args[1], props);
+        case 'clamp': {
+            const val = evalOLExpr(args[0], props);
+            const lo = evalOLExpr(args[1], props);
+            const hi = evalOLExpr(args[2], props);
+            return Math.max(lo, Math.min(hi, val));
+        }
+        case '==':
+            // eslint-disable-next-line eqeqeq
+            return evalOLExpr(args[0], props) == evalOLExpr(args[1], props);
+        case '!=':
+            // eslint-disable-next-line eqeqeq
+            return evalOLExpr(args[0], props) != evalOLExpr(args[1], props);
+        case '>':
+            return evalOLExpr(args[0], props) > evalOLExpr(args[1], props);
+        case '>=':
+            return evalOLExpr(args[0], props) >= evalOLExpr(args[1], props);
+        case '<':
+            return evalOLExpr(args[0], props) < evalOLExpr(args[1], props);
+        case '<=':
+            return evalOLExpr(args[0], props) <= evalOLExpr(args[1], props);
+        default:
+            return undefined;
+    }
+}
+
+/**
  * Evaluates an `ExprOr<T>` value. If the value is a literal it is returned as-is.
  * If it is an `IEvaluatable` (OL encoded expression), the expression is evaluated against
- * the provided feature's properties using OL's CPU expression evaluator.
+ * the provided feature's properties using a lightweight built-in expression evaluator.
  * Returns `undefined` when the expression cannot be evaluated (e.g. no feature provided).
  *
  * @hidden
@@ -32,12 +95,7 @@ export function evalFeature<T>(expr: ExprOr<T>, feat: OLFeature | undefined): an
         return undefined;
     }
     try {
-        const parsingCtx = newParsingContext();
-        const evaluator = buildExpression(expr.expr, AnyType, parsingCtx);
-        const evalCtx = newEvaluationContext();
-        evalCtx.properties = feat.getProperties();
-        evalCtx.featureId = feat.getId() ?? null;
-        return evaluator(evalCtx);
+        return evalOLExpr(expr.expr, feat.getProperties());
     } catch (e) {
         return undefined;
     }

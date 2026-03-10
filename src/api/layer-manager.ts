@@ -279,8 +279,11 @@ export class LayerManager implements ILayerManager {
                 onClick: extraOptions.onClusterClickAction ?? ClusterClickAction.ShowPopup,
                 style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
             };
-            // Note: cluster sub-feature property access is not expressible with OL flat expressions,
-            // so cluster labels based on labelOnProperty are not set here.
+            if (!strIsNullOrEmpty(labelOnProperty)) {
+                // OL supports nested property access: ['get', 'features', 0, labelOnProperty]
+                // reads features[0][labelOnProperty] — the label of the first sub-feature.
+                ensureLabelTextForStyle(clusterSettings.style.default, { expr: ['get', 'features', 0, labelOnProperty] });
+            }
         }
         // Delete irrelevant styles based on geometry types encountered
         const bStyle: IVectorLayerStyle = defaultStyle ?? cloneObject(DEFAULT_VECTOR_LAYER_STYLE);

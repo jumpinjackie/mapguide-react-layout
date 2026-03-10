@@ -141,3 +141,83 @@ describe('extractWmsLayers', () => {
         expect(() => extractWmsLayers(caps)).toThrow();
     });
 });
+
+describe('WmsCapabilitiesPanel', () => {
+    const baseCaps: WmsCapabilitiesDocument = {
+        version: '1.3.0',
+        Service: { Name: 'WMS', Title: 'My WMS', Abstract: 'Test WMS service' },
+        Capability: {
+            Layer: {
+                Title: 'Root Layer',
+                Abstract: 'Root'
+            }
+        }
+    } as any;
+
+    it('renders without throwing when there are no layers', () => {
+        const onAddLayer = vi.fn();
+        const { container } = render(
+            <WmsCapabilitiesPanel
+                capabilities={baseCaps}
+                locale="en"
+                onAddLayer={onAddLayer}
+            />
+        );
+        expect(container).toBeDefined();
+    });
+
+    it('renders with layers that have styles', () => {
+        const onAddLayer = vi.fn();
+        const capsWithStyles: WmsCapabilitiesDocument = {
+            ...baseCaps,
+            Capability: {
+                Layer: {
+                    Title: 'Root',
+                    Abstract: 'Root',
+                    Layer: [{
+                        Name: 'layer1',
+                        Title: 'Layer 1',
+                        Abstract: 'A layer',
+                        queryable: true,
+                        Style: [{ Name: 'default', Title: 'Default Style' }]
+                    }]
+                }
+            }
+        } as any;
+        const { container } = render(
+            <WmsCapabilitiesPanel
+                capabilities={capsWithStyles}
+                locale="en"
+                onAddLayer={onAddLayer}
+            />
+        );
+        expect(container).toBeDefined();
+    });
+
+    it('renders with layers without styles', () => {
+        const onAddLayer = vi.fn();
+        const capsNoStyles: WmsCapabilitiesDocument = {
+            ...baseCaps,
+            Capability: {
+                Layer: {
+                    Title: 'Root',
+                    Abstract: 'Root',
+                    Layer: [{
+                        Name: 'layer1',
+                        Title: 'Layer 1',
+                        Abstract: 'A layer',
+                        queryable: false
+                    }]
+                }
+            }
+        } as any;
+        const { container } = render(
+            <WmsCapabilitiesPanel
+                capabilities={capsNoStyles}
+                locale="en"
+                onAddLayer={onAddLayer}
+            />
+        );
+        expect(container).toBeDefined();
+    });
+});

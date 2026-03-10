@@ -679,4 +679,136 @@ describe("reducers/mouse", () => {
             expect(Object.keys(state.flyouts)).toHaveLength(Object.keys(action.payload.toolbars.flyouts).length);
         });
     });
+
+    describe(ActionType.COMPONENT_OPEN, () => {
+        it("opens a component in a flyout by flyoutId", () => {
+            const initialState = createInitialState();
+            const stateWithFlyout = {
+                ...initialState.toolbar,
+                flyouts: {
+                    "testFlyout": { open: false, metrics: null, componentName: null, componentProps: null }
+                }
+            };
+            const action: any = {
+                type: ActionType.COMPONENT_OPEN,
+                payload: {
+                    flyoutId: "testFlyout",
+                    metrics: { posX: 10, posY: 20, width: 100, height: 50 },
+                    name: "TestComponent",
+                    props: { foo: "bar" }
+                }
+            };
+            const newState = toolbarReducer(stateWithFlyout as any, action);
+            expect(newState.flyouts["testFlyout"]).toBeDefined();
+            expect((newState.flyouts["testFlyout"] as any).open).toBe(true);
+        });
+
+        it("returns state unchanged when flyoutId is not provided", () => {
+            const initialState = createInitialState();
+            const action: any = {
+                type: ActionType.COMPONENT_OPEN,
+                payload: {}
+            };
+            const newState = toolbarReducer(initialState.toolbar, action);
+            expect(newState).toBe(initialState.toolbar);
+        });
+    });
+
+    describe(ActionType.FLYOUT_OPEN, () => {
+        it("opens a flyout by flyoutId", () => {
+            const initialState = createInitialState();
+            const stateWithFlyout = {
+                ...initialState.toolbar,
+                flyouts: {
+                    "myFlyout": { open: false, metrics: null }
+                }
+            };
+            const action: any = {
+                type: ActionType.FLYOUT_OPEN,
+                payload: {
+                    flyoutId: "myFlyout",
+                    metrics: { posX: 5, posY: 10, width: 50, height: 25 }
+                }
+            };
+            const newState = toolbarReducer(stateWithFlyout as any, action);
+            expect((newState.flyouts["myFlyout"] as any).open).toBe(true);
+        });
+
+        it("returns state unchanged when flyoutId is not provided", () => {
+            const initialState = createInitialState();
+            const action: any = {
+                type: ActionType.FLYOUT_OPEN,
+                payload: {}
+            };
+            const newState = toolbarReducer(initialState.toolbar, action);
+            expect(newState).toBe(initialState.toolbar);
+        });
+    });
+
+    describe(ActionType.FLYOUT_CLOSE, () => {
+        it("closes a flyout by flyoutId", () => {
+            const initialState = createInitialState();
+            const stateWithFlyout = {
+                ...initialState.toolbar,
+                flyouts: {
+                    "myFlyout": { open: true, metrics: { posX: 5, posY: 10, width: 50, height: 25 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.FLYOUT_CLOSE,
+                payload: {
+                    flyoutId: "myFlyout"
+                }
+            };
+            const newState = toolbarReducer(stateWithFlyout as any, action);
+            expect((newState.flyouts["myFlyout"] as any).open).toBe(false);
+        });
+    });
+
+    describe(ActionType.CONTEXT_MENU_CLOSE, () => {
+        it("closes the context menu flyout", () => {
+            const initialState = createInitialState();
+            const contextMenuId = "MapContextMenu";
+            const stateWithContextMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [contextMenuId]: { open: true, metrics: { posX: 10, posY: 20, width: 0, height: 0 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.CONTEXT_MENU_CLOSE
+            };
+            const newState = toolbarReducer(stateWithContextMenu as any, action);
+            expect((newState.flyouts[contextMenuId] as any).open).toBe(false);
+        });
+    });
+
+    describe(ActionType.CONTEXT_MENU_OPEN, () => {
+        it("returns state unchanged when context menu flyout is not registered", () => {
+            const initialState = createInitialState();
+            const action: any = {
+                type: ActionType.CONTEXT_MENU_OPEN,
+                payload: { x: 10, y: 20 }
+            };
+            const newState = toolbarReducer(initialState.toolbar, action);
+            expect(newState).toBe(initialState.toolbar);
+        });
+
+        it("opens the context menu when flyout is registered", () => {
+            const initialState = createInitialState();
+            const contextMenuId = "MapContextMenu";
+            const stateWithContextMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [contextMenuId]: { open: false, metrics: null }
+                }
+            };
+            const action: any = {
+                type: ActionType.CONTEXT_MENU_OPEN,
+                payload: { x: 50, y: 75 }
+            };
+            const newState = toolbarReducer(stateWithContextMenu as any, action);
+            expect((newState.flyouts[contextMenuId] as any).open).toBe(true);
+        });
+    });
 });

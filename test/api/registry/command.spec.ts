@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { CommandConditions, mergeInvokeUrlParameters, reduceAppToToolbarState } from "../../../src/api/registry/command";
+import { CommandConditions, mapToolbarReference, mergeInvokeUrlParameters, reduceAppToToolbarState } from "../../../src/api/registry/command";
 import { createInitialState, createMap, createSelectionSet } from "../../../test-data";
-import { IBranchedMapSubState } from '../../../src/api/common';
+import { IBranchedMapSubState, ActiveMapTool } from '../../../src/api/common';
+import type { IToolbarAppState } from "../../../src/api/registry/command";
 
 describe("api/registry/command", () => {
     describe("mergeInvokeUrlParameters", () => {
@@ -247,6 +248,80 @@ describe("api/registry/command", () => {
             ]
             result = CommandConditions.hasNextView(reduceAppToToolbarState(state));
             expect(result).toBe(true);
+        });
+    });
+
+    describe("mapToolbarReference", () => {
+        const mockState: IToolbarAppState = {
+            stateless: false,
+            visibleAndSelectableWmsLayerCount: 0,
+            busyWorkerCount: 0,
+            hasSelection: false,
+            hasClientSelection: false,
+            hasPreviousView: false,
+            hasNextView: false,
+            featureTooltipsEnabled: false,
+            activeTool: ActiveMapTool.Pan
+        };
+
+        it("returns error item when tb.error is set", () => {
+            const tb = { error: "Some error message" };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).not.toBeNull();
+            expect((result as any).tooltip).toBe("Some error message");
+        });
+
+        it("returns separator item when tb.isSeparator is true", () => {
+            const tb = { isSeparator: true };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).not.toBeNull();
+            expect((result as any).isSeparator).toBe(true);
+        });
+
+        it("returns null when tb has no recognized properties", () => {
+            const tb = {};
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).toBeNull();
+        });
+
+        it("returns component flyout item when tb.componentName is set", () => {
+            const tb = {
+                componentName: "MyComponent",
+                componentProps: { foo: "bar" },
+                flyoutId: "flyout1",
+                tooltip: "Tooltip",
+                label: "Label"
+            };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).not.toBeNull();
+            expect((result as any).componentName).toBe("MyComponent");
+        });
+
+        it("returns flyout item when tb has label and flyoutId", () => {
+            const tb = {
+                label: "My Flyout",
+                flyoutId: "flyout2",
+                tooltip: "Flyout tooltip"
+            };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).not.toBeNull();
+            expect((result as any).flyoutId).toBe("flyout2");
+        });
+
+        it("returns inline menu when tb has children", () => {
+            const tb = {
+                label: "Menu",
+                children: [{ isSeparator: true }]
+            };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).not.toBeNull();
+            expect((result as any).childItems).toBeDefined();
+        });
+
+        it("returns null for unknown command", () => {
+            const tb = { command: "UNKNOWN_COMMAND_12345" };
+            const result = mapToolbarReference(tb, mockState, () => {});
+            expect(result).toBeNull();
         });
     });
 });

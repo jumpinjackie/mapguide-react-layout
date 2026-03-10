@@ -32,7 +32,6 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:gha": "yarn run test:coverage && cat ./coverage-report/lcov.info",
-    "ci:appveyor": "yarn run lint && yarn run test:coverage",
     "ci:gha": "yarn run lint && yarn run test:gha"
   },
   "repository": {

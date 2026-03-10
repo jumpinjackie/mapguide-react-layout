@@ -55,17 +55,17 @@ describe("api/ol-style-helpers", () => {
     });
 
     describe("getOLStyleFunction", () => {
-        it("returns a tuple of [styleFunction, OLStyleMapSet]", () => {
-            const [styleFunc, styleMapSet] = getOLStyleFunction(SIMPLE_STYLE, undefined);
-            expect(typeof styleFunc).toBe("function");
+        it("returns a tuple of [flatRules, OLStyleMapSet]", () => {
+            const [flatRules, styleMapSet] = getOLStyleFunction(SIMPLE_STYLE, undefined);
+            expect(Array.isArray(flatRules)).toBe(true);
             expect(styleMapSet).toBeDefined();
         });
 
-        it("returned style function produces a style for a point feature", () => {
-            const [styleFunc] = getOLStyleFunction(SIMPLE_STYLE, undefined);
-            const feature = new Feature(new Point([0, 0])) as OLFeature;
-            const style = (styleFunc as Function)(feature);
-            expect(style).toBeDefined();
+        it("flat rules array has at least the default else-rule", () => {
+            const [flatRules] = getOLStyleFunction(SIMPLE_STYLE, undefined);
+            expect(flatRules.length).toBeGreaterThanOrEqual(1);
+            const lastRule = flatRules[flatRules.length - 1];
+            expect(lastRule.else).toBe(true);
         });
     });
 });

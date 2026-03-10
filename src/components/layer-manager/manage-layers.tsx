@@ -129,14 +129,15 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     let enableLine = false;
     let enablePoint = false;
     let enablePolygon = false;
-    for (const k in theVectorStyle) {
-        if (theVectorStyle[k].point) {
+    const allStyles = theVectorStyle ? [theVectorStyle.default, ...(theVectorStyle.rules?.map(r => r.style) ?? [])] : [];
+    for (const s of allStyles) {
+        if (s.point) {
             enablePoint = true;
         }
-        if (theVectorStyle[k].line) {
+        if (s.line) {
             enableLine = true;
         }
-        if (theVectorStyle[k].polygon) {
+        if (s.polygon) {
             enablePolygon = true;
         }
     }

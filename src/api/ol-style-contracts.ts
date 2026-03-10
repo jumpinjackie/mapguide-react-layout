@@ -1,6 +1,5 @@
 import type Style from 'ol/style/Style';
 import { MAP_MARKER_ICON } from '../constants/assets';
-import { ExprEvalContext } from './expr-eval-context';
 import { OLFeature } from './ol-types';
 
 /**
@@ -20,17 +19,39 @@ export enum VectorStyleSource {
 }
 
 /**
+ * A single rule in a vector layer style, mapping an optional OL expression filter to a feature style.
+ *
+ * @since 0.15
+ */
+export interface IVectorLayerStyleRule {
+    /**
+     * An OL encoded expression that evaluates to a boolean.
+     * If omitted, this rule always applies (subject to `else` semantics).
+     */
+    filter?: any[];
+    /**
+     * The feature style to apply when this rule matches.
+     */
+    style: IVectorFeatureStyle;
+    /**
+     * If true, this rule applies only when no previous rule matched.
+     */
+    else?: boolean;
+}
+
+/**
  * Defines a style for a vector layer
  */
 export interface IVectorLayerStyle {
     /**
-     * The vector style for the given filter
-     */
-    [filter: string]: IVectorFeatureStyle;
-    /**
-     * The default vector style
+     * The default vector style (applied when no rule matches or no rules are defined).
      */
     default: IVectorFeatureStyle;
+    /**
+     * Optional conditional rules. Rules are evaluated in order; the first matching rule wins.
+     * @since 0.15
+     */
+    rules?: IVectorLayerStyleRule[];
 }
 
 /**
@@ -87,10 +108,14 @@ export type TextPlacement = "point" | "line";
 export type TextBaseline = "bottom" | "top" | "middle" | "alphabetic" | "hanging" | "ideographic";
 
 /**
+ * Wraps an OL encoded expression (e.g. `['get', 'propName']`) so it can be used
+ * in place of a literal style value.
+ *
  * @since 0.14
+ * @since 0.15 `expr` changed from an expr-eval-fork string to an OL encoded expression array
  */
 export interface IEvaluatable {
-    expr: string;
+    expr: any[];
 }
 
 /**
@@ -102,7 +127,7 @@ export type ExprOr<T> = IEvaluatable | T;
  * @since 0.14
  */
 export function isEvaluatable<T>(arg: any): arg is IEvaluatable {
-    return typeof (arg?.expr) == 'string';
+    return Array.isArray(arg?.expr);
 }
 
 /**
@@ -239,6 +264,7 @@ export const DEFAULT_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
 /**
  * The default style for clustered point features
  * @since 0.14
+ * @since 0.15 radius expression updated to use OL expression format; uses `clamp` instead of `min`
  */
 export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
     type: "Circle",
@@ -246,11 +272,7 @@ export const DEFAULT_CLUSTERED_POINT_CIRCLE_STYLE: IBasicPointCircleStyle = {
         color: "#ff0000",
         alpha: 255
     },
-    radius: { expr: "min(arr_size(features) + 4, 25)" },
-    /*
-    label: {
-        text: expr("if(arr_size(features) > 1, '', arr_size(features))"),
-    },*/
+    radius: { expr: ['clamp', ['+', ['get', 'features', 'length'], 4], 5, 25] },
     stroke: {
         color: "#0000ff",
         alpha: 255,
@@ -348,4 +370,4 @@ export interface IOlStyleMap {
     "Circle": Style;
 }
 
-export type DynamicStyleMap = (feature: OLFeature | undefined, context: ExprEvalContext | undefined) => IOlStyleMap;
+export type DynamicStyleMap = (feature: OLFeature | undefined) => IOlStyleMap;

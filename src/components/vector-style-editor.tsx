@@ -1,8 +1,7 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
-import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill } from '../api/ol-style-contracts';
+import { ExprOr, isEvaluatable, IPointIconStyle, IBasicPointCircleStyle, IBasicVectorPointStyle, DEFAULT_POINT_CIRCLE_STYLE, DEFAULT_POINT_ICON_STYLE, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorFeatureStyle, DEFAULT_LINE_STYLE, DEFAULT_POLY_STYLE, IVectorLayerStyle, IVectorLabelSettings, IBasicStroke, IBasicFill, IVectorLayerStyleRule } from '../api/ol-style-contracts';
 import { DEFAULT_STYLE_KEY } from '../api/ol-style-helpers';
-import { Parser } from "expr-eval-fork";
 import { ColorExprEditor, NumberExprEditor, SliderExprEditor, StringExprEditor } from "./layer-manager/common";
 import { STR_EMPTY } from "../utils/string";
 import { getLegendImage } from "./layer-manager/legend";
@@ -401,47 +400,49 @@ export interface IVectorLayerStyleEditorProps {
 }
 
 interface IFilterItemProps extends Omit<IVectorLayerStyleEditorProps, "onChange" | "style"> {
-    onChange: (filter: string, style: IVectorFeatureStyle) => void;
+    onChange: (style: IVectorFeatureStyle) => void;
     featureStyle: IVectorFeatureStyle;
-    filter?: string;
+    /** OL expression filter (for non-default rules) */
+    filter?: any[];
     isDefault: boolean;
     isStyleEditorOpen: boolean;
     onToggleStyleEditor: (visible: boolean) => void;
 }
 
-const parser = new Parser();
+/**
+ * Attempts to validate and parse a JSON string as an OL encoded expression array.
+ */
+function parseOLFilterExpr(json: string): { valid: boolean; expr?: any[] } {
+    try {
+        const parsed = JSON.parse(json);
+        if (Array.isArray(parsed) && parsed.length >= 1 && typeof parsed[0] === 'string') {
+            return { valid: true, expr: parsed };
+        }
+        return { valid: false };
+    } catch {
+        return { valid: false };
+    }
+}
 
 const FilterItem = (props: IFilterItemProps) => {
     const { Button } = useElementContext();
     const { filter, isDefault, isStyleEditorOpen, featureStyle, onChange } = props;
-    const [localFilter, setLocalFilter] = React.useState(filter ?? "");
+    const [localFilterJson, setLocalFilterJson] = React.useState(() => filter ? JSON.stringify(filter) : "");
     const [isLocalFilterValid, setIsLocalFilterValid] = React.useState(true);
     const [pointStyleUrl, setPointStyleUrl] = React.useState<string | undefined>(undefined);
     const [lineStyleUrl, setLineStyleUrl] = React.useState<string | undefined>(undefined);
     const [polyStyleUrl, setPolyStyleUrl] = React.useState<string | undefined>(undefined);
     React.useEffect(() => {
-        setLocalFilter(localFilter);
+        setLocalFilterJson(filter ? JSON.stringify(filter) : "");
     }, [filter]);
     React.useEffect(() => {
-        try {
-            const expr: any = parser.parse(localFilter);
-            let bHaveVar = false;
-            let bHaveOperator = false;
-            for (const t of expr.tokens) {
-                switch (t.type) {
-                    case "IVAR":
-                        bHaveVar = true;
-                        break;
-                    case "IOP2":
-                        bHaveOperator = true;
-                        break;
-                }
-            }
-            setIsLocalFilterValid(bHaveVar && bHaveOperator && expr.tokens.length == 3);
-        } catch (e) {
-            setIsLocalFilterValid(false);
+        if (isDefault) {
+            setIsLocalFilterValid(true);
+            return;
         }
-    }, [localFilter]);
+        const { valid } = parseOLFilterExpr(localFilterJson);
+        setIsLocalFilterValid(valid);
+    }, [localFilterJson, isDefault]);
     React.useEffect(() => {
         let fs = featureStyle;
         // A default clustered style will have a dynamic expression for the radius, the legend preview isn't
@@ -460,9 +461,9 @@ const FilterItem = (props: IFilterItemProps) => {
         let ls: any;
         let pls: any;
         if (typeof (olstyle) == 'function') {
-            pos = (feat: any) => olstyle(feat, undefined)["Point"];
-            ls = (feat: any) => olstyle(feat, undefined)["LineString"];
-            pls = (feat: any) => olstyle(feat, undefined)["Polygon"];
+            pos = (feat: any) => (olstyle as any)(feat)["Point"];
+            ls = (feat: any) => (olstyle as any)(feat)["LineString"];
+            pls = (feat: any) => (olstyle as any)(feat)["Polygon"];
         } else {
             pos = olstyle.Point;
             ls = olstyle.LineString;
@@ -489,7 +490,7 @@ const FilterItem = (props: IFilterItemProps) => {
         props.onToggleStyleEditor(!isStyleEditorOpen);
     };
     const onInnerStyleChanged = (style: IVectorFeatureStyle) => {
-        onChange?.(isDefault ? DEFAULT_STYLE_KEY : localFilter, style);
+        onChange(style);
     }
     let colSpan = 5;
     if (!props.enableLine)
@@ -521,21 +522,22 @@ const FilterItem = (props: IFilterItemProps) => {
 }
 
 export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
-    const filters = Object.keys(props.style).filter(k => k != DEFAULT_STYLE_KEY);
-    const [openStyleEditors, setOpenStyleEditors] = React.useState<{ [filter: string]: boolean }>({});
-    const onFeatureStyleChanged = (filter: string, style: IVectorFeatureStyle) => {
-        const updatedStyle = {
-            ...props.style
-        };
-        updatedStyle[filter] = style;
-        props.onChange?.(updatedStyle);
+    const rules = props.style.rules ?? [];
+    const [openStyleEditors, setOpenStyleEditors] = React.useState<{ [key: string]: boolean }>({});
+    const onRuleStyleChanged = (index: number, style: IVectorFeatureStyle) => {
+        const updatedRules = [...(props.style.rules ?? [])];
+        updatedRules[index] = { ...updatedRules[index], style };
+        props.onChange?.({ ...props.style, rules: updatedRules });
     };
-    const onToggleStyleEditor = (index: number | string, visible: boolean) => {
+    const onDefaultStyleChanged = (style: IVectorFeatureStyle) => {
+        props.onChange?.({ ...props.style, default: style });
+    };
+    const onToggleStyleEditor = (key: string, visible: boolean) => {
         const opEds = { ...openStyleEditors };
         if (!visible) {
-            delete opEds[index];
+            delete opEds[key];
         } else {
-            opEds[index] = true;
+            opEds[key] = true;
         }
         setOpenStyleEditors(opEds);
     };
@@ -548,21 +550,24 @@ export const VectorLayerStyleEditor = (props: IVectorLayerStyleEditorProps) => {
             <col span={1} style={{ width: 32 }} />
         </colgroup>
         <tbody>
-            {filters.map((f, i) => <FilterItem
-                key={`filter-${i}`}
-                filter={f}
-                isDefault={false}
-                onChange={(f, s) => onFeatureStyleChanged(f, s)}
-                featureStyle={props.style[filters[i]]}
-                isStyleEditorOpen={openStyleEditors[f] === true}
-                onToggleStyleEditor={(isVisible) => onToggleStyleEditor(f, isVisible)}
-                locale={props.locale}
-                enableLine={props.enableLine}
-                enablePoint={props.enablePoint}
-                enablePolygon={props.enablePolygon} />)}
+            {rules.map((rule, i) => {
+                const key = `rule-${i}`;
+                return <FilterItem
+                    key={key}
+                    filter={rule.filter}
+                    isDefault={false}
+                    onChange={(s) => onRuleStyleChanged(i, s)}
+                    featureStyle={rule.style}
+                    isStyleEditorOpen={openStyleEditors[key] === true}
+                    onToggleStyleEditor={(isVisible) => onToggleStyleEditor(key, isVisible)}
+                    locale={props.locale}
+                    enableLine={props.enableLine}
+                    enablePoint={props.enablePoint}
+                    enablePolygon={props.enablePolygon} />;
+            })}
             <FilterItem
                 isDefault
-                onChange={(f, s) => onFeatureStyleChanged(DEFAULT_STYLE_KEY, s)}
+                onChange={(s) => onDefaultStyleChanged(s)}
                 featureStyle={props.style.default}
                 isStyleEditorOpen={openStyleEditors[DEFAULT_STYLE_KEY] === true}
                 onToggleStyleEditor={(isVisible) => onToggleStyleEditor(DEFAULT_STYLE_KEY, isVisible)}

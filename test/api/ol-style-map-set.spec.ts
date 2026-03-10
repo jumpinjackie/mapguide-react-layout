@@ -60,22 +60,26 @@ describe('OLStyleMapSet.evaluateStyle', () => {
         expect(style).toBeInstanceOf(Style);
     });
 
-    it('returns style from filter if filter matches', () => {
-        const styleWithFilter: IVectorLayerStyle = {
+    it('returns style from matching rule filter', () => {
+        const ruleStyle: IVectorLayerStyle = {
             ...SIMPLE_STYLE,
-            foo: {
-                point: {
-                    type: 'Circle',
-                    radius: 10,
-                    fill: { color: '#00ff00', alpha: 1 },
-                    stroke: { color: '#000000', width: 1, alpha: 1 }
+            rules: [
+                {
+                    filter: ['==', ['get', 'CATEGORY'], 'A'],
+                    style: {
+                        point: {
+                            type: 'Circle',
+                            radius: 10,
+                            fill: { color: '#00ff00', alpha: 1 },
+                            stroke: { color: '#000000', width: 1, alpha: 1 }
+                        }
+                    }
                 }
-            }
+            ]
         };
-        const styleSet = new OLStyleMapSet(styleWithFilter, undefined);
-        // Patch exprContext to always return 'foo'
-        vi.spyOn(styleSet['exprContext'], 'evaluateFilter').mockReturnValue('foo');
+        const styleSet = new OLStyleMapSet(ruleStyle, undefined);
         const feature = createFeatureWithGeometry(new Point([0, 0]));
+        feature.set('CATEGORY', 'A');
         const style = styleSet.evaluateStyle(feature);
         expect(style).toBeInstanceOf(Style);
     });
@@ -89,5 +93,33 @@ describe('OLStyleMapSet.evaluateStyle', () => {
         expect(styleSet.evaluateStyle(feature)).toBeNull();
         expect(consoleError).toHaveBeenCalled();
         consoleError.mockRestore();
+    });
+});
+
+describe('OLStyleMapSet.toFlatRules', () => {
+    it('produces at least one rule (the default else rule)', () => {
+        const styleSet = new OLStyleMapSet(SIMPLE_STYLE, undefined);
+        const rules = styleSet.toFlatRules();
+        expect(rules.length).toBeGreaterThanOrEqual(1);
+        const lastRule = rules[rules.length - 1];
+        expect(lastRule.else).toBe(true);
+    });
+
+    it('includes rules from IVectorLayerStyle.rules with their filters', () => {
+        const styleWithRules: IVectorLayerStyle = {
+            ...SIMPLE_STYLE,
+            rules: [
+                {
+                    filter: ['==', ['get', 'TYPE'], 'park'],
+                    style: { polygon: { fill: { color: '#00ff00', alpha: 200 }, stroke: { color: '#000', alpha: 255, width: 1 } } }
+                }
+            ]
+        };
+        const styleSet = new OLStyleMapSet(styleWithRules, undefined);
+        const rules = styleSet.toFlatRules();
+        // First rule should have the filter
+        expect(rules[0].filter).toEqual(['==', ['get', 'TYPE'], 'park']);
+        // Last rule should be the else fallback
+        expect(rules[rules.length - 1].else).toBe(true);
     });
 });

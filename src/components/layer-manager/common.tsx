@@ -58,7 +58,7 @@ function stringifyExpr<T>(expr: ExprOr<T> | undefined, locale: string): string {
         return tr("EXPR_NOT_SET", locale);
     }
     if (isEvaluatable(expr)) {
-        return "Expr: " + expr.expr;
+        return "Expr: " + JSON.stringify(expr.expr);
     }
     return `${expr ?? STR_EMPTY}`;
 }
@@ -80,7 +80,7 @@ type EditMode = "edit-expr" | "edit-value";
 function stringifyExprIf<T>(expr: ExprOr<T>, mode: EditMode): string {
     switch (mode) {
         case "edit-expr":
-            return isEvaluatable(expr) ? expr.expr : STR_EMPTY;
+            return isEvaluatable(expr) ? JSON.stringify(expr.expr) : STR_EMPTY;
         case "edit-value":
             return isEvaluatable(expr) ? STR_EMPTY : `${expr ?? STR_EMPTY}`;
     }
@@ -157,7 +157,22 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
                 <br />
                 <Radio name="edit-mode" label="Expression" value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
-                <input disabled={editMode != "edit-expr"} type="text" className="bp3-input" value={stringifyExprIf(localValue, "edit-expr")} onChange={e => onUpdateLocalValue({ expr: e.target.value })} />
+                <input
+                    disabled={editMode != "edit-expr"}
+                    type="text"
+                    className="bp3-input"
+                    placeholder='e.g. ["get","propertyName"]'
+                    value={stringifyExprIf(localValue, "edit-expr")}
+                    onChange={e => {
+                        try {
+                            const parsed = JSON.parse(e.target.value);
+                            if (Array.isArray(parsed)) {
+                                onUpdateLocalValue({ expr: parsed });
+                            }
+                        } catch {
+                            // Keep local text state but don't update value until valid JSON
+                        }
+                    }} />
                 <br /><br />
                 <ElementGroup>
                     <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>Apply</Button>

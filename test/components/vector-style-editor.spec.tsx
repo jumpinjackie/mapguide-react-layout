@@ -148,23 +148,28 @@ describe('VectorLayerStyleEditor', () => {
 
     const style: IVectorLayerStyle = {
         default: defaultStyle,
-        filter1: {
-            point: {
-                type: 'Circle',
-                fill: { color: '#00ff00', alpha: 255 },
-                stroke: { color: '#000000', width: 1, alpha: 255 },
-                radius: 10
-            },
-            line: {
-                color: '#ff00ff',
-                width: 3,
-                alpha: 255
-            },
-            polygon: {
-                fill: { color: '#00ffff', alpha: 255 },
-                stroke: { color: '#000000', width: 2, alpha: 255 }
+        rules: [
+            {
+                filter: ['==', ['get', 'CATEGORY'], 'A'],
+                style: {
+                    point: {
+                        type: 'Circle',
+                        fill: { color: '#00ff00', alpha: 255 },
+                        stroke: { color: '#000000', width: 1, alpha: 255 },
+                        radius: 10
+                    },
+                    line: {
+                        color: '#ff00ff',
+                        width: 3,
+                        alpha: 255
+                    },
+                    polygon: {
+                        fill: { color: '#00ffff', alpha: 255 },
+                        stroke: { color: '#000000', width: 2, alpha: 255 }
+                    }
+                }
             }
-        }
+        ]
     };
 
     it('renders a table with filter rows and default style row', () => {

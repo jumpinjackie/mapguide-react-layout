@@ -1,94 +1,62 @@
+/**
+ * Tests for OL expression evaluation via evalFeature.
+ * The former ExprEvalContext (expr-eval-fork) was replaced in 0.15 by OL's
+ * native CPU expression evaluator.
+ */
 import { describe, it, expect } from "vitest";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
-import { ExprEvalContext } from "../../src/api/expr-eval-context";
+import { evalFeature } from "../../src/api/ol-style-builders";
 import type { OLFeature } from "../../src/api/ol-types";
 
-describe("api/expr-eval-context", () => {
-    describe("ExprEvalContext constructor", () => {
-        it("creates a new instance without throwing", () => {
-            expect(() => new ExprEvalContext()).not.toThrow();
-        });
+describe("api/ol expression evaluation (via evalFeature)", () => {
+    it("returns a literal value unchanged", () => {
+        expect(evalFeature(42, undefined)).toBe(42);
+        expect(evalFeature("hello", undefined)).toBe("hello");
     });
 
-    describe("addExpr / evaluate", () => {
-        it("evaluates a simple numeric expression against a feature property", () => {
-            const ctx = new ExprEvalContext();
-            const feature = new Feature({ geometry: new Point([0, 0]), VALUE: 42 }) as OLFeature;
-            const result = ctx.evaluate("VALUE", feature);
-            expect(result).toBe(42);
-        });
-
-        it("evaluates an expression that uses a feature property", () => {
-            const ctx = new ExprEvalContext();
-            const feature = new Feature({ geometry: new Point([0, 0]), score: 10 }) as OLFeature;
-            const result = ctx.evaluate("score * 2", feature);
-            expect(result).toBe(20);
-        });
-
-        it("caches an already added expression", () => {
-            const ctx = new ExprEvalContext();
-            const feature = new Feature({ geometry: new Point([0, 0]), x: 5 }) as OLFeature;
-            ctx.addExpr("x + 1");
-            ctx.addExpr("x + 1"); // add again - should not throw
-            const result = ctx.evaluate("x + 1", feature);
-            expect(result).toBe(6);
-        });
+    it("returns undefined for an OL expression when no feature is given", () => {
+        const expr = { expr: ['get', 'VALUE'] };
+        expect(evalFeature(expr, undefined)).toBeUndefined();
     });
 
-    describe("addFilter / evaluateFilter", () => {
-        it("returns matching filter key when feature matches", () => {
-            const ctx = new ExprEvalContext();
-            ctx.addFilter("CATEGORY == 1");
-            const feature = new Feature({ geometry: new Point([0, 0]), CATEGORY: 1 }) as OLFeature;
-            const result = ctx.evaluateFilter(feature);
-            expect(result).toBe("CATEGORY == 1");
-        });
-
-        it("returns undefined when no filter matches", () => {
-            const ctx = new ExprEvalContext();
-            ctx.addFilter("CATEGORY == 99");
-            const feature = new Feature({ geometry: new Point([0, 0]), CATEGORY: 1 }) as OLFeature;
-            const result = ctx.evaluateFilter(feature);
-            expect(result).toBeUndefined();
-        });
+    it("evaluates ['get', prop] against feature properties", () => {
+        const feature = new Feature({ geometry: new Point([0, 0]), VALUE: 42 }) as OLFeature;
+        expect(evalFeature({ expr: ['get', 'VALUE'] }, feature)).toBe(42);
     });
 
-    describe("addClusterExpr / addClusterFilter", () => {
-        it("caches cluster expressions without throwing", () => {
-            const ctx = new ExprEvalContext();
-            ctx.addClusterExpr("x + 1");
-            ctx.addClusterExpr("x + 1"); // double add should be fine
-            expect(true).toBe(true); // no throw
-        });
-
-        it("caches cluster filters without throwing", () => {
-            const ctx = new ExprEvalContext();
-            ctx.addClusterFilter("x > 0");
-            ctx.addClusterFilter("x > 0"); // double add should be fine
-            expect(true).toBe(true); // no throw
-        });
+    it("evaluates arithmetic OL expressions", () => {
+        const feature = new Feature({ geometry: new Point([0, 0]), score: 10 }) as OLFeature;
+        expect(evalFeature({ expr: ['*', ['get', 'score'], 2] }, feature)).toBe(20);
     });
 
-    describe("evaluate with clustered feature", () => {
-        it("evaluates cluster expression using cluster cache", () => {
-            const ctx = new ExprEvalContext();
-            const subFeature = new Feature({ geometry: new Point([1, 1]), score: 5 }) as OLFeature;
-            const clusterFeature = new Feature({ geometry: new Point([0, 0]) }) as OLFeature;
-            clusterFeature.set("features", [subFeature]);
-            // agg_sum over cluster sub-features
-            const result = ctx.evaluate("arr_size(features)", clusterFeature);
-            expect(result).toBe(1);
-        });
+    it("evaluates ['clamp', ...] expressions", () => {
+        const feature = new Feature({ geometry: new Point([0, 0]), n: 30 }) as OLFeature;
+        // clamp(30, 0, 25) = 25
+        expect(evalFeature({ expr: ['clamp', ['get', 'n'], 0, 25] }, feature)).toBe(25);
+        // clamp(5, 0, 25) = 5
+        const feature2 = new Feature({ geometry: new Point([0, 0]), n: 5 }) as OLFeature;
+        expect(evalFeature({ expr: ['clamp', ['get', 'n'], 0, 25] }, feature2)).toBe(5);
     });
 
-    describe("property names with spaces", () => {
-        it("converts spaces to underscores in property names before evaluation", () => {
-            const ctx = new ExprEvalContext();
-            const feature = new Feature({ geometry: new Point([0, 0]), "OFFICE TYPE": "SALES" }) as OLFeature;
-            // Space replaced with underscore
-            const result = ctx.evaluate("OFFICE_TYPE", feature);
-            expect(result).toBe("SALES");
-        });
+    it("evaluates comparison expressions to boolean", () => {
+        const feature = new Feature({ geometry: new Point([0, 0]), CATEGORY: 'A' }) as OLFeature;
+        expect(evalFeature({ expr: ['==', ['get', 'CATEGORY'], 'A'] }, feature)).toBe(true);
+        expect(evalFeature({ expr: ['==', ['get', 'CATEGORY'], 'B'] }, feature)).toBe(false);
+    });
+
+    it("returns undefined when the expression references an unknown operator", () => {
+        const feature = new Feature({ geometry: new Point([0, 0]) }) as OLFeature;
+        const result = evalFeature({ expr: ['nonexistent-op'] }, feature);
+        expect(result).toBeUndefined();
+    });
+
+    it("accesses nested array properties (cluster features length)", () => {
+        const sub1 = new Feature(new Point([1, 1])) as OLFeature;
+        const sub2 = new Feature(new Point([2, 2])) as OLFeature;
+        const cluster = new Feature({ geometry: new Point([0, 0]) }) as OLFeature;
+        cluster.set("features", [sub1, sub2]);
+        // ['get', 'features', 'length'] accesses the .length of the features array
+        expect(evalFeature({ expr: ['get', 'features', 'length'] }, cluster)).toBe(2);
     });
 });

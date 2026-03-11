@@ -280,9 +280,9 @@ export class LayerManager implements ILayerManager {
                 style: cloneObject(extraOptions.clusterStyle ?? defaultStyle ?? DEFAULT_CLUSTERED_LAYER_STYLE)
             };
             if (!strIsNullOrEmpty(labelOnProperty)) {
-                for (const k in clusterSettings.style) {
-                    ensureLabelTextForStyle(clusterSettings.style[k], { expr: `if (arr_size(features) == 1, feat_property(features[0], '${labelOnProperty}'), '')` });
-                }
+                // OL supports nested property access: ['get', 'features', 0, labelOnProperty]
+                // reads features[0][labelOnProperty] — the label of the first sub-feature.
+                ensureLabelTextForStyle(clusterSettings.style.default, { expr: ['get', 'features', 0, labelOnProperty] });
             }
         }
         // Delete irrelevant styles based on geometry types encountered
@@ -301,7 +301,7 @@ export class LayerManager implements ILayerManager {
         }
 
         if (!strIsNullOrEmpty(labelOnProperty)) {
-            ensureLabelTextForStyle(bStyle.default, { expr: labelOnProperty });
+            ensureLabelTextForStyle(bStyle.default, { expr: ['get', labelOnProperty] });
         }
 
         if (extraOptions?.kind == "Theme") {
@@ -318,19 +318,24 @@ export class LayerManager implements ILayerManager {
             const chosenRamp = getMaxRamp(ramp);
             const ruleCount = Math.min(values.length, chosenRamp?.length ?? 0);
             const palette = ramp[ruleCount];
+            if (!bStyle.rules) {
+                bStyle.rules = [];
+            }
             for (let i = 0; i < ruleCount; i++) {
                 const v = values[i];
-                const filter = `${extraOptions.themeOnProperty} == '${v}'`;
-                const style = {
+                const style: IVectorFeatureStyle = {
                     label: v,
                     point: clonePointWithFill(baseTemplatePoint, palette[i]),
                     line: cloneLineWithFill(baseTemplateLine, palette[i]),
                     polygon: clonePolyWithFill(baseTemplatePoly, palette[i]),
                 };
                 if (!strIsNullOrEmpty(labelOnProperty)) {
-                    ensureLabelTextForStyle(style, { expr: labelOnProperty });
+                    ensureLabelTextForStyle(style, { expr: ['get', labelOnProperty] });
                 }
-                (bStyle as any)[filter] = style;
+                bStyle.rules.push({
+                    filter: ['==', ['get', extraOptions.themeOnProperty], v],
+                    style
+                });
             }
         }
         if (layer instanceof olVectorLayer) {

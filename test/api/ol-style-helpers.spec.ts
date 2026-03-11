@@ -1,7 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
-import { isClusteredFeature, getClusterSubFeatures, getOLStyleFunction } from "../../src/api/ol-style-helpers";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { isClusteredFeature, getClusterSubFeatures, getOLStyleFunction, setOLVectorLayerStyle } from "../../src/api/ol-style-helpers";
+import { OLStyleMapSet } from "../../src/api/ol-style-map-set";
+import { LayerProperty } from "../../src/api/common";
 import type { OLFeature } from "../../src/api/ol-types";
 import type { IVectorLayerStyle } from "../../src/api/ol-style-contracts";
 
@@ -55,17 +59,35 @@ describe("api/ol-style-helpers", () => {
     });
 
     describe("getOLStyleFunction", () => {
-        it("returns a tuple of [styleFunction, OLStyleMapSet]", () => {
-            const [styleFunc, styleMapSet] = getOLStyleFunction(SIMPLE_STYLE, undefined);
-            expect(typeof styleFunc).toBe("function");
+        it("returns a tuple of [flatRules, OLStyleMapSet]", () => {
+            const [flatRules, styleMapSet] = getOLStyleFunction(SIMPLE_STYLE, undefined);
+            expect(Array.isArray(flatRules)).toBe(true);
             expect(styleMapSet).toBeDefined();
         });
 
-        it("returned style function produces a style for a point feature", () => {
-            const [styleFunc] = getOLStyleFunction(SIMPLE_STYLE, undefined);
-            const feature = new Feature(new Point([0, 0])) as OLFeature;
-            const style = (styleFunc as Function)(feature);
-            expect(style).toBeDefined();
+        it("flat rules array has at least the default else-rule", () => {
+            const [flatRules] = getOLStyleFunction(SIMPLE_STYLE, undefined);
+            expect(flatRules.length).toBeGreaterThanOrEqual(1);
+            const lastRule = flatRules[flatRules.length - 1];
+            expect(lastRule.else).toBe(true);
+        });
+    });
+
+    describe("setOLVectorLayerStyle", () => {
+        it("sets VECTOR_STYLE property on the layer as an OLStyleMapSet", () => {
+            const layer = new VectorLayer({ source: new VectorSource() }) as any;
+            setOLVectorLayerStyle(layer, SIMPLE_STYLE, undefined);
+            const styleSet = layer.get(LayerProperty.VECTOR_STYLE);
+            expect(styleSet).toBeInstanceOf(OLStyleMapSet);
+        });
+
+        it("calls layer.setStyle with the flat rules array", () => {
+            const layer = new VectorLayer({ source: new VectorSource() }) as any;
+            const setStyleSpy = vi.spyOn(layer, 'setStyle');
+            setOLVectorLayerStyle(layer, SIMPLE_STYLE, undefined);
+            expect(setStyleSpy).toHaveBeenCalled();
+            const arg = setStyleSpy.mock.calls[0][0];
+            expect(Array.isArray(arg)).toBe(true);
         });
     });
 });

@@ -58,7 +58,7 @@ function stringifyExpr<T>(expr: ExprOr<T> | undefined, locale: string): string {
         return tr("EXPR_NOT_SET", locale);
     }
     if (isEvaluatable(expr)) {
-        return "Expr: " + expr.expr;
+        return "Expr: " + JSON.stringify(expr.expr);
     }
     return `${expr ?? STR_EMPTY}`;
 }
@@ -80,7 +80,7 @@ type EditMode = "edit-expr" | "edit-value";
 function stringifyExprIf<T>(expr: ExprOr<T>, mode: EditMode): string {
     switch (mode) {
         case "edit-expr":
-            return isEvaluatable(expr) ? expr.expr : STR_EMPTY;
+            return isEvaluatable(expr) ? JSON.stringify(expr.expr) : STR_EMPTY;
         case "edit-value":
             return isEvaluatable(expr) ? STR_EMPTY : `${expr ?? STR_EMPTY}`;
     }
@@ -140,6 +140,12 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
         onCancelEditing,
         onUpdateLocalValue
     } = useExprEditor(props);
+    // Maintain a separate local text state for the OL expression JSON input so that
+    // intermediate (potentially invalid) typing is reflected in the input field.
+    const [exprText, setExprText] = React.useState(() => stringifyExprIf(localValue, "edit-expr"));
+    React.useEffect(() => {
+        setExprText(stringifyExprIf(localValue, "edit-expr"));
+    }, [localValue, editMode]);
     const onEditClick = () => {
         if (isEditing) {
             onCancelEditing();
@@ -157,7 +163,23 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
                 <br />
                 <Radio name="edit-mode" label="Expression" value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
-                <input disabled={editMode != "edit-expr"} type="text" className="bp3-input" value={stringifyExprIf(localValue, "edit-expr")} onChange={e => onUpdateLocalValue({ expr: e.target.value })} />
+                <input
+                    disabled={editMode != "edit-expr"}
+                    type="text"
+                    className="bp3-input"
+                    placeholder='e.g. ["get","propertyName"]'
+                    value={exprText}
+                    onChange={e => {
+                        setExprText(e.target.value);
+                        try {
+                            const parsed = JSON.parse(e.target.value);
+                            if (Array.isArray(parsed)) {
+                                onUpdateLocalValue({ expr: parsed });
+                            }
+                        } catch {
+                            // Keep typing; Apply button disabled until JSON is valid
+                        }
+                    }} />
                 <br /><br />
                 <ElementGroup>
                     <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>Apply</Button>

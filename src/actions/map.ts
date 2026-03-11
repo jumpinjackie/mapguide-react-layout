@@ -586,10 +586,10 @@ export function activateMap(mapName: string): ReduxThunkedAction {
                             payload: { mapName, map }
                         });
                     } catch (e) {
-                        warn(`Failed to lazily create runtime map (${mapName}): ${e?.message ?? e}`);
+                        warn(`Failed to lazily create runtime map (${mapName}): ${e?.message ?? e}. Proceeding with map switch; the map may not render correctly.`);
                     }
                 } else {
-                    warn(`Cannot lazily create runtime map (${mapName}): no active session found`);
+                    warn(`Cannot lazily create runtime map (${mapName}): no active session found. Proceeding with map switch; the map may not render correctly.`);
                 }
             }
         }

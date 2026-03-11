@@ -672,6 +672,8 @@ import { VectorStyleSource } from "../../src/api/ol-style-contracts";
 import type { IVectorLayerStyle } from "../../src/api/ol-style-contracts";
 import type { ILayerInfo } from "../../src/api/common";
 import type { ClientSelectionFeature } from "../../src/api/contracts/common";
+import { createInitialState, createMap } from "../../test-data";
+import { MAP_STATE_INITIAL_SUB_STATE, MG_INITIAL_SUB_STATE } from "../../src/reducers/map-state";
 
 const SIMPLE_VECTOR_STYLE: IVectorLayerStyle = {
     default: {
@@ -902,10 +904,6 @@ describe("actions/map - action creators", () => {
         expect(action.payload.defaultStyle).toEqual(SIMPLE_VECTOR_STYLE);
     });
 });
-
-import { activateMap } from "../../src/actions/map";
-import { createInitialState, createMap } from "../../test-data";
-import { MAP_STATE_INITIAL_SUB_STATE, MG_INITIAL_SUB_STATE } from "../../src/reducers/map-state";
 
 describe("actions/map - activateMap thunk", () => {
     it("dispatches MAP_SET_ACTIVE_MAP directly when map is not pending", async () => {

@@ -283,9 +283,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                             targetMapName: m.name
                         }, siteVersion));
                     }
-                    if (isFirstMapDef) {
-                        isFirstMapDef = false;
-                    }
+                    isFirstMapDef = false;
                 }
             }
         }

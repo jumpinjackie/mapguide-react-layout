@@ -13,7 +13,7 @@ import {
 import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
-import { IQueryMapFeaturesOptions, QueryFeaturesSet } from '../api/request-builder';
+import { IQueryMapFeaturesOptions, QueryFeaturesSet, RuntimeMapFeatureFlags } from '../api/request-builder';
 import { buildSelectionXml } from '../api/builders/deArrayify';
 import { ActionType } from '../constants/actions';
 import {
@@ -49,15 +49,21 @@ import {
     IEnableSelectDragPanAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
-import { getSiteVersion, canUseQueryMapFeaturesV4 } from '../utils/site-version';
+import { getSiteVersion, canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
 import { areViewsCloseToEqual } from '../utils/viewer-state';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { ClientSelectionFeature } from "../api/contracts/common";
 import xor from "lodash.xor";
 import xorby from "lodash.xorby";
 import { RuntimeMap } from "../api/contracts/runtime-map";
-import { debug } from "../utils/logger";
+import { debug, info, warn } from "../utils/logger";
 import { IMapProviderContext } from "../components/map-providers/base";
+import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
+import { register } from 'ol/proj/proj4';
+import proj4 from "proj4";
+import { AsyncLazy } from '../api/lazy';
+import type { SiteVersionResponse } from '../api/contracts/common';
+import { tryParseArbitraryCs } from '../utils/units';
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
@@ -520,6 +526,74 @@ export function setActiveMap(mapName: string): ISetActiveMapAction {
     return {
         type: ActionType.MAP_SET_ACTIVE_MAP,
         payload: mapName
+    };
+}
+
+/**
+ * Activates the given runtime map by name. If the map has not yet been created (lazy map), it will
+ * be created on demand before switching to it. This is the preferred way to switch between maps in
+ * a multi-map flex layout.
+ *
+ * @param {string} mapName The name of the runtime map to activate
+ * @returns {ReduxThunkedAction}
+ * @since 0.15
+ */
+export function activateMap(mapName: string): ReduxThunkedAction {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const pendingMap = state.config.pendingMaps?.[mapName];
+        if (pendingMap) {
+            const { agentUri, agentKind, locale } = state.config;
+            if (agentUri && agentKind) {
+                // Retrieve the session from the currently active map's runtime map
+                const activeMapName = state.config.activeMapName;
+                let sessionId = "";
+                if (activeMapName) {
+                    sessionId = state.mapState[activeMapName]?.mapguide?.runtimeMap?.SessionId ?? "";
+                }
+                if (sessionId) {
+                    try {
+                        info(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                        const client = new Client(agentUri, agentKind);
+                        const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => client.getSiteVersion());
+                        const sv = await siteVersion.getValueAsync();
+                        let map: RuntimeMap;
+                        if (canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version))) {
+                            map = await client.createRuntimeMap_v4({
+                                mapDefinition: pendingMap.mapDef,
+                                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                session: sessionId,
+                                targetMapName: mapName
+                            });
+                        } else {
+                            map = await client.createRuntimeMap({
+                                mapDefinition: pendingMap.mapDef,
+                                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                session: sessionId,
+                                targetMapName: mapName
+                            });
+                        }
+                        // Register the map's projection if needed
+                        const epsg = map.CoordinateSystem.EpsgCode;
+                        const arbCs = tryParseArbitraryCs(map.CoordinateSystem.MentorCode);
+                        if (!arbCs && epsg && epsg !== "0" && !proj4.defs[`EPSG:${epsg}`]) {
+                            await resolveProjectionFromEpsgCodeAsync(epsg, locale, map.MapDefinition);
+                            register(proj4);
+                        }
+                        // Update the map state with the newly created runtime map
+                        dispatch({
+                            type: ActionType.MAP_REFRESH,
+                            payload: { mapName, map }
+                        });
+                    } catch (e) {
+                        warn(`Failed to lazily create runtime map (${mapName}): ${e?.message ?? e}`);
+                    }
+                } else {
+                    warn(`Cannot lazily create runtime map (${mapName}): no active session found`);
+                }
+            }
+        }
+        dispatch(setActiveMap(mapName));
     };
 }
 

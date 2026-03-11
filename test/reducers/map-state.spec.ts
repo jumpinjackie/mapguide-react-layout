@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { IMapSetViewAction } from "../../src/actions/defs";
+import { IMapSetViewAction, MapInfo } from "../../src/actions/defs";
 import { setGroupExpanded, setGroupVisibility, setLayerSelectable, setLayerVisibility } from "../../src/actions/legend";
 import { addClientSelectedFeature, clearClientSelection, nextView, previousView, setBaseLayer, setCurrentView, setScale, setSelection } from "../../src/actions/map";
-import { IMapView } from "../../src/api/common";
+import { Dictionary, IMapView } from "../../src/api/common";
 import { RuntimeMap } from "../../src/api/contracts/runtime-map";
 import { ActionType } from "../../src/constants/actions";
 import { mapStateReducer } from "../../src/reducers/map-state";
@@ -29,6 +29,38 @@ describe("reducers/config", () => {
             expect(ms.currentView?.x).toBe(view.x);
             expect(ms.currentView?.y).toBe(view.y);
             expect(ms.currentView?.scale).toBe(view.scale);
+        });
+        it("stores per-map coordinateFormat from MapInfo when set", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = {
+                x: -87.72,
+                y: 43.74,
+                scale: 70000
+            };
+            const action = createInitAction(map, view, "en");
+            const perMapFormat = "X: {x}, Y: {y} {units}";
+            (action.payload.maps as Dictionary<MapInfo>)[map.Name].coordinateFormat = perMapFormat;
+            const state = mapStateReducer(initialState.mapState, action);
+
+            const ms = state[map.Name]!;
+            expect(ms).not.toBeUndefined();
+            expect(ms.coordinateFormat).toBe(perMapFormat);
+        });
+        it("leaves coordinateFormat undefined when not set in MapInfo", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = {
+                x: -87.72,
+                y: 43.74,
+                scale: 70000
+            };
+            const action = createInitAction(map, view, "en");
+            const state = mapStateReducer(initialState.mapState, action);
+
+            const ms = state[map.Name]!;
+            expect(ms).not.toBeUndefined();
+            expect(ms.coordinateFormat).toBeUndefined();
         });
     });
     describe(ActionType.MAP_SET_BASE_LAYER, () => {

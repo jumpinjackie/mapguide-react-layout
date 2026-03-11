@@ -1668,6 +1668,15 @@ export interface IBranchedMapSubState {
      * @since 0.14
      */
     generic: IGenericLayerSubState | undefined;
+    /**
+     * An optional coordinate display format override for this map. When set, the mouse
+     * coordinates component will use this format instead of the global coordinate display
+     * format when this map is the active map and no display projection override is configured.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    coordinateFormat: string | undefined;
 }
 
 /**

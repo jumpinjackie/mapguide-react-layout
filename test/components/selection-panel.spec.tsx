@@ -103,16 +103,17 @@ describe("components/selection-panel", () => {
         const onZoomRequest = vi.fn();
         const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const capturedContexts: string[] = [];
+        const capturedContexts: ISelectionPanelCellContext[] = [];
         const cleanHTML = (html: string, context: ISelectionPanelCellContext) => {
-            capturedContexts.push(context.propertyName);
+            capturedContexts.push(context);
             return html;
         };
         const allowHTMLValues = true;
         const sel = new CompositeSelection(set);
         render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
-        expect(capturedContexts).toContain("ID");
-        expect(capturedContexts).toContain("Name");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("ID");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("Name");
+        expect(capturedContexts.every(c => c.layerName === "Foo")).toBe(true);
     });
     it("formatPropertyValue is called for non-HTML values", () => {
         const onZoomRequest = vi.fn();
@@ -132,16 +133,17 @@ describe("components/selection-panel", () => {
         const onZoomRequest = vi.fn();
         const onShowSelectedFeature = vi.fn();
         const set: SelectedFeatureSet = createSelectionSet();
-        const capturedContexts: string[] = [];
+        const capturedContexts: ISelectionPanelCellContext[] = [];
         const formatPropertyValue = (value: string, context: ISelectionPanelCellContext) => {
-            capturedContexts.push(context.propertyName);
+            capturedContexts.push(context);
             return value;
         };
         const allowHTMLValues = false;
         const sel = new CompositeSelection(set);
         render(<SelectionPanel formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
-        expect(capturedContexts).toContain("ID");
-        expect(capturedContexts).toContain("Name");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("ID");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("Name");
+        expect(capturedContexts.every(c => c.layerName === "Foo")).toBe(true);
     });
     it("formatPropertyValue can limit decimal places of floating point numbers", () => {
         const onZoomRequest = vi.fn();

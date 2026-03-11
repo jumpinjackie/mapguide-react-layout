@@ -18,11 +18,21 @@ export interface ISelectionPanelCellContext {
      * The name of the property being rendered in the cell
      */
     propertyName: string;
+    /**
+     * The name of the active selection layer containing this property
+     */
+    layerName: string | undefined;
 }
 
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
     selectedLayer?: LayerMetadata;
+    /**
+     * The name of the active selection layer
+     *
+     * @since 0.15
+     */
+    layerName?: string;
     locale: string;
     allowHtmlValues: boolean;
     /**
@@ -44,7 +54,7 @@ export interface ISelectedFeatureProps {
 }
 
 const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
-    const { selectedFeature, selectedLayer, locale, allowHtmlValues, cleanHTML, formatPropertyValue } = props;
+    const { selectedFeature, selectedLayer, layerName, locale, allowHtmlValues, cleanHTML, formatPropertyValue } = props;
     const featureProps = [] as FeatureProperty[];
     if (selectedLayer?.Property) {
         for (const lp of selectedLayer.Property) {
@@ -70,7 +80,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                 return <tr key={prop.Name}>
                     <td className="property-name-cell" data-property-name={prop.Name}>{prop.Name}</td>
                     {(() => {
-                        const context: ISelectionPanelCellContext = { propertyName: prop.Name };
+                        const context: ISelectionPanelCellContext = { propertyName: prop.Name, layerName };
                         let value = prop.Value;
                         if (formatPropertyValue && !strIsNullOrEmpty(value)) {
                             value = formatPropertyValue(value, context);
@@ -282,10 +292,12 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
     const locale = props.locale || DEFAULT_LOCALE;
     let feat: SelectedFeature | undefined;
     let meta: LayerMetadata | undefined;
+    let layerName: string | undefined;
     if (selection != null && selectedLayerIndex >= 0 && featureIndex >= 0) {
         const selLayer = selection.getLayerAt(selectedLayerIndex);
         feat = selLayer?.getFeatureAt(featureIndex);
         meta = selLayer?.getLayerMetadata();
+        layerName = selLayer?.getName();
     }
     let selBodyStyle: React.CSSProperties | undefined;
     if (maxHeight) {
@@ -339,9 +351,9 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
             {(() => {
                 if (feat) {
                     if (selectedFeatureRenderer) {
-                        return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, formatPropertyValue: formatPropertyValue, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
+                        return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, formatPropertyValue: formatPropertyValue, allowHtmlValues: allowHtmlValues, selectedLayer: meta, layerName: layerName, locale: locale });
                     } else {
-                        return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
+                        return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHtmlValues} selectedLayer={meta} layerName={layerName} locale={locale} />;
                     }
                 } else if (!(selection?.getLayerCount() > 0)) {
                     return <Callout variant="primary" icon="info-sign">

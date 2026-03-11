@@ -348,8 +348,9 @@ describe('featureStyleToFlatStyle', () => {
         };
         const flat = featureStyleToFlatStyle(style);
         // static color + dynamic alpha → ['color', r, g, b, ['/', expr, 255]]
-        expect(Array.isArray(flat['circle-fill-color'])).toBe(true);
-        expect(flat['circle-fill-color'][0]).toBe('color');
+        const fillColor = flat['circle-fill-color'] as any[];
+        expect(Array.isArray(fillColor)).toBe(true);
+        expect(fillColor[0]).toBe('color');
     });
 
     it('handles both dynamic color and alpha (uses color expression)', () => {

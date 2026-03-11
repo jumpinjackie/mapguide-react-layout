@@ -645,6 +645,7 @@ import {
     nextView,
     setActiveTool,
     setActiveMap,
+    activateMap,
     setFeatureTooltipsEnabled,
     enableSelectDragPan,
     setManualFeatureTooltipsEnabled,

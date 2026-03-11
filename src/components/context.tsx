@@ -59,6 +59,13 @@ export interface IApplicationContext {
      */
     getHTMLCleaner: () => (ISelectedFeatureProps["cleanHTML"]);
     /**
+     * Gets a property value formatting function (if provided via mount option). If none provided,
+     * property values are displayed as-is.
+     * 
+     * @since 0.15
+     */
+    getPropertyValueFormatter: () => (ISelectedFeatureProps["formatPropertyValue"]);
+    /**
      * Provide extra HTML elements to insert before a layer name in a layer legend node
      * 
      * @param options
@@ -76,7 +83,8 @@ export interface IApplicationContext {
 
 export const AppContext = React.createContext<IApplicationContext>({
     allowHtmlValuesInSelection: () => false,
-    getHTMLCleaner: () => v => v,
+    getHTMLCleaner: () => undefined,
+    getPropertyValueFormatter: () => undefined,
     getLegendLayerExtraIconsProvider: () => [],
     getLegendGroupExtraIconsProvider: () => []
 });
@@ -87,7 +95,8 @@ export const AppContext = React.createContext<IApplicationContext>({
 export const AppContextProvider: React.FC<React.PropsWithChildren<{ mapguide: IMapGuideAppProps | undefined }>> = ({ mapguide, children }) => {
     const providerImpl = React.useMemo<IApplicationContext>(() => ({
         allowHtmlValuesInSelection: () => mapguide?.selectionSettings?.allowHtmlValues ?? false,
-        getHTMLCleaner: () => mapguide?.selectionSettings?.cleanHtml ?? (v => v),
+        getHTMLCleaner: () => mapguide?.selectionSettings?.cleanHtml,
+        getPropertyValueFormatter: () => mapguide?.selectionSettings?.formatPropertyValue,
         getLegendLayerExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapLayer>) => mapguide?.legendSettings?.provideExtraLayerIconsHtml?.(options) ?? [],
         getLegendGroupExtraIconsProvider: (options: LegendNodeExtraHTMLProps<MapGroup>) => mapguide?.legendSettings?.provideExtraGroupIconsHtml?.(options) ?? []
     }), [mapguide]);

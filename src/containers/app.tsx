@@ -37,7 +37,15 @@ const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
 
 export interface SelectionOptions {
     allowHtmlValues?: boolean;
-    cleanHtml?: ISelectedFeatureProps["cleanHTML"]
+    cleanHtml?: ISelectedFeatureProps["cleanHTML"];
+    /**
+     * An optional function for formatting/transforming a property value before it is displayed.
+     * This function is called for all property values regardless of the allowHtmlValues setting,
+     * making it the preferred hook for transforming plain text values such as decimal numbers.
+     *
+     * @since 0.15
+     */
+    formatPropertyValue?: ISelectedFeatureProps["formatPropertyValue"];
 }
 
 /**

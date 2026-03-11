@@ -15,7 +15,7 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
 import type { IElementState } from '../actions/defs';
-import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled } from './hooks';
+import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled, useCustomAppSettings } from './hooks';
 import { areStatesEqual, getStateFromUrl, type IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
@@ -26,6 +26,49 @@ import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
 import type { ISelectedFeatureProps } from "../components/selection-panel";
+
+/**
+ * The app setting key used to specify URL props to ignore.
+ * The value should be a comma-separated list of URL parameter names.
+ *
+ * @example
+ * To ignore `x`, `y`, and `scale` URL parameters, set this app setting in your appdef's ViewerSettings:
+ * ```xml
+ * <Setting name="urlPropsIgnore" value="x,y,scale" />
+ * ```
+ *
+ * @since 0.15
+ */
+export const APP_SETTING_URL_PROPS_IGNORE = "urlPropsIgnore";
+
+/**
+ * Gets the effective list of URL props to ignore, combining the `urlPropsIgnore` prop value
+ * with any value specified in the app settings under the {@link APP_SETTING_URL_PROPS_IGNORE} key.
+ *
+ * This allows `urlPropsIgnore` to be configured via an app setting in the loaded Application
+ * Definition, without requiring modification of the viewer HTML template.
+ *
+ * @param propIgnore The `urlPropsIgnore` prop value
+ * @param settingsValue The value of the `urlPropsIgnore` app setting (comma-separated)
+ * @returns The combined list of URL props to ignore, or undefined if both are empty
+ *
+ * @example
+ * // Merging a prop value with a settings string
+ * getEffectiveUrlPropsIgnore(["scale"], "x,y"); // returns ["scale", "x", "y"]
+ *
+ * // Settings-only configuration
+ * getEffectiveUrlPropsIgnore(undefined, "x,y,scale"); // returns ["x", "y", "scale"]
+ *
+ * @since 0.15
+ * @hidden
+ */
+export function getEffectiveUrlPropsIgnore(propIgnore: string[] | undefined, settingsValue: string | undefined): string[] | undefined {
+    const fromSettings = settingsValue?.split(",").map(s => s.trim()).filter(s => s.length > 0);
+    if (fromSettings?.length) {
+        return [...(propIgnore ?? []), ...fromSettings];
+    }
+    return propIgnore;
+}
 
 const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
     const { NonIdealState, Spinner } = useElementContext();
@@ -236,6 +279,7 @@ export const App = (props: IAppProps) => {
     const map = useActiveMapBranch();
     const activeMapName = useActiveMapName();
     const ftEnabled = useViewerFeatureTooltipsEnabled();
+    const configuredAppSettings = useCustomAppSettings();
 
     const dispatch = useReduxDispatch();
     const viewer = useMapProviderContext();
@@ -257,6 +301,7 @@ export const App = (props: IAppProps) => {
             layout: layoutProp,
             urlPropsIgnore
         } = props;
+        const effectiveUrlPropsIgnore = getEffectiveUrlPropsIgnore(urlPropsIgnore, appSettings?.[APP_SETTING_URL_PROPS_IGNORE]);
         const {
             locale: urlLocale,
             resource: urlResource,
@@ -270,7 +315,7 @@ export const App = (props: IAppProps) => {
             hl: urlHideLayers,
             sg: urlShowGroups,
             hg: urlHideGroups
-        } = getStateFromUrl(urlPropsIgnore);
+        } = getStateFromUrl(effectiveUrlPropsIgnore);
         if (setElementVisibility && mapguide?.initialElementVisibility) {
             const { taskpane, legend, selection } = mapguide.initialElementVisibility;
             const states: IElementState = {
@@ -421,8 +466,8 @@ export const App = (props: IAppProps) => {
             }
         }
         if (!areStatesEqual(curUrlState, nextUrlState))
-            updateUrl(nextUrlState, undefined, props.urlPropsIgnore);
-    }, [map, activeMapName, ftEnabled, props]);
+            updateUrl(nextUrlState, undefined, getEffectiveUrlPropsIgnore(props.urlPropsIgnore, configuredAppSettings?.[APP_SETTING_URL_PROPS_IGNORE]));
+    }, [map, activeMapName, ftEnabled, props, configuredAppSettings]);
 
     const renderErrorMessage = React.useCallback((err: Error | InitError, locale: string, args: any): JSX.Element => {
         const msg = err.message;

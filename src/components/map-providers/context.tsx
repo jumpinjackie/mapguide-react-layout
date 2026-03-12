@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { IMapProviderContext } from './base';
+import type { IMapProviderContext, IReduxStoreRef } from './base';
 import { Provider, useDispatch, useSelector } from "react-redux";
 import type { IApplicationState } from "../../api/common";
 import type { configureStore } from "../../store/configure-store";
@@ -62,7 +62,9 @@ export const MapContextProvider: React.FC<React.PropsWithChildren<{ value: IMapP
     // Inject the Redux store reference into the provider so it can lazily initialize
     // secondary map layer set groups on demand (e.g. for the map swipe feature).
     React.useEffect(() => {
-        value.setReduxStore(store);
+        // Cast is safe: the redux-thunk-enhanced store dispatch accepts ViewerAction/ReduxThunkedAction
+        // at runtime, but TypeScript sees Dispatch<AnyAction> which is not structurally identical to ReduxDispatch.
+        value.setReduxStore(store as IReduxStoreRef | undefined);
         return () => {
             value.setReduxStore(undefined);
         };

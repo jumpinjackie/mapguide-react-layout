@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap, { type Options as OverviewMapOptions } from 'ol/control/OverviewMap';
@@ -206,9 +206,8 @@ export interface IMapProviderStateExtras {
  *
  * @since 0.15
  */
-export interface IReduxStoreRef {
-    getState(): any;
-    dispatch(action: any): void;
+export interface IReduxStoreRef extends ReduxStore {
+    dispatch: ReduxDispatch;
 }
 
 /**

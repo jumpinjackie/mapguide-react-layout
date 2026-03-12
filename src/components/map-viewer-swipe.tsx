@@ -30,6 +30,23 @@ export function useActiveSwipePair(): IMapSwipePair | undefined {
 }
 
 /**
+ * Returns `true` when the map swipe (layer compare) mode is currently active.
+ * Components can use this hook to react to swipe mode changes, for example to
+ * update the visual state of a toolbar button.
+ *
+ * @example
+ * ```tsx
+ * const swipeActive = useIsMapSwipeActive();
+ * <Button variant={swipeActive ? "primary" : undefined} onClick={...}>Compare</Button>
+ * ```
+ *
+ * @since 0.15
+ */
+export function useIsMapSwipeActive(): boolean {
+    return useAppState(state => state.config.swipeActive === true);
+}
+
+/**
  * Returns the current swipe state from Redux.
  *
  * @hidden
@@ -49,8 +66,9 @@ function useSwipeState() {
  *
  * @remarks
  * The component automatically activates/deactivates the OL-level swipe when
- * the Redux swipe state changes. It also provides drag interaction to update
- * the swipe position.
+ * the Redux swipe state changes. Only the divider line and handle area capture
+ * pointer events; the rest of the map remains fully interactive (pan, zoom,
+ * feature selection etc.).
  *
  * @example
  * ```tsx
@@ -65,6 +83,8 @@ export const MapSwipeControl: React.FC = () => {
     const viewer = useMapProviderContext();
     const { active, position, locale } = useSwipeState();
     const swipePair = useActiveSwipePair();
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = React.useState(false);
 
     // Activate / deactivate the OL-level swipe when Redux state changes
     React.useEffect(() => {
@@ -96,87 +116,103 @@ export const MapSwipeControl: React.FC = () => {
         return null;
     }
 
-    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newPosition = parseInt(e.target.value, 10);
-        dispatch(updateMapSwipePosition(newPosition));
+    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        setIsDragging(true);
+        e.stopPropagation();
     };
 
-    const handleClose = () => {
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!isDragging || !containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const newPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        dispatch(updateMapSwipePosition(Math.round(newPosition)));
+        e.stopPropagation();
+    };
+
+    const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+        setIsDragging(false);
+        e.stopPropagation();
+    };
+
+    const handleClose = (e: React.MouseEvent) => {
+        e.stopPropagation();
         dispatch(setMapSwipeMode(false));
     };
 
     return (
         <div
+            ref={containerRef}
             style={{
                 position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
+                // Pass all pointer events through except where explicitly overridden
                 pointerEvents: "none",
                 zIndex: 10
             }}
         >
-            {/* Vertical divider line */}
+            {/* Draggable divider — captures pointer events for dragging */}
             <div
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
                 style={{
                     position: "absolute",
                     top: 0,
                     bottom: 0,
-                    left: `${position}%`,
-                    width: 3,
-                    background: "rgba(255,255,255,0.9)",
-                    boxShadow: "0 0 4px rgba(0,0,0,0.5)",
-                    pointerEvents: "none",
-                    transform: "translateX(-50%)"
-                }}
-            />
-            {/* Drag handle */}
-            <div
-                style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: `${position}%`,
-                    transform: "translate(-50%, -50%)",
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    background: "rgba(255,255,255,0.9)",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "ew-resize",
-                    pointerEvents: "none",
-                    userSelect: "none"
-                }}
-            >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M7 4L3 10L7 16M13 4L17 10L13 16" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            </div>
-            {/* Range slider (invisible but interactive) */}
-            <input
-                type="range"
-                min={0}
-                max={100}
-                value={position}
-                onChange={handleSliderChange}
-                title={tr("MAP_SWIPE_SLIDER_TITLE", locale)}
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    opacity: 0,
+                    // Wide-ish hit zone around the divider line
+                    left: `calc(${position}% - 16px)`,
+                    width: 32,
                     cursor: "ew-resize",
                     pointerEvents: "all",
-                    margin: 0,
-                    WebkitAppearance: "none"
+                    zIndex: 11
                 }}
-            />
-            {/* Close button */}
+            >
+                {/* Visible divider line */}
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        left: "50%",
+                        width: 3,
+                        background: "rgba(255,255,255,0.9)",
+                        boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+                        transform: "translateX(-50%)",
+                        pointerEvents: "none"
+                    }}
+                />
+                {/* Drag handle circle */}
+                <div
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        background: "rgba(255,255,255,0.9)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "ew-resize",
+                        pointerEvents: "none",
+                        userSelect: "none"
+                    }}
+                >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7 4L3 10L7 16M13 4L17 10L13 16" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </div>
+            </div>
+            {/* Close button — positioned above the divider */}
             <button
                 onClick={handleClose}
                 title={tr("MAP_SWIPE_CLOSE", locale)}
@@ -193,7 +229,8 @@ export const MapSwipeControl: React.FC = () => {
                     fontSize: 12,
                     pointerEvents: "all",
                     boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
+                    zIndex: 12
                 }}
             >
                 ✕ {tr("MAP_SWIPE_CLOSE", locale)}

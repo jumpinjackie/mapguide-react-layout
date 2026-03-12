@@ -201,6 +201,16 @@ export interface IMapProviderStateExtras {
 }
 
 /**
+ * Minimal interface for the Redux store, used by the map provider to read application
+ * state on demand (e.g. for lazily initialising secondary map layer sets for swipe mode).
+ *
+ * @since 0.15
+ */
+export interface IReduxStoreRef {
+    getState(): any;
+}
+
+/**
  * Defines a mapping provider
  * 
  * @since 0.14
@@ -221,6 +231,14 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
     hideAllPopups(): void;
     getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
     addCustomSelectionPopupRenderer(mapName: string | undefined, layerName: string | undefined, renderer: SelectionPopupContentRenderer): void;
+    /**
+     * Injects a reference to the Redux store so that the provider can lazily initialise
+     * secondary map layer sets on demand (e.g. for the map swipe feature).
+     *
+     * @param {IReduxStoreRef | undefined} store
+     * @since 0.15
+     */
+    setReduxStore(store: IReduxStoreRef | undefined): void;
     /**
      * Returns the underlying OpenLayers View object, or undefined if the viewer is not yet ready.
      * This can be used to share the view with a secondary map for swipe/compare functionality.
@@ -292,10 +310,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _activeDrawInteraction: Draw | null;
 
     // Swipe mode state
-    private _swipeSecondaryLayerRefs: LayerBase[] = [];
+    private _swipeSecondaryTopLayers: LayerBase[] = [];
+    private _swipePrimaryClipLayers: LayerBase[] = [];
+    private _swipeSecondaryClipLayers: LayerBase[] = [];
     private _swipePreRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePostRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePosition: number = 50;
+    // Redux store reference, set by MapContextProvider so swipe can lazily init secondary layer sets
+    protected _reduxStore: IReduxStoreRef | undefined;
 
     constructor(private olFactory: OLFactory = new OLFactory()) {
         this._busyWorkers = 0;
@@ -488,10 +510,55 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public isReady(): boolean { return !!(this._map && this._comp); }
 
     /**
+     * Stores a reference to the Redux store, injected by MapContextProvider.
+     * Used by subclasses (e.g. GenericMapProviderContext) to lazily initialize
+     * secondary map layer sets on demand (e.g. for the map swipe feature).
+     *
+     * @since 0.15
+     */
+    public setReduxStore(store: IReduxStoreRef | undefined): void {
+        this._reduxStore = store;
+    }
+
+    /**
      * @since 0.15
      */
     public getOLView(): View | undefined {
         return this._map?.getView();
+    }
+
+    /**
+     * Recursively collects leaf (non-group) OL layers from a LayerBase tree.
+     * LayerGroup prerender/postrender canvas clip does not propagate to children in OL,
+     * so we must attach clip handlers to the individual leaf layers.
+     */
+    private getLeafLayersForClip(layer: LayerBase): LayerBase[] {
+        if (layer instanceof LayerGroup) {
+            const result: LayerBase[] = [];
+            for (const child of layer.getLayers().getArray()) {
+                result.push(...this.getLeafLayersForClip(child));
+            }
+            return result;
+        }
+        return [layer];
+    }
+
+    private attachClipHandler(layer: LayerBase, makeClipPath: (event: any, ctx: CanvasRenderingContext2D, size: number[]) => void): void {
+        const preRenderHandler = (event: any) => {
+            const ctx = event.context as CanvasRenderingContext2D;
+            if (!ctx || !this._map) return;
+            const size = this._map.getSize();
+            if (!size) return;
+            makeClipPath(event, ctx, size);
+        };
+        const postRenderHandler = (event: any) => {
+            const ctx = event.context as CanvasRenderingContext2D;
+            if (ctx) ctx.restore();
+        };
+        layer.on('prerender' as any, preRenderHandler);
+        layer.on('postrender' as any, postRenderHandler);
+        this._swipePreRenderHandlers.set(layer, preRenderHandler);
+        this._swipePostRenderHandlers.set(layer, postRenderHandler);
     }
 
     /**
@@ -504,51 +571,63 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // First deactivate any existing swipe
         this.deactivateMapSwipe();
         this._swipePosition = position;
+
+        // === Primary map layers: clip to LEFT side ===
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        if (primaryLayerSet) {
+            for (const topLayer of primaryLayerSet.getMainSetLayers()) {
+                for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                    this.attachClipHandler(leaf, (event, ctx, size) => {
+                        const width = this.getSwipeWidth(size[0]);
+                        const tl = getRenderPixel(event, [0, 0]);
+                        const tr = getRenderPixel(event, [width, 0]);
+                        const bl = getRenderPixel(event, [0, size[1]]);
+                        const br = getRenderPixel(event, [width, size[1]]);
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(tl[0], tl[1]);
+                        ctx.lineTo(tr[0], tr[1]);
+                        ctx.lineTo(br[0], br[1]);
+                        ctx.lineTo(bl[0], bl[1]);
+                        ctx.closePath();
+                        ctx.clip();
+                    });
+                    this._swipePrimaryClipLayers.push(leaf);
+                }
+            }
+        }
+
+        // === Secondary map layers: clip to RIGHT side ===
         const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
         if (!secondaryLayerSet) {
+            // Secondary map not yet initialized — undo primary clip and bail
+            this.deactivateMapSwipe();
             return false;
         }
-        const mapSize = this._map.getSize();
-        if (!mapSize) {
-            return false;
-        }
-        const layers = this._map.getLayers().getArray();
-        // Collect all layers belonging to the secondary map's layer set group
-        const secondaryLayers = secondaryLayerSet.getMainSetLayers();
-        for (const layer of secondaryLayers) {
-            if (!layers.includes(layer)) {
-                this._map.addLayer(layer);
+        const currentMapLayers = this._map.getLayers().getArray();
+        for (const topLayer of secondaryLayerSet.getMainSetLayers()) {
+            if (!currentMapLayers.includes(topLayer)) {
+                this._map.addLayer(topLayer);
             }
-            const preRenderHandler = (event: any) => {
-                const ctx = event.context as CanvasRenderingContext2D;
-                if (!ctx || !this._map) return;
-                const size = this._map.getSize();
-                if (!size) return;
-                const width = this.getSwipeWidth(size[0]);
-                const tl = getRenderPixel(event, [width, 0]);
-                const tr = getRenderPixel(event, [size[0], 0]);
-                const bl = getRenderPixel(event, [width, size[1]]);
-                const br = getRenderPixel(event, size);
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(tl[0], tl[1]);
-                ctx.lineTo(bl[0], bl[1]);
-                ctx.lineTo(br[0], br[1]);
-                ctx.lineTo(tr[0], tr[1]);
-                ctx.closePath();
-                ctx.clip();
-            };
-            const postRenderHandler = (event: any) => {
-                const ctx = event.context as CanvasRenderingContext2D;
-                if (ctx) {
-                    ctx.restore();
-                }
-            };
-            layer.on('prerender' as any, preRenderHandler);
-            layer.on('postrender' as any, postRenderHandler);
-            this._swipePreRenderHandlers.set(layer, preRenderHandler);
-            this._swipePostRenderHandlers.set(layer, postRenderHandler);
-            this._swipeSecondaryLayerRefs.push(layer);
+            this._swipeSecondaryTopLayers.push(topLayer);
+            for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                this.attachClipHandler(leaf, (event, ctx, size) => {
+                    const width = this.getSwipeWidth(size[0]);
+                    const tl = getRenderPixel(event, [width, 0]);
+                    const tr = getRenderPixel(event, [size[0], 0]);
+                    const bl = getRenderPixel(event, [width, size[1]]);
+                    const br = getRenderPixel(event, size);
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(tl[0], tl[1]);
+                    ctx.lineTo(bl[0], bl[1]);
+                    ctx.lineTo(br[0], br[1]);
+                    ctx.lineTo(tr[0], tr[1]);
+                    ctx.closePath();
+                    ctx.clip();
+                });
+                this._swipeSecondaryClipLayers.push(leaf);
+            }
         }
         this._map.render();
         return true;
@@ -563,7 +642,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     public deactivateMapSwipe(): void {
         if (!this._map) return;
-        for (const layer of this._swipeSecondaryLayerRefs) {
+        const allClipLayers = [...this._swipePrimaryClipLayers, ...this._swipeSecondaryClipLayers];
+        for (const layer of allClipLayers) {
             const preHandler = this._swipePreRenderHandlers.get(layer);
             const postHandler = this._swipePostRenderHandlers.get(layer);
             if (preHandler) {
@@ -572,9 +652,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (postHandler) {
                 layer.un('postrender' as any, postHandler);
             }
-            this._map.removeLayer(layer);
         }
-        this._swipeSecondaryLayerRefs = [];
+        for (const topLayer of this._swipeSecondaryTopLayers) {
+            this._map.removeLayer(topLayer);
+        }
+        this._swipePrimaryClipLayers = [];
+        this._swipeSecondaryClipLayers = [];
+        this._swipeSecondaryTopLayers = [];
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
         this._map.render();

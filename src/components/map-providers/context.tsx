@@ -59,6 +59,14 @@ export type ReduxStoreImpl = ReturnType<typeof configureStore>;
  * @since 0.14
  */
 export const MapContextProvider: React.FC<React.PropsWithChildren<{ value: IMapProviderContext, store?: ReduxStoreImpl }>> = ({ value, store, children }) => {
+    // Inject the Redux store reference into the provider so it can lazily initialize
+    // secondary map layer set groups on demand (e.g. for the map swipe feature).
+    React.useEffect(() => {
+        value.setReduxStore(store);
+        return () => {
+            value.setReduxStore(undefined);
+        };
+    }, [value, store]);
     let inner = children;
     if (store) {
         inner = <ReduxProvider store={store}>

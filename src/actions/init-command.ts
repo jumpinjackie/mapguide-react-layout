@@ -1,5 +1,5 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
-import { ReduxDispatch, Dictionary, ActiveMapTool } from '../api/common';
+import { ReduxDispatch, Dictionary, ActiveMapTool, IMapSwipePair } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
@@ -14,6 +14,42 @@ import { ensureParameters } from '../utils/url';
 import { MgError } from '../api/error';
 import { strStartsWith } from '../utils/string';
 import { IClusterSettings } from '../api/ol-style-contracts';
+
+/**
+ * Parses swipe pair declarations from the application definition's MapSet.
+ *
+ * A swipe pair is declared by adding Extension.SwipePairWith (the paired map group id)
+ * and Extension.SwipePrimary ("true" or "false") to a MapGroup element.
+ *
+ * @since 0.15
+ */
+export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] {
+    const pairs: IMapSwipePair[] = [];
+    const seen = new Set<string>();
+    if (!appDef.MapSet?.MapGroup) {
+        return pairs;
+    }
+    for (const mg of appDef.MapSet.MapGroup) {
+        const ext = mg.Extension;
+        if (!ext) {
+            continue;
+        }
+        const swipePairWith = ext.SwipePairWith as string | undefined;
+        const swipePrimary = ext.SwipePrimary as string | undefined;
+        if (swipePairWith && swipePrimary?.toLowerCase() === "true") {
+            const primaryId = mg["@id"];
+            const pairKey = [primaryId, swipePairWith].sort().join("|");
+            if (!seen.has(pairKey)) {
+                seen.add(pairKey);
+                pairs.push({
+                    primaryMapName: primaryId,
+                    secondaryMapName: swipePairWith
+                });
+            }
+        }
+    }
+    return pairs;
+}
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
@@ -277,7 +313,8 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
             },
             toolbars: tb,
             warnings: warnings,
-            initialActiveTool: ActiveMapTool.Pan
+            initialActiveTool: ActiveMapTool.Pan,
+            mapSwipePairs: parseSwipePairs(appDef)
         }, options.layout);
     }
 }

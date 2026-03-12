@@ -688,12 +688,12 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
         //viewRotation
         if (this._state.viewRotation != nextState.viewRotation) {
-            this.getOLView().setRotation(nextState.viewRotation);
+            this._map?.getView().setRotation(nextState.viewRotation);
         }
         //viewRotationEnabled
         if (this._state.viewRotationEnabled != nextState.viewRotationEnabled) {
             if (this._map) {
-                const view = this.getOLView();
+                const view = this._map.getView();
                 const newView = new View({
                     enableRotation: nextState.viewRotationEnabled,
                     rotation: nextState.viewRotation,
@@ -725,7 +725,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                     const checkReady = () => {
                         if (this._busyWorkers == 0) {
                             //console.log("Ready to request updated feature selection");
-                            const view = this.getOLView();
+                            const view = this._map?.getView();
+                            if (!view) return;
                             const me: any = view.calculateExtent(ms);
                             const size = { w: ms[0], h: ms[1] };
                             this.showSelectedFeature(me, size, nmap, nextState.activeSelectedFeatureColor, nextState.activeSelectedFeatureXml);

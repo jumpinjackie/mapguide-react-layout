@@ -40,9 +40,10 @@ import {
     SPRITE_INVOKE_SCRIPT,
     SPRITE_COORDINATE_TRACKER,
     SPRITE_LAYER_ADD,
-    SPRITE_PRINT
+    SPRITE_PRINT,
+    SPRITE_MAP_SWIPE
 } from "../constants/assets";
-import { setCurrentView, setActiveTool, previousView, nextView } from '../actions/map';
+import { setCurrentView, setActiveTool, previousView, nextView, setMapSwipeMode } from '../actions/map';
 import { showModalComponent, showModalUrl } from '../actions/modal';
 import { refresh } from '../actions/legend';
 import { setTaskPaneVisibility, setLegendVisibility, setSelectionPanelVisibility } from '../actions/template';
@@ -419,6 +420,24 @@ export function initDefaultCommands() {
                     }
                 }
             });
+        }
+    });
+    //MapSwipe
+    registerCommand(DefaultCommands.MapSwipe, {
+        iconClass: SPRITE_MAP_SWIPE,
+        selected: (state) => state.swipeActive,
+        enabled: (state) => {
+            const pairs = state.mapSwipePairs;
+            if (!pairs || pairs.length === 0) {
+                return false;
+            }
+            const activeMapName = state.activeMapName;
+            return pairs.some(p => p.primaryMapName === activeMapName || p.secondaryMapName === activeMapName);
+        },
+        invoke: (dispatch, getState) => {
+            const state = getState();
+            const swipeActive = state.config.swipeActive === true;
+            dispatch(setMapSwipeMode(!swipeActive));
         }
     });
     //Fusion template helper commands

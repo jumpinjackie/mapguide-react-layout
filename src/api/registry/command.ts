@@ -12,7 +12,8 @@ import {
     NOOP,
     ALWAYS_FALSE,
     IInvokeUrlCommandParameter,
-    ActiveMapTool} from "../../api/common";
+    ActiveMapTool,
+    IMapSwipePair} from "../../api/common";
 import { getFusionRoot } from "../../api/runtime";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import { tr } from "../i18n";
@@ -156,6 +157,18 @@ export interface IToolbarAppState {
     hasNextView: boolean;
     featureTooltipsEnabled: boolean;
     activeTool: ActiveMapTool;
+    /**
+     * @since 0.15
+     */
+    swipeActive: boolean;
+    /**
+     * @since 0.15
+     */
+    mapSwipePairs: IMapSwipePair[];
+    /**
+     * @since 0.15
+     */
+    activeMapName: string | undefined;
 }
 
 /**
@@ -187,7 +200,10 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
         hasPreviousView,
         hasNextView,
         activeTool: state.viewer.tool,
-        featureTooltipsEnabled: state.viewer.featureTooltipsEnabled
+        featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
+        swipeActive: state.config.swipeActive === true,
+        mapSwipePairs: state.config.mapSwipePairs ?? [],
+        activeMapName: state.config.activeMapName
     }
 }
 
@@ -308,7 +324,11 @@ export enum DefaultCommands {
     /**
      * @since 0.14
      */
-    Print = "Print"
+    Print = "Print",
+    /**
+     * @since 0.15
+     */
+    MapSwipe = "MapSwipe"
 }
 
 const commands: Dictionary<ICommand> = {};

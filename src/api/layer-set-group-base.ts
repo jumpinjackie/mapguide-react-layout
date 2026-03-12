@@ -146,6 +146,13 @@ export abstract class LayerSetGroupBase {
     public getMetersPerUnit = () => this.mainSet.getMetersPerUnit();
     public scaleToResolution = (scale: number) => this.mainSet.scaleToResolution(scale);
     public resolutionToScale = (resolution: number) => this.mainSet.resolutionToScale(resolution);
+    /**
+     * Gets the OL layers from the main layer set. Used internally for the map swipe feature.
+     *
+     * @returns {LayerBase[]}
+     * @since 0.15
+     */
+    public getMainSetLayers = (): LayerBase[] => this.mainSet.getLayers();
 
     public attach(map: Map, ovMapControl: OverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that

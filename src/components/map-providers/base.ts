@@ -56,6 +56,7 @@ import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
 import { supportsTouch } from "../../utils/browser-support";
+import { getRenderPixel } from 'ol/render';
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -220,6 +221,38 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
     hideAllPopups(): void;
     getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
     addCustomSelectionPopupRenderer(mapName: string | undefined, layerName: string | undefined, renderer: SelectionPopupContentRenderer): void;
+    /**
+     * Returns the underlying OpenLayers View object, or undefined if the viewer is not yet ready.
+     * This can be used to share the view with a secondary map for swipe/compare functionality.
+     *
+     * @returns {(View | undefined)}
+     * @since 0.15
+     */
+    getOLView(): View | undefined;
+    /**
+     * Activates the map swipe mode for the secondary map. When active, the secondary map's
+     * layers are rendered alongside the primary map's layers with a clip effect at the
+     * specified position.
+     *
+     * @param {string} secondaryMapName The name of the secondary map to show
+     * @param {number} position The swipe position as a percentage (0-100)
+     * @returns {boolean} true if swipe mode was successfully activated
+     * @since 0.15
+     */
+    activateMapSwipe(secondaryMapName: string, position: number): boolean;
+    /**
+     * Deactivates the map swipe mode, removing the secondary map layers.
+     *
+     * @since 0.15
+     */
+    deactivateMapSwipe(): void;
+    /**
+     * Updates the swipe position when swipe mode is active.
+     *
+     * @param {number} position The swipe position as a percentage (0-100)
+     * @since 0.15
+     */
+    updateSwipePosition(position: number): void;
 }
 
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
@@ -257,6 +290,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _triggerZoomRequestOnMoveEnd: boolean;
     protected _select: Select | undefined;
     protected _activeDrawInteraction: Draw | null;
+
+    // Swipe mode state
+    private _swipeSecondaryLayerRefs: LayerBase[] = [];
+    private _swipePreRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
+    private _swipePostRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
+    private _swipePosition: number = 50;
 
     constructor(private olFactory: OLFactory = new OLFactory()) {
         this._busyWorkers = 0;
@@ -447,6 +486,103 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     public isReady(): boolean { return !!(this._map && this._comp); }
+
+    /**
+     * @since 0.15
+     */
+    public getOLView(): View | undefined {
+        return this._map?.getView();
+    }
+
+    /**
+     * @since 0.15
+     */
+    public activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        if (!this._map) {
+            return false;
+        }
+        // First deactivate any existing swipe
+        this.deactivateMapSwipe();
+        this._swipePosition = position;
+        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
+        if (!secondaryLayerSet) {
+            return false;
+        }
+        const mapSize = this._map.getSize();
+        if (!mapSize) {
+            return false;
+        }
+        const layers = this._map.getLayers().getArray();
+        // Collect all layers belonging to the secondary map's layer set group
+        const secondaryLayers = secondaryLayerSet.getMainSetLayers();
+        for (const layer of secondaryLayers) {
+            if (!layers.includes(layer)) {
+                this._map.addLayer(layer);
+            }
+            const preRenderHandler = (event: any) => {
+                const ctx = event.context as CanvasRenderingContext2D;
+                if (!ctx || !this._map) return;
+                const size = this._map.getSize();
+                if (!size) return;
+                const width = size[0] * (this._swipePosition / 100);
+                const tl = getRenderPixel(event, [width, 0]);
+                const tr = getRenderPixel(event, [size[0], 0]);
+                const bl = getRenderPixel(event, [width, size[1]]);
+                const br = getRenderPixel(event, size);
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(tl[0], tl[1]);
+                ctx.lineTo(bl[0], bl[1]);
+                ctx.lineTo(br[0], br[1]);
+                ctx.lineTo(tr[0], tr[1]);
+                ctx.closePath();
+                ctx.clip();
+            };
+            const postRenderHandler = (event: any) => {
+                const ctx = event.context as CanvasRenderingContext2D;
+                if (ctx) {
+                    ctx.restore();
+                }
+            };
+            layer.on('prerender' as any, preRenderHandler);
+            layer.on('postrender' as any, postRenderHandler);
+            this._swipePreRenderHandlers.set(layer, preRenderHandler);
+            this._swipePostRenderHandlers.set(layer, postRenderHandler);
+            this._swipeSecondaryLayerRefs.push(layer);
+        }
+        this._map.render();
+        return true;
+    }
+
+    /**
+     * @since 0.15
+     */
+    public deactivateMapSwipe(): void {
+        if (!this._map) return;
+        for (const layer of this._swipeSecondaryLayerRefs) {
+            const preHandler = this._swipePreRenderHandlers.get(layer);
+            const postHandler = this._swipePostRenderHandlers.get(layer);
+            if (preHandler) {
+                layer.un('prerender' as any, preHandler);
+            }
+            if (postHandler) {
+                layer.un('postrender' as any, postHandler);
+            }
+            this._map.removeLayer(layer);
+        }
+        this._swipeSecondaryLayerRefs = [];
+        this._swipePreRenderHandlers = new WeakMap();
+        this._swipePostRenderHandlers = new WeakMap();
+        this._map.render();
+    }
+
+    /**
+     * @since 0.15
+     */
+    public updateSwipePosition(position: number): void {
+        this._swipePosition = position;
+        this._map?.render();
+    }
 
     //#region IMapViewer
     /**
@@ -1217,7 +1353,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     public getCurrentView(): IMapView {
-        const ov = this.getOLView();
+        assertIsDefined(this._map);
+        const ov = this._map.getView();
         const center = ov.getCenter();
         const resolution = ov.getResolution();
         const scale = this.resolutionToScale(resolution!);
@@ -1235,10 +1372,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public getSize(): Size2 {
         assertIsDefined(this._map);
         return this._map.getSize() as Size2;
-    }
-    public getOLView(): View {
-        assertIsDefined(this._map);
-        return this._map.getView();
     }
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {

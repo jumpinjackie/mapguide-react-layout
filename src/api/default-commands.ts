@@ -432,7 +432,9 @@ export function initDefaultCommands() {
                 return false;
             }
             const activeMapName = state.activeMapName;
-            return pairs.some(p => p.primaryMapName === activeMapName || p.secondaryMapName === activeMapName);
+            // Only enable when the PRIMARY map is active; activating from the secondary
+            // map would cause the same layer set to be used for both sides of the split.
+            return pairs.some(p => p.primaryMapName === activeMapName);
         },
         invoke: (dispatch, getState) => {
             const state = getState();

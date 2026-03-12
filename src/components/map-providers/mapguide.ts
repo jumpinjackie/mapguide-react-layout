@@ -510,6 +510,43 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
 
     /**
+     * Override activateMapSwipe to eagerly initialize the secondary map's layer set group
+     * if it hasn't been visited yet. The Redux store reference (stored by MapContextProvider)
+     * is used to read the secondary map's configuration from state.
+     *
+     * @override
+     * @since 0.15
+     */
+    public override activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        if (!this._layerSetGroups[secondaryMapName] && this._reduxStore) {
+            const appState = this._reduxStore.getState();
+            const secMapState = appState?.mapState?.[secondaryMapName];
+            if (secMapState) {
+                const secondaryMap: RuntimeMap | IGenericSubjectMapLayer =
+                    secMapState.generic?.subject ?? secMapState.mapguide?.runtimeMap;
+                if (secondaryMap) {
+                    const secondaryMapState: IMapGuideProviderState = {
+                        ...this._state,
+                        mapName: secondaryMapName,
+                        map: secondaryMap,
+                        externalBaseLayers: secMapState.externalBaseLayers ?? [],
+                        initialExternalLayers: secMapState.initialExternalLayers ?? [],
+                        showGroups: [],
+                        hideGroups: [],
+                        showLayers: [],
+                        hideLayers: [],
+                        layerTransparency: {},
+                        selection: null,
+                        activeSelectedFeatureXml: ""
+                    };
+                    this.initLayerSet(secondaryMapState);
+                }
+            }
+        }
+        return super.activateMapSwipe(secondaryMapName, position);
+    }
+
+    /**
      * @override
      * @readonly
      *

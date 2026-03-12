@@ -72,7 +72,7 @@ export const MapSwipeControl: React.FC = () => {
             return;
         }
         if (active && swipePair) {
-            // When activating, ensure secondary map is the non-active/paired one
+            // Activate at the current Redux position
             viewer.activateMapSwipe(swipePair.secondaryMapName, position);
         } else {
             viewer.deactivateMapSwipe();
@@ -80,10 +80,10 @@ export const MapSwipeControl: React.FC = () => {
         return () => {
             viewer.deactivateMapSwipe();
         };
-        // We only re-run when the active flag or pair changes - position changes
+        // We only re-run when the active flag or swipePair changes - position changes
         // are handled separately via updateSwipePosition
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [active, swipePair?.secondaryMapName]);
+    }, [active, swipePair]);
 
     // Sync swipe position changes to the OL provider
     React.useEffect(() => {

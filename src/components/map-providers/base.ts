@@ -524,7 +524,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 if (!ctx || !this._map) return;
                 const size = this._map.getSize();
                 if (!size) return;
-                const width = size[0] * (this._swipePosition / 100);
+                const width = this.getSwipeWidth(size[0]);
                 const tl = getRenderPixel(event, [width, 0]);
                 const tr = getRenderPixel(event, [size[0], 0]);
                 const bl = getRenderPixel(event, [width, size[1]]);
@@ -552,6 +552,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
         this._map.render();
         return true;
+    }
+
+    private getSwipeWidth(mapWidth: number): number {
+        return mapWidth * (this._swipePosition / 100);
     }
 
     /**

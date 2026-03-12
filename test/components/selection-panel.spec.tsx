@@ -1,7 +1,7 @@
 import * as React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render } from "@testing-library/react";
-import { SelectionPanel } from "../../src/components/selection-panel";
+import { SelectionPanel, type ISelectionPanelCellContext } from "../../src/components/selection-panel";
 import { SelectedFeatureSet } from "../../src/api/contracts/query";
 import { tr } from "../../src/api/i18n";
 import { createClientSelectionSet, createSelectionSet } from "../../test-data";
@@ -97,6 +97,84 @@ describe("components/selection-panel", () => {
         expect(container.querySelectorAll(".selection-panel-property-grid")).toHaveLength(1)
         expect(container.querySelectorAll("tr")).toHaveLength(3);
         const el = getByText("Cleaned / Feature 1");
+        expect(el).not.toBeUndefined();
+    });
+    it("HTML cleaning function receives property name context", () => {
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const set: SelectedFeatureSet = createSelectionSet();
+        const capturedContexts: ISelectionPanelCellContext[] = [];
+        const cleanHTML = (html: string, context: ISelectionPanelCellContext) => {
+            capturedContexts.push(context);
+            return html;
+        };
+        const allowHTMLValues = true;
+        const sel = new CompositeSelection(set);
+        render(<SelectionPanel cleanHTML={cleanHTML} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        expect(capturedContexts.map(c => c.propertyName)).toContain("ID");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("Name");
+        expect(capturedContexts.every(c => c.layerName === "Foo")).toBe(true);
+    });
+    it("formatPropertyValue is called for non-HTML values", () => {
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const set: SelectedFeatureSet = createSelectionSet();
+        const formatPropertyValue = (value: string) => strReplaceAll(value, "Feature", "Item");
+        const allowHTMLValues = false;
+        const sel = new CompositeSelection(set);
+        const { getByText, container } = render(<SelectionPanel formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        expect(container.querySelectorAll(".selection-panel-toolbar")).toHaveLength(1);
+        expect(container.querySelectorAll(".selection-panel-property-grid")).toHaveLength(1);
+        expect(container.querySelectorAll("tr")).toHaveLength(3);
+        const el = getByText("Foo / Item 1");
+        expect(el).not.toBeUndefined();
+    });
+    it("formatPropertyValue receives property name context", () => {
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const set: SelectedFeatureSet = createSelectionSet();
+        const capturedContexts: ISelectionPanelCellContext[] = [];
+        const formatPropertyValue = (value: string, context: ISelectionPanelCellContext) => {
+            capturedContexts.push(context);
+            return value;
+        };
+        const allowHTMLValues = false;
+        const sel = new CompositeSelection(set);
+        render(<SelectionPanel formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHTMLValues} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        expect(capturedContexts.map(c => c.propertyName)).toContain("ID");
+        expect(capturedContexts.map(c => c.propertyName)).toContain("Name");
+        expect(capturedContexts.every(c => c.layerName === "Foo")).toBe(true);
+    });
+    it("formatPropertyValue can limit decimal places of floating point numbers", () => {
+        const onZoomRequest = vi.fn();
+        const onShowSelectedFeature = vi.fn();
+        const set: SelectedFeatureSet = {
+            SelectedLayer: [
+                {
+                    "@id": "layer1",
+                    "@name": "TestLayer",
+                    Feature: [
+                        {
+                            Bounds: "0 0 1 1",
+                            Property: [
+                                { Name: "Latitude", Value: "38.174886687764541" },
+                                { Name: "Name", Value: "Location A" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        const formatPropertyValue = (value: string) => {
+            if (/^-?\d+\.\d+$/.test(value)) {
+                return parseFloat(value).toFixed(3);
+            }
+            return value;
+        };
+        const sel = new CompositeSelection(set);
+        const { getByText, container } = render(<SelectionPanel formatPropertyValue={formatPropertyValue} allowHtmlValues={false} selection={sel} onRequestZoomToFeature={onZoomRequest} onShowSelectedFeature={onShowSelectedFeature} />);
+        expect(container.querySelectorAll(".selection-panel-property-grid")).toHaveLength(1);
+        const el = getByText("38.175");
         expect(el).not.toBeUndefined();
     });
     it("Can scroll forwards/backwards on first selected layer", () => {

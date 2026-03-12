@@ -13,7 +13,7 @@ import { createInitialState } from "../../../test-data";
 
 const mockMapProviderContext: IMapProviderContext = {
     setReduxStore: () => {}
-} as IMapProviderContext;
+} as unknown as IMapProviderContext;
 
 describe("components/map-providers/context", () => {
     describe("MapProviderContextProvider", () => {

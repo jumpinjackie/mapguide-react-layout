@@ -300,4 +300,6 @@ export const STRINGS_EN: ILocalizedMessages = {
     "INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET": "This viewer refers to a map ({mapId}) with an arbitrary coordinate system, which is incompatible with this widget ({widget})",
     "MAP_SWIPE_SLIDER_TITLE": "Drag to compare maps",
     "MAP_SWIPE_CLOSE": "Close Comparison",
+    "MAP_SWIPE_PRIMARY_LABEL": "Primary",
+    "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
 };

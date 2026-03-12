@@ -1905,6 +1905,22 @@ export interface IMapSwipePair {
      * @type {string}
      */
     secondaryMapName: string;
+    /**
+     * Optional display label for the primary (left) side of the swipe. Defaults
+     * to the "MAP_SWIPE_PRIMARY_LABEL" i18n string ("Primary") when not set.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    primaryLabel?: string;
+    /**
+     * Optional display label for the secondary (right) side of the swipe. Defaults
+     * to the "MAP_SWIPE_SECONDARY_LABEL" i18n string ("Secondary") when not set.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    secondaryLabel?: string;
 }
 
 /**

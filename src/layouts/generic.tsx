@@ -7,14 +7,14 @@ import { InitWarningDisplay } from '../containers/init-warning-display';
 import { ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool, setFeatureTooltipsEnabled } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
-import { useReducedToolbarAppState, useViewerActiveTool, useActiveMapName } from '../containers/hooks';
+import { useReducedToolbarAppState, useViewerActiveTool } from '../containers/hooks';
 import { useActiveMapState } from "../containers/hooks-mapguide";
 import { tr } from "../api/i18n";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
 import { ElementGroup, useElementContext } from "../components/elements/element-context";
 import { useMapProviderContext } from "../components/map-providers/context";
-import { useActiveSwipePair, useIsMapSwipeActive } from "../components/map-viewer-swipe";
+import { useMapSwipeInfo, useIsMapSwipeActive } from "../components/map-viewer-swipe";
 //import { useMapProviderContext } from "../components/map-providers/context";
 
 type MapToolbarProps = {
@@ -33,13 +33,8 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
-    const pair = useActiveSwipePair();
+    const swipeInfo = useMapSwipeInfo();
     const swipeActive = useIsMapSwipeActive();
-    const activeMapName = useActiveMapName();
-    // Only show the swipe button when the active map is the PRIMARY of a swipe pair.
-    // Activating swipe from the secondary map would use the same layer set for both
-    // sides of the split, causing a broken (all-white) view.
-    const isSwipePrimary = pair != null && pair.primaryMapName === activeMapName;
     const { Button, Card, Popover } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
@@ -66,7 +61,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
                 <Button icon="cog" title={tr("VIEWER_OPTIONS", locale)} />
                 <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
             </Popover>
-            {isSwipePrimary && <Button icon="comparison" variant={swipeActive ? "primary" : undefined} onClick={() => onInvokeCommand(DefaultCommands.MapSwipe)} />}
+            {swipeInfo?.isSwipePrimary && <Button icon="comparison" variant={swipeActive ? "primary" : undefined} onClick={() => onInvokeCommand(DefaultCommands.MapSwipe)} />}
             <Button icon="print" onClick={() => onInvokeCommand(DefaultCommands.Print)} />
         </ElementGroup>
     </>

@@ -14,18 +14,57 @@ import { IMapSwipePair } from "../api/common";
 import { tr } from "../api/i18n";
 
 /**
- * Returns the swipe pair that involves the currently active map, if one exists.
+ * Describes the active map swipe context — the swipe pair that involves the
+ * currently active map, plus a flag indicating whether the active map is the
+ * primary side of the pair (the side that can initiate a swipe).
+ *
+ * @interface IMapSwipeInfo
+ * @since 0.15
+ */
+export interface IMapSwipeInfo {
+    /**
+     * The swipe pair that involves the currently active map.
+     */
+    pair: IMapSwipePair;
+    /**
+     * `true` when the active map is the primary map of the pair (the only side
+     * from which swipe can be initiated).
+     */
+    isSwipePrimary: boolean;
+}
+
+/**
+ * Returns swipe context for the currently active map if it belongs to a declared
+ * swipe pair, or `undefined` if the active map is not part of any pair.
+ *
+ * The returned object includes the full pair descriptor and an `isSwipePrimary`
+ * flag that is `true` when the active map is the primary side of the pair. Only
+ * use the swipe command when `isSwipePrimary` is `true`.
+ *
+ * @example
+ * ```tsx
+ * const swipeInfo = useMapSwipeInfo();
+ * // Show swipe button only for the primary map
+ * {swipeInfo?.isSwipePrimary && <Button onClick={...}>Compare</Button>}
+ * ```
  *
  * @since 0.15
  */
-export function useActiveSwipePair(): IMapSwipePair | undefined {
+export function useMapSwipeInfo(): IMapSwipeInfo | undefined {
     return useAppState(state => {
         const pairs = state.config.mapSwipePairs;
         const activeMapName = state.config.activeMapName;
         if (!pairs || !activeMapName) {
             return undefined;
         }
-        return pairs.find(p => p.primaryMapName === activeMapName || p.secondaryMapName === activeMapName);
+        const pair = pairs.find(p => p.primaryMapName === activeMapName || p.secondaryMapName === activeMapName);
+        if (!pair) {
+            return undefined;
+        }
+        return {
+            pair,
+            isSwipePrimary: pair.primaryMapName === activeMapName
+        };
     });
 }
 
@@ -82,7 +121,8 @@ export const MapSwipeControl: React.FC = () => {
     const dispatch = useReduxDispatch();
     const viewer = useMapProviderContext();
     const { active, position, locale } = useSwipeState();
-    const swipePair = useActiveSwipePair();
+    const swipeInfo = useMapSwipeInfo();
+    const swipePair = swipeInfo?.pair;
     const containerRef = React.useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = React.useState(false);
 
@@ -235,6 +275,46 @@ export const MapSwipeControl: React.FC = () => {
             >
                 ✕ {tr("MAP_SWIPE_CLOSE", locale)}
             </button>
+            {/* Primary (left-side) label */}
+            <div
+                style={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    background: "rgba(255,255,255,0.85)",
+                    border: "1px solid rgba(0,0,0,0.2)",
+                    borderRadius: 4,
+                    padding: "2px 8px",
+                    fontSize: 12,
+                    fontWeight: "bold",
+                    pointerEvents: "none",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+                    whiteSpace: "nowrap",
+                    zIndex: 12
+                }}
+            >
+                {swipePair?.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}
+            </div>
+            {/* Secondary (right-side) label */}
+            <div
+                style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    background: "rgba(255,255,255,0.85)",
+                    border: "1px solid rgba(0,0,0,0.2)",
+                    borderRadius: 4,
+                    padding: "2px 8px",
+                    fontSize: 12,
+                    fontWeight: "bold",
+                    pointerEvents: "none",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+                    whiteSpace: "nowrap",
+                    zIndex: 12
+                }}
+            >
+                {swipePair?.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}
+            </div>
         </div>
     );
 };

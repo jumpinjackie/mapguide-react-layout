@@ -6,7 +6,9 @@
                 "@id": "Australia",
                 "Extension": {
                     "SwipePrimary": "true",
-                    "SwipePairWith": "AustraliaCompare"
+                    "SwipePairWith": "AustraliaCompare",
+                    "SwipePrimaryLabel": "Capital Cities",
+                    "SwipeSecondaryLabel": "Natural Landmarks"
                 },
                 "Map": [
                     {

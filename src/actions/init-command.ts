@@ -41,9 +41,13 @@ export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] 
             const pairKey = [primaryId, swipePairWith].sort().join("|");
             if (!seen.has(pairKey)) {
                 seen.add(pairKey);
+                const primaryLabel = ext.SwipePrimaryLabel as string | undefined;
+                const secondaryLabel = ext.SwipeSecondaryLabel as string | undefined;
                 pairs.push({
                     primaryMapName: primaryId,
-                    secondaryMapName: swipePairWith
+                    secondaryMapName: swipePairWith,
+                    ...(primaryLabel ? { primaryLabel } : {}),
+                    ...(secondaryLabel ? { secondaryLabel } : {})
                 });
             }
         }

@@ -322,4 +322,12 @@ export interface ILocalizedMessages {
      * @since 0.15
      */
     MAP_SWIPE_CLOSE: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_PRIMARY_LABEL: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_SECONDARY_LABEL: string;
 }

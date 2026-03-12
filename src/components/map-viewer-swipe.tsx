@@ -16,9 +16,9 @@ import { tr } from "../api/i18n";
 /**
  * Returns the swipe pair that involves the currently active map, if one exists.
  *
- * @hidden
+ * @since 0.15
  */
-function useActiveSwipePair(): IMapSwipePair | undefined {
+export function useActiveSwipePair(): IMapSwipePair | undefined {
     return useAppState(state => {
         const pairs = state.config.mapSwipePairs;
         const activeMapName = state.config.activeMapName;

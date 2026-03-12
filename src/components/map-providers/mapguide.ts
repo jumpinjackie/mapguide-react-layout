@@ -7,7 +7,7 @@ import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query'
 import WKTFormat from "ol/format/WKT";
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled } from '../../actions/map';
+import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled, setMapSwipeMode } from '../../actions/map';
 import View from 'ol/View';
 import debounce from 'lodash.debounce';
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
@@ -658,6 +658,15 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         let bChangedView = false;
         //map
         if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            // If swipe is currently active, deactivate it before switching maps.
+            // The swipe activation adds secondary map layers directly to the OL map,
+            // and if we don't remove them now, `attach` will throw a "Duplicate item"
+            // error when it tries to add those same layers again for the new active map.
+            const swipeWasActive = this._reduxStore?.getState()?.config?.swipeActive === true;
+            if (swipeWasActive) {
+                this.deactivateMapSwipe();
+                this._reduxStore?.dispatch(setMapSwipeMode(false));
+            }
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);

@@ -208,6 +208,7 @@ export interface IMapProviderStateExtras {
  */
 export interface IReduxStoreRef {
     getState(): any;
+    dispatch(action: any): void;
 }
 
 /**

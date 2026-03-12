@@ -568,6 +568,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (!this._map) {
             return false;
         }
+        // Guard: cannot swipe a map against itself — this would clip both sides with
+        // the same layer set, producing a blank (all-white) view.
+        if (secondaryMapName === this._state.mapName) {
+            return false;
+        }
         // First deactivate any existing swipe
         this.deactivateMapSwipe();
         this._swipePosition = position;

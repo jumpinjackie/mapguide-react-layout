@@ -522,7 +522,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             const appState = this._reduxStore.getState();
             const secMapState = appState?.mapState?.[secondaryMapName];
             if (secMapState) {
-                const secondaryMap: RuntimeMap | IGenericSubjectMapLayer =
+                const secondaryMap =
                     secMapState.generic?.subject ?? secMapState.mapguide?.runtimeMap;
                 if (secondaryMap) {
                     const secondaryMapState: IMapGuideProviderState = {

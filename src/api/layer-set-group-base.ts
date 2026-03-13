@@ -154,6 +154,18 @@ export abstract class LayerSetGroupBase {
      */
     public getMainSetLayers = (): LayerBase[] => this.mainSet.getLayers();
 
+    /**
+     * Returns all layers that should be visible for map swipe: the base map layers plus any
+     * custom (runtime-added) layers. This ensures that layers added at runtime after the
+     * initial appdef load are included when swipe mode is activated.
+     *
+     * @since 0.15
+     */
+    public getSwipeableLayers = (): LayerBase[] => [
+        ...this.mainSet.getLayers(),
+        ...Object.values(this._customLayers).map(c => c.layer)
+    ];
+
     public attach(map: Map, ovMapControl: OverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that
         // already has layers (eg. Measurements), we reverse iterate all the layers we need to

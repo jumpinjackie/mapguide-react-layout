@@ -580,7 +580,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // === Primary map layers: clip to LEFT side ===
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
         if (primaryLayerSet) {
-            for (const topLayer of primaryLayerSet.getMainSetLayers()) {
+            for (const topLayer of primaryLayerSet.getSwipeableLayers()) {
                 for (const leaf of this.getLeafLayersForClip(topLayer)) {
                     this.attachClipHandler(leaf, (event, ctx, size) => {
                         const width = this.getSwipeWidth(size[0]);
@@ -610,7 +610,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return false;
         }
         const currentMapLayers = this._map.getLayers().getArray();
-        for (const topLayer of secondaryLayerSet.getMainSetLayers()) {
+        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
             if (!currentMapLayers.includes(topLayer)) {
                 this._map.addLayer(topLayer);
             }

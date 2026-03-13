@@ -23,6 +23,12 @@ export interface IAddLayerProps {
     onLayerAdded: (layer: ILayerInfo) => void;
     onAddLayerBusyWorker: (name: string) => void;
     onRemoveLayerBusyWorker: (name: string) => void;
+    /**
+     * When provided, overrides the default layer manager (active map) used to add layers.
+     * Used in swipe mode to target the secondary map's layer set directly.
+     * @since 0.15
+     */
+    targetLayerManager?: import("../../api/common").ILayerManager;
 }
 
 /**
@@ -40,6 +46,12 @@ export interface IAddLayerContentProps {
     onLayerAdded: (layer: ILayerInfo) => void;
     onAddLayerBusyWorker: (name: string) => void;
     onRemoveLayerBusyWorker: (name: string) => void;
+    /**
+     * When provided, overrides the default layer manager (active map) used to add layers.
+     * Used in swipe mode to target the secondary map's layer set directly.
+     * @since 0.15
+     */
+    targetLayerManager?: import("../../api/common").ILayerManager;
 }
 
 interface IAddLayerConf {
@@ -169,8 +181,10 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 if (!strIsNullOrEmpty(addLayerName)) {
                     parsedFeaturesRef.current.name = addLayerName;
                 }
-                const layerMgr = viewer.getLayerManager();
-                if (layerMgr.hasLayer(parsedFeaturesRef.current.name)) {
+                // Use the target layer manager if provided (e.g. for the secondary map in swipe mode),
+                // otherwise fall back to the viewer's active layer manager.
+                const targetLayerMgr = props.targetLayerManager ?? viewer.getLayerManager();
+                if (targetLayerMgr.hasLayer(parsedFeaturesRef.current.name)) {
                     throw new Error(tr("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
                 let extraOpts: AddVectorLayerExtraOptions | undefined;
@@ -199,7 +213,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
                 if (enableLabels) {
                     labelProp = labelOnProperty;
                 }
-                const layer = await layerMgr.addLayerFromParsedFeatures({
+                const layer = await targetLayerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
                     projection: layerProj,
                     extraOptions: extraOpts,
@@ -220,7 +234,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction, props.onLayerAdded, addLayerName, locale]);
+    }, [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction, props.onLayerAdded, props.targetLayerManager, addLayerName, locale]);
     if (loadedFile) {
         let canAdd = true;
         if (createLayerAs == CreateVectorLayerAs.Themed) {
@@ -339,7 +353,8 @@ const AddUrlLayer = (props: IAddLayerProps) => {
                     locale: locale,
                     onLayerAdded: props.onLayerAdded,
                     onAddLayerBusyWorker: props.onAddLayerBusyWorker,
-                    onRemoveLayerBusyWorker: props.onRemoveLayerBusyWorker
+                    onRemoveLayerBusyWorker: props.onRemoveLayerBusyWorker,
+                    targetLayerManager: props.targetLayerManager
                 };
                 return ADD_URL_LAYER_TYPES[selectedUrlType].content(cprops);
             }

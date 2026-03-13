@@ -93,7 +93,7 @@ export const AddWfsLayer = (props: IAddLayerContentProps) => {
                     layer.set(LayerProperty.WGS84_BBOX, wfsWgs84Bounds);
                 }
                 setOLVectorLayerStyle(layer, DEFAULT_VECTOR_LAYER_STYLE, undefined);
-                viewer.getLayerManager().addLayer(name, layer);
+                (props.targetLayerManager ?? viewer.getLayerManager()).addLayer(name, layer);
                 viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
                 const li = getLayerInfo(layer, true);
                 zoomToLayerExtents(li.name, viewer);

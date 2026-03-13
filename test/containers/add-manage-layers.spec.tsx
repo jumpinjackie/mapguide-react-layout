@@ -9,12 +9,14 @@
  *  2. The dropdown lists the primary and secondary maps.
  *  3. `onLayerAdded` dispatches to the correct map name based on the dropdown
  *     selection.
- *  4. After adding a layer with the secondary map selected,
- *     `viewer.transferLayerToSwipeSecondary()` is called.
- *  5. After adding a layer with the primary map selected,
- *     `viewer.refreshSwipeClips()` is called.
- *  6. When swipe is inactive, the layers from the active map are shown in the
+ *  4. After adding a layer (regardless of whether primary or secondary is
+ *     selected), `viewer.refreshSwipeClips()` is always called when swipe is
+ *     active so that the new layer gets the correct clip applied.
+ *  5. When swipe is inactive, the layers from the active map are shown in the
  *     Manage Layers tab (no secondary-map mixing).
+ *  6. `viewer.getLayerManager(mapName)` is called with the secondary map name
+ *     when secondary is selected, so that the layer is added directly to the
+ *     secondary layer set (avoiding "layer already exists" collisions).
  *
  * @since 0.15
  */
@@ -139,8 +141,6 @@ function makeLayerInfo(name: string, displayName: string): ILayerInfo {
         busyWorkerCount: 0,
         type: "Vector" as any,
         isExternal: true,
-        order: 0,
-        isSelectable: false,
     };
 }
 
@@ -428,7 +428,7 @@ describe("AddManageLayersContainer – swipe mode UI & dispatch behaviour", () =
             expect(viewer.transferLayerToSwipeSecondary).not.toHaveBeenCalled();
         });
 
-        it("dispatches mapLayerAdded with secondaryMapName and calls transferLayerToSwipeSecondary when secondary is selected", () => {
+        it("dispatches mapLayerAdded with secondaryMapName and calls refreshSwipeClips when secondary is selected", () => {
             const state = makeState({
                 activeMapName: PRIMARY_MAP,
                 swipeActive: true,
@@ -461,9 +461,36 @@ describe("AddManageLayersContainer – swipe mode UI & dispatch behaviour", () =
             expect(layerAddedCall).toBeDefined();
             expect((layerAddedCall![0] as any).payload?.mapName).toBe(SECONDARY_MAP);
 
-            // Layer should be transferred to secondary clip context
-            expect(viewer.transferLayerToSwipeSecondary).toHaveBeenCalledWith("test-added-layer");
-            expect(viewer.refreshSwipeClips).not.toHaveBeenCalled();
+            // refreshSwipeClips is always called when swipe is active (secondary side too),
+            // because layers are now added directly to the secondary's layer set via
+            // viewer.getLayerManager(secondaryMapName) — no transfer needed.
+            expect(viewer.refreshSwipeClips).toHaveBeenCalledOnce();
+
+            // viewer.getLayerManager should have been called with the secondary map name
+            // so that the layer is added to the secondary's layer set (not primary's)
+            expect(viewer.getLayerManager).toHaveBeenCalledWith(SECONDARY_MAP);
+        });
+
+        it("does NOT call viewer.getLayerManager with a map name when primary is selected", () => {
+            const state = makeState({
+                activeMapName: PRIMARY_MAP,
+                swipeActive: true,
+                primaryMapLayers: [],
+            });
+            const viewer = makeViewer();
+
+            render(
+                <Provider store={configureStore(state)}>
+                    <MapProviderContextProvider value={viewer as any}>
+                        <AddManageLayersContainer />
+                    </MapProviderContextProvider>
+                </Provider>
+            );
+
+            // Dropdown defaults to primary — no secondary-targeted layer manager needed
+            const getLayerManagerCalls = (viewer.getLayerManager as ReturnType<typeof vi.fn>).mock.calls;
+            const calledWithSecondary = getLayerManagerCalls.some(args => args[0] === SECONDARY_MAP);
+            expect(calledWithSecondary).toBe(false);
         });
 
         it("dispatches mapLayerAdded with activeMapName and calls NO swipe methods when swipe is not active", () => {
@@ -493,74 +520,54 @@ describe("AddManageLayersContainer – swipe mode UI & dispatch behaviour", () =
             expect(layerAddedCall).toBeDefined();
             expect((layerAddedCall![0] as any).payload?.mapName).toBe(PRIMARY_MAP);
 
-            // Neither swipe method should be called when swipe is off
+            // refreshSwipeClips should not be called when swipe is off
             expect(viewer.refreshSwipeClips).not.toHaveBeenCalled();
-            expect(viewer.transferLayerToSwipeSecondary).not.toHaveBeenCalled();
         });
     });
 
     // -----------------------------------------------------------------------
-    // viewer.refreshSwipeClips / transferLayerToSwipeSecondary expectations
-    // These are unit-level contracts: given the onLayerAdded implementation in
-    // add-manage-layers.tsx, verify the viewer methods are called correctly.
+    // viewer.refreshSwipeClips expectations
+    // New behaviour: layers are added directly to the target layer set via
+    // viewer.getLayerManager(mapName), so refreshSwipeClips() is always called
+    // when swipe is active (regardless of primary/secondary selection).
+    // transferLayerToSwipeSecondary is no longer used in the add-layer flow.
     // -----------------------------------------------------------------------
     describe("viewer swipe method contracts (unit-level)", () => {
 
         it("calls viewer.refreshSwipeClips() after a layer is added with primary selected", () => {
             const viewer = makeViewer();
-            // Simulate the onLayerAdded handler logic directly (mirrors the
-            // implementation in add-manage-layers.tsx):
+            // Simulate the new onLayerAdded handler logic:
             const isSwipeActive = true;
-            const targetMapName = PRIMARY_MAP;
-            const pair = swipePair;
 
-            // This is the exact logic from the onLayerAdded handler:
-            if (isSwipeActive && pair) {
-                if (targetMapName === pair.secondaryMapName) {
-                    viewer.transferLayerToSwipeSecondary(primaryLayer.name);
-                } else {
-                    viewer.refreshSwipeClips();
-                }
+            if (isSwipeActive) {
+                viewer.refreshSwipeClips();
             }
 
             expect(viewer.refreshSwipeClips).toHaveBeenCalledOnce();
-            expect(viewer.transferLayerToSwipeSecondary).not.toHaveBeenCalled();
         });
 
-        it("calls viewer.transferLayerToSwipeSecondary() after a layer is added with secondary selected", () => {
+        it("calls viewer.refreshSwipeClips() after a layer is added with secondary selected", () => {
             const viewer = makeViewer();
             const isSwipeActive = true;
-            const targetMapName = SECONDARY_MAP;
-            const pair = swipePair;
 
-            if (isSwipeActive && pair) {
-                if (targetMapName === pair.secondaryMapName) {
-                    viewer.transferLayerToSwipeSecondary(secondaryLayer.name);
-                } else {
-                    viewer.refreshSwipeClips();
-                }
+            // New logic: always call refreshSwipeClips (layer is already in secondary's
+            // layer set via getLayerManager(secondaryMapName))
+            if (isSwipeActive) {
+                viewer.refreshSwipeClips();
             }
 
-            expect(viewer.transferLayerToSwipeSecondary).toHaveBeenCalledWith(secondaryLayer.name);
-            expect(viewer.refreshSwipeClips).not.toHaveBeenCalled();
+            expect(viewer.refreshSwipeClips).toHaveBeenCalledOnce();
         });
 
         it("calls neither viewer method when swipe is NOT active", () => {
             const viewer = makeViewer();
             const isSwipeActive = false;
-            const targetMapName = PRIMARY_MAP;
-            const pair = swipePair;
 
-            if (isSwipeActive && pair) {
-                if (targetMapName === pair.secondaryMapName) {
-                    viewer.transferLayerToSwipeSecondary(primaryLayer.name);
-                } else {
-                    viewer.refreshSwipeClips();
-                }
+            if (isSwipeActive) {
+                viewer.refreshSwipeClips();
             }
 
             expect(viewer.refreshSwipeClips).not.toHaveBeenCalled();
-            expect(viewer.transferLayerToSwipeSecondary).not.toHaveBeenCalled();
         });
     });
 

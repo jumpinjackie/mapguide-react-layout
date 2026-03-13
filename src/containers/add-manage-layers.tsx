@@ -75,6 +75,17 @@ export const AddManageLayersContainer = () => {
     // When swipe is active, this follows the dropdown selection.
     const targetMapName = isSwipeActive ? (selectedMapForLayers ?? activeMapName) : activeMapName;
 
+    // The layer manager for the target map. When swipe is active and the secondary map is
+    // selected, use the secondary map's layer manager so that layers are added directly to
+    // the secondary's layer set (avoiding the "layer name already exists" collision that would
+    // occur if a layer with the same name was already added to the primary side).
+    const targetLayerManager = React.useMemo(() => {
+        if (isSwipeActive && targetMapName && targetMapName !== activeMapName) {
+            return viewer.getLayerManager(targetMapName);
+        }
+        return undefined; // undefined means AddLayer will fall back to the active map's layer manager
+    }, [isSwipeActive, targetMapName, activeMapName, viewer]);
+
     // Primary map layers — used as the ready-gate. Until these are defined the map hasn't
     // finished initialising and we should not render the UI at all.
     const primaryLayers = useAppState<ILayerInfo[] | undefined>(state => {
@@ -114,16 +125,10 @@ export const AddManageLayersContainer = () => {
         if (targetMapName) {
             dispatch(mapLayerAdded(targetMapName, layer));
         }
-        // After adding a layer while swipe is active, update the swipe clips so the new layer
-        // is properly clipped to the correct side.
-        if (isSwipeActive && swipeInfo) {
-            if (targetMapName === swipeInfo.pair.secondaryMapName) {
-                // Transfer the OL layer from primary to secondary clip context (right side)
-                viewer.transferLayerToSwipeSecondary(layer.name);
-            } else {
-                // Re-activate swipe so the new primary layer gets left-side clip
-                viewer.refreshSwipeClips();
-            }
+        // After adding a layer while swipe is active, refresh the swipe clips so the new layer
+        // is correctly clipped to its target side (primary = left, secondary = right).
+        if (isSwipeActive) {
+            viewer.refreshSwipeClips();
         }
     };
     const onAddLayerBusyWorker = (name: string) => {
@@ -217,6 +222,7 @@ export const AddManageLayersContainer = () => {
                     content: <AddLayer onLayerAdded={onLayerAdded}
                         onAddLayerBusyWorker={onAddLayerBusyWorker}
                         onRemoveLayerBusyWorker={onRemoveLayerBusyWorker}
+                        targetLayerManager={targetLayerManager}
                         locale={locale} />
                 },
                 {

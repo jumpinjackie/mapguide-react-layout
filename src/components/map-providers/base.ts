@@ -1670,7 +1670,17 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public getLayerManager(mapName?: string): ILayerManager {
         assertIsDefined(this._map);
         assertIsDefined(this._state.mapName);
-        const layerSet = this.ensureAndGetLayerSetGroup(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
+        // If a specific (non-active) map name is provided and it has an initialised layer set,
+        // return a layer manager backed by that layer set. This is used in swipe mode so that
+        // layers can be added directly to the secondary map without going through the primary
+        // layer manager and causing a "layer name already exists" collision.
+        if (mapName && mapName !== this._state.mapName) {
+            const namedLayerSet = this.getLayerSetGroup(mapName);
+            if (namedLayerSet) {
+                return this.getLayerManagerForLayerSet(namedLayerSet);
+            }
+        }
+        const layerSet = this.ensureAndGetLayerSetGroup(this._state);
         return this.getLayerManagerForLayerSet(layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {

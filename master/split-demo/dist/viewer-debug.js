@@ -7737,6 +7737,17 @@ class LayerSetGroupBase {
          * @since 0.15
          */
         this.getMainSetLayers = () => this.mainSet.getLayers();
+        /**
+         * Returns all layers that should be visible for map swipe: the base map layers plus any
+         * custom (runtime-added) layers. This ensures that layers added at runtime after the
+         * initial appdef load are included when swipe mode is activated.
+         *
+         * @since 0.15
+         */
+        this.getSwipeableLayers = () => [
+            ...this.mainSet.getLayers(),
+            ...Object.values(this._customLayers).map(c => c.layer)
+        ];
         this._customLayers = {};
         this.scratchLayer = new Vector_1.default({
             source: new Vector_2.default()
@@ -16358,7 +16369,7 @@ class BaseMapProviderContext {
         // === Primary map layers: clip to LEFT side ===
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
         if (primaryLayerSet) {
-            for (const topLayer of primaryLayerSet.getMainSetLayers()) {
+            for (const topLayer of primaryLayerSet.getSwipeableLayers()) {
                 for (const leaf of this.getLeafLayersForClip(topLayer)) {
                     this.attachClipHandler(leaf, (event, ctx, size) => {
                         const width = this.getSwipeWidth(size[0]);
@@ -16387,7 +16398,7 @@ class BaseMapProviderContext {
             return false;
         }
         const currentMapLayers = this._map.getLayers().getArray();
-        for (const topLayer of secondaryLayerSet.getMainSetLayers()) {
+        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
             if (!currentMapLayers.includes(topLayer)) {
                 this._map.addLayer(topLayer);
             }

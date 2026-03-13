@@ -271,6 +271,24 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
      * @since 0.15
      */
     updateSwipePosition(position: number): void;
+    /**
+     * Re-activates swipe mode with the current stored secondary map name and position,
+     * refreshing the clip event handlers for all current layers (including any newly added ones).
+     * No-op if swipe mode is not active.
+     *
+     * @since 0.15
+     */
+    refreshSwipeClips(): void;
+    /**
+     * Transfers a custom layer from the primary (active) map's layer set group to the
+     * secondary map's layer set group in swipe mode. The layer remains on the OL map
+     * but is re-registered with right-side clip handlers instead of left-side.
+     * No-op if swipe mode is not active or the layer is not found.
+     *
+     * @param layerName The name of the layer to transfer
+     * @since 0.15
+     */
+    transferLayerToSwipeSecondary(layerName: string): void;
 }
 
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
@@ -695,6 +713,35 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public updateSwipePosition(position: number): void {
         this._swipePosition = position;
         this._map?.render();
+    }
+
+    /**
+     * @since 0.15
+     */
+    public refreshSwipeClips(): void {
+        if (this._swipeSecondaryMapName) {
+            this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+        }
+    }
+
+    /**
+     * @since 0.15
+     */
+    public transferLayerToSwipeSecondary(layerName: string): void {
+        if (!this._map || !this._swipeSecondaryMapName) return;
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        const secondaryLayerSet = this.getLayerSetGroup(this._swipeSecondaryMapName);
+        if (!primaryLayerSet || !secondaryLayerSet) return;
+        // Peek at the OL layer to capture its current index before removing from tracking
+        const olLayer = primaryLayerSet.getLayer(layerName);
+        if (!olLayer) return;
+        const order = this._map.getLayers().getArray().indexOf(olLayer);
+        // Remove from primary's layer set group (tracking only; layer stays on OL map)
+        primaryLayerSet.transferLayerOut(layerName);
+        // Register in secondary's layer set group with the captured OL layer index
+        secondaryLayerSet.transferLayerIn(layerName, olLayer, order >= 0 ? order : this._map.getLayers().getLength());
+        // Re-activate to set up the correct (right-side) clip for this layer
+        this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
     }
 
     //#region IMapViewer

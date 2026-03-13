@@ -345,6 +345,32 @@ export abstract class LayerSetGroupBase {
         }
         return layer;
     }
+    /**
+     * Removes a layer from _customLayers tracking without removing it from the OL map.
+     * Used when transferring a custom layer to another layer set group in swipe mode.
+     * @param name The name of the layer to remove from tracking
+     * @returns The removed OL layer, or undefined if not found
+     * @since 0.15
+     */
+    public transferLayerOut(name: string): LayerBase | undefined {
+        if (this._customLayers[name]) {
+            const layer = this._customLayers[name].layer;
+            delete this._customLayers[name];
+            return layer;
+        }
+        return undefined;
+    }
+    /**
+     * Adds a layer to _customLayers tracking without adding it to the OL map.
+     * Used when receiving a custom layer transferred from another layer set group in swipe mode.
+     * @param name The name (identifier) of the layer
+     * @param layer The OpenLayers layer instance to track
+     * @param order The layer's position index in the map's layer collection
+     * @since 0.15
+     */
+    public transferLayerIn(name: string, layer: LayerBase, order: number): void {
+        this._customLayers[name] = { layer, order };
+    }
     public apply(map: Map, layers: ILayerInfo[]): void {
         const layersByName = layers.reduce((current, layer) => {
             current[layer.name] = layer;

@@ -62,7 +62,7 @@ export const AddManageLayersContainer = () => {
     const swipeInfo = useMapSwipeInfo();
     const isSwipeActive = useIsMapSwipeActive();
 
-    // When swipe is active, the user can select which map's layers to manage.
+    // When swipe is active, the user can select which map's layers to manage/add to.
     // Default to the primary (active) map; reset to active map when swipe ends.
     const [selectedMapForLayers, setSelectedMapForLayers] = React.useState<string | undefined>(activeMapName);
     React.useEffect(() => {
@@ -71,14 +71,9 @@ export const AddManageLayersContainer = () => {
         }
     }, [isSwipeActive, activeMapName]);
 
-    // "Add Layer" always targets the active (primary) map because the viewer context and its
-    // layer manager are bound to the currently active OL map. Using a different map name here
-    // would dispatch layers to a different Redux state entry than what the OL canvas tracks,
-    // causing the "wires crossed" visual/state mismatch.
-    const addLayerTargetMapName = activeMapName;
-
-    // The map whose layer list is displayed in the "Manage Layers" tab.
-    const manageTargetMapName = isSwipeActive ? (selectedMapForLayers ?? activeMapName) : activeMapName;
+    // The map targeted for both Add Layer and Manage Layers operations.
+    // When swipe is active, this follows the dropdown selection.
+    const targetMapName = isSwipeActive ? (selectedMapForLayers ?? activeMapName) : activeMapName;
 
     // Primary map layers — used as the ready-gate. Until these are defined the map hasn't
     // finished initialising and we should not render the UI at all.
@@ -92,15 +87,15 @@ export const AddManageLayersContainer = () => {
     // Layers for the "Manage Layers" tab (selected map). Falls back to an empty array so the
     // tab renders even when the secondary map hasn't been visited yet.
     const manageLayers = useAppState<ILayerInfo[]>(state => {
-        if (manageTargetMapName && state.mapState[manageTargetMapName]?.layers) {
-            return state.mapState[manageTargetMapName].layers;
+        if (targetMapName && state.mapState[targetMapName]?.layers) {
+            return state.mapState[targetMapName].layers;
         }
         return [];
     });
 
     const view = useAppState<IMapView | undefined>(state => {
-        if (manageTargetMapName && state.mapState[manageTargetMapName]) {
-            return state.mapState[manageTargetMapName].currentView;
+        if (targetMapName && state.mapState[targetMapName]) {
+            return state.mapState[targetMapName].currentView;
         }
         return undefined;
     });
@@ -116,35 +111,46 @@ export const AddManageLayersContainer = () => {
         return -1;
     };
     const onLayerAdded = (layer: ILayerInfo) => {
-        if (addLayerTargetMapName) {
-            dispatch(mapLayerAdded(addLayerTargetMapName, layer));
+        if (targetMapName) {
+            dispatch(mapLayerAdded(targetMapName, layer));
+        }
+        // After adding a layer while swipe is active, update the swipe clips so the new layer
+        // is properly clipped to the correct side.
+        if (isSwipeActive && swipeInfo) {
+            if (targetMapName === swipeInfo.pair.secondaryMapName) {
+                // Transfer the OL layer from primary to secondary clip context (right side)
+                viewer.transferLayerToSwipeSecondary(layer.name);
+            } else {
+                // Re-activate swipe so the new primary layer gets left-side clip
+                viewer.refreshSwipeClips();
+            }
         }
     };
     const onAddLayerBusyWorker = (name: string) => {
-        if (addLayerTargetMapName) {
-            dispatch(addMapLayerBusyWorker(addLayerTargetMapName, name));
+        if (targetMapName) {
+            dispatch(addMapLayerBusyWorker(targetMapName, name));
         }
     }
     const onRemoveLayerBusyWorker = (name: string) => {
-        if (addLayerTargetMapName) {
-            dispatch(removeMapLayerBusyWorker(addLayerTargetMapName, name));
+        if (targetMapName) {
+            dispatch(removeMapLayerBusyWorker(targetMapName, name));
         }
     };
     const removeHandler = (layerName: string) => {
-        if (manageTargetMapName) {
-            dispatch(removeMapLayer(manageTargetMapName, layerName));
+        if (targetMapName) {
+            dispatch(removeMapLayer(targetMapName, layerName));
         }
     };
     const upHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
-        if (manageTargetMapName && newIndex >= 0) {
-            dispatch(setMapLayerIndex(manageTargetMapName, layerName, newIndex - 1));
+        if (targetMapName && newIndex >= 0) {
+            dispatch(setMapLayerIndex(targetMapName, layerName, newIndex - 1));
         }
     };
     const downHandler = (layerName: string) => {
         const newIndex = getLayerIndex(layerName);
-        if (manageLayers && manageTargetMapName && newIndex < manageLayers.length - 1) {
-            dispatch(setMapLayerIndex(manageTargetMapName, layerName, newIndex + 1));
+        if (manageLayers && targetMapName && newIndex < manageLayers.length - 1) {
+            dispatch(setMapLayerIndex(targetMapName, layerName, newIndex + 1));
         }
     };
     const zoomToBounds = (layerName: string) => {
@@ -153,33 +159,33 @@ export const AddManageLayersContainer = () => {
         }
     };
     const setVisibility = (layerName: string, visible: boolean) => {
-        if (manageTargetMapName) {
-            dispatch(setMapLayerVisibility(manageTargetMapName, layerName, visible));
+        if (targetMapName) {
+            dispatch(setMapLayerVisibility(targetMapName, layerName, visible));
         }
     };
     const setOpacity = (layerName: string, value: number) => {
-        if (manageTargetMapName) {
-            dispatch(setMapLayerOpacity(manageTargetMapName, layerName, value));
+        if (targetMapName) {
+            dispatch(setMapLayerOpacity(targetMapName, layerName, value));
         }
     };
     const setHeatmapBlur = (layerName: string, value: number) => {
-        if (manageTargetMapName) {
-            dispatch(setHeatmapLayerBlur(manageTargetMapName, layerName, value));
+        if (targetMapName) {
+            dispatch(setHeatmapLayerBlur(targetMapName, layerName, value));
         }
     };
     const setHeatmapRadius = (layerName: string, value: number) => {
-        if (manageTargetMapName) {
-            dispatch(setHeatmapLayerRadius(manageTargetMapName, layerName, value));
+        if (targetMapName) {
+            dispatch(setHeatmapLayerRadius(targetMapName, layerName, value));
         }
     };
     const updateVectorStyle = (layerName: string, value: IVectorLayerStyle, which: VectorStyleSource) => {
-        if (manageTargetMapName) {
-            dispatch(setMapLayerVectorStyle(manageTargetMapName, layerName, value, which));
+        if (targetMapName) {
+            dispatch(setMapLayerVectorStyle(targetMapName, layerName, value, which));
         }
     }
 
-    // When swipe is active, render a map selector dropdown above the "Manage Layers" tab so the
-    // user can choose which map's layers to display and manage.
+    // When swipe is active, render a map selector dropdown ABOVE both tabs so the user always
+    // knows which map they are targeting for both adding and managing layers.
     const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
     const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
     const selectorSelectStyle: React.CSSProperties = { flex: 1 };
@@ -216,25 +222,23 @@ export const AddManageLayersContainer = () => {
                 {
                     id: "manage_layers",
                     title: <span><Icon icon="layers" /> {tr("MANAGE_LAYERS", locale)}</span>,
-                    content: <>
-                        {swipeMapSelector}
-                        <ManageLayers layers={manageLayers}
-                            locale={locale}
-                            currentResolution={view?.resolution}
-                            onSetOpacity={setOpacity}
-                            onSetHeatmapBlur={setHeatmapBlur}
-                            onSetHeatmapRadius={setHeatmapRadius}
-                            onSetVisibility={setVisibility}
-                            onZoomToBounds={zoomToBounds}
-                            onMoveLayerDown={downHandler}
-                            onMoveLayerUp={upHandler}
-                            onRemoveLayer={removeHandler}
-                            onVectorStyleChanged={updateVectorStyle} />
-                    </>
+                    content: <ManageLayers layers={manageLayers}
+                        locale={locale}
+                        currentResolution={view?.resolution}
+                        onSetOpacity={setOpacity}
+                        onSetHeatmapBlur={setHeatmapBlur}
+                        onSetHeatmapRadius={setHeatmapRadius}
+                        onSetVisibility={setVisibility}
+                        onZoomToBounds={zoomToBounds}
+                        onMoveLayerDown={downHandler}
+                        onMoveLayerUp={upHandler}
+                        onRemoveLayer={removeHandler}
+                        onVectorStyleChanged={updateVectorStyle} />
                 }
             ]
         };
         return <div style={{ padding: 8 }}>
+            {swipeMapSelector}
             <TabSet {...tabProps} />
         </div>;
     } else {

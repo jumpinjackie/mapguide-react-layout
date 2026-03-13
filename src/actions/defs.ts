@@ -4,7 +4,7 @@
  * Redux action definitions
  */
 
-import { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair } from '../api/common';
+import type { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair, IMapSwipePair } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
@@ -368,6 +368,11 @@ export interface IInitAppActionPayload {
      * @since 0.14.8
      */
     appSettings?: Dictionary<string> | undefined;
+    /**
+     * Swipe pairs declared in the application definition
+     * @since 0.15
+     */
+    mapSwipePairs?: IMapSwipePair[];
 }
 
 /**
@@ -976,6 +981,28 @@ export interface IClearClientSelectionAction {
 }
 
 /**
+ * Sets/toggles the map swipe mode
+ * @since 0.15
+ */
+export interface ISetMapSwipeModeAction {
+    type: ActionType.MAP_SET_SWIPE_MODE;
+    payload: {
+        active: boolean;
+    }
+}
+
+/**
+ * Updates the map swipe position
+ * @since 0.15
+ */
+export interface IUpdateMapSwipePositionAction {
+    type: ActionType.MAP_UPDATE_SWIPE_POSITION;
+    payload: {
+        position: number;
+    }
+}
+
+/**
  * @since 0.12
  */
 export type ViewerAction = IOpenFlyoutAction 
@@ -1040,3 +1067,5 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetAppSettingAction //@since 0.14.8
     | IUpdateModalDimensionsAction //@since 0.14.8
     | ITemplateSetCustomDataAction //@since 0.14.8
+    | ISetMapSwipeModeAction //@since 0.15
+    | IUpdateMapSwipePositionAction; //@since 0.15

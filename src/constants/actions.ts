@@ -125,5 +125,13 @@ export enum ActionType {
     /**
      * @since 0.14.8
      */
-    SET_APP_SETTING = 'MapGuide/SET_APP_SETTING'
+    SET_APP_SETTING = 'MapGuide/SET_APP_SETTING',
+    /**
+     * @since 0.15
+     */
+    MAP_SET_SWIPE_MODE = 'Map/SET_SWIPE_MODE',
+    /**
+     * @since 0.15
+     */
+    MAP_UPDATE_SWIPE_POSITION = 'Map/UPDATE_SWIPE_POSITION'
 }

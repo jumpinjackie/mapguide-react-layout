@@ -27,3 +27,7 @@ slate_frame.html
 storybook-static
 src/index.ts
 viewer/ApplicationDefinition.schema.json
+docker/devenv/packages/*
+!docker/devenv/packages/README.md
+docker/devenv/server-data/*
+!docker/devenv/server-data/README.md

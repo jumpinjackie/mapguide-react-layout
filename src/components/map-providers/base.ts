@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap, { type Options as OverviewMapOptions } from 'ol/control/OverviewMap';
@@ -56,6 +56,7 @@ import { useReduxDispatch } from "./context";
 import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
 import { supportsTouch } from "../../utils/browser-support";
+import { getRenderPixel } from 'ol/render';
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -200,6 +201,16 @@ export interface IMapProviderStateExtras {
 }
 
 /**
+ * Minimal interface for the Redux store, used by the map provider to read application
+ * state on demand (e.g. for lazily initialising secondary map layer sets for swipe mode).
+ *
+ * @since 0.15
+ */
+export interface IReduxStoreRef extends ReduxStore {
+    dispatch: ReduxDispatch;
+}
+
+/**
  * Defines a mapping provider
  * 
  * @since 0.14
@@ -220,6 +231,64 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
     hideAllPopups(): void;
     getHookFunction(): () => IMapProviderState & IMapProviderStateExtras;
     addCustomSelectionPopupRenderer(mapName: string | undefined, layerName: string | undefined, renderer: SelectionPopupContentRenderer): void;
+    /**
+     * Injects a reference to the Redux store so that the provider can lazily initialise
+     * secondary map layer sets on demand (e.g. for the map swipe feature).
+     *
+     * @param {IReduxStoreRef | undefined} store
+     * @since 0.15
+     */
+    setReduxStore(store: IReduxStoreRef | undefined): void;
+    /**
+     * Returns the underlying OpenLayers View object, or undefined if the viewer is not yet ready.
+     * This can be used to share the view with a secondary map for swipe/compare functionality.
+     *
+     * @returns {(View | undefined)}
+     * @since 0.15
+     */
+    getOLView(): View | undefined;
+    /**
+     * Activates the map swipe mode for the secondary map. When active, the secondary map's
+     * layers are rendered alongside the primary map's layers with a clip effect at the
+     * specified position.
+     *
+     * @param {string} secondaryMapName The name of the secondary map to show
+     * @param {number} position The swipe position as a percentage (0-100)
+     * @returns {boolean} true if swipe mode was successfully activated
+     * @since 0.15
+     */
+    activateMapSwipe(secondaryMapName: string, position: number): boolean;
+    /**
+     * Deactivates the map swipe mode, removing the secondary map layers.
+     *
+     * @since 0.15
+     */
+    deactivateMapSwipe(): void;
+    /**
+     * Updates the swipe position when swipe mode is active.
+     *
+     * @param {number} position The swipe position as a percentage (0-100)
+     * @since 0.15
+     */
+    updateSwipePosition(position: number): void;
+    /**
+     * Re-activates swipe mode with the current stored secondary map name and position,
+     * refreshing the clip event handlers for all current layers (including any newly added ones).
+     * No-op if swipe mode is not active.
+     *
+     * @since 0.15
+     */
+    refreshSwipeClips(): void;
+    /**
+     * Transfers a custom layer from the primary (active) map's layer set group to the
+     * secondary map's layer set group in swipe mode. The layer remains on the OL map
+     * but is re-registered with right-side clip handlers instead of left-side.
+     * No-op if swipe mode is not active or the layer is not found.
+     *
+     * @param layerName The name of the layer to transfer
+     * @since 0.15
+     */
+    transferLayerToSwipeSecondary(layerName: string): void;
 }
 
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
@@ -257,6 +326,18 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected _triggerZoomRequestOnMoveEnd: boolean;
     protected _select: Select | undefined;
     protected _activeDrawInteraction: Draw | null;
+
+    // Swipe mode state
+    private _swipeSecondaryTopLayers: LayerBase[] = [];
+    private _swipePrimaryClipLayers: LayerBase[] = [];
+    private _swipeSecondaryClipLayers: LayerBase[] = [];
+    private _swipePreRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
+    private _swipePostRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
+    private _swipePosition: number = 50;
+    /** The secondary map name when swipe is active; used to route click events to the correct map. */
+    private _swipeSecondaryMapName: string | undefined = undefined;
+    // Redux store reference, set by MapContextProvider so swipe can lazily init secondary layer sets
+    protected _reduxStore: IReduxStoreRef | undefined;
 
     constructor(private olFactory: OLFactory = new OLFactory()) {
         this._busyWorkers = 0;
@@ -447,6 +528,222 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     public isReady(): boolean { return !!(this._map && this._comp); }
+
+    /**
+     * Stores a reference to the Redux store, injected by MapContextProvider.
+     * Used by subclasses (e.g. GenericMapProviderContext) to lazily initialize
+     * secondary map layer sets on demand (e.g. for the map swipe feature).
+     *
+     * @since 0.15
+     */
+    public setReduxStore(store: IReduxStoreRef | undefined): void {
+        this._reduxStore = store;
+    }
+
+    /**
+     * @since 0.15
+     */
+    public getOLView(): View | undefined {
+        return this._map?.getView();
+    }
+
+    /**
+     * Recursively collects leaf (non-group) OL layers from a LayerBase tree.
+     * LayerGroup prerender/postrender canvas clip does not propagate to children in OL,
+     * so we must attach clip handlers to the individual leaf layers.
+     */
+    private getLeafLayersForClip(layer: LayerBase): LayerBase[] {
+        if (layer instanceof LayerGroup) {
+            const result: LayerBase[] = [];
+            for (const child of layer.getLayers().getArray()) {
+                result.push(...this.getLeafLayersForClip(child));
+            }
+            return result;
+        }
+        return [layer];
+    }
+
+    private attachClipHandler(layer: LayerBase, makeClipPath: (event: any, ctx: CanvasRenderingContext2D, size: number[]) => void): void {
+        const preRenderHandler = (event: any) => {
+            const ctx = event.context as CanvasRenderingContext2D;
+            if (!ctx || !this._map) return;
+            const size = this._map.getSize();
+            if (!size) return;
+            makeClipPath(event, ctx, size);
+        };
+        const postRenderHandler = (event: any) => {
+            const ctx = event.context as CanvasRenderingContext2D;
+            if (ctx) ctx.restore();
+        };
+        layer.on('prerender' as any, preRenderHandler);
+        layer.on('postrender' as any, postRenderHandler);
+        this._swipePreRenderHandlers.set(layer, preRenderHandler);
+        this._swipePostRenderHandlers.set(layer, postRenderHandler);
+    }
+
+    /**
+     * @since 0.15
+     */
+    public activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        if (!this._map) {
+            return false;
+        }
+        // Guard: cannot swipe a map against itself — this would clip both sides with
+        // the same layer set, producing a blank (all-white) view.
+        if (secondaryMapName === this._state.mapName) {
+            return false;
+        }
+        // First deactivate any existing swipe
+        this.deactivateMapSwipe();
+        this._swipePosition = position;
+        this._swipeSecondaryMapName = secondaryMapName;
+
+        // === Primary map layers: clip to LEFT side ===
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        if (primaryLayerSet) {
+            for (const topLayer of primaryLayerSet.getSwipeableLayers()) {
+                for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                    this.attachClipHandler(leaf, (event, ctx, size) => {
+                        const width = this.getSwipeWidth(size[0]);
+                        const tl = getRenderPixel(event, [0, 0]);
+                        const tr = getRenderPixel(event, [width, 0]);
+                        const bl = getRenderPixel(event, [0, size[1]]);
+                        const br = getRenderPixel(event, [width, size[1]]);
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(tl[0], tl[1]);
+                        ctx.lineTo(tr[0], tr[1]);
+                        ctx.lineTo(br[0], br[1]);
+                        ctx.lineTo(bl[0], bl[1]);
+                        ctx.closePath();
+                        ctx.clip();
+                    });
+                    this._swipePrimaryClipLayers.push(leaf);
+                }
+            }
+        }
+
+        // === Secondary map layers: clip to RIGHT side ===
+        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
+        if (!secondaryLayerSet) {
+            // Secondary map not yet initialized — undo primary clip and bail
+            this.deactivateMapSwipe();
+            return false;
+        }
+        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
+            // Always remove and re-add to ensure correct z-ordering (base layers are added
+            // first, custom layers last so they appear on top). removeLayer is a no-op if the
+            // layer is not yet on the map.
+            this._map.removeLayer(topLayer);
+            this._map.addLayer(topLayer);
+            this._swipeSecondaryTopLayers.push(topLayer);
+            for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                this.attachClipHandler(leaf, (event, ctx, size) => {
+                    const width = this.getSwipeWidth(size[0]);
+                    const tl = getRenderPixel(event, [width, 0]);
+                    const tr = getRenderPixel(event, [size[0], 0]);
+                    const bl = getRenderPixel(event, [width, size[1]]);
+                    const br = getRenderPixel(event, size);
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(tl[0], tl[1]);
+                    ctx.lineTo(bl[0], bl[1]);
+                    ctx.lineTo(br[0], br[1]);
+                    ctx.lineTo(tr[0], tr[1]);
+                    ctx.closePath();
+                    ctx.clip();
+                });
+                this._swipeSecondaryClipLayers.push(leaf);
+            }
+        }
+        this._map.render();
+        return true;
+    }
+
+    private getSwipeWidth(mapWidth: number): number {
+        return mapWidth * (this._swipePosition / 100);
+    }
+
+    /**
+     * Returns the effective map name for handling a mouse event at the given pixel X
+     * coordinate. When swipe mode is active and the pixel is to the right of the swipe
+     * divider, returns the secondary map name; otherwise returns the active map name.
+     *
+     * @since 0.15
+     */
+    protected getEffectiveMapNameAtPixel(pixelX: number): string | undefined {
+        if (this._swipeSecondaryMapName && this._map) {
+            const mapSize = this._map.getSize();
+            if (mapSize && pixelX > this.getSwipeWidth(mapSize[0])) {
+                return this._swipeSecondaryMapName;
+            }
+        }
+        return this._state.mapName;
+    }
+    /**
+     * @since 0.15
+     */
+    public deactivateMapSwipe(): void {
+        if (!this._map) return;
+        const allClipLayers = [...this._swipePrimaryClipLayers, ...this._swipeSecondaryClipLayers];
+        for (const layer of allClipLayers) {
+            const preHandler = this._swipePreRenderHandlers.get(layer);
+            const postHandler = this._swipePostRenderHandlers.get(layer);
+            if (preHandler) {
+                layer.un('prerender' as any, preHandler);
+            }
+            if (postHandler) {
+                layer.un('postrender' as any, postHandler);
+            }
+        }
+        for (const topLayer of this._swipeSecondaryTopLayers) {
+            this._map.removeLayer(topLayer);
+        }
+        this._swipePrimaryClipLayers = [];
+        this._swipeSecondaryClipLayers = [];
+        this._swipeSecondaryTopLayers = [];
+        this._swipePreRenderHandlers = new WeakMap();
+        this._swipePostRenderHandlers = new WeakMap();
+        this._swipeSecondaryMapName = undefined;
+        this._map.render();
+    }
+
+    /**
+     * @since 0.15
+     */
+    public updateSwipePosition(position: number): void {
+        this._swipePosition = position;
+        this._map?.render();
+    }
+
+    /**
+     * @since 0.15
+     */
+    public refreshSwipeClips(): void {
+        if (this._swipeSecondaryMapName) {
+            this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+        }
+    }
+
+    /**
+     * @since 0.15
+     */
+    public transferLayerToSwipeSecondary(layerName: string): void {
+        if (!this._map || !this._swipeSecondaryMapName) return;
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        const secondaryLayerSet = this.getLayerSetGroup(this._swipeSecondaryMapName);
+        if (!primaryLayerSet || !secondaryLayerSet) return;
+        // Peek at the OL layer to capture its current index before removing from tracking
+        const olLayer = primaryLayerSet.getLayer(layerName);
+        if (!olLayer) return;
+        const order = this._map.getLayers().getArray().indexOf(olLayer);
+        // Remove from primary's layer set group (tracking only; layer stays on OL map)
+        primaryLayerSet.transferLayerOut(layerName);
+        // Register in secondary's layer set group with the captured OL layer index
+        secondaryLayerSet.transferLayerIn(layerName, olLayer, order >= 0 ? order : this._map.getLayers().getLength());
+        // Re-activate to set up the correct (right-side) clip for this layer
+        this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+    }
 
     //#region IMapViewer
     /**
@@ -856,10 +1153,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
-    private addClientSelectedFeature(f: OLFeature, l: LayerBase) {
+    private addClientSelectedFeature(f: OLFeature, l: LayerBase, mapNameOverride?: string) {
         if (this._select)
             this._select.getFeatures().push(f);
-        if (this._state.mapName) {
+        const effectiveMapName = mapNameOverride ?? this._state.mapName;
+        if (effectiveMapName) {
             const features = f.get("features");
             let theFeature: OLFeature;
             //Are we clustered?
@@ -879,15 +1177,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 bounds: theFeature.getGeometry()?.getExtent() as Bounds,
                 properties: p
             };
-            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), feat));
+            this.dispatch(addClientSelectedFeature(effectiveMapName, l.get(LayerProperty.LAYER_NAME), feat));
         }
     }
 
-    private clearClientSelectedFeatures() {
+    private clearClientSelectedFeatures(mapNameOverride?: string) {
         if (this._select)
             this._select.getFeatures().clear();
-        if (this._state.mapName) {
-            this.dispatch(clearClientSelection(this._state.mapName));
+        const effectiveMapName = mapNameOverride ?? this._state.mapName;
+        if (effectiveMapName) {
+            this.dispatch(clearClientSelection(effectiveMapName));
         }
     }
 
@@ -907,6 +1206,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
 
+        // When swipe is active, determine which map owns the click position.
+        // Clicks to the right of the swipe divider belong to the secondary map.
+        const effectiveMapName = this.getEffectiveMapNameAtPixel(e.pixel[0]);
+
         //TODO: Our selected feature tooltip only shows properties of a single feature
         //and displays upon said feature being selected. As a result, although we can
         //(and should) allow for multiple features to be selected, we need to figure
@@ -916,7 +1219,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         const featureToLayerMap = [] as [OLFeature, OLLayer][];
         if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
             if (!bAppendMode) {
-                this.clearClientSelectedFeatures();
+                this.clearClientSelectedFeatures(effectiveMapName);
             }
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
@@ -942,7 +1245,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     const inflatedBounds = inflateBoundsByMeters(this.getProjection(), zoomBounds, 20);
                     this.zoomToExtent(inflatedBounds);
                 } else {
-                    this.addClientSelectedFeature(f, l);
+                    this.addClientSelectedFeature(f, l, effectiveMapName);
                 }
             }
         }
@@ -952,7 +1255,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
-                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
+                this.queryWmsFeatures(effectiveMapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
                     if (!madeSelection) {
                         this.onProviderMapClick(px);
                     } else {
@@ -965,10 +1268,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         } else {
             if (this._select) {
                 if (!bAppendMode) {
-                    if (this._state.mapName) {
-                        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-                        activeLayerSet?.clearWmsSelectionOverlay();
-                    }
+                    const activeLayerSet = this.getLayerSetGroup(effectiveMapName);
+                    activeLayerSet?.clearWmsSelectionOverlay();
                 }
                 this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
             }
@@ -1217,7 +1518,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     public getCurrentView(): IMapView {
-        const ov = this.getOLView();
+        assertIsDefined(this._map);
+        const ov = this._map.getView();
         const center = ov.getCenter();
         const resolution = ov.getResolution();
         const scale = this.resolutionToScale(resolution!);
@@ -1235,10 +1537,6 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public getSize(): Size2 {
         assertIsDefined(this._map);
         return this._map.getSize() as Size2;
-    }
-    public getOLView(): View {
-        assertIsDefined(this._map);
-        return this._map.getView();
     }
     public zoomToView(x: number, y: number, scale: number): void {
         if (this._map) {
@@ -1373,7 +1671,17 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     public getLayerManager(mapName?: string): ILayerManager {
         assertIsDefined(this._map);
         assertIsDefined(this._state.mapName);
-        const layerSet = this.ensureAndGetLayerSetGroup(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
+        // If a specific (non-active) map name is provided and it has an initialised layer set,
+        // return a layer manager backed by that layer set. This is used in swipe mode so that
+        // layers can be added directly to the secondary map without going through the primary
+        // layer manager and causing a "layer name already exists" collision.
+        if (mapName && mapName !== this._state.mapName) {
+            const namedLayerSet = this.getLayerSetGroup(mapName);
+            if (namedLayerSet) {
+                return this.getLayerManagerForLayerSet(namedLayerSet);
+            }
+        }
+        const layerSet = this.ensureAndGetLayerSetGroup(this._state);
         return this.getLayerManagerForLayerSet(layerSet);
     }
     public screenToMapUnits(x: number, y: number): [number, number] {

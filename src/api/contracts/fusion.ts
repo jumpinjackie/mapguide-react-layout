@@ -54,6 +54,12 @@ export interface MapSetGroup {
      * The list of map layers that comprise this map
      */
     Map: MapConfiguration[];
+    /**
+     * Extension properties for this map group. Used to configure features such as the map swipe pair.
+     * 
+     * @since 0.15
+     */
+    Extension?: IExtension;
 }
 
 /**

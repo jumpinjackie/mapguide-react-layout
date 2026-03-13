@@ -135,6 +135,10 @@ export const SPRITE_ABOUT = "about";
 export const SPRITE_HELP = "help";
 export const SPRITE_MEASURE = "measure";
 export const SPRITE_PRINT = "print";
+/**
+ * @since 0.15
+ */
+export const SPRITE_MAP_SWIPE = "comparison";
 export const SPRITE_OPTIONS = "options";
 export const SPRITE_SELECT_RADIUS = "select-radius";
 export const SPRITE_SELECT_POLYGON = "select-polygon";

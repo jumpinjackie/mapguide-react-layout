@@ -46,7 +46,9 @@ import {
     IClearClientSelectionAction,
     ISetHeatmapLayerBlurAction,
     ISetHeatmapLayerRadiusAction,
-    IEnableSelectDragPanAction
+    IEnableSelectDragPanAction,
+    ISetMapSwipeModeAction,
+    IUpdateMapSwipePositionAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
@@ -923,6 +925,38 @@ export function clearClientSelection(mapName: string): IClearClientSelectionActi
         type: ActionType.MAP_CLEAR_CLIENT_SELECTION,
         payload: {
             mapName
+        }
+    }
+}
+
+/**
+ * Sets the map swipe mode active or inactive
+ *
+ * @param {boolean} active
+ * @returns {ISetMapSwipeModeAction}
+ * @since 0.15
+ */
+export function setMapSwipeMode(active: boolean): ISetMapSwipeModeAction {
+    return {
+        type: ActionType.MAP_SET_SWIPE_MODE,
+        payload: {
+            active
+        }
+    }
+}
+
+/**
+ * Updates the swipe position
+ *
+ * @param {number} position A value between 0 and 100 representing the swipe slider position
+ * @returns {IUpdateMapSwipePositionAction}
+ * @since 0.15
+ */
+export function updateMapSwipePosition(position: number): IUpdateMapSwipePositionAction {
+    return {
+        type: ActionType.MAP_UPDATE_SWIPE_POSITION,
+        payload: {
+            position
         }
     }
 }

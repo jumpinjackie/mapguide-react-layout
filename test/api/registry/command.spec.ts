@@ -261,7 +261,10 @@ describe("api/registry/command", () => {
             hasPreviousView: false,
             hasNextView: false,
             featureTooltipsEnabled: false,
-            activeTool: ActiveMapTool.Pan
+            activeTool: ActiveMapTool.Pan,
+            swipeActive: false,
+            mapSwipePairs: [],
+            activeMapName: undefined
         };
 
         it("returns error item when tb.error is set", () => {

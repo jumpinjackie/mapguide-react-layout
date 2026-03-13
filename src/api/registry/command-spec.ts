@@ -167,6 +167,8 @@ function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolea
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Measure);
         case "Print":
             return makeCommand(widget, noToolbarLabels, DefaultCommands.Print);
+        case "MapSwipe":
+            return makeCommand(widget, noToolbarLabels, DefaultCommands.MapSwipe);
         case "BasemapSwitcher":
             return { icon: widget.ImageUrl, spriteClass: widget.ImageClass, label: (noToolbarLabels ? null : widget.Label), tooltip: widget.Tooltip, componentName: DefaultComponentNames.BaseMapSwitcher, flyoutId: `${DefaultComponentNames.BaseMapSwitcher}_${scopedId.next()}`, parameters: widget.Extension };
         case "InvokeScript":

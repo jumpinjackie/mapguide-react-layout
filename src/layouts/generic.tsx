@@ -14,6 +14,7 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
 import { ElementGroup, useElementContext } from "../components/elements/element-context";
 import { useMapProviderContext } from "../components/map-providers/context";
+import { useMapSwipeInfo, useIsMapSwipeActive } from "../components/map-viewer-swipe";
 //import { useMapProviderContext } from "../components/map-providers/context";
 
 type MapToolbarProps = {
@@ -32,6 +33,8 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
+    const swipeInfo = useMapSwipeInfo();
+    const swipeActive = useIsMapSwipeActive();
     const { Button, Card, Popover } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
@@ -58,6 +61,7 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
                 <Button icon="cog" title={tr("VIEWER_OPTIONS", locale)} />
                 <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
             </Popover>
+            {swipeInfo?.isSwipePrimary && <Button icon="comparison" variant={swipeActive ? "primary" : undefined} onClick={() => onInvokeCommand(DefaultCommands.MapSwipe)} />}
             <Button icon="print" onClick={() => onInvokeCommand(DefaultCommands.Print)} />
         </ElementGroup>
     </>

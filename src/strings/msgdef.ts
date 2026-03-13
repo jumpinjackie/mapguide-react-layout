@@ -314,4 +314,24 @@ export interface ILocalizedMessages {
     ENABLE_SELECT_DRAGPAN: string;
     INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER: string;
     INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_SLIDER_TITLE: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_CLOSE: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_PRIMARY_LABEL: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_SECONDARY_LABEL: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_LAYER_MANAGER_FOR: string;
 }

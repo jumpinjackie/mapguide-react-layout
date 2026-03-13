@@ -7,7 +7,7 @@ import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query'
 import WKTFormat from "ol/format/WKT";
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled } from '../../actions/map';
+import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled, setMapSwipeMode } from '../../actions/map';
 import View from 'ol/View';
 import debounce from 'lodash.debounce';
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
@@ -510,6 +510,43 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
 
     /**
+     * Override activateMapSwipe to eagerly initialize the secondary map's layer set group
+     * if it hasn't been visited yet. The Redux store reference (stored by MapContextProvider)
+     * is used to read the secondary map's configuration from state.
+     *
+     * @override
+     * @since 0.15
+     */
+    public override activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        if (!this._layerSetGroups[secondaryMapName] && this._reduxStore) {
+            const appState = this._reduxStore.getState();
+            const secMapState = appState?.mapState?.[secondaryMapName];
+            if (secMapState) {
+                const secondaryMap =
+                    secMapState.generic?.subject ?? secMapState.mapguide?.runtimeMap;
+                if (secondaryMap) {
+                    const secondaryMapState: IMapGuideProviderState = {
+                        ...this._state,
+                        mapName: secondaryMapName,
+                        map: secondaryMap,
+                        externalBaseLayers: secMapState.externalBaseLayers ?? [],
+                        initialExternalLayers: secMapState.initialExternalLayers ?? [],
+                        showGroups: [],
+                        hideGroups: [],
+                        showLayers: [],
+                        hideLayers: [],
+                        layerTransparency: {},
+                        selection: null,
+                        activeSelectedFeatureXml: ""
+                    };
+                    this.initLayerSet(secondaryMapState);
+                }
+            }
+        }
+        return super.activateMapSwipe(secondaryMapName, position);
+    }
+
+    /**
      * @override
      * @readonly
      *
@@ -621,6 +658,15 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         let bChangedView = false;
         //map
         if (nextState.mapName != this._state.mapName && this._map && this._ovMap) {
+            // If swipe is currently active, deactivate it before switching maps.
+            // The swipe activation adds secondary map layers directly to the OL map,
+            // and if we don't remove them now, `attach` will throw a "Duplicate item"
+            // error when it tries to add those same layers again for the new active map.
+            const swipeWasActive = this._reduxStore?.getState()?.config?.swipeActive === true;
+            if (swipeWasActive) {
+                this.deactivateMapSwipe();
+                this._reduxStore?.dispatch(setMapSwipeMode(false));
+            }
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
             const newLayerSet = this.ensureAndGetLayerSetGroup(nextState);
@@ -688,12 +734,12 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
         //viewRotation
         if (this._state.viewRotation != nextState.viewRotation) {
-            this.getOLView().setRotation(nextState.viewRotation);
+            this._map?.getView().setRotation(nextState.viewRotation);
         }
         //viewRotationEnabled
         if (this._state.viewRotationEnabled != nextState.viewRotationEnabled) {
             if (this._map) {
-                const view = this.getOLView();
+                const view = this._map.getView();
                 const newView = new View({
                     enableRotation: nextState.viewRotationEnabled,
                     rotation: nextState.viewRotation,
@@ -725,7 +771,8 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                     const checkReady = () => {
                         if (this._busyWorkers == 0) {
                             //console.log("Ready to request updated feature selection");
-                            const view = this.getOLView();
+                            const view = this._map?.getView();
+                            if (!view) return;
                             const me: any = view.calculateExtent(ms);
                             const size = { w: ms[0], h: ms[1] };
                             this.showSelectedFeature(me, size, nmap, nextState.activeSelectedFeatureColor, nextState.activeSelectedFeatureXml);

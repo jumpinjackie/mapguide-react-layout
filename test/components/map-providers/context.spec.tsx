@@ -11,7 +11,9 @@ import type { IMapProviderContext } from "../../../src/components/map-providers/
 import { configureStore } from "../../../src/store/configure-store";
 import { createInitialState } from "../../../test-data";
 
-const mockMapProviderContext: IMapProviderContext = {} as IMapProviderContext;
+const mockMapProviderContext: IMapProviderContext = {
+    setReduxStore: () => {}
+} as unknown as IMapProviderContext;
 
 describe("components/map-providers/context", () => {
     describe("MapProviderContextProvider", () => {

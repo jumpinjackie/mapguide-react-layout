@@ -677,6 +677,9 @@ function deArrayifyMapGroup(json: any): MapSetGroup {
             });
         }
     }
+    if (root.Extension) {
+        mapGroup.Extension = deArrayifyExtension(root.Extension);
+    }
     return mapGroup;
 }
 

@@ -105,7 +105,7 @@ export const AddWmsLayer = (props: IAddLayerContentProps) => {
                 source.on("imageloaderror", finished);
             }
 
-            viewer.getLayerManager().addLayer(name, layer);
+            (props.targetLayerManager ?? viewer.getLayerManager()).addLayer(name, layer);
             viewer.toastSuccess("success", tr("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded(getLayerInfo(layer, true));
         }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSubjectLayerDefn, isMapDefinition, isStateless } from "../../src/actions/init-command";
+import { buildSubjectLayerDefn, isMapDefinition, isStateless, parseSwipePairs } from "../../src/actions/init-command";
 import { GenericSubjectLayerType, IGenericSubjectMapLayer } from "../../src/actions/defs";
 
 describe("actions/init-command", () => {
@@ -58,5 +58,78 @@ describe("actions/init-command", () => {
             }
         };
         expect(isStateless(appDef as any)).toBe(false);
+    });
+
+    describe("parseSwipePairs", () => {
+        it("returns empty array when no MapSet", () => {
+            const appDef = {};
+            expect(parseSwipePairs(appDef as any)).toEqual([]);
+        });
+
+        it("returns empty array when no swipe Extension on MapGroups", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        { "@id": "MapA", Map: [] },
+                        { "@id": "MapB", Map: [] }
+                    ]
+                }
+            };
+            expect(parseSwipePairs(appDef as any)).toEqual([]);
+        });
+
+        it("returns empty array when SwipePairWith present but SwipePrimary is not true", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "false" } },
+                        { "@id": "MapB", Map: [] }
+                    ]
+                }
+            };
+            expect(parseSwipePairs(appDef as any)).toEqual([]);
+        });
+
+        it("returns a pair when primary map declares SwipePairWith and SwipePrimary=true", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "true" } },
+                        { "@id": "MapB", Map: [] }
+                    ]
+                }
+            };
+            const pairs = parseSwipePairs(appDef as any);
+            expect(pairs).toHaveLength(1);
+            expect(pairs[0].primaryMapName).toBe("MapA");
+            expect(pairs[0].secondaryMapName).toBe("MapB");
+        });
+
+        it("deduplicates pairs if same pair is declared twice", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "true" } },
+                        { "@id": "MapB", Map: [], Extension: { SwipePairWith: "MapA", SwipePrimary: "true" } }
+                    ]
+                }
+            };
+            const pairs = parseSwipePairs(appDef as any);
+            expect(pairs).toHaveLength(1);
+        });
+
+        it("handles case-insensitive SwipePrimary values", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "True" } },
+                        { "@id": "MapB", Map: [] }
+                    ]
+                }
+            };
+            const pairs = parseSwipePairs(appDef as any);
+            expect(pairs).toHaveLength(1);
+            expect(pairs[0].primaryMapName).toBe("MapA");
+        });
     });
 });

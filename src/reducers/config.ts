@@ -88,7 +88,8 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     locale: payload.locale || DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: am,
-                    availableMaps: availableMaps
+                    availableMaps: availableMaps,
+                    mapSwipePairs: payload.mapSwipePairs
                 };
                 const newState = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
@@ -174,6 +175,14 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
         case ActionType.MAP_SET_MANUAL_MAPTIP:
             {
                 return { ...state, ...{ manualFeatureTooltips: action.payload } };
+            }
+        case ActionType.MAP_SET_SWIPE_MODE:
+            {
+                return { ...state, swipeActive: action.payload.active };
+            }
+        case ActionType.MAP_UPDATE_SWIPE_POSITION:
+            {
+                return { ...state, swipePosition: action.payload.position };
             }
     }
     return state;

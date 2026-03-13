@@ -53,10 +53,12 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     if (selection?.SelectedFeatures != null || clientSelection) {
         const allowHtmlValues = appContext.allowHtmlValuesInSelection();
         const cleaner = appContext.getHTMLCleaner();
+        const formatter = appContext.getPropertyValueFormatter();
         return <SelectionPanel locale={locale}
             onResolveLayerLabel={resolveLayerLabel}
             allowHtmlValues={allowHtmlValues}
             cleanHTML={cleaner}
+            formatPropertyValue={formatter}
             selection={compSel}
             onRequestZoomToFeature={onZoomToSelectedFeature}
             onShowSelectedFeature={onShowSelectedFeature}

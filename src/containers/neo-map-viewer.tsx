@@ -14,6 +14,7 @@ import { ISubscriberProps, Subscriber } from './subscriber';
 import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useViewerFlyouts, useViewerSelectCanDragPan } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
+import { MapSwipeControl } from "../components/map-viewer-swipe";
 
 function useLoadingCounters() {
     const [loading, setLoading] = React.useState(0);
@@ -241,6 +242,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
                         <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />
                     ))}
                     {children}
+                    <MapSwipeControl />
                 </div>
             </>
         );

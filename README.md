@@ -43,9 +43,33 @@ This project is not affiliated with Autodesk or OSGeo.
  2. Extract the archive to MapGuide's physical wwwroot directory
  3. Launch the viewer using a pre-defined template (see `Templates` below)
 
-# Demo
+# MapGuide Dev Container
 
-See [DEMO.md](https://github.com/jumpinjackie/mapguide-react-layout/blob/master/docs_dev/content/DEMO.md) to find out how to use [play-with-docker](http://play-with-docker.com) easily set up a mapguide-react-layout demo site
+If you need a MapGuide Server to run this viewer against but don't want to install MapGuide bare metal, a Dockerfile is included to easily build and spin up. A convenience `mapguide-devenv.sh` is included to facilitate this.
+
+To build the MapGuide docker image:
+
+```
+./mapguide-devenv.sh build
+```
+
+To spin up this MapGuide docker container:
+
+```
+./mapguide-devenv.sh run --packages-dir $PWD/docker/devenv/packages --www-dir $PWD/viewer --target-dir viewer --repositories-dir $PWD/docker/devenv/server-data
+```
+
+The MapGuide web tier will then be accessible from port 8008. The server's repository data is volume mounted to `docker/devenv/server-data` so your data will persist between container runs.
+
+If you need to load any packages, drop the .mgp files into `docker/devenv/packages` and then load them with the Site Administrator accessible at:
+
+http://localhost:8008/mapguide/mapadmin/login.php
+
+The viewer will be accessible from `viewer` like so:
+
+http://localhost:8008/mapguide/viewer/index.html?resource=Library://Samples/Sheboygan/Layouts/SheboyganPhp.WebLayout
+
+To faciliate a rapid developer loop for your viewer against this running MapGuide Server, run `yarn watch:dev` after spinning up the MapGuide container.
 
 # Templates
 

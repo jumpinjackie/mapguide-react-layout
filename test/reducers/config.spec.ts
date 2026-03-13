@@ -128,4 +128,26 @@ describe("reducers/config", () => {
             expect(state2.manualFeatureTooltips).toBe(false);
         });
     });
+    describe(ActionType.MAP_SET_SWIPE_MODE, () => {
+        it("updates swipeActive when activated", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = { type: ActionType.MAP_SET_SWIPE_MODE, payload: { active: true } };
+            const state = configReducer(initialState.config, action);
+            expect(state.swipeActive).toBe(true);
+        });
+        it("updates swipeActive when deactivated", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = { type: ActionType.MAP_SET_SWIPE_MODE, payload: { active: false } };
+            const state = configReducer(initialState.config, action);
+            expect(state.swipeActive).toBe(false);
+        });
+    });
+    describe(ActionType.MAP_UPDATE_SWIPE_POSITION, () => {
+        it("updates swipePosition", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = { type: ActionType.MAP_UPDATE_SWIPE_POSITION, payload: { position: 75 } };
+            const state = configReducer(initialState.config, action);
+            expect(state.swipePosition).toBe(75);
+        });
+    });
 });

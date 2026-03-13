@@ -82,6 +82,30 @@ export class GenericMapProviderContext extends BaseMapProviderContext<IGenericMa
         return layerSet;
     }
     public getProviderName(): string { return "Generic"; }
+    /**
+     * Override activateMapSwipe to eagerly initialize the secondary map's layer set group
+     * if it hasn't been visited yet. The Redux store reference (stored by MapContextProvider)
+     * is used to read the secondary map's configuration.
+     *
+     * @override
+     * @since 0.15
+     */
+    public override activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        if (!this._layerSetGroups[secondaryMapName] && this._reduxStore) {
+            const appState = this._reduxStore.getState();
+            const secMapState = appState?.mapState?.[secondaryMapName];
+            if (secMapState) {
+                this.initLayerSet({
+                    ...this._state,
+                    mapName: secondaryMapName,
+                    subject: secMapState.generic?.subject,
+                    externalBaseLayers: secMapState.externalBaseLayers ?? [],
+                    initialExternalLayers: secMapState.initialExternalLayers ?? []
+                });
+            }
+        }
+        return super.activateMapSwipe(secondaryMapName, position);
+    }
     public setProviderState(nextState: IGenericMapProviderState): void {
         // If viewer not mounted yet, just accept the next state and bail
         if (!this._comp || !this._map) {

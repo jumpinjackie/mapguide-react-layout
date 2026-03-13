@@ -8,16 +8,53 @@ import { strIsNullOrEmpty } from "../utils/string";
 import DOMPurify from "dompurify";
 import { TypedSelect, useElementContext } from "./elements/element-context";
 
+/**
+ * Context information provided to the cell value customization functions of the Selection Panel
+ *
+ * @since 0.15
+ */
+export interface ISelectionPanelCellContext {
+    /**
+     * The name of the property being rendered in the cell
+     */
+    propertyName: string;
+    /**
+     * The name of the active selection layer containing this property
+     */
+    layerName: string | undefined;
+}
+
 export interface ISelectedFeatureProps {
     selectedFeature: SelectedFeature;
     selectedLayer?: LayerMetadata;
+    /**
+     * The name of the active selection layer
+     *
+     * @since 0.15
+     */
+    layerName?: string;
     locale: string;
     allowHtmlValues: boolean;
-    cleanHTML?: (html: string) => string;
+    /**
+     * An optional function for sanitizing/transforming a HTML property value before it is rendered.
+     * The context parameter provides additional information about the property being rendered,
+     * allowing for fine-grained control over what kind of content to clean/reformat.
+     *
+     * @since 0.15 Added context parameter
+     */
+    cleanHTML?: (html: string, context: ISelectionPanelCellContext) => string;
+    /**
+     * An optional function for formatting/transforming a property value before it is displayed.
+     * This function is called for all property values regardless of the allowHtmlValues setting,
+     * making it the preferred hook for transforming plain text values such as decimal numbers.
+     *
+     * @since 0.15
+     */
+    formatPropertyValue?: (value: string, context: ISelectionPanelCellContext) => string;
 }
 
 const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
-    const { selectedFeature, selectedLayer, locale, allowHtmlValues, cleanHTML } = props;
+    const { selectedFeature, selectedLayer, layerName, locale, allowHtmlValues, cleanHTML, formatPropertyValue } = props;
     const featureProps = [] as FeatureProperty[];
     if (selectedLayer?.Property) {
         for (const lp of selectedLayer.Property) {
@@ -43,16 +80,20 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                 return <tr key={prop.Name}>
                     <td className="property-name-cell" data-property-name={prop.Name}>{prop.Name}</td>
                     {(() => {
+                        const context: ISelectionPanelCellContext = { propertyName: prop.Name, layerName };
                         let value = prop.Value;
+                        if (formatPropertyValue && !strIsNullOrEmpty(value)) {
+                            value = formatPropertyValue(value, context);
+                        }
                         if (allowHtmlValues && !strIsNullOrEmpty(value)) {
                             if (cleanHTML) {
-                                value = cleanHTML(value);
+                                value = cleanHTML(value, context);
                             } else {
                                 value = DOMPurify.sanitize(value);
                             }
                             return <td className="property-value-cell" data-property-value-for={prop.Name} dangerouslySetInnerHTML={{ __html: value }} />
                         } else {
-                            return <td className="property-value-cell" data-property-value-for={prop.Name}>{prop.Value}</td>;
+                            return <td className="property-value-cell" data-property-value-for={prop.Name}>{value}</td>;
                         }
                     })()}
                 </tr>;
@@ -87,11 +128,31 @@ export interface ISelectionPanelProps {
     /**
      * If allowHtmlValues = true, defines a custom function for sanitizing the given HTML string
      * to guard against cross-site scripting attacks. You are strongly recommended to provide
-     * a santitization function if your HTML property values come from an un-trusted source
+     * a santitization function if your HTML property values come from an un-trusted source.
+     * The context parameter provides additional information about which property is being
+     * rendered, enabling fine-grained control over what kind of content to clean/reformat.
      * 
      * @since 0.11
+     * @since 0.15 Added context parameter
      */
     cleanHTML?: ISelectedFeatureProps["cleanHTML"];
+    /**
+     * An optional function for formatting/transforming a property value before it is displayed.
+     * This function is called for all property values regardless of the allowHtmlValues setting,
+     * making it the preferred hook for transforming plain text values such as decimal numbers.
+     *
+     * @example
+     * // Limit decimal numbers to 3 decimal places
+     * formatPropertyValue={(value, context) => {
+     *   if (/^-?\d+\.\d+$/.test(value)) {
+     *     return parseFloat(value).toFixed(3);
+     *   }
+     *   return value;
+     * }}
+     *
+     * @since 0.15
+     */
+    formatPropertyValue?: ISelectedFeatureProps["formatPropertyValue"];
 }
 
 interface ISelectionPanel {
@@ -147,6 +208,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
         selectedFeatureRenderer,
         allowHtmlValues,
         cleanHTML,
+        formatPropertyValue,
         onShowSelectedFeature,
         onRequestZoomToFeature
     } = props;
@@ -230,10 +292,12 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
     const locale = props.locale || DEFAULT_LOCALE;
     let feat: SelectedFeature | undefined;
     let meta: LayerMetadata | undefined;
+    let layerName: string | undefined;
     if (selection != null && selectedLayerIndex >= 0 && featureIndex >= 0) {
         const selLayer = selection.getLayerAt(selectedLayerIndex);
         feat = selLayer?.getFeatureAt(featureIndex);
         meta = selLayer?.getLayerMetadata();
+        layerName = selLayer?.getName();
     }
     let selBodyStyle: React.CSSProperties | undefined;
     if (maxHeight) {
@@ -287,9 +351,9 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
             {(() => {
                 if (feat) {
                     if (selectedFeatureRenderer) {
-                        return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, allowHtmlValues: allowHtmlValues, selectedLayer: meta, locale: locale });
+                        return selectedFeatureRenderer({ selectedFeature: feat, cleanHTML: cleanHTML, formatPropertyValue: formatPropertyValue, allowHtmlValues: allowHtmlValues, selectedLayer: meta, layerName: layerName, locale: locale });
                     } else {
-                        return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} allowHtmlValues={allowHtmlValues} selectedLayer={meta} locale={locale} />;
+                        return <DefaultSelectedFeature selectedFeature={feat} cleanHTML={cleanHTML} formatPropertyValue={formatPropertyValue} allowHtmlValues={allowHtmlValues} selectedLayer={meta} layerName={layerName} locale={locale} />;
                     }
                 } else if (!(selection?.getLayerCount() > 0)) {
                     return <Callout variant="primary" icon="info-sign">

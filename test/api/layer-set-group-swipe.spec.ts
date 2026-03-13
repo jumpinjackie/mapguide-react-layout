@@ -250,6 +250,9 @@ describe("LayerSetGroupBase – swipe mode methods", () => {
 
     // -----------------------------------------------------------------------
     // apply() – secondary layers on OL map must not corrupt primary's apply()
+    // Bug fix: filter by object identity (layer === _customLayers[name].layer)
+    // not just name presence, to prevent same-named layers from causing false
+    // size mismatches and incorrect full invalidations.
     // -----------------------------------------------------------------------
     describe("apply() filtering with swipe-active OL map", () => {
         it("does not remove secondary layers from OL map when applying primary layers", () => {
@@ -331,6 +334,58 @@ describe("LayerSetGroupBase – swipe mode methods", () => {
             expect(map.getLayers().getArray()).toContain(secondaryLayer);
             // primary-custom must still be on the OL map
             expect(map.getLayers().getArray()).toContain(primaryLayer);
+        });
+
+        it("apply() does not cause full invalidation when primary and secondary have same-named layers", () => {
+            // This test covers the scenario where:
+            // 1. User adds "gisborne.geojson" to primary (layer1 in primary._customLayers)
+            // 2. User adds "gisborne.geojson" to secondary (layer2 in secondary._customLayers)
+            //    Both layer1 and layer2 are on the primary OL map (in swipe mode)
+            // 3. apply() is triggered for primary with primary's Redux layers ([layer1])
+            // Before fix: the filter `_customLayers[name] != null` matched BOTH layer1 and layer2
+            //   (same name "gisborne") → currentLayers.length=2, layers.length=1 → FULL INVALIDATION
+            //   → layer2 (secondary's layer) got REMOVED from OL map → secondary layer invisible
+            // After fix: filter uses object identity `_customLayers[name]?.layer === l.layer`
+            //   → only layer1 matches → currentLayers.length=1 == layers.length=1 → no invalidation
+            const primaryGroup = new TestLayerSetGroup([]);
+            const secondaryGroup = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+
+            // Primary adds "gisborne.geojson" → layer1 (IS_EXTERNAL=true, added to OL map)
+            const layer1 = makeLayer("gisborne.geojson");
+            primaryGroup.addLayer(map as any, "gisborne.geojson", layer1);
+
+            // Secondary adds same-named file → layer2 (different OL object, also on same OL map)
+            const layer2 = makeLayer("gisborne.geojson");
+            secondaryGroup.addLayer(map as any, "gisborne.geojson", layer2);
+
+            // Both layers are on the OL map
+            expect(map.getLayers().getArray()).toContain(layer1);
+            expect(map.getLayers().getArray()).toContain(layer2);
+
+            // apply() for primary with its own layers (primary Redux state = [layer1])
+            const primaryLayerInfo = [
+                {
+                    name: "gisborne.geojson",
+                    displayName: "gisborne.geojson",
+                    visible: true,
+                    opacity: 1,
+                    selectable: false,
+                    busyWorkerCount: 0,
+                    type: "Vector" as any,
+                    isExternal: true,
+                    order: 0,
+                    isSelectable: false
+                }
+            ];
+            primaryGroup.apply(map as any, primaryLayerInfo);
+
+            // PRIMARY's layer must still be on OL map
+            expect(map.getLayers().getArray()).toContain(layer1);
+            // SECONDARY's layer must also still be on OL map (must NOT be removed by primary's apply)
+            expect(map.getLayers().getArray()).toContain(layer2);
+            // Secondary's tracking is unchanged
+            expect(secondaryGroup.hasLayer("gisborne.geojson")).toBe(true);
         });
     });
 

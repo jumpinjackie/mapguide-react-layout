@@ -630,11 +630,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this.deactivateMapSwipe();
             return false;
         }
-        const currentMapLayers = this._map.getLayers().getArray();
         for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
-            if (!currentMapLayers.includes(topLayer)) {
-                this._map.addLayer(topLayer);
-            }
+            // Always remove and re-add to ensure correct z-ordering (base layers are added
+            // first, custom layers last so they appear on top). removeLayer is a no-op if the
+            // layer is not yet on the map.
+            this._map.removeLayer(topLayer);
+            this._map.addLayer(topLayer);
             this._swipeSecondaryTopLayers.push(topLayer);
             for (const leaf of this.getLeafLayersForClip(topLayer)) {
                 this.attachClipHandler(leaf, (event, ctx, size) => {

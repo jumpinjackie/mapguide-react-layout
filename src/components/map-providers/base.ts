@@ -316,6 +316,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     private _swipePreRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePostRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePosition: number = 50;
+    /** The secondary map name when swipe is active; used to route click events to the correct map. */
+    private _swipeSecondaryMapName: string | undefined = undefined;
     // Redux store reference, set by MapContextProvider so swipe can lazily init secondary layer sets
     protected _reduxStore: IReduxStoreRef | undefined;
 
@@ -576,6 +578,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // First deactivate any existing swipe
         this.deactivateMapSwipe();
         this._swipePosition = position;
+        this._swipeSecondaryMapName = secondaryMapName;
 
         // === Primary map layers: clip to LEFT side ===
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
@@ -643,6 +646,22 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
 
     /**
+     * Returns the effective map name for handling a mouse event at the given pixel X
+     * coordinate. When swipe mode is active and the pixel is to the right of the swipe
+     * divider, returns the secondary map name; otherwise returns the active map name.
+     *
+     * @since 0.15
+     */
+    protected getEffectiveMapNameAtPixel(pixelX: number): string | undefined {
+        if (this._swipeSecondaryMapName && this._map) {
+            const mapSize = this._map.getSize();
+            if (mapSize && pixelX > this.getSwipeWidth(mapSize[0])) {
+                return this._swipeSecondaryMapName;
+            }
+        }
+        return this._state.mapName;
+    }
+    /**
      * @since 0.15
      */
     public deactivateMapSwipe(): void {
@@ -666,6 +685,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._swipeSecondaryTopLayers = [];
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
+        this._swipeSecondaryMapName = undefined;
         this._map.render();
     }
 
@@ -1085,10 +1105,11 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      */
     protected onImageError(e: GenericEvent) { }
 
-    private addClientSelectedFeature(f: OLFeature, l: LayerBase) {
+    private addClientSelectedFeature(f: OLFeature, l: LayerBase, mapNameOverride?: string) {
         if (this._select)
             this._select.getFeatures().push(f);
-        if (this._state.mapName) {
+        const effectiveMapName = mapNameOverride ?? this._state.mapName;
+        if (effectiveMapName) {
             const features = f.get("features");
             let theFeature: OLFeature;
             //Are we clustered?
@@ -1108,15 +1129,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 bounds: theFeature.getGeometry()?.getExtent() as Bounds,
                 properties: p
             };
-            this.dispatch(addClientSelectedFeature(this._state.mapName, l.get(LayerProperty.LAYER_NAME), feat));
+            this.dispatch(addClientSelectedFeature(effectiveMapName, l.get(LayerProperty.LAYER_NAME), feat));
         }
     }
 
-    private clearClientSelectedFeatures() {
+    private clearClientSelectedFeatures(mapNameOverride?: string) {
         if (this._select)
             this._select.getFeatures().clear();
-        if (this._state.mapName) {
-            this.dispatch(clearClientSelection(this._state.mapName));
+        const effectiveMapName = mapNameOverride ?? this._state.mapName;
+        if (effectiveMapName) {
+            this.dispatch(clearClientSelection(effectiveMapName));
         }
     }
 
@@ -1136,6 +1158,10 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
 
+        // When swipe is active, determine which map owns the click position.
+        // Clicks to the right of the swipe divider belong to the secondary map.
+        const effectiveMapName = this.getEffectiveMapNameAtPixel(e.pixel[0]);
+
         //TODO: Our selected feature tooltip only shows properties of a single feature
         //and displays upon said feature being selected. As a result, although we can
         //(and should) allow for multiple features to be selected, we need to figure
@@ -1145,7 +1171,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         const featureToLayerMap = [] as [OLFeature, OLLayer][];
         if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
             if (!bAppendMode) {
-                this.clearClientSelectedFeatures();
+                this.clearClientSelectedFeatures(effectiveMapName);
             }
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
@@ -1171,7 +1197,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     const inflatedBounds = inflateBoundsByMeters(this.getProjection(), zoomBounds, 20);
                     this.zoomToExtent(inflatedBounds);
                 } else {
-                    this.addClientSelectedFeature(f, l);
+                    this.addClientSelectedFeature(f, l, effectiveMapName);
                 }
             }
         }
@@ -1181,7 +1207,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
-                this.queryWmsFeatures(this._state.mapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
+                this.queryWmsFeatures(effectiveMapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
                     if (!madeSelection) {
                         this.onProviderMapClick(px);
                     } else {
@@ -1194,10 +1220,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         } else {
             if (this._select) {
                 if (!bAppendMode) {
-                    if (this._state.mapName) {
-                        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-                        activeLayerSet?.clearWmsSelectionOverlay();
-                    }
+                    const activeLayerSet = this.getLayerSetGroup(effectiveMapName);
+                    activeLayerSet?.clearWmsSelectionOverlay();
                 }
                 this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
             }

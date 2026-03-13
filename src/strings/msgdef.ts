@@ -330,4 +330,8 @@ export interface ILocalizedMessages {
      * @since 0.15
      */
     MAP_SWIPE_SECONDARY_LABEL: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_LAYER_MANAGER_FOR: string;
 }

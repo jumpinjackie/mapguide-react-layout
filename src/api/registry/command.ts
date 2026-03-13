@@ -12,8 +12,8 @@ import {
     NOOP,
     ALWAYS_FALSE,
     IInvokeUrlCommandParameter,
-    ActiveMapTool,
-    IMapSwipePair} from "../../api/common";
+    ActiveMapTool} from "../../api/common";
+import type { IMapSwipePair } from "../../api/common";
 import { getFusionRoot } from "../../api/runtime";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import { tr } from "../i18n";

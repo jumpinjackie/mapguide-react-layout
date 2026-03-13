@@ -10,7 +10,7 @@ import * as React from "react";
 import { useAppState, useReduxDispatch } from "./map-providers/context";
 import { useMapProviderContext } from "./map-providers/context";
 import { updateMapSwipePosition, setMapSwipeMode } from "../actions/map";
-import { IMapSwipePair } from "../api/common";
+import type { IMapSwipePair } from "../api/common";
 import { tr } from "../api/i18n";
 
 /**

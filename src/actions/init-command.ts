@@ -1,5 +1,6 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
-import { ReduxDispatch, Dictionary, ActiveMapTool, IMapSwipePair } from '../api/common';
+import { ActiveMapTool } from '../api/common';
+import type { ReduxDispatch, Dictionary, IMapSwipePair } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';

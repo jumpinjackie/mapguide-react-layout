@@ -146,6 +146,25 @@ export abstract class LayerSetGroupBase {
     public getMetersPerUnit = () => this.mainSet.getMetersPerUnit();
     public scaleToResolution = (scale: number) => this.mainSet.scaleToResolution(scale);
     public resolutionToScale = (resolution: number) => this.mainSet.resolutionToScale(resolution);
+    /**
+     * Gets the OL layers from the main layer set. Used internally for the map swipe feature.
+     *
+     * @returns {LayerBase[]}
+     * @since 0.15
+     */
+    public getMainSetLayers = (): LayerBase[] => this.mainSet.getLayers();
+
+    /**
+     * Returns all layers that should be visible for map swipe: the base map layers plus any
+     * custom (runtime-added) layers. This ensures that layers added at runtime after the
+     * initial appdef load are included when swipe mode is activated.
+     *
+     * @since 0.15
+     */
+    public getSwipeableLayers = (): LayerBase[] => [
+        ...this.mainSet.getLayers(),
+        ...Object.values(this._customLayers).map(c => c.layer)
+    ];
 
     public attach(map: Map, ovMapControl: OverviewMap, bSetLayers = true): void {
         // To guard against the possibility that we may be attaching layers to a map that
@@ -326,6 +345,32 @@ export abstract class LayerSetGroupBase {
         }
         return layer;
     }
+    /**
+     * Removes a layer from _customLayers tracking without removing it from the OL map.
+     * Used when transferring a custom layer to another layer set group in swipe mode.
+     * @param name The name of the layer to remove from tracking
+     * @returns The removed OL layer, or undefined if not found
+     * @since 0.15
+     */
+    public transferLayerOut(name: string): LayerBase | undefined {
+        if (this._customLayers[name]) {
+            const layer = this._customLayers[name].layer;
+            delete this._customLayers[name];
+            return layer;
+        }
+        return undefined;
+    }
+    /**
+     * Adds a layer to _customLayers tracking without adding it to the OL map.
+     * Used when receiving a custom layer transferred from another layer set group in swipe mode.
+     * @param name The name (identifier) of the layer
+     * @param layer The OpenLayers layer instance to track
+     * @param order The layer's position index in the map's layer collection
+     * @since 0.15
+     */
+    public transferLayerIn(name: string, layer: LayerBase, order: number): void {
+        this._customLayers[name] = { layer, order };
+    }
     public apply(map: Map, layers: ILayerInfo[]): void {
         const layersByName = layers.reduce((current, layer) => {
             current[layer.name] = layer;
@@ -369,13 +414,18 @@ export abstract class LayerSetGroupBase {
         //Last item, bottom-most
         const cCurrentLayers = map.getLayers();
         const aCurrentLayers = cCurrentLayers.getArray();
+        // Only consider external layers that belong to THIS layer set group's _customLayers.
+        // When map swipe is active, the secondary map's layers are also on the OL map
+        // (with IS_EXTERNAL = true), but they belong to a different layer set group and may
+        // share layer names with primary layers. Using object identity (layer === tracked layer)
+        // prevents false matches when primary and secondary have layers with the same name.
         const currentLayers = aCurrentLayers.map(l => ({
             name: l.get(LayerProperty.LAYER_NAME),
             type: l.get(LayerProperty.LAYER_TYPE),
             isExternal: l.get(LayerProperty.IS_EXTERNAL),
             isGroup: l.get(LayerProperty.IS_GROUP),
             layer: l
-        })).filter(l => l.isExternal == true);
+        })).filter(l => l.isExternal == true && this._customLayers[l.name]?.layer === l.layer);
         //console.assert(currentLayers.length == layers.length);
         //console.table(currentLayers);
         //console.table(layers);

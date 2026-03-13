@@ -1884,6 +1884,46 @@ export const KC_U = 85;
 export type MapLoadIndicatorPositioning = "top" | "bottom";
 
 /**
+ * Describes a swipe pair of maps. When swipe mode is active, the primary map is
+ * shown on the left (or covered area) and the secondary map is shown on the right
+ * (or uncovered area) based on the swipe position.
+ *
+ * @interface IMapSwipePair
+ * @since 0.15
+ */
+export interface IMapSwipePair {
+    /**
+     * The name of the primary map in the swipe pair. This is the map shown
+     * in non-swipe mode.
+     *
+     * @type {string}
+     */
+    primaryMapName: string;
+    /**
+     * The name of the secondary map in the swipe pair.
+     *
+     * @type {string}
+     */
+    secondaryMapName: string;
+    /**
+     * Optional display label for the primary (left) side of the swipe. Defaults
+     * to the "MAP_SWIPE_PRIMARY_LABEL" i18n string ("Primary") when not set.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    primaryLabel?: string;
+    /**
+     * Optional display label for the secondary (right) side of the swipe. Defaults
+     * to the "MAP_SWIPE_SECONDARY_LABEL" i18n string ("Secondary") when not set.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    secondaryLabel?: string;
+}
+
+/**
  * Describes the reducer state branch for various configuration properties
  *
  *
@@ -2049,6 +2089,29 @@ export interface IConfigurationReducerState {
      *
      */
     undoLastPointKey: number;
+    /**
+     * The map swipe pairs declared in the application definition. When set, the
+     * viewer supports a side-by-side swipe comparison between two maps.
+     *
+     * @type {IMapSwipePair[]}
+     * @since 0.15
+     */
+    mapSwipePairs?: IMapSwipePair[];
+    /**
+     * Indicates if map swipe mode is currently active.
+     *
+     * @type {boolean}
+     * @since 0.15
+     */
+    swipeActive?: boolean;
+    /**
+     * The current swipe position as a percentage (0-100). 
+     * 50 means the slider is in the center.
+     *
+     * @type {number}
+     * @since 0.15
+     */
+    swipePosition?: number;
 }
 
 /**

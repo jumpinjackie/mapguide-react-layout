@@ -123,6 +123,7 @@
     "translate": "^3.0.1",
     "ts-loader": "9.5.4",
     "tslint": "6.1.3",
+    "tsx": "^4.21.0",
     "typedoc": "0.28.17",
     "typedoc-plugin-ga": "^1.0.5",
     "typedoc-plugin-merge-modules": "7.0.0",

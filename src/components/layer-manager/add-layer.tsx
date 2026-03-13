@@ -220,7 +220,7 @@ const AddFileLayer = (props: IAddLayerProps) => {
             }
             setIsAddingLayer(false);
         }
-    }, [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction]);
+    }, [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction, props.onLayerAdded, addLayerName, locale]);
     if (loadedFile) {
         let canAdd = true;
         if (createLayerAs == CreateVectorLayerAs.Themed) {

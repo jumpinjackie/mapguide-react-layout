@@ -414,13 +414,17 @@ export abstract class LayerSetGroupBase {
         //Last item, bottom-most
         const cCurrentLayers = map.getLayers();
         const aCurrentLayers = cCurrentLayers.getArray();
+        // Only consider external layers that belong to THIS layer set group's _customLayers.
+        // When map swipe is active, the secondary map's layers are also on the OL map
+        // (with IS_EXTERNAL = true), but they belong to a different layer set group.
+        // Including them here would cause a size mismatch that incorrectly removes them.
         const currentLayers = aCurrentLayers.map(l => ({
             name: l.get(LayerProperty.LAYER_NAME),
             type: l.get(LayerProperty.LAYER_TYPE),
             isExternal: l.get(LayerProperty.IS_EXTERNAL),
             isGroup: l.get(LayerProperty.IS_GROUP),
             layer: l
-        })).filter(l => l.isExternal == true);
+        })).filter(l => l.isExternal == true && this._customLayers[l.name] != null);
         //console.assert(currentLayers.length == layers.length);
         //console.table(currentLayers);
         //console.table(layers);

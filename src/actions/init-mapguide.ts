@@ -241,8 +241,18 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         });
         // Collect only the MapDefinition entries for lazy-load eligibility check
         const mapDefItems = mapDefs.filter(isMapDefinition);
-        // Lazy creation only applies when: not stateless, not reusing session, and there are multiple MapGuide maps
-        const canLazyLoad = !isStateless && !sessionWasReused && mapDefItems.length > 1;
+        // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
+        // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
+        // (where the session is reused), non-active maps should still be deferred because they may
+        // never have been created in the previous session (the user may not have switched to them).
+        // These deferred maps will be lazily initialized via activateMap() when the user switches
+        // to them, which now tries to describe the existing map first before creating a new one.
+        const canLazyLoad = !isStateless && mapDefItems.length > 1;
+        // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
+        // to identify which map to eagerly recover. If the URL param doesn't match any map in the
+        // appdef (or is absent), fall back to the first map by position.
+        const initialActiveMapName = this.options.initialActiveMap;
+        const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
         if (isStateless) { 
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
@@ -264,15 +274,23 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             let isFirstMapDef = true;
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
-                    //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-                    if (sessionWasReused) {
+                    // Determine if this is the "primary" map to eagerly load/recover.
+                    // - For new sessions: the primary is always the first map in the appdef.
+                    // - For reused sessions (browser refresh): the primary is the map the user was
+                    //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
+                    //   URL param is absent or does not match any map, fall back to first-by-position.
+                    const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
+                        ? m.name === initialActiveMapName
+                        : isFirstMapDef;
+                    if (canLazyLoad && !isPrimaryMap) {
+                        // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
+                        // This applies regardless of whether the session is being reused.
+                        info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
+                        pendingMapDefs[m.name] = m;
+                    } else if (sessionWasReused) {
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                         info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
                         mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
-                    } else if (canLazyLoad && !isFirstMapDef) {
-                        // Defer creation of non-first maps in a multi-map layout to avoid loading all maps upfront
-                        info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
-                        pendingMapDefs[m.name] = m;
                     } else {
                         info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
                         assertIsDefined(this.client);

@@ -241,8 +241,13 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         });
         // Collect only the MapDefinition entries for lazy-load eligibility check
         const mapDefItems = mapDefs.filter(isMapDefinition);
-        // Lazy creation only applies when: not stateless, not reusing session, and there are multiple MapGuide maps
-        const canLazyLoad = !isStateless && !sessionWasReused && mapDefItems.length > 1;
+        // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
+        // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
+        // (where the session is reused), non-first maps should still be deferred because they may
+        // never have been created in the previous session (the user may not have switched to them).
+        // These deferred maps will be lazily initialized via activateMap() when the user switches
+        // to them, which now tries to describe the existing map first before creating a new one.
+        const canLazyLoad = !isStateless && mapDefItems.length > 1;
         if (isStateless) { 
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
@@ -264,15 +269,16 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             let isFirstMapDef = true;
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
-                    //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-                    if (sessionWasReused) {
+                    if (canLazyLoad && !isFirstMapDef) {
+                        // Defer creation of non-first maps in a multi-map layout to avoid loading all maps upfront.
+                        // This applies regardless of whether the session is being reused (browser refresh), because
+                        // the non-first maps may never have been created in a previous session.
+                        info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
+                        pendingMapDefs[m.name] = m;
+                    } else if (sessionWasReused) {
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                         info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
                         mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
-                    } else if (canLazyLoad && !isFirstMapDef) {
-                        // Defer creation of non-first maps in a multi-map layout to avoid loading all maps upfront
-                        info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
-                        pendingMapDefs[m.name] = m;
                     } else {
                         info(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
                         assertIsDefined(this.client);

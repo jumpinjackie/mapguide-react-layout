@@ -555,40 +555,69 @@ export function activateMap(mapName: string): ReduxThunkedAction {
                 }
                 if (sessionId) {
                     try {
-                        info(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
                         const client = new Client(agentUri, agentKind);
                         const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => client.getSiteVersion());
                         const sv = await siteVersion.getValueAsync();
-                        let map: RuntimeMap;
-                        if (canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version))) {
-                            map = await client.createRuntimeMap_v4({
-                                mapDefinition: pendingMap.mapDef,
-                                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                session: sessionId,
-                                targetMapName: mapName
-                            });
-                        } else {
-                            map = await client.createRuntimeMap({
-                                mapDefinition: pendingMap.mapDef,
-                                requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                session: sessionId,
-                                targetMapName: mapName
+                        const useV4 = canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version));
+                        let map: RuntimeMap | undefined;
+                        // Try to describe the runtime map first. This handles the case where the map
+                        // was previously created in a reused session (e.g. after a browser refresh where
+                        // the user had previously switched to this map). If the map does not exist yet
+                        // (i.e. the user has never switched to it), fall back to creating it.
+                        try {
+                            info(`Attempting to describe existing runtime map state (${mapName})`);
+                            if (useV4) {
+                                map = await client.describeRuntimeMap_v4({
+                                    mapname: mapName,
+                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId
+                                });
+                            } else {
+                                map = await client.describeRuntimeMap({
+                                    mapname: mapName,
+                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId
+                                });
+                            }
+                        } catch (describeErr: any) {
+                            if (describeErr?.message === "MgResourceNotFoundException") {
+                                // Map does not exist yet in this session, create it
+                                info(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                                if (useV4) {
+                                    map = await client.createRuntimeMap_v4({
+                                        mapDefinition: pendingMap.mapDef,
+                                        requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                        session: sessionId,
+                                        targetMapName: mapName
+                                    });
+                                } else {
+                                    map = await client.createRuntimeMap({
+                                        mapDefinition: pendingMap.mapDef,
+                                        requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                        session: sessionId,
+                                        targetMapName: mapName
+                                    });
+                                }
+                            } else {
+                                throw describeErr;
+                            }
+                        }
+                        if (map) {
+                            // Register the map's projection if needed
+                            const epsg = map.CoordinateSystem.EpsgCode;
+                            const arbCs = tryParseArbitraryCs(map.CoordinateSystem.MentorCode);
+                            if (!arbCs && epsg && epsg !== "0" && !proj4.defs[`EPSG:${epsg}`]) {
+                                await resolveProjectionFromEpsgCodeAsync(epsg, locale, map.MapDefinition);
+                                register(proj4);
+                            }
+                            // Update the map state with the runtime map
+                            dispatch({
+                                type: ActionType.MAP_REFRESH,
+                                payload: { mapName, map }
                             });
                         }
-                        // Register the map's projection if needed
-                        const epsg = map.CoordinateSystem.EpsgCode;
-                        const arbCs = tryParseArbitraryCs(map.CoordinateSystem.MentorCode);
-                        if (!arbCs && epsg && epsg !== "0" && !proj4.defs[`EPSG:${epsg}`]) {
-                            await resolveProjectionFromEpsgCodeAsync(epsg, locale, map.MapDefinition);
-                            register(proj4);
-                        }
-                        // Update the map state with the newly created runtime map
-                        dispatch({
-                            type: ActionType.MAP_REFRESH,
-                            payload: { mapName, map }
-                        });
-                    } catch (e) {
-                        warn(`Failed to lazily create runtime map (${mapName}): ${e?.message ?? e}. Proceeding with map switch; the map may not render correctly.`);
+                    } catch (e: any) {
+                        warn(`Failed to lazily initialize runtime map (${mapName}): ${e?.message ?? e}. Proceeding with map switch; the map may not render correctly.`);
                     }
                 } else {
                     warn(`Cannot lazily create runtime map (${mapName}): no active session found. Proceeding with map switch; the map may not render correctly.`);

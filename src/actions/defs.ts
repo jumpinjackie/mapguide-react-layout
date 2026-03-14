@@ -310,6 +310,7 @@ export type MapInfo = {
      * @since 0.15
      */
     coordinateFormat?: string;
+    /**
      * If set, this map has not been loaded yet and will be lazily created the first time it is switched to.
      * Only applicable to MapGuide map definitions in multi-map flex layouts.
      *

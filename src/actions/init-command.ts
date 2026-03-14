@@ -204,7 +204,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
     public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
-    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string): Dictionary<MapInfo>;
+    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo>;
     protected async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
         //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
         //exists for us to fetch
@@ -247,7 +247,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         return makeUnique(epsgs);
     }
     
-    protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject | IGenericSubjectMapLayer>, warnings: string[]): Promise<IInitAppActionPayload> {
+    protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject | IGenericSubjectMapLayer>, warnings: string[], pendingMapDefs?: Dictionary<MapToLoad>): Promise<IInitAppActionPayload> {
         const {
             taskPane,
             hasTaskBar,
@@ -281,7 +281,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
         }
 
         const mapsDict: any  = mapsByName; //HACK: TS generics doesn't want to play nice with us
-        const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale);
+        const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale, pendingMapDefs);
         if (appDef.Title) {
             document.title = appDef.Title || document.title;
         }

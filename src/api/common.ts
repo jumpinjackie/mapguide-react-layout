@@ -1986,6 +1986,14 @@ export interface IConfigurationReducerState {
      */
     appSettings?: Dictionary<string>;
     /**
+     * Maps that have been deferred for lazy creation. When a user first switches to one of these maps,
+     * the runtime map will be created on demand.
+     *
+     * @type {(Dictionary<{mapDef: string, metadata: any}> | undefined)}
+     * @since 0.15
+     */
+    pendingMaps?: Dictionary<{mapDef: string, metadata: any}>;
+    /**
      * Viewer configuration
      * 
      *

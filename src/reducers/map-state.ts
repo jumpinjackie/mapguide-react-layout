@@ -43,7 +43,8 @@ export const MAP_STATE_INITIAL_SUB_STATE: IBranchedMapSubState = {
     layers: undefined,
     mapguide: undefined,
     generic: undefined,
-    clientSelection: undefined
+    clientSelection: undefined,
+    coordinateFormat: undefined
 };
 
 function applyMapGuideSubState(state: IBranchedMapState, mapName: string, applyFn: (current: IMapGuideSubState) => Partial<IMapGuideSubState>) {
@@ -194,6 +195,7 @@ export function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action: ViewerA
                         ...{ externalBaseLayers: maps[mapName].externalBaseLayers },
                         ...{ initialExternalLayers: maps[mapName].initialExternalLayers },
                         ...{ initialView: maps[mapName].initialView },
+                        ...{ coordinateFormat: maps[mapName].coordinateFormat },
                         ...(cv || {}),
                         ...{ mapguide: newMgSubState }
                     };

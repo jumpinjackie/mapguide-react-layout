@@ -128,3 +128,19 @@ export function useActiveMapFiniteScales() {
 export function useActiveMapState() {
     return useAppState<RuntimeMap | undefined>(state => getRuntimeMap(state));
 }
+
+/**
+ * Gets the coordinate display format override for the active map, if one is configured.
+ * When set and no global display projection override is active, the mouse coordinates
+ * component will use this format instead of the global coordinate display format.
+ *
+ * @since 0.15
+ */
+export function useActiveMapCoordinateFormat() {
+    return useAppState<string | undefined>(state => {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName]?.coordinateFormat;
+        }
+        return undefined;
+    });
+}

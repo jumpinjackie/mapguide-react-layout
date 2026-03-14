@@ -302,6 +302,15 @@ export type MapInfo = {
      */
     initialExternalLayers: IInitialExternalLayer[];
     /**
+     * An optional coordinate display format override for this map. When set, the mouse
+     * coordinates component will use this format instead of the global coordinate display
+     * format when this map is the active map and no display projection override is configured.
+     *
+     * @type {string | undefined}
+     * @since 0.15
+     */
+    coordinateFormat?: string;
+    /**
      * If set, this map has not been loaded yet and will be lazily created the first time it is switched to.
      * Only applicable to MapGuide map definitions in multi-map flex layouts.
      *

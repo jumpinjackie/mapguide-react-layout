@@ -11,6 +11,7 @@ import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
+import { get as getProjection } from 'ol/proj';
 import proj4 from "proj4";
 import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
@@ -557,6 +558,21 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 }
 
                 if (mapName) {
+                    // Determine if a per-map coordinate format override is needed.
+                    // When no global display projection is configured, coordinates are shown in the map's
+                    // native CRS. If the native CRS is non-geographic (not degrees), provide a sensible
+                    // default format using X/Y labels instead of Lon/Lat.
+                    //
+                    // Note: By this point, all map projections have been registered via
+                    // resolveProjectionFromEpsgCodeAsync in createRuntimeMapsAsync, so
+                    // getProjection should return a valid projection for the map's EPSG code.
+                    let coordinateFormat: string | undefined;
+                    if (!config.coordinateProjection && subject && isRuntimeMap(subject)) {
+                        const prj = getProjection(`EPSG:${subject.CoordinateSystem.EpsgCode}`);
+                        if (prj && prj.getUnits() !== 'degrees') {
+                            coordinateFormat = "X: {x}, Y: {y} {units}";
+                        }
+                    }
                     const pendingEntry = pendingMapDefs?.[mapName];
                     dict[mapName] = {
                         mapGroupId: mGroup["@id"],
@@ -564,6 +580,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers,
                         initialExternalLayers: initExternalLayers,
+                        coordinateFormat: coordinateFormat,
                         // If this map is pending lazy creation, store the mapDef for later use
                         ...(pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {})
                     };

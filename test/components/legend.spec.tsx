@@ -248,3 +248,150 @@ describe("Legend component advanced tests", () => {
         expect(rules).toHaveLength(3); //One for each geom style
     });
 });
+
+describe("Legend context menu", () => {
+    const makeLayer = (id: string, label: string, selectable = true): MapLayer => ({
+        Type: 1,
+        Selectable: selectable,
+        LayerDefinition: "def",
+        LegendLabel: label,
+        Name: id,
+        ObjectId: id,
+        DisplayInLegend: true,
+        ExpandInLegend: false,
+        Visible: true,
+        ActuallyVisible: true,
+        ScaleRange: [{ MinScale: 0, MaxScale: 10000, FeatureStyle: [] }]
+    } as any);
+
+    it("shows context menu items on right-click", () => {
+        const map = createMockMap([makeLayer("l1", "Layer 1")]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        expect(getByText("Expand All")).toBeInTheDocument();
+        expect(getByText("Collapse All")).toBeInTheDocument();
+        expect(getByText("All Selectable")).toBeInTheDocument();
+        expect(getByText("All Unselectable")).toBeInTheDocument();
+        expect(getByText("Show invisible layers")).toBeInTheDocument();
+    });
+
+    it("shows Refresh item when onRefresh is provided", () => {
+        const onRefresh = vi.fn();
+        const map = createMockMap([makeLayer("l1", "Layer 1")]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onRefresh={onRefresh} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        expect(getByText("Refresh")).toBeInTheDocument();
+    });
+
+    it("does not show Refresh item when onRefresh is not provided", () => {
+        const map = createMockMap([makeLayer("l1", "Layer 1")]);
+        const { container, queryByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        expect(queryByText("Refresh")).toBeNull();
+    });
+
+    it("calls onRefresh when Refresh menu item is clicked", () => {
+        const onRefresh = vi.fn();
+        const map = createMockMap([makeLayer("l1", "Layer 1")]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onRefresh={onRefresh} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("Refresh"));
+        expect(onRefresh).toHaveBeenCalledTimes(1);
+    });
+
+    it("calls onGroupExpansionChanged for all layers and groups when Expand All is clicked", () => {
+        const onGroupExpansionChanged = vi.fn();
+        const layer1 = makeLayer("l1", "Layer 1");
+        const map = createMockMap([layer1]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onGroupExpansionChanged={onGroupExpansionChanged} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("Expand All"));
+        expect(onGroupExpansionChanged).toHaveBeenCalledWith("l1", true);
+    });
+
+    it("calls onGroupExpansionChanged for all layers and groups when Collapse All is clicked", () => {
+        const onGroupExpansionChanged = vi.fn();
+        const layer1 = makeLayer("l1", "Layer 1");
+        const map = createMockMap([layer1]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onGroupExpansionChanged={onGroupExpansionChanged} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("Collapse All"));
+        expect(onGroupExpansionChanged).toHaveBeenCalledWith("l1", false);
+    });
+
+    it("calls onLayerSelectabilityChanged for all selectable layers when All Selectable is clicked", () => {
+        const onLayerSelectabilityChanged = vi.fn();
+        const layer1 = makeLayer("l1", "Layer 1", true);
+        const layer2 = makeLayer("l2", "Layer 2", false);
+        const map = createMockMap([layer1, layer2]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onLayerSelectabilityChanged={onLayerSelectabilityChanged} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("All Selectable"));
+        expect(onLayerSelectabilityChanged).toHaveBeenCalledWith("l1", true);
+        expect(onLayerSelectabilityChanged).not.toHaveBeenCalledWith("l2", true);
+    });
+
+    it("calls onLayerSelectabilityChanged for all selectable layers when All Unselectable is clicked", () => {
+        const onLayerSelectabilityChanged = vi.fn();
+        const layer1 = makeLayer("l1", "Layer 1", true);
+        const map = createMockMap([layer1]);
+        const { container, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} onLayerSelectabilityChanged={onLayerSelectabilityChanged} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("All Unselectable"));
+        expect(onLayerSelectabilityChanged).toHaveBeenCalledWith("l1", false);
+    });
+
+    it("shows invisible layers when Show invisible layers is toggled", () => {
+        // Layer only visible at scale 0-1000, but currentScale is 5000
+        const layer: MapLayer = {
+            ...makeLayer("l1", "Invisible Layer"),
+            ScaleRange: [{ MinScale: 0, MaxScale: 1000, FeatureStyle: [] }]
+        } as any;
+        const map = createMockMap([layer]);
+        const { container, queryByText, getByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} />
+        );
+        // Layer should not be visible at scale 5000
+        expect(queryByText("Invisible Layer")).toBeNull();
+        // Open context menu and click "Show invisible layers"
+        fireEvent.contextMenu(container.firstChild as Element);
+        fireEvent.click(getByText("Show invisible layers"));
+        // Layer should now be visible
+        expect(queryByText("Invisible Layer")).toBeInTheDocument();
+    });
+
+    it("toggles context menu label from Show to Hide when invisible layers are shown", () => {
+        const layer: MapLayer = {
+            ...makeLayer("l1", "Invisible Layer"),
+            ScaleRange: [{ MinScale: 0, MaxScale: 1000, FeatureStyle: [] }]
+        } as any;
+        const map = createMockMap([layer]);
+        const { container, getByText, queryByText } = render(
+            <Legend stateless={false} showLayers={undefined} hideLayers={undefined} showGroups={undefined} hideGroups={undefined} locale="en" inlineBaseLayerSwitcher={false} activeMapName="testmap" map={map} currentScale={5000} />
+        );
+        fireEvent.contextMenu(container.firstChild as Element);
+        expect(getByText("Show invisible layers")).toBeInTheDocument();
+        expect(queryByText("Hide invisible layers")).toBeNull();
+        fireEvent.click(getByText("Show invisible layers"));
+        // Re-open context menu
+        fireEvent.contextMenu(container.firstChild as Element);
+        expect(queryByText("Show invisible layers")).toBeNull();
+        expect(getByText("Hide invisible layers")).toBeInTheDocument();
+    });
+});

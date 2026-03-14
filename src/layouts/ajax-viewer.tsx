@@ -65,7 +65,7 @@ export const AjaxViewerLayout = () => {
                                             if (hasLegend) {
                                                 return <div className="ajax-sidebar-panel" style={lgStyle}>
                                                     <div className="ajax-sidebar-panel-heading">
-                                                        <p>{tr("TPL_TITLE_LEGEND", locale)}</p>
+                                                        <span>{tr("TPL_TITLE_LEGEND", locale)}</span>
                                                     </div>
                                                     <div className="ajax-sidebar-panel-body">
                                                         <PlaceholderComponent id={DefaultComponentNames.Legend} locale={locale} componentProps={DEFAULT_LEGEND_COMPONENT_PROPS} />
@@ -77,7 +77,7 @@ export const AjaxViewerLayout = () => {
                                             if (hasSelectionPanel) {
                                                 return <div className="ajax-sidebar-panel" style={selStyle}>
                                                     <div className="ajax-sidebar-panel-heading">
-                                                        <p>{tr("TPL_TITLE_SELECTION_PANEL", locale)}</p>
+                                                        <span>{tr("TPL_TITLE_SELECTION_PANEL", locale)}</span>
                                                     </div>
                                                     <div className="ajax-sidebar-panel-body">
                                                         <PlaceholderComponent id={DefaultComponentNames.SelectionPanel} locale={locale} />

@@ -357,7 +357,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
                     }
                 } else if (!(selection?.getLayerCount() > 0)) {
                     return <Callout variant="primary" icon="info-sign">
-                        <p className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</p>
+                        <span className="selection-panel-no-selection">{xlate("NO_SELECTED_FEATURES", locale)}</span>
                     </Callout>;
                 }
             })()}

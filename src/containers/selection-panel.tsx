@@ -66,7 +66,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
             maxHeight={maxHeight} />;
     } else {
         return <Callout variant="primary" icon="info-sign">
-            <p className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</p>
+            <span className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</span>
         </Callout>;
     }
 }

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { IExternalBaseLayer, GenericEvent, ILayerInfo } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { LegendContext, ILegendContext, LegendNodeExtraHTMLProps } from "./context";
@@ -103,6 +104,13 @@ export interface ILegendProps {
      * @since 0.14.9
      */
     provideExtraGroupIconsHtml?: (options: LegendNodeExtraHTMLProps<MapGroup>) => string[];
+    /**
+     * Optional callback invoked when the user selects "Refresh" from the legend context menu.
+     * If not provided, the Refresh menu item will not be shown.
+     *
+     * @since 0.15
+     */
+    onRefresh?: () => void;
 }
 
 function getIconUri(iconMimeType: string | undefined, iconBase64: string | undefined): string | undefined {
@@ -546,7 +554,7 @@ const FILTER_BUTTON_STYLE: React.CSSProperties = { position: "absolute", right: 
  * @param props 
  */
 export const Legend = /*React.memo(*/(props: ILegendProps) => {
-    const { Button, Card, InputGroup, Heading } = useElementContext();
+    const { Button, Card, InputGroup, Heading, MenuComponent } = useElementContext();
     const {
         showGroups,
         hideGroups,
@@ -563,6 +571,8 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
     const [isFiltering, setIsFiltering] = React.useState(false);
     const [filterText, setFilterText] = React.useState("");
     const [filteredTree, setFilteredTree] = React.useState<TreeState | undefined>(undefined);
+    const [showInvisibleLayers, setShowInvisibleLayers] = React.useState(false);
+    const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number } | undefined>(undefined);
     React.useEffect(() => {
         onExitFilterMode();
         const tree: any = setupTree(map);
@@ -639,6 +649,69 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
     const getChildren = React.useCallback((objectId: string): (MapLayer | MapGroup)[] => {
         return _tree.groupChildren[objectId] ?? [];
     }, [_tree]);
+
+    const onExpandAll = React.useCallback(() => {
+        if (map?.Layer) {
+            for (const layer of map.Layer) {
+                props.onGroupExpansionChanged?.(layer.ObjectId, true);
+            }
+        }
+        if (map?.Group) {
+            for (const group of map.Group) {
+                props.onGroupExpansionChanged?.(group.ObjectId, true);
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onGroupExpansionChanged]);
+
+    const onCollapseAll = React.useCallback(() => {
+        if (map?.Layer) {
+            for (const layer of map.Layer) {
+                props.onGroupExpansionChanged?.(layer.ObjectId, false);
+            }
+        }
+        if (map?.Group) {
+            for (const group of map.Group) {
+                props.onGroupExpansionChanged?.(group.ObjectId, false);
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onGroupExpansionChanged]);
+
+    const onSetAllSelectable = React.useCallback((selectable: boolean) => {
+        if (map?.Layer) {
+            for (const layer of map.Layer) {
+                if (layer.Selectable) {
+                    props.onLayerSelectabilityChanged?.(layer.ObjectId, selectable);
+                }
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onLayerSelectabilityChanged]);
+
+    const onContextMenuHandler = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setContextMenu({ x: e.clientX, y: e.clientY });
+    }, []);
+
+    const onCloseContextMenu = React.useCallback(() => {
+        setContextMenu(undefined);
+    }, []);
+
+    // Close context menu on any mousedown outside of it
+    React.useEffect(() => {
+        if (!contextMenu) return;
+        const handler = () => setContextMenu(undefined);
+        // Defer listener so the current right-click doesn't immediately close the menu
+        const timerId = setTimeout(() => {
+            document.addEventListener("mousedown", handler);
+        }, 0);
+        return () => {
+            clearTimeout(timerId);
+            document.removeEventListener("mousedown", handler);
+        };
+    }, [contextMenu]);
+
     const rootStyle: React.CSSProperties = {
         position: "relative"
     };
@@ -672,8 +745,59 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
     };
     const daTree = providerImpl.getTree();
     const rootItems: (MapLayer | MapGroup)[] = daTree.root;
+    const contextMenuItems = React.useMemo(() => {
+        const items = [];
+        if (props.onRefresh) {
+            items.push({
+                label: tr("LEGEND_CONTEXT_MENU_REFRESH", props.locale),
+                invoke: () => {
+                    props.onRefresh?.();
+                    setContextMenu(undefined);
+                }
+            });
+            items.push({ isSeparator: true });
+        }
+        items.push({
+            label: tr("LEGEND_CONTEXT_MENU_EXPAND_ALL", props.locale),
+            invoke: onExpandAll
+        });
+        items.push({
+            label: tr("LEGEND_CONTEXT_MENU_COLLAPSE_ALL", props.locale),
+            invoke: onCollapseAll
+        });
+        items.push({ isSeparator: true });
+        items.push({
+            label: tr("LEGEND_CONTEXT_MENU_ALL_SELECTABLE", props.locale),
+            invoke: () => onSetAllSelectable(true)
+        });
+        items.push({
+            label: tr("LEGEND_CONTEXT_MENU_ALL_UNSELECTABLE", props.locale),
+            invoke: () => onSetAllSelectable(false)
+        });
+        items.push({ isSeparator: true });
+        items.push({
+            label: showInvisibleLayers
+                ? tr("LEGEND_CONTEXT_MENU_HIDE_INVISIBLE_LAYERS", props.locale)
+                : tr("LEGEND_CONTEXT_MENU_SHOW_INVISIBLE_LAYERS", props.locale),
+            invoke: () => {
+                setShowInvisibleLayers(v => !v);
+                setContextMenu(undefined);
+            }
+        });
+        return items;
+    }, [props.onRefresh, props.locale, onExpandAll, onCollapseAll, onSetAllSelectable, showInvisibleLayers]);
     return <LegendContext.Provider value={providerImpl}>
-        <div style={rootStyle}>
+        <div style={rootStyle} onContextMenu={onContextMenuHandler}>
+            {contextMenu && document.body && createPortal(
+                <div
+                    className="mg-legend-context-menu"
+                    style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 9999 }}
+                    onMouseDown={e => e.stopPropagation()}
+                >
+                    <MenuComponent items={contextMenuItems} onInvoked={onCloseContextMenu} />
+                </div>,
+                document.body
+            )}
             {(() => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
@@ -701,7 +825,7 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
                 {rootItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if (isLayer(item)) {
-                            if (isLayerVisibleAtScale(item, currentScale, props.stateless)) {
+                            if (showInvisibleLayers || isLayerVisibleAtScale(item, currentScale, props.stateless)) {
                                 //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 return <LayerNode key={item.ObjectId} layer={item} />;
                             }
@@ -715,7 +839,7 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
                                     bGroupVisFilter = true;
                                 }
                             }
-                            if (bGroupVisAtScale || bGroupVisFilter) {
+                            if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) {
                                 //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 const children = daTree.groupChildren[item.ObjectId] || [];
                                 return <GroupNode key={item.ObjectId} group={item} childItems={children} />;

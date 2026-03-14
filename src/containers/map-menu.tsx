@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MapMenu } from "../components/map-menu";
 import { useViewerLocale, useActiveMapName, useAvailableMaps } from './hooks';
-import { setActiveMap } from '../actions/map';
+import { activateMap } from '../actions/map';
 import { useReduxDispatch } from "../components/map-providers/context";
 
 export const MapMenuContainer = () => {
@@ -9,8 +9,7 @@ export const MapMenuContainer = () => {
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const availableMaps = useAvailableMaps();
-    const setActiveMapAction = (mapName: string) => dispatch(setActiveMap(mapName));
-    const onActiveMapChanged = (mapName: string) => setActiveMapAction(mapName);
+    const onActiveMapChanged = (mapName: string) => dispatch(activateMap(mapName));
     if (locale && activeMapName && availableMaps) {
         //TODO: Should use MapGroup id has label. For now, use map name for both
         const entries = availableMaps.map(m => {

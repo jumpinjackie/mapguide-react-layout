@@ -645,6 +645,7 @@ import {
     nextView,
     setActiveTool,
     setActiveMap,
+    activateMap,
     setFeatureTooltipsEnabled,
     enableSelectDragPan,
     setManualFeatureTooltipsEnabled,
@@ -671,6 +672,8 @@ import { VectorStyleSource } from "../../src/api/ol-style-contracts";
 import type { IVectorLayerStyle } from "../../src/api/ol-style-contracts";
 import type { ILayerInfo } from "../../src/api/common";
 import type { ClientSelectionFeature } from "../../src/api/contracts/common";
+import { createInitialState, createMap } from "../../test-data";
+import { MAP_STATE_INITIAL_SUB_STATE, MG_INITIAL_SUB_STATE } from "../../src/reducers/map-state";
 
 const SIMPLE_VECTOR_STYLE: IVectorLayerStyle = {
     default: {
@@ -899,5 +902,73 @@ describe("actions/map - action creators", () => {
         const layer: ILayerInfo = { name: "Roads", displayName: "Roads", type: "Vector", visible: true, isExternal: true } as unknown as ILayerInfo;
         const action = mapLayerAdded("TestMap", layer, SIMPLE_VECTOR_STYLE);
         expect(action.payload.defaultStyle).toEqual(SIMPLE_VECTOR_STYLE);
+    });
+});
+
+describe("actions/map - activateMap thunk", () => {
+    it("dispatches MAP_SET_ACTIVE_MAP directly when map is not pending", async () => {
+        const initialState = createInitialState();
+        const map = createMap();
+        // Set up mapState for the active map
+        const mapState = {
+            [map.Name]: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                mapguide: { ...MG_INITIAL_SUB_STATE, runtimeMap: map }
+            }
+        };
+        const state = {
+            ...initialState,
+            config: {
+                ...initialState.config,
+                activeMapName: map.Name,
+                pendingMaps: undefined
+            },
+            mapState
+        };
+        const dispatched: any[] = [];
+        const dispatch = (action: any) => { dispatched.push(action); return action; };
+        const getState = () => state as any;
+
+        const thunk = activateMap(map.Name);
+        await thunk(dispatch as any, getState as any);
+
+        expect(dispatched).toHaveLength(1);
+        expect(dispatched[0].type).toBe(ActionType.MAP_SET_ACTIVE_MAP);
+        expect(dispatched[0].payload).toBe(map.Name);
+    });
+
+    it("dispatches MAP_SET_ACTIVE_MAP without MAP_REFRESH when no session is available", async () => {
+        const initialState = createInitialState();
+        const map = createMap();
+        const mapState = {
+            [map.Name]: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                mapguide: { ...MG_INITIAL_SUB_STATE, runtimeMap: undefined }
+            }
+        };
+        const state = {
+            ...initialState,
+            config: {
+                ...initialState.config,
+                agentUri: "http://localhost/mapguide/mapagent/mapagent.fcgi",
+                agentKind: "mapagent" as const,
+                activeMapName: map.Name,
+                pendingMaps: {
+                    "LazyMap": { mapDef: "Library://LazyMap.MapDefinition", metadata: {} }
+                }
+            },
+            mapState
+        };
+        const dispatched: any[] = [];
+        const dispatch = (action: any) => { dispatched.push(action); return action; };
+        const getState = () => state as any;
+
+        const thunk = activateMap("LazyMap");
+        await thunk(dispatch as any, getState as any);
+
+        // Without a session, it should still dispatch MAP_SET_ACTIVE_MAP (just without creating the map)
+        expect(dispatched).toHaveLength(1);
+        expect(dispatched[0].type).toBe(ActionType.MAP_SET_ACTIVE_MAP);
+        expect(dispatched[0].payload).toBe("LazyMap");
     });
 });

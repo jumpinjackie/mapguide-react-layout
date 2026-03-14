@@ -580,7 +580,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers,
                         initialExternalLayers: initExternalLayers,
-                        coordinateFormat: coordinateFormat
+                        coordinateFormat: coordinateFormat,
                         // If this map is pending lazy creation, store the mapDef for later use
                         ...(pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {})
                     };

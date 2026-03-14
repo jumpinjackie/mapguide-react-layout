@@ -379,11 +379,11 @@ class FusionWidgetApiShim {
         if (viewer.isReady()) {
             let extent: [number, number, number, number];
             if (typeof bounds === "number") {
-                extent = [bounds, miny as number, maxx as number, maxy as number];
+                extent = resolveSetExtentsBounds(bounds, miny as number, maxx as number, maxy as number);
             } else if (Array.isArray(bounds)) {
-                extent = bounds;
+                extent = resolveSetExtentsBounds(bounds);
             } else {
-                extent = [bounds.left, bounds.bottom, bounds.right, bounds.top];
+                extent = resolveSetExtentsBounds(bounds);
             }
             viewer.zoomToExtent(extent);
         }

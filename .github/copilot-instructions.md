@@ -104,3 +104,10 @@
 # Review guidelines around React components
 
 - Do not blindly suggest that `useEffect` calls always require full dependency arrays. Many components in this library require code that runs on mount and on unmount and need an empty dependency array for that to happen.
+
+# Pull Request Guidelines
+
+- When generating a pull request, ensure that the pull request description includes a clear and concise summary of the changes made in the pull request, as well as any relevant context or background information.
+- If the pull request includes changes to the public API of the library, ensure that the pull request description includes a clear explanation of the changes to the API, including any new functions, classes, or types that have been added, as well as any changes to existing functions, classes, or types.
+- If the pull request includes changes to the documentation of the library, ensure that the pull request description includes a clear explanation of the changes to the documentation, including any new sections that have been added
+- Please include a manual testing plan in the pull request description if the changes made in the pull request are user-facing. This plan should include a clear explanation of the steps that need to be taken to test the changes, as well as any relevant information about the expected behavior of the library after the changes have been made.

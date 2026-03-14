@@ -424,6 +424,13 @@ export interface IExternalBaseLayer {
      *
      */
     options?: any;
+    /**
+     * An optional URL to a thumbnail image to display in the base layer switcher UI
+     *
+     * @type {string}
+     * @since 0.15
+     */
+    thumbnailImageUrl?: string;
 }
 
 

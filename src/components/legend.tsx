@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { IExternalBaseLayer, GenericEvent, ILayerInfo } from "../api/common";
 import { RuntimeMap, MapLayer, MapGroup, RuleInfo } from "../api/contracts/runtime-map";
 import { LegendContext, ILegendContext, LegendNodeExtraHTMLProps } from "./context";
@@ -697,6 +698,20 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
         setContextMenu(undefined);
     }, []);
 
+    // Close context menu on any mousedown outside of it
+    React.useEffect(() => {
+        if (!contextMenu) return;
+        const handler = () => setContextMenu(undefined);
+        // Defer listener so the current right-click doesn't immediately close the menu
+        const timerId = setTimeout(() => {
+            document.addEventListener("mousedown", handler);
+        }, 0);
+        return () => {
+            clearTimeout(timerId);
+            document.removeEventListener("mousedown", handler);
+        };
+    }, [contextMenu]);
+
     const rootStyle: React.CSSProperties = {
         position: "relative"
     };
@@ -773,14 +788,15 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
     }, [props.onRefresh, props.locale, onExpandAll, onCollapseAll, onSetAllSelectable, showInvisibleLayers]);
     return <LegendContext.Provider value={providerImpl}>
         <div style={rootStyle} onContextMenu={onContextMenuHandler}>
-            {contextMenu && (
+            {contextMenu && document.body && createPortal(
                 <div
                     className="mg-legend-context-menu"
-                    style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 2000 }}
-                    onMouseLeave={onCloseContextMenu}
+                    style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 9999 }}
+                    onMouseDown={e => e.stopPropagation()}
                 >
                     <MenuComponent items={contextMenuItems} onInvoked={onCloseContextMenu} />
-                </div>
+                </div>,
+                document.body
             )}
             {(() => {
                 if (externalBaseLayers != null &&

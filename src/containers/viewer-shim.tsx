@@ -343,10 +343,14 @@ class FusionWidgetApiShim {
         }
         return undefined;
     }
-    setExtents(bounds: OL2Bounds) { //Map
+    setExtents(bounds: OL2Bounds | [number, number, number, number]) { //Map
         const { viewer } = this.parent.props;
         if (viewer.isReady()) {
-            viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+            if (Array.isArray(bounds)) {
+                viewer.zoomToExtent(bounds);
+            } else {
+                viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+            }
         }
     }
     setActiveLayer(layer: any) { //Map

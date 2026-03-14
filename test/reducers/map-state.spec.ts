@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { IMapSetViewAction } from "../../src/actions/defs";
+import { IMapSetViewAction, IExternalLayersReadyAction } from "../../src/actions/defs";
 import { setGroupExpanded, setGroupVisibility, setLayerSelectable, setLayerVisibility } from "../../src/actions/legend";
 import {
     addClientSelectedFeature,
@@ -499,7 +499,7 @@ describe("reducers/config", () => {
             const initAction = createInitAction(map, view, "en");
             const state = mapStateReducer(initialState.mapState, initAction);
 
-            const action = externalLayersReady(map.Name);
+            const action = externalLayersReady(map.Name) as IExternalLayersReadyAction;
             const state2 = mapStateReducer(state, action);
             const ms = state2[map.Name];
             expect(ms).not.toBeUndefined();

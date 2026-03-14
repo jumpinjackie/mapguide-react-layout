@@ -1,11 +1,16 @@
 import { describe, it, expect } from "vitest";
+import type { Store } from "redux";
 import { configureStore } from "../../src/store/configure-store";
 import { ActionType } from "../../src/constants/actions";
 import type { ViewerAction } from "../../src/actions/defs";
+import type { IApplicationState } from "../../src/api/common";
+
+// configureStore uses redux compose(), which loses TypeScript generics. Declare a typed alias.
+type AppStore = Store<Readonly<IApplicationState>, ViewerAction>;
 
 describe("store/configure-store", () => {
     it("creates a store with default root reducers", () => {
-        const store = configureStore({});
+        const store = configureStore({}) as unknown as AppStore;
         const state = store.getState();
 
         expect(state).not.toBeNull();
@@ -23,15 +28,15 @@ describe("store/configure-store", () => {
 
     it("creates a store with extra reducers when provided", () => {
         const customReducer = (state = { value: 42 }, _action: ViewerAction) => state;
-        const store = configureStore({}, { custom: customReducer });
-        const state = store.getState() as ReturnType<typeof store.getState> & { custom: { value: number } };
+        const store = configureStore({}, { custom: customReducer }) as unknown as AppStore;
+        const state = store.getState() as Readonly<IApplicationState> & { custom: { value: number } };
 
         expect(state.custom).not.toBeUndefined();
         expect(state.custom.value).toBe(42);
     });
 
     it("dispatches actions that are processed by the root reducers", () => {
-        const store = configureStore({});
+        const store = configureStore({}) as unknown as AppStore;
         const initialBusyCount = store.getState().viewer.busyCount;
         expect(initialBusyCount).toBe(0);
 
@@ -53,7 +58,7 @@ describe("store/configure-store", () => {
                 featureTooltipsEnabled: false
             }
         };
-        const store = configureStore(initialState);
+        const store = configureStore(initialState) as unknown as AppStore;
         expect(store.getState().viewer.busyCount).toBe(5);
         expect(store.getState().viewer.featureTooltipsEnabled).toBe(false);
     });

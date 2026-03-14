@@ -243,11 +243,16 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const mapDefItems = mapDefs.filter(isMapDefinition);
         // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
         // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
-        // (where the session is reused), non-first maps should still be deferred because they may
+        // (where the session is reused), non-active maps should still be deferred because they may
         // never have been created in the previous session (the user may not have switched to them).
         // These deferred maps will be lazily initialized via activateMap() when the user switches
         // to them, which now tries to describe the existing map first before creating a new one.
         const canLazyLoad = !isStateless && mapDefItems.length > 1;
+        // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
+        // to identify which map to eagerly recover. If the URL param doesn't match any map in the
+        // appdef (or is absent), fall back to the first map by position.
+        const initialActiveMapName = this.options.initialActiveMap;
+        const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
         if (isStateless) { 
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
@@ -269,10 +274,17 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             let isFirstMapDef = true;
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
-                    if (canLazyLoad && !isFirstMapDef) {
-                        // Defer creation of non-first maps in a multi-map layout to avoid loading all maps upfront.
-                        // This applies regardless of whether the session is being reused (browser refresh), because
-                        // the non-first maps may never have been created in a previous session.
+                    // Determine if this is the "primary" map to eagerly load/recover.
+                    // - For new sessions: the primary is always the first map in the appdef.
+                    // - For reused sessions (browser refresh): the primary is the map the user was
+                    //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
+                    //   URL param is absent or does not match any map, fall back to first-by-position.
+                    const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
+                        ? m.name === initialActiveMapName
+                        : isFirstMapDef;
+                    if (canLazyLoad && !isPrimaryMap) {
+                        // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
+                        // This applies regardless of whether the session is being reused.
                         info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
                         pendingMapDefs[m.name] = m;
                     } else if (sessionWasReused) {

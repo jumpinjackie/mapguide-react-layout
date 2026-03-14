@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mapResized, setActiveTool, setBusyCount, setFeatureTooltipsEnabled } from "../../src/actions/map";
+import { enableSelectDragPan, mapResized, setActiveTool, setBusyCount, setFeatureTooltipsEnabled } from "../../src/actions/map";
 import { ActiveMapTool, IMapView } from "../../src/api/common";
 import { ActionType } from "../../src/constants/actions";
 import { viewerReducer } from "../../src/reducers/viewer";
@@ -56,6 +56,20 @@ describe("reducers/viewer", () => {
             expect(state.size).not.toBeUndefined();
             expect(state.size![0]).toBe(action.payload.width);
             expect(state.size![1]).toBe(action.payload.height);
+        });
+    });
+    describe(ActionType.MAP_ENABLE_SELECT_DRAGPAN, () => {
+        it("updates selectCanDragPan when enabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(true);
+            const state = viewerReducer(initialState.viewer, action);
+            expect(state.selectCanDragPan).toBe(true);
+        });
+        it("updates selectCanDragPan when disabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(false);
+            const state = viewerReducer(initialState.viewer, action);
+            expect(state.selectCanDragPan).toBe(false);
         });
     });
 });

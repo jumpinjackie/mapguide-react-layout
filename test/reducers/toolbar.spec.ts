@@ -4,6 +4,7 @@ import { ICommandSpec, IFlyoutSpec } from "../../src/api/registry/command-spec";
 import { ActionType } from "../../src/constants/actions";
 import { toolbarReducer } from "../../src/reducers/toolbar";
 import { createInitAction, createInitialState, createMap } from "../../test-data";
+import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU } from "../../src/constants";
 
 describe("reducers/mouse", () => {
     describe(ActionType.INIT_APP, () => {
@@ -809,6 +810,110 @@ describe("reducers/mouse", () => {
             };
             const newState = toolbarReducer(stateWithContextMenu as any, action);
             expect((newState.flyouts[contextMenuId] as any).open).toBe(true);
+        });
+    });
+
+    describe(ActionType.COMPONENT_CLOSE, () => {
+        it("returns state unchanged when context menu flyout is not registered", () => {
+            const initialState = createInitialState();
+            const action: any = {
+                type: ActionType.COMPONENT_CLOSE,
+                payload: { flyoutId: "someComponent" }
+            };
+            const newState = toolbarReducer(initialState.toolbar, action);
+            expect(newState).toBe(initialState.toolbar);
+        });
+        it("closes a component flyout when context menu is registered", () => {
+            const initialState = createInitialState();
+            const componentFlyoutId = "myComponentFlyout";
+            const stateWithFlyouts = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [WEBLAYOUT_CONTEXTMENU]: { open: false, metrics: null },
+                    [componentFlyoutId]: { open: true, metrics: { posX: 10, posY: 20, width: 0, height: 0 }, componentName: "MyComponent", componentProps: {} }
+                }
+            };
+            const action: any = {
+                type: ActionType.COMPONENT_CLOSE,
+                payload: { flyoutId: componentFlyoutId }
+            };
+            const newState = toolbarReducer(stateWithFlyouts as any, action);
+            expect((newState.flyouts[componentFlyoutId] as any).open).toBe(false);
+            expect((newState.flyouts[componentFlyoutId] as any).componentName).toBeNull();
+            expect((newState.flyouts[componentFlyoutId] as any).componentProps).toBeNull();
+        });
+    });
+    describe(ActionType.FUSION_SET_ELEMENT_STATE, () => {
+        it("closes the task menu flyout when taskPaneVisible is false and task menu is registered", () => {
+            const initialState = createInitialState();
+            const stateWithTaskMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [WEBLAYOUT_TASKMENU]: { open: true, metrics: { posX: 0, posY: 0, width: 0, height: 0 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.FUSION_SET_ELEMENT_STATE,
+                payload: { legendVisible: true, taskPaneVisible: false, selectionPanelVisible: true }
+            };
+            const newState = toolbarReducer(stateWithTaskMenu as any, action);
+            expect((newState.flyouts[WEBLAYOUT_TASKMENU] as any).open).toBe(false);
+        });
+        it("returns state unchanged when taskPaneVisible is true", () => {
+            const initialState = createInitialState();
+            const stateWithTaskMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [WEBLAYOUT_TASKMENU]: { open: true, metrics: { posX: 0, posY: 0, width: 0, height: 0 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.FUSION_SET_ELEMENT_STATE,
+                payload: { legendVisible: true, taskPaneVisible: true, selectionPanelVisible: true }
+            };
+            const newState = toolbarReducer(stateWithTaskMenu as any, action);
+            expect(newState).toBe(stateWithTaskMenu);
+        });
+        it("returns state unchanged when task menu is not registered", () => {
+            const initialState = createInitialState();
+            const action: any = {
+                type: ActionType.FUSION_SET_ELEMENT_STATE,
+                payload: { legendVisible: true, taskPaneVisible: false, selectionPanelVisible: true }
+            };
+            const newState = toolbarReducer(initialState.toolbar, action);
+            expect(newState).toBe(initialState.toolbar);
+        });
+    });
+    describe(ActionType.FUSION_SET_TASK_PANE_VISIBILITY, () => {
+        it("closes the task menu flyout when visibility is false", () => {
+            const initialState = createInitialState();
+            const stateWithTaskMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [WEBLAYOUT_TASKMENU]: { open: true, metrics: { posX: 0, posY: 0, width: 0, height: 0 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.FUSION_SET_TASK_PANE_VISIBILITY,
+                payload: false
+            };
+            const newState = toolbarReducer(stateWithTaskMenu as any, action);
+            expect((newState.flyouts[WEBLAYOUT_TASKMENU] as any).open).toBe(false);
+        });
+        it("returns state unchanged when visibility is true", () => {
+            const initialState = createInitialState();
+            const stateWithTaskMenu = {
+                ...initialState.toolbar,
+                flyouts: {
+                    [WEBLAYOUT_TASKMENU]: { open: true, metrics: { posX: 0, posY: 0, width: 0, height: 0 } }
+                }
+            };
+            const action: any = {
+                type: ActionType.FUSION_SET_TASK_PANE_VISIBILITY,
+                payload: true
+            };
+            const newState = toolbarReducer(stateWithTaskMenu as any, action);
+            expect(newState).toBe(stateWithTaskMenu);
         });
     });
 });

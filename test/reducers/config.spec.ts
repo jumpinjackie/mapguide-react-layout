@@ -5,7 +5,7 @@ import {
 import { createMap, createInitAction, createInitialState } from "../../test-data";
 import { configReducer } from "../../src/reducers/config";
 import { ActionType } from "../../src/constants/actions";
-import { setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
+import { enableSelectDragPan, setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
 import { ViewerAction } from "../../src/actions/defs";
 
 describe("reducers/config", () => {
@@ -202,6 +202,28 @@ describe("reducers/config", () => {
             const action: ViewerAction = { type: ActionType.MAP_UPDATE_SWIPE_POSITION, payload: { position: 75 } };
             const state = configReducer(initialState.config, action);
             expect(state.swipePosition).toBe(75);
+        });
+    });
+    describe(ActionType.SET_LOCALE, () => {
+        it("updates locale", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = { type: ActionType.SET_LOCALE, payload: "fr" };
+            const state = configReducer(initialState.config, action);
+            expect(state.locale).toBe("fr");
+        });
+    });
+    describe(ActionType.MAP_ENABLE_SELECT_DRAGPAN, () => {
+        it("updates selectCanDragPan when enabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(true);
+            const state = configReducer(initialState.config, action);
+            expect(state.selectCanDragPan).toBe(true);
+        });
+        it("updates selectCanDragPan when disabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(false);
+            const state = configReducer(initialState.config, action);
+            expect(state.selectCanDragPan).toBe(false);
         });
     });
 });

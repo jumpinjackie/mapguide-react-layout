@@ -127,6 +127,7 @@
     "typedoc": "0.28.17",
     "typedoc-plugin-ga": "^1.0.5",
     "typedoc-plugin-merge-modules": "7.0.0",
+    "tsx": "^4.21.0",
     "typescript": "5.9.3",
     "typescript-json-schema": "^0.67.1",
     "vitest": "3.2.4",

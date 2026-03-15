@@ -1862,7 +1862,7 @@ class ViewerInitCommand {
         }
         return (0, array_1.makeUnique)(epsgs);
     }
-    initFromAppDefCoreAsync(appDef, options, mapsByName, warnings) {
+    initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingMapDefs) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const { taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask } = (0, command_spec_1.parseWidgetsInAppDef)(appDef, command_1.registerCommand);
@@ -1885,7 +1885,7 @@ class ViewerInitCommand {
                 }
             }
             const mapsDict = mapsByName; //HACK: TS generics doesn't want to play nice with us
-            const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale);
+            const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale, pendingMapDefs);
             if (appDef.Title) {
                 document.title = appDef.Title || document.title;
             }
@@ -2027,7 +2027,7 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
     initFromWebLayoutAsync(webLayout, session, sessionWasReused) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             var _a;
-            const [mapsByName, warnings] = yield this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
+            const [mapsByName, , warnings] = yield this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
             const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
             const cmdsByKey = (0, command_spec_1.parseCommandsInWebLayout)(webLayout, command_1.registerCommand);
             const mainToolbar = (webLayout.ToolBar.Visible
@@ -2172,12 +2172,27 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
             const { locale } = this.options;
             const subjectLayers = {};
             const fetchEpsgs = [];
+            const pendingMapDefs = {};
             // We use an AsyncLazy because we only want to fetch the site version *iff* we are required to
             const siteVersion = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () {
                 (0, assert_1.assertIsDefined)(this.client);
                 const sv = yield this.client.getSiteVersion();
                 return sv;
             }));
+            // Collect only the MapDefinition entries for lazy-load eligibility check
+            const mapDefItems = mapDefs.filter(init_command_1.isMapDefinition);
+            // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
+            // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
+            // (where the session is reused), non-active maps should still be deferred because they may
+            // never have been created in the previous session (the user may not have switched to them).
+            // These deferred maps will be lazily initialized via activateMap() when the user switches
+            // to them, which now tries to describe the existing map first before creating a new one.
+            const canLazyLoad = !isStateless && mapDefItems.length > 1;
+            // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
+            // to identify which map to eagerly recover. If the URL param doesn't match any map in the
+            // appdef (or is absent), fall back to the first map by position.
+            const initialActiveMapName = this.options.initialActiveMap;
+            const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
             if (isStateless) {
                 for (const m of mapDefs) {
                     if ((0, init_command_1.isMapDefinition)(m)) {
@@ -2198,10 +2213,24 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                 }
             }
             else {
+                let isFirstMapDef = true;
                 for (const m of mapDefs) {
                     if ((0, init_command_1.isMapDefinition)(m)) {
-                        //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-                        if (sessionWasReused) {
+                        // Determine if this is the "primary" map to eagerly load/recover.
+                        // - For new sessions: the primary is always the first map in the appdef.
+                        // - For reused sessions (browser refresh): the primary is the map the user was
+                        //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
+                        //   URL param is absent or does not match any map, fall back to first-by-position.
+                        const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
+                            ? m.name === initialActiveMapName
+                            : isFirstMapDef;
+                        if (canLazyLoad && !isPrimaryMap) {
+                            // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
+                            // This applies regardless of whether the session is being reused.
+                            (0, logger_1.info)(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
+                            pendingMapDefs[m.name] = m;
+                        }
+                        else if (sessionWasReused) {
                             //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                             (0, logger_1.info)(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
                             mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
@@ -2216,6 +2245,7 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                                 targetMapName: m.name
                             }, siteVersion));
                         }
+                        isFirstMapDef = false;
                     }
                 }
             }
@@ -2259,7 +2289,7 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                     mapsByName[gs.name] = gs;
                 }
             }
-            return [mapsByName, warnings];
+            return [mapsByName, pendingMapDefs, warnings];
         });
     }
     describeRuntimeMapStateless(client, siteVersion, m) {
@@ -2382,10 +2412,12 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
      * @param {Dictionary<SubjectLayerType>} mapsByName
      * @param {*} config
      * @param {string[]} warnings
+     * @param {string} locale
+     * @param {Dictionary<MapToLoad>} [pendingMapDefs]
      * @returns {Dictionary<MapInfo>}
      *
      */
-    setupMaps(appDef, mapsByName, config, warnings, locale) {
+    setupMaps(appDef, mapsByName, config, warnings, locale, pendingMapDefs) {
         const dict = {};
         if (appDef.MapSet) {
             for (const mGroup of appDef.MapSet.MapGroup) {
@@ -2417,6 +2449,14 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                                 mapName = name;
                                 subject = mapDef;
                                 break;
+                            }
+                        }
+                        // If not found in the eagerly-loaded maps, check if it is a pending lazy map
+                        if (!mapName && pendingMapDefs) {
+                            const groupId = mGroup["@id"];
+                            if (pendingMapDefs[groupId]) {
+                                mapName = groupId;
+                                // subject remains undefined for pending maps
                             }
                         }
                     }
@@ -2471,13 +2511,8 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                     };
                 }
                 if (mapName) {
-                    dict[mapName] = {
-                        mapGroupId: mGroup["@id"],
-                        map: mapsByName[mapName],
-                        initialView: initialView,
-                        externalBaseLayers: externalBaseLayers,
-                        initialExternalLayers: initExternalLayers
-                    };
+                    const pendingEntry = pendingMapDefs === null || pendingMapDefs === void 0 ? void 0 : pendingMapDefs[mapName];
+                    dict[mapName] = Object.assign({ mapGroupId: mGroup["@id"], map: mapsByName[mapName], initialView: initialView, externalBaseLayers: externalBaseLayers, initialExternalLayers: initExternalLayers }, (pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {}));
                 }
             }
         }
@@ -2506,8 +2541,8 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                 }
                 (0, proj4_1.register)(proj4_2.default);
             }
-            const [mapsByName, warnings] = yield this.createRuntimeMapsAsync(session, appDef, (0, init_command_1.isStateless)(appDef), fl => (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
-            return yield this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
+            const [mapsByName, pendingMapDefs, warnings] = yield this.createRuntimeMapsAsync(session, appDef, (0, init_command_1.isStateless)(appDef), fl => (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
+            return yield this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
         });
     }
     sessionAcquiredAsync(session, sessionWasReused) {
@@ -3034,6 +3069,7 @@ exports.previousView = previousView;
 exports.nextView = nextView;
 exports.setActiveTool = setActiveTool;
 exports.setActiveMap = setActiveMap;
+exports.activateMap = activateMap;
 exports.setFeatureTooltipsEnabled = setFeatureTooltipsEnabled;
 exports.enableSelectDragPan = enableSelectDragPan;
 exports.setManualFeatureTooltipsEnabled = setManualFeatureTooltipsEnabled;
@@ -3068,6 +3104,11 @@ const viewer_state_1 = __webpack_require__(/*! ../utils/viewer-state */ "./src/u
 const lodash_xor_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.xor */ "./node_modules/lodash.xor/index.js"));
 const lodash_xorby_1 = tslib_1.__importDefault(__webpack_require__(/*! lodash.xorby */ "./node_modules/lodash.xorby/index.js"));
 const logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
+const projections_1 = __webpack_require__(/*! ../api/registry/projections */ "./src/api/registry/projections.ts");
+const proj4_1 = __webpack_require__(/*! ol/proj/proj4 */ "./node_modules/ol/proj/proj4.js");
+const proj4_2 = tslib_1.__importDefault(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
+const lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
+const units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx");
 function combineSelectedFeatures(oldRes, newRes) {
     // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
     // attributes on the first QUERYMAPFEATURES call and use the save merged selection XML QUERYMAPFEATURES call as an 
@@ -3476,6 +3517,109 @@ function setActiveMap(mapName) {
         type: actions_1.ActionType.MAP_SET_ACTIVE_MAP,
         payload: mapName
     };
+}
+/**
+ * Activates the given runtime map by name. If the map has not yet been created (lazy map), it will
+ * be created on demand before switching to it. This is the preferred way to switch between maps in
+ * a multi-map flex layout.
+ *
+ * @param {string} mapName The name of the runtime map to activate
+ * @returns {ReduxThunkedAction}
+ * @since 0.15
+ */
+function activateMap(mapName) {
+    return (dispatch, getState) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c, _d, _e, _f;
+        const state = getState();
+        const pendingMap = (_a = state.config.pendingMaps) === null || _a === void 0 ? void 0 : _a[mapName];
+        if (pendingMap) {
+            const { agentUri, agentKind, locale } = state.config;
+            if (agentUri && agentKind) {
+                // Retrieve the session from the currently active map's runtime map
+                const activeMapName = state.config.activeMapName;
+                let sessionId = "";
+                if (activeMapName) {
+                    sessionId = (_e = (_d = (_c = (_b = state.mapState[activeMapName]) === null || _b === void 0 ? void 0 : _b.mapguide) === null || _c === void 0 ? void 0 : _c.runtimeMap) === null || _d === void 0 ? void 0 : _d.SessionId) !== null && _e !== void 0 ? _e : "";
+                }
+                if (sessionId) {
+                    try {
+                        const client = new client_1.Client(agentUri, agentKind);
+                        const siteVersion = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return client.getSiteVersion(); }));
+                        const sv = yield siteVersion.getValueAsync();
+                        const useV4 = (0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version));
+                        let map;
+                        // Try to describe the runtime map first. This handles the case where the map
+                        // was previously created in a reused session (e.g. after a browser refresh where
+                        // the user had previously switched to this map). If the map does not exist yet
+                        // (i.e. the user has never switched to it), fall back to creating it.
+                        try {
+                            (0, logger_1.info)(`Attempting to describe existing runtime map state (${mapName})`);
+                            if (useV4) {
+                                map = yield client.describeRuntimeMap_v4({
+                                    mapname: mapName,
+                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId
+                                });
+                            }
+                            else {
+                                map = yield client.describeRuntimeMap({
+                                    mapname: mapName,
+                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId
+                                });
+                            }
+                        }
+                        catch (describeErr) {
+                            if ((describeErr === null || describeErr === void 0 ? void 0 : describeErr.message) === "MgResourceNotFoundException") {
+                                // Map does not exist yet in this session, create it
+                                (0, logger_1.info)(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                                if (useV4) {
+                                    map = yield client.createRuntimeMap_v4({
+                                        mapDefinition: pendingMap.mapDef,
+                                        requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                        session: sessionId,
+                                        targetMapName: mapName
+                                    });
+                                }
+                                else {
+                                    map = yield client.createRuntimeMap({
+                                        mapDefinition: pendingMap.mapDef,
+                                        requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                        session: sessionId,
+                                        targetMapName: mapName
+                                    });
+                                }
+                            }
+                            else {
+                                throw describeErr;
+                            }
+                        }
+                        if (map) {
+                            // Register the map's projection if needed
+                            const epsg = map.CoordinateSystem.EpsgCode;
+                            const arbCs = (0, units_1.tryParseArbitraryCs)(map.CoordinateSystem.MentorCode);
+                            if (!arbCs && epsg && epsg !== "0" && !proj4_2.default.defs[`EPSG:${epsg}`]) {
+                                yield (0, projections_1.resolveProjectionFromEpsgCodeAsync)(epsg, locale, map.MapDefinition);
+                                (0, proj4_1.register)(proj4_2.default);
+                            }
+                            // Update the map state with the runtime map
+                            dispatch({
+                                type: actions_1.ActionType.MAP_REFRESH,
+                                payload: { mapName, map }
+                            });
+                        }
+                    }
+                    catch (e) {
+                        (0, logger_1.warn)(`Failed to lazily initialize runtime map (${mapName}): ${(_f = e === null || e === void 0 ? void 0 : e.message) !== null && _f !== void 0 ? _f : e}. Proceeding with map switch; the map may not render correctly.`);
+                    }
+                }
+                else {
+                    (0, logger_1.warn)(`Cannot lazily create runtime map (${mapName}): no active session found. Proceeding with map switch; the map may not render correctly.`);
+                }
+            }
+        }
+        dispatch(setActiveMap(mapName));
+    });
 }
 /**
  * Sets whether feature tooltips (aka. Map Tips) are enabled
@@ -7993,6 +8137,32 @@ class LayerSetGroupBase {
         }
         return layer;
     }
+    /**
+     * Removes a layer from _customLayers tracking without removing it from the OL map.
+     * Used when transferring a custom layer to another layer set group in swipe mode.
+     * @param name The name of the layer to remove from tracking
+     * @returns The removed OL layer, or undefined if not found
+     * @since 0.15
+     */
+    transferLayerOut(name) {
+        if (this._customLayers[name]) {
+            const layer = this._customLayers[name].layer;
+            delete this._customLayers[name];
+            return layer;
+        }
+        return undefined;
+    }
+    /**
+     * Adds a layer to _customLayers tracking without adding it to the OL map.
+     * Used when receiving a custom layer transferred from another layer set group in swipe mode.
+     * @param name The name (identifier) of the layer
+     * @param layer The OpenLayers layer instance to track
+     * @param order The layer's position index in the map's layer collection
+     * @since 0.15
+     */
+    transferLayerIn(name, layer, order) {
+        this._customLayers[name] = { layer, order };
+    }
     apply(map, layers) {
         var _a;
         const layersByName = layers.reduce((current, layer) => {
@@ -8035,13 +8205,18 @@ class LayerSetGroupBase {
         //Last item, bottom-most
         const cCurrentLayers = map.getLayers();
         const aCurrentLayers = cCurrentLayers.getArray();
+        // Only consider external layers that belong to THIS layer set group's _customLayers.
+        // When map swipe is active, the secondary map's layers are also on the OL map
+        // (with IS_EXTERNAL = true), but they belong to a different layer set group and may
+        // share layer names with primary layers. Using object identity (layer === tracked layer)
+        // prevents false matches when primary and secondary have layers with the same name.
         const currentLayers = aCurrentLayers.map(l => ({
             name: l.get(common_1.LayerProperty.LAYER_NAME),
             type: l.get(common_1.LayerProperty.LAYER_TYPE),
             isExternal: l.get(common_1.LayerProperty.IS_EXTERNAL),
             isGroup: l.get(common_1.LayerProperty.IS_GROUP),
             layer: l
-        })).filter(l => l.isExternal == true);
+        })).filter(l => { var _a; return l.isExternal == true && ((_a = this._customLayers[l.name]) === null || _a === void 0 ? void 0 : _a.layer) === l.layer; });
         //console.assert(currentLayers.length == layers.length);
         //console.table(currentLayers);
         //console.table(layers);
@@ -13709,6 +13884,7 @@ const AddFileLayer = (props) => {
         setParsedFile(undefined);
     };
     const onAddFileLayer = React.useCallback((layerProjection) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         if (viewer.isReady() && (parsedFeaturesRef === null || parsedFeaturesRef === void 0 ? void 0 : parsedFeaturesRef.current)) {
             setIsAddingLayer(true);
             setAddLayerError(undefined);
@@ -13717,8 +13893,10 @@ const AddFileLayer = (props) => {
                 if (!(0, string_1.strIsNullOrEmpty)(addLayerName)) {
                     parsedFeaturesRef.current.name = addLayerName;
                 }
-                const layerMgr = viewer.getLayerManager();
-                if (layerMgr.hasLayer(parsedFeaturesRef.current.name)) {
+                // Use the target layer manager if provided (e.g. for the secondary map in swipe mode),
+                // otherwise fall back to the viewer's active layer manager.
+                const targetLayerMgr = (_a = props.targetLayerManager) !== null && _a !== void 0 ? _a : viewer.getLayerManager();
+                if (targetLayerMgr.hasLayer(parsedFeaturesRef.current.name)) {
                     throw new Error((0, i18n_1.tr)("LAYER_NAME_EXISTS", locale, { name: parsedFeaturesRef.current.name }));
                 }
                 let extraOpts;
@@ -13747,7 +13925,7 @@ const AddFileLayer = (props) => {
                 if (enableLabels) {
                     labelProp = labelOnProperty;
                 }
-                const layer = yield layerMgr.addLayerFromParsedFeatures({
+                const layer = yield targetLayerMgr.addLayerFromParsedFeatures({
                     features: parsedFeaturesRef.current,
                     projection: layerProj,
                     extraOptions: extraOpts,
@@ -13769,7 +13947,7 @@ const AddFileLayer = (props) => {
             }
             setIsAddingLayer(false);
         }
-    }), [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction]);
+    }), [clusterDistance, createLayerAs, themeOnProperty, themeToUse, enableLabels, labelOnProperty, clusterClickAction, props.onLayerAdded, props.targetLayerManager, addLayerName, locale]);
     if (loadedFile) {
         let canAdd = true;
         if (createLayerAs == CreateVectorLayerAs.Themed) {
@@ -13850,7 +14028,8 @@ const AddUrlLayer = (props) => {
                     locale: locale,
                     onLayerAdded: props.onLayerAdded,
                     onAddLayerBusyWorker: props.onAddLayerBusyWorker,
-                    onRemoveLayerBusyWorker: props.onRemoveLayerBusyWorker
+                    onRemoveLayerBusyWorker: props.onRemoveLayerBusyWorker,
+                    targetLayerManager: props.targetLayerManager
                 };
                 return ADD_URL_LAYER_TYPES[selectedUrlType].content(cprops);
             }
@@ -13927,6 +14106,7 @@ const AddWfsLayer = (props) => {
     const onAddLayer = (name, version, format, origCrs, epsgCode, wfsWgs84Bounds) => {
         if (caps && viewer.isReady()) {
             (0, projections_1.ensureProjection)(epsgCode, locale, origCrs).then(([, resolvedProj]) => {
+                var _a;
                 const sourceProj = viewer.getProjection();
                 //TODO: For correctness, we should be using the URL from the ows:Get element of the
                 //GetFeature operations metadata instead of just re-computing the WFS GetFeature URL
@@ -13971,7 +14151,7 @@ const AddWfsLayer = (props) => {
                     layer.set(common_1.LayerProperty.WGS84_BBOX, wfsWgs84Bounds);
                 }
                 (0, ol_style_helpers_1.setOLVectorLayerStyle)(layer, ol_style_contracts_1.DEFAULT_VECTOR_LAYER_STYLE, undefined);
-                viewer.getLayerManager().addLayer(name, layer);
+                ((_a = props.targetLayerManager) !== null && _a !== void 0 ? _a : viewer.getLayerManager()).addLayer(name, layer);
                 viewer.toastSuccess("success", (0, i18n_1.tr)("ADDED_LAYER", locale, { name: name }));
                 const li = (0, layer_manager_1.getLayerInfo)(layer, true);
                 (0, add_manage_layers_1.zoomToLayerExtents)(li.name, viewer);
@@ -14072,7 +14252,7 @@ const AddWmsLayer = (props) => {
     const [error, setError] = React.useState(undefined);
     const viewer = (0, context_1.useMapProviderContext)();
     const onAddLayer = (name, selectable, isTiled, style) => {
-        var _a, _b;
+        var _a, _b, _c;
         if (caps && viewer.isReady()) {
             const params = {
                 LAYERS: name
@@ -14133,7 +14313,7 @@ const AddWmsLayer = (props) => {
                 source.on("imageloadend", finished);
                 source.on("imageloaderror", finished);
             }
-            viewer.getLayerManager().addLayer(name, layer);
+            ((_c = props.targetLayerManager) !== null && _c !== void 0 ? _c : viewer.getLayerManager()).addLayer(name, layer);
             viewer.toastSuccess("success", (0, i18n_1.tr)("ADDED_LAYER", locale, { name: name }));
             props.onLayerAdded((0, layer_manager_1.getLayerInfo)(layer, true));
         }
@@ -15172,6 +15352,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Legend = exports.GroupNode = exports.LayerNode = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_dom_1 = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 const context_1 = __webpack_require__(/*! ./context */ "./src/components/context.tsx");
 const base_layer_switcher_1 = __webpack_require__(/*! ./base-layer-switcher */ "./src/components/base-layer-switcher.tsx");
 const type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/utils/type-guards.ts");
@@ -15647,13 +15828,15 @@ const FILTER_BUTTON_STYLE = { position: "absolute", right: 0, top: 0 };
  */
 const Legend = (props) => {
     var _a, _b;
-    const { Button, Card, InputGroup, Heading } = (0, element_context_1.useElementContext)();
+    const { Button, Card, InputGroup, Heading, MenuComponent } = (0, element_context_1.useElementContext)();
     const { showGroups, hideGroups, showLayers, hideLayers, currentScale, externalBaseLayers, onBaseLayerChanged, maxHeight, map } = props;
     const [state, setState] = React.useState(setupTree(map));
     const { tree: _tree } = state;
     const [isFiltering, setIsFiltering] = React.useState(false);
     const [filterText, setFilterText] = React.useState("");
     const [filteredTree, setFilteredTree] = React.useState(undefined);
+    const [showInvisibleLayers, setShowInvisibleLayers] = React.useState(false);
+    const [contextMenu, setContextMenu] = React.useState(undefined);
     React.useEffect(() => {
         onExitFilterMode();
         const tree = setupTree(map);
@@ -15743,6 +15926,66 @@ const Legend = (props) => {
         var _a;
         return (_a = _tree.groupChildren[objectId]) !== null && _a !== void 0 ? _a : [];
     }, [_tree]);
+    const onExpandAll = React.useCallback(() => {
+        var _a, _b;
+        if (map === null || map === void 0 ? void 0 : map.Layer) {
+            for (const layer of map.Layer) {
+                (_a = props.onGroupExpansionChanged) === null || _a === void 0 ? void 0 : _a.call(props, layer.ObjectId, true);
+            }
+        }
+        if (map === null || map === void 0 ? void 0 : map.Group) {
+            for (const group of map.Group) {
+                (_b = props.onGroupExpansionChanged) === null || _b === void 0 ? void 0 : _b.call(props, group.ObjectId, true);
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onGroupExpansionChanged]);
+    const onCollapseAll = React.useCallback(() => {
+        var _a, _b;
+        if (map === null || map === void 0 ? void 0 : map.Layer) {
+            for (const layer of map.Layer) {
+                (_a = props.onGroupExpansionChanged) === null || _a === void 0 ? void 0 : _a.call(props, layer.ObjectId, false);
+            }
+        }
+        if (map === null || map === void 0 ? void 0 : map.Group) {
+            for (const group of map.Group) {
+                (_b = props.onGroupExpansionChanged) === null || _b === void 0 ? void 0 : _b.call(props, group.ObjectId, false);
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onGroupExpansionChanged]);
+    const onSetAllSelectable = React.useCallback((selectable) => {
+        var _a;
+        if (map === null || map === void 0 ? void 0 : map.Layer) {
+            for (const layer of map.Layer) {
+                if (layer.Selectable) {
+                    (_a = props.onLayerSelectabilityChanged) === null || _a === void 0 ? void 0 : _a.call(props, layer.ObjectId, selectable);
+                }
+            }
+        }
+        setContextMenu(undefined);
+    }, [map, props.onLayerSelectabilityChanged]);
+    const onContextMenuHandler = React.useCallback((e) => {
+        e.preventDefault();
+        setContextMenu({ x: e.clientX, y: e.clientY });
+    }, []);
+    const onCloseContextMenu = React.useCallback(() => {
+        setContextMenu(undefined);
+    }, []);
+    // Close context menu on any mousedown outside of it
+    React.useEffect(() => {
+        if (!contextMenu)
+            return;
+        const handler = () => setContextMenu(undefined);
+        // Defer listener so the current right-click doesn't immediately close the menu
+        const timerId = setTimeout(() => {
+            document.addEventListener("mousedown", handler);
+        }, 0);
+        return () => {
+            clearTimeout(timerId);
+            document.removeEventListener("mousedown", handler);
+        };
+    }, [contextMenu]);
     const rootStyle = {
         position: "relative"
     };
@@ -15776,8 +16019,52 @@ const Legend = (props) => {
     };
     const daTree = providerImpl.getTree();
     const rootItems = daTree.root;
+    const contextMenuItems = React.useMemo(() => {
+        const items = [];
+        if (props.onRefresh) {
+            items.push({
+                label: (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_REFRESH", props.locale),
+                invoke: () => {
+                    var _a;
+                    (_a = props.onRefresh) === null || _a === void 0 ? void 0 : _a.call(props);
+                    setContextMenu(undefined);
+                }
+            });
+            items.push({ isSeparator: true });
+        }
+        items.push({
+            label: (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_EXPAND_ALL", props.locale),
+            invoke: onExpandAll
+        });
+        items.push({
+            label: (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_COLLAPSE_ALL", props.locale),
+            invoke: onCollapseAll
+        });
+        items.push({ isSeparator: true });
+        items.push({
+            label: (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_ALL_SELECTABLE", props.locale),
+            invoke: () => onSetAllSelectable(true)
+        });
+        items.push({
+            label: (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_ALL_UNSELECTABLE", props.locale),
+            invoke: () => onSetAllSelectable(false)
+        });
+        items.push({ isSeparator: true });
+        items.push({
+            label: showInvisibleLayers
+                ? (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_HIDE_INVISIBLE_LAYERS", props.locale)
+                : (0, i18n_1.tr)("LEGEND_CONTEXT_MENU_SHOW_INVISIBLE_LAYERS", props.locale),
+            invoke: () => {
+                setShowInvisibleLayers(v => !v);
+                setContextMenu(undefined);
+            }
+        });
+        return items;
+    }, [props.onRefresh, props.locale, onExpandAll, onCollapseAll, onSetAllSelectable, showInvisibleLayers]);
     return React.createElement(context_1.LegendContext.Provider, { value: providerImpl },
-        React.createElement("div", { style: rootStyle },
+        React.createElement("div", { style: rootStyle, onContextMenu: onContextMenuHandler },
+            contextMenu && document.body && (0, react_dom_1.createPortal)(React.createElement("div", { className: "mg-legend-context-menu", style: { position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 9999 }, onMouseDown: e => e.stopPropagation() },
+                React.createElement(MenuComponent, { items: contextMenuItems, onInvoked: onCloseContextMenu })), document.body),
             (() => {
                 if (externalBaseLayers != null &&
                     externalBaseLayers.length > 0 &&
@@ -15800,7 +16087,7 @@ const Legend = (props) => {
                 rootItems.map(item => {
                     if (item.DisplayInLegend === true) {
                         if ((0, type_guards_1.isLayer)(item)) {
-                            if (isLayerVisibleAtScale(item, currentScale, props.stateless)) {
+                            if (showInvisibleLayers || isLayerVisibleAtScale(item, currentScale, props.stateless)) {
                                 //console.debug(`isLayerVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 return React.createElement(exports.LayerNode, { key: item.ObjectId, layer: item });
                             }
@@ -15815,7 +16102,7 @@ const Legend = (props) => {
                                     bGroupVisFilter = true;
                                 }
                             }
-                            if (bGroupVisAtScale || bGroupVisFilter) {
+                            if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) {
                                 //console.debug(`isGroupVisibleAtScale(${item.Name}, ${currentScale}) = true`);
                                 const children = daTree.groupChildren[item.ObjectId] || [];
                                 return React.createElement(exports.GroupNode, { key: item.ObjectId, group: item, childItems: children });
@@ -16104,6 +16391,8 @@ class BaseMapProviderContext {
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
         this._swipePosition = 50;
+        /** The secondary map name when swipe is active; used to route click events to the correct map. */
+        this._swipeSecondaryMapName = undefined;
         this.onBeginDigitization = (callback) => {
             var _a;
             (_a = this._comp) === null || _a === void 0 ? void 0 : _a.onDispatch((0, map_1.setActiveTool)(common_1.ActiveMapTool.None));
@@ -16366,6 +16655,7 @@ class BaseMapProviderContext {
         // First deactivate any existing swipe
         this.deactivateMapSwipe();
         this._swipePosition = position;
+        this._swipeSecondaryMapName = secondaryMapName;
         // === Primary map layers: clip to LEFT side ===
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
         if (primaryLayerSet) {
@@ -16397,11 +16687,12 @@ class BaseMapProviderContext {
             this.deactivateMapSwipe();
             return false;
         }
-        const currentMapLayers = this._map.getLayers().getArray();
         for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
-            if (!currentMapLayers.includes(topLayer)) {
-                this._map.addLayer(topLayer);
-            }
+            // Always remove and re-add to ensure correct z-ordering (base layers are added
+            // first, custom layers last so they appear on top). removeLayer is a no-op if the
+            // layer is not yet on the map.
+            this._map.removeLayer(topLayer);
+            this._map.addLayer(topLayer);
             this._swipeSecondaryTopLayers.push(topLayer);
             for (const leaf of this.getLeafLayersForClip(topLayer)) {
                 this.attachClipHandler(leaf, (event, ctx, size) => {
@@ -16429,6 +16720,22 @@ class BaseMapProviderContext {
         return mapWidth * (this._swipePosition / 100);
     }
     /**
+     * Returns the effective map name for handling a mouse event at the given pixel X
+     * coordinate. When swipe mode is active and the pixel is to the right of the swipe
+     * divider, returns the secondary map name; otherwise returns the active map name.
+     *
+     * @since 0.15
+     */
+    getEffectiveMapNameAtPixel(pixelX) {
+        if (this._swipeSecondaryMapName && this._map) {
+            const mapSize = this._map.getSize();
+            if (mapSize && pixelX > this.getSwipeWidth(mapSize[0])) {
+                return this._swipeSecondaryMapName;
+            }
+        }
+        return this._state.mapName;
+    }
+    /**
      * @since 0.15
      */
     deactivateMapSwipe() {
@@ -16453,6 +16760,7 @@ class BaseMapProviderContext {
         this._swipeSecondaryTopLayers = [];
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
+        this._swipeSecondaryMapName = undefined;
         this._map.render();
     }
     /**
@@ -16462,6 +16770,36 @@ class BaseMapProviderContext {
         var _a;
         this._swipePosition = position;
         (_a = this._map) === null || _a === void 0 ? void 0 : _a.render();
+    }
+    /**
+     * @since 0.15
+     */
+    refreshSwipeClips() {
+        if (this._swipeSecondaryMapName) {
+            this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+        }
+    }
+    /**
+     * @since 0.15
+     */
+    transferLayerToSwipeSecondary(layerName) {
+        if (!this._map || !this._swipeSecondaryMapName)
+            return;
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        const secondaryLayerSet = this.getLayerSetGroup(this._swipeSecondaryMapName);
+        if (!primaryLayerSet || !secondaryLayerSet)
+            return;
+        // Peek at the OL layer to capture its current index before removing from tracking
+        const olLayer = primaryLayerSet.getLayer(layerName);
+        if (!olLayer)
+            return;
+        const order = this._map.getLayers().getArray().indexOf(olLayer);
+        // Remove from primary's layer set group (tracking only; layer stays on OL map)
+        primaryLayerSet.transferLayerOut(layerName);
+        // Register in secondary's layer set group with the captured OL layer index
+        secondaryLayerSet.transferLayerIn(layerName, olLayer, order >= 0 ? order : this._map.getLayers().getLength());
+        // Re-activate to set up the correct (right-side) clip for this layer
+        this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
     }
     //#region IMapViewer
     /**
@@ -16879,11 +17217,12 @@ class BaseMapProviderContext {
      *
      */
     onImageError(e) { }
-    addClientSelectedFeature(f, l) {
+    addClientSelectedFeature(f, l, mapNameOverride) {
         var _a;
         if (this._select)
             this._select.getFeatures().push(f);
-        if (this._state.mapName) {
+        const effectiveMapName = mapNameOverride !== null && mapNameOverride !== void 0 ? mapNameOverride : this._state.mapName;
+        if (effectiveMapName) {
             const features = f.get("features");
             let theFeature;
             //Are we clustered?
@@ -16905,14 +17244,15 @@ class BaseMapProviderContext {
                 bounds: (_a = theFeature.getGeometry()) === null || _a === void 0 ? void 0 : _a.getExtent(),
                 properties: p
             };
-            this.dispatch((0, map_1.addClientSelectedFeature)(this._state.mapName, l.get(common_1.LayerProperty.LAYER_NAME), feat));
+            this.dispatch((0, map_1.addClientSelectedFeature)(effectiveMapName, l.get(common_1.LayerProperty.LAYER_NAME), feat));
         }
     }
-    clearClientSelectedFeatures() {
+    clearClientSelectedFeatures(mapNameOverride) {
         if (this._select)
             this._select.getFeatures().clear();
-        if (this._state.mapName) {
-            this.dispatch((0, map_1.clearClientSelection)(this._state.mapName));
+        const effectiveMapName = mapNameOverride !== null && mapNameOverride !== void 0 ? mapNameOverride : this._state.mapName;
+        if (effectiveMapName) {
+            this.dispatch((0, map_1.clearClientSelection)(effectiveMapName));
         }
     }
     onMapClick(e) {
@@ -16930,6 +17270,9 @@ class BaseMapProviderContext {
         if (this.isDigitizing()) {
             return;
         }
+        // When swipe is active, determine which map owns the click position.
+        // Clicks to the right of the swipe divider belong to the secondary map.
+        const effectiveMapName = this.getEffectiveMapNameAtPixel(e.pixel[0]);
         //TODO: Our selected feature tooltip only shows properties of a single feature
         //and displays upon said feature being selected. As a result, although we can
         //(and should) allow for multiple features to be selected, we need to figure
@@ -16938,7 +17281,7 @@ class BaseMapProviderContext {
         const featureToLayerMap = [];
         if ((this._state.activeTool == common_1.ActiveMapTool.Select) && this._select) {
             if (!bAppendMode) {
-                this.clearClientSelectedFeatures();
+                this.clearClientSelectedFeatures(effectiveMapName);
             }
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
@@ -16965,7 +17308,7 @@ class BaseMapProviderContext {
                     this.zoomToExtent(inflatedBounds);
                 }
                 else {
-                    this.addClientSelectedFeature(f, l);
+                    this.addClientSelectedFeature(f, l, effectiveMapName);
                 }
             }
         }
@@ -16975,7 +17318,7 @@ class BaseMapProviderContext {
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == common_1.ActiveMapTool.Select) {
-                this.queryWmsFeatures(this._state.mapName, e.coordinate, bAppendMode).then(madeSelection => {
+                this.queryWmsFeatures(effectiveMapName, e.coordinate, bAppendMode).then(madeSelection => {
                     if (!madeSelection) {
                         this.onProviderMapClick(px);
                     }
@@ -16991,10 +17334,8 @@ class BaseMapProviderContext {
         else {
             if (this._select) {
                 if (!bAppendMode) {
-                    if (this._state.mapName) {
-                        const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-                        activeLayerSet === null || activeLayerSet === void 0 ? void 0 : activeLayerSet.clearWmsSelectionOverlay();
-                    }
+                    const activeLayerSet = this.getLayerSetGroup(effectiveMapName);
+                    activeLayerSet === null || activeLayerSet === void 0 ? void 0 : activeLayerSet.clearWmsSelectionOverlay();
                 }
                 this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
             }
@@ -17379,7 +17720,17 @@ class BaseMapProviderContext {
     getLayerManager(mapName) {
         (0, assert_1.assertIsDefined)(this._map);
         (0, assert_1.assertIsDefined)(this._state.mapName);
-        const layerSet = this.ensureAndGetLayerSetGroup(this._state); // this.getLayerSet(mapName ?? this._state.mapName, true, this._comp as any);
+        // If a specific (non-active) map name is provided and it has an initialised layer set,
+        // return a layer manager backed by that layer set. This is used in swipe mode so that
+        // layers can be added directly to the secondary map without going through the primary
+        // layer manager and causing a "layer name already exists" collision.
+        if (mapName && mapName !== this._state.mapName) {
+            const namedLayerSet = this.getLayerSetGroup(mapName);
+            if (namedLayerSet) {
+                return this.getLayerManagerForLayerSet(namedLayerSet);
+            }
+        }
+        const layerSet = this.ensureAndGetLayerSetGroup(this._state);
         return this.getLayerManagerForLayerSet(layerSet);
     }
     screenToMapUnits(x, y) {
@@ -19277,7 +19628,7 @@ exports.SelectionPanel = React.memo((props) => {
             }
             else if (!((selection === null || selection === void 0 ? void 0 : selection.getLayerCount()) > 0)) {
                 return React.createElement(Callout, { variant: "primary", icon: "info-sign" },
-                    React.createElement("p", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
+                    React.createElement("span", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
             }
         })()));
 });
@@ -21776,6 +22127,7 @@ const proj_1 = __webpack_require__(/*! ol/proj */ "./node_modules/ol/proj.js");
 const map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
+const map_viewer_swipe_1 = __webpack_require__(/*! ../components/map-viewer-swipe */ "./src/components/map-viewer-swipe.tsx");
 function zoomToLayerExtents(layerName, viewer) {
     var _a;
     const layer = viewer.getLayerManager().getLayer(layerName);
@@ -21811,17 +22163,62 @@ function zoomToLayerExtents(layerName, viewer) {
     }
 }
 const AddManageLayersContainer = () => {
+    var _a, _b, _c;
     const { TabSet, Icon } = (0, element_context_1.useElementContext)();
     const dispatch = (0, context_1.useReduxDispatch)();
     const locale = (0, hooks_1.useViewerLocale)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
-    const layers = (0, hooks_1.useActiveMapLayers)();
-    const view = (0, hooks_1.useActiveMapView)();
     const viewer = (0, context_1.useMapProviderContext)();
+    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
+    const isSwipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
+    // When swipe is active, the user can select which map's layers to manage/add to.
+    // Default to the primary (active) map; reset to active map when swipe ends.
+    const [selectedMapForLayers, setSelectedMapForLayers] = React.useState(activeMapName);
+    React.useEffect(() => {
+        if (!isSwipeActive) {
+            setSelectedMapForLayers(activeMapName);
+        }
+    }, [isSwipeActive, activeMapName]);
+    // The map targeted for both Add Layer and Manage Layers operations.
+    // When swipe is active, this follows the dropdown selection.
+    const targetMapName = isSwipeActive ? (selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) : activeMapName;
+    // The layer manager for the target map. When swipe is active and the secondary map is
+    // selected, use the secondary map's layer manager so that layers are added directly to
+    // the secondary's layer set (avoiding the "layer name already exists" collision that would
+    // occur if a layer with the same name was already added to the primary side).
+    const targetLayerManager = React.useMemo(() => {
+        if (isSwipeActive && targetMapName && targetMapName !== activeMapName) {
+            return viewer.getLayerManager(targetMapName);
+        }
+        return undefined; // undefined means AddLayer will fall back to the active map's layer manager
+    }, [isSwipeActive, targetMapName, activeMapName, viewer]);
+    // Primary map layers — used as the ready-gate. Until these are defined the map hasn't
+    // finished initialising and we should not render the UI at all.
+    const primaryLayers = (0, context_1.useAppState)(state => {
+        if (activeMapName && state.mapState[activeMapName]) {
+            return state.mapState[activeMapName].layers;
+        }
+        return undefined;
+    });
+    // Layers for the "Manage Layers" tab (selected map). Falls back to an empty array so the
+    // tab renders even when the secondary map hasn't been visited yet.
+    const manageLayers = (0, context_1.useAppState)(state => {
+        var _a;
+        if (targetMapName && ((_a = state.mapState[targetMapName]) === null || _a === void 0 ? void 0 : _a.layers)) {
+            return state.mapState[targetMapName].layers;
+        }
+        return [];
+    });
+    const view = (0, context_1.useAppState)(state => {
+        if (targetMapName && state.mapState[targetMapName]) {
+            return state.mapState[targetMapName].currentView;
+        }
+        return undefined;
+    });
     const getLayerIndex = (layerName) => {
-        if (layers) {
-            for (let i = 0; i < layers.length; i++) {
-                if (layers[i].name == layerName) {
+        if (manageLayers) {
+            for (let i = 0; i < manageLayers.length; i++) {
+                if (manageLayers[i].name === layerName) {
                     return i;
                 }
             }
@@ -21829,35 +22226,40 @@ const AddManageLayersContainer = () => {
         return -1;
     };
     const onLayerAdded = (layer) => {
-        if (activeMapName) {
-            dispatch((0, map_1.mapLayerAdded)(activeMapName, layer));
+        if (targetMapName) {
+            dispatch((0, map_1.mapLayerAdded)(targetMapName, layer));
+        }
+        // After adding a layer while swipe is active, refresh the swipe clips so the new layer
+        // is correctly clipped to its target side (primary = left, secondary = right).
+        if (isSwipeActive) {
+            viewer.refreshSwipeClips();
         }
     };
     const onAddLayerBusyWorker = (name) => {
-        if (activeMapName) {
-            dispatch((0, map_1.addMapLayerBusyWorker)(activeMapName, name));
+        if (targetMapName) {
+            dispatch((0, map_1.addMapLayerBusyWorker)(targetMapName, name));
         }
     };
     const onRemoveLayerBusyWorker = (name) => {
-        if (activeMapName) {
-            dispatch((0, map_1.removeMapLayerBusyWorker)(activeMapName, name));
+        if (targetMapName) {
+            dispatch((0, map_1.removeMapLayerBusyWorker)(targetMapName, name));
         }
     };
     const removeHandler = (layerName) => {
-        if (activeMapName) {
-            dispatch((0, map_1.removeMapLayer)(activeMapName, layerName));
+        if (targetMapName) {
+            dispatch((0, map_1.removeMapLayer)(targetMapName, layerName));
         }
     };
     const upHandler = (layerName) => {
         const newIndex = getLayerIndex(layerName);
-        if (activeMapName && newIndex >= 0) {
-            dispatch((0, map_1.setMapLayerIndex)(activeMapName, layerName, newIndex - 1));
+        if (targetMapName && newIndex >= 0) {
+            dispatch((0, map_1.setMapLayerIndex)(targetMapName, layerName, newIndex - 1));
         }
     };
     const downHandler = (layerName) => {
         const newIndex = getLayerIndex(layerName);
-        if (layers && activeMapName && newIndex < layers.length - 1) {
-            dispatch((0, map_1.setMapLayerIndex)(activeMapName, layerName, newIndex + 1));
+        if (manageLayers && targetMapName && newIndex < manageLayers.length - 1) {
+            dispatch((0, map_1.setMapLayerIndex)(targetMapName, layerName, newIndex + 1));
         }
     };
     const zoomToBounds = (layerName) => {
@@ -21866,31 +22268,47 @@ const AddManageLayersContainer = () => {
         }
     };
     const setVisibility = (layerName, visible) => {
-        if (activeMapName) {
-            dispatch((0, map_1.setMapLayerVisibility)(activeMapName, layerName, visible));
+        if (targetMapName) {
+            dispatch((0, map_1.setMapLayerVisibility)(targetMapName, layerName, visible));
         }
     };
     const setOpacity = (layerName, value) => {
-        if (activeMapName) {
-            dispatch((0, map_1.setMapLayerOpacity)(activeMapName, layerName, value));
+        if (targetMapName) {
+            dispatch((0, map_1.setMapLayerOpacity)(targetMapName, layerName, value));
         }
     };
     const setHeatmapBlur = (layerName, value) => {
-        if (activeMapName) {
-            dispatch((0, map_1.setHeatmapLayerBlur)(activeMapName, layerName, value));
+        if (targetMapName) {
+            dispatch((0, map_1.setHeatmapLayerBlur)(targetMapName, layerName, value));
         }
     };
     const setHeatmapRadius = (layerName, value) => {
-        if (activeMapName) {
-            dispatch((0, map_1.setHeatmapLayerRadius)(activeMapName, layerName, value));
+        if (targetMapName) {
+            dispatch((0, map_1.setHeatmapLayerRadius)(targetMapName, layerName, value));
         }
     };
     const updateVectorStyle = (layerName, value, which) => {
-        if (activeMapName) {
-            dispatch((0, map_1.setMapLayerVectorStyle)(activeMapName, layerName, value, which));
+        if (targetMapName) {
+            dispatch((0, map_1.setMapLayerVectorStyle)(targetMapName, layerName, value, which));
         }
     };
-    if (layers) {
+    // When swipe is active, render a map selector dropdown ABOVE both tabs so the user always
+    // knows which map they are targeting for both adding and managing layers.
+    const selectorContainerStyle = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
+    const selectorLabelStyle = { whiteSpace: "nowrap" };
+    const selectorSelectStyle = { flex: 1 };
+    const swipeMapSelector = isSwipeActive && swipeInfo ? (React.createElement("div", { style: selectorContainerStyle },
+        React.createElement("label", { style: selectorLabelStyle }, (0, i18n_1.tr)("MAP_SWIPE_LAYER_MANAGER_FOR", locale)),
+        React.createElement("select", { value: (_a = selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) !== null && _a !== void 0 ? _a : "", onChange: e => setSelectedMapForLayers(e.target.value), style: selectorSelectStyle },
+            React.createElement("option", { value: swipeInfo.pair.primaryMapName }, (_b = swipeInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
+                " (",
+                swipeInfo.pair.primaryMapName,
+                ")"),
+            React.createElement("option", { value: swipeInfo.pair.secondaryMapName }, (_c = swipeInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
+                " (",
+                swipeInfo.pair.secondaryMapName,
+                ")")))) : null;
+    if (primaryLayers) {
         const tabProps = {
             id: "tabs",
             tabs: [
@@ -21900,7 +22318,7 @@ const AddManageLayersContainer = () => {
                         React.createElement(Icon, { icon: "new-layer" }),
                         " ",
                         (0, i18n_1.tr)("ADD_LAYER", locale)),
-                    content: React.createElement(add_layer_1.AddLayer, { onLayerAdded: onLayerAdded, onAddLayerBusyWorker: onAddLayerBusyWorker, onRemoveLayerBusyWorker: onRemoveLayerBusyWorker, locale: locale })
+                    content: React.createElement(add_layer_1.AddLayer, { onLayerAdded: onLayerAdded, onAddLayerBusyWorker: onAddLayerBusyWorker, onRemoveLayerBusyWorker: onRemoveLayerBusyWorker, targetLayerManager: targetLayerManager, locale: locale })
                 },
                 {
                     id: "manage_layers",
@@ -21908,11 +22326,12 @@ const AddManageLayersContainer = () => {
                         React.createElement(Icon, { icon: "layers" }),
                         " ",
                         (0, i18n_1.tr)("MANAGE_LAYERS", locale)),
-                    content: React.createElement(manage_layers_1.ManageLayers, { layers: layers, locale: locale, currentResolution: view === null || view === void 0 ? void 0 : view.resolution, onSetOpacity: setOpacity, onSetHeatmapBlur: setHeatmapBlur, onSetHeatmapRadius: setHeatmapRadius, onSetVisibility: setVisibility, onZoomToBounds: zoomToBounds, onMoveLayerDown: downHandler, onMoveLayerUp: upHandler, onRemoveLayer: removeHandler, onVectorStyleChanged: updateVectorStyle })
+                    content: React.createElement(manage_layers_1.ManageLayers, { layers: manageLayers, locale: locale, currentResolution: view === null || view === void 0 ? void 0 : view.resolution, onSetOpacity: setOpacity, onSetHeatmapBlur: setHeatmapBlur, onSetHeatmapRadius: setHeatmapRadius, onSetVisibility: setVisibility, onZoomToBounds: zoomToBounds, onMoveLayerDown: downHandler, onMoveLayerUp: upHandler, onRemoveLayer: removeHandler, onVectorStyleChanged: updateVectorStyle })
                 }
             ]
         };
         return React.createElement("div", { style: { padding: 8 } },
+            swipeMapSelector,
             React.createElement(TabSet, Object.assign({}, tabProps)));
     }
     else {
@@ -22979,10 +23398,13 @@ const LegendContainer = (props) => {
             setBaseLayerAction(activeMapName, layerName);
         }
     }, [setBaseLayerAction, activeMapName]);
+    const onRefresh = React.useCallback(() => {
+        dispatch((0, legend_2.refresh)());
+    }, [dispatch]);
     if ((map || layers) && view) {
         let scale = view.scale;
         if (scale || layers) {
-            return React.createElement(legend_1.Legend, { map: map, activeMapName: activeMapName, stateless: stateless, maxHeight: maxHeight, currentScale: scale, externalLayers: layers, showLayers: showLayers, showGroups: showGroups, hideLayers: hideLayers, hideGroups: hideGroups, locale: locale, inlineBaseLayerSwitcher: !!inlineBaseLayerSwitcher, externalBaseLayers: externalBaseLayers, onBaseLayerChanged: onBaseLayerChanged, overrideSelectableLayers: selectableLayers, overrideExpandedItems: expandedGroups, onLayerSelectabilityChanged: onLayerSelectabilityChanged, onGroupExpansionChanged: onGroupExpansionChanged, onGroupVisibilityChanged: onGroupVisibilityChanged, onLayerVisibilityChanged: onLayerVisibilityChanged, provideExtraLayerIconsHtml: appContext.getLegendLayerExtraIconsProvider, provideExtraGroupIconsHtml: appContext.getLegendGroupExtraIconsProvider });
+            return React.createElement(legend_1.Legend, { map: map, activeMapName: activeMapName, stateless: stateless, maxHeight: maxHeight, currentScale: scale, externalLayers: layers, showLayers: showLayers, showGroups: showGroups, hideLayers: hideLayers, hideGroups: hideGroups, locale: locale, inlineBaseLayerSwitcher: !!inlineBaseLayerSwitcher, externalBaseLayers: externalBaseLayers, onBaseLayerChanged: onBaseLayerChanged, overrideSelectableLayers: selectableLayers, overrideExpandedItems: expandedGroups, onLayerSelectabilityChanged: onLayerSelectabilityChanged, onGroupExpansionChanged: onGroupExpansionChanged, onGroupVisibilityChanged: onGroupVisibilityChanged, onLayerVisibilityChanged: onLayerVisibilityChanged, onRefresh: onRefresh, provideExtraLayerIconsHtml: appContext.getLegendLayerExtraIconsProvider, provideExtraGroupIconsHtml: appContext.getLegendGroupExtraIconsProvider });
         }
         else {
             return React.createElement("div", null, (0, i18n_1.tr)("LOADING_MSG", locale));
@@ -23141,8 +23563,7 @@ const MapMenuContainer = () => {
     const locale = (0, hooks_1.useViewerLocale)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
     const availableMaps = (0, hooks_1.useAvailableMaps)();
-    const setActiveMapAction = (mapName) => dispatch((0, map_1.setActiveMap)(mapName));
-    const onActiveMapChanged = (mapName) => setActiveMapAction(mapName);
+    const onActiveMapChanged = (mapName) => dispatch((0, map_1.activateMap)(mapName));
     if (locale && activeMapName && availableMaps) {
         //TODO: Should use MapGroup id has label. For now, use map name for both
         const entries = availableMaps.map(m => {
@@ -24718,7 +25139,7 @@ const SelectionPanelContainer = (props) => {
     }
     else {
         return React.createElement(Callout, { variant: "primary", icon: "info-sign" },
-            React.createElement("p", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
+            React.createElement("span", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
     }
 };
 exports.SelectionPanelContainer = SelectionPanelContainer;
@@ -25329,6 +25750,7 @@ exports.ViewerOptions = ViewerOptions;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ViewerApiShim = exports.AjaxViewerMapActionCode = exports.AjaxViewerLineStringOrPolygon = void 0;
 exports.enableRedlineMessagePrompt = enableRedlineMessagePrompt;
+exports.resolveSetExtentsBounds = resolveSetExtentsBounds;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const extent_1 = __webpack_require__(/*! ol/extent */ "./node_modules/ol/extent.js");
@@ -25599,6 +26021,17 @@ function isRedlineMessagePromptEnabled() {
 function enableRedlineMessagePrompt(enabled) {
     mRedlineMessageEnabled = enabled;
 }
+function resolveSetExtentsBounds(bounds, miny, maxx, maxy) {
+    if (typeof bounds === "number") {
+        return [bounds, miny, maxx, maxy];
+    }
+    else if (Array.isArray(bounds)) {
+        return bounds;
+    }
+    else {
+        return [bounds.left, bounds.bottom, bounds.right, bounds.top];
+    }
+}
 /**
  * This class emulates APIs from various widgets
  */
@@ -25660,10 +26093,20 @@ class FusionWidgetApiShim {
         }
         return undefined;
     }
-    setExtents(bounds) {
+    setExtents(bounds, miny, maxx, maxy) {
         const { viewer } = this.parent.props;
         if (viewer.isReady()) {
-            viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+            let extent;
+            if (typeof bounds === "number") {
+                extent = resolveSetExtentsBounds(bounds, miny, maxx, maxy);
+            }
+            else if (Array.isArray(bounds)) {
+                extent = resolveSetExtentsBounds(bounds);
+            }
+            else {
+                extent = resolveSetExtentsBounds(bounds);
+            }
+            viewer.zoomToExtent(extent);
         }
     }
     setActiveLayer(layer) {
@@ -26874,7 +27317,7 @@ const AjaxViewerLayout = () => {
                                             if (hasLegend) {
                                                 return React.createElement("div", { className: "ajax-sidebar-panel", style: lgStyle },
                                                     React.createElement("div", { className: "ajax-sidebar-panel-heading" },
-                                                        React.createElement("p", null, (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale))),
+                                                        React.createElement("span", null, (0, i18n_1.tr)("TPL_TITLE_LEGEND", locale))),
                                                     React.createElement("div", { className: "ajax-sidebar-panel-body" },
                                                         React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.Legend, locale: locale, componentProps: DEFAULT_LEGEND_COMPONENT_PROPS })));
                                             }
@@ -26883,7 +27326,7 @@ const AjaxViewerLayout = () => {
                                             if (hasSelectionPanel) {
                                                 return React.createElement("div", { className: "ajax-sidebar-panel", style: selStyle },
                                                     React.createElement("div", { className: "ajax-sidebar-panel-heading" },
-                                                        React.createElement("p", null, (0, i18n_1.tr)("TPL_TITLE_SELECTION_PANEL", locale))),
+                                                        React.createElement("span", null, (0, i18n_1.tr)("TPL_TITLE_SELECTION_PANEL", locale))),
                                                     React.createElement("div", { className: "ajax-sidebar-panel-body" },
                                                         React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.SelectionPanel, locale: locale })));
                                             }
@@ -28580,13 +29023,22 @@ function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
                     (0, logger_1.warn)(`Invalid initial active map name: ${am}. Probably because we haven't properly implemented recovery of runtime maps on reload yet`);
                     am = mapNames[0];
                 }
+                // Collect any maps that have been deferred for lazy creation
+                const pendingMaps = {};
+                for (const mapName of mapNames) {
+                    const mi = maps[mapName];
+                    if (mi.mapDef) {
+                        pendingMaps[mapName] = { mapDef: mi.mapDef, metadata: mi.metadata };
+                    }
+                }
                 const state1 = {
                     appSettings: payload.appSettings,
                     locale: payload.locale || i18n_1.DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: am,
                     availableMaps: availableMaps,
-                    mapSwipePairs: payload.mapSwipePairs
+                    mapSwipePairs: payload.mapSwipePairs,
+                    pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
                 const newState = Object.assign(Object.assign({}, state), state1);
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
@@ -28642,6 +29094,19 @@ function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
                 else {
                     return newState;
                 }
+            }
+        case actions_1.ActionType.MAP_REFRESH:
+            {
+                // When a runtime map is loaded/refreshed, clear it from pendingMaps if present
+                if (state.pendingMaps) {
+                    const mapName = action.payload.mapName;
+                    if (state.pendingMaps[mapName]) {
+                        const updatedPendingMaps = Object.assign({}, state.pendingMaps);
+                        delete updatedPendingMaps[mapName];
+                        return Object.assign(Object.assign({}, state), { pendingMaps: Object.keys(updatedPendingMaps).length > 0 ? updatedPendingMaps : undefined });
+                    }
+                }
+                return state;
             }
         case actions_1.ActionType.MAP_ENABLE_SELECT_DRAGPAN:
             {
@@ -30306,6 +30771,13 @@ exports.STRINGS_EN = {
     "WINDOW_MOVING": "Moving Window",
     "OTHER_THEME_RULE_COUNT": "... ({count} other theme rules)",
     "LEGEND_FILTER_LAYERS": "Filter/search for layers or groups",
+    "LEGEND_CONTEXT_MENU_REFRESH": "Refresh",
+    "LEGEND_CONTEXT_MENU_EXPAND_ALL": "Expand All",
+    "LEGEND_CONTEXT_MENU_COLLAPSE_ALL": "Collapse All",
+    "LEGEND_CONTEXT_MENU_ALL_SELECTABLE": "All Selectable",
+    "LEGEND_CONTEXT_MENU_ALL_UNSELECTABLE": "All Unselectable",
+    "LEGEND_CONTEXT_MENU_SHOW_INVISIBLE_LAYERS": "Show invisible layers",
+    "LEGEND_CONTEXT_MENU_HIDE_INVISIBLE_LAYERS": "Hide invisible layers",
     "ADD_LAYER_KIND_PROMPT": "What kind of layer do you want to add?",
     "LAYER_KIND_FILE": "A local file-based layer",
     "LAYER_KIND_URL": "A remote url-based layer",
@@ -30410,6 +30882,7 @@ exports.STRINGS_EN = {
     "MAP_SWIPE_CLOSE": "Close Comparison",
     "MAP_SWIPE_PRIMARY_LABEL": "Primary",
     "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
+    "MAP_SWIPE_LAYER_MANAGER_FOR": "Layers for:",
 };
 
 

@@ -664,7 +664,10 @@ import {
     addClientSelectedFeature,
     clearClientSelection,
     externalLayersReady,
-    mapLayerAdded
+    mapLayerAdded,
+    setCurrentView,
+    setMapSwipeMode,
+    updateMapSwipePosition
 } from "../../src/actions/map";
 import { Client } from "../../src/api/client";
 import { ActionType } from "../../src/constants/actions";
@@ -904,6 +907,19 @@ describe("actions/map - action creators", () => {
         const action = mapLayerAdded("TestMap", layer, SIMPLE_VECTOR_STYLE);
         expect(action.payload.defaultStyle).toEqual(SIMPLE_VECTOR_STYLE);
     });
+    it("setMapSwipeMode creates correct action", () => {
+        const action = setMapSwipeMode(true);
+        expect(action.type).toBe(ActionType.MAP_SET_SWIPE_MODE);
+        expect(action.payload.active).toBe(true);
+
+        const action2 = setMapSwipeMode(false);
+        expect(action2.payload.active).toBe(false);
+    });
+    it("updateMapSwipePosition creates correct action", () => {
+        const action = updateMapSwipePosition(65);
+        expect(action.type).toBe(ActionType.MAP_UPDATE_SWIPE_POSITION);
+        expect(action.payload.position).toBe(65);
+    });
 });
 
 describe("actions/map - activateMap thunk", () => {
@@ -1104,5 +1120,103 @@ describe("actions/map - activateMap thunk (with session)", () => {
         expect(dispatched).toHaveLength(1);
         expect(dispatched[0].type).toBe(ActionType.MAP_SET_ACTIVE_MAP);
         expect(dispatched[0].payload).toBe("LazyMap");
+    });
+});
+
+describe("actions/map - setCurrentView thunk", () => {
+    it("dispatches MAP_SET_VIEW when no previous view exists", () => {
+        const initialState = createInitialState();
+        const map = createMap();
+        const mapState = {
+            [map.Name]: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                currentView: undefined,
+                mapguide: { ...MG_INITIAL_SUB_STATE, runtimeMap: map }
+            }
+        };
+        const state = {
+            ...initialState,
+            config: {
+                ...initialState.config,
+                activeMapName: map.Name
+            },
+            mapState
+        };
+        const dispatched: any[] = [];
+        const dispatch = (action: any) => { dispatched.push(action); return action; };
+        const getState = () => state as any;
+
+        const view = { x: -87.72, y: 43.74, scale: 70000 };
+        const thunk = setCurrentView(view);
+        thunk(dispatch as any, getState as any);
+
+        expect(dispatched).toHaveLength(1);
+        expect(dispatched[0].type).toBe(ActionType.MAP_SET_VIEW);
+        expect(dispatched[0].payload.view.x).toBe(view.x);
+        expect(dispatched[0].payload.view.y).toBe(view.y);
+        expect(dispatched[0].payload.view.scale).toBe(view.scale);
+    });
+
+    it("does not dispatch MAP_SET_VIEW when the view is the same as the current view", () => {
+        const initialState = createInitialState();
+        const map = createMap();
+        const currentView = { x: -87.72, y: 43.74, scale: 70000 };
+        const mapState = {
+            [map.Name]: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                currentView,
+                mapguide: { ...MG_INITIAL_SUB_STATE, runtimeMap: map }
+            }
+        };
+        const state = {
+            ...initialState,
+            config: {
+                ...initialState.config,
+                activeMapName: map.Name
+            },
+            mapState
+        };
+        const dispatched: any[] = [];
+        const dispatch = (action: any) => { dispatched.push(action); return action; };
+        const getState = () => state as any;
+
+        const thunk = setCurrentView({ ...currentView });
+        thunk(dispatch as any, getState as any);
+
+        expect(dispatched).toHaveLength(0);
+    });
+
+    it("dispatches MAP_SET_VIEW when the view differs from the current view", () => {
+        const initialState = createInitialState();
+        const map = createMap();
+        const currentView = { x: -87.72, y: 43.74, scale: 70000 };
+        const mapState = {
+            [map.Name]: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                currentView,
+                mapguide: { ...MG_INITIAL_SUB_STATE, runtimeMap: map }
+            }
+        };
+        const state = {
+            ...initialState,
+            config: {
+                ...initialState.config,
+                activeMapName: map.Name
+            },
+            mapState
+        };
+        const dispatched: any[] = [];
+        const dispatch = (action: any) => { dispatched.push(action); return action; };
+        const getState = () => state as any;
+
+        const newView = { x: -87.50, y: 43.50, scale: 50000 };
+        const thunk = setCurrentView(newView);
+        thunk(dispatch as any, getState as any);
+
+        expect(dispatched).toHaveLength(1);
+        expect(dispatched[0].type).toBe(ActionType.MAP_SET_VIEW);
+        expect(dispatched[0].payload.view.x).toBe(newView.x);
+        expect(dispatched[0].payload.view.y).toBe(newView.y);
+        expect(dispatched[0].payload.view.scale).toBe(newView.scale);
     });
 });

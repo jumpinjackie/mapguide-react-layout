@@ -11,11 +11,15 @@ import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, act } from "@testing-library/react";
 import { Provider } from "react-redux";
+import type { Store } from "redux";
 import { configureStore } from "../../src/store/configure-store";
 import type { IApplicationState, ILayerInfo } from "../../src/api/common";
+import type { ViewerAction } from "../../src/actions/defs";
 import { useNamedMapLayers } from "../../src/containers/hooks";
 import { MAP_STATE_INITIAL_SUB_STATE } from "../../src/reducers/map-state";
 import { setMapLayerVisibility } from "../../src/actions/map";
+
+type AppStore = Store<Readonly<IApplicationState>, ViewerAction>;
 
 // ---------------------------------------------------------------------------
 // Helper: minimal Redux store with a named map entry
@@ -24,7 +28,7 @@ function makeStore(mapState: Partial<IApplicationState["mapState"]> = {}) {
     const initState: Partial<IApplicationState> = {
         mapState: mapState as IApplicationState["mapState"]
     };
-    return configureStore(initState);
+    return configureStore(initState) as unknown as AppStore;
 }
 
 // ---------------------------------------------------------------------------

@@ -15,7 +15,7 @@ import { configureStore } from "../../src/store/configure-store";
 import type { IApplicationState, ILayerInfo } from "../../src/api/common";
 import { useNamedMapLayers } from "../../src/containers/hooks";
 import { MAP_STATE_INITIAL_SUB_STATE } from "../../src/reducers/map-state";
-import { ActionType } from "../../src/constants/actions";
+import { setMapLayerVisibility } from "../../src/actions/map";
 
 // ---------------------------------------------------------------------------
 // Helper: minimal Redux store with a named map entry
@@ -134,10 +134,7 @@ describe("useNamedMapLayers", () => {
 
         // Dispatch SET_LAYER_VISIBILITY to toggle visibility off
         act(() => {
-            store.dispatch({
-                type: ActionType.SET_LAYER_VISIBILITY,
-                payload: { mapName: "Sherbrooke", layerName: "roads", visible: false }
-            });
+            store.dispatch(setMapLayerVisibility("Sherbrooke", "roads", false));
         });
 
         // Hook should now reflect the updated layer state

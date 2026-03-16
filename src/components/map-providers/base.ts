@@ -1221,10 +1221,19 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (!bAppendMode) {
                 this.clearClientSelectedFeatures(effectiveMapName);
             }
+            // When swipe is active, only consider features from the layer set that owns the
+            // click pixel. Without this filter, secondary map layers (which are on top in the OL
+            // layer stack) would be found first by forEachFeatureAtPixel even when clicking on the
+            // primary side, because OL hit detection does not respect canvas clip regions.
+            const effectiveLayerSet = this._swipeSecondaryMapName
+                ? this.getLayerSetGroup(effectiveMapName)
+                : undefined;
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        featureToLayerMap.push([feature, layer]);
+                        if (!effectiveLayerSet || effectiveLayerSet.ownsCustomLayer(layer)) {
+                            featureToLayerMap.push([feature, layer]);
+                        }
                     }
                 }
             });

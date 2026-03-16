@@ -371,6 +371,15 @@ export abstract class LayerSetGroupBase {
     public transferLayerIn(name: string, layer: LayerBase, order: number): void {
         this._customLayers[name] = { layer, order };
     }
+    /**
+     * Returns true if the given OL layer is a custom (external) layer tracked by this layer set group.
+     * Used in swipe mode to restrict feature hit-detection to the map that owns the clicked pixel.
+     *
+     * @since 0.15
+     */
+    public ownsCustomLayer(layer: LayerBase): boolean {
+        return Object.values(this._customLayers).some(c => c.layer === layer);
+    }
     public apply(map: Map, layers: ILayerInfo[]): void {
         const layersByName = layers.reduce((current, layer) => {
             current[layer.name] = layer;
@@ -477,7 +486,10 @@ export abstract class LayerSetGroupBase {
             }
         }
         // The scratch layer (where client-side selection overlays and other temp vector features reside) must always be topmost
-        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
+        // Get a reference to the internal layers array for convenient includes() checks.
+        // getArray() returns the live internal array, so it always reflects the current state.
+        const topLayers = cCurrentLayers.getArray();
+        if (topLayers.includes(this.scratchLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
             map.removeLayer(this.scratchLayer);
             map.addLayer(this.scratchLayer);
             //const layers2 = cCurrentLayers.getArray();
@@ -485,7 +497,7 @@ export abstract class LayerSetGroupBase {
         }
 
         // And the wms selection overlay layer
-        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.wmsSelOverlayLayer) {
+        if (topLayers.includes(this.wmsSelOverlayLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.wmsSelOverlayLayer) {
             map.removeLayer(this.wmsSelOverlayLayer);
             map.addLayer(this.wmsSelOverlayLayer);
             //const layers2 = cCurrentLayers.getArray();
@@ -493,7 +505,7 @@ export abstract class LayerSetGroupBase {
         }
 
         // And the hover highlight layer on top of that
-        if (cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
+        if (topLayers.includes(this.hoverHighlightLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
             map.removeLayer(this.hoverHighlightLayer);
             map.addLayer(this.hoverHighlightLayer);
             //const layers2 = cCurrentLayers.getArray();

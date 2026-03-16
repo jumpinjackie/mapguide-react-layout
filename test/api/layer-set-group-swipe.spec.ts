@@ -446,4 +446,110 @@ describe("LayerSetGroupBase – swipe mode methods", () => {
             expect(primarySwipeable).toHaveLength(2);
         });
     });
+
+    // -----------------------------------------------------------------------
+    // ownsCustomLayer()
+    // -----------------------------------------------------------------------
+    describe("ownsCustomLayer()", () => {
+        it("returns false for an arbitrary OL layer not added to this group", () => {
+            const group = new TestLayerSetGroup([]);
+            const foreignLayer = makeLayer("foreign");
+            expect(group.ownsCustomLayer(foreignLayer)).toBe(false);
+        });
+
+        it("returns true for a layer added via addLayer()", () => {
+            const group = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+            const layer = makeLayer("owned");
+            group.addLayer(map as any, "owned", layer);
+            expect(group.ownsCustomLayer(layer)).toBe(true);
+        });
+
+        it("returns false after transferLayerOut removes the layer from tracking", () => {
+            const group = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+            const layer = makeLayer("toTransfer");
+            group.addLayer(map as any, "toTransfer", layer);
+
+            expect(group.ownsCustomLayer(layer)).toBe(true);
+            group.transferLayerOut("toTransfer");
+            expect(group.ownsCustomLayer(layer)).toBe(false);
+        });
+
+        it("returns true after transferLayerIn registers the layer", () => {
+            const group = new TestLayerSetGroup([]);
+            const layer = makeLayer("incoming");
+            // Layer was never added to this group; simulate a transfer-in
+            group.transferLayerIn("incoming", layer, 0);
+            expect(group.ownsCustomLayer(layer)).toBe(true);
+        });
+
+        it("returns false for helper layers (scratchLayer, wmsSelOverlayLayer, hoverHighlightLayer)", () => {
+            // Helper layers are in protected members, not in _customLayers.
+            // ownsCustomLayer() must not claim them.
+            const group = new TestLayerSetGroup([]);
+            const anyGroup = group as any;
+            expect(group.ownsCustomLayer(anyGroup.scratchLayer)).toBe(false);
+            expect(group.ownsCustomLayer(anyGroup.wmsSelOverlayLayer)).toBe(false);
+            expect(group.ownsCustomLayer(anyGroup.hoverHighlightLayer)).toBe(false);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // apply() – helper layers (scratch/wmsSelOverlay/hoverHighlight) must
+    // NOT be repositioned when they are not already on the OL map.
+    // This prevents secondary-map layer sets from accidentally adding their
+    // helper layers to the shared OL map when apply() is triggered by the
+    // secondary-layer-style sync useEffect (before attach() has been called).
+    // -----------------------------------------------------------------------
+    describe("apply() helper-layer includes guard", () => {
+        it("does not add scratchLayer to OL map when it is not already present", () => {
+            const group = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+            const anyGroup = group as any;
+
+            // Confirm scratchLayer is NOT on the map initially
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.scratchLayer);
+
+            // apply() with an empty layer list should not add the helper layers
+            group.apply(map as any, []);
+
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.scratchLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.wmsSelOverlayLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.hoverHighlightLayer);
+        });
+
+        it("does not add helper layers to OL map when only custom layers are present", () => {
+            const group = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+            const anyGroup = group as any;
+
+            // Add a custom layer so there are real layers to apply
+            const layer = makeLayer("vec");
+            group.addLayer(map as any, "vec", layer);
+
+            // Clear the map's collection and re-add only the custom layer
+            // (simulate a secondary group whose helper layers were never attached)
+            map.getLayers().clear();
+            map.addLayer(layer);
+
+            group.apply(map as any, [
+                {
+                    name: "vec",
+                    displayName: "vec",
+                    visible: true,
+                    opacity: 1,
+                    selectable: false,
+                    busyWorkerCount: 0,
+                    type: "Vector",
+                    isExternal: true,
+                }
+            ]);
+
+            // Helper layers must still NOT be on the map
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.scratchLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.wmsSelOverlayLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.hoverHighlightLayer);
+        });
+    });
 });

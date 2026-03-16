@@ -63,6 +63,28 @@ export function useActiveMapLayers() {
     }));
 }
 
+/**
+ * Returns the layers for the given named map. Unlike {@link useActiveMapLayers}, this hook
+ * accepts an explicit map name so it can be used to watch a secondary (swipe) map's layers.
+ *
+ * @since 0.15
+ */
+export function useNamedMapLayers(mapName: string | undefined) {
+    return useAppState<ILayerInfo[] | undefined>(state => {
+        if (mapName && state.mapState[mapName]) {
+            return state.mapState[mapName].layers;
+        }
+        return undefined;
+    }, (left, right) => !areArraysDifferent(left, right, (l, r) => {
+        return l.name == r.name
+            && l.opacity == r.opacity
+            && l.visible == r.visible
+            && l.vectorStyle == r.vectorStyle
+            && l.cluster == r.cluster
+            && sameHeatmapSettings(l.heatmap, r.heatmap);
+    }));
+}
+
 export function useViewerLocale() {
     return useAppState<string>(state => state.config.locale);
 }

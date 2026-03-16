@@ -1137,7 +1137,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (res && this._selectTooltip) {
                 return await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, bAppendMode, {
                     getLocale: () => this._state.locale,
-                    addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer),
+                    addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer, mapName),
                     addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
                     getWmsRequestAugmentations: () => this._wmsQueryAugmentations[mapName] ?? {}
                 });
@@ -1252,18 +1252,27 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         // We'll only fall through the normal map selection query route if no 
         // vector features were selected as part of this click
         const px = e.pixel as [number, number];
+        // Only invoke the provider map click (e.g. MapGuide QUERYMAPFEATURES) for the
+        // primary map. When swipe is active and the user clicks on the secondary side,
+        // calling onProviderMapClick would incorrectly send a query for the primary map
+        // using coordinates from the secondary side, producing a spurious selection.
+        const isClickOnPrimary = !this._swipeSecondaryMapName || effectiveMapName === this._state.mapName;
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
                 this.queryWmsFeatures(effectiveMapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
                     if (!madeSelection) {
-                        this.onProviderMapClick(px);
+                        if (isClickOnPrimary) {
+                            this.onProviderMapClick(px);
+                        }
                     } else {
                         console.log("Made WMS selection. Skipping provider click event");
                     }
                 })
             } else {
-                this.onProviderMapClick(px);
+                if (isClickOnPrimary) {
+                    this.onProviderMapClick(px);
+                }
             }
         } else {
             if (this._select) {

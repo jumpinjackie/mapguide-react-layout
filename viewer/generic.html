@@ -38,7 +38,12 @@
                 { name: "OpenStreetMap", kind: "OSM" },
                 { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" } },
                 { name: "Stamen - Watercolor", kind: "Stamen", options: { layer: "watercolor" } }
-            ],*/
+            ],
+            // To show thumbnails in the base layer switcher, add a thumbnailImageUrl property:
+            // externalBaseLayers: [
+            //     { name: "OpenStreetMap", kind: "OSM", thumbnailImageUrl: "https://example.com/osm-thumbnail.png" },
+            //     { name: "Stamen - Toner", kind: "Stamen", visible: true, options: { layer: "toner" }, thumbnailImageUrl: "https://example.com/toner-thumbnail.png" }
+            // ],*/
             mapguide: {
                 agentUri: "../mapagent/mapagent.fcgi"
             }

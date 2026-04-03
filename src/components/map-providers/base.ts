@@ -656,6 +656,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 this._swipeSecondaryClipLayers.push(leaf);
             }
         }
+        // Secondary swipe layers are re-added on top; re-promote active helper overlays so
+        // hover highlight and selection overlays remain visible on both swipe sides.
+        primaryLayerSet?.ensureHelperLayersOnTop(this._map);
         this._map.render();
         return true;
     }
@@ -1097,28 +1100,38 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
         if (this._state.mapName && this._map) {
             const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-            if (activeLayerSet) {
-                const pixel = this._map.getEventPixel(e.originalEvent);
-                if (pixel) {
-                    const featureToLayerMap = [] as [OLFeature, OLLayer][];
-                    this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
-                        if (this.isLayerHoverable(layer) && feature instanceof Feature) {
+            if (!activeLayerSet) {
+                return;
+            }
+            const pixel = this._map.getEventPixel(e.originalEvent);
+            if (pixel) {
+                const effectiveMapName = this.getEffectiveMapNameAtPixel(pixel[0]);
+                const effectiveLayerSet = this.getLayerSetGroup(effectiveMapName);
+                if (!effectiveLayerSet) {
+                    return;
+                }
+                const featureToLayerMap = [] as [OLFeature, OLLayer][];
+                this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
+                    if (this.isLayerHoverable(layer) && feature instanceof Feature) {
+                        if (!this._swipeSecondaryMapName || effectiveLayerSet.ownsSwipeableLayer(layer as any)) {
                             featureToLayerMap.push([feature, layer]);
                         }
-                    });
-                    const feature = featureToLayerMap.length ? featureToLayerMap[0][0] : undefined;
-
-                    //const featuresAtPixel = this._map?.getFeaturesAtPixel(pixel);
-                    //const feature = featuresAtPixel?.length ? featuresAtPixel[0] : undefined;
-                    if (feature != this._highlightedFeature && feature instanceof Feature) {
-                        if (this._highlightedFeature) {
-                            activeLayerSet.removeHighlightedFeature(this._highlightedFeature);
-                        }
-                        if (feature) {
-                            activeLayerSet.addHighlightedFeature(feature);
-                        }
-                        this._highlightedFeature = feature;
                     }
+                });
+                const feature = featureToLayerMap.length ? featureToLayerMap[0][0] : undefined;
+
+                //const featuresAtPixel = this._map?.getFeaturesAtPixel(pixel);
+                //const feature = featuresAtPixel?.length ? featuresAtPixel[0] : undefined;
+                if (feature != this._highlightedFeature) {
+                    if (this._highlightedFeature) {
+                        activeLayerSet.removeHighlightedFeature(this._highlightedFeature);
+                    }
+                    if (feature) {
+                        // In swipe mode only the active map's hover highlight layer is attached,
+                        // so render all hover highlights through that overlay even for secondary hits.
+                        activeLayerSet.addHighlightedFeature(feature);
+                    }
+                    this._highlightedFeature = feature;
                 }
             }
         }
@@ -1231,7 +1244,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        if (!effectiveLayerSet || effectiveLayerSet.ownsCustomLayer(layer)) {
+                        if (!effectiveLayerSet || effectiveLayerSet.ownsSwipeableLayer(layer as any)) {
                             featureToLayerMap.push([feature, layer]);
                         }
                     }

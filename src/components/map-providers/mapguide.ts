@@ -1,7 +1,7 @@
 
 import { Client } from '../../api/client';
 import { SessionKeepAlive } from '../session-keep-alive';
-import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport, Dictionary } from '../../api/common';
+import { Bounds, GenericEvent, ActiveMapTool, ImageFormat, RefreshMode, SelectionVariant, ClientKind, LayerTransparencySet, Size, BLANK_SIZE, IMapGuideViewerSupport, Dictionary, ILayerManager } from '../../api/common';
 import { IQueryMapFeaturesOptions } from '../../api/request-builder';
 import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query';
 import WKTFormat from "ol/format/WKT";
@@ -446,6 +446,36 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         };
     }
 
+    private ensureMapLayerSetGroup(mapName: string): void {
+        if (this._layerSetGroups[mapName] || !this._reduxStore) {
+            return;
+        }
+        const appState = this._reduxStore.getState();
+        const mapState = appState?.mapState?.[mapName];
+        if (!mapState) {
+            return;
+        }
+        const targetMap = mapState.generic?.subject ?? mapState.mapguide?.runtimeMap;
+        if (!targetMap) {
+            return;
+        }
+        const targetState: IMapGuideProviderState = {
+            ...this._state,
+            mapName,
+            map: targetMap,
+            externalBaseLayers: mapState.externalBaseLayers ?? [],
+            initialExternalLayers: mapState.initialExternalLayers ?? [],
+            showGroups: [],
+            hideGroups: [],
+            showLayers: [],
+            hideLayers: [],
+            layerTransparency: {},
+            selection: null,
+            activeSelectedFeatureXml: ""
+        };
+        this.initLayerSet(targetState);
+    }
+
     /**
      * @virtual
      * @protected
@@ -518,32 +548,15 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @since 0.15
      */
     public override activateMapSwipe(secondaryMapName: string, position: number): boolean {
-        if (!this._layerSetGroups[secondaryMapName] && this._reduxStore) {
-            const appState = this._reduxStore.getState();
-            const secMapState = appState?.mapState?.[secondaryMapName];
-            if (secMapState) {
-                const secondaryMap =
-                    secMapState.generic?.subject ?? secMapState.mapguide?.runtimeMap;
-                if (secondaryMap) {
-                    const secondaryMapState: IMapGuideProviderState = {
-                        ...this._state,
-                        mapName: secondaryMapName,
-                        map: secondaryMap,
-                        externalBaseLayers: secMapState.externalBaseLayers ?? [],
-                        initialExternalLayers: secMapState.initialExternalLayers ?? [],
-                        showGroups: [],
-                        hideGroups: [],
-                        showLayers: [],
-                        hideLayers: [],
-                        layerTransparency: {},
-                        selection: null,
-                        activeSelectedFeatureXml: ""
-                    };
-                    this.initLayerSet(secondaryMapState);
-                }
-            }
-        }
+        this.ensureMapLayerSetGroup(secondaryMapName);
         return super.activateMapSwipe(secondaryMapName, position);
+    }
+
+    public override getLayerManager(mapName?: string): ILayerManager {
+        if (mapName && mapName !== this._state.mapName) {
+            this.ensureMapLayerSetGroup(mapName);
+        }
+        return super.getLayerManager(mapName);
     }
 
     /**

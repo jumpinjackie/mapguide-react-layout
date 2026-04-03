@@ -18,6 +18,7 @@ import VectorSource from "ol/source/Vector";
 import TileLayer from "ol/layer/Tile";
 import Collection from "ol/Collection";
 import LayerBase from "ol/layer/Base";
+import LayerGroup from "ol/layer/Group";
 import type { ProjectionLike } from "ol/proj";
 import type { Bounds } from "../../src/api/common";
 import { LayerProperty } from "../../src/api/common";
@@ -492,6 +493,84 @@ describe("LayerSetGroupBase – swipe mode methods", () => {
             expect(group.ownsCustomLayer(anyGroup.scratchLayer)).toBe(false);
             expect(group.ownsCustomLayer(anyGroup.wmsSelOverlayLayer)).toBe(false);
             expect(group.ownsCustomLayer(anyGroup.hoverHighlightLayer)).toBe(false);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // ownsSwipeableLayer()
+    // -----------------------------------------------------------------------
+    describe("ownsSwipeableLayer()", () => {
+        it("returns true for a tracked custom layer", () => {
+            const group = new TestLayerSetGroup([]);
+            const map = makeOLMap();
+            const layer = makeLayer("owned-swipeable");
+            group.addLayer(map as any, "owned-swipeable", layer);
+
+            expect(group.ownsSwipeableLayer(layer)).toBe(true);
+        });
+
+        it("returns true for child layers of grouped swipeable layers", () => {
+            const child = makeLayer("group-child");
+            const grouped = new LayerGroup({
+                layers: [child]
+            });
+            grouped.set(LayerProperty.LAYER_NAME, "grouped");
+
+            const group = new TestLayerSetGroup([grouped]);
+
+            expect(group.ownsSwipeableLayer(grouped)).toBe(true);
+            expect(group.ownsSwipeableLayer(child)).toBe(true);
+        });
+
+        it("returns false for helper layers and unknown layers", () => {
+            const group = new TestLayerSetGroup([]);
+            const anyGroup = group as any;
+            const unknown = makeLayer("unknown");
+
+            expect(group.ownsSwipeableLayer(anyGroup.scratchLayer)).toBe(false);
+            expect(group.ownsSwipeableLayer(anyGroup.wmsSelOverlayLayer)).toBe(false);
+            expect(group.ownsSwipeableLayer(anyGroup.hoverHighlightLayer)).toBe(false);
+            expect(group.ownsSwipeableLayer(unknown)).toBe(false);
+        });
+    });
+
+    // -----------------------------------------------------------------------
+    // ensureHelperLayersOnTop()
+    // -----------------------------------------------------------------------
+    describe("ensureHelperLayersOnTop()", () => {
+        it("re-promotes helper overlays above subsequently added layers", () => {
+            const group = new TestLayerSetGroup([]);
+            const anyGroup = group as any;
+            const map = makeOLMap();
+
+            // Simulate attached helper layers on top
+            map.addLayer(anyGroup.scratchLayer);
+            map.addLayer(anyGroup.wmsSelOverlayLayer);
+            map.addLayer(anyGroup.hoverHighlightLayer);
+
+            // Simulate swipe activation re-adding secondary layers above helpers
+            const secondaryTop = makeLayer("secondary-top");
+            map.addLayer(secondaryTop);
+
+            // Helper hover layer is now covered before promotion
+            expect(map.getLayers().item(map.getLayers().getLength() - 1)).toBe(secondaryTop);
+
+            group.ensureHelperLayersOnTop(map as any);
+
+            // Hover helper must be top-most after re-promotion
+            expect(map.getLayers().item(map.getLayers().getLength() - 1)).toBe(anyGroup.hoverHighlightLayer);
+        });
+
+        it("does not add helper overlays when they are not attached", () => {
+            const group = new TestLayerSetGroup([]);
+            const anyGroup = group as any;
+            const map = makeOLMap();
+
+            group.ensureHelperLayersOnTop(map as any);
+
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.scratchLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.wmsSelOverlayLayer);
+            expect(map.getLayers().getArray()).not.toContain(anyGroup.hoverHighlightLayer);
         });
     });
 

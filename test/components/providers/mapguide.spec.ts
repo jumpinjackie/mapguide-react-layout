@@ -240,4 +240,57 @@ describe('MapGuideMapProviderContext', () => {
         expect(disposeFeatureTooltip).toHaveBeenCalled();
         expect(superDetach).toHaveBeenCalled();
     });
+
+    it('getLayerManager initializes missing secondary layer set from redux state', () => {
+        const secondaryMapName = 'SecondaryMap';
+        // @ts-expect-error: _map is protected
+        context._map = {} as any;
+
+        // @ts-expect-error: _reduxStore is protected
+        context._reduxStore = {
+            getState: () => ({
+                mapState: {
+                    [secondaryMapName]: {
+                        generic: { subject: {} },
+                        externalBaseLayers: [],
+                        initialExternalLayers: []
+                    }
+                }
+            })
+        } as any;
+
+        const fakeLayerSet = {} as any;
+        const initSpy = vi.spyOn(context as any, 'initLayerSet').mockImplementation((nextState: IMapGuideProviderState) => {
+            // @ts-expect-error: _layerSetGroups is protected
+            context._layerSetGroups[nextState.mapName] = fakeLayerSet;
+            return fakeLayerSet;
+        });
+
+        const mgr = context.getLayerManager(secondaryMapName);
+
+        expect(initSpy).toHaveBeenCalledTimes(1);
+        expect(initSpy).toHaveBeenCalledWith(expect.objectContaining({ mapName: secondaryMapName }));
+        expect(mgr).toBeDefined();
+    });
+
+    it('getLayerManager does not initialize secondary layer set when redux has no map state', () => {
+        const secondaryMapName = 'SecondaryMap';
+        // @ts-expect-error: _map is protected
+        context._map = {} as any;
+        // Ensure active map layer set exists so fallback path does not trigger initLayerSet
+        // @ts-expect-error: _layerSetGroups is protected
+        context._layerSetGroups[initialState.mapName] = {} as any;
+
+        // @ts-expect-error: _reduxStore is protected
+        context._reduxStore = {
+            getState: () => ({ mapState: {} })
+        } as any;
+
+        const initSpy = vi.spyOn(context as any, 'initLayerSet');
+
+        const mgr = context.getLayerManager(secondaryMapName);
+
+        expect(initSpy).not.toHaveBeenCalled();
+        expect(mgr).toBeDefined();
+    });
 });

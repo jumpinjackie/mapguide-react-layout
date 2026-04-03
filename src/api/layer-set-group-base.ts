@@ -21,6 +21,7 @@ import { IInitialExternalLayer } from '../actions/defs';
 import { createOLLayerFromSubjectDefn } from '../components/external-layer-factory';
 import Geometry from 'ol/geom/Geometry';
 import TileLayer from 'ol/layer/Tile';
+import LayerGroup from "ol/layer/Group";
 import UrlTile from 'ol/source/UrlTile';
 import ImageLayer from 'ol/layer/Image';
 import { debug } from '../utils/logger';
@@ -380,6 +381,53 @@ export abstract class LayerSetGroupBase {
     public ownsCustomLayer(layer: LayerBase): boolean {
         return Object.values(this._customLayers).some(c => c.layer === layer);
     }
+
+    /**
+     * Returns true if the given OL layer belongs to this layer set's swipeable layers,
+     * including children of grouped layers.
+     *
+     * @since 0.15
+     */
+    public ownsSwipeableLayer(layer: LayerBase | undefined): boolean {
+        if (!layer) {
+            return false;
+        }
+        const hasLayer = (candidate: LayerBase): boolean => {
+            if (candidate === layer) {
+                return true;
+            }
+            if (candidate instanceof LayerGroup) {
+                return candidate.getLayers().getArray().some(child => hasLayer(child));
+            }
+            return false;
+        };
+        return this.getSwipeableLayers().some(top => hasLayer(top));
+    }
+
+    /**
+     * Ensures helper overlays are at the top of the current OL layer stack if already attached.
+     *
+     * @since 0.15
+     */
+    public ensureHelperLayersOnTop(map: Map): void {
+        const cCurrentLayers = map.getLayers();
+        const topLayers = cCurrentLayers.getArray();
+
+        if (topLayers.includes(this.scratchLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
+            map.removeLayer(this.scratchLayer);
+            map.addLayer(this.scratchLayer);
+        }
+
+        if (topLayers.includes(this.wmsSelOverlayLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.wmsSelOverlayLayer) {
+            map.removeLayer(this.wmsSelOverlayLayer);
+            map.addLayer(this.wmsSelOverlayLayer);
+        }
+
+        if (topLayers.includes(this.hoverHighlightLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
+            map.removeLayer(this.hoverHighlightLayer);
+            map.addLayer(this.hoverHighlightLayer);
+        }
+    }
     public apply(map: Map, layers: ILayerInfo[]): void {
         const layersByName = layers.reduce((current, layer) => {
             current[layer.name] = layer;
@@ -485,32 +533,8 @@ export abstract class LayerSetGroupBase {
                 }
             }
         }
-        // The scratch layer (where client-side selection overlays and other temp vector features reside) must always be topmost
-        // Get a reference to the internal layers array for convenient includes() checks.
-        // getArray() returns the live internal array, so it always reflects the current state.
-        const topLayers = cCurrentLayers.getArray();
-        if (topLayers.includes(this.scratchLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.scratchLayer) {
-            map.removeLayer(this.scratchLayer);
-            map.addLayer(this.scratchLayer);
-            //const layers2 = cCurrentLayers.getArray();
-            //console.log(layers2);
-        }
-
-        // And the wms selection overlay layer
-        if (topLayers.includes(this.wmsSelOverlayLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.wmsSelOverlayLayer) {
-            map.removeLayer(this.wmsSelOverlayLayer);
-            map.addLayer(this.wmsSelOverlayLayer);
-            //const layers2 = cCurrentLayers.getArray();
-            //console.log(layers2);
-        }
-
-        // And the hover highlight layer on top of that
-        if (topLayers.includes(this.hoverHighlightLayer) && cCurrentLayers.item(cCurrentLayers.getLength() - 1) != this.hoverHighlightLayer) {
-            map.removeLayer(this.hoverHighlightLayer);
-            map.addLayer(this.hoverHighlightLayer);
-            //const layers2 = cCurrentLayers.getArray();
-            //console.log(layers2);
-        }
+        // Ensure helper overlays remain on top after any layer re-ordering.
+        this.ensureHelperLayersOnTop(map);
 
         // And then the measurement layer, if present
         if (theMeasureLayer) {

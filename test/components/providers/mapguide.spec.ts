@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { IMapGuideProviderState, MapGuideMapProviderContext } from '../../../src/components/map-providers/mapguide';
 import { Polygon, type Geometry } from 'ol/geom';
+import Collection from 'ol/Collection';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
 import { IQueryMapFeaturesOptions } from '../../../src/api/request-builder';
-import { ActiveMapTool } from '../../../src/api/common';
+import { ActiveMapTool, LayerProperty } from '../../../src/api/common';
 import * as logger from '../../../src/utils/logger';
 import { ActionType } from '../../../src/constants/actions';
 import { registerRequestBuilder } from '../../../src/api/builders/factory';
@@ -292,5 +295,70 @@ describe('MapGuideMapProviderContext', () => {
 
         expect(initSpy).not.toHaveBeenCalled();
         expect(mgr).toBeDefined();
+    });
+
+    it('onMapClick uses hovered fallback and still invokes provider refresh path', () => {
+        // @ts-expect-error: _state is protected
+        context._state = {
+            ...initialState,
+            activeTool: ActiveMapTool.Select,
+            mapName: 'TestMap'
+        };
+
+        const onDispatch = vi.fn();
+        // @ts-expect-error: _comp is protected
+        context._comp = {
+            isContextMenuOpen: () => false,
+            onHideContextMenu: vi.fn(),
+            onDispatch
+        } as any;
+
+        const selected = new Collection<Feature<Geometry>>();
+        // @ts-expect-error: _select is protected
+        context._select = {
+            getFeatures: () => selected
+        } as any;
+
+        // No direct pixel hit; fallback should kick in
+        // @ts-expect-error: _map is protected
+        context._map = {
+            forEachFeatureAtPixel: vi.fn(),
+            getInteractions: () => ({
+                getArray: () => []
+            })
+        } as any;
+
+        const highlightedFeature = new Feature({ id: 123 });
+        highlightedFeature.setGeometry(new Point([1, 2]));
+        const highlightedLayer = {
+            get: (name: string) => {
+                if (name === LayerProperty.IS_SELECTABLE) {
+                    return true;
+                }
+                if (name === LayerProperty.LAYER_NAME) {
+                    return 'L1';
+                }
+                return undefined;
+            }
+        } as any;
+
+        // @ts-expect-error: private in base class
+        context._highlightedFeature = highlightedFeature;
+        // @ts-expect-error: private in base class
+        context._highlightedLayer = highlightedLayer;
+
+        const showSelectedSpy = vi.spyOn(context as any, 'showSelectedVectorFeatures').mockImplementation(() => { });
+        const providerClickSpy = vi.spyOn(context as any, 'onProviderMapClick').mockImplementation(() => { });
+
+        (context as any).onMapClick({
+            pixel: [10, 10],
+            coordinate: [100, 100]
+        });
+
+        expect(showSelectedSpy).toHaveBeenCalledTimes(1);
+        expect(providerClickSpy).toHaveBeenCalledTimes(1);
+        expect(selected.getLength()).toBe(1);
+        expect(onDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.MAP_CLEAR_CLIENT_SELECTION }));
+        expect(onDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE }));
     });
 });

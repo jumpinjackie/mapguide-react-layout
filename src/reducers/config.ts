@@ -83,13 +83,22 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     warn(`Invalid initial active map name: ${am}. Probably because we haven't properly implemented recovery of runtime maps on reload yet`);
                     am = mapNames[0];
                 }
+                // Collect any maps that have been deferred for lazy creation
+                const pendingMaps: IConfigurationReducerState["pendingMaps"] = {};
+                for (const mapName of mapNames) {
+                    const mi = maps[mapName];
+                    if (mi.mapDef) {
+                        pendingMaps[mapName] = { mapDef: mi.mapDef, metadata: mi.metadata };
+                    }
+                }
                 const state1: Partial<IConfigurationReducerState> = {
                     appSettings: payload.appSettings,
                     locale: payload.locale || DEFAULT_LOCALE,
                     capabilities: payload.capabilities,
                     activeMapName: am,
                     availableMaps: availableMaps,
-                    mapSwipePairs: payload.mapSwipePairs
+                    mapSwipePairs: payload.mapSwipePairs,
+                    pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
                 const newState = { ...state, ...state1 };
                 if (payload.config != null && Object.keys(payload.config).length > 0) {
@@ -142,6 +151,22 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                 } else {
                     return newState;
                 }
+            }
+        case ActionType.MAP_REFRESH:
+            {
+                // When a runtime map is loaded/refreshed, clear it from pendingMaps if present
+                if (state.pendingMaps) {
+                    const mapName = action.payload.mapName;
+                    if (state.pendingMaps[mapName]) {
+                        const updatedPendingMaps = { ...state.pendingMaps };
+                        delete updatedPendingMaps[mapName];
+                        return {
+                            ...state,
+                            pendingMaps: Object.keys(updatedPendingMaps).length > 0 ? updatedPendingMaps : undefined
+                        };
+                    }
+                }
+                return state;
             }
         case ActionType.MAP_ENABLE_SELECT_DRAGPAN:
             {

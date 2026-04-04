@@ -210,6 +210,34 @@ export interface ILocalizedMessages {
     WINDOW_MOVING: string;
     OTHER_THEME_RULE_COUNT: string;
     LEGEND_FILTER_LAYERS: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_REFRESH: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_EXPAND_ALL: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_COLLAPSE_ALL: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_ALL_SELECTABLE: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_ALL_UNSELECTABLE: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_SHOW_INVISIBLE_LAYERS: string;
+    /**
+     * @since 0.15
+     */
+    LEGEND_CONTEXT_MENU_HIDE_INVISIBLE_LAYERS: string;
     ADD_LAYER_KIND_PROMPT: string;
     LAYER_KIND_FILE: string;
     LAYER_KIND_URL: string;

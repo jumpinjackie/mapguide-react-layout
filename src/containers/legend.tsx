@@ -3,7 +3,7 @@ import { Legend } from "../components/legend";
 import { tr } from "../api/i18n";
 import { useActiveMapView, useActiveMapExternalBaseLayers, useActiveMapName, useViewerLocale, useViewerIsStateless, useActiveMapLayers } from './hooks';
 import { setBaseLayer } from '../actions/map';
-import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded } from '../actions/legend';
+import { setGroupVisibility, setLayerVisibility, setLayerSelectable, setGroupExpanded, refresh } from '../actions/legend';
 import { useActiveMapState, useActiveMapShowGroups, useActiveMapShowLayers, useActiveMapHideGroups, useActiveMapHideLayers, useActiveMapExpandedGroups, useActiveMapSelectableLayers } from './hooks-mapguide';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { AppContext } from "../components/context";
@@ -67,6 +67,9 @@ export const LegendContainer = (props: ILegendContainerProps) => {
             setBaseLayerAction(activeMapName, layerName);
         }
     }, [setBaseLayerAction, activeMapName]);
+    const onRefresh = React.useCallback(() => {
+        dispatch(refresh());
+    }, [dispatch]);
     if ((map || layers) && view) {
         let scale = view.scale;
         if (scale || layers) {
@@ -90,6 +93,7 @@ export const LegendContainer = (props: ILegendContainerProps) => {
                 onGroupExpansionChanged={onGroupExpansionChanged}
                 onGroupVisibilityChanged={onGroupVisibilityChanged}
                 onLayerVisibilityChanged={onLayerVisibilityChanged}
+                onRefresh={onRefresh}
                 provideExtraLayerIconsHtml={appContext.getLegendLayerExtraIconsProvider}
                 provideExtraGroupIconsHtml={appContext.getLegendGroupExtraIconsProvider} />;
         } else {

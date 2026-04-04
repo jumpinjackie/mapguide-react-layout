@@ -5,7 +5,7 @@ import {
 import { createMap, createInitAction, createInitialState } from "../../test-data";
 import { configReducer } from "../../src/reducers/config";
 import { ActionType } from "../../src/constants/actions";
-import { setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
+import { enableSelectDragPan, setActiveMap, setManualFeatureTooltipsEnabled, setViewRotation, setViewRotationEnabled, setViewSizeUnits } from "../../src/actions/map";
 import { ViewerAction } from "../../src/actions/defs";
 
 describe("reducers/config", () => {
@@ -110,6 +110,60 @@ describe("reducers/config", () => {
             expect(state.activeMapName).toBe("FooBar");
         });
     });
+    describe("pending maps (lazy loading)", () => {
+        it("INIT_APP populates pendingMaps for MapInfo entries with mapDef set", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = { x: 0, y: 0, scale: 1000 };
+            const action = createInitAction(map, view);
+            // Manually add a second map with mapDef set (simulating a lazy map)
+            action.payload.maps["LazyMap"] = {
+                mapGroupId: "LazyMap",
+                map: undefined,
+                initialView: undefined,
+                externalBaseLayers: [],
+                initialExternalLayers: [],
+                mapDef: "Library://LazyMap.MapDefinition",
+                metadata: {}
+            };
+            const state = configReducer(initialState.config, action as any);
+            expect(state.pendingMaps).not.toBeUndefined();
+            expect(state.pendingMaps!["LazyMap"]).not.toBeUndefined();
+            expect(state.pendingMaps!["LazyMap"].mapDef).toBe("Library://LazyMap.MapDefinition");
+        });
+        it("INIT_APP does not set pendingMaps when no maps have mapDef", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = { x: 0, y: 0, scale: 1000 };
+            const action = createInitAction(map, view);
+            const state = configReducer(initialState.config, action as any);
+            expect(state.pendingMaps).toBeUndefined();
+        });
+        it("MAP_REFRESH clears the map from pendingMaps", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = { x: 0, y: 0, scale: 1000 };
+            const initAction = createInitAction(map, view);
+            initAction.payload.maps["LazyMap"] = {
+                mapGroupId: "LazyMap",
+                map: undefined,
+                initialView: undefined,
+                externalBaseLayers: [],
+                initialExternalLayers: [],
+                mapDef: "Library://LazyMap.MapDefinition",
+                metadata: {}
+            };
+            const state = configReducer(initialState.config, initAction as any);
+            expect(state.pendingMaps!["LazyMap"]).not.toBeUndefined();
+
+            const refreshAction: ViewerAction = {
+                type: ActionType.MAP_REFRESH,
+                payload: { mapName: "LazyMap", map: map }
+            };
+            const state2 = configReducer(state, refreshAction);
+            expect(state2.pendingMaps).toBeUndefined();
+        });
+    });
     describe(ActionType.MAP_SET_VIEW_SIZE_UNITS, () => {
         it("updates", () => {
             const initialState = createInitialState();
@@ -148,6 +202,28 @@ describe("reducers/config", () => {
             const action: ViewerAction = { type: ActionType.MAP_UPDATE_SWIPE_POSITION, payload: { position: 75 } };
             const state = configReducer(initialState.config, action);
             expect(state.swipePosition).toBe(75);
+        });
+    });
+    describe(ActionType.SET_LOCALE, () => {
+        it("updates locale", () => {
+            const initialState = createInitialState();
+            const action: ViewerAction = { type: ActionType.SET_LOCALE, payload: "fr" };
+            const state = configReducer(initialState.config, action);
+            expect(state.locale).toBe("fr");
+        });
+    });
+    describe(ActionType.MAP_ENABLE_SELECT_DRAGPAN, () => {
+        it("updates selectCanDragPan when enabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(true);
+            const state = configReducer(initialState.config, action);
+            expect(state.selectCanDragPan).toBe(true);
+        });
+        it("updates selectCanDragPan when disabled", () => {
+            const initialState = createInitialState();
+            const action = enableSelectDragPan(false);
+            const state = configReducer(initialState.config, action);
+            expect(state.selectCanDragPan).toBe(false);
         });
     });
 });

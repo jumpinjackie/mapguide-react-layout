@@ -281,6 +281,37 @@ export function enableRedlineMessagePrompt(enabled: boolean): void {
 }
 
 /**
+ * Resolves the various overload forms of `setExtents` into a normalised
+ * `[minx, miny, maxx, maxy]` tuple that can be passed directly to
+ * `viewer.zoomToExtent`.
+ *
+ * Accepted forms:
+ * - An `OL2Bounds`-compatible object with `left`, `bottom`, `right` and `top`
+ *   properties (mirrors `OpenLayers.Bounds` from classic Fusion).
+ * - A 4-element number array `[minx, miny, maxx, maxy]`.
+ * - Four individual number arguments `(minx, miny, maxx, maxy)`.
+ *
+ * @hidden
+ * @since 0.15
+ */
+export function resolveSetExtentsBounds(bounds: { left: number; bottom: number; right: number; top: number }): [number, number, number, number];
+export function resolveSetExtentsBounds(bounds: [number, number, number, number]): [number, number, number, number];
+export function resolveSetExtentsBounds(minx: number, miny: number, maxx: number, maxy: number): [number, number, number, number];
+export function resolveSetExtentsBounds(
+    bounds: { left: number; bottom: number; right: number; top: number } | [number, number, number, number] | number,
+    miny?: number,
+    maxx?: number,
+    maxy?: number
+): [number, number, number, number] {
+    if (typeof bounds === "number") {
+        return [bounds, miny as number, maxx as number, maxy as number];
+    } else if (Array.isArray(bounds)) {
+        return bounds;
+    } else {
+        return [bounds.left, bounds.bottom, bounds.right, bounds.top];
+    }
+}
+/**
  * This class emulates APIs from various widgets
  */
 class FusionWidgetApiShim {
@@ -343,10 +374,18 @@ class FusionWidgetApiShim {
         }
         return undefined;
     }
-    setExtents(bounds: OL2Bounds) { //Map
+    setExtents(bounds: OL2Bounds | [number, number, number, number] | number, miny?: number, maxx?: number, maxy?: number) { //Map
         const { viewer } = this.parent.props;
         if (viewer.isReady()) {
-            viewer.zoomToExtent([bounds.left, bounds.bottom, bounds.right, bounds.top]);
+            let extent: [number, number, number, number];
+            if (typeof bounds === "number") {
+                extent = resolveSetExtentsBounds(bounds, miny as number, maxx as number, maxy as number);
+            } else if (Array.isArray(bounds)) {
+                extent = resolveSetExtentsBounds(bounds);
+            } else {
+                extent = resolveSetExtentsBounds(bounds);
+            }
+            viewer.zoomToExtent(extent);
         }
     }
     setActiveLayer(layer: any) { //Map

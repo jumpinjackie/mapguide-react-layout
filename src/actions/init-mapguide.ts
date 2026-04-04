@@ -94,7 +94,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         }
     }
     private async initFromWebLayoutAsync(webLayout: WebLayout, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
-        const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
+        const [mapsByName, , warnings] = await this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
         const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
         const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCommand);
         const mainToolbar = (webLayout.ToolBar.Visible
@@ -225,19 +225,34 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             throw e;
         }
     }
-    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, string[]]> {
+    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, Dictionary<MapToLoad>, string[]]> {
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
         const warnings = [] as string[];
         const { locale } = this.options;
         const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
         const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
+        const pendingMapDefs: Dictionary<MapToLoad> = {};
         // We use an AsyncLazy because we only want to fetch the site version *iff* we are required to
         const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => {
             assertIsDefined(this.client);
             const sv = await this.client.getSiteVersion();
             return sv;
         });
+        // Collect only the MapDefinition entries for lazy-load eligibility check
+        const mapDefItems = mapDefs.filter(isMapDefinition);
+        // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
+        // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
+        // (where the session is reused), non-active maps should still be deferred because they may
+        // never have been created in the previous session (the user may not have switched to them).
+        // These deferred maps will be lazily initialized via activateMap() when the user switches
+        // to them, which now tries to describe the existing map first before creating a new one.
+        const canLazyLoad = !isStateless && mapDefItems.length > 1;
+        // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
+        // to identify which map to eagerly recover. If the URL param doesn't match any map in the
+        // appdef (or is absent), fall back to the first map by position.
+        const initialActiveMapName = this.options.initialActiveMap;
+        const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
         if (isStateless) { 
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
@@ -256,10 +271,23 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 }
             }
         } else {
+            let isFirstMapDef = true;
             for (const m of mapDefs) {
                 if (isMapDefinition(m)) {
-                    //sessionWasReused is a hint whether to create a new runtime map, or recover the last runtime map state from the given map name
-                    if (sessionWasReused) {
+                    // Determine if this is the "primary" map to eagerly load/recover.
+                    // - For new sessions: the primary is always the first map in the appdef.
+                    // - For reused sessions (browser refresh): the primary is the map the user was
+                    //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
+                    //   URL param is absent or does not match any map, fall back to first-by-position.
+                    const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
+                        ? m.name === initialActiveMapName
+                        : isFirstMapDef;
+                    if (canLazyLoad && !isPrimaryMap) {
+                        // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
+                        // This applies regardless of whether the session is being reused.
+                        info(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
+                        pendingMapDefs[m.name] = m;
+                    } else if (sessionWasReused) {
                         //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
                         info(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
                         mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
@@ -273,6 +301,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                             targetMapName: m.name
                         }, siteVersion));
                     }
+                    isFirstMapDef = false;
                 }
             }
         }
@@ -318,7 +347,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 mapsByName[gs.name] = gs;
             }
         }
-        return [mapsByName, warnings];
+        return [mapsByName, pendingMapDefs, warnings];
     }
     private async describeRuntimeMapStateless(client: Client, siteVersion: string, m: MapToLoad): Promise<RuntimeMap> {
         const { name, mapDef, metadata } = m;
@@ -445,10 +474,12 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
      * @param {Dictionary<SubjectLayerType>} mapsByName
      * @param {*} config
      * @param {string[]} warnings
+     * @param {string} locale
+     * @param {Dictionary<MapToLoad>} [pendingMapDefs]
      * @returns {Dictionary<MapInfo>}
      *
      */
-    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[], locale: string): Dictionary<MapInfo> {
+    protected setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<SubjectLayerType>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo> {
         const dict: Dictionary<MapInfo> = {};
         if (appDef.MapSet) {
             for (const mGroup of appDef.MapSet.MapGroup) {
@@ -481,6 +512,14 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                                 mapName = name;
                                 subject = mapDef;
                                 break;
+                            }
+                        }
+                        // If not found in the eagerly-loaded maps, check if it is a pending lazy map
+                        if (!mapName && pendingMapDefs) {
+                            const groupId = mGroup["@id"];
+                            if (pendingMapDefs[groupId]) {
+                                mapName = groupId;
+                                // subject remains undefined for pending maps
                             }
                         }
                     }
@@ -536,12 +575,15 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 }
 
                 if (mapName) {
+                    const pendingEntry = pendingMapDefs?.[mapName];
                     dict[mapName] = {
                         mapGroupId: mGroup["@id"],
                         map: mapsByName[mapName],
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers,
-                        initialExternalLayers: initExternalLayers
+                        initialExternalLayers: initExternalLayers,
+                        // If this map is pending lazy creation, store the mapDef for later use
+                        ...(pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {})
                     };
                 }
             }
@@ -568,8 +610,8 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             }
             register(proj4);
         }
-        const [mapsByName, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
-        return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings);
+        const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
+        return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
     }
     private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
         const { resourceId, locale } = this.options;

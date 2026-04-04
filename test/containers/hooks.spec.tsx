@@ -74,6 +74,47 @@ describe("useNamedMapLayers", () => {
         expect(getByTestId("result").dataset.result).toBe("undefined");
     });
 
+    it("does not cause spurious re-renders when mapName is undefined and store is updated", () => {
+        // Regression: the equality function was calling areArraysDifferent(undefined, undefined)
+        // which returned true (different), causing a re-render on every store update.
+        // The fix adds a `left === right` short-circuit so undefined === undefined is treated as equal.
+        const store = makeStore({
+            Sherbrooke: {
+                ...MAP_STATE_INITIAL_SUB_STATE,
+                layers: [makeLayerInfo("roads")]
+            }
+        });
+
+        let renderCount = 0;
+        function CountingHarness() {
+            renderCount++;
+            const layers = useNamedMapLayers(undefined);
+            return (
+                <div
+                    data-testid="result"
+                    data-result={layers === undefined ? "undefined" : JSON.stringify(layers)}
+                />
+            );
+        }
+
+        render(
+            <Provider store={store}>
+                <CountingHarness />
+            </Provider>
+        );
+
+        const countAfterMount = renderCount;
+
+        // Trigger a store update that does not affect the hook's selected value (still undefined)
+        act(() => {
+            store.dispatch(setMapLayerVisibility("Sherbrooke", "roads", false));
+        });
+
+        // Without the fix, renderCount would have increased because the equality function
+        // incorrectly reported undefined !== undefined. With the fix it stays the same.
+        expect(renderCount).toBe(countAfterMount);
+    });
+
     it("returns undefined when the named map is not in state", () => {
         const store = makeStore({});
         const { getByTestId } = render(

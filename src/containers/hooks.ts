@@ -75,14 +75,18 @@ export function useNamedMapLayers(mapName: string | undefined) {
             return state.mapState[mapName].layers;
         }
         return undefined;
-    }, (left, right) => !areArraysDifferent(left, right, (l, r) => {
-        return l.name == r.name
-            && l.opacity == r.opacity
-            && l.visible == r.visible
-            && l.vectorStyle == r.vectorStyle
-            && l.cluster == r.cluster
-            && sameHeatmapSettings(l.heatmap, r.heatmap);
-    }));
+    }, (left, right) => {
+        if (left === right) return true;
+        if (!left || !right) return false;
+        return !areArraysDifferent(left, right, (l, r) => {
+            return l.name == r.name
+                && l.opacity == r.opacity
+                && l.visible == r.visible
+                && l.vectorStyle == r.vectorStyle
+                && l.cluster == r.cluster
+                && sameHeatmapSettings(l.heatmap, r.heatmap);
+        });
+    });
 }
 
 export function useViewerLocale() {

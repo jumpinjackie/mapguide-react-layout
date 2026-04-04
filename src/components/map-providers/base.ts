@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { batch } from 'react-redux';
 import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
@@ -29,7 +30,7 @@ import type Interaction from 'ol/interaction/Interaction';
 import type Overlay from 'ol/Overlay';
 import { transformExtent, ProjectionLike } from 'ol/proj';
 import { LayerManager } from '../../api/layer-manager';
-import type Collection from 'ol/Collection';
+import Collection from 'ol/Collection';
 import * as olExtent from "ol/extent";
 import * as olEasing from "ol/easing";
 import type MapBrowserEvent from 'ol/MapBrowserEvent';
@@ -656,6 +657,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 this._swipeSecondaryClipLayers.push(leaf);
             }
         }
+        // Secondary swipe layers are re-added on top; re-promote active helper overlays so
+        // hover highlight and selection overlays remain visible on both swipe sides.
+        primaryLayerSet?.ensureHelperLayersOnTop(this._map);
         this._map.render();
         return true;
     }
@@ -1080,6 +1084,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._mouseTooltip?.onMouseMove?.(e);
     }
     private _highlightedFeature: OLFeature | undefined;
+    private _highlightedLayer: OLLayer | undefined;
     private isLayerHoverable(layer: OLLayer) {
         return !(layer?.get(LayerProperty.IS_HOVER_HIGHLIGHT) == true)
             && !(layer?.get(LayerProperty.IS_WMS_SELECTION_OVERLAY) == true)
@@ -1097,28 +1102,42 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
         if (this._state.mapName && this._map) {
             const activeLayerSet = this.getLayerSetGroup(this._state.mapName);
-            if (activeLayerSet) {
-                const pixel = this._map.getEventPixel(e.originalEvent);
-                if (pixel) {
-                    const featureToLayerMap = [] as [OLFeature, OLLayer][];
-                    this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
-                        if (this.isLayerHoverable(layer) && feature instanceof Feature) {
+            if (!activeLayerSet) {
+                return;
+            }
+            const pixel = this._map.getEventPixel(e.originalEvent);
+            if (pixel) {
+                const effectiveMapName = this.getEffectiveMapNameAtPixel(pixel[0]);
+                const effectiveLayerSet = this.getLayerSetGroup(effectiveMapName);
+                if (!effectiveLayerSet) {
+                    return;
+                }
+                const featureToLayerMap = [] as [OLFeature, OLLayer][];
+                this._map.forEachFeatureAtPixel(pixel, (feature, layer) => {
+                    if (this.isLayerHoverable(layer) && layer?.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
+                        if (!this._swipeSecondaryMapName || effectiveLayerSet.ownsSwipeableLayer(layer as any)) {
                             featureToLayerMap.push([feature, layer]);
                         }
-                    });
-                    const feature = featureToLayerMap.length ? featureToLayerMap[0][0] : undefined;
-
-                    //const featuresAtPixel = this._map?.getFeaturesAtPixel(pixel);
-                    //const feature = featuresAtPixel?.length ? featuresAtPixel[0] : undefined;
-                    if (feature != this._highlightedFeature && feature instanceof Feature) {
-                        if (this._highlightedFeature) {
-                            activeLayerSet.removeHighlightedFeature(this._highlightedFeature);
-                        }
-                        if (feature) {
-                            activeLayerSet.addHighlightedFeature(feature);
-                        }
-                        this._highlightedFeature = feature;
                     }
+                }, {
+                    hitTolerance: 4
+                });
+                const feature = featureToLayerMap.length ? featureToLayerMap[0][0] : undefined;
+                const layer = featureToLayerMap.length ? featureToLayerMap[0][1] : undefined;
+
+                //const featuresAtPixel = this._map?.getFeaturesAtPixel(pixel);
+                //const feature = featuresAtPixel?.length ? featuresAtPixel[0] : undefined;
+                if (feature != this._highlightedFeature) {
+                    if (this._highlightedFeature) {
+                        activeLayerSet.removeHighlightedFeature(this._highlightedFeature);
+                    }
+                    if (feature) {
+                        // In swipe mode only the active map's hover highlight layer is attached,
+                        // so render all hover highlights through that overlay even for secondary hits.
+                        activeLayerSet.addHighlightedFeature(feature);
+                    }
+                    this._highlightedFeature = feature;
+                    this._highlightedLayer = layer;
                 }
             }
         }
@@ -1137,7 +1156,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             if (res && this._selectTooltip) {
                 return await this._selectTooltip.queryWmsFeatures(activeLayerSet, layerMgr, coord, res, bAppendMode, {
                     getLocale: () => this._state.locale,
-                    addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer),
+                    addClientSelectedFeature: (feat, layer) => this.addClientSelectedFeature(feat, layer, mapName),
                     addFeatureToHighlight: (feat, bAppend) => this.addFeatureToHighlight(feat, bAppend),
                     getWmsRequestAugmentations: () => this._wmsQueryAugmentations[mapName] ?? {}
                 });
@@ -1215,19 +1234,46 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         //(and should) allow for multiple features to be selected, we need to figure
         //out the proper UI for such a case before we enable multiple selection.
         const bAppendMode = false;
+        let usedHoverFallback = false;
+        const clearSelectionForCurrentClick = () => {
+            if (this._swipeSecondaryMapName && this._state.mapName) {
+                this.clearClientSelectedFeatures(this._state.mapName);
+                this.clearClientSelectedFeatures(this._swipeSecondaryMapName);
+            } else {
+                this.clearClientSelectedFeatures(effectiveMapName);
+            }
+        };
 
         const featureToLayerMap = [] as [OLFeature, OLLayer][];
         if ((this._state.activeTool == ActiveMapTool.Select) && this._select) {
-            if (!bAppendMode) {
-                this.clearClientSelectedFeatures(effectiveMapName);
-            }
+            // When swipe is active, only consider features from the layer set that owns the
+            // click pixel. Without this filter, secondary map layers (which are on top in the OL
+            // layer stack) would be found first by forEachFeatureAtPixel even when clicking on the
+            // primary side, because OL hit detection does not respect canvas clip regions.
+            const effectiveLayerSet = this._swipeSecondaryMapName
+                ? this.getLayerSetGroup(effectiveMapName)
+                : undefined;
             this._map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
                 if (featureToLayerMap.length == 0) { //See TODO above
                     if (layer.get(LayerProperty.IS_SELECTABLE) == true && feature instanceof Feature) {
-                        featureToLayerMap.push([feature, layer]);
+                        if (!effectiveLayerSet || effectiveLayerSet.ownsSwipeableLayer(layer as any)) {
+                            featureToLayerMap.push([feature, layer]);
+                        }
                     }
                 }
+            }, {
+                hitTolerance: 4
             });
+            // Fallback: if the current click does not resolve a selectable feature at pixel,
+            // but we do have a valid hovered feature/layer, treat it as the clicked target.
+            if (featureToLayerMap.length == 0 && this._highlightedFeature && this._highlightedLayer) {
+                if (this._highlightedLayer.get(LayerProperty.IS_SELECTABLE) == true) {
+                    if (!effectiveLayerSet || effectiveLayerSet.ownsSwipeableLayer(this._highlightedLayer as any)) {
+                        featureToLayerMap.push([this._highlightedFeature, this._highlightedLayer]);
+                        usedHoverFallback = true;
+                    }
+                }
+            }
             if (this._select && featureToLayerMap.length == 1) {
                 const [f, l] = featureToLayerMap[0];
                 if (isClusteredFeature(f) && getClusterSubFeatures(f).length > 1 && (l.get(LayerProperty.VECTOR_STYLE) as OLStyleMapSet)?.getClusterClickAction() == ClusterClickAction.ZoomToClusterExtents) {
@@ -1245,25 +1291,46 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     const inflatedBounds = inflateBoundsByMeters(this.getProjection(), zoomBounds, 20);
                     this.zoomToExtent(inflatedBounds);
                 } else {
-                    this.addClientSelectedFeature(f, l, effectiveMapName);
+                    if (!bAppendMode) {
+                        // Keep clear/add in one React batch so subscribers never observe
+                        // an intermediate empty selection state for this click.
+                        batch(() => {
+                            clearSelectionForCurrentClick();
+                            this.addClientSelectedFeature(f, l, effectiveMapName);
+                        });
+                    } else {
+                        this.addClientSelectedFeature(f, l, effectiveMapName);
+                    }
                 }
             }
         }
         // We'll only fall through the normal map selection query route if no 
         // vector features were selected as part of this click
         const px = e.pixel as [number, number];
+        // Only invoke the provider map click (e.g. MapGuide QUERYMAPFEATURES) for the
+        // primary map. When swipe is active and the user clicks on the secondary side,
+        // calling onProviderMapClick would incorrectly send a query for the primary map
+        // using coordinates from the secondary side, producing a spurious selection.
+        const isClickOnPrimary = !this._swipeSecondaryMapName || effectiveMapName === this._state.mapName;
         if (featureToLayerMap.length == 0) {
             this.hideSelectedVectorFeaturesTooltip();
             if (this._state.activeTool == ActiveMapTool.Select) {
+                if (!bAppendMode) {
+                    clearSelectionForCurrentClick();
+                }
                 this.queryWmsFeatures(effectiveMapName, e.coordinate as Coordinate2D, bAppendMode).then(madeSelection => {
                     if (!madeSelection) {
-                        this.onProviderMapClick(px);
+                        if (isClickOnPrimary) {
+                            this.onProviderMapClick(px);
+                        }
                     } else {
                         console.log("Made WMS selection. Skipping provider click event");
                     }
                 })
             } else {
-                this.onProviderMapClick(px);
+                if (isClickOnPrimary) {
+                    this.onProviderMapClick(px);
+                }
             }
         } else {
             if (this._select) {
@@ -1271,7 +1338,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     const activeLayerSet = this.getLayerSetGroup(effectiveMapName);
                     activeLayerSet?.clearWmsSelectionOverlay();
                 }
-                this.showSelectedVectorFeatures(this._select.getFeatures(), px, featureToLayerMap, this._state.locale);
+                const clickedFeatures = new Collection<OLFeature>();
+                for (const [feat] of featureToLayerMap) {
+                    clickedFeatures.push(feat);
+                }
+                this.showSelectedVectorFeatures(clickedFeatures, px, featureToLayerMap, this._state.locale);
+                // If this selection came from hover fallback (pixel miss), also trigger provider
+                // click handling so provider-backed selection highlight can still refresh.
+                if (usedHoverFallback && this._state.activeTool == ActiveMapTool.Select && isClickOnPrimary) {
+                    this.onProviderMapClick(px);
+                }
             }
         }
     }
@@ -1476,6 +1552,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ]
         };
         this._map = new Map(mapOptions);
+        // OpenLayers sets both overlay containers to inline z-index: 0 in its Map
+        // constructor, which causes popup overlays to render underneath our swipe
+        // control. Raise those containers after map creation so popups can sit above
+        // the swipe divider/handle.
+        const viewport = this._map.getViewport();
+        viewport.querySelector<HTMLElement>('.ol-overlaycontainer')?.style.setProperty('z-index', '20');
+        viewport.querySelector<HTMLElement>('.ol-overlaycontainer-stopevent')?.style.setProperty('z-index', '20');
         const activeLayerSet = this.ensureAndGetLayerSetGroup(this._state);
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);

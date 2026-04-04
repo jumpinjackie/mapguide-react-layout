@@ -11,10 +11,10 @@ import { tr } from '../api/i18n';
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { ISubscriberProps, Subscriber } from './subscriber';
-import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useViewerFlyouts, useViewerSelectCanDragPan } from "./hooks";
+import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useNamedMapLayers, useViewerFlyouts, useViewerSelectCanDragPan } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
-import { MapSwipeControl } from "../components/map-viewer-swipe";
+import { MapSwipeControl, useIsMapSwipeActive, useMapSwipeInfo } from "../components/map-viewer-swipe";
 
 function useLoadingCounters() {
     const [loading, setLoading] = React.useState(0);
@@ -69,6 +69,21 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const mapViewerRef = React.useRef<HTMLDivElement>(null);
     const bContextMenuOpen = (flyouts[WEBLAYOUT_CONTEXTMENU]?.open == true);
     const bSelectCanDragPan = useViewerSelectCanDragPan();
+
+    // Secondary map layer sync for swipe mode: when the secondary map's layer styles change
+    // in Redux (e.g. user edits a layer style in the secondary map panel), apply those changes
+    // to the secondary map's OL layer manager so they are reflected immediately.
+    const isSwipeActive = useIsMapSwipeActive();
+    const swipeInfo = useMapSwipeInfo();
+    // Only watch the secondary map name; the primary is already handled by useViewerSideEffects.
+    const secondaryMapName = isSwipeActive ? swipeInfo?.pair.secondaryMapName : undefined;
+    const secondaryLayers = useNamedMapLayers(secondaryMapName);
+    React.useEffect(() => {
+        if (context.isReady() && secondaryMapName && secondaryLayers) {
+            const layerManager = context.getLayerManager(secondaryMapName);
+            layerManager.apply(secondaryLayers);
+        }
+    }, [context, secondaryMapName, secondaryLayers]);
 
     // HACK: Still have some MG-specific state we're needing to check for here. Minor abstraction leakage.
     let agentUri: string | undefined;

@@ -1552,6 +1552,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             ]
         };
         this._map = new Map(mapOptions);
+        // OpenLayers sets both overlay containers to inline z-index: 0 in its Map
+        // constructor, which causes popup overlays to render underneath our swipe
+        // control. Raise those containers after map creation so popups can sit above
+        // the swipe divider/handle.
+        const viewport = this._map.getViewport();
+        viewport.querySelector<HTMLElement>('.ol-overlaycontainer')?.style.setProperty('z-index', '20');
+        viewport.querySelector<HTMLElement>('.ol-overlaycontainer-stopevent')?.style.setProperty('z-index', '20');
         const activeLayerSet = this.ensureAndGetLayerSetGroup(this._state);
         this.initContext(activeLayerSet, this._state.locale, this._state.overviewMapElementSelector);
         this._mouseTooltip = new MouseTrackingTooltip(this._map, this._comp.isContextMenuOpen);

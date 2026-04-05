@@ -134,8 +134,13 @@ describe("actions/init-command", () => {
     });
 
     describe("parseMapGroupCoordinateFormat", () => {
-        it("returns undefined when the first map has no extension", () => {
+        it("returns undefined when Map array is empty", () => {
             const mapGroup = { "@id": "MapA", Map: [] };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
+        });
+
+        it("returns undefined when the first map has no extension", () => {
+            const mapGroup = { "@id": "MapA", Map: [{ Type: "MapGuide" }] };
             expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
         });
 

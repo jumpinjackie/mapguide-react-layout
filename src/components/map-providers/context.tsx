@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { IMapProviderContext, IReduxStoreRef } from './base';
 import { Provider, useDispatch, useSelector } from "react-redux";
-import type { IApplicationState } from "../../api/common";
+import type { IApplicationState, ReduxDispatch } from "../../api/common";
 import type { configureStore } from "../../store/configure-store";
 
 const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
@@ -14,12 +14,16 @@ const MapProviderContext = React.createContext<IMapProviderContext>({} as any);
 export const ReduxProvider: React.FC<React.PropsWithChildren<{ store: ReduxStoreImpl }>> = ({ store, children }) => <Provider store={store}>{children}</Provider>
 
 /**
- * Wraps useDispatch from react-redux
+ * Wraps useDispatch from react-redux, typed to accept both plain ViewerActions and thunked actions.
  * 
  * @since 0.14
  */
-export function useReduxDispatch() {
-    return useDispatch();
+export function useReduxDispatch(): ReduxDispatch {
+    // The double cast is required because react-redux's useDispatch() returns Dispatch<AnyAction>,
+    // which only accepts plain action objects. ReduxDispatch also accepts thunk functions, so the
+    // types are structurally incompatible at the TypeScript level. The RTK store includes thunk
+    // middleware, so at runtime dispatch correctly handles both plain actions and thunks.
+    return useDispatch() as unknown as ReduxDispatch;
 }
 
 /**

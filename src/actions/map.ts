@@ -48,7 +48,8 @@ import {
     ISetHeatmapLayerRadiusAction,
     IEnableSelectDragPanAction,
     ISetMapSwipeModeAction,
-    IUpdateMapSwipePositionAction
+    IUpdateMapSwipePositionAction,
+    IExternalLayersReadyAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
 import { getSiteVersion, canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
@@ -741,7 +742,7 @@ export function mapLayerAdded(mapName: string, layer: ILayerInfo, defaultStyle?:
  * @param mapName 
  * @since 0.14
  */
-export function externalLayersReady(mapName: string) {
+export function externalLayersReady(mapName: string): IExternalLayersReadyAction {
     return {
         type: ActionType.EXTERNAL_LAYERS_READY,
         payload: {

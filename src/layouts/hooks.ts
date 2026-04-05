@@ -1,9 +1,8 @@
 import * as React from "react";
 import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible, useTemplateLegendVisible, useTemplateTaskPaneVisible } from '../containers/hooks';
 import { IElementState } from '../actions/defs';
-import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
+import { IViewerCapabilities, TemplateReducerFunction, ReduxDispatch } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
-import type { Dispatch } from '@reduxjs/toolkit';
 import { setElementStates } from '../actions/template';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 
@@ -19,7 +18,7 @@ export type CommonTemplateState = {
     onDragEnd: () => void;
     onSplitterChanged: () => void;
     onActiveElementChanged: (id: "Legend" | "TaskPane" | "Selection") => void;
-    dispatch: Dispatch<any>;
+    dispatch: ReduxDispatch;
 };
 
 export function useCommonTemplateState(templateReducer?: TemplateReducerFunction): CommonTemplateState {

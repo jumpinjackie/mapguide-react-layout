@@ -54,6 +54,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.54.0",
     "@react-hook/resize-observer": "^2.0.2",
+    "@reduxjs/toolkit": "^2.11.2",
     "colorbrewer": "^1.6.1",
     "dompurify": "^3.3.1",
     "geojson-vt": "^4.0.2",
@@ -71,9 +72,6 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.9",
     "react-rnd": "^10.5.2",
-    "redux": "^4.2.1",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.4.2",
     "stickybits": "3.7.11",
     "tslib": "^2.8.1",
     "url-parse": "^1.5.10"

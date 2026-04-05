@@ -3,7 +3,7 @@ import { useViewerLocale, useConfiguredCapabilities, useTemplateSelectionVisible
 import { IElementState } from '../actions/defs';
 import { IViewerCapabilities, TemplateReducerFunction } from '../api/common';
 import { setCustomTemplateReducer } from '../reducers/template';
-import { Dispatch } from 'redux';
+import type { Dispatch } from '@reduxjs/toolkit';
 import { setElementStates } from '../actions/template';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 

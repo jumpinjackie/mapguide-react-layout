@@ -1,5 +1,4 @@
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import { configureStore as rtkConfigureStore, combineReducers } from '@reduxjs/toolkit';
 import { promiseMiddleware } from './promise-middleware';
 import { logger } from './logger';
 import { rootReducer } from '../reducers/root';
@@ -14,31 +13,18 @@ import { rootReducer } from '../reducers/root';
  * @since 0.15 - Fixed return type to no longer be `any`
  */
 export function configureStore(initialState: any, extraReducers?: any) {
-    const root = extraReducers ? combineReducers({ ...rootReducer, ...extraReducers }) : combineReducers(rootReducer);
-    const store = compose(
-        _getMiddleware(),
-        ..._getEnhancers()
-    )(createStore)(root, initialState);
-    return store;
-}
-
-function _getMiddleware() {
-    let middleware = [
-        promiseMiddleware,
-        thunk,
-    ];
-
-    if (typeof(__DEV__) !== 'undefined' && __DEV__) {
-        middleware = [...middleware, logger];
-    }
-
-    return applyMiddleware(...middleware);
-}
-
-function _getEnhancers() {
-    let enhancers = [] as any[];
-    if (typeof(__DEV__) !== 'undefined' && __DEV__ && window.__REDUX_DEVTOOLS_EXTENSION__) {
-        enhancers = [...enhancers, window.__REDUX_DEVTOOLS_EXTENSION__()];
-    }
-    return enhancers;
+    const rootReducerMap = extraReducers ? { ...rootReducer, ...extraReducers } : rootReducer;
+    const isDev = typeof(__DEV__) !== 'undefined' && __DEV__;
+    return rtkConfigureStore({
+        reducer: combineReducers(rootReducerMap),
+        preloadedState: initialState,
+        middleware: (getDefaultMiddleware) => {
+            const base = getDefaultMiddleware({
+                serializableCheck: false,
+                immutableStateInvariant: false,
+            }).prepend(promiseMiddleware as any);
+            return isDev ? base.concat(logger as any) : base;
+        },
+        devTools: isDev,
+    });
 }

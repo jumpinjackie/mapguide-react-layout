@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { createStore, applyMiddleware } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import { logger } from "../../src/store/logger";
 import { ActionType } from "../../src/constants/actions";
 
@@ -19,7 +19,7 @@ describe("store/logger", () => {
             const consoleGroupCollapsed = vi.spyOn(console, "groupCollapsed").mockImplementation(() => {});
             const consoleGroupEnd = vi.spyOn(console, "groupEnd").mockImplementation(() => {});
 
-            const store = createStore(reducer, applyMiddleware(logger));
+            const store = configureStore({ reducer, middleware: () => [logger] as any });
             // Dispatch a non-filtered action type
             store.dispatch({ type: "TEST_ACTION", payload: {} });
             // No assertion needed - just ensuring predicate and stateTransformer get called
@@ -34,7 +34,7 @@ describe("store/logger", () => {
             const consoleSpy = vi.spyOn(console, "group").mockImplementation(() => {});
             const consoleGroupCollapsed = vi.spyOn(console, "groupCollapsed").mockImplementation(() => {});
 
-            const store = createStore(reducer, applyMiddleware(logger));
+            const store = configureStore({ reducer, middleware: () => [logger] as any });
             // Dispatch a filtered action type - should not be logged
             store.dispatch({ type: ActionType.MAP_RESIZED, payload: { width: 100, height: 100 } } as any);
             store.dispatch({ type: ActionType.UPDATE_MOUSE_COORDINATES, payload: {} } as any);

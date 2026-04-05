@@ -21,7 +21,7 @@ export function configureStore(initialState: any, extraReducers?: any) {
         middleware: (getDefaultMiddleware) => {
             const base = getDefaultMiddleware({
                 serializableCheck: false,
-                immutableStateInvariant: false,
+                immutableCheck: false,
             }).prepend(promiseMiddleware as any);
             return isDev ? base.concat(logger as any) : base;
         },

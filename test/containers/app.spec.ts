@@ -33,4 +33,20 @@ describe("getEffectiveUrlPropsIgnore", () => {
     it("returns undefined when prop is undefined and settings value results in empty list", () => {
         expect(getEffectiveUrlPropsIgnore(undefined, "  ,,  ")).toBeUndefined();
     });
+
+    it("lowercases all entries from prop", () => {
+        expect(getEffectiveUrlPropsIgnore(["X", "Y"], undefined)).toEqual(["x", "y"]);
+    });
+
+    it("lowercases all entries from settings value", () => {
+        expect(getEffectiveUrlPropsIgnore(undefined, "X,Y,Scale")).toEqual(["x", "y", "scale"]);
+    });
+
+    it("deduplicates entries across prop and settings", () => {
+        expect(getEffectiveUrlPropsIgnore(["x", "scale"], "x,y")).toEqual(["x", "scale", "y"]);
+    });
+
+    it("deduplicates case-insensitively (prop uppercase, settings lowercase)", () => {
+        expect(getEffectiveUrlPropsIgnore(["X"], "x,y")).toEqual(["x", "y"]);
+    });
 });

@@ -63,11 +63,27 @@ export const APP_SETTING_URL_PROPS_IGNORE = "urlPropsIgnore";
  * @hidden
  */
 export function getEffectiveUrlPropsIgnore(propIgnore: string[] | undefined, settingsValue: string | undefined): string[] | undefined {
-    const fromSettings = settingsValue?.split(",").map(s => s.trim()).filter(s => s.length > 0);
-    if (fromSettings?.length) {
-        return [...(propIgnore ?? []), ...fromSettings];
+    const normalizeIgnoreProp = (value: string) => value.trim().toLowerCase();
+    const fromProps = propIgnore?.map(normalizeIgnoreProp).filter(s => s.length > 0) ?? [];
+    const fromSettings = settingsValue?.split(",").map(normalizeIgnoreProp).filter(s => s.length > 0) ?? [];
+    const merged = [...new Set([...fromProps, ...fromSettings])];
+    return merged.length > 0 ? merged : undefined;
+}
+
+/**
+ * Returns a copy of the given URL state with the specified keys omitted.
+ * Used to strip ignored keys before equality comparison so that changes
+ * to ignored fields do not trigger unnecessary URL updates.
+ */
+function omitIgnoredStateKeys(state: IAppUrlState, ignoreProps: string[]): IAppUrlState {
+    const ignoreSet = new Set(ignoreProps.map(k => k.toLowerCase()));
+    const result: IAppUrlState = {};
+    for (const k in state) {
+        if (!ignoreSet.has(k.toLowerCase())) {
+            (result as any)[k] = (state as any)[k];
+        }
     }
-    return propIgnore;
+    return result;
 }
 
 const AppLoadingPlaceholder: React.FC<{ locale: string }> = ({ locale }) => {
@@ -473,8 +489,11 @@ export const App = (props: IAppProps) => {
                 }
             }
         }
-        if (!areStatesEqual(curUrlState, nextUrlState))
-            updateUrl(nextUrlState, undefined, getEffectiveUrlPropsIgnore(props.urlPropsIgnore, configuredAppSettings?.[APP_SETTING_URL_PROPS_IGNORE]));
+        const effectiveIgnore = getEffectiveUrlPropsIgnore(props.urlPropsIgnore, configuredAppSettings?.[APP_SETTING_URL_PROPS_IGNORE]);
+        const curComparable = effectiveIgnore ? omitIgnoredStateKeys(curUrlState, effectiveIgnore) : curUrlState;
+        const nextComparable = effectiveIgnore ? omitIgnoredStateKeys(nextUrlState, effectiveIgnore) : nextUrlState;
+        if (!areStatesEqual(curComparable, nextComparable))
+            updateUrl(nextUrlState, undefined, effectiveIgnore);
     }, [map, activeMapName, ftEnabled, props, configuredAppSettings]);
 
     const renderErrorMessage = React.useCallback((err: Error | InitError, locale: string, args: any): JSX.Element => {

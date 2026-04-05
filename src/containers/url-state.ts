@@ -50,12 +50,15 @@ export function updateUrl(state: IAppUrlState, extraState?: any, ignoreProps?: s
     const st: any = {};
 
     // Preserve existing URL params by default, excluding ignored keys.
+    // Keys are normalised to lowercase so that a later write of the same
+    // key from IAppUrlState (which is always lowercase) overwrites the
+    // existing entry rather than creating a duplicate with different casing.
     const currentParams = parseUrlParameters(window.location.href);
     for (const k in currentParams) {
         if (ignoreSet.has(k.toLowerCase())) {
             continue;
         }
-        st[k] = currentParams[k];
+        st[k.toLowerCase()] = currentParams[k];
     }
 
     // Apply extra state next, unless explicitly ignored.

@@ -1,5 +1,5 @@
 // Tests for URL state synchronization behavior when ignored URL properties are configured.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { updateUrl } from "../../src/containers/url-state";
 
 describe("updateUrl", () => {
@@ -11,6 +11,11 @@ describe("updateUrl", () => {
             x: "1"
         });
         window.history.replaceState({}, "", `/?${params.toString()}`);
+    });
+
+    afterEach(() => {
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     it("preserves existing non-ignored params when ignore props are configured", () => {

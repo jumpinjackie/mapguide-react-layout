@@ -46,9 +46,33 @@ const debouncedReplaceState = debounce((state, _, url) => window.history.replace
  * @since 0.14.9 - New optional ignoreProps argument
  */
 export function updateUrl(state: IAppUrlState, extraState?: any, ignoreProps?: string[] | undefined): void {
-    const st: any = { ...extraState };
+    const ignoreSet = new Set((ignoreProps ?? []).map(k => k.toLowerCase()));
+    const st: any = {};
+
+    // Preserve existing URL params by default, excluding ignored keys.
+    // Keys are normalised to lowercase so that a later write of the same
+    // key from IAppUrlState (which is always lowercase) overwrites the
+    // existing entry rather than creating a duplicate with different casing.
+    const currentParams = parseUrlParameters(window.location.href);
+    for (const k in currentParams) {
+        if (ignoreSet.has(k.toLowerCase())) {
+            continue;
+        }
+        st[k.toLowerCase()] = currentParams[k];
+    }
+
+    // Apply extra state next, unless explicitly ignored.
+    if (extraState != null) {
+        for (const k in extraState) {
+            if (ignoreSet.has(k.toLowerCase())) {
+                continue;
+            }
+            st[k] = extraState[k];
+        }
+    }
+
     for (const k in state) {
-        if (ignoreProps && ignoreProps.indexOf(k) >= 0)
+        if (ignoreSet.has(k.toLowerCase()))
             continue;
         const val: any = (state as any)[k];
         switch (k) {
@@ -72,7 +96,7 @@ export function updateUrl(state: IAppUrlState, extraState?: any, ignoreProps?: s
                 break;
         }
     }
-    const url = appendParameters(window.location.href, st, true, false, ignoreProps != null);
+    const url = appendParameters(window.location.href, st, true, false, true);
     //window.history.replaceState(st, "", url);
     debouncedReplaceState(st, "", url);
 }

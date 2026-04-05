@@ -3,19 +3,29 @@ import { strIsNullOrEmpty } from './string';
 
 /**
  * Converts a URLSearchParams instance to a plain object. Handles repeated keys by
- * converting them to arrays.
+ * converting them to arrays. Uses a single O(n) pass over entries.
  */
 function urlSearchParamsToObject(usp: URLSearchParams): any {
     const obj: any = {};
-    const seen = new Set<string>();
-    for (const key of usp.keys()) {
-        if (!seen.has(key)) {
-            seen.add(key);
-            const values = usp.getAll(key);
-            obj[key] = values.length === 1 ? values[0] : values;
+    for (const [key, value] of usp.entries()) {
+        const existing = obj[key];
+        if (existing === undefined) {
+            obj[key] = value;
+        } else if (Array.isArray(existing)) {
+            existing.push(value);
+        } else {
+            obj[key] = [existing, value];
         }
     }
     return obj;
+}
+
+/**
+ * Returns the base URL to use for resolving relative URLs. Falls back to a
+ * localhost base when `window` is not available (e.g. in Node.js environments).
+ */
+function getUrlBase(): string {
+    return typeof window !== "undefined" ? window.location.href : "http://localhost/";
 }
 
 /**
@@ -56,7 +66,16 @@ function areParamsEqual(params1: any, params2: any): boolean {
     const keys2 = Object.keys(params2).filter(k => k.toLowerCase() != "locale").sort();
     if (arraysEqual(keys1, keys2)) {
         for (const key of keys1) {
-            if (params1[key] != params2[key]) {
+            const v1 = params1[key];
+            const v2 = params2[key];
+            if (Array.isArray(v1) || Array.isArray(v2)) {
+                if (!arraysEqual(
+                    Array.isArray(v1) ? v1 : [v1],
+                    Array.isArray(v2) ? v2 : [v2]
+                )) {
+                    return false;
+                }
+            } else if (v1 != v2) {
                 return false;
             }
         }
@@ -73,7 +92,7 @@ function areParamsEqual(params1: any, params2: any): boolean {
  * @returns {boolean}
  */
 export function areUrlsSame(url1: string, url2: string): boolean {
-    const base = typeof window !== "undefined" ? window.location.href : undefined;
+    const base = getUrlBase();
     let parsed1: URL;
     let parsed2: URL;
     try {
@@ -242,7 +261,7 @@ export function parseUrl(url: string): IParsedUrl {
  */
 export function stringifyQuery(parameters: any): string {
     const usp = new URLSearchParams();
-    for (const key in parameters) {
+    for (const key of Object.keys(parameters)) {
         const value = parameters[key];
         if (Array.isArray(value)) {
             value.forEach((v, i) => {
@@ -267,8 +286,7 @@ export function stringifyQuery(parameters: any): string {
  * @since 0.15 - Ensured return type is a string
  */
 export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false): string {
-    const base = typeof window !== "undefined" ? window.location.href : undefined;
-    const parsed = new URL(url, base);
+    const parsed = new URL(url, getUrlBase());
     let currentParams: any;
     if (!bDiscardExistingParams) {
         currentParams = urlSearchParamsToObject(parsed.searchParams);
@@ -277,11 +295,11 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
     }
 
     const paramNames: any = {};
-    for (const key in currentParams) {
+    for (const key of Object.keys(currentParams)) {
         paramNames[key.toUpperCase()] = key;
     }
 
-    for (const name in parameters) {
+    for (const name of Object.keys(parameters)) {
         //See if this parameter name was normalized
         const key = paramNames[name.toUpperCase()] || name;
         //If it was and we've got an existing value there, skip if not overwriting
@@ -294,7 +312,7 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
 
     if (bConvertToUppercase) {
         let params2: any = {};
-        for (const name in currentParams) {
+        for (const name of Object.keys(currentParams)) {
             params2[name.toUpperCase()] = currentParams[name];
         }
         currentParams = params2;
@@ -312,7 +330,6 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
  * @since 0.13
  */
 export function parseUrlParameters(url: string): any {
-    const base = typeof window !== "undefined" ? window.location.href : undefined;
-    const parsed = new URL(url, base);
+    const parsed = new URL(url, getUrlBase());
     return urlSearchParamsToObject(parsed.searchParams);
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSubjectLayerDefn, isMapDefinition, isStateless, parseSwipePairs } from "../../src/actions/init-command";
+import { buildSubjectLayerDefn, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, parseSwipePairs } from "../../src/actions/init-command";
 import { GenericSubjectLayerType, IGenericSubjectMapLayer } from "../../src/actions/defs";
 
 describe("actions/init-command", () => {
@@ -130,6 +130,82 @@ describe("actions/init-command", () => {
             const pairs = parseSwipePairs(appDef as any);
             expect(pairs).toHaveLength(1);
             expect(pairs[0].primaryMapName).toBe("MapA");
+        });
+    });
+
+    describe("parseMapGroupCoordinateFormat", () => {
+        it("returns undefined when Map array is empty", () => {
+            const mapGroup = { "@id": "MapA", Map: [] };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
+        });
+
+        it("returns undefined when the first map has no extension", () => {
+            const mapGroup = { "@id": "MapA", Map: [{ Type: "MapGuide" }] };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
+        });
+
+        it("returns MouseCoordinatesFormat from the first map extension", () => {
+            const mapGroup = {
+                "@id": "MapA",
+                Map: [
+                    {
+                        Type: "MapGuide",
+                        Extension: {
+                            MouseCoordinatesFormat: "Lng: {x} {units}, Lat: {y} {units}"
+                        }
+                    }
+                ]
+            };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBe("Lng: {x} {units}, Lat: {y} {units}");
+        });
+
+        it("ignores non-canonical alias keys", () => {
+            const mapGroup = {
+                "@id": "MapA",
+                Map: [
+                    {
+                        Type: "MapGuide",
+                        Extension: {
+                            CoordinateFormat: "Easting: {x} {units}, Northing: {y} {units}"
+                        }
+                    }
+                ]
+            };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
+        });
+
+        it("returns undefined for blank values", () => {
+            const mapGroup = {
+                "@id": "MapA",
+                Map: [
+                    {
+                        Type: "MapGuide",
+                        Extension: {
+                            MouseCoordinatesFormat: "   "
+                        }
+                    }
+                ]
+            };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
+        });
+
+        it("only reads from the first map", () => {
+            const mapGroup = {
+                "@id": "MapA",
+                Map: [
+                    {
+                        Type: "MapGuide",
+                        Extension: {}
+                    },
+                    {
+                        Type: "MapGuide",
+                        Extension: {
+                            MouseCoordinatesFormat: "Easting: {x} {units}, Northing: {y} {units}"
+                        }
+                    }
+                ]
+            };
+            expect(parseMapGroupCoordinateFormat(mapGroup as any)).toBeUndefined();
         });
     });
 });

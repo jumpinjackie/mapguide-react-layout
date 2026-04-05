@@ -1668,6 +1668,12 @@ export interface IBranchedMapSubState {
      * @since 0.14
      */
     generic: IGenericLayerSubState | undefined;
+    /**
+     * Optional coordinate display format override for this map.
+     *
+     * @since 0.15
+     */
+    coordinateFormat?: string;
 }
 
 /**

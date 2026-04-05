@@ -128,3 +128,18 @@ export function useActiveMapFiniteScales() {
 export function useActiveMapState() {
     return useAppState<RuntimeMap | undefined>(state => getRuntimeMap(state));
 }
+
+/**
+ * Gets the coordinate display format override for the active map.
+ *
+ * @hidden
+ * @since 0.15
+ */
+export function useActiveMapCoordinateFormat() {
+    return useAppState<string | undefined>(state => {
+        if (state.config.activeMapName) {
+            return state.mapState[state.config.activeMapName]?.coordinateFormat;
+        }
+        return undefined;
+    });
+}

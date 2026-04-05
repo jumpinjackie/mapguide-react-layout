@@ -76,10 +76,10 @@ export function getEffectiveUrlPropsIgnore(propIgnore: string[] | undefined, set
  * to ignored fields do not trigger unnecessary URL updates.
  */
 function omitIgnoredStateKeys(state: IAppUrlState, ignoreProps: string[]): IAppUrlState {
-    const ignoreSet = new Set(ignoreProps.map(k => k.toLowerCase()));
+    const ignoreSet = new Set(ignoreProps);
     const result: IAppUrlState = {};
     for (const k in state) {
-        if (!ignoreSet.has(k.toLowerCase())) {
+        if (!ignoreSet.has(k)) {
             (result as any)[k] = (state as any)[k];
         }
     }

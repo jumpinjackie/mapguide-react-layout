@@ -43,6 +43,8 @@ jobs:
         uses: q1sh101/build-size-diff@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-install: true
+          build-command: 'true'
           dist-path: 'viewer/dist'
 
   release:

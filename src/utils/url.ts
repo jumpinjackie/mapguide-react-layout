@@ -1,9 +1,22 @@
-import queryString from "qs";
 import type { IInvokeUrlCommandParameter } from "../api/common";
 import { strIsNullOrEmpty } from './string';
-const parse = require("url-parse");
 
-const DEFAULT_PARSE_OPTIONS = { ignoreQueryPrefix: true };
+/**
+ * Converts a URLSearchParams instance to a plain object. Handles repeated keys by
+ * converting them to arrays.
+ */
+function urlSearchParamsToObject(usp: URLSearchParams): any {
+    const obj: any = {};
+    const seen = new Set<string>();
+    for (const key of usp.keys()) {
+        if (!seen.has(key)) {
+            seen.add(key);
+            const values = usp.getAll(key);
+            obj[key] = values.length === 1 ? values[0] : values;
+        }
+    }
+    return obj;
+}
 
 /**
  * Indicates if the given arrays are equal
@@ -60,22 +73,30 @@ function areParamsEqual(params1: any, params2: any): boolean {
  * @returns {boolean}
  */
 export function areUrlsSame(url1: string, url2: string): boolean {
-    const parsed1 = parse(url1);
-    const parsed2 = parse(url2);
-    const params1 = queryString.parse(parsed1.query, DEFAULT_PARSE_OPTIONS);
-    const params2 = queryString.parse(parsed2.query, DEFAULT_PARSE_OPTIONS);
+    const base = typeof window !== "undefined" ? window.location.href : undefined;
+    let parsed1: URL;
+    let parsed2: URL;
+    try {
+        parsed1 = new URL(url1, base);
+    } catch {
+        return false;
+    }
+    try {
+        parsed2 = new URL(url2, base);
+    } catch {
+        return false;
+    }
+    const params1 = urlSearchParamsToObject(parsed1.searchParams);
+    const params2 = urlSearchParamsToObject(parsed2.searchParams);
 
-    const same = parsed1.protocol == parsed2.protocol
-        && parsed1.slashes == parsed2.slashes
-        && parsed1.auth == parsed2.auth
-        && parsed1.username == parsed2.username
-        && parsed1.password == parsed2.password
-        && parsed1.host == parsed2.host
-        && parsed1.hostname == parsed2.hostname
-        && parsed1.port == parsed2.port
-        && parsed1.pathname == parsed2.pathname
-        && parsed1.hash == parsed2.hash
-        && parsed1.host == parsed2.host
+    const same = parsed1.protocol === parsed2.protocol
+        && parsed1.username === parsed2.username
+        && parsed1.password === parsed2.password
+        && parsed1.host === parsed2.host
+        && parsed1.hostname === parsed2.hostname
+        && parsed1.port === parsed2.port
+        && parsed1.pathname === parsed2.pathname
+        && parsed1.hash === parsed2.hash
         && areParamsEqual(params1, params2);
 
     return same;
@@ -111,7 +132,7 @@ export function parseComponentUri(uri: string): ParsedComponentUri | undefined {
     if (isComponentUri(uri)) {
         const qi = uri.lastIndexOf("?");
         const name = qi < 0 ? uri.substring(12) : uri.substring(12, qi);
-        const props = qi < 0 ? {} : queryString.parse(uri.substring(qi), DEFAULT_PARSE_OPTIONS);
+        const props = qi < 0 ? {} : urlSearchParamsToObject(new URLSearchParams(uri.substring(qi)));
         return {
             name,
             props
@@ -136,7 +157,7 @@ export function ensureParameters(url: string, mapName: string | undefined, sessi
         return url;
     }
     const parsed = parseUrl(url);
-    const params: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+    const params: any = parsed.query != null ? { ...parsed.query } : {};
     let bNeedMapName = true;
     let bNeedSession = true;
     let bNeedLocale = true;
@@ -180,16 +201,6 @@ export function ensureParameters(url: string, mapName: string | undefined, sessi
         params[p.name] = p.value;
     }
 
-    /*
-    parsed.query = queryString.stringify(params);
-    const result = parsed.toString();
-
-    if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
-        return result;
-    }
-
-    return result;
-    */
     //Don't uppercase the parameters here if true, uppercasing is only for filling in
     //missing parameters
     return appendParameters(url, params, true, false /*uppercase*/);
@@ -214,10 +225,9 @@ export interface IParsedUrl {
  * @since 0.12
  */
 export function parseUrl(url: string): IParsedUrl {
-    //return queryString.parseUrl(url);
     const qi = url.lastIndexOf("?");
     const parsedUrl = qi < 0 ? url : url.substring(0, qi);
-    const query = qi < 0 ? {} : queryString.parse(url.substring(qi), DEFAULT_PARSE_OPTIONS);
+    const query = qi < 0 ? {} : urlSearchParamsToObject(new URLSearchParams(url.substring(qi)));
     return {
         url: parsedUrl,
         query
@@ -231,7 +241,18 @@ export function parseUrl(url: string): IParsedUrl {
  * @returns {string} The query string fragment
  */
 export function stringifyQuery(parameters: any): string {
-    return queryString.stringify(parameters);
+    const usp = new URLSearchParams();
+    for (const key in parameters) {
+        const value = parameters[key];
+        if (Array.isArray(value)) {
+            value.forEach((v, i) => {
+                usp.append(`${key}[${i}]`, String(v));
+            });
+        } else if (value !== undefined && value !== null) {
+            usp.set(key, String(value));
+        }
+    }
+    return usp.toString();
 }
 
 /**
@@ -246,10 +267,11 @@ export function stringifyQuery(parameters: any): string {
  * @since 0.15 - Ensured return type is a string
  */
 export function appendParameters(url: string, parameters: any, bOverwriteExisting: boolean = true, bConvertToUppercase: boolean = false, bDiscardExistingParams: boolean = false): string {
-    const parsed = parse(url);
+    const base = typeof window !== "undefined" ? window.location.href : undefined;
+    const parsed = new URL(url, base);
     let currentParams: any;
     if (!bDiscardExistingParams) {
-        currentParams = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
+        currentParams = urlSearchParamsToObject(parsed.searchParams);
     } else {
         currentParams = {};
     }
@@ -278,14 +300,9 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
         currentParams = params2;
     }
 
-    parsed.query = queryString.stringify(currentParams);
-    const result = parsed.toString();
-
-    if (url.indexOf(parsed.protocol) >= 0 || url.indexOf("/") == 0) {
-        return result;
-    }
-
-    return result;
+    const queryStr = stringifyQuery(currentParams);
+    parsed.search = queryStr ? `?${queryStr}` : "";
+    return parsed.toString();
 }
 
 /**
@@ -295,7 +312,7 @@ export function appendParameters(url: string, parameters: any, bOverwriteExistin
  * @since 0.13
  */
 export function parseUrlParameters(url: string): any {
-    const parsed = parse(url);
-    const currentParams: any = parsed.query != null ? queryString.parse(parsed.query, DEFAULT_PARSE_OPTIONS) : {};
-    return currentParams;
+    const base = typeof window !== "undefined" ? window.location.href : undefined;
+    const parsed = new URL(url, base);
+    return urlSearchParamsToObject(parsed.searchParams);
 }

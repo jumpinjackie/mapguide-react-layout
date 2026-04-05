@@ -7,7 +7,7 @@ import { MouseCoordinates } from "../components/mouse-coordinates";
 import * as olProj from "ol/proj";
 import { getUnitOfMeasure } from "../utils/units";
 import { useViewerLocale, useCurrentMouseCoordinates, useConfiguredCoordinateProjection, useConfiguredCoordinateDecimals, useConfiguredCoordinateFormat } from './hooks';
-import { useActiveMapProjection } from './hooks-mapguide';
+import { useActiveMapProjection, useActiveMapCoordinateFormat } from './hooks-mapguide';
 
 export interface IMouseCoordinatesContainerProps {
     style?: React.CSSProperties;
@@ -19,6 +19,7 @@ export const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps
     const projection = useConfiguredCoordinateProjection();
     const decimals = useConfiguredCoordinateDecimals();
     const format = useConfiguredCoordinateFormat();
+    const mapCoordinateFormat = useActiveMapCoordinateFormat();
     const mouse = useCurrentMouseCoordinates();
     const locale = useViewerLocale();
     if (mouse) {
@@ -51,7 +52,8 @@ export const MouseCoordinatesContainer = (props: IMouseCoordinatesContainerProps
 
             }
         }
-        return <MouseCoordinates units={units} coords={coords} style={style} decimals={decimals} format={format} />;
+        const effectiveFormat = mapCoordinateFormat || format;
+        return <MouseCoordinates units={units} coords={coords} style={style} decimals={decimals} format={effectiveFormat} />;
     } else {
         return <div />;
     }

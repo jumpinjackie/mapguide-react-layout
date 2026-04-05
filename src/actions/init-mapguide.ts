@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, MapToLoad, ViewerInitCommand } from './init-command';
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, MapToLoad, ViewerInitCommand } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
@@ -575,6 +575,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                 }
 
                 if (mapName) {
+                    const coordinateFormat = parseMapGroupCoordinateFormat(mGroup);
                     const pendingEntry = pendingMapDefs?.[mapName];
                     dict[mapName] = {
                         mapGroupId: mGroup["@id"],
@@ -582,6 +583,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         initialView: initialView,
                         externalBaseLayers: externalBaseLayers,
                         initialExternalLayers: initExternalLayers,
+                        coordinateFormat: coordinateFormat,
                         // If this map is pending lazy creation, store the mapDef for later use
                         ...(pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {})
                     };

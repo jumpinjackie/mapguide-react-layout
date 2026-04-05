@@ -4,7 +4,7 @@ import type { ReduxDispatch, Dictionary, IMapSwipePair } from '../api/common';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
-import { ApplicationDefinition, MapConfiguration } from '../api/contracts/fusion';
+import { ApplicationDefinition, MapConfiguration, MapSetGroup } from '../api/contracts/fusion';
 import { warn, info } from '../utils/logger';
 import { registerCommand } from '../api/registry/command';
 import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
@@ -54,6 +54,28 @@ export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] 
         }
     }
     return pairs;
+}
+
+/**
+ * Parses a map-level mouse coordinate format override from the first map
+ * configuration inside a MapGroup.
+ *
+ * Supported extension key on the first map's Extension object:
+ * - MouseCoordinatesFormat
+ *
+ * @hidden
+ * @since 0.15
+ */
+export function parseMapGroupCoordinateFormat(mapGroup: MapSetGroup): string | undefined {
+    const ext = mapGroup.Map?.[0]?.Extension;
+    if (!ext) {
+        return undefined;
+    }
+    const candidate = ext.MouseCoordinatesFormat;
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+        return candidate;
+    }
+    return undefined;
 }
 
 const TYPE_SUBJECT = "SubjectLayer";

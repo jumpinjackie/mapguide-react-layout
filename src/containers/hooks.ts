@@ -1,3 +1,4 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { IApplicationState, IMapView, UnitOfMeasure, getCurrentView, IExternalBaseLayer, Coordinate2D, ILayerInfo, getExternalBaseLayers, InitError, IBranchedMapSubState, getSelectionSet, INameValuePair, ActiveMapTool, ClientKind, ImageFormat, MapLoadIndicatorPositioning, IViewerCapabilities } from '../api/common';
 import { WEBLAYOUT_CONTEXTMENU } from '../constants';
 import { useRef, useEffect } from "react";
@@ -8,6 +9,26 @@ import { reduceAppToToolbarState } from '../api/registry/command';
 import { useAppState } from '../components/map-providers/context';
 import { ClientSelectionSet } from '../api/contracts/common';
 import { IHeatmapSettings } from '../api/ol-style-contracts';
+
+const EMPTY_INITIAL_EXTERNAL_LAYERS: IInitialExternalLayer[] = [];
+
+const selectReducedToolbarAppState = createSelector(
+    [(state: IApplicationState) => state],
+    state => reduceAppToToolbarState(state)
+);
+
+const selectActiveMapLayers = createSelector(
+    [
+        (state: IApplicationState) => state.config.activeMapName,
+        (state: IApplicationState) => state.mapState
+    ],
+    (activeMapName, mapState) => {
+        if (activeMapName) {
+            return mapState[activeMapName]?.layers;
+        }
+        return undefined;
+    }
+);
 
 // From: https://usehooks.com/usePrevious/
 
@@ -34,7 +55,7 @@ export function useActiveMapInitialExternalLayers() {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].initialExternalLayers;
         }
-        return [];
+        return EMPTY_INITIAL_EXTERNAL_LAYERS;
     });
 }
 
@@ -48,19 +69,18 @@ function sameHeatmapSettings(left: IHeatmapSettings | undefined, right: IHeatmap
 
 
 export function useActiveMapLayers() {
-    return useAppState<ILayerInfo[] | undefined>(state => {
-        if (state.config.activeMapName) {
-            return state.mapState[state.config.activeMapName].layers;
-        }
-        return undefined;
-    }, (left, right) => !areArraysDifferent(left, right, (l, r) => {
-        return l.name == r.name
-            && l.opacity == r.opacity
-            && l.visible == r.visible
-            && l.vectorStyle == r.vectorStyle
-            && l.cluster == r.cluster
-            && sameHeatmapSettings(l.heatmap, r.heatmap);
-    }));
+    return useAppState<ILayerInfo[] | undefined>(selectActiveMapLayers, (left, right) => {
+        if (left === right) return true;
+        if (!left || !right) return false;
+        return !areArraysDifferent(left, right, (l, r) => {
+            return l.name == r.name
+                && l.opacity == r.opacity
+                && l.visible == r.visible
+                && l.vectorStyle == r.vectorStyle
+                && l.cluster == r.cluster
+                && sameHeatmapSettings(l.heatmap, r.heatmap);
+        });
+    });
 }
 
 /**
@@ -350,7 +370,7 @@ export function useLastDispatchedAction() {
 export function useReducedToolbarAppState() {
     const selection = useActiveMapSelectionSet();
     const clientSelection = useActiveMapClientSelectionSet();
-    const tbState = useAppState(state => reduceAppToToolbarState(state), (left, right) => {
+    const tbState = useAppState(selectReducedToolbarAppState, (left, right) => {
         return left?.busyWorkerCount == right?.busyWorkerCount
             && left?.hasNextView == right?.hasNextView
             && left?.hasPreviousView == right?.hasPreviousView

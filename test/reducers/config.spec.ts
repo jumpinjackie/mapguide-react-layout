@@ -163,6 +163,20 @@ describe("reducers/config", () => {
             const state2 = configReducer(state, refreshAction);
             expect(state2.pendingMaps).toBeUndefined();
         });
+        it("INIT_APP persists sessionWasReused flag", () => {
+            const initialState = createInitialState();
+            const map = createMap();
+            const view: IMapView = { x: 0, y: 0, scale: 1000 };
+            const initAction = createInitAction(map, view);
+            initAction.payload.sessionWasReused = true;
+
+            const state = configReducer(initialState.config, initAction as any);
+            expect(state.sessionWasReused).toBe(true);
+
+            const initAction2 = createInitAction(map, view);
+            const state2 = configReducer(initialState.config, initAction2 as any);
+            expect(state2.sessionWasReused).toBe(false);
+        });
     });
     describe(ActionType.MAP_SET_VIEW_SIZE_UNITS, () => {
         it("updates", () => {

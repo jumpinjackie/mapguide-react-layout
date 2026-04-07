@@ -380,6 +380,12 @@ export interface IInitAppActionPayload {
      * @since 0.15
      */
     mapSwipePairs?: IMapSwipePair[];
+    /**
+     * Indicates whether initialization reused an existing MapGuide session.
+     *
+     * @since 0.15
+     */
+    sessionWasReused?: boolean;
 }
 
 /**

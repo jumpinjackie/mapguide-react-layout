@@ -13,6 +13,8 @@ import { useMapProviderContext, useReduxDispatch, useAppState } from "../compone
 import { TabSetProps, useElementContext } from "../components/elements/element-context";
 import { useMapSwipeInfo, useIsMapSwipeActive } from "../components/map-viewer-swipe";
 
+const EMPTY_MANAGE_LAYERS: ILayerInfo[] = [];
+
 export function zoomToLayerExtents(layerName: string, viewer: IMapViewer) {
     const layer = viewer.getLayerManager().getLayer(layerName);
     // If the layer has a WGS84 bbox, we'll use that
@@ -101,7 +103,7 @@ export const AddManageLayersContainer = () => {
         if (targetMapName && state.mapState[targetMapName]?.layers) {
             return state.mapState[targetMapName].layers;
         }
-        return [];
+        return EMPTY_MANAGE_LAYERS;
     });
 
     const view = useAppState<IMapView | undefined>(state => {

@@ -560,47 +560,50 @@ export function activateMap(mapName: string): ReduxThunkedAction {
                         const siteVersion = new AsyncLazy<SiteVersionResponse>(async () => client.getSiteVersion());
                         const sv = await siteVersion.getValueAsync();
                         const useV4 = canUseQueryMapFeaturesV4(parseSiteVersion(sv.Version));
+                        const shouldTryDescribeExisting = state.config.sessionWasReused === true;
                         let map: RuntimeMap | undefined;
-                        // Try to describe the runtime map first. This handles the case where the map
-                        // was previously created in a reused session (e.g. after a browser refresh where
-                        // the user had previously switched to this map). If the map does not exist yet
-                        // (i.e. the user has never switched to it), fall back to creating it.
-                        try {
-                            info(`Attempting to describe existing runtime map state (${mapName})`);
-                            if (useV4) {
-                                map = await client.describeRuntimeMap_v4({
-                                    mapname: mapName,
-                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                    session: sessionId
-                                });
-                            } else {
-                                map = await client.describeRuntimeMap({
-                                    mapname: mapName,
-                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                    session: sessionId
-                                });
-                            }
-                        } catch (describeErr: any) {
-                            if (describeErr?.message === "MgResourceNotFoundException") {
-                                // Map does not exist yet in this session, create it
-                                info(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                        // Try describe-first only for reused sessions where a deferred map may already
+                        // exist from prior interaction. For fresh sessions, create directly.
+                        if (shouldTryDescribeExisting) {
+                            try {
+                                info(`Attempting to describe existing runtime map state (${mapName})`);
                                 if (useV4) {
-                                    map = await client.createRuntimeMap_v4({
-                                        mapDefinition: pendingMap.mapDef,
+                                    map = await client.describeRuntimeMap_v4({
+                                        mapname: mapName,
                                         requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                        session: sessionId,
-                                        targetMapName: mapName
+                                        session: sessionId
                                     });
                                 } else {
-                                    map = await client.createRuntimeMap({
-                                        mapDefinition: pendingMap.mapDef,
+                                    map = await client.describeRuntimeMap({
+                                        mapname: mapName,
                                         requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
-                                        session: sessionId,
-                                        targetMapName: mapName
+                                        session: sessionId
                                     });
                                 }
+                            } catch (describeErr: any) {
+                                if (describeErr?.message === "MgResourceNotFoundException") {
+                                    // Expected when deferred map has not yet been created in the reused session.
+                                } else {
+                                    throw describeErr;
+                                }
+                            }
+                        }
+                        if (!map) {
+                            info(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                            if (useV4) {
+                                map = await client.createRuntimeMap_v4({
+                                    mapDefinition: pendingMap.mapDef,
+                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId,
+                                    targetMapName: mapName
+                                });
                             } else {
-                                throw describeErr;
+                                map = await client.createRuntimeMap({
+                                    mapDefinition: pendingMap.mapDef,
+                                    requestedFeatures: RuntimeMapFeatureFlags.LayerFeatureSources | RuntimeMapFeatureFlags.LayerIcons | RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId,
+                                    targetMapName: mapName
+                                });
                             }
                         }
                         if (map) {

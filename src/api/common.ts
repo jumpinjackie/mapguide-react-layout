@@ -2000,6 +2000,12 @@ export interface IConfigurationReducerState {
      */
     pendingMaps?: Dictionary<{mapDef: string, metadata: any}>;
     /**
+     * Indicates whether initialization reused an existing MapGuide session.
+     *
+     * @since 0.15
+     */
+    sessionWasReused?: boolean;
+    /**
      * Viewer configuration
      * 
      *

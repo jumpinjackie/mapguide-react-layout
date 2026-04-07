@@ -65,7 +65,7 @@ jobs:
           node-version: '22'
           cache: 'yarn'
 
-      - name: Install dependencies and build
+      - name: Install dependencies and build (postinstall produces viewer.zip and storybook.zip)
         run: yarn install
 
       - name: Checkout gh-pages branch

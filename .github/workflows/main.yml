@@ -9,6 +9,10 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,6 +52,61 @@ jobs:
           skip-install: true
           build-command: 'true'
           dist-path: 'viewer/dist'
+
+      - name: Upload build artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-zips
+          path: |
+            viewer.zip
+            storybook.zip
+
+  deploy_gh_pages:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-zips
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Clear and extract viewer.zip to master/viewer
+        run: |
+          rm -rf gh-pages/master/viewer
+          mkdir -p gh-pages/master
+          unzip viewer.zip -d gh-pages/master
+
+      - name: Clear and extract storybook.zip to master/storybook-latest
+        run: |
+          rm -rf gh-pages/master/storybook-latest gh-pages/master/storybook-extract
+          mkdir -p gh-pages/master/storybook-extract
+          unzip storybook.zip -d gh-pages/master/storybook-extract
+          if [ -d gh-pages/master/storybook-extract/storybook-static ]; then
+            mv gh-pages/master/storybook-extract/storybook-static gh-pages/master/storybook-latest
+            rmdir gh-pages/master/storybook-extract
+          else
+            mv gh-pages/master/storybook-extract gh-pages/master/storybook-latest
+          fi
+
+      - name: Commit and push to gh-pages
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Deploy master/viewer from ${{ github.sha }} (run ${{ github.run_id }})"
+          git push
 
   release:
     runs-on: ubuntu-latest

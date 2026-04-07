@@ -74,11 +74,11 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Clear and extract viewer.zip to master/latest
+      - name: Clear and extract viewer.zip to master/viewer
         run: |
-          rm -rf gh-pages/master/latest
-          mkdir -p gh-pages/master/latest
-          unzip viewer.zip -d gh-pages/master/latest
+          rm -rf gh-pages/master/viewer
+          mkdir -p gh-pages/master/viewer
+          unzip viewer.zip -d gh-pages/master/viewer
 
       - name: Clear and extract storybook.zip to master/storybook-latest
         run: |

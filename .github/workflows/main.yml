@@ -49,6 +49,52 @@ jobs:
           build-command: 'true'
           dist-path: 'viewer/dist'
 
+  deploy_gh_pages:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies and build
+        run: yarn install
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Clear and extract viewer.zip to master/latest
+        run: |
+          rm -rf gh-pages/master/latest
+          mkdir -p gh-pages/master/latest
+          unzip viewer.zip -d gh-pages/master/latest
+
+      - name: Clear and extract storybook.zip to master/storybook-latest
+        run: |
+          rm -rf gh-pages/master/storybook-latest
+          mkdir -p gh-pages/master/storybook-latest
+          unzip storybook.zip -d gh-pages/master/storybook-latest
+
+      - name: Commit and push to gh-pages
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Deploy master/latest from ${{ github.sha }} (run ${{ github.run_id }})"
+          git push
+
   release:
     runs-on: ubuntu-latest
     needs: build

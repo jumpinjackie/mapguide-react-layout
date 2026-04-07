@@ -10,7 +10,7 @@ import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { IVectorLayerStyle, IClusterSettings, VectorStyleSource } from '../api/ol-style-contracts';
-import { Action } from 'redux';
+import type { Action } from '@reduxjs/toolkit';
 import { ClientSelectionFeature } from '../api/contracts/common';
 
 /**
@@ -380,6 +380,12 @@ export interface IInitAppActionPayload {
      * @since 0.15
      */
     mapSwipePairs?: IMapSwipePair[];
+    /**
+     * Indicates whether initialization reused an existing MapGuide session.
+     *
+     * @since 0.15
+     */
+    sessionWasReused?: boolean;
 }
 
 /**

@@ -675,6 +675,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             session = new AsyncLazy<string>(() => Promise.resolve(this.options.session!));
         }
         const payload = await this.sessionAcquiredAsync(session, sessionWasReused);
+        payload.sessionWasReused = sessionWasReused;
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};
             for (const mapName in payload.maps) {

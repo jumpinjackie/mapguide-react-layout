@@ -11,7 +11,7 @@ import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, act } from "@testing-library/react";
 import { Provider } from "react-redux";
-import type { Store } from "redux";
+import type { Store } from "@reduxjs/toolkit";
 import { configureStore } from "../../src/store/configure-store";
 import type { IApplicationState, ILayerInfo } from "../../src/api/common";
 import type { ViewerAction } from "../../src/actions/defs";

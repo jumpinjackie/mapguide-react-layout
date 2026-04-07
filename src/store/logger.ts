@@ -1,21 +1,30 @@
+import type { Middleware } from '@reduxjs/toolkit';
 import { ActionType } from '../constants/actions';
-const createLogger = require("redux-logger").createLogger;
 
-export const logger = createLogger({
-    collapsed: true,
-    stateTransformer: (state: any) => {
-        return state;
-    },
-    //Note the { type } syntax: https://github.com/Microsoft/TypeScript/issues/9657
-    predicate: (getState: any, { type }: { type: string }) => {
-        return type !== 'redux-form/BLUR' &&
-            type !== 'redux-form/CHANGE' &&
-            type !== 'redux-form/FOCUS' &&
-            type !== 'redux-form/TOUCH' &&
-            type !== ActionType.MAP_RESIZED &&
-            type !== ActionType.UPDATE_MOUSE_COORDINATES &&
-            type !== ActionType.MAP_SET_BUSY_COUNT &&
-            type !== ActionType.ADD_LAYER_BUSY_WORKER &&
-            type !== ActionType.REMOVE_LAYER_BUSY_WORKER;
-    },
-});
+const FILTERED_TYPES = new Set([
+    'redux-form/BLUR',
+    'redux-form/CHANGE',
+    'redux-form/FOCUS',
+    'redux-form/TOUCH',
+    ActionType.MAP_RESIZED,
+    ActionType.UPDATE_MOUSE_COORDINATES,
+    ActionType.MAP_SET_BUSY_COUNT,
+    ActionType.ADD_LAYER_BUSY_WORKER,
+    ActionType.REMOVE_LAYER_BUSY_WORKER,
+]);
+
+export const logger: Middleware = store => next => action => {
+    const actionType = (action as any)?.type;
+    if (FILTERED_TYPES.has(actionType)) {
+        return next(action);
+    }
+    const prevState = store.getState();
+    const result = next(action);
+    const nextState = store.getState();
+    console.groupCollapsed(`action: ${actionType}`);
+    console.log('prev state', prevState);
+    console.log('action', action);
+    console.log('next state', nextState);
+    console.groupEnd();
+    return result;
+};

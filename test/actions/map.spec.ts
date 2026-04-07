@@ -999,7 +999,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
         vi.clearAllMocks();
     });
 
-    function createStateWithPendingMap(sessionId = "test-session-id") {
+    function createStateWithPendingMap(sessionId = "test-session-id", sessionWasReused = false) {
         const initialState = createInitialState();
         const map = createMap();
         const mapState = {
@@ -1014,6 +1014,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
                 ...initialState.config,
                 agentUri: "http://localhost/mapguide/mapagent/mapagent.fcgi",
                 agentKind: "mapagent" as const,
+                sessionWasReused,
                 activeMapName: map.Name,
                 pendingMaps: {
                     "LazyMap": { mapDef: "Library://LazyMap.MapDefinition", metadata: {} }
@@ -1040,7 +1041,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
         };
         vi.mocked(Client).mockImplementation(() => mockClient as any);
 
-        const state = createStateWithPendingMap();
+        const state = createStateWithPendingMap("test-session-id", true);
         const dispatched: any[] = [];
         const dispatch = (action: any) => { dispatched.push(action); return action; };
         const getState = () => state as any;
@@ -1062,16 +1063,16 @@ describe("actions/map - activateMap thunk (with session)", () => {
         expect(dispatched[1].payload).toBe("LazyMap");
     });
 
-    it("dispatches MAP_REFRESH with created map when describe fails with MgResourceNotFoundException (new map)", async () => {
+    it("dispatches MAP_REFRESH with created map without describe attempt in a fresh session", async () => {
         const lazyMap = createLazyMap();
         const mockClient = {
             getSiteVersion: vi.fn().mockResolvedValue({ Version: "4.0.0.0" }),
-            describeRuntimeMap_v4: vi.fn().mockRejectedValue(new Error("MgResourceNotFoundException")),
+            describeRuntimeMap_v4: vi.fn(),
             createRuntimeMap_v4: vi.fn().mockResolvedValue(lazyMap)
         };
         vi.mocked(Client).mockImplementation(() => mockClient as any);
 
-        const state = createStateWithPendingMap();
+        const state = createStateWithPendingMap("test-session-id", false);
         const dispatched: any[] = [];
         const dispatch = (action: any) => { dispatched.push(action); return action; };
         const getState = () => state as any;
@@ -1079,10 +1080,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
         const thunk = activateMap("LazyMap");
         await thunk(dispatch as any, getState as any);
 
-        expect(mockClient.describeRuntimeMap_v4).toHaveBeenCalledWith(expect.objectContaining({
-            mapname: "LazyMap",
-            session: "test-session-id"
-        }));
+        expect(mockClient.describeRuntimeMap_v4).not.toHaveBeenCalled();
         expect(mockClient.createRuntimeMap_v4).toHaveBeenCalledWith(expect.objectContaining({
             mapDefinition: "Library://LazyMap.MapDefinition",
             session: "test-session-id",
@@ -1105,7 +1103,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
         };
         vi.mocked(Client).mockImplementation(() => mockClient as any);
 
-        const state = createStateWithPendingMap();
+        const state = createStateWithPendingMap("test-session-id", true);
         const dispatched: any[] = [];
         const dispatch = (action: any) => { dispatched.push(action); return action; };
         const getState = () => state as any;

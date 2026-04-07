@@ -18,6 +18,7 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     agentKind: "mapagent",
     locale: DEFAULT_LOCALE,
     activeMapName: undefined,
+    sessionWasReused: false,
     availableMaps: undefined,
     viewRotation: 0,
     viewRotationEnabled: true,
@@ -98,6 +99,7 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     activeMapName: am,
                     availableMaps: availableMaps,
                     mapSwipePairs: payload.mapSwipePairs,
+                    sessionWasReused: payload.sessionWasReused === true,
                     pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
                 const newState = { ...state, ...state1 };

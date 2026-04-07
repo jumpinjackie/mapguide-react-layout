@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Store } from "redux";
+import type { Store } from "@reduxjs/toolkit";
 import { configureStore } from "../../src/store/configure-store";
 import { ActionType } from "../../src/constants/actions";
 import type { ViewerAction } from "../../src/actions/defs";

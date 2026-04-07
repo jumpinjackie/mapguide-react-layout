@@ -51,9 +51,10 @@ export interface IMapSwipeInfo {
  * @since 0.15
  */
 export function useMapSwipeInfo(): IMapSwipeInfo | undefined {
-    return useAppState(state => {
-        const pairs = state.config.mapSwipePairs;
-        const activeMapName = state.config.activeMapName;
+    const pairs = useAppState(state => state.config.mapSwipePairs);
+    const activeMapName = useAppState(state => state.config.activeMapName);
+
+    return React.useMemo(() => {
         if (!pairs || !activeMapName) {
             return undefined;
         }
@@ -65,7 +66,7 @@ export function useMapSwipeInfo(): IMapSwipeInfo | undefined {
             pair,
             isSwipePrimary: pair.primaryMapName === activeMapName
         };
-    });
+    }, [pairs, activeMapName]);
 }
 
 /**
@@ -91,11 +92,15 @@ export function useIsMapSwipeActive(): boolean {
  * @hidden
  */
 function useSwipeState() {
-    return useAppState(state => ({
-        active: state.config.swipeActive === true,
-        position: state.config.swipePosition ?? 50,
-        locale: state.config.locale
-    }));
+    const active = useAppState(state => state.config.swipeActive === true);
+    const swipePosition = useAppState(state => state.config.swipePosition);
+    const locale = useAppState(state => state.config.locale);
+
+    return {
+        active,
+        position: swipePosition ?? 50,
+        locale
+    };
 }
 
 /**

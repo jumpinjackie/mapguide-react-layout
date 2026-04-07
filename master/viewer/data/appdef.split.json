@@ -1,0 +1,710 @@
+{
+    "Title": "Split View Demo",
+    "MapSet": {
+        "MapGroup": [
+            {
+                "@id": "Australia",
+                "Extension": {
+                    "SwipePrimary": "true",
+                    "SwipePairWith": "AustraliaCompare",
+                    "SwipePrimaryLabel": "Capital Cities",
+                    "SwipeSecondaryLabel": "Natural Landmarks"
+                },
+                "Map": [
+                    {
+                        "Type": "SubjectLayer",
+                        "Extension": {
+                            "source_type": "GeoJSON_Inline",
+                            "display_name": "Australian Capital Cities",
+                            "source_param_features": {
+                                "type": "FeatureCollection",
+                                "features": [
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [151.2093, -33.8688] },
+                                        "properties": { "name": "Sydney", "state": "New South Wales", "population": 5312000, "role": "Largest city" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [144.9631, -37.8136] },
+                                        "properties": { "name": "Melbourne", "state": "Victoria", "population": 5078000, "role": "Capital of Victoria" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [153.0251, -27.4698] },
+                                        "properties": { "name": "Brisbane", "state": "Queensland", "population": 2514000, "role": "Capital of Queensland" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [115.8575, -31.9505] },
+                                        "properties": { "name": "Perth", "state": "Western Australia", "population": 2059000, "role": "Capital of Western Australia" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [138.6007, -34.9285] },
+                                        "properties": { "name": "Adelaide", "state": "South Australia", "population": 1345000, "role": "Capital of South Australia" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [147.3272, -42.8821] },
+                                        "properties": { "name": "Hobart", "state": "Tasmania", "population": 228000, "role": "Capital of Tasmania" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [130.8456, -12.4634] },
+                                        "properties": { "name": "Darwin", "state": "Northern Territory", "population": 147000, "role": "Capital of Northern Territory" }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [149.1300, -35.2809] },
+                                        "properties": { "name": "Canberra", "state": "ACT", "population": 454000, "role": "National Capital" }
+                                    }
+                                ]
+                            },
+                            "source_param_attributions": [],
+                            "meta_extents": [
+                                113.34,
+                                -43.63,
+                                153.57,
+                                -10.67
+                            ],
+                            "meta_projection": "EPSG:4326",
+                            "is_selectable": true,
+                            "popup_template": {
+                                "title": "{name}",
+                                "propertyMappings": [
+                                    { "name": "state", "value": "State / Territory" },
+                                    { "name": "role", "value": "Role" },
+                                    { "name": "population", "value": "Population" }
+                                ]
+                            },
+                            "vector_layer_style": {
+                                "default": {
+                                    "point": {
+                                        "type": "Circle",
+                                        "fill": {
+                                            "color": "#ff6600",
+                                            "alpha": 255
+                                        },
+                                        "radius": 8,
+                                        "stroke": {
+                                            "color": "#cc3300",
+                                            "alpha": 255,
+                                            "width": 2
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "OpenStreetMap",
+                        "Extension": {
+                            "Options": {
+                                "name": "Open Street Map",
+                                "type": "Mapnik"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "@id": "AustraliaCompare",
+                "Map": [
+                    {
+                        "Type": "SubjectLayer",
+                        "Extension": {
+                            "source_type": "GeoJSON_Inline",
+                            "display_name": "Australian Natural Landmarks",
+                            "source_param_features": {
+                                "type": "FeatureCollection",
+                                "features": [
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [145.8000, -16.3000] },
+                                        "properties": { "name": "Great Barrier Reef", "type": "Marine Park", "world_heritage": "Yes", "area_km2": 344400 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [131.0369, -25.3444] },
+                                        "properties": { "name": "Uluru-Kata Tjuta", "type": "National Park", "world_heritage": "Yes", "area_km2": 1326 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [150.3000, -33.7000] },
+                                        "properties": { "name": "Blue Mountains", "type": "National Park", "world_heritage": "Yes", "area_km2": 2680 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [132.5000, -12.8000] },
+                                        "properties": { "name": "Kakadu National Park", "type": "National Park", "world_heritage": "Yes", "area_km2": 19804 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [145.4166, -16.1699] },
+                                        "properties": { "name": "Daintree Rainforest", "type": "National Park", "world_heritage": "Yes", "area_km2": 1200 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [143.4000, -38.8000] },
+                                        "properties": { "name": "Great Ocean Road", "type": "Scenic Coastline", "world_heritage": "No", "area_km2": null }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [113.7500, -22.7000] },
+                                        "properties": { "name": "Ningaloo Reef", "type": "Marine Park", "world_heritage": "Yes", "area_km2": 604500 }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "geometry": { "type": "Point", "coordinates": [145.5000, -10.5000] },
+                                        "properties": { "name": "Cape York Peninsula", "type": "Wilderness Area", "world_heritage": "No", "area_km2": 137000 }
+                                    }
+                                ]
+                            },
+                            "source_param_attributions": [],
+                            "meta_extents": [
+                                113.34,
+                                -43.63,
+                                153.57,
+                                -10.67
+                            ],
+                            "meta_projection": "EPSG:4326",
+                            "is_selectable": true,
+                            "popup_template": {
+                                "title": "{name}",
+                                "propertyMappings": [
+                                    { "name": "type", "value": "Type" },
+                                    { "name": "world_heritage", "value": "World Heritage" },
+                                    { "name": "area_km2", "value": "Area (km²)" }
+                                ]
+                            },
+                            "vector_layer_style": {
+                                "default": {
+                                    "point": {
+                                        "type": "Circle",
+                                        "fill": {
+                                            "color": "#00aa44",
+                                            "alpha": 255
+                                        },
+                                        "radius": 8,
+                                        "stroke": {
+                                            "color": "#006622",
+                                            "alpha": 255,
+                                            "width": 2
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Type": "OpenStreetMap",
+                        "Extension": {
+                            "Options": {
+                                "name": "Open Street Map",
+                                "type": "Mapnik"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "WidgetSet": [
+        {
+            "Container": [
+                {
+                    "Name": "MapContextMenu",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "RefreshMap" },
+                        { "Function": "Separator" },
+                        { "Function": "Widget", "Widget": "Pan" },
+                        { "Function": "Widget", "Widget": "Zoom" },
+                        { "Function": "Separator" },
+                        { "Function": "Widget", "Widget": "ZoomIn" },
+                        { "Function": "Widget", "Widget": "ZoomOut" },
+                        { "Function": "Widget", "Widget": "Measure" },
+                        { "Function": "Separator" },
+                        { "Function": "Widget", "Widget": "ViewOptions" },
+                        { "Function": "Widget", "Widget": "Help" },
+                        { "Function": "Widget", "Widget": "About" }
+                    ]
+                },
+                {
+                    "Name": "Toolbar",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "MapSwipe" },
+                        { "Function": "Separator" },
+                        { "Function": "Widget", "Widget": "Print" },
+                        { "Function": "Widget", "Widget": "RefreshMap" },
+                        { "Function": "Widget", "Widget": "Select" },
+                        { "Function": "Widget", "Widget": "ClearSelection" },
+                        { "Function": "Widget", "Widget": "Measure" },
+                        { "Function": "Widget", "Widget": "ViewOptions" },
+                        { "Function": "Widget", "Widget": "About" },
+                        { "Function": "Widget", "Widget": "Help" }
+                    ]
+                },
+                {
+                    "Name": "ToolbarSecondary",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "Select" },
+                        { "Function": "Widget", "Widget": "Pan" },
+                        { "Function": "Widget", "Widget": "Zoom" },
+                        { "Function": "Widget", "Widget": "ZoomIn" },
+                        { "Function": "Widget", "Widget": "ZoomOut" },
+                        { "Function": "Widget", "Widget": "InitialMapView" },
+                        { "Function": "Widget", "Widget": "ZoomToSelection" },
+                        { "Function": "Widget", "Widget": "PreviousView" },
+                        { "Function": "Widget", "Widget": "NextView" }
+                    ]
+                },
+                {
+                    "Name": "FileMenu",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "MapSwipe" },
+                        { "Function": "Separator" },
+                        { "Function": "Flyout", "Label": "View", "Item": [
+                            { "Function": "Widget", "Widget": "showTaskPane" },
+                            { "Function": "Widget", "Widget": "showLegend" },
+                            { "Function": "Widget", "Widget": "showSelectionPanel" }
+                        ]},
+                        { "Function": "Flyout", "Label": "Tools", "Item": [
+                            { "Function": "Widget", "Widget": "AddExternalLayers" },
+                            { "Function": "Widget", "Widget": "ShareLink" },
+                            { "Function": "Widget", "Widget": "Geolocation" },
+                            { "Function": "Widget", "Widget": "CoordinateTracker" }
+                        ]}
+                    ]
+                },
+                {
+                    "Name": "Statusbar",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "statusCoordinates" },
+                        { "Function": "Widget", "Widget": "statusSelection" },
+                        { "Function": "Widget", "Widget": "EditableScale" },
+                        { "Function": "Widget", "Widget": "statusViewSize" }
+                    ]
+                },
+                {
+                    "Name": "TaskMenu",
+                    "Type": "Toolbar",
+                    "Item": [
+                        { "Function": "Widget", "Widget": "Measure" },
+                        { "Function": "Widget", "Widget": "AddExternalLayers" },
+                        { "Function": "Widget", "Widget": "CoordinateTracker" }
+                    ]
+                }
+            ],
+            "Widget": [
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "comparison",
+                    "Label": "Map Swipe",
+                    "Tooltip": "Toggle side-by-side comparison between Capital Cities and Natural Landmarks",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "MapSwipe",
+                    "Type": "MapSwipe",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "about",
+                    "Label": "About",
+                    "Tooltip": "Click to show information about this application",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "About",
+                    "Type": "About",
+                    "Location": null,
+                    "Extension": { "AboutURL": "widgets/About/About.html" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-centre",
+                    "Label": "Center selection",
+                    "Tooltip": "Click to center the map on the current selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "CenterSelection",
+                    "Type": "CenterSelection",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-clear",
+                    "Label": "Clear Selection",
+                    "Tooltip": "Click to clear the current selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ClearSelection",
+                    "Type": "ClearSelection",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "geolocation",
+                    "Label": "My Location",
+                    "Tooltip": "Click to zoom to your current geographic location",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Geolocation",
+                    "Type": "Geolocation",
+                    "Location": null,
+                    "Extension": { "EnableHighAccuracy": "false", "MaximumAge": "0", "Timeout": "5000" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "help",
+                    "Label": "Help",
+                    "Tooltip": "Click to get help",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Help",
+                    "Type": "Help",
+                    "Location": null,
+                    "Extension": { "Target": "HelpWindow", "Url": "widgets/Help/Help.html" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-full",
+                    "Label": "Zoom Extents",
+                    "Tooltip": "Click to zoom to the full map extents",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "InitialMapView",
+                    "Type": "InitialMapView",
+                    "Location": null,
+                    "Extension": { "ViewType": "initial" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "pan",
+                    "Label": "Pan",
+                    "Tooltip": "Click and drag to pan the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Pan",
+                    "Type": "Pan",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "file-print",
+                    "Label": "Print",
+                    "Tooltip": "Print the current map view",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Print",
+                    "Type": "Print",
+                    "Location": null,
+                    "Extension": { "ShowLegend": "false", "ShowNorthArrow": "false", "ShowPrintUI": "true", "ShowTitle": "false" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-refresh",
+                    "Label": "Refresh",
+                    "Tooltip": "Click to redraw the map",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "RefreshMap",
+                    "Type": "RefreshMap",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select",
+                    "Label": "Select",
+                    "Tooltip": "Click to select features",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "Select",
+                    "Type": "Select",
+                    "Location": null,
+                    "Extension": { "QueryActiveLayer": "false", "SelectionType": "INTERSECTS", "Tolerance": "3" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-polygon",
+                    "Label": "Select Polygon",
+                    "Tooltip": "Draw a polygon to perform a selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "SelectPolygon",
+                    "Type": "SelectPolygon",
+                    "Location": null,
+                    "Extension": { "SelectionType": "INTERSECTS", "Tolerance": "3" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "options",
+                    "Label": "Options",
+                    "Tooltip": "Click to change the units displayed",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ViewOptions",
+                    "Type": "ViewOptions",
+                    "Location": null,
+                    "Extension": {}
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-in",
+                    "Label": "Zoom Rectangle",
+                    "Tooltip": "Click or click and drag on the map to zoom in",
+                    "StatusText": "Click or click and drag on the map to zoom in",
+                    "Disabled": false,
+                    "Name": "Zoom",
+                    "Type": "Zoom",
+                    "Location": null,
+                    "Extension": { "Direction": "in", "Factor": "2", "Tolerance": "5" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "select-zoom",
+                    "Label": "Zoom Selection",
+                    "Tooltip": "Click to zoom to the selection",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ZoomToSelection",
+                    "Type": "ZoomToSelection",
+                    "Location": null,
+                    "Extension": { "MaximumZoomDimension": "-1", "ZoomFactor": "2" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "measure",
+                    "Label": "Measure",
+                    "Tooltip": "Measure",
+                    "StatusText": "Measure distances and areas on the map",
+                    "Disabled": false,
+                    "Name": "Measure",
+                    "Type": "Measure",
+                    "Location": null,
+                    "Extension": { "AreaPrecision": "0", "DistancePrecision": "0", "MeasureTooltipContainer": "MeasureResult", "MeasureTooltipType": "dynamic", "Target": "TaskPane", "Type": "both", "Units": "meters" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-in-fixed",
+                    "Label": "Zoom In",
+                    "Tooltip": "Zoom in by a preset increment",
+                    "StatusText": "Zoom in by a preset increment",
+                    "Disabled": false,
+                    "Name": "ZoomIn",
+                    "Type": "ZoomOnClick",
+                    "Location": null,
+                    "Extension": { "Factor": "2" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "zoom-out-fixed",
+                    "Label": "Zoom Out",
+                    "Tooltip": "Zoom out by a preset increment",
+                    "StatusText": "Zoom out by a preset increment",
+                    "Disabled": false,
+                    "Name": "ZoomOut",
+                    "Type": "ZoomOnClick",
+                    "Location": null,
+                    "Extension": { "Factor": "0.5" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-back",
+                    "Label": "Previous",
+                    "Tooltip": "Go to previous view",
+                    "StatusText": "Go to previous view",
+                    "Disabled": false,
+                    "Name": "PreviousView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": { "Direction": "previous" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "view-forward",
+                    "Label": "Next",
+                    "Tooltip": "Go to next view",
+                    "StatusText": "Go to next view",
+                    "Disabled": false,
+                    "Name": "NextView",
+                    "Type": "ExtentHistory",
+                    "Location": null,
+                    "Extension": { "Direction": "next" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Task Pane",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "showTaskPane",
+                    "Type": "InvokeScript",
+                    "Location": null,
+                    "Extension": { "Script": "showTaskPane()" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Legend",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "showLegend",
+                    "Type": "InvokeScript",
+                    "Location": null,
+                    "Extension": { "Script": "showLegend()" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Show Selection Panel",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "showSelectionPanel",
+                    "Type": "InvokeScript",
+                    "Location": null,
+                    "Extension": { "Script": "showSelectionPanel()" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Manage External Layers",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "AddExternalLayers",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": { "AdditionalParameter": null, "DisableIfSelectionEmpty": "false", "Target": "TaskPane", "Url": "component://AddManageLayers" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": null,
+                    "ImageClass": null,
+                    "Label": "Share Link to View",
+                    "Tooltip": null,
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "ShareLink",
+                    "Type": "InvokeURL",
+                    "Location": null,
+                    "Extension": { "AdditionalParameter": null, "DisableIfSelectionEmpty": "false", "Target": "InvokeUrlWindow", "Url": "component://ShareLinkToView" }
+                },
+                {
+                    "WidgetType": "UiWidgetType",
+                    "ImageUrl": "images/icons.png",
+                    "ImageClass": "coordinate-tracker",
+                    "Label": "Coordinate Tracker",
+                    "Tooltip": "Click to view mouse coordinates in various projections",
+                    "StatusText": null,
+                    "Disabled": false,
+                    "Name": "CoordinateTracker",
+                    "Type": "CoordinateTracker",
+                    "Location": null,
+                    "Extension": { "Projection": ["EPSG:4326", "EPSG:3857"], "Target": "TaskPane" }
+                },
+                {
+                    "Name": "Legend",
+                    "Type": "Legend",
+                    "Location": null,
+                    "Extension": {
+                        "DisabledLayerIcon": "images/icons/legend-layer.png",
+                        "GroupInfoIcon": "images/icons/tree_group_info.png",
+                        "HideInvisibleLayers": "true",
+                        "LayerDWFIcon": "images/icons/legend-DWF.png",
+                        "LayerInfoIcon": "images/icons/tree_layer_info.png",
+                        "LayerRasterIcon": "images/icons/legend-raster.png",
+                        "LayerThemeIcon": "images/icons/legend-theme.png",
+                        "RootFolderIcon": "images/icons/legend-map.png",
+                        "ShowMapFolder": "false",
+                        "ShowRootFolder": "false"
+                    }
+                },
+                {
+                    "Name": "Navigator",
+                    "Type": "Navigator",
+                    "Location": null,
+                    "Extension": null
+                },
+                {
+                    "Name": "SelectionPanel",
+                    "Type": "SelectionPanel",
+                    "Location": null,
+                    "Extension": {
+                        "ResultsPerPage": "0",
+                        "SelectionRenderer": "Fusion.Widget.SelectionPanel.SelectionRendererDefault"
+                    }
+                },
+                {
+                    "Name": "TaskPane",
+                    "Type": "TaskPane",
+                    "Location": null,
+                    "Extension": {
+                        "MenuContainer": "TaskMenu"
+                    }
+                },
+                {
+                    "Name": "EditableScale",
+                    "Type": "EditableScale",
+                    "Location": null,
+                    "Extension": { "Precision": "4" }
+                },
+                {
+                    "Name": "statusCoordinates",
+                    "Type": "CursorPosition",
+                    "Location": null,
+                    "Extension": { "EmptyText": "&nbsp;", "Precision": "4", "Template": "Lon: {x} {units}, Lat: {y} {units}", "Units": "dd" }
+                },
+                {
+                    "Name": "statusSelection",
+                    "Type": "SelectionInfo",
+                    "Location": null,
+                    "Extension": { "EmptyText": "No selection", "Template": "{0} feature(s) selected on {1} layer(s)" }
+                },
+                {
+                    "Name": "statusViewSize",
+                    "Type": "ViewSize",
+                    "Location": null,
+                    "Extension": { "Precision": "2", "Template": "{w} x {h} ({units})", "Units": "Meters" }
+                }
+            ]
+        }
+    ]
+}

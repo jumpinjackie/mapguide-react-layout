@@ -2640,6 +2640,7 @@ class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
                 session = new lazy_1.AsyncLazy(() => Promise.resolve(this.options.session));
             }
             const payload = yield this.sessionAcquiredAsync(session, sessionWasReused);
+            payload.sessionWasReused = sessionWasReused;
             if (sessionWasReused) {
                 let initSelections = {};
                 for (const mapName in payload.maps) {
@@ -3571,51 +3572,54 @@ function activateMap(mapName) {
                         const siteVersion = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return client.getSiteVersion(); }));
                         const sv = yield siteVersion.getValueAsync();
                         const useV4 = (0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version));
+                        const shouldTryDescribeExisting = state.config.sessionWasReused === true;
                         let map;
-                        // Try to describe the runtime map first. This handles the case where the map
-                        // was previously created in a reused session (e.g. after a browser refresh where
-                        // the user had previously switched to this map). If the map does not exist yet
-                        // (i.e. the user has never switched to it), fall back to creating it.
-                        try {
-                            (0, logger_1.info)(`Attempting to describe existing runtime map state (${mapName})`);
-                            if (useV4) {
-                                map = yield client.describeRuntimeMap_v4({
-                                    mapname: mapName,
-                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                                    session: sessionId
-                                });
-                            }
-                            else {
-                                map = yield client.describeRuntimeMap({
-                                    mapname: mapName,
-                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                                    session: sessionId
-                                });
-                            }
-                        }
-                        catch (describeErr) {
-                            if ((describeErr === null || describeErr === void 0 ? void 0 : describeErr.message) === "MgResourceNotFoundException") {
-                                // Map does not exist yet in this session, create it
-                                (0, logger_1.info)(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                        // Try describe-first only for reused sessions where a deferred map may already
+                        // exist from prior interaction. For fresh sessions, create directly.
+                        if (shouldTryDescribeExisting) {
+                            try {
+                                (0, logger_1.info)(`Attempting to describe existing runtime map state (${mapName})`);
                                 if (useV4) {
-                                    map = yield client.createRuntimeMap_v4({
-                                        mapDefinition: pendingMap.mapDef,
+                                    map = yield client.describeRuntimeMap_v4({
+                                        mapname: mapName,
                                         requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                                        session: sessionId,
-                                        targetMapName: mapName
+                                        session: sessionId
                                     });
                                 }
                                 else {
-                                    map = yield client.createRuntimeMap({
-                                        mapDefinition: pendingMap.mapDef,
+                                    map = yield client.describeRuntimeMap({
+                                        mapname: mapName,
                                         requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                                        session: sessionId,
-                                        targetMapName: mapName
+                                        session: sessionId
                                     });
                                 }
                             }
+                            catch (describeErr) {
+                                if ((describeErr === null || describeErr === void 0 ? void 0 : describeErr.message) === "MgResourceNotFoundException") {
+                                    // Expected when deferred map has not yet been created in the reused session.
+                                }
+                                else {
+                                    throw describeErr;
+                                }
+                            }
+                        }
+                        if (!map) {
+                            (0, logger_1.info)(`Lazily creating runtime map state (${mapName}) for: ${pendingMap.mapDef}`);
+                            if (useV4) {
+                                map = yield client.createRuntimeMap_v4({
+                                    mapDefinition: pendingMap.mapDef,
+                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId,
+                                    targetMapName: mapName
+                                });
+                            }
                             else {
-                                throw describeErr;
+                                map = yield client.createRuntimeMap({
+                                    mapDefinition: pendingMap.mapDef,
+                                    requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                                    session: sessionId,
+                                    targetMapName: mapName
+                                });
                             }
                         }
                         if (map) {
@@ -17958,11 +17962,15 @@ const MapProviderContext = React.createContext({});
 const ReduxProvider = ({ store, children }) => React.createElement(react_redux_1.Provider, { store: store }, children);
 exports.ReduxProvider = ReduxProvider;
 /**
- * Wraps useDispatch from react-redux
+ * Wraps useDispatch from react-redux, typed to accept both plain ViewerActions and thunked actions.
  *
  * @since 0.14
  */
 function useReduxDispatch() {
+    // The double cast is required because react-redux's useDispatch() returns Dispatch<AnyAction>,
+    // which only accepts plain action objects. ReduxDispatch also accepts thunk functions, so the
+    // types are structurally incompatible at the TypeScript level. The RTK store includes thunk
+    // middleware, so at runtime dispatch correctly handles both plain actions and thunks.
     return (0, react_redux_1.useDispatch)();
 }
 /**
@@ -17995,7 +18003,7 @@ const MapContextProvider = ({ value, store, children }) => {
     // Inject the Redux store reference into the provider so it can lazily initialize
     // secondary map layer set groups on demand (e.g. for the map swipe feature).
     React.useEffect(() => {
-        // Cast is safe: the redux-thunk-enhanced store dispatch accepts ViewerAction/ReduxThunkedAction
+        // Cast is safe: the redux-toolkit-enhanced store dispatch accepts ViewerAction/ReduxThunkedAction
         // at runtime, but TypeScript sees Dispatch<AnyAction> which is not structurally identical to ReduxDispatch.
         value.setReduxStore(store);
         return () => {
@@ -18885,9 +18893,9 @@ const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
  * @since 0.15
  */
 function useMapSwipeInfo() {
-    return (0, context_1.useAppState)(state => {
-        const pairs = state.config.mapSwipePairs;
-        const activeMapName = state.config.activeMapName;
+    const pairs = (0, context_1.useAppState)(state => state.config.mapSwipePairs);
+    const activeMapName = (0, context_1.useAppState)(state => state.config.activeMapName);
+    return React.useMemo(() => {
         if (!pairs || !activeMapName) {
             return undefined;
         }
@@ -18899,7 +18907,7 @@ function useMapSwipeInfo() {
             pair,
             isSwipePrimary: pair.primaryMapName === activeMapName
         };
-    });
+    }, [pairs, activeMapName]);
 }
 /**
  * Returns `true` when the map swipe (layer compare) mode is currently active.
@@ -18923,14 +18931,14 @@ function useIsMapSwipeActive() {
  * @hidden
  */
 function useSwipeState() {
-    return (0, context_1.useAppState)(state => {
-        var _a;
-        return ({
-            active: state.config.swipeActive === true,
-            position: (_a = state.config.swipePosition) !== null && _a !== void 0 ? _a : 50,
-            locale: state.config.locale
-        });
-    });
+    const active = (0, context_1.useAppState)(state => state.config.swipeActive === true);
+    const swipePosition = (0, context_1.useAppState)(state => state.config.swipePosition);
+    const locale = (0, context_1.useAppState)(state => state.config.locale);
+    return {
+        active,
+        position: swipePosition !== null && swipePosition !== void 0 ? swipePosition : 50,
+        locale
+    };
 }
 /**
  * The MapSwipeControl renders an interactive vertical slider that enables comparison
@@ -22283,6 +22291,7 @@ const map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const map_viewer_swipe_1 = __webpack_require__(/*! ../components/map-viewer-swipe */ "./src/components/map-viewer-swipe.tsx");
+const EMPTY_MANAGE_LAYERS = [];
 function zoomToLayerExtents(layerName, viewer) {
     var _a;
     const layer = viewer.getLayerManager().getLayer(layerName);
@@ -22362,7 +22371,7 @@ const AddManageLayersContainer = () => {
         if (targetMapName && ((_a = state.mapState[targetMapName]) === null || _a === void 0 ? void 0 : _a.layers)) {
             return state.mapState[targetMapName].layers;
         }
-        return [];
+        return EMPTY_MANAGE_LAYERS;
     });
     const view = (0, context_1.useAppState)(state => {
         if (targetMapName && state.mapState[targetMapName]) {
@@ -23230,12 +23239,25 @@ exports.useTaskPaneLastUrlPushed = useTaskPaneLastUrlPushed;
 exports.useTaskPaneNavigationStack = useTaskPaneNavigationStack;
 exports.useLastDispatchedAction = useLastDispatchedAction;
 exports.useReducedToolbarAppState = useReducedToolbarAppState;
+const toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs");
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
 const command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
+const EMPTY_INITIAL_EXTERNAL_LAYERS = [];
+const selectReducedToolbarAppState = (0, toolkit_1.createSelector)([(state) => state], state => (0, command_1.reduceAppToToolbarState)(state));
+const selectActiveMapLayers = (0, toolkit_1.createSelector)([
+    (state) => state.config.activeMapName,
+    (state) => state.mapState
+], (activeMapName, mapState) => {
+    var _a;
+    if (activeMapName) {
+        return (_a = mapState[activeMapName]) === null || _a === void 0 ? void 0 : _a.layers;
+    }
+    return undefined;
+});
 // From: https://usehooks.com/usePrevious/
 function usePrevious(value) {
     // The ref object is a generic container whose current property is mutable ...
@@ -23256,7 +23278,7 @@ function useActiveMapInitialExternalLayers() {
         if (state.config.activeMapName) {
             return state.mapState[state.config.activeMapName].initialExternalLayers;
         }
-        return [];
+        return EMPTY_INITIAL_EXTERNAL_LAYERS;
     });
 }
 function sameHeatmapSettings(left, right) {
@@ -23267,19 +23289,20 @@ function sameHeatmapSettings(left, right) {
     return false;
 }
 function useActiveMapLayers() {
-    return (0, context_1.useAppState)(state => {
-        if (state.config.activeMapName) {
-            return state.mapState[state.config.activeMapName].layers;
-        }
-        return undefined;
-    }, (left, right) => !(0, array_1.areArraysDifferent)(left, right, (l, r) => {
-        return l.name == r.name
-            && l.opacity == r.opacity
-            && l.visible == r.visible
-            && l.vectorStyle == r.vectorStyle
-            && l.cluster == r.cluster
-            && sameHeatmapSettings(l.heatmap, r.heatmap);
-    }));
+    return (0, context_1.useAppState)(selectActiveMapLayers, (left, right) => {
+        if (left === right)
+            return true;
+        if (!left || !right)
+            return false;
+        return !(0, array_1.areArraysDifferent)(left, right, (l, r) => {
+            return l.name == r.name
+                && l.opacity == r.opacity
+                && l.visible == r.visible
+                && l.vectorStyle == r.vectorStyle
+                && l.cluster == r.cluster
+                && sameHeatmapSettings(l.heatmap, r.heatmap);
+        });
+    });
 }
 /**
  * Returns the layers for the given named map. Unlike {@link useActiveMapLayers}, this hook
@@ -23516,7 +23539,7 @@ function useLastDispatchedAction() {
 function useReducedToolbarAppState() {
     const selection = useActiveMapSelectionSet();
     const clientSelection = useActiveMapClientSelectionSet();
-    const tbState = (0, context_1.useAppState)(state => (0, command_1.reduceAppToToolbarState)(state), (left, right) => {
+    const tbState = (0, context_1.useAppState)(selectReducedToolbarAppState, (left, right) => {
         return (left === null || left === void 0 ? void 0 : left.busyWorkerCount) == (right === null || right === void 0 ? void 0 : right.busyWorkerCount)
             && (left === null || left === void 0 ? void 0 : left.hasNextView) == (right === null || right === void 0 ? void 0 : right.hasNextView)
             && (left === null || left === void 0 ? void 0 : left.hasPreviousView) == (right === null || right === void 0 ? void 0 : right.hasPreviousView)
@@ -29263,6 +29286,7 @@ exports.CONFIG_INITIAL_STATE = {
     agentKind: "mapagent",
     locale: i18n_1.DEFAULT_LOCALE,
     activeMapName: undefined,
+    sessionWasReused: false,
     availableMaps: undefined,
     viewRotation: 0,
     viewRotationEnabled: true,
@@ -29337,6 +29361,7 @@ function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
                     activeMapName: am,
                     availableMaps: availableMaps,
                     mapSwipePairs: payload.mapSwipePairs,
+                    sessionWasReused: payload.sessionWasReused === true,
                     pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
                 const newState = Object.assign(Object.assign({}, state), state1);
@@ -30725,9 +30750,7 @@ function viewerReducer(state = exports.VIEWER_INITIAL_STATE, action) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configureStore = configureStore;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
-const redux_thunk_1 = tslib_1.__importDefault(__webpack_require__(/*! redux-thunk */ "./node_modules/redux-thunk/es/index.js"));
+const toolkit_1 = __webpack_require__(/*! @reduxjs/toolkit */ "./node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs");
 const promise_middleware_1 = __webpack_require__(/*! ./promise-middleware */ "./src/store/promise-middleware.ts");
 const logger_1 = __webpack_require__(/*! ./logger */ "./src/store/logger.ts");
 const root_1 = __webpack_require__(/*! ../reducers/root */ "./src/reducers/root.ts");
@@ -30741,26 +30764,20 @@ const root_1 = __webpack_require__(/*! ../reducers/root */ "./src/reducers/root.
  * @since 0.15 - Fixed return type to no longer be `any`
  */
 function configureStore(initialState, extraReducers) {
-    const root = extraReducers ? (0, redux_1.combineReducers)(Object.assign(Object.assign({}, root_1.rootReducer), extraReducers)) : (0, redux_1.combineReducers)(root_1.rootReducer);
-    const store = (0, redux_1.compose)(_getMiddleware(), ..._getEnhancers())(redux_1.createStore)(root, initialState);
-    return store;
-}
-function _getMiddleware() {
-    let middleware = [
-        promise_middleware_1.promiseMiddleware,
-        redux_thunk_1.default,
-    ];
-    if (true) {
-        middleware = [...middleware, logger_1.logger];
-    }
-    return (0, redux_1.applyMiddleware)(...middleware);
-}
-function _getEnhancers() {
-    let enhancers = [];
-    if ( true && window.__REDUX_DEVTOOLS_EXTENSION__) {
-        enhancers = [...enhancers, window.__REDUX_DEVTOOLS_EXTENSION__()];
-    }
-    return enhancers;
+    const rootReducerMap = extraReducers ? Object.assign(Object.assign({}, root_1.rootReducer), extraReducers) : root_1.rootReducer;
+    const isDev =  true && true;
+    return (0, toolkit_1.configureStore)({
+        reducer: (0, toolkit_1.combineReducers)(rootReducerMap),
+        preloadedState: initialState,
+        middleware: (getDefaultMiddleware) => {
+            const base = getDefaultMiddleware({
+                serializableCheck: false,
+                immutableCheck: false,
+            }).prepend(promise_middleware_1.promiseMiddleware);
+            return isDev ? base.concat(logger_1.logger) : base;
+        },
+        devTools: isDev,
+    });
 }
 
 
@@ -30777,25 +30794,33 @@ function _getEnhancers() {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.logger = void 0;
 const actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
-const createLogger = (__webpack_require__(/*! redux-logger */ "./node_modules/redux-logger/dist/redux-logger.js").createLogger);
-exports.logger = createLogger({
-    collapsed: true,
-    stateTransformer: (state) => {
-        return state;
-    },
-    //Note the { type } syntax: https://github.com/Microsoft/TypeScript/issues/9657
-    predicate: (getState, { type }) => {
-        return type !== 'redux-form/BLUR' &&
-            type !== 'redux-form/CHANGE' &&
-            type !== 'redux-form/FOCUS' &&
-            type !== 'redux-form/TOUCH' &&
-            type !== actions_1.ActionType.MAP_RESIZED &&
-            type !== actions_1.ActionType.UPDATE_MOUSE_COORDINATES &&
-            type !== actions_1.ActionType.MAP_SET_BUSY_COUNT &&
-            type !== actions_1.ActionType.ADD_LAYER_BUSY_WORKER &&
-            type !== actions_1.ActionType.REMOVE_LAYER_BUSY_WORKER;
-    },
-});
+const FILTERED_TYPES = new Set([
+    'redux-form/BLUR',
+    'redux-form/CHANGE',
+    'redux-form/FOCUS',
+    'redux-form/TOUCH',
+    actions_1.ActionType.MAP_RESIZED,
+    actions_1.ActionType.UPDATE_MOUSE_COORDINATES,
+    actions_1.ActionType.MAP_SET_BUSY_COUNT,
+    actions_1.ActionType.ADD_LAYER_BUSY_WORKER,
+    actions_1.ActionType.REMOVE_LAYER_BUSY_WORKER,
+]);
+const logger = store => next => action => {
+    const actionType = action === null || action === void 0 ? void 0 : action.type;
+    if (FILTERED_TYPES.has(actionType)) {
+        return next(action);
+    }
+    const prevState = store.getState();
+    const result = next(action);
+    const nextState = store.getState();
+    console.groupCollapsed(`action: ${actionType}`);
+    console.log('prev state', prevState);
+    console.log('action', action);
+    console.log('next state', nextState);
+    console.groupEnd();
+    return result;
+};
+exports.logger = logger;
 
 
 /***/ },

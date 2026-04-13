@@ -19,6 +19,10 @@ export interface ISelectionPanelContainerProps {
     selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
 }
 
+const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
+const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
+const selectorSelectStyle: React.CSSProperties = { flex: 1 };
+
 /**
  * Container component for the Selection Panel. When the viewer is in split (swipe) mode,
  * an additional dropdown is rendered so the user can choose which map's selection to display.
@@ -92,13 +96,11 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
         }
     };
 
-    const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
-    const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
-    const selectorSelectStyle: React.CSSProperties = { flex: 1 };
     const swipeMapSelector = isSwipeActive && swipeInfo ? (
         <div style={selectorContainerStyle}>
-            <label style={selectorLabelStyle}>{tr("MAP_SWIPE_SELECTION_FOR", locale)}</label>
+            <label htmlFor="selection-panel-map-select" style={selectorLabelStyle}>{tr("MAP_SWIPE_SELECTION_FOR", locale)}</label>
             <select
+                id="selection-panel-map-select"
                 value={selectedMapForSelection ?? activeMapName ?? ""}
                 onChange={e => setSelectedMapForSelection(e.target.value)}
                 style={selectorSelectStyle}
@@ -118,7 +120,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
         const allowHtmlValues = appContext.allowHtmlValuesInSelection();
         const cleaner = appContext.getHTMLCleaner();
         const formatter = appContext.getPropertyValueFormatter();
-        return <div>
+        return <>
             {swipeMapSelector}
             <SelectionPanel locale={locale}
                 onResolveLayerLabel={resolveLayerLabel}
@@ -130,13 +132,13 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
                 onShowSelectedFeature={onShowSelectedFeature}
                 selectedFeatureRenderer={selectedFeatureRenderer}
                 maxHeight={maxHeight} />
-        </div>;
+        </>;
     } else {
-        return <div>
+        return <>
             {swipeMapSelector}
             <Callout variant="primary" icon="info-sign">
                 <span className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</span>
             </Callout>
-        </div>;
+        </>;
     }
 }

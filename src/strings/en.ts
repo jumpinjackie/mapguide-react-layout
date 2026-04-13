@@ -310,4 +310,5 @@ export const STRINGS_EN: ILocalizedMessages = {
     "MAP_SWIPE_PRIMARY_LABEL": "Primary",
     "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
     "MAP_SWIPE_LAYER_MANAGER_FOR": "Layers for:",
+    "MAP_SWIPE_SELECTION_FOR": "Selection for:",
 };

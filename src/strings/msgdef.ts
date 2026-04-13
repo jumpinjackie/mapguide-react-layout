@@ -362,4 +362,8 @@ export interface ILocalizedMessages {
      * @since 0.15
      */
     MAP_SWIPE_LAYER_MANAGER_FOR: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SWIPE_SELECTION_FOR: string;
 }

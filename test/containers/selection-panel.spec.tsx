@@ -53,10 +53,20 @@ vi.mock("../../src/components/elements/element-context", () => ({
 
 // ---------------------------------------------------------------------------
 // Mock the SelectionPanel component to avoid deep OL / Blueprint dependencies.
-// Renders a sentinel element so tests can verify it is rendered vs. not.
+// Renders a sentinel element so tests can verify it is rendered vs. not, and
+// exposes a "Show Feature" button so tests can trigger onShowSelectedFeature.
 // ---------------------------------------------------------------------------
 vi.mock("../../src/components/selection-panel", () => ({
-    SelectionPanel: () => <div data-testid="selection-panel-mock" />,
+    SelectionPanel: ({ onShowSelectedFeature }: { onShowSelectedFeature?: (layerId: string, selectionKey: string) => void }) => (
+        <div data-testid="selection-panel-mock">
+            <button
+                data-testid="simulate-show-feature"
+                onClick={() => onShowSelectedFeature?.("layer-1", "sel-key-1")}
+            >
+                Show Feature
+            </button>
+        </div>
+    ),
 }));
 
 // ---------------------------------------------------------------------------
@@ -259,49 +269,89 @@ describe("SelectionPanelContainer", () => {
             expect(screen.getByTestId("selection-panel-mock")).toBeDefined();
         });
 
-        it("dropdown remains visible regardless of whether a selection exists", () => {
-            // No selection at all
+        it("dropdown remains visible when there is no selection", () => {
             renderContainer(makeState({ swipeActive: true }));
             expect(screen.getByRole("combobox")).toBeDefined();
+        });
 
-            // With a selection on primary
+        it("dropdown remains visible when the primary map has a selection", () => {
             renderContainer(makeState({
                 swipeActive: true,
                 primarySelection: makeSelectionResponse(),
             }));
-            expect(screen.getAllByRole("combobox").length).toBeGreaterThanOrEqual(1);
+            expect(screen.getByRole("combobox")).toBeDefined();
         });
     });
 
     // -----------------------------------------------------------------------
     // showSelectedFeature dispatch behaviour
+    //
+    // The mock SelectionPanel exposes a "Show Feature" button that calls
+    // onShowSelectedFeature("layer-1", "sel-key-1") when clicked.  This lets us
+    // verify that the container dispatches MAP_SHOW_SELECTED_FEATURE with the
+    // correct mapName based on the current dropdown selection.
     // -----------------------------------------------------------------------
     describe("showSelectedFeature dispatch target", () => {
-        it("dispatches showSelectedFeature with the primaryMapName when primary is selected", () => {
+        it("dispatches MAP_SHOW_SELECTED_FEATURE with primaryMapName when primary is selected", () => {
             const state = makeState({
                 swipeActive: true,
                 primarySelection: makeSelectionResponse(),
             });
-            const { store } = renderContainer(state);
+            // Create the store and spy BEFORE render so the component's
+            // useDispatch() closure picks up the spy on first mount.
+            const store = configureStore(state);
             const dispatchSpy = vi.spyOn(store, "dispatch");
+            const viewer = makeViewer();
 
-            // The mock SelectionPanel doesn't call onShowSelectedFeature, so we
-            // verify the dropdown defaults to primary and that targetMapName is
-            // passed correctly by reading the rendered select value.
-            const select = screen.getByRole("combobox") as HTMLSelectElement;
-            expect(select.value).toBe(PRIMARY_MAP);
-            // dispatch spy baseline (no extra calls yet)
-            expect(dispatchSpy).not.toHaveBeenCalled();
+            render(
+                <Provider store={store}>
+                    <MapProviderContextProvider value={viewer as any}>
+                        <SelectionPanelContainer />
+                    </MapProviderContextProvider>
+                </Provider>
+            );
+
+            fireEvent.click(screen.getByTestId("simulate-show-feature"));
+
+            const showFeatureCall = dispatchSpy.mock.calls.find(c => {
+                const action = c[0] as any;
+                return action.type === "Map/SHOW_SELECTED_FEATURE";
+            });
+            expect(showFeatureCall).toBeDefined();
+            expect((showFeatureCall![0] as any).payload?.mapName).toBe(PRIMARY_MAP);
         });
 
-        it("switches dropdown value to secondary after user interaction", () => {
-            renderContainer(makeState({
+        it("dispatches MAP_SHOW_SELECTED_FEATURE with secondaryMapName when secondary is selected", () => {
+            const state = makeState({
                 swipeActive: true,
                 secondarySelection: makeSelectionResponse(),
-            }));
+            });
+            // Create the store and spy BEFORE render so the component's
+            // useDispatch() closure picks up the spy on first mount.
+            const store = configureStore(state);
+            const dispatchSpy = vi.spyOn(store, "dispatch");
+            const viewer = makeViewer();
+
+            render(
+                <Provider store={store}>
+                    <MapProviderContextProvider value={viewer as any}>
+                        <SelectionPanelContainer />
+                    </MapProviderContextProvider>
+                </Provider>
+            );
+
+            // Switch dropdown to secondary map
             const select = screen.getByRole("combobox") as HTMLSelectElement;
             fireEvent.change(select, { target: { value: SECONDARY_MAP } });
-            expect(select.value).toBe(SECONDARY_MAP);
+
+            fireEvent.click(screen.getByTestId("simulate-show-feature"));
+
+            const showFeatureCall = dispatchSpy.mock.calls.find(c => {
+                const action = c[0] as any;
+                return action.type === "Map/SHOW_SELECTED_FEATURE";
+            });
+            expect(showFeatureCall).toBeDefined();
+            expect((showFeatureCall![0] as any).payload?.mapName).toBe(SECONDARY_MAP);
         });
     });
 });

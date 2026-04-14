@@ -25393,19 +25393,60 @@ const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 const context_1 = __webpack_require__(/*! ../components/context */ "./src/components/context.tsx");
 const hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 const map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
-const hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 const context_2 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const composite_selection_1 = __webpack_require__(/*! ../api/composite-selection */ "./src/api/composite-selection.ts");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
+const map_viewer_swipe_1 = __webpack_require__(/*! ../components/map-viewer-swipe */ "./src/components/map-viewer-swipe.tsx");
+const selectorContainerStyle = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
+const selectorLabelStyle = { whiteSpace: "nowrap" };
+const selectorSelectStyle = { flex: 1 };
+const swipeSelectionRootStyle = { display: "flex", flexDirection: "column", height: "100%" };
+const swipeSelectionPanelSlotStyle = { position: "relative", flex: 1, minHeight: 0 };
+/**
+ * Container component for the Selection Panel. When the viewer is in split (swipe) mode,
+ * an additional dropdown is rendered so the user can choose which map's selection to display.
+ *
+ * @since 0.15
+ * @hidden
+ */
 const SelectionPanelContainer = (props) => {
+    var _a, _b, _c;
     const { Callout } = (0, element_context_1.useElementContext)();
     const { maxHeight, selectedFeatureRenderer } = props;
     const locale = (0, hooks_1.useViewerLocale)();
-    const map = (0, hooks_mapguide_1.useActiveMapState)();
-    const selection = (0, hooks_1.useActiveMapSelectionSet)();
-    const clientSelection = (0, hooks_1.useActiveMapClientSelectionSet)();
     const dispatch = (0, context_2.useReduxDispatch)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
+    const isSwipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
+    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
+    // When swipe is active, the user can choose which map's selection to display.
+    // Default to the primary (active) map; reset to the active map when swipe ends.
+    const [selectedMapForSelection, setSelectedMapForSelection] = React.useState(activeMapName);
+    React.useEffect(() => {
+        if (!isSwipeActive) {
+            setSelectedMapForSelection(activeMapName);
+        }
+    }, [isSwipeActive, activeMapName]);
+    const targetMapName = isSwipeActive ? (selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) : activeMapName;
+    const map = (0, context_2.useAppState)(state => {
+        var _a;
+        if (targetMapName && state.mapState[targetMapName]) {
+            return (_a = state.mapState[targetMapName].mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap;
+        }
+        return undefined;
+    });
+    const selection = (0, context_2.useAppState)(state => {
+        var _a, _b;
+        if (targetMapName && state.mapState[targetMapName]) {
+            return (_b = (_a = state.mapState[targetMapName].mapguide) === null || _a === void 0 ? void 0 : _a.selectionSet) !== null && _b !== void 0 ? _b : null;
+        }
+        return null;
+    });
+    const clientSelection = (0, context_2.useAppState)(state => {
+        if (targetMapName && state.mapState[targetMapName]) {
+            return state.mapState[targetMapName].clientSelection;
+        }
+        return undefined;
+    });
     const setCurrentViewAction = (view) => dispatch((0, map_1.setCurrentView)(view));
     const showSelectedFeatureAction = (mapName, layerId, selectionKey) => dispatch((0, map_1.showSelectedFeature)(mapName, layerId, selectionKey));
     const appContext = React.useContext(context_1.AppContext);
@@ -25427,20 +25468,41 @@ const SelectionPanelContainer = (props) => {
         }
     };
     const onShowSelectedFeature = (layerId, selectionKey) => {
-        if (activeMapName) {
-            showSelectedFeatureAction(activeMapName, layerId, selectionKey);
+        if (targetMapName) {
+            showSelectedFeatureAction(targetMapName, layerId, selectionKey);
         }
+    };
+    const swipeMapSelector = isSwipeActive && swipeInfo ? (React.createElement("div", { style: selectorContainerStyle },
+        React.createElement("label", { htmlFor: "selection-panel-map-select", style: selectorLabelStyle }, (0, i18n_1.tr)("MAP_SWIPE_SELECTION_FOR", locale)),
+        React.createElement("select", { id: "selection-panel-map-select", value: (_a = selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) !== null && _a !== void 0 ? _a : "", onChange: e => setSelectedMapForSelection(e.target.value), style: selectorSelectStyle },
+            React.createElement("option", { value: swipeInfo.pair.primaryMapName }, (_b = swipeInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
+                " (",
+                swipeInfo.pair.primaryMapName,
+                ")"),
+            React.createElement("option", { value: swipeInfo.pair.secondaryMapName }, (_c = swipeInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
+                " (",
+                swipeInfo.pair.secondaryMapName,
+                ")")))) : null;
+    const withSwipeSelectorLayout = (content) => {
+        if (swipeMapSelector) {
+            return React.createElement("div", { style: swipeSelectionRootStyle },
+                swipeMapSelector,
+                React.createElement("div", { style: swipeSelectionPanelSlotStyle }, content));
+        }
+        return content;
     };
     const compSel = new composite_selection_1.CompositeSelection(selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures, clientSelection);
     if ((selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures) != null || clientSelection) {
         const allowHtmlValues = appContext.allowHtmlValuesInSelection();
         const cleaner = appContext.getHTMLCleaner();
         const formatter = appContext.getPropertyValueFormatter();
-        return React.createElement(selection_panel_1.SelectionPanel, { locale: locale, onResolveLayerLabel: resolveLayerLabel, allowHtmlValues: allowHtmlValues, cleanHTML: cleaner, formatPropertyValue: formatter, selection: compSel, onRequestZoomToFeature: onZoomToSelectedFeature, onShowSelectedFeature: onShowSelectedFeature, selectedFeatureRenderer: selectedFeatureRenderer, maxHeight: maxHeight });
+        return withSwipeSelectorLayout(React.createElement(React.Fragment, null,
+            React.createElement(selection_panel_1.SelectionPanel, { locale: locale, onResolveLayerLabel: resolveLayerLabel, allowHtmlValues: allowHtmlValues, cleanHTML: cleaner, formatPropertyValue: formatter, selection: compSel, onRequestZoomToFeature: onZoomToSelectedFeature, onShowSelectedFeature: onShowSelectedFeature, selectedFeatureRenderer: selectedFeatureRenderer, maxHeight: maxHeight })));
     }
     else {
-        return React.createElement(Callout, { variant: "primary", icon: "info-sign" },
-            React.createElement("span", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)));
+        return withSwipeSelectorLayout(React.createElement(React.Fragment, null,
+            React.createElement(Callout, { variant: "primary", icon: "info-sign" },
+                React.createElement("span", { className: "selection-panel-no-selection" }, (0, i18n_1.tr)("NO_SELECTED_FEATURES", locale)))));
     }
 };
 exports.SelectionPanelContainer = SelectionPanelContainer;
@@ -31208,6 +31270,7 @@ exports.STRINGS_EN = {
     "MAP_SWIPE_PRIMARY_LABEL": "Primary",
     "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
     "MAP_SWIPE_LAYER_MANAGER_FOR": "Layers for:",
+    "MAP_SWIPE_SELECTION_FOR": "Selection for:",
 };
 
 

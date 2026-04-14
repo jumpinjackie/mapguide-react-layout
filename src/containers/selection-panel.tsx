@@ -22,6 +22,8 @@ export interface ISelectionPanelContainerProps {
 const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
 const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
 const selectorSelectStyle: React.CSSProperties = { flex: 1 };
+const swipeSelectionRootStyle: React.CSSProperties = { display: "flex", flexDirection: "column", height: "100%" };
+const swipeSelectionPanelSlotStyle: React.CSSProperties = { position: "relative", flex: 1, minHeight: 0 };
 
 /**
  * Container component for the Selection Panel. When the viewer is in split (swipe) mode,
@@ -115,13 +117,24 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
         </div>
     ) : null;
 
+    const withSwipeSelectorLayout = (content: JSX.Element) => {
+        if (swipeMapSelector) {
+            return <div style={swipeSelectionRootStyle}>
+                {swipeMapSelector}
+                <div style={swipeSelectionPanelSlotStyle}>
+                    {content}
+                </div>
+            </div>;
+        }
+        return content;
+    };
+
     const compSel = new CompositeSelection(selection?.SelectedFeatures, clientSelection);
     if (selection?.SelectedFeatures != null || clientSelection) {
         const allowHtmlValues = appContext.allowHtmlValuesInSelection();
         const cleaner = appContext.getHTMLCleaner();
         const formatter = appContext.getPropertyValueFormatter();
-        return <>
-            {swipeMapSelector}
+        return withSwipeSelectorLayout(<>
             <SelectionPanel locale={locale}
                 onResolveLayerLabel={resolveLayerLabel}
                 allowHtmlValues={allowHtmlValues}
@@ -132,13 +145,12 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
                 onShowSelectedFeature={onShowSelectedFeature}
                 selectedFeatureRenderer={selectedFeatureRenderer}
                 maxHeight={maxHeight} />
-        </>;
+        </>);
     } else {
-        return <>
-            {swipeMapSelector}
+        return withSwipeSelectorLayout(<>
             <Callout variant="primary" icon="info-sign">
                 <span className="selection-panel-no-selection">{tr("NO_SELECTED_FEATURES", locale)}</span>
             </Callout>
-        </>;
+        </>);
     }
 }

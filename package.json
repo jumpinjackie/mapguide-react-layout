@@ -127,5 +127,5 @@
     "webpack": "5.105.4",
     "webpack-cli": "^6.0.1"
   },
-  "resolutions": {}
+  "packageManager": "yarn@4.13.0"
 }

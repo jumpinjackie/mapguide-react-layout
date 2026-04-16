@@ -12,6 +12,10 @@ interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
     expr: ExprOr<T>;
     onExprChanged: (value: ExprOr<T>) => void;
+    /**
+     * The locale to use for string translations.
+     * @since 0.15
+     */
     locale: string;
 }
 

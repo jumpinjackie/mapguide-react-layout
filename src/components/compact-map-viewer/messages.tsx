@@ -52,7 +52,14 @@ export const useMapMessage = () => {
     return React.useContext(OLMapMessageContext);
 }
 
-const Messages: React.FC<{ title: string, messages: string[], locale: string, onClose: () => void }> = ({ title, messages, locale, onClose }) => {
+type MessagesProps = {
+    title: string;
+    messages: string[];
+    locale: string;
+    onClose: () => void;
+};
+
+const Messages: React.FC<MessagesProps> = ({ title, messages, locale, onClose }) => {
     return <div style={{ padding: 10, background: 'white', position: 'absolute', top: 50, left: 30 }}>
         <h3>{title}</h3>
         <div style={{ padding: 10, width: 300, maxHeight: 200, overflow: 'auto' }}>

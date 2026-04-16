@@ -28,7 +28,7 @@ describe("actions/taskpane", () => {
         const getState = vi.fn().mockReturnValue({
             taskpane: { initialUrl: "http://example.com/home" }
         });
-        thunk(dispatch, getState as any, undefined);
+        thunk(dispatch, getState as any);
         expect(dispatch).toHaveBeenCalledWith({ type: ActionType.TASK_PANE_HOME });
     });
     it("goHome throws when initialUrl is not set", () => {
@@ -37,6 +37,6 @@ describe("actions/taskpane", () => {
         const getState = vi.fn().mockReturnValue({
             taskpane: { initialUrl: null }
         });
-        expect(() => thunk(dispatch, getState as any, undefined)).toThrow();
+        expect(() => thunk(dispatch, getState as any)).toThrow();
     });
 });

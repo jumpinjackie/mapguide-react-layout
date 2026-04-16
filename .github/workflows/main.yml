@@ -24,6 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -34,7 +37,7 @@ jobs:
         run: yarn install
 
       - name: Audit packages (production packages only)
-        run: yarn audit --groups "dependencies"
+        run: yarn npm audit --environment production
 
       - name: Lint and run tests
         run: yarn run ci:gha
@@ -117,6 +120,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

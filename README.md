@@ -25,13 +25,13 @@ This project is not affiliated with Autodesk or OSGeo.
     * For mobile devices:
       * iOS: Mobile Safari
       * Android: Google Chrome or Mozilla Firefox
- * For development: node.js 6.x or newer
-    * Make sure yarn is installed `npm install -g yarn`
+ * For development: node.js 18.x or newer
+    * Make sure corepack is enabled: `corepack enable`
 
 # Installation - From Source
 
  1. Clone this repository
- 2. Run from the command-line: `yarn install` (note: If this fails for you on Windows, just run it again - [Related issue](https://github.com/yarnpkg/yarn/issues/919))
+ 2. Run from the command-line: `yarn install`
  3. Either:
     * Copy the `viewer` directory to MapGuide's physical wwwroot directory
     * Map the `viewer` directory as a child virtual directory under the MapGuide's wwwroot in your web server of choice (IIS or Apache)

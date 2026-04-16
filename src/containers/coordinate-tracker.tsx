@@ -32,8 +32,8 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
                 }
                 return <Card key={p} style={{ marginBottom: 10 }}>
                     <h5 className="bp3-heading"><a href="#">{p}</a></h5>
-                    <p><strong>X:</strong> {x}</p>
-                    <p><strong>Y:</strong> {y}</p>
+                    <p><strong>{tr("COORDTRACKER_X", locale)}</strong> {x}</p>
+                    <p><strong>{tr("COORDTRACKER_Y", locale)}</strong> {y}</p>
                 </Card>;
             })}
         </div>;

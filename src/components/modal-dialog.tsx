@@ -117,7 +117,7 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
                 <div className="bp3-dialog-header noselect">
                     {props.icon && <Icon icon={props.icon} />}
                     <Heading level={4} className="mrl-modal-diag-drag-handle">{props.title}</Heading>
-                    <Button onClick={props.onClose} aria-label="Close" className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
+                    <Button onClick={props.onClose} aria-label={tr("ACTION_CLOSE", props.locale)} className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
                 </div>
                 <div className="bp3-dialog-body" style={modalBodyStyle}>
                     {(() => {

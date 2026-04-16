@@ -12,6 +12,7 @@ interface IExprEditorProps<T> {
     converter: (value: string) => ExprOr<T>;
     expr: ExprOr<T>;
     onExprChanged: (value: ExprOr<T>) => void;
+    locale: string;
 }
 
 function assertValue<T>(val: ExprOr<T>): asserts val is T {
@@ -21,7 +22,7 @@ function assertValue<T>(val: ExprOr<T>): asserts val is T {
 
 function ExprEditor<T>(props: IExprEditorProps<T>) {
     assertValue(props.expr);
-    return <>Expr: <input type="text" value={`${props.expr}`} onChange={e => props.onExprChanged(props.converter(e.target.value))} /></>;
+    return <>{tr("EXPR_EDITOR_EXPR_PREFIX", props.locale)}<input type="text" value={`${props.expr}`} onChange={e => props.onExprChanged(props.converter(e.target.value))} /></>;
 }
 
 const DynamicSwitch = (props: Omit<Omit<SwitchProps, "checked">, "onChange"> & Omit<IExprEditorProps<boolean>, "converter">) => {
@@ -157,7 +158,7 @@ const PointIconStyleEditor = ({ style, onChange, locale }: ISubStyleEditorProps<
             {tr("VSED_PT_ICON_ANCHOR_H", locale)} <NumericInput value={style.anchor[0]} min={0} onChange={e => onChange({ ...style, anchor: [e, style.anchor[1]] })} />
             {tr("VSED_PT_ICON_ANCHOR_V", locale)} <NumericInput value={style.anchor[1]} min={0} onChange={e => onChange({ ...style, anchor: [style.anchor[0], e] })} />
         </FormGroup>
-        <DynamicSwitch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} expr={style.rotateWithView} onExprChanged={(e: any) => onChange({ ...style, rotateWithView: e })} />
+        <DynamicSwitch label={tr("VSED_PT_ICON_ROTATE_WITH_VIEW", locale)} expr={style.rotateWithView} onExprChanged={(e: any) => onChange({ ...style, rotateWithView: e })} locale={locale} />
         <FormGroup label={tr("VSED_PT_ICON_ROTATION", locale)}>
             <SliderExprEditor locale={locale} min={0} max={360} labelStepSize={360} value={style.rotation} onChange={(n: any) => onChange({ ...style, rotation: n })} />
         </FormGroup>
@@ -508,7 +509,7 @@ const FilterItem = (props: IFilterItemProps) => {
             {props.enablePoint && <td>{pointStyleUrl && <img src={pointStyleUrl} />}</td>}
             {props.enableLine && <td>{lineStyleUrl && <img src={lineStyleUrl} />}</td>}
             {props.enablePolygon && <td>{polyStyleUrl && <img src={polyStyleUrl} />}</td>}
-            <td>{isDefault ? <strong>Default Style</strong> : filterExprEd}</td>
+            <td>{isDefault ? <strong>{tr("VSED_DEFAULT_STYLE", props.locale)}</strong> : filterExprEd}</td>
             <td><Button variant={isStyleEditorOpen ? "danger" : "primary"} onClick={onToggle} icon={isStyleEditorOpen ? "cross" : "edit"} /></td>
         </tr>
         {isStyleEditorOpen && <tr>

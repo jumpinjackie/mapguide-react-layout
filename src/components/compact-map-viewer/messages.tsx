@@ -1,4 +1,5 @@
 import React from "react";
+import { tr, DEFAULT_LOCALE } from "../../api/i18n";
 
 /**
  * Provides a context for other compact map viewer components to report messages to
@@ -51,14 +52,29 @@ export const useMapMessage = () => {
     return React.useContext(OLMapMessageContext);
 }
 
-const Messages: React.FC<{ title: string, messages: string[], onClose: () => void }> = ({ title, messages, onClose }) => {
+const Messages: React.FC<{ title: string, messages: string[], locale: string, onClose: () => void }> = ({ title, messages, locale, onClose }) => {
     return <div style={{ padding: 10, background: 'white', position: 'absolute', top: 50, left: 30 }}>
         <h3>{title}</h3>
         <div style={{ padding: 10, width: 300, maxHeight: 200, overflow: 'auto' }}>
             {messages.map((v, i) => <p key={`message-${i}`}>{v}</p>)}
         </div>
-        <button onClick={() => onClose()}>Close</button>
+        <button onClick={() => onClose()}>{tr("ACTION_CLOSE", locale)}</button>
     </div>
+};
+
+/**
+ * Props for the MapMessages component.
+ * 
+ * @since 0.15
+ */
+export type MapMessagesProps = {
+    style?: React.CSSProperties;
+    /**
+     * The locale to use for string translations. Defaults to the default locale if not specified.
+     * 
+     * @since 0.15
+     */
+    locale?: string;
 };
 
 /**
@@ -66,7 +82,7 @@ const Messages: React.FC<{ title: string, messages: string[], onClose: () => voi
  * 
  * @since 0.15
  */
-export const MapMessages: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+export const MapMessages: React.FC<MapMessagesProps> = ({ style, locale = DEFAULT_LOCALE }) => {
     const messages = useMapMessage();
     const [infoVisible, setInfoVisible] = React.useState(false);
     const [warnVisible, setWarnVisible] = React.useState(false);
@@ -77,8 +93,8 @@ export const MapMessages: React.FC<{ style?: React.CSSProperties }> = ({ style }
             <button onClick={() => setWarnVisible(!warnVisible)}>W: {messages.warningMessages.length}</button>
             <button onClick={() => setErrorVisible(!errorVisible)}>E: {messages.errorMessages.length}</button>
         </div>
-        {infoVisible && <Messages title="Info Messages" messages={messages.infoMessages} onClose={() => setInfoVisible(false)} />}
-        {warnVisible && <Messages title="Warning Messages" messages={messages.warningMessages} onClose={() => setWarnVisible(false)} />}
-        {errorVisible && <Messages title="Error Messages" messages={messages.errorMessages} onClose={() => setErrorVisible(false)} />}
+        {infoVisible && <Messages title={tr("MSG_PANEL_INFO", locale)} messages={messages.infoMessages} locale={locale} onClose={() => setInfoVisible(false)} />}
+        {warnVisible && <Messages title={tr("MSG_PANEL_WARNING", locale)} messages={messages.warningMessages} locale={locale} onClose={() => setWarnVisible(false)} />}
+        {errorVisible && <Messages title={tr("MSG_PANEL_ERROR", locale)} messages={messages.errorMessages} locale={locale} onClose={() => setErrorVisible(false)} />}
     </>
 }

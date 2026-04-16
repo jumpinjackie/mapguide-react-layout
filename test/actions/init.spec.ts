@@ -48,19 +48,21 @@ describe("actions/init", () => {
         expect(result.capabilities.hasTaskPane).toBe(true);
     });
     it("normalizeInitPayload overrides hasTaskPane when layout caps say no task pane", () => {
-        registerLayout("no-taskpane-layout", () => null as any, { hasTaskPane: false });
+        // Each test uses a unique layout name to avoid cross-test state contamination in the module-level registry
+        registerLayout("no-taskpane-layout-init-test", () => null as any, { hasTaskPane: false });
         const payload: any = {
             capabilities: { hasTaskPane: true }
         };
-        const result = normalizeInitPayload(payload, "no-taskpane-layout");
+        const result = normalizeInitPayload(payload, "no-taskpane-layout-init-test");
         expect(result.capabilities.hasTaskPane).toBe(false);
     });
     it("normalizeInitPayload does not override hasTaskPane when layout caps say there is a task pane", () => {
-        registerLayout("with-taskpane-layout", () => null as any, { hasTaskPane: true });
+        // Each test uses a unique layout name to avoid cross-test state contamination in the module-level registry
+        registerLayout("with-taskpane-layout-init-test", () => null as any, { hasTaskPane: true });
         const payload: any = {
             capabilities: { hasTaskPane: false }
         };
-        const result = normalizeInitPayload(payload, "with-taskpane-layout");
+        const result = normalizeInitPayload(payload, "with-taskpane-layout-init-test");
         // capabilities.hasTaskPane is only overridden to false, not to true
         expect(result.capabilities.hasTaskPane).toBe(false);
     });

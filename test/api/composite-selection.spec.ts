@@ -167,7 +167,8 @@ describe("api/composite-selection", () => {
             const csl = new CompositeSelectionLayer(layer);
             const f = csl.getFeatureAt(0);
             expect(f).toBeDefined();
-            // Properties are mapped from key/value pairs
+            // Client feature properties (key/value object) are converted to FeatureProperty[]
+            // with Name and Value fields to match the MapGuide SelectedFeature contract
             const colorProp = f!.Property.find(p => p.Name === "color");
             expect(colorProp?.Value).toBe("blue");
             const sizeProp = f!.Property.find(p => p.Name === "size");

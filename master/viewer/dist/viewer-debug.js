@@ -25523,13 +25523,27 @@ exports.ShareLinkToViewContainer = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
-const react_copy_to_clipboard_1 = tslib_1.__importDefault(__webpack_require__(/*! react-copy-to-clipboard */ "./node_modules/react-copy-to-clipboard/lib/index.js"));
 const url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 const hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 const hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 function NOOP() { }
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.setAttribute("readonly", "true");
+    textArea.style.position = "absolute";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        return document.execCommand("copy");
+    }
+    finally {
+        document.body.removeChild(textArea);
+    }
+}
 const ShareLinkToViewContainer = () => {
     const { Checkbox, Button } = (0, element_context_1.useElementContext)();
     const [showSession, setShowSession] = React.useState(false);
@@ -25542,18 +25556,34 @@ const ShareLinkToViewContainer = () => {
             v.toastSuccess("clipboard", (0, i18n_1.tr)("SHARE_LINK_COPIED", locale));
         }
     };
+    const onCopyToClipboard = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        try {
+            if ((_a = navigator.clipboard) === null || _a === void 0 ? void 0 : _a.writeText) {
+                yield navigator.clipboard.writeText(shareUrl);
+            }
+            else if (!fallbackCopyTextToClipboard(shareUrl)) {
+                return;
+            }
+            onCopied();
+        }
+        catch (_b) {
+            if (fallbackCopyTextToClipboard(shareUrl)) {
+                onCopied();
+            }
+        }
+    });
     const parsed = (0, url_1.parseUrl)(`${window.location}`);
     if (!showSession) {
         delete parsed.query.session;
     }
     const shareUrl = `${parsed.url}?${(0, url_1.stringifyQuery)(parsed.query)}`;
     return React.createElement("div", null,
-        React.createElement("textarea", { style: { width: "100%" }, rows: 16, readOnly: true, value: shareUrl, onChange: NOOP }),
+        React.createElement("textarea", { style: { width: "100%", boxSizing: "border-box", border: "none" }, rows: 16, readOnly: true, value: shareUrl, onChange: NOOP }),
         React.createElement("br", null),
         React.createElement("div", { style: { padding: 15 } },
             map && React.createElement(Checkbox, { checked: showSession, label: (0, i18n_1.tr)("SHARE_LINK_INCLUDE_SESSION", locale), onChange: onShowSessionChanged }),
-            React.createElement(react_copy_to_clipboard_1.default, { text: shareUrl, onCopy: onCopied },
-                React.createElement(Button, { variant: "primary" }, (0, i18n_1.tr)("SHARE_LINK_COPY_CLIPBOARD", locale)))));
+            React.createElement(Button, { variant: "primary", onClick: onCopyToClipboard }, (0, i18n_1.tr)("SHARE_LINK_COPY_CLIPBOARD", locale))));
 };
 exports.ShareLinkToViewContainer = ShareLinkToViewContainer;
 

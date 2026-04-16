@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { supportsTouch, isMobileViewport } from "../../src/utils/browser-support";
+import { supportsTouch, isMobileViewport, supportsWebGL } from "../../src/utils/browser-support";
 
 describe("utils/browser-support", () => {
     it("supportsTouch returns true if ontouchstart in document.documentElement", () => {
@@ -19,5 +19,13 @@ describe("utils/browser-support", () => {
         const spy = vi.spyOn(window, "matchMedia").mockImplementation((query: string) => ({ matches: false }) as any);
         expect(isMobileViewport()).toBe(false);
         spy.mockRestore();
+    });
+    it("supportsWebGL returns a boolean", () => {
+        // In jsdom, WebGLRenderingContext is not defined; mock it to false to test the path
+        const origWebGL = (global as any).WebGLRenderingContext;
+        (global as any).WebGLRenderingContext = class WebGLRenderingContext {};
+        const result = supportsWebGL();
+        expect(typeof result).toBe("boolean");
+        (global as any).WebGLRenderingContext = origWebGL;
     });
 });

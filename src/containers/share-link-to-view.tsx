@@ -65,7 +65,7 @@ export const ShareLinkToViewContainer = () => {
     }
     const shareUrl = `${parsed.url}?${stringifyQuery(parsed.query)}`;
     return <div>
-        <textarea style={{ width: "100%" }} rows={16} readOnly value={shareUrl} onChange={NOOP} />
+        <textarea style={{ width: "100%", boxSizing: "border-box", border: "none" }} rows={16} readOnly value={shareUrl} onChange={NOOP} />
         <br />
         <div style={{ padding: 15 }}>
             {map && <Checkbox checked={showSession} label={tr("SHARE_LINK_INCLUDE_SESSION", locale)} onChange={onShowSessionChanged} />}

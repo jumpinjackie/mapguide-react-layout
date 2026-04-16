@@ -171,4 +171,99 @@ describe("api/ol-factory", () => {
             expect(extended[3]).toBe(20);
         });
     });
+
+    describe("projection and coordinate transforms", () => {
+        it("createProjection creates a Projection object", () => {
+            const Projection = require("ol/proj/Projection").default;
+            const proj = factory.createProjection({ code: "EPSG:4326" });
+            expect(proj).toBeInstanceOf(Projection);
+        });
+
+        it("transformCoordinateFromLonLat transforms lon/lat to default projection", () => {
+            const result = factory.transformCoordinateFromLonLat([0, 0]);
+            expect(result).toHaveLength(2);
+            expect(typeof result[0]).toBe("number");
+            expect(typeof result[1]).toBe("number");
+        });
+
+        it("transformCoordinate transforms between projections", () => {
+            const result = factory.transformCoordinate([0, 0], "EPSG:4326", "EPSG:3857");
+            expect(result).toHaveLength(2);
+        });
+
+        it("transformExtent transforms an extent between projections", () => {
+            const extent: Bounds = [-180, -85, 180, 85];
+            const result = factory.transformExtent(extent, "EPSG:4326", "EPSG:3857");
+            expect(result).toHaveLength(4);
+        });
+    });
+
+    describe("overlay", () => {
+        it("createOverlay creates an Overlay", () => {
+            const Overlay = require("ol/Overlay").default;
+            const overlay = factory.createOverlay({ element: document.createElement("div") });
+            expect(overlay).toBeInstanceOf(Overlay);
+        });
+    });
+
+    describe("interactions", () => {
+        it("createInteractionDraw creates a DrawInteraction", () => {
+            const DrawInteraction = require("ol/interaction/Draw").default;
+            const source = factory.createVectorSource();
+            const interaction = factory.createInteractionDraw({ source, type: "Point" });
+            expect(interaction).toBeInstanceOf(DrawInteraction);
+        });
+
+        it("createInteractionExtent creates an ExtentInteraction", () => {
+            const ExtentInteraction = require("ol/interaction/Extent").default;
+            const interaction = factory.createInteractionExtent({});
+            expect(interaction).toBeInstanceOf(ExtentInteraction);
+        });
+
+        it("createInteractionTranslate creates a TranslateInteraction", () => {
+            const TranslateInteraction = require("ol/interaction/Translate").default;
+            const interaction = factory.createInteractionTranslate({});
+            expect(interaction).toBeInstanceOf(TranslateInteraction);
+        });
+
+        it("createInteractionSnap creates a SnapInteraction", () => {
+            const SnapInteraction = require("ol/interaction/Snap").default;
+            const source = factory.createVectorSource();
+            const interaction = factory.createInteractionSnap({ source });
+            expect(interaction).toBeInstanceOf(SnapInteraction);
+        });
+
+        it("createInteractionModify creates a ModifyInteraction", () => {
+            const ModifyInteraction = require("ol/interaction/Modify").default;
+            const source = factory.createVectorSource();
+            const interaction = factory.createInteractionModify({ source });
+            expect(interaction).toBeInstanceOf(ModifyInteraction);
+        });
+
+        it("createInteractionSelect creates a SelectInteraction", () => {
+            const SelectInteraction = require("ol/interaction/Select").default;
+            const interaction = factory.createInteractionSelect({});
+            expect(interaction).toBeInstanceOf(SelectInteraction);
+        });
+    });
+
+    describe("styles (extended)", () => {
+        it("createStyleIcon creates an IconStyle", () => {
+            const IconStyle = require("ol/style/Icon").default;
+            const icon = factory.createStyleIcon({ src: "icon.png" });
+            expect(icon).toBeInstanceOf(IconStyle);
+        });
+
+        it("createStyleRegularShape creates a RegularShapeStyle", () => {
+            const RegularShapeStyle = require("ol/style/RegularShape").default;
+            const shape = factory.createStyleRegularShape({ points: 4, radius: 10, angle: Math.PI / 4 });
+            expect(shape).toBeInstanceOf(RegularShapeStyle);
+        });
+
+        it("createStyleText creates a TextStyle", () => {
+            const TextStyle = require("ol/style/Text").default;
+            const text = factory.createStyleText({ text: "hello" });
+            expect(text).toBeInstanceOf(TextStyle);
+        });
+    });
 });

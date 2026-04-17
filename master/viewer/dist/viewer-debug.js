@@ -11973,18 +11973,21 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.About = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+const hooks_1 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 /**
  * The About component displays information about this viewer
- * @param props
  */
 const About = () => {
     const { Heading } = (0, element_context_1.useElementContext)();
+    const locale = (0, hooks_1.useViewerLocale)();
     return React.createElement("div", { className: "component-about-dialog-content" },
         React.createElement(Heading, { level: 4 }, "mapguide-react-layout"),
         React.createElement("hr", null),
         React.createElement("p", null,
-            "Hash: ",
+            (0, i18n_1.tr)("ABOUT_HASH_LABEL", locale),
+            " ",
             ""),
         React.createElement("hr", null),
         React.createElement("p", null,
@@ -12155,7 +12158,7 @@ const ColorPicker = (props) => {
             constants_1.NBSP,
             constants_1.NBSP,
             constants_1.NBSP),
-        React.createElement("input", { type: "text", "aria-label": "color", value: (_b = props.value) !== null && _b !== void 0 ? _b : "#" + ol_style_contracts_1.DEFAULT_COLOR, onChange: (e) => props.onChange(e.target.value.replace(/^#/, "")), style: { width: 0, height: 0, opacity: 0 } }),
+        React.createElement("input", { type: "text", "aria-label": (0, i18n_1.tr)("COLOR_PICKER_INPUT_LABEL", props.locale), value: (_b = props.value) !== null && _b !== void 0 ? _b : "#" + ol_style_contracts_1.DEFAULT_COLOR, onChange: (e) => props.onChange(e.target.value.replace(/^#/, "")), style: { width: 0, height: 0, opacity: 0 } }),
         React.createElement(Collapsible, { isOpen: isPickerOpen },
             React.createElement(Card, null,
                 React.createElement(react_colorful_1.HexColorPicker, { style: { width: "100%" }, color: (_c = props.value) !== null && _c !== void 0 ? _c : ol_style_contracts_1.DEFAULT_COLOR, onChange: (c) => props.onChange(c) }),
@@ -14531,7 +14534,7 @@ function stringifyExpr(expr, locale) {
         return (0, i18n_1.tr)("EXPR_NOT_SET", locale);
     }
     if ((0, ol_style_contracts_1.isEvaluatable)(expr)) {
-        return "Expr: " + JSON.stringify(expr.expr);
+        return (0, i18n_1.tr)("EXPR_EDITOR_EXPR_PREFIX", locale) + JSON.stringify(expr.expr);
     }
     return `${expr !== null && expr !== void 0 ? expr : string_1.STR_EMPTY}`;
 }
@@ -14616,11 +14619,11 @@ function ExprEditorInner(props) {
         React.createElement(InputGroup, { style: roStyle, readOnly: true, value: stringifyExpr(props.value, locale), rightElement: editButton }),
         React.createElement(Collapsible, { isOpen: isEditing },
             React.createElement(Card, null,
-                React.createElement(Heading, { level: 5 }, "Edit Value"),
-                React.createElement(Radio, { name: "edit-mode", label: "Value", value: "edit-value", checked: editMode == "edit-value", onChange: (e) => setEditMode(e.target.value) }),
+                React.createElement(Heading, { level: 5 }, (0, i18n_1.tr)("EXPR_EDITOR_EDIT_VALUE", locale)),
+                React.createElement(Radio, { name: "edit-mode", label: (0, i18n_1.tr)("EXPR_EDITOR_VALUE", locale), value: "edit-value", checked: editMode == "edit-value", onChange: (e) => setEditMode(e.target.value) }),
                 renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value"),
                 React.createElement("br", null),
-                React.createElement(Radio, { name: "edit-mode", label: "Expression", value: "edit-expr", checked: editMode == "edit-expr", onChange: (e) => setEditMode(e.target.value) }),
+                React.createElement(Radio, { name: "edit-mode", label: (0, i18n_1.tr)("EXPR_EDITOR_EXPRESSION", locale), value: "edit-expr", checked: editMode == "edit-expr", onChange: (e) => setEditMode(e.target.value) }),
                 React.createElement("input", { disabled: editMode != "edit-expr", type: "text", className: "bp3-input", placeholder: 'e.g. ["get","propertyName"]', value: exprText, onChange: e => {
                         setExprText(e.target.value);
                         try {
@@ -14636,8 +14639,8 @@ function ExprEditorInner(props) {
                 React.createElement("br", null),
                 React.createElement("br", null),
                 React.createElement(element_context_1.ElementGroup, null,
-                    React.createElement(Button, { disabled: !isEditValid, variant: "success", onClick: (e) => onApplyValue() }, "Apply"),
-                    React.createElement(Button, { variant: "danger", onClick: (e) => onCancelEditing() }, "Cancel")))));
+                    React.createElement(Button, { disabled: !isEditValid, variant: "success", onClick: (e) => onApplyValue() }, (0, i18n_1.tr)("APPLY", locale)),
+                    React.createElement(Button, { variant: "danger", onClick: (e) => onCancelEditing() }, (0, i18n_1.tr)("CANCEL", locale))))));
 }
 const NumberExprEditor = props => {
     const { NumericInput } = (0, element_context_1.useElementContext)();
@@ -19241,7 +19244,7 @@ const RndModalDialog = (props) => {
                 React.createElement("div", { className: "bp3-dialog-header noselect" },
                     props.icon && React.createElement(Icon, { icon: props.icon }),
                     React.createElement(Heading, { level: 4, className: "mrl-modal-diag-drag-handle" }, props.title),
-                    React.createElement(Button, { onClick: props.onClose, "aria-label": "Close", className: "bp3-dialog-close-button bp3-button", minimal: true, icon: "small-cross" })),
+                    React.createElement(Button, { onClick: props.onClose, "aria-label": (0, i18n_1.tr)("ACTION_CLOSE", props.locale), className: "bp3-dialog-close-button bp3-button", minimal: true, icon: "small-cross" })),
                 React.createElement("div", { className: "bp3-dialog-body", style: modalBodyStyle }, (() => {
                     //We use NonIdealState as a visual mask to suppress unwanted mouse 
                     //interaction during the act of dragging/resizing, similar to what the
@@ -21343,7 +21346,7 @@ function assertValue(val) {
 function ExprEditor(props) {
     assertValue(props.expr);
     return React.createElement(React.Fragment, null,
-        "Expr: ",
+        (0, i18n_1.tr)("EXPR_EDITOR_EXPR_PREFIX", props.locale),
         React.createElement("input", { type: "text", value: `${props.expr}`, onChange: e => props.onExprChanged(props.converter(e.target.value)) }));
 }
 const DynamicSwitch = (props) => {
@@ -21440,7 +21443,7 @@ const PointIconStyleEditor = ({ style, onChange, locale }) => {
             (0, i18n_1.tr)("VSED_PT_ICON_ANCHOR_V", locale),
             " ",
             React.createElement(NumericInput, { value: style.anchor[1], min: 0, onChange: e => onChange(Object.assign(Object.assign({}, style), { anchor: [style.anchor[0], e] })) })),
-        React.createElement(DynamicSwitch, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATE_WITH_VIEW", locale), expr: style.rotateWithView, onExprChanged: (e) => onChange(Object.assign(Object.assign({}, style), { rotateWithView: e })) }),
+        React.createElement(DynamicSwitch, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATE_WITH_VIEW", locale), expr: style.rotateWithView, onExprChanged: (e) => onChange(Object.assign(Object.assign({}, style), { rotateWithView: e })), locale: locale }),
         React.createElement(FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_ROTATION", locale) },
             React.createElement(common_1.SliderExprEditor, { locale: locale, min: 0, max: 360, labelStepSize: 360, value: style.rotation, onChange: (n) => onChange(Object.assign(Object.assign({}, style), { rotation: n })) })),
         React.createElement(FormGroup, { label: (0, i18n_1.tr)("VSED_PT_ICON_SCALE", locale) },
@@ -21728,7 +21731,7 @@ const FilterItem = (props) => {
             props.enablePoint && React.createElement("td", null, pointStyleUrl && React.createElement("img", { src: pointStyleUrl })),
             props.enableLine && React.createElement("td", null, lineStyleUrl && React.createElement("img", { src: lineStyleUrl })),
             props.enablePolygon && React.createElement("td", null, polyStyleUrl && React.createElement("img", { src: polyStyleUrl })),
-            React.createElement("td", null, isDefault ? React.createElement("strong", null, "Default Style") : filterExprEd),
+            React.createElement("td", null, isDefault ? React.createElement("strong", null, (0, i18n_1.tr)("VSED_DEFAULT_STYLE", props.locale)) : filterExprEd),
             React.createElement("td", null,
                 React.createElement(Button, { variant: isStyleEditorOpen ? "danger" : "primary", onClick: onToggle, icon: isStyleEditorOpen ? "cross" : "edit" }))),
         isStyleEditorOpen && React.createElement("tr", null,
@@ -22914,11 +22917,11 @@ const CoordinateTrackerContainer = (props) => {
                     React.createElement("h5", { className: "bp3-heading" },
                         React.createElement("a", { href: "#" }, p)),
                     React.createElement("p", null,
-                        React.createElement("strong", null, "X:"),
+                        React.createElement("strong", null, (0, i18n_1.tr)("COORDTRACKER_X", locale)),
                         " ",
                         x),
                     React.createElement("p", null,
-                        React.createElement("strong", null, "Y:"),
+                        React.createElement("strong", null, (0, i18n_1.tr)("COORDTRACKER_Y", locale)),
                         " ",
                         y));
             }));
@@ -31301,6 +31304,19 @@ exports.STRINGS_EN = {
     "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
     "MAP_SWIPE_LAYER_MANAGER_FOR": "Layers for:",
     "MAP_SWIPE_SELECTION_FOR": "Selection for:",
+    "APPLY": "Apply",
+    "EXPR_EDITOR_EDIT_VALUE": "Edit Value",
+    "EXPR_EDITOR_VALUE": "Value",
+    "EXPR_EDITOR_EXPRESSION": "Expression",
+    "EXPR_EDITOR_EXPR_PREFIX": "Expr: ",
+    "VSED_DEFAULT_STYLE": "Default Style",
+    "COORDTRACKER_X": "X:",
+    "COORDTRACKER_Y": "Y:",
+    "COLOR_PICKER_INPUT_LABEL": "color",
+    "MSG_PANEL_INFO": "Info Messages",
+    "MSG_PANEL_WARNING": "Warning Messages",
+    "MSG_PANEL_ERROR": "Error Messages",
+    "ABOUT_HASH_LABEL": "Hash:",
 };
 
 

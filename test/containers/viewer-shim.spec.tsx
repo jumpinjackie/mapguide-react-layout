@@ -61,7 +61,7 @@ function cleanupLegacyGlobals() {
  * stand in for the real viewer during setExtents tests. Only `isReady` and
  * `zoomToExtent` need real implementations; everything else can be a no-op.
  */
-function makeViewer(overrides?: Partial<IMapProviderContext>): IMapProviderContext {
+function makeViewer(overrides?: any): IMapProviderContext {
     return {
         isReady: () => true,
         zoomToExtent: vi.fn(),
@@ -104,7 +104,7 @@ function makeViewer(overrides?: Partial<IMapProviderContext>): IMapProviderConte
     } as Partial<IMapProviderContext> as IMapProviderContext;
 }
 
-function makeState(overrides?: Partial<IApplicationState>): Partial<IApplicationState> {
+function makeState(overrides?: any): any {
     return {
         config: {
             activeMapName: "Map1",
@@ -117,7 +117,7 @@ function makeState(overrides?: Partial<IApplicationState>): Partial<IApplication
                 selectionColor: "#00ff00",
                 activeSelectedFeatureColor: "#ff0000",
                 pointSelectionBuffer: 5,
-                loadIndicatorPositioning: "top-left",
+                loadIndicatorPositioning: "top",
                 loadIndicatorColor: "#ffffff",
             },
         },
@@ -137,8 +137,8 @@ function makeState(overrides?: Partial<IApplicationState>): Partial<IApplication
                     selectionSet: {
                         FeatureSet: {
                             Layer: [
-                                { "@id": "L1", Class: { ID: ["1", "2"] } },
-                                { "@id": "L2", Class: { ID: ["3"] } },
+                                { "@id": "L1", "@name": "Parcels", Class: { ID: ["1", "2"] } },
+                                { "@id": "L2", "@name": "Roads", Class: { ID: ["3"] } },
                             ],
                         },
                         SelectedFeatures: {
@@ -162,6 +162,9 @@ function makeState(overrides?: Partial<IApplicationState>): Partial<IApplication
         },
         viewer: {
             busyCount: 0,
+            size: [800, 600],
+            tool: 0,
+            featureTooltipsEnabled: true,
         },
         taskpane: {
             initialUrl: "http://example.test/taskpane-home",
@@ -171,6 +174,7 @@ function makeState(overrides?: Partial<IApplicationState>): Partial<IApplication
         },
         toolbar: {
             flyouts: {},
+            toolbars: {},
         },
         ...overrides,
     };
@@ -180,7 +184,7 @@ function makeState(overrides?: Partial<IApplicationState>): Partial<IApplication
  * Mounts a `ViewerApiShim` component, which installs `window.Fusion` on
  * mount. Returns the unmount function.
  */
-function mountShim(options?: { state?: Partial<IApplicationState>; viewer?: IMapProviderContext }) {
+function mountShim(options?: { state?: any; viewer?: IMapProviderContext }) {
     cleanupLegacyGlobals();
     const store = configureStore(options?.state ?? makeState());
     const viewer = options?.viewer ?? makeViewer();
@@ -385,7 +389,7 @@ describe("ViewerApiShim legacy map frame API", () => {
             SelectedFeatures: { SelectedLayer: [] },
         };
         const nextSelection = {
-            FeatureSet: { Layer: [{ "@id": "L1", Class: { ID: ["1"] } }] },
+            FeatureSet: { Layer: [{ "@id": "L1", "@name": "Parcels", Class: { ID: ["1"] } }] },
             SelectedFeatures: {
                 SelectedLayer: [{
                     "@name": "Parcels",
@@ -520,6 +524,7 @@ describe("ViewerApiShim legacy map frame API", () => {
         const { unmount } = mountShim({
             viewer,
             state: makeState({
+                viewer: { ...makeState().viewer, busyCount: 2 },
                 config: {
                     ...makeState().config,
                     activeMapName: "Map1",
@@ -527,11 +532,10 @@ describe("ViewerApiShim legacy map frame API", () => {
                     agentUri: "http://example.test/mapagent",
                     viewSizeUnits: UnitOfMeasure.Meters,
                     viewer: {
-                        ...makeState().config?.viewer,
+                        ...(makeState().config?.viewer ?? {}),
                         isStateless: true,
                     },
                 },
-                viewer: { busyCount: 2 },
             }),
         });
 

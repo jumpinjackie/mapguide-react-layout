@@ -71,7 +71,7 @@ vi.mock("../../src/utils/asset", () => assetMock);
 vi.mock("../../src/utils/logger", () => loggerMock);
 
 vi.mock("../../src/components/context", () => ({
-   AppContextProvider: ({ children }: React.PropsWithChildren) => <div data-testid="app-context">{children}</div>,
+   AppContextProvider: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="app-context">{children}</div>,
 }));
 
 vi.mock("../../src/components/elements/element-context", () => ({

@@ -218,7 +218,7 @@ describe("hooks selectors", () => {
    });
 
    it("returns expected values for state-backed selectors", () => {
-      expect(getActiveMapBranch(stateRef.value)?.currentView.scale).toBe(1000);
+      expect(getActiveMapBranch(stateRef.value)?.currentView?.scale).toBe(1000);
       expect(useActiveMapName()).toBe("Map1");
       expect(useActiveMapInitialExternalLayers()).toEqual([{ name: "Initial Base" }]);
       expect(useViewerLocale()).toBe("en");
@@ -232,7 +232,7 @@ describe("hooks selectors", () => {
       expect(useInitError()).toEqual({ message: "Boom" });
       expect(useInitErrorStack()).toBe(true);
       expect(useInitErrorOptions()).toEqual({ retry: true });
-      expect(useActiveMapBranch()?.initialView.scale).toBe(5000);
+      expect(useActiveMapBranch()?.initialView?.scale).toBe(5000);
       expect(useActiveMapSelectionSet()).toEqual(stateRef.value.mapState.Map1.mapguide.selectionSet);
       expect(useCustomAppSettings()).toEqual({ custom: "value" });
       expect(useActiveMapClientSelectionSet()).toEqual({ layers: [{ id: "client-1" }] });

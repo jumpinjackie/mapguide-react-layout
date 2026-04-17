@@ -46,7 +46,7 @@ vi.mock("../../src/utils/units", () => ({
 
 vi.mock("../../src/components/elements/element-context", () => ({
    useElementContext: () => ({
-      Heading: ({ children }: React.PropsWithChildren) => <h5>{children}</h5>,
+      Heading: ({ children }: React.PropsWithChildren<{}>) => <h5>{children}</h5>,
       Slider: ({ value, onChange }: { value: number; onChange: (value: number) => void }) => (
          <input data-testid="slider" type="range" value={value} onChange={(e) => onChange(Number((e.target as HTMLInputElement).value))} />
       ),

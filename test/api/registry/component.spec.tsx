@@ -24,6 +24,9 @@ describe("api/registry/component", () => {
 
     it("PlaceholderComponent renders an error component for unknown ids", () => {
         const el = PlaceholderComponent({ id: "DefinitelyUnknown", locale: "en" });
+        if (!el) {
+            throw new Error("Expected placeholder component to return an element");
+        }
 
         expect(React.isValidElement(el)).toBe(true);
         expect(el.type).toBe(ErrorComponent);

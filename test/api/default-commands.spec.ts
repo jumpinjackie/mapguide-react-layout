@@ -79,7 +79,7 @@ describe("api/default-commands", () => {
         const panLeftCmd = getCommand(DefaultCommands.PanLeft);
         const panDownCmd = getCommand(DefaultCommands.PanDown);
         const state = createInitialState();
-        state.config.activeMapName = "Main";
+        (state.config as any).activeMapName = "Main";
         state.mapState = {
             Main: {
                 externalBaseLayers: [],
@@ -176,7 +176,7 @@ describe("api/default-commands", () => {
         const restoreCmd = getCommand(DefaultCommands.RestoreView);
         const refreshCmd = getCommand(DefaultCommands.RefreshMap);
         const state = createInitialState();
-        state.config.activeMapName = "Main";
+        (state.config as any).activeMapName = "Main";
         state.mapState = {
             Main: {
                 externalBaseLayers: [],
@@ -218,7 +218,7 @@ describe("api/default-commands", () => {
         const nextCmd = getCommand(DefaultCommands.NextView);
         const dispatch = vi.fn((action) => action);
         const state = createInitialState();
-        state.config.activeMapName = "Main";
+        (state.config as any).activeMapName = "Main";
 
         previousCmd?.invoke(dispatch as any, () => state, undefined as any);
         nextCmd?.invoke(dispatch as any, () => state, undefined as any);
@@ -316,7 +316,7 @@ describe("api/default-commands", () => {
     it("registers geolocation command that zooms and shows success toast for coordinates inside the map", () => {
         const geolocationCmd = getCommand(DefaultCommands.Geolocation);
         const state = createInitialState();
-        state.config.activeMapName = "Main";
+        (state.config as any).activeMapName = "Main";
         state.mapState = {
             Main: {
                 externalBaseLayers: [],

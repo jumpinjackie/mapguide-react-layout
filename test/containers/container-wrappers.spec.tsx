@@ -232,7 +232,7 @@ vi.mock("../../src/utils/url", () => urlMock);
 vi.mock("ol/proj", () => olProjMock);
 
 vi.mock("@blueprintjs/core", () => ({
-   Dialog: ({ children }: React.PropsWithChildren) => <div data-testid="dialog">{children}</div>,
+   Dialog: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="dialog">{children}</div>,
 }));
 
 vi.mock("../../src/components/context", () => ({
@@ -246,7 +246,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
    useElementContext: () => ({
       Button: ({ children, onClick }: React.PropsWithChildren<{ onClick?: () => void }>) => <button data-testid="ctx-btn" onClick={onClick}>{children}</button>,
       Callout: ({ children, title }: React.PropsWithChildren<{ title?: string }>) => <div data-testid="callout">{title}{children}</div>,
-      Card: ({ children }: React.PropsWithChildren) => <div data-testid="card">{children}</div>,
+      Card: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="card">{children}</div>,
       NonIdealState: ({ description }: { description?: string }) => <div data-testid="non-ideal-state">{description}</div>,
    }),
 }));

@@ -65,14 +65,14 @@ vi.mock("../../src/api/i18n", () => ({
 }));
 
 vi.mock("../../src/components/elements/element-context", () => ({
-   ElementGroup: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+   ElementGroup: ({ children }: React.PropsWithChildren<{}>) => <div>{children}</div>,
    TypedSelect: ({ value, onChange, items }: any) => (
       <select data-testid="measure-type" value={value} onChange={(e) => onChange(e.target.value)}>
          {items.map((i: any) => <option key={i.value} value={i.value}>{i.label}</option>)}
       </select>
    ),
    useElementContext: () => ({
-      Callout: ({ children }: React.PropsWithChildren) => <div data-testid="measuring-callout">{children}</div>,
+      Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="measuring-callout">{children}</div>,
       Button: ({ children, onClick, disabled }: any) => <button type="button" disabled={disabled} onClick={onClick}>{children}</button>,
    }),
 }));

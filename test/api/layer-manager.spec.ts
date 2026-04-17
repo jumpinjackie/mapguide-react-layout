@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, afterEach, describe, expect, it, vi } from "vitest";
 import ImageLayer from "ol/layer/Image";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";

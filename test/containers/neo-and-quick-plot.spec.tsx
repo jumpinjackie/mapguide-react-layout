@@ -123,8 +123,8 @@ vi.mock("../../src/components/elements/element-context", () => ({
             onChange={(e) => onChange?.(Number((e.target as HTMLInputElement).value))}
          />
       ),
-      Callout: ({ children }: React.PropsWithChildren) => <div data-testid="callout">{children}</div>,
-      Button: ({ children }: React.PropsWithChildren) => <button>{children}</button>,
+      Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="callout">{children}</div>,
+      Button: ({ children }: React.PropsWithChildren<{}>) => <button>{children}</button>,
       Select: () => <select />,
    }),
 }));

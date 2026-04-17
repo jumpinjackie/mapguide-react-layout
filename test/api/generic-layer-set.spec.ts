@@ -200,6 +200,23 @@ describe('GenericLayerSetOL', () => {
             );
             expect(layerSet.getSourcesForProgressTracking()).toEqual([]);
         });
+
+        it('returns source from ImageLayer subject layer', () => {
+            const subjectLayer = new ImageLayer({});
+            const subjectSource = { dummy: 'subjectImageSource' } as any;
+            vi.spyOn(subjectLayer, 'getSource').mockReturnValue(subjectSource);
+
+            const layerSet = new GenericLayerSetOL(
+                mockView,
+                subjectLayer,
+                mockExtent,
+                undefined,
+                mockProjection
+            );
+
+            const sources = layerSet.getSourcesForProgressTracking();
+            expect(sources).toEqual([subjectSource]);
+        });
     });
 
     describe('updateTransparency', () => {
@@ -272,6 +289,21 @@ describe('GenericLayerSetOL', () => {
             const res = layerSet.scaleToResolution(scale);
             const scale2 = layerSet.resolutionToScale(res);
             expect(scale2).toBeCloseTo(scale);
+        });
+
+        it('no-op public methods can be invoked safely', () => {
+            const subjectLayer = new TileLayer({});
+            const layerSet = new GenericLayerSetOL(
+                mockView,
+                subjectLayer,
+                mockExtent,
+                undefined,
+                mockProjection
+            );
+
+            expect(() => layerSet.showActiveSelectedFeature(mockExtent, [100, 100] as any, 'http://example.test')).not.toThrow();
+            expect(() => layerSet.update(undefined, undefined, undefined, undefined)).not.toThrow();
+            expect(() => layerSet.updateSelectionColor('#ff00ff')).not.toThrow();
         });
     });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSubjectLayerDefn, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, parseSwipePairs } from "../../src/actions/init-command";
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, parseSwipePairs } from "../../src/actions/init-command";
 import { GenericSubjectLayerType, IGenericSubjectMapLayer } from "../../src/actions/defs";
 
 describe("actions/init-command", () => {
@@ -58,6 +58,59 @@ describe("actions/init-command", () => {
             }
         };
         expect(isStateless(appDef as any)).toBe(false);
+    });
+
+    it("getMapDefinitionsFromFlexLayout returns map definitions with metadata and subject layers", () => {
+        const appDef = {
+            MapSet: {
+                MapGroup: [
+                    {
+                        "@id": "MainMap",
+                        Map: [
+                            {
+                                Type: "MapGuide",
+                                Extension: {
+                                    ResourceId: "Library://Samples/Sheboygan.MapDefinition",
+                                    Meta_Category: "Operations",
+                                    Meta_Order: "1"
+                                }
+                            },
+                            {
+                                Type: "SubjectLayer",
+                                Extension: {
+                                    source_type: "geojson",
+                                    display_name: "Cities",
+                                    driver_name: "GeoJSON",
+                                    initially_visible: true,
+                                    source_param_url: "https://example.test/cities.geojson",
+                                    meta_projection: "EPSG:4326"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        const maps = getMapDefinitionsFromFlexLayout(appDef as any);
+        expect(maps).toHaveLength(2);
+        expect(maps[0]).toEqual({
+            name: "MainMap",
+            mapDef: "Library://Samples/Sheboygan.MapDefinition",
+            metadata: {
+                Category: "Operations",
+                Order: "1"
+            }
+        });
+        expect(isMapDefinition(maps[1] as any)).toBe(false);
+        expect((maps[1] as IGenericSubjectMapLayer).displayName).toBe("Cities");
+        expect((maps[1] as IGenericSubjectMapLayer).sourceParams.url).toBe("https://example.test/cities.geojson");
+        expect((maps[1] as IGenericSubjectMapLayer).meta).toEqual({ projection: "EPSG:4326" });
+    });
+
+    it("getMapDefinitionsFromFlexLayout throws when there are no map definitions or subject layers", () => {
+        expect(() => getMapDefinitionsFromFlexLayout({ MapSet: { MapGroup: [{ "@id": "Empty", Map: [] }] } } as any))
+            .toThrow("No Map Definition or subject layer found in Application Definition");
     });
 
     describe("parseSwipePairs", () => {

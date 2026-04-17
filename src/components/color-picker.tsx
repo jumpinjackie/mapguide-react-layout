@@ -30,7 +30,7 @@ export const ColorPicker = (props: IColorPickerProps) => {
     };
     return <div>
         <button disabled={props.disabled} style={{ width: 80, borderRadius: 3, backgroundColor: props.value ?? DEFAULT_COLOR }} onClick={onPickerToggle}>{NBSP}{NBSP}{NBSP}</button>
-        <input type="text" aria-label="color" value={props.value ?? "#" + DEFAULT_COLOR} onChange={(e) => props.onChange(e.target.value.replace(/^#/, ""))} style={{ width: 0, height: 0, opacity: 0 }} />
+        <input type="text" aria-label={tr("COLOR_PICKER_INPUT_LABEL", props.locale)} value={props.value ?? "#" + DEFAULT_COLOR} onChange={(e) => props.onChange(e.target.value.replace(/^#/, ""))} style={{ width: 0, height: 0, opacity: 0 }} />
         <Collapsible isOpen={isPickerOpen}>
             <Card>
                 <HexColorPicker style={{ width: "100%" }} color={props.value ?? DEFAULT_COLOR} onChange={(c: any) => props.onChange(c)} />

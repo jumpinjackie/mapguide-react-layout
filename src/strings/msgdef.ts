@@ -366,4 +366,56 @@ export interface ILocalizedMessages {
      * @since 0.15
      */
     MAP_SWIPE_SELECTION_FOR: string;
+    /**
+     * @since 0.15
+     */
+    APPLY: string;
+    /**
+     * @since 0.15
+     */
+    EXPR_EDITOR_EDIT_VALUE: string;
+    /**
+     * @since 0.15
+     */
+    EXPR_EDITOR_VALUE: string;
+    /**
+     * @since 0.15
+     */
+    EXPR_EDITOR_EXPRESSION: string;
+    /**
+     * @since 0.15
+     */
+    EXPR_EDITOR_EXPR_PREFIX: string;
+    /**
+     * @since 0.15
+     */
+    VSED_DEFAULT_STYLE: string;
+    /**
+     * @since 0.15
+     */
+    COORDTRACKER_X: string;
+    /**
+     * @since 0.15
+     */
+    COORDTRACKER_Y: string;
+    /**
+     * @since 0.15
+     */
+    COLOR_PICKER_INPUT_LABEL: string;
+    /**
+     * @since 0.15
+     */
+    MSG_PANEL_INFO: string;
+    /**
+     * @since 0.15
+     */
+    MSG_PANEL_WARNING: string;
+    /**
+     * @since 0.15
+     */
+    MSG_PANEL_ERROR: string;
+    /**
+     * @since 0.15
+     */
+    ABOUT_HASH_LABEL: string;
 }

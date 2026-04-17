@@ -58,7 +58,7 @@ function stringifyExpr<T>(expr: ExprOr<T> | undefined, locale: string): string {
         return tr("EXPR_NOT_SET", locale);
     }
     if (isEvaluatable(expr)) {
-        return "Expr: " + JSON.stringify(expr.expr);
+        return tr("EXPR_EDITOR_EXPR_PREFIX", locale) + JSON.stringify(expr.expr);
     }
     return `${expr ?? STR_EMPTY}`;
 }
@@ -158,11 +158,11 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
         <InputGroup style={roStyle} readOnly value={stringifyExpr(props.value, locale)} rightElement={editButton} />
         <Collapsible isOpen={isEditing}>
             <Card>
-                <Heading level={5}>Edit Value</Heading>
-                <Radio name="edit-mode" label="Value" value="edit-value" checked={editMode == "edit-value"} onChange={(e: any) => setEditMode(e.target.value)} />
+                <Heading level={5}>{tr("EXPR_EDITOR_EDIT_VALUE", locale)}</Heading>
+                <Radio name="edit-mode" label={tr("EXPR_EDITOR_VALUE", locale)} value="edit-value" checked={editMode == "edit-value"} onChange={(e: any) => setEditMode(e.target.value)} />
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
                 <br />
-                <Radio name="edit-mode" label="Expression" value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
+                <Radio name="edit-mode" label={tr("EXPR_EDITOR_EXPRESSION", locale)} value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
                 <input
                     disabled={editMode != "edit-expr"}
                     type="text"
@@ -182,8 +182,8 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                     }} />
                 <br /><br />
                 <ElementGroup>
-                    <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>Apply</Button>
-                    <Button variant="danger" onClick={(e: any) => onCancelEditing()}>Cancel</Button>
+                    <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>{tr("APPLY", locale)}</Button>
+                    <Button variant="danger" onClick={(e: any) => onCancelEditing()}>{tr("CANCEL", locale)}</Button>
                 </ElementGroup>
             </Card>
         </Collapsible>

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   ElementGroup,
+  IToasterRef,
   TypedSelect,
   useElementContext,
 } from "../components/elements/element-context";
@@ -526,4 +527,63 @@ export const _ElementGroup = {
     );
   },
   name: "Element Group",
+};
+
+export const _Toaster = {
+  render: () => {
+    const { Toaster, Button } = useElementContext();
+    const toasterRef = React.useRef<IToasterRef>(null);
+    const variant = select(
+      "Variant",
+      ["primary", "warning", "success", "danger"],
+      "primary"
+    );
+    const message = text("Message", "This is a toast notification");
+    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    if (strIsNullOrEmpty(icon)) icon = undefined;
+    const onShow = () => {
+      toasterRef.current?.show({ message, variant, icon });
+    };
+    return (
+      <>
+        <Button variant="primary" onClick={onShow}>
+          Show Toast
+        </Button>
+        <Toaster usePortal={false} position="top" ref={toasterRef} />
+      </>
+    );
+  },
+  name: "Toaster",
+};
+
+export const _Dialog = {
+  render: () => {
+    const { Dialog, Button } = useElementContext();
+    const [isOpen, setIsOpen] = React.useState(false);
+    const title = text("Title", "Dialog Title");
+    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    if (strIsNullOrEmpty(icon)) icon = undefined;
+    return (
+      <>
+        <Button variant="primary" onClick={() => setIsOpen(true)}>
+          Open Dialog
+        </Button>
+        <Dialog
+          isOpen={isOpen}
+          title={title}
+          icon={icon}
+          usePortal={false}
+          onClose={() => setIsOpen(false)}
+        >
+          <p style={{ padding: "20px" }}>This is the dialog body content.</p>
+          <div style={{ padding: "0 20px 20px", textAlign: "right" }}>
+            <Button variant="primary" onClick={() => setIsOpen(false)}>
+              Close
+            </Button>
+          </div>
+        </Dialog>
+      </>
+    );
+  },
+  name: "Dialog",
 };

@@ -231,10 +231,6 @@ vi.mock("../../src/utils/units", () => unitMock);
 vi.mock("../../src/utils/url", () => urlMock);
 vi.mock("ol/proj", () => olProjMock);
 
-vi.mock("@blueprintjs/core", () => ({
-   Dialog: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="dialog">{children}</div>,
-}));
-
 vi.mock("../../src/components/context", () => ({
    AppContext: React.createContext({
       getLegendLayerExtraIconsProvider: () => [],

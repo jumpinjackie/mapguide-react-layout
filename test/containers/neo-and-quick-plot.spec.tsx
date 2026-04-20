@@ -104,10 +104,6 @@ vi.mock("../../src/constants/assets", () => ({
 vi.mock("../../src/constants", () => ({
    WEBLAYOUT_CONTEXTMENU: "WebLayout.ContextMenu",
 }));
-vi.mock("@blueprintjs/core", () => ({
-   Position: { TOP: "top" },
-   Toaster: React.forwardRef((_props: any, _ref: any) => <div data-testid="toaster" />),
-}));
 vi.mock("../../src/components/elements/element-context", () => ({
    TypedSelect: ({ items, value, onChange }: any) => (
       <select data-testid="typed-select" value={value} onChange={(e) => onChange(e.target.value)}>

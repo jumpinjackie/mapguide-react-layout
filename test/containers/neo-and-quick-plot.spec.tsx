@@ -126,6 +126,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
       Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="callout">{children}</div>,
       Button: ({ children }: React.PropsWithChildren<{}>) => <button>{children}</button>,
       Select: () => <select />,
+      Toaster: React.forwardRef((_props: any, _ref: any) => <div data-testid="toaster" />),
    }),
 }));
 vi.mock("../../src/api/i18n", () => ({

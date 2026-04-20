@@ -240,6 +240,55 @@ export type Positioning = "left" | "bottom" | "right" | "top";
 /**
  * @since 0.15
  */
+export type ToastPosition = "top" | "top-left" | "top-right" | "bottom" | "bottom-left" | "bottom-right";
+
+/**
+ * @since 0.15
+ */
+export type ToastMessage = {
+    icon?: string;
+    message: string | JSX.Element;
+    variant?: ElementVariant;
+};
+
+/**
+ * The imperative API exposed by the abstract Toaster component via a ref.
+ *
+ * @since 0.15
+ */
+export interface IToasterRef {
+    /**
+     * Displays a toast notification and returns its unique key.
+     */
+    show(message: ToastMessage): string | undefined;
+    /**
+     * Dismisses the toast notification identified by the given key.
+     */
+    dismiss(key: string): void;
+}
+
+/**
+ * @since 0.15
+ */
+export type ToasterProps = {
+    usePortal?: boolean;
+    position?: ToastPosition;
+};
+
+/**
+ * @since 0.15
+ */
+export type DialogProps = {
+    icon?: string;
+    isOpen?: boolean;
+    usePortal?: boolean;
+    onClose?: () => void;
+    title?: string;
+};
+
+/**
+ * @since 0.15
+ */
 export type PopoverProps = {
     usePortal?: boolean;
     position: Positioning,
@@ -296,6 +345,8 @@ export interface IElementContext {
     TabSet: React.ComponentType<TabSetProps>;
     Drawer: React.ComponentType<React.PropsWithChildren<DrawerProps>>;
     Popover: React.ComponentType<React.PropsWithChildren<PopoverProps>>;
+    Toaster: React.ForwardRefExoticComponent<ToasterProps & React.RefAttributes<IToasterRef>>;
+    Dialog: React.ComponentType<React.PropsWithChildren<DialogProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

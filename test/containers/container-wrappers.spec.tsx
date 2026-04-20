@@ -248,6 +248,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
       Callout: ({ children, title }: React.PropsWithChildren<{ title?: string }>) => <div data-testid="callout">{title}{children}</div>,
       Card: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="card">{children}</div>,
       NonIdealState: ({ description }: { description?: string }) => <div data-testid="non-ideal-state">{description}</div>,
+      Dialog: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="dialog">{children}</div>,
    }),
 }));
 

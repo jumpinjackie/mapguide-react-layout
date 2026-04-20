@@ -39,7 +39,7 @@ import type { LayerSetGroupBase } from '../../api/layer-set-group-base';
 import { assertIsDefined } from '../../utils/assert';
 import { info, debug } from '../../utils/logger';
 import { setCurrentView, setViewRotation, mapResized, setMouseCoordinates, setBusyCount, setViewRotationEnabled, setActiveTool, mapLayerAdded, externalLayersReady, addClientSelectedFeature, clearClientSelection } from '../../actions/map';
-import { Toaster, Intent } from '@blueprintjs/core';
+import type { IToasterRef } from '../elements/element-context';
 import { IOLFactory, OLFactory } from '../../api/ol-factory';
 import type { ISubscriberProps } from '../../containers/subscriber';
 import type { IInitialExternalLayer } from '../../actions/defs';
@@ -226,7 +226,7 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
     decrementBusyWorker(): void;
     attachToComponent(el: HTMLElement, comp: IViewerComponent): void;
     detachFromComponent(): void;
-    setToasterRef(ref: React.RefObject<Toaster>): void;
+    setToasterRef(ref: React.RefObject<IToasterRef>): void;
     setProviderState(nextState: IMapProviderState): void;
     onKeyDown(e: GenericEvent): void;
     hideAllPopups(): void;
@@ -295,7 +295,7 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
 export type WmsQueryAugmentation = (getFeatureInfoUrl: string) => string;
 
 export abstract class BaseMapProviderContext<TState extends IMapProviderState, TLayerSetGroup extends LayerSetGroupBase> implements IMapProviderContext {
-    private _toasterRef: React.RefObject<Toaster> | undefined;
+    private _toasterRef: React.RefObject<IToasterRef> | undefined;
     private _baseTileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _tileSourceLoaders: Dictionary<Dictionary<TileLoadFunction>>;
     private _imageSourceLoaders: Dictionary<Dictionary<ImageLoadFunction>>;
@@ -780,16 +780,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._comp?.onDispatch(setViewRotationEnabled(enabled));
     }
     toastSuccess(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.SUCCESS });
+        return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "success" });
     }
     toastWarning(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.WARNING });
+        return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "warning" });
     }
     toastError(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.DANGER });
+        return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "danger" });
     }
     toastPrimary(iconName: string, message: string | JSX.Element): string | undefined {
-        return this._toasterRef?.current?.show({ icon: (iconName as any), message: message, intent: Intent.PRIMARY });
+        return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "primary" });
     }
     dismissToast(key: string): void {
         this._toasterRef?.current?.dismiss(key);
@@ -1391,7 +1391,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      *
      */
     protected onBeforeAttachingLayerSetGroup(layerSetGroup: TLayerSetGroup): void { }
-    public setToasterRef(ref: React.RefObject<Toaster>) {
+    public setToasterRef(ref: React.RefObject<IToasterRef>) {
         this._toasterRef = ref;
     }
     public abstract setProviderState(nextState: TState): void;

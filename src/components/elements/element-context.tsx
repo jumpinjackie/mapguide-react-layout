@@ -287,6 +287,42 @@ export type DialogProps = {
 };
 
 /**
+ * Props for the outer dialog container wrapper used when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogContainerProps = {};
+
+/**
+ * Props for the dialog shell element (the visible chrome that wraps header and body).
+ *
+ * @since 0.15
+ */
+export type DialogShellProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog header area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogHeaderProps = {
+    className?: string;
+};
+
+/**
+ * Props for the dialog body area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogBodyProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
  * @since 0.15
  */
 export type PopoverProps = {
@@ -347,6 +383,10 @@ export interface IElementContext {
     Popover: React.ComponentType<React.PropsWithChildren<PopoverProps>>;
     Toaster: React.ForwardRefExoticComponent<ToasterProps & React.RefAttributes<IToasterRef>>;
     Dialog: React.ComponentType<React.PropsWithChildren<DialogProps>>;
+    DialogContainer: React.ComponentType<React.PropsWithChildren<DialogContainerProps>>;
+    DialogShell: React.ComponentType<React.PropsWithChildren<DialogShellProps>>;
+    DialogHeader: React.ComponentType<React.PropsWithChildren<DialogHeaderProps>>;
+    DialogBody: React.ComponentType<React.PropsWithChildren<DialogBodyProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

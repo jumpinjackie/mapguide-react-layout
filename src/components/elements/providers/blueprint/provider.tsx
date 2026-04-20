@@ -24,7 +24,7 @@ import { BpDrawer } from "./drawer";
 import { BpHeading } from "./heading";
 import { BpText } from "./text";
 import { BpToaster } from "./toaster";
-import { BpDialog } from "./dialog";
+import { BpDialog, BpDialogBody, BpDialogContainer, BpDialogHeader, BpDialogShell } from "./dialog";
 
 import "./bp-override.css";
 
@@ -53,7 +53,11 @@ const provider: IElementContext = {
     Drawer: BpDrawer,
     Popover: BpPopover,
     Toaster: BpToaster,
-    Dialog: BpDialog
+    Dialog: BpDialog,
+    DialogContainer: BpDialogContainer,
+    DialogShell: BpDialogShell,
+    DialogHeader: BpDialogHeader,
+    DialogBody: BpDialogBody
 };
 
 export default provider;

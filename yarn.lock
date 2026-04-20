@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@adobe/css-tools@npm:^4.4.0":
@@ -1320,10 +1320,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@petamoriken/float16@npm:^3.4.7":
-  version: 3.9.2
-  resolution: "@petamoriken/float16@npm:3.9.2"
-  checksum: 10c0/af229a0fc429083e76c459cc3bf7e682f578518c34c21e2d1c1b1c2744e69a5208b94245c41757f500ef722dd79fb6c55e8858d29d7fb57d4fe2b3e5734f1149
+"@petamoriken/float16@npm:^3.9.3":
+  version: 3.9.3
+  resolution: "@petamoriken/float16@npm:3.9.3"
+  checksum: 10c0/de0a1a0224862cba16e6b614e6a5dd557c545c3f0372db21f61d7bcce7595fa63a28d10512c908acfbe177d209a39cea406f190159936f5891b3c095d460fdc2
   languageName: node
   linkType: hard
 
@@ -2944,13 +2944,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zarrita/storage@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "@zarrita/storage@npm:0.1.4"
+"@zarrita/storage@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@zarrita/storage@npm:0.2.0"
   dependencies:
     reference-spec-reader: "npm:^0.2.0"
-    unzipit: "npm:1.4.3"
-  checksum: 10c0/8157662271fe9b4fb527bf4aec60b4b788e149e1b3b2bca0e26c11c5a55f9c3b6b085241c9bb4e14eed2f8e30a3226d074a119a780e6f7dd219ed8894ca499a2
+    unzipit: "npm:2.0.0"
+  checksum: 10c0/9f433cb8ab404741f05c842b57e03710cc8add4f58826a001099a7b0eff7f2bb3fd3a87c9c038655d479abc9a50368eaf0685898433e313c9cf587b6d51b03a8
   languageName: node
   linkType: hard
 
@@ -4816,7 +4816,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:*, dompurify@npm:^3.3.3":
+"dompurify@npm:*, dompurify@npm:^3.4.0":
   version: 3.4.0
   resolution: "dompurify@npm:3.4.0"
   dependencies:
@@ -6145,11 +6145,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"geotiff@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "geotiff@npm:3.0.3"
+"geotiff@npm:^3.0.5 || ^3.1.0-beta.0":
+  version: 3.1.0-beta.0
+  resolution: "geotiff@npm:3.1.0-beta.0"
   dependencies:
-    "@petamoriken/float16": "npm:^3.4.7"
+    "@petamoriken/float16": "npm:^3.9.3"
     lerc: "npm:^3.0.0"
     pako: "npm:^2.0.4"
     parse-headers: "npm:^2.0.2"
@@ -6157,7 +6157,7 @@ __metadata:
     web-worker: "npm:^1.5.0"
     xml-utils: "npm:^1.10.2"
     zstddec: "npm:^0.2.0"
-  checksum: 10c0/7d8d86c0be6af001db57b889fc7daeb563e3a1e6bcd7e935a56fd58033ea31736ed212f4a440e5308db55396cde8fededdedc6df76cc9d4dc92a8ec60cbf4c72
+  checksum: 10c0/d6d22d5012c03b780aac925661275234b0c896671640dd3cedf19778da8e10c5d9f4753b214f3f3964629e5892b83406be08e57ed469abd6a260b89c48ec7d40
   languageName: node
   linkType: hard
 
@@ -7436,16 +7436,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonfile@npm:6.2.0":
-  version: 6.2.0
-  resolution: "jsonfile@npm:6.2.0"
+"jsonfile@npm:6.2.1":
+  version: 6.2.1
+  resolution: "jsonfile@npm:6.2.1"
   dependencies:
     graceful-fs: "npm:^4.1.6"
     universalify: "npm:^2.0.0"
   dependenciesMeta:
     graceful-fs:
       optional: true
-  checksum: 10c0/7f4f43b08d1869ded8a6822213d13ae3b99d651151d77efd1557ced0889c466296a7d9684e397bd126acf5eb2cfcb605808c3e681d0fdccd2fe5a04b47e76c0d
+  checksum: 10c0/e1abf000ecee9942d4d028a8e02dc752617face227d72afd1cfb2187e2433079e625bf82b807a313689db71b6472c6b2b389a2340d2798737b1199a39631c28a
   languageName: node
   linkType: hard
 
@@ -7914,20 +7914,20 @@ __metadata:
     cross-env: "npm:10.1.0"
     css-loader: "npm:7.1.4"
     docsify-cli: "npm:4.4.4"
-    dompurify: "npm:^3.3.3"
+    dompurify: "npm:^3.4.0"
     file-loader: "npm:6.2.0"
     geojson-vt: "npm:^4.0.2"
     immutability-helper: "npm:^3.1.1"
     jsdom: "npm:^26.1.0"
-    jsonfile: "npm:6.2.0"
+    jsonfile: "npm:6.2.1"
     lodash.debounce: "npm:^4.0.8"
     lodash.xor: "npm:^4.5.0"
     lodash.xorby: "npm:^4.7.0"
     mini-css-extract-plugin: "npm:^2.9.2"
-    ol: "npm:^10.8.0"
+    ol: "npm:^10.9.0"
     papaparse: "npm:^5.5.3"
     patch-package: "npm:^8.0.0"
-    proj4: "npm:2.20.6"
+    proj4: "npm:2.20.8"
     raf: "npm:^3.4.1"
     raw-loader: "npm:4.0.2"
     react: "npm:^17.0.2"
@@ -7947,13 +7947,13 @@ __metadata:
     tslib: "npm:^2.8.1"
     tslint: "npm:6.1.3"
     tsx: "npm:^4.21.0"
-    typedoc: "npm:0.28.18"
+    typedoc: "npm:0.28.19"
     typedoc-plugin-ga: "npm:^1.1.1"
     typedoc-plugin-merge-modules: "npm:7.0.0"
     typescript: "npm:5.9.3"
     typescript-json-schema: "npm:^0.67.1"
     vitest: "npm:3.2.4"
-    webpack: "npm:5.105.4"
+    webpack: "npm:5.106.2"
     webpack-cli: "npm:^6.0.1"
   languageName: unknown
   linkType: soft
@@ -8067,6 +8067,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mime-db@npm:^1.54.0":
+  version: 1.54.0
+  resolution: "mime-db@npm:1.54.0"
+  checksum: 10c0/8d907917bc2a90fa2df842cdf5dfeaf509adc15fe0531e07bb2f6ab15992416479015828d6a74200041c492e42cce3ebf78e5ce714388a0a538ea9c53eece284
+  languageName: node
+  linkType: hard
+
 "mime-types@npm:^2.1.12, mime-types@npm:^2.1.27, mime-types@npm:^2.1.31, mime-types@npm:~2.1.19":
   version: 2.1.35
   resolution: "mime-types@npm:2.1.35"
@@ -8129,7 +8136,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.2.2, minimatch@npm:^10.2.4":
+"minimatch@npm:^10.2.2, minimatch@npm:^10.2.5":
   version: 10.2.5
   resolution: "minimatch@npm:10.2.5"
   dependencies:
@@ -8529,17 +8536,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ol@npm:^10.8.0":
-  version: 10.8.0
-  resolution: "ol@npm:10.8.0"
+"ol@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "ol@npm:10.9.0"
   dependencies:
     "@types/rbush": "npm:4.0.0"
     earcut: "npm:^3.0.0"
-    geotiff: "npm:^3.0.2"
+    geotiff: "npm:^3.0.5 || ^3.1.0-beta.0"
     pbf: "npm:4.0.1"
     rbush: "npm:^4.0.0"
-    zarrita: "npm:^0.6.0"
-  checksum: 10c0/ede7ab1ab967ca9ec681c2efa72ea3e44013ec61df1d9fca2c7219eed2f29084f999f7c74202e433b03f83e546c75eb5a0e13c7481f2fb2e184308e5b37b7b64
+    zarrita: "npm:^0.7.1"
+  checksum: 10c0/f8e955819db2d9c2f46430c81485d8f0a22fb1b0ec654a128e79716b419905e8fd3aadc23185570f45c60e5d1fe926f3593341441dfc35c5f3ed3a5e4a54ec48
   languageName: node
   linkType: hard
 
@@ -9250,13 +9257,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:2.20.6":
-  version: 2.20.6
-  resolution: "proj4@npm:2.20.6"
+"proj4@npm:2.20.8":
+  version: 2.20.8
+  resolution: "proj4@npm:2.20.8"
   dependencies:
     mgrs: "npm:1.0.0"
     wkt-parser: "npm:^1.5.5"
-  checksum: 10c0/16132c203a3b322add26c4d02b5f807214fc69722fa2fe578c298ea525302d7ec6af899bad731fff971a05c3137d18fce07ec41ad877c2c81a4b1be0a06bc65b
+  checksum: 10c0/a4488c5229d25260697ca925d06fc251e772d033e7d081f97ab8b01a37854378d4a48903c667c39aa9305febff59ad09dddc019be8866977cdd2767d3a774239
   languageName: node
   linkType: hard
 
@@ -11563,20 +11570,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.28.18":
-  version: 0.28.18
-  resolution: "typedoc@npm:0.28.18"
+"typedoc@npm:0.28.19":
+  version: 0.28.19
+  resolution: "typedoc@npm:0.28.19"
   dependencies:
     "@gerrit0/mini-shiki": "npm:^3.23.0"
     lunr: "npm:^2.3.9"
     markdown-it: "npm:^14.1.1"
-    minimatch: "npm:^10.2.4"
-    yaml: "npm:^2.8.2"
+    minimatch: "npm:^10.2.5"
+    yaml: "npm:^2.8.3"
   peerDependencies:
     typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x || 5.9.x || 6.0.x
   bin:
     typedoc: bin/typedoc
-  checksum: 10c0/cb5ba76e4c7ffdaaff9aeb6bfd5f22410c3c16b713e2a863c0090cfdae092d40394915221020ee48f596d73c3ebd68aaa026123d827acc74919bffd66a8819d6
+  checksum: 10c0/a46ea8ec4e661320dacf27f1d68595bdf9d671383f20060b590f212e6ebbf9a65d4962e698e8a43804a14add1f04a3528381c338801350dc03ddc6baf33fb898
   languageName: node
   linkType: hard
 
@@ -11697,12 +11704,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unzipit@npm:1.4.3":
-  version: 1.4.3
-  resolution: "unzipit@npm:1.4.3"
-  dependencies:
-    uzip-module: "npm:^1.0.2"
-  checksum: 10c0/6f710615aaafb6283d5f489950e54d158deaa1c8757ba486d98ddc76f3ae3b7eab24cd24017185dd5f4edcd2df43b04431bca009538d4116c60229b60db8dd3b
+"unzipit@npm:2.0.0":
+  version: 2.0.0
+  resolution: "unzipit@npm:2.0.0"
+  checksum: 10c0/7ee6af8bf1b8a978c08cebbe65d7e0dfab8a0889d20ef89c1b2219389cad255074611f895242f34087cb0cf428719dd8251734d0e8fa4033c618c9ff21d67445
   languageName: node
   linkType: hard
 
@@ -11853,13 +11858,6 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 10c0/1607dd32ac7fc22f2d8f77051e6a64845c9bce5cd3dd8aa0070c074ec73e666a1f63c7b4e0f4bf2bc8b9d59dc85a15e17807446d9d2b17c8485fbc2147b27f9b
-  languageName: node
-  linkType: hard
-
-"uzip-module@npm:^1.0.2":
-  version: 1.0.3
-  resolution: "uzip-module@npm:1.0.3"
-  checksum: 10c0/206e09cf620aa178e5d8ab20425d1a4f4484de9a86673e8a5913087b7b0febb12d49a22b15574a3c5b0c9d911a0d600c9f51651de2a78ffbc6e0345b8ef3af8d
   languageName: node
   linkType: hard
 
@@ -12207,9 +12205,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.105.4":
-  version: 5.105.4
-  resolution: "webpack@npm:5.105.4"
+"webpack@npm:5.106.2":
+  version: 5.106.2
+  resolution: "webpack@npm:5.106.2"
   dependencies:
     "@types/eslint-scope": "npm:^3.7.7"
     "@types/estree": "npm:^1.0.8"
@@ -12227,9 +12225,8 @@ __metadata:
     events: "npm:^3.2.0"
     glob-to-regexp: "npm:^0.4.1"
     graceful-fs: "npm:^4.2.11"
-    json-parse-even-better-errors: "npm:^2.3.1"
     loader-runner: "npm:^4.3.1"
-    mime-types: "npm:^2.1.27"
+    mime-db: "npm:^1.54.0"
     neo-async: "npm:^2.6.2"
     schema-utils: "npm:^4.3.3"
     tapable: "npm:^2.3.0"
@@ -12241,7 +12238,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/e9896d20bac351b119d59942b7efae5b117056ecf203acc0d1a84ecbf0a5a9a80ca733735f96bd163e3530be6ab7f615cd67e5320bd3c47d709c9bfe376c3280
+  checksum: 10c0/933293ae94b7f3405147aebd824d978696693a7fbd85cfbf4d05b517329c93f69e634400ad70a27f4ba4148e14e2fd502e335cd8d30d75282091ab3c72a1ac01
   languageName: node
   linkType: hard
 
@@ -12560,7 +12557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.8.2":
+"yaml@npm:^2.8.3":
   version: 2.8.3
   resolution: "yaml@npm:2.8.3"
   bin:
@@ -12667,13 +12664,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zarrita@npm:^0.6.0":
-  version: 0.6.1
-  resolution: "zarrita@npm:0.6.1"
+"zarrita@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "zarrita@npm:0.7.1"
   dependencies:
-    "@zarrita/storage": "npm:^0.1.4"
+    "@zarrita/storage": "npm:^0.2.0"
     numcodecs: "npm:^0.3.2"
-  checksum: 10c0/afc183e0e91fb3bc40b28f65dd0f7548aa4a1ba559940aa21ac5d13e5486a91dca0b8e3fb84ed9f916e5c1018280aa7050ed0d56bc8e52d8a0699e49bd1fac42
+  checksum: 10c0/f82f5710ff7a5594e02f50a3519a3a03eaba5395c0c546cdf9066a72c43442443191708835749917bd603e61062cf555fba3f0960ba3fc1c703aa76ed4ff7b9b
   languageName: node
   linkType: hard
 

@@ -575,11 +575,15 @@ export const _Dialog = {
           usePortal={false}
           onClose={() => setIsOpen(false)}
         >
-          <p style={{ padding: "20px" }}>This is the dialog body content.</p>
-          <div style={{ padding: "0 20px 20px", textAlign: "right" }}>
-            <Button variant="primary" onClick={() => setIsOpen(false)}>
-              Close
-            </Button>
+          <div className="bp3-dialog-body">
+            <p>This is the dialog body content.</p>
+          </div>
+          <div className="bp3-dialog-footer">
+            <div className="bp3-dialog-footer-actions">
+              <Button variant="primary" onClick={() => setIsOpen(false)}>
+                Close
+              </Button>
+            </div>
           </div>
         </Dialog>
       </>

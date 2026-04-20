@@ -33,7 +33,15 @@ BpDialogContainer.displayName = "BpDialogContainer";
  */
 export const BpDialogShell: React.FC<React.PropsWithChildren<DialogShellProps>> = ({ style, className, children }) => {
     const cls = ["bp3-dialog", className].filter(Boolean).join(" ");
-    return <div className={cls} style={style}>{children}</div>;
+    const combinedStyle: React.CSSProperties = {
+        // Neutralize Blueprint's default padding-bottom that would otherwise shrink the
+        // available flex layout area for the dialog body when an explicit height is set.
+        paddingBottom: 0,
+        // Clip any content that exceeds the dialog shell bounds.
+        overflow: "hidden",
+        ...style,
+    };
+    return <div className={cls} style={combinedStyle}>{children}</div>;
 };
 
 BpDialogShell.displayName = "BpDialogShell";

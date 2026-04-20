@@ -16,3 +16,5 @@ export const BpDialog: React.FC<React.PropsWithChildren<DialogProps>> = ({ icon,
         {children}
     </Dialog>;
 };
+
+BpDialog.displayName = "BpDialog";

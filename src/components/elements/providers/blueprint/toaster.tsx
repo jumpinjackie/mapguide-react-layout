@@ -48,3 +48,5 @@ export const BpToaster = React.forwardRef<IToasterRef, ToasterProps>((props, ref
         position={toastPositionToBp(props.position)}
     />;
 });
+
+BpToaster.displayName = "BpToaster";

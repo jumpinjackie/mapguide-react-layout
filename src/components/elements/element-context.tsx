@@ -291,7 +291,10 @@ export type DialogProps = {
  *
  * @since 0.15
  */
-export type DialogContainerProps = {};
+export type DialogContainerProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
 
 /**
  * Props for the dialog shell element (the visible chrome that wraps header and body).

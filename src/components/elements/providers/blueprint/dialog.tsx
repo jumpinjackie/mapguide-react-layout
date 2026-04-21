@@ -22,9 +22,10 @@ BpDialog.displayName = "BpDialog";
 /**
  * @hidden
  */
-export const BpDialogContainer: React.FC<React.PropsWithChildren<DialogContainerProps>> = ({ children }) => (
-    <div className="bp3-dialog-container">{children}</div>
-);
+export const BpDialogContainer: React.FC<React.PropsWithChildren<DialogContainerProps>> = ({ className, style, children }) => {
+    const cls = ["bp3-dialog-container", className].filter(Boolean).join(" ");
+    return <div className={cls} style={style}>{children}</div>;
+};
 
 BpDialogContainer.displayName = "BpDialogContainer";
 

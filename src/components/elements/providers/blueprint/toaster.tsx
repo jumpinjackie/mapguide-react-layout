@@ -1,7 +1,8 @@
-import { Toaster, Position, Intent } from "@blueprintjs/core";
+import { Toaster, Position } from "@blueprintjs/core";
 import type { ToasterPosition } from "@blueprintjs/core";
 import React from "react";
 import type { IToasterRef, ToasterProps, ToastPosition } from "../../element-context";
+import { iconName, variantToIntent } from "./utils";
 
 function toastPositionToBp(position: ToastPosition | undefined): ToasterPosition {
     switch (position) {
@@ -24,17 +25,10 @@ export const BpToaster = React.forwardRef<IToasterRef, ToasterProps>((props, ref
 
     React.useImperativeHandle(ref, () => ({
         show(message) {
-            let intent: Intent | undefined;
-            switch (message.variant) {
-                case "primary": intent = Intent.PRIMARY; break;
-                case "success": intent = Intent.SUCCESS; break;
-                case "warning": intent = Intent.WARNING; break;
-                case "danger": intent = Intent.DANGER; break;
-            }
             return bpToasterRef.current?.show({
-                icon: message.icon as any,
+                icon: iconName(message.icon),
                 message: message.message,
-                intent
+                intent: variantToIntent(message.variant)
             });
         },
         dismiss(key) {

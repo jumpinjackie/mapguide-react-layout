@@ -326,6 +326,26 @@ export type DialogBodyProps = {
 };
 
 /**
+ * Props for the dialog footer area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogFooterProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog footer actions area (button row) when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogFooterActionsProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
  * @since 0.15
  */
 export type PopoverProps = {
@@ -390,6 +410,8 @@ export interface IElementContext {
     DialogShell: React.ComponentType<React.PropsWithChildren<DialogShellProps>>;
     DialogHeader: React.ComponentType<React.PropsWithChildren<DialogHeaderProps>>;
     DialogBody: React.ComponentType<React.PropsWithChildren<DialogBodyProps>>;
+    DialogFooter: React.ComponentType<React.PropsWithChildren<DialogFooterProps>>;
+    DialogFooterActions: React.ComponentType<React.PropsWithChildren<DialogFooterActionsProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

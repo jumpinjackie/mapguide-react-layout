@@ -558,7 +558,7 @@ export const _Toaster = {
 
 export const _Dialog = {
   render: () => {
-    const { Dialog, Button } = useElementContext();
+    const { Dialog, Button, DialogBody, DialogFooter, DialogFooterActions } = useElementContext();
     const [isOpen, setIsOpen] = React.useState(false);
     const title = text("Title", "Dialog Title");
     let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
@@ -575,16 +575,16 @@ export const _Dialog = {
           usePortal={false}
           onClose={() => setIsOpen(false)}
         >
-          <div className="bp3-dialog-body">
+          <DialogBody>
             <p>This is the dialog body content.</p>
-          </div>
-          <div className="bp3-dialog-footer">
-            <div className="bp3-dialog-footer-actions">
+          </DialogBody>
+          <DialogFooter>
+            <DialogFooterActions>
               <Button variant="primary" onClick={() => setIsOpen(false)}>
                 Close
               </Button>
-            </div>
-          </div>
+            </DialogFooterActions>
+          </DialogFooter>
         </Dialog>
       </>
     );

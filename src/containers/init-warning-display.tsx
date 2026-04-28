@@ -11,7 +11,7 @@ export interface IInitWarningDisplayProps {
 
 
 export const InitWarningDisplay = () => {
-    const { Button, Dialog } = useElementContext();
+    const { Button, Dialog, DialogBody, DialogFooter, DialogFooterActions } = useElementContext();
     const dispatch = useReduxDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
     const warnings = useInitWarnings();
@@ -23,19 +23,19 @@ export const InitWarningDisplay = () => {
             usePortal={false}
             onClose={acknowledge}
             title={tr("WARNING", locale)}>
-            <div className="bp3-dialog-body">
+            <DialogBody>
                 <p>{tr("INIT_WARNINGS_FOUND", locale)}</p>
                 <ul>
                     {warnings.map(w => <li key={w}>{w}</li>)}
                 </ul>
-            </div>
-            <div className="bp3-dialog-footer">
-                <div className="bp3-dialog-footer-actions">
+            </DialogBody>
+            <DialogFooter>
+                <DialogFooterActions>
                     <Button
                         variant="primary"
                         onClick={acknowledge}>{tr("OK", locale)}</Button>
-                </div>
-            </div>
+                </DialogFooterActions>
+            </DialogFooter>
         </Dialog>
     } else {
         return <noscript />;

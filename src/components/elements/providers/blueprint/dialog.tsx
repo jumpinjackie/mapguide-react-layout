@@ -1,6 +1,6 @@
 import { Dialog } from "@blueprintjs/core";
 import React from "react";
-import type { DialogBodyProps, DialogContainerProps, DialogHeaderProps, DialogProps, DialogShellProps } from "../../element-context";
+import type { DialogBodyProps, DialogContainerProps, DialogFooterActionsProps, DialogFooterProps, DialogHeaderProps, DialogProps, DialogShellProps } from "../../element-context";
 import { iconName } from "./utils";
 
 /**
@@ -66,3 +66,23 @@ export const BpDialogBody: React.FC<React.PropsWithChildren<DialogBodyProps>> = 
 };
 
 BpDialogBody.displayName = "BpDialogBody";
+
+/**
+ * @hidden
+ */
+export const BpDialogFooter: React.FC<React.PropsWithChildren<DialogFooterProps>> = ({ style, className, children }) => {
+    const cls = ["bp3-dialog-footer", className].filter(Boolean).join(" ");
+    return <div className={cls} style={style}>{children}</div>;
+};
+
+BpDialogFooter.displayName = "BpDialogFooter";
+
+/**
+ * @hidden
+ */
+export const BpDialogFooterActions: React.FC<React.PropsWithChildren<DialogFooterActionsProps>> = ({ style, className, children }) => {
+    const cls = ["bp3-dialog-footer-actions", className].filter(Boolean).join(" ");
+    return <div className={cls} style={style}>{children}</div>;
+};
+
+BpDialogFooterActions.displayName = "BpDialogFooterActions";

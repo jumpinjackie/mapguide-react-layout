@@ -4,9 +4,10 @@ import { CURSOR_DIGITIZE_POINT, CURSOR_DIGITIZE_LINE, CURSOR_DIGITIZE_LINESTRING
 import { MapLoadIndicator } from '../components/map-load-indicator';
 import { ActiveMapTool, GenericEvent, ClientKind } from '../api/common';
 import { useMapProviderContext, useReduxDispatch } from '../components/map-providers/context';
-import { Toaster, Position } from '@blueprintjs/core';
 import { isMapGuideProviderState } from '../components/map-providers/mapguide';
 import { tr } from '../api/i18n';
+import { useElementContext } from '../components/elements/element-context';
+import type { IToasterRef } from '../components/elements/element-context';
 
 import "ol/ol.css";
 import { QueryMapFeaturesResponse } from '../api/contracts/query';
@@ -40,7 +41,8 @@ function useLoadingCounters() {
  */
 export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     const context = useMapProviderContext();
-    const toasterRef = React.useRef<Toaster>(null);
+    const { Toaster } = useElementContext();
+    const toasterRef = React.useRef<IToasterRef>(null);
     const loadIndicatorPositioning = useConfiguredLoadIndicatorPositioning();
     const loadIndicatorColor = useConfiguredLoadIndicatorColor();
     const dispatch = useReduxDispatch();
@@ -238,7 +240,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
         return (
             <>
                 {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
-                <Toaster usePortal={false} position={Position.TOP} ref={toasterRef} />
+                <Toaster usePortal={false} position="top" ref={toasterRef} />
                 <div
                     className="map-viewer-component"
                     ref={mapViewerRef}

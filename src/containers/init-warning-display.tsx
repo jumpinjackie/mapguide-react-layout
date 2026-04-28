@@ -1,7 +1,6 @@
 import * as React from "react";
 import { acknowledgeInitWarnings } from "../actions/init";
 import { tr } from "../api/i18n";
-import { Dialog } from '@blueprintjs/core';
 import { useInitWarnings, useViewerLocale } from './hooks';
 import { useReduxDispatch } from "../components/map-providers/context";
 import { useElementContext } from "../components/elements/element-context";
@@ -12,7 +11,7 @@ export interface IInitWarningDisplayProps {
 
 
 export const InitWarningDisplay = () => {
-    const { Button } = useElementContext();
+    const { Button, Dialog, DialogBody, DialogFooter, DialogFooterActions } = useElementContext();
     const dispatch = useReduxDispatch();
     const acknowledge = () => dispatch(acknowledgeInitWarnings());
     const warnings = useInitWarnings();
@@ -24,19 +23,19 @@ export const InitWarningDisplay = () => {
             usePortal={false}
             onClose={acknowledge}
             title={tr("WARNING", locale)}>
-            <div className="bp3-dialog-body">
+            <DialogBody>
                 <p>{tr("INIT_WARNINGS_FOUND", locale)}</p>
                 <ul>
                     {warnings.map(w => <li key={w}>{w}</li>)}
                 </ul>
-            </div>
-            <div className="bp3-dialog-footer">
-                <div className="bp3-dialog-footer-actions">
+            </DialogBody>
+            <DialogFooter>
+                <DialogFooterActions>
                     <Button
                         variant="primary"
                         onClick={acknowledge}>{tr("OK", locale)}</Button>
-                </div>
-            </div>
+                </DialogFooterActions>
+            </DialogFooter>
         </Dialog>
     } else {
         return <noscript />;

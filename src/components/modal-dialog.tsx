@@ -33,7 +33,7 @@ export interface IRndModalDialogProps {
 const DIAG_HEADER_HEIGHT = 40;
 
 export const RndModalDialog = (props: IRndModalDialogProps) => {
-    const { Icon, Button, NonIdealState, Heading } = useElementContext();
+    const { Icon, Button, NonIdealState, Heading, DialogContainer, DialogShell, DialogHeader, DialogBody } = useElementContext();
     if (props.isOpen === false)
         return <div />;
     const [isDragging, setIsDragging] = React.useState(false);
@@ -114,14 +114,14 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
         }}
         dragHandleClassName="mrl-modal-diag-drag-handle"
         default={{ x: props.x, y: props.y, width: props.width, height: props.height }}>
-        <div className="bp3-dialog-container">
-            <div className="bp3-dialog" style={modalStyle}>
-                <div className="bp3-dialog-header noselect">
+        <DialogContainer>
+            <DialogShell style={modalStyle}>
+                <DialogHeader className="noselect">
                     {props.icon && <Icon icon={props.icon} />}
                     <Heading level={4} className="mrl-modal-diag-drag-handle">{props.title}</Heading>
-                    <Button onClick={props.onClose} aria-label={tr("ACTION_CLOSE", props.locale)} className="bp3-dialog-close-button bp3-button" minimal icon="small-cross" />
-                </div>
-                <div className="bp3-dialog-body" style={modalBodyStyle}>
+                    <Button onClick={props.onClose} aria-label={tr("ACTION_CLOSE", props.locale)} minimal icon="small-cross" />
+                </DialogHeader>
+                <DialogBody style={modalBodyStyle}>
                     {(() => {
                         //We use NonIdealState as a visual mask to suppress unwanted mouse 
                         //interaction during the act of dragging/resizing, similar to what the
@@ -135,8 +135,8 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
                             return props.children(diagSize);
                         }
                     })()}
-                </div>
-            </div>
-        </div>
+                </DialogBody>
+            </DialogShell>
+        </DialogContainer>
     </Rnd>;
 }

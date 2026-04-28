@@ -240,6 +240,114 @@ export type Positioning = "left" | "bottom" | "right" | "top";
 /**
  * @since 0.15
  */
+export type ToastPosition = "top" | "top-left" | "top-right" | "bottom" | "bottom-left" | "bottom-right";
+
+/**
+ * @since 0.15
+ */
+export type ToastMessage = {
+    icon?: string;
+    message: string | JSX.Element;
+    variant?: ElementVariant;
+};
+
+/**
+ * The imperative API exposed by the abstract Toaster component via a ref.
+ *
+ * @since 0.15
+ */
+export interface IToasterRef {
+    /**
+     * Displays a toast notification and returns its unique key.
+     */
+    show(message: ToastMessage): string | undefined;
+    /**
+     * Dismisses the toast notification identified by the given key.
+     */
+    dismiss(key: string): void;
+}
+
+/**
+ * @since 0.15
+ */
+export type ToasterProps = {
+    usePortal?: boolean;
+    position?: ToastPosition;
+};
+
+/**
+ * @since 0.15
+ */
+export type DialogProps = {
+    icon?: string;
+    isOpen?: boolean;
+    usePortal?: boolean;
+    onClose?: () => void;
+    title?: string;
+};
+
+/**
+ * Props for the outer dialog container wrapper used when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogContainerProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog shell element (the visible chrome that wraps header and body).
+ *
+ * @since 0.15
+ */
+export type DialogShellProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog header area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogHeaderProps = {
+    className?: string;
+};
+
+/**
+ * Props for the dialog body area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogBodyProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog footer area when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogFooterProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * Props for the dialog footer actions area (button row) when composing a custom dialog layout.
+ *
+ * @since 0.15
+ */
+export type DialogFooterActionsProps = {
+    style?: React.CSSProperties;
+    className?: string;
+};
+
+/**
+ * @since 0.15
+ */
 export type PopoverProps = {
     usePortal?: boolean;
     position: Positioning,
@@ -296,6 +404,14 @@ export interface IElementContext {
     TabSet: React.ComponentType<TabSetProps>;
     Drawer: React.ComponentType<React.PropsWithChildren<DrawerProps>>;
     Popover: React.ComponentType<React.PropsWithChildren<PopoverProps>>;
+    Toaster: React.ForwardRefExoticComponent<ToasterProps & React.RefAttributes<IToasterRef>>;
+    Dialog: React.ComponentType<React.PropsWithChildren<DialogProps>>;
+    DialogContainer: React.ComponentType<React.PropsWithChildren<DialogContainerProps>>;
+    DialogShell: React.ComponentType<React.PropsWithChildren<DialogShellProps>>;
+    DialogHeader: React.ComponentType<React.PropsWithChildren<DialogHeaderProps>>;
+    DialogBody: React.ComponentType<React.PropsWithChildren<DialogBodyProps>>;
+    DialogFooter: React.ComponentType<React.PropsWithChildren<DialogFooterProps>>;
+    DialogFooterActions: React.ComponentType<React.PropsWithChildren<DialogFooterActionsProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

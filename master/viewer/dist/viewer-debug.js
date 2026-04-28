@@ -12348,7 +12348,11 @@ const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/pr
  * @hidden
  */
 const BpCallout = (props) => {
-    return react_1.default.createElement(core_1.Callout, { intent: (0, utils_1.variantToIntent)(props.variant), title: props.title, icon: (0, utils_1.iconName)(props.icon) }, props.children);
+    const title = props.title;
+    const content = title ? react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement("h5", { className: "bp3-heading" }, title),
+        props.children) : props.children;
+    return react_1.default.createElement(core_1.Callout, { intent: (0, utils_1.variantToIntent)(props.variant), icon: (0, utils_1.iconName)(props.icon) }, content);
 };
 exports.BpCallout = BpCallout;
 
@@ -13093,16 +13097,13 @@ const Error = (props) => {
             return props.errorRenderer(err);
         }
         else {
-            const message = err.message;
             const stack = normalizeStack(err);
-            return React.createElement(Callout, { variant: "danger", icon: "error" },
-                React.createElement("h5", { className: "error-header" }, err.message),
+            return React.createElement(Callout, { variant: "danger", icon: "error", title: err.message },
                 React.createElement("ul", { className: "error-stack" }, stack.map((ln, i) => React.createElement("li", { key: `stack-line-${i}` }, ln))));
         }
     }
     else {
-        return React.createElement(Callout, { variant: "danger", icon: "error" },
-            React.createElement("h5", { className: "error-header" }, err));
+        return React.createElement(Callout, { variant: "danger", icon: "error", title: err });
     }
 };
 exports.Error = Error;
@@ -19178,16 +19179,18 @@ const RndModalDialog = (props) => {
     const { Icon, Button, NonIdealState, Heading } = (0, element_context_1.useElementContext)();
     if (props.isOpen === false)
         return React.createElement("div", null);
-    const modalBodyStyle = {
-        margin: 0
-    };
-    if (!props.disableYOverflow) {
-        modalBodyStyle.overflowY = "auto";
-    }
     const [isDragging, setIsDragging] = React.useState(false);
     const [isResizing, setIsResizing] = React.useState(false);
     const [diagWidth, setDiagWidth] = React.useState(props.width);
     const [diagHeight, setDiagHeight] = React.useState(props.height);
+    const modalBodyStyle = {
+        margin: 0,
+        height: diagHeight - DIAG_HEADER_HEIGHT,
+        overflow: "hidden"
+    };
+    if (!props.disableYOverflow) {
+        modalBodyStyle.overflowY = "auto";
+    }
     const [diagX, setDiagX] = React.useState(props.x);
     const [diagY, setDiagY] = React.useState(props.y);
     const ZINDEX = {

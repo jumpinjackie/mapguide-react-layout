@@ -54,7 +54,7 @@ export const ViewerOptions = () => {
     };
     const onViewSizeUnitsChanged = (value: string | undefined) => {
         if (value !== undefined) {
-            setViewSizeDisplayUnitsAction(parseInt(value) as UnitOfMeasure);
+            setViewSizeDisplayUnitsAction(parseInt(value, 10) as UnitOfMeasure);
         }
     };
     const onFeatureTooltipsChanged = (e: GenericEvent) => {

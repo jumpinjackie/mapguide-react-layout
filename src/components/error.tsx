@@ -42,18 +42,14 @@ export const Error = (props: IErrorProps) => {
         if (props.errorRenderer) {
             return props.errorRenderer(err);
         } else {
-            const message = err.message;
             const stack = normalizeStack(err);
-            return <Callout variant="danger" icon="error">
-                <h5 className="error-header">{err.message}</h5>
+            return <Callout variant="danger" icon="error" title={err.message}>
                 <ul className="error-stack">
                     {stack.map((ln, i) => <li key={`stack-line-${i}`}>{ln}</li>)}
                 </ul>
             </Callout>;
         }
     } else {
-        return <Callout variant="danger" icon="error">
-            <h5 className="error-header">{err}</h5>
-        </Callout>;
+        return <Callout variant="danger" icon="error" title={err} />;
     }
 };

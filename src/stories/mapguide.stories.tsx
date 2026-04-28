@@ -7,6 +7,7 @@ import { SelectionPanelContainer } from "../containers/selection-panel";
 import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
 import { useElementContext } from "../components/elements/element-context";
+import { About } from "../components/about";
 
 export default {
   title: "Map and Map Interaction Components / MapGuide-specific",
@@ -46,3 +47,8 @@ export const SelectedFeatureCount = () => {
 };
 
 export const SelectionPanel = () => <SelectionPanelContainer />;
+
+export const AboutViewer = {
+  render: () => <About />,
+  name: "About",
+};

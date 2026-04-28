@@ -36,16 +36,18 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
     const { Icon, Button, NonIdealState, Heading, DialogContainer, DialogShell, DialogHeader, DialogBody } = useElementContext();
     if (props.isOpen === false)
         return <div />;
+    const [isDragging, setIsDragging] = React.useState(false);
+    const [isResizing, setIsResizing] = React.useState(false);
+    const [diagWidth, setDiagWidth] = React.useState<number>(props.width);
+    const [diagHeight, setDiagHeight] = React.useState<number>(props.height);
     const modalBodyStyle: React.CSSProperties = {
-        margin: 0
+        margin: 0,
+        height: diagHeight - DIAG_HEADER_HEIGHT,
+        overflow: "hidden"
     };
     if (!props.disableYOverflow) {
         modalBodyStyle.overflowY = "auto";
     }
-    const [isDragging, setIsDragging] = React.useState(false);
-    const [isResizing, setIsResizing] = React.useState(false);
-    const [diagWidth, setDiagWidth] = React.useState<number>(props.width);
-    const [diagHeight, setDiagHeight] = React.useState< number>(props.height);
     const [diagX, setDiagX] = React.useState(props.x);
     const [diagY, setDiagY] = React.useState(props.y);
 

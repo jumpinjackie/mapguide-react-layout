@@ -9,6 +9,9 @@ import React from "react";
 export const BpInputGroup: React.FC<InputGroupProps> = (props) => {
     return <InputGroup round={props.round}
         autoFocus={props.autoFocus}
+        disabled={props.disabled}
+        id={props.id}
+        name={props.name}
         leftIcon={iconName(props.leftIcon)}
         placeholder={props.placeholder}
         readOnly={props.readOnly}

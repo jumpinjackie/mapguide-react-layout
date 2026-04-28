@@ -25,6 +25,7 @@ import { BpHeading } from "./heading";
 import { BpText } from "./text";
 import { BpToaster } from "./toaster";
 import { BpDialog, BpDialogBody, BpDialogContainer, BpDialogFooter, BpDialogFooterActions, BpDialogHeader, BpDialogShell } from "./dialog";
+import { BpHtmlTable } from "./html-table";
 
 import "./bp-override.css";
 
@@ -59,7 +60,8 @@ const provider: IElementContext = {
     DialogHeader: BpDialogHeader,
     DialogBody: BpDialogBody,
     DialogFooter: BpDialogFooter,
-    DialogFooterActions: BpDialogFooterActions
+    DialogFooterActions: BpDialogFooterActions,
+    HtmlTable: BpHtmlTable
 };
 
 export default provider;

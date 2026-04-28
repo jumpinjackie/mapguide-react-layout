@@ -163,10 +163,8 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
                 <br />
                 <Radio name="edit-mode" label={tr("EXPR_EDITOR_EXPRESSION", locale)} value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
-                <input
+                <InputGroup
                     disabled={editMode != "edit-expr"}
-                    type="text"
-                    className="bp3-input"
                     placeholder='e.g. ["get","propertyName"]'
                     value={exprText}
                     onChange={e => {
@@ -211,11 +209,12 @@ export const SliderExprEditor: React.FC<ExprEditorProps<number> & { min?: number
 }
 
 export const StringExprEditor: React.FC<ExprEditorProps<string>> = props => {
+    const { InputGroup } = useElementContext();
     return <ExprEditorInner<string>
         locale={props.locale}
         value={props.value}
         onChange={props.onChange}
-        renderValueEditor={(v, oc, loc, disabled) => <input disabled={disabled} type="text" className="bp3-input" value={stringifyExprIf(v, "edit-value")} onChange={e => oc(e.target.value)} />} />;
+        renderValueEditor={(v, oc, loc, disabled) => <InputGroup disabled={disabled} value={stringifyExprIf(v, "edit-value")} onChange={e => oc(e.target.value)} />} />;
 }
 
 export const BooleanExprEditor: React.FC<ExprEditorProps<boolean>> = props => {

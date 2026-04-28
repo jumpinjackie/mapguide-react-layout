@@ -12,7 +12,7 @@ describe("components/base-layer-switcher", () => {
         const { container } = render(<BaseLayerSwitcher externalBaseLayers={layers} onBaseLayerChanged={onBaseLayerChanged} locale="en" />);
         const cnt = container.querySelectorAll(".base-layer-switcher-item-container");
         expect(cnt).toHaveLength(1); //, "Expected 1 item");
-        const radio = container.querySelectorAll(".base-layer-switcher-option");
+        const radio = container.querySelectorAll("input[type=radio]");
         expect(radio).toHaveLength(1); //, "Expected 1 radio");
         expect((radio[0] as HTMLInputElement).value).toBe(STR_EMPTY);
         expect((radio[0] as HTMLInputElement).checked).toBe(true);
@@ -26,7 +26,7 @@ describe("components/base-layer-switcher", () => {
         const { container } = render(<BaseLayerSwitcher externalBaseLayers={layers} onBaseLayerChanged={onBaseLayerChanged} locale="en" />);
         const cnt = container.querySelectorAll(".base-layer-switcher-item-container");
         expect(cnt).toHaveLength(3); //, "Expected 3 items");
-        const radio = container.querySelectorAll(".base-layer-switcher-option");
+        const radio = container.querySelectorAll("input[type=radio]");
         expect(radio).toHaveLength(3); //, "Expected 3 radios");
         expect((radio[0] as HTMLInputElement).value).toBe(STR_EMPTY);
         expect((radio[0] as HTMLInputElement).checked).toBe(false);
@@ -44,7 +44,7 @@ describe("components/base-layer-switcher", () => {
         const { container } = render(<BaseLayerSwitcher externalBaseLayers={layers} onBaseLayerChanged={onBaseLayerChanged} locale="en" />);
         const cnt = container.querySelectorAll(".base-layer-switcher-item-container");
         expect(cnt).toHaveLength(3); //, "Expected 3 items");
-        const radio = container.querySelectorAll(".base-layer-switcher-option");
+        const radio = container.querySelectorAll("input[type=radio]");
         expect(radio).toHaveLength(3); //, "Expected 3 radios");
         expect((radio[0] as HTMLInputElement).value).toBe(STR_EMPTY);
         expect((radio[0] as HTMLInputElement).checked).toBe(true);

@@ -55,6 +55,7 @@ export interface ISelectedFeatureProps {
 
 const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
     const { selectedFeature, selectedLayer, layerName, locale, allowHtmlValues, cleanHTML, formatPropertyValue } = props;
+    const { HtmlTable } = useElementContext();
     const featureProps = [] as FeatureProperty[];
     if (selectedLayer?.Property) {
         for (const lp of selectedLayer.Property) {
@@ -68,7 +69,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
             featureProps.push(fp);
         }
     }
-    return <table className="selection-panel-property-grid bp3-html-table bp3-html-table-condensed bp3-html-table-bordered">
+    return <HtmlTable condensed bordered className="selection-panel-property-grid">
         <thead>
             <tr>
                 <th>{xlate("SELECTION_PROPERTY", locale)}</th>
@@ -99,7 +100,7 @@ const DefaultSelectedFeature = (props: ISelectedFeatureProps) => {
                 </tr>;
             })}
         </tbody>
-    </table>;
+    </HtmlTable>;
 };
 
 /**

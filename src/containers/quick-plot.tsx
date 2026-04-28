@@ -196,7 +196,7 @@ export interface IQuickPlotContainerState {
 }
 
 export const QuickPlotContainer = () => {
-    const { Slider, Callout, Button, Select } = useElementContext();
+    const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = useElementContext();
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
     const [showLegend, setShowLegend] = React.useState(false);
@@ -338,16 +338,13 @@ export const QuickPlotContainer = () => {
         <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
             <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
             <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
-            <label className="bp3-label">
-                {xlate("QUICKPLOT_TITLE", locale)}
-                <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:title}" id="title" maxLength={100} value={title} onChange={onTitleChanged} />
-            </label>
-            <label className="bp3-label">
-                {xlate("QUICKPLOT_SUBTITLE", locale)}
-                <input type="text" className="bp3-input bp3-fill" dir="auto" name="{field:sub_title}" id="subtitle" maxLength={100} value={subTitle} onChange={onSubTitleChanged} />
-            </label>
-            <label className="bp3-label">
-                {xlate("QUICKPLOT_PAPER_SIZE", locale)}
+            <FormGroup label={xlate("QUICKPLOT_TITLE", locale)}>
+                <InputGroup name="{field:title}" id="title" value={title} onChange={onTitleChanged} />
+            </FormGroup>
+            <FormGroup label={xlate("QUICKPLOT_SUBTITLE", locale)}>
+                <InputGroup name="{field:sub_title}" id="subtitle" value={subTitle} onChange={onSubTitleChanged} />
+            </FormGroup>
+            <FormGroup label={xlate("QUICKPLOT_PAPER_SIZE", locale)}>
                 {/*
                     The pre-defined paper size list. The value for each "option" item is in this format: [width,height]. The unit is in millimeter.
                     We can change the html code to add more paper size or remove some ones.
@@ -358,9 +355,8 @@ export const QuickPlotContainer = () => {
                     value={paperSize}
                     onChange={e => setPaperSize(e)}
                     items={PAPER_SIZES} />
-            </label>
-            <label className="bp3-label">
-                {xlate("QUICKPLOT_ORIENTATION", locale)}
+            </FormGroup>
+            <FormGroup label={xlate("QUICKPLOT_ORIENTATION", locale)}>
                 {/*
                     The pre-defined paper orientations
                 */}
@@ -371,50 +367,25 @@ export const QuickPlotContainer = () => {
                     value={orientation}
                     onChange={e => setOrientation(e)}
                     items={ORIENTATIONS} />
-            </label>
+            </FormGroup>
             <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
             <input type="hidden" id="printSize" name="printSize" value={prSize} />
             <fieldset>
                 <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_SHOWLEGEND", locale)}
-                </label>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_SHOWNORTHARROW", locale)}
-                </label>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_SHOWCOORDINTES", locale)}
-                </label>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_SHOWSCALEBAR", locale)}
-                </label>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={showDisclaimer} onChange={onShowDisclaimerChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_SHOWDISCLAIMER", locale)}
-                </label>
+                <Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} />
+                <Checkbox id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} label={xlate("QUICKPLOT_SHOWNORTHARROW", locale)} />
+                <Checkbox id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} label={xlate("QUICKPLOT_SHOWCOORDINTES", locale)} />
+                <Checkbox id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} label={xlate("QUICKPLOT_SHOWSCALEBAR", locale)} />
+                <Checkbox id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={showDisclaimer} onChange={onShowDisclaimerChanged} label={xlate("QUICKPLOT_SHOWDISCLAIMER", locale)} />
             </fieldset>
             <div className="HPlaceholder5px"></div>
             <div>
-                <label className="bp3-control bp3-checkbox">
-                    <input type="checkbox" id="AdvancedOptionsCheckBox" onChange={onAdvancedOptionsChanged} />
-                    <span className="bp3-control-indicator" />
-                    {xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)}
-                </label>
+                <Checkbox id="AdvancedOptionsCheckBox" onChange={onAdvancedOptionsChanged} label={xlate("QUICKPLOT_ADVANCED_OPTIONS", locale)} />
             </div>
             {(() => {
                 if (showAdvanced) {
                     return <div>
-                        <label className="bp3-label">
-                            {xlate("QUICKPLOT_SCALING", locale)}
+                        <FormGroup label={xlate("QUICKPLOT_SCALING", locale)}>
                             {/*
                                 The pre-defined scales. The value for each "option" item is the scale denominator.
                                 We can change the html code to extend the pre-defined scales
@@ -425,9 +396,8 @@ export const QuickPlotContainer = () => {
                                 value={scale}
                                 onChange={e => setScale(e)}
                                 items={SCALES} />
-                        </label>
-                        <label className="bp3-label">
-                            {xlate("QUICKPLOT_DPI", locale)}
+                        </FormGroup>
+                        <FormGroup label={xlate("QUICKPLOT_DPI", locale)}>
                             {/*
                                 The pre-defined print DPI.
                                 We can change the html code to extend the pre-defined values
@@ -437,13 +407,12 @@ export const QuickPlotContainer = () => {
                                 name="dpi"
                                 onChange={e => setDpi(e)}
                                 items={DPIS} />
-                        </label>
-                        <label className="bp3-label noselect">
-                            {xlate("QUICKPLOT_BOX_ROTATION", locale)}
+                        </FormGroup>
+                        <FormGroup label={xlate("QUICKPLOT_BOX_ROTATION", locale)}>
                             <div style={{ paddingLeft: 16, paddingRight: 16 }}>
                                 <Slider min={0} max={360} labelStepSize={90} stepSize={1} value={rotation} onChange={onRotationChanged} />
                             </div>
-                        </label>
+                        </FormGroup>
                     </div>;
                 } else {
                     return <div>

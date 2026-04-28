@@ -18,7 +18,7 @@ export interface IViewerOptionsProps {
 }
 
 export const ViewerOptions = () => {
-    const { Slider, Select, Heading } = useElementContext();
+    const { Slider, Select, Heading, Switch, FormGroup } = useElementContext();
     const externalBaseLayers = useActiveMapExternalBaseLayers()?.filter(ebl => isVisualBaseLayer(ebl));
     const mapName = useActiveMapName();
     const layerTransparency = useActiveMapLayerTransparency();
@@ -52,8 +52,10 @@ export const ViewerOptions = () => {
     const onMgSelOpacityChanged = (value: number) => {
         onMgLayerOpacityChanged(mapName, LAYER_ID_MG_SEL_OVERLAY, value);
     };
-    const onViewSizeUnitsChanged = (e: GenericEvent) => {
-        setViewSizeDisplayUnitsAction(e.target.value);
+    const onViewSizeUnitsChanged = (value: string | undefined) => {
+        if (value !== undefined) {
+            setViewSizeDisplayUnitsAction(parseInt(value) as UnitOfMeasure);
+        }
     };
     const onFeatureTooltipsChanged = (e: GenericEvent) => {
         toggleMapTipsAction(e.target.checked);
@@ -93,61 +95,44 @@ export const ViewerOptions = () => {
     return <div className="component-viewer-options">
         <Heading level={5}>{tr("VIEWER_OPTIONS", locale)}</Heading>
         <hr />
-        {!isStateless && <label className="bp3-control bp3-switch">
-            <input type="checkbox" checked={featureTooltipsEnabled} onChange={onFeatureTooltipsChanged} />
-            <span className="bp3-control-indicator"></span>
-            {tr("FEATURE_TOOLTIPS", locale)}
-        </label>}
+        {!isStateless && <Switch checked={featureTooltipsEnabled} onChange={onFeatureTooltipsChanged} label={tr("FEATURE_TOOLTIPS", locale)} />}
         {(() => {
             if (!isStateless && featureTooltipsEnabled) {
-                return <label className="bp3-control bp3-switch">
-                    <input type="checkbox" checked={manualFeatureTooltips} onChange={onManualFeatureTooltipsChanged} />
-                    <span className="bp3-control-indicator"></span>
-                    {tr("MANUAL_FEATURE_TOOLTIPS", locale)}
-                </label>;
+                return <Switch checked={manualFeatureTooltips} onChange={onManualFeatureTooltipsChanged} label={tr("MANUAL_FEATURE_TOOLTIPS", locale)} />;
             }
         })()}
-        <label className="bp3-control bp3-switch">
-            <input type="checkbox" checked={selectDragPanEnabled} onChange={onSelectDragPanEnabled} />
-            <span className="bp3-control-indicator"></span>
-            {tr("ENABLE_SELECT_DRAGPAN", locale)}
-        </label>
+        <Switch checked={selectDragPanEnabled} onChange={onSelectDragPanEnabled} label={tr("ENABLE_SELECT_DRAGPAN", locale)} />
         <fieldset>
             <legend>{tr("LAYER_TRANSPARENCY", locale)}</legend>
             {(() => {
                 if (externalBaseLayers) {
-                    return <label className="bp3-label noselect">
-                        {tr("LAYER_ID_BASE", locale)}
+                    return <FormGroup label={tr("LAYER_ID_BASE", locale)}>
                         <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                             <Slider min={0} max={1.0} stepSize={0.01} value={opBase} onChange={onBaseOpacityChanged} />
                         </div>
-                    </label>;
+                    </FormGroup>;
                 }
             })()}
-            {hasMgBaseLayers && <label className="bp3-label noselect">
-                {tr("LAYER_ID_MG_BASE_LAYERS", locale)}
+            {hasMgBaseLayers && <FormGroup label={tr("LAYER_ID_MG_BASE_LAYERS", locale)}>
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={opMgBase} onChange={onMgOpacityChanged} />
                 </div>
-            </label>}
-            <label className="bp3-label noselect">
-                {map ? tr("LAYER_ID_MG_BASE", locale) : tr("LAYER_ID_SUBJECT", locale)}
+            </FormGroup>}
+            <FormGroup label={map ? tr("LAYER_ID_MG_BASE", locale) : tr("LAYER_ID_SUBJECT", locale)}>
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={opMgDynamicOverlay} onChange={onMgDynamicOverlayOpacityChanged} />
                 </div>
-            </label>
-            {!isStateless && <label className="bp3-label noselect">
-                {tr("LAYER_ID_MG_SEL_OVERLAY", locale)}
+            </FormGroup>
+            {!isStateless && <FormGroup label={tr("LAYER_ID_MG_SEL_OVERLAY", locale)}>
                 <div style={{ paddingLeft: 8, paddingRight: 8 }}>
                     <Slider min={0} max={1.0} stepSize={0.01} value={opMgSelOverlay} onChange={onMgSelOpacityChanged} />
                 </div>
-            </label>}
+            </FormGroup>}
         </fieldset>
-        <label className="bp3-label">
-            {tr("MAP_SIZE_DISPLAY_UNITS", locale)}
-            <Select value={`${viewSizeUnits}`}
+        <FormGroup label={tr("MAP_SIZE_DISPLAY_UNITS", locale)} labelFor="viewSizeUnitsSelect">
+            <Select id="viewSizeUnitsSelect" value={`${viewSizeUnits}`}
                 onChange={onViewSizeUnitsChanged}
                 items={units.map(uom => ({ value: `${uom}`, label: getUnitOfMeasure(uom).localizedName(locale) }))} />
-        </label>
+        </FormGroup>
     </div>;
 };

@@ -17,7 +17,7 @@ import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 
 export const MeasureContainer = () => {
-    const { Callout, Button } = useElementContext();
+    const { Callout, Button, HtmlTable } = useElementContext();
     const activeMapName = useActiveMapName();
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
@@ -173,7 +173,7 @@ export const MeasureContainer = () => {
                         {tr("MEASURING_MESSAGE", locale)}
                     </Callout>
                     {segments && (
-                        <table className="bp3-html-table bp3-html-table-condensed">
+                        <HtmlTable condensed>
                             <thead>
                                 <tr>
                                     <th>{tr("MEASURE_SEGMENT", locale)}</th>
@@ -213,7 +213,7 @@ export const MeasureContainer = () => {
                                     </tr>
                                 )}
                             </tbody>
-                        </table>
+                        </HtmlTable>
                     )}
                 </div>
             )}

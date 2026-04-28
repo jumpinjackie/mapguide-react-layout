@@ -51,9 +51,15 @@ vi.mock("../../src/components/elements/element-context", () => ({
          <input data-testid="slider" type="range" value={value} onChange={(e) => onChange(Number((e.target as HTMLInputElement).value))} />
       ),
       Select: ({ value, items, onChange }: any) => (
-         <select aria-label="MAP_SIZE_DISPLAY_UNITS" value={String(value)} onChange={(e) => onChange(e)}>
+         <select aria-label="MAP_SIZE_DISPLAY_UNITS" value={String(value)} onChange={(e) => onChange(e.target.value)}>
             {items.map((i: any) => <option key={i.value} value={i.value}>{i.label}</option>)}
          </select>
+      ),
+      Switch: ({ checked, onChange, label }: any) => (
+         <label><input type="checkbox" checked={checked} onChange={onChange} />{label}</label>
+      ),
+      FormGroup: ({ label, children }: React.PropsWithChildren<{ label?: string }>) => (
+         <div><label>{label}</label>{children}</div>
       ),
    }),
 }));
@@ -117,7 +123,7 @@ describe("ViewerOptions interactions", () => {
    it("dispatches view-size unit action and renders stateless branches", () => {
       const { rerender, queryByText } = render(<ViewerOptions />);
       fireEvent.change(screen.getByLabelText("MAP_SIZE_DISPLAY_UNITS"), { target: { value: "1" } });
-      expect(mapActionsMock.setViewSizeUnits).toHaveBeenCalledWith("1");
+      expect(mapActionsMock.setViewSizeUnits).toHaveBeenCalledWith(1);
 
       hooksMock.useViewerIsStateless.mockReturnValue(true);
       hooksMgMock.useActiveMapState.mockReturnValue(undefined);

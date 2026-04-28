@@ -12431,6 +12431,92 @@ exports.BpCollapsible = BpCollapsible;
 
 /***/ },
 
+/***/ "./src/components/elements/providers/blueprint/dialog.tsx"
+/*!****************************************************************!*\
+  !*** ./src/components/elements/providers/blueprint/dialog.tsx ***!
+  \****************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BpDialogFooterActions = exports.BpDialogFooter = exports.BpDialogBody = exports.BpDialogHeader = exports.BpDialogShell = exports.BpDialogContainer = exports.BpDialog = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
+/**
+ * @hidden
+ */
+const BpDialog = ({ icon, isOpen, usePortal, onClose, title, children }) => {
+    return react_1.default.createElement(core_1.Dialog, { icon: (0, utils_1.iconName)(icon), isOpen: isOpen, usePortal: usePortal, onClose: onClose, title: title }, children);
+};
+exports.BpDialog = BpDialog;
+exports.BpDialog.displayName = "BpDialog";
+/**
+ * @hidden
+ */
+const BpDialogContainer = ({ className, style, children }) => {
+    const cls = ["bp3-dialog-container", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.BpDialogContainer = BpDialogContainer;
+exports.BpDialogContainer.displayName = "BpDialogContainer";
+/**
+ * @hidden
+ */
+const BpDialogShell = ({ style, className, children }) => {
+    const cls = ["bp3-dialog", className].filter(Boolean).join(" ");
+    const combinedStyle = Object.assign({ 
+        // Neutralize Blueprint's default padding-bottom that would otherwise shrink the
+        // available flex layout area for the dialog body when an explicit height is set.
+        paddingBottom: 0, 
+        // Clip any content that exceeds the dialog shell bounds.
+        overflow: "hidden" }, style);
+    return react_1.default.createElement("div", { className: cls, style: combinedStyle }, children);
+};
+exports.BpDialogShell = BpDialogShell;
+exports.BpDialogShell.displayName = "BpDialogShell";
+/**
+ * @hidden
+ */
+const BpDialogHeader = ({ className, children }) => {
+    const cls = ["bp3-dialog-header", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls }, children);
+};
+exports.BpDialogHeader = BpDialogHeader;
+exports.BpDialogHeader.displayName = "BpDialogHeader";
+/**
+ * @hidden
+ */
+const BpDialogBody = ({ style, className, children }) => {
+    const cls = ["bp3-dialog-body", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.BpDialogBody = BpDialogBody;
+exports.BpDialogBody.displayName = "BpDialogBody";
+/**
+ * @hidden
+ */
+const BpDialogFooter = ({ style, className, children }) => {
+    const cls = ["bp3-dialog-footer", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.BpDialogFooter = BpDialogFooter;
+exports.BpDialogFooter.displayName = "BpDialogFooter";
+/**
+ * @hidden
+ */
+const BpDialogFooterActions = ({ style, className, children }) => {
+    const cls = ["bp3-dialog-footer-actions", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.BpDialogFooterActions = BpDialogFooterActions;
+exports.BpDialogFooterActions.displayName = "BpDialogFooterActions";
+
+
+/***/ },
+
 /***/ "./src/components/elements/providers/blueprint/drawer.tsx"
 /*!****************************************************************!*\
   !*** ./src/components/elements/providers/blueprint/drawer.tsx ***!
@@ -12788,6 +12874,8 @@ const popover_1 = __webpack_require__(/*! ./popover */ "./src/components/element
 const drawer_1 = __webpack_require__(/*! ./drawer */ "./src/components/elements/providers/blueprint/drawer.tsx");
 const heading_1 = __webpack_require__(/*! ./heading */ "./src/components/elements/providers/blueprint/heading.tsx");
 const text_1 = __webpack_require__(/*! ./text */ "./src/components/elements/providers/blueprint/text.tsx");
+const toaster_1 = __webpack_require__(/*! ./toaster */ "./src/components/elements/providers/blueprint/toaster.tsx");
+const dialog_1 = __webpack_require__(/*! ./dialog */ "./src/components/elements/providers/blueprint/dialog.tsx");
 __webpack_require__(/*! ./bp-override.css */ "./src/components/elements/providers/blueprint/bp-override.css");
 const provider = {
     Text: text_1.BpText,
@@ -12812,7 +12900,15 @@ const provider = {
     MenuComponent: menu_1.BpMenuComponent,
     TabSet: tab_set_1.BpTabSet,
     Drawer: drawer_1.BpDrawer,
-    Popover: popover_1.BpPopover
+    Popover: popover_1.BpPopover,
+    Toaster: toaster_1.BpToaster,
+    Dialog: dialog_1.BpDialog,
+    DialogContainer: dialog_1.BpDialogContainer,
+    DialogShell: dialog_1.BpDialogShell,
+    DialogHeader: dialog_1.BpDialogHeader,
+    DialogBody: dialog_1.BpDialogBody,
+    DialogFooter: dialog_1.BpDialogFooter,
+    DialogFooterActions: dialog_1.BpDialogFooterActions
 };
 exports["default"] = provider;
 
@@ -13008,6 +13104,58 @@ const BpText = ({ component, className, style, children }) => {
     }
 };
 exports.BpText = BpText;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/blueprint/toaster.tsx"
+/*!*****************************************************************!*\
+  !*** ./src/components/elements/providers/blueprint/toaster.tsx ***!
+  \*****************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BpToaster = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
+function toastPositionToBp(position) {
+    switch (position) {
+        case "top-left": return core_1.Position.TOP_LEFT;
+        case "top-right": return core_1.Position.TOP_RIGHT;
+        case "bottom": return core_1.Position.BOTTOM;
+        case "bottom-left": return core_1.Position.BOTTOM_LEFT;
+        case "bottom-right": return core_1.Position.BOTTOM_RIGHT;
+        case "top":
+        default:
+            return core_1.Position.TOP;
+    }
+}
+/**
+ * @hidden
+ */
+exports.BpToaster = react_1.default.forwardRef((props, ref) => {
+    const bpToasterRef = react_1.default.useRef(null);
+    react_1.default.useImperativeHandle(ref, () => ({
+        show(message) {
+            var _a;
+            return (_a = bpToasterRef.current) === null || _a === void 0 ? void 0 : _a.show({
+                icon: (0, utils_1.iconName)(message.icon),
+                message: message.message,
+                intent: (0, utils_1.variantToIntent)(message.variant)
+            });
+        },
+        dismiss(key) {
+            var _a;
+            (_a = bpToasterRef.current) === null || _a === void 0 ? void 0 : _a.dismiss(key);
+        }
+    }));
+    return react_1.default.createElement(core_1.Toaster, { ref: bpToasterRef, usePortal: props.usePortal, position: toastPositionToBp(props.position) });
+});
+exports.BpToaster.displayName = "BpToaster";
 
 
 /***/ },
@@ -16345,7 +16493,6 @@ const i18n_1 = __webpack_require__(/*! ../../api/i18n */ "./src/api/i18n.ts");
 const assert_1 = __webpack_require__(/*! ../../utils/assert */ "./src/utils/assert.ts");
 const logger_1 = __webpack_require__(/*! ../../utils/logger */ "./src/utils/logger.ts");
 const map_1 = __webpack_require__(/*! ../../actions/map */ "./src/actions/map.ts");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 const ol_factory_1 = __webpack_require__(/*! ../../api/ol-factory */ "./src/api/ol-factory.ts");
 const Group_1 = tslib_1.__importDefault(__webpack_require__(/*! ol/layer/Group */ "./node_modules/ol/layer/Group.js"));
 const ol_style_contracts_1 = __webpack_require__(/*! ../../api/ol-style-contracts */ "./src/api/ol-style-contracts.ts");
@@ -16906,19 +17053,19 @@ class BaseMapProviderContext {
     }
     toastSuccess(iconName, message) {
         var _a, _b;
-        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, intent: core_1.Intent.SUCCESS });
+        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, variant: "success" });
     }
     toastWarning(iconName, message) {
         var _a, _b;
-        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, intent: core_1.Intent.WARNING });
+        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, variant: "warning" });
     }
     toastError(iconName, message) {
         var _a, _b;
-        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, intent: core_1.Intent.DANGER });
+        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, variant: "danger" });
     }
     toastPrimary(iconName, message) {
         var _a, _b;
-        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, intent: core_1.Intent.PRIMARY });
+        return (_b = (_a = this._toasterRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.show({ icon: iconName, message: message, variant: "primary" });
     }
     dismissToast(key) {
         var _a, _b;
@@ -19176,7 +19323,7 @@ const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 const DIAG_HEADER_HEIGHT = 40;
 const RndModalDialog = (props) => {
-    const { Icon, Button, NonIdealState, Heading } = (0, element_context_1.useElementContext)();
+    const { Icon, Button, NonIdealState, Heading, DialogContainer, DialogShell, DialogHeader, DialogBody } = (0, element_context_1.useElementContext)();
     if (props.isOpen === false)
         return React.createElement("div", null);
     const [isDragging, setIsDragging] = React.useState(false);
@@ -19242,13 +19389,13 @@ const RndModalDialog = (props) => {
             //console.log("Modal Change", args);
             (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, args);
         }, dragHandleClassName: "mrl-modal-diag-drag-handle", default: { x: props.x, y: props.y, width: props.width, height: props.height } },
-        React.createElement("div", { className: "bp3-dialog-container" },
-            React.createElement("div", { className: "bp3-dialog", style: modalStyle },
-                React.createElement("div", { className: "bp3-dialog-header noselect" },
+        React.createElement(DialogContainer, null,
+            React.createElement(DialogShell, { style: modalStyle },
+                React.createElement(DialogHeader, { className: "noselect" },
                     props.icon && React.createElement(Icon, { icon: props.icon }),
                     React.createElement(Heading, { level: 4, className: "mrl-modal-diag-drag-handle" }, props.title),
-                    React.createElement(Button, { onClick: props.onClose, "aria-label": (0, i18n_1.tr)("ACTION_CLOSE", props.locale), className: "bp3-dialog-close-button bp3-button", minimal: true, icon: "small-cross" })),
-                React.createElement("div", { className: "bp3-dialog-body", style: modalBodyStyle }, (() => {
+                    React.createElement(Button, { onClick: props.onClose, "aria-label": (0, i18n_1.tr)("ACTION_CLOSE", props.locale), minimal: true, icon: "small-cross" })),
+                React.createElement(DialogBody, { style: modalBodyStyle }, (() => {
                     //We use NonIdealState as a visual mask to suppress unwanted mouse 
                     //interaction during the act of dragging/resizing, similar to what the
                     //Task Pane does
@@ -23587,23 +23734,22 @@ const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const init_1 = __webpack_require__(/*! ../actions/init */ "./src/actions/init.ts");
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 const hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const InitWarningDisplay = () => {
-    const { Button } = (0, element_context_1.useElementContext)();
+    const { Button, Dialog, DialogBody, DialogFooter, DialogFooterActions } = (0, element_context_1.useElementContext)();
     const dispatch = (0, context_1.useReduxDispatch)();
     const acknowledge = () => dispatch((0, init_1.acknowledgeInitWarnings)());
     const warnings = (0, hooks_1.useInitWarnings)();
     const locale = (0, hooks_1.useViewerLocale)();
     if (warnings && warnings.length && acknowledge) {
-        return React.createElement(core_1.Dialog, { icon: "warning-sign", isOpen: true, usePortal: false, onClose: acknowledge, title: (0, i18n_1.tr)("WARNING", locale) },
-            React.createElement("div", { className: "bp3-dialog-body" },
+        return React.createElement(Dialog, { icon: "warning-sign", isOpen: true, usePortal: false, onClose: acknowledge, title: (0, i18n_1.tr)("WARNING", locale) },
+            React.createElement(DialogBody, null,
                 React.createElement("p", null, (0, i18n_1.tr)("INIT_WARNINGS_FOUND", locale)),
                 React.createElement("ul", null, warnings.map(w => React.createElement("li", { key: w }, w)))),
-            React.createElement("div", { className: "bp3-dialog-footer" },
-                React.createElement("div", { className: "bp3-dialog-footer-actions" },
+            React.createElement(DialogFooter, null,
+                React.createElement(DialogFooterActions, null,
                     React.createElement(Button, { variant: "primary", onClick: acknowledge }, (0, i18n_1.tr)("OK", locale)))));
     }
     else {
@@ -24736,9 +24882,9 @@ const assets_1 = __webpack_require__(/*! ../constants/assets */ "./src/constants
 const map_load_indicator_1 = __webpack_require__(/*! ../components/map-load-indicator */ "./src/components/map-load-indicator.tsx");
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
 const mapguide_1 = __webpack_require__(/*! ../components/map-providers/mapguide */ "./src/components/map-providers/mapguide.ts");
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 __webpack_require__(/*! ol/ol.css */ "./node_modules/ol/ol.css");
 const subscriber_1 = __webpack_require__(/*! ./subscriber */ "./src/containers/subscriber.tsx");
 const hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
@@ -24769,6 +24915,7 @@ function useLoadingCounters() {
 const MapViewer = ({ children }) => {
     var _a;
     const context = (0, context_1.useMapProviderContext)();
+    const { Toaster } = (0, element_context_1.useElementContext)();
     const toasterRef = React.useRef(null);
     const loadIndicatorPositioning = (0, hooks_1.useConfiguredLoadIndicatorPositioning)();
     const loadIndicatorColor = (0, hooks_1.useConfiguredLoadIndicatorColor)();
@@ -24934,7 +25081,7 @@ const MapViewer = ({ children }) => {
     }
     if (nextState.isReady) {
         return (React.createElement(React.Fragment, null,
-            React.createElement(core_1.Toaster, { usePortal: false, position: core_1.Position.TOP, ref: toasterRef }),
+            React.createElement(Toaster, { usePortal: false, position: "top", ref: toasterRef }),
             React.createElement("div", { className: "map-viewer-component", ref: mapViewerRef, style: style, onContextMenu: onContextMenu, onMouseDown: onMouseDown, onMouseUp: onMouseUp },
                 React.createElement(map_load_indicator_1.MapLoadIndicator, { loaded: loaded || 0, loading: loading || 0, position: loadIndicatorPositioning, color: loadIndicatorColor }),
                 subscribers.map((s, i) => (React.createElement(subscriber_1.Subscriber, Object.assign({ key: `subscriber-${i}-${s.name}` }, s)))),

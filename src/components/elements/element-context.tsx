@@ -61,7 +61,7 @@ export type CollapsibleProps = {
  */
 export type CalloutProps = {
     variant?: ElementVariant;
-    title?: string;
+    title?: React.ReactNode;
     icon?: string;
 };
 

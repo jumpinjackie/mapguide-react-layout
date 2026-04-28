@@ -18,6 +18,102 @@ registerComponentFactory("story:hello-world", () => (
    </div>
 ));
 
+interface IModalLauncherStoryContentProps {
+   buttonText?: string;
+   buttonVariant?: "primary" | "warning";
+   description: React.ReactNode;
+   onOpen?: () => void;
+}
+
+const ModalLauncherStoryContent: React.FC<IModalLauncherStoryContentProps> = ({
+   buttonText,
+   buttonVariant = "primary",
+   description,
+   onOpen,
+}) => {
+   const { Button } = useElementContext();
+
+   return (
+      <div style={{ padding: 16 }}>
+         {description}
+         {onOpen && buttonText && (
+            <Button variant={buttonVariant} onClick={onOpen}>{buttonText}</Button>
+         )}
+         <ModalLauncher />
+      </div>
+   );
+};
+
+const UrlModalStoryContent: React.FC = () => {
+   const dispatch = useReduxDispatch();
+
+   const openModal = () => {
+      dispatch(showModalUrl({
+         name: "story-url-modal",
+         modal: {
+            title: "External URL",
+            backdrop: false,
+            size: [500, 400],
+         },
+         url: "https://www.example.com",
+      }));
+   };
+
+   return <ModalLauncherStoryContent
+      description={<p>Click the button to open a URL modal dialog (an iframe-based dialog).</p>}
+      buttonText="Open URL Modal"
+      onOpen={openModal}
+   />;
+};
+
+const ComponentModalStoryContent: React.FC = () => {
+   const dispatch = useReduxDispatch();
+
+   const openModal = () => {
+      dispatch(showModalComponent({
+         name: "story-component-modal",
+         modal: {
+            title: "Component Dialog",
+            backdrop: false,
+            size: [400, 300],
+         },
+         component: "story:hello-world",
+      }));
+   };
+
+   return <ModalLauncherStoryContent
+      description={<p>Click the button to open a component modal dialog.</p>}
+      buttonText="Open Component Modal"
+      onOpen={openModal}
+   />;
+};
+
+const UnregisteredComponentModalStoryContent: React.FC = () => {
+   const dispatch = useReduxDispatch();
+
+   const openModal = () => {
+      dispatch(showModalComponent({
+         name: "story-unknown-modal",
+         modal: {
+            title: "Unknown Component",
+            backdrop: false,
+            size: [400, 260],
+         },
+         component: "story:not-registered",
+      }));
+   };
+
+   return <ModalLauncherStoryContent
+      description={<>
+         <p>Click the button to open a modal that references a component not in the registry.</p>
+         <p>The ModalLauncher will display an error message inside the dialog.</p>
+      </>}
+      buttonText="Open Unregistered Component Modal"
+      buttonVariant="warning"
+      onOpen={openModal}
+   />;
+};
+
 export default {
    title: "Viewer Containers / Modal Launcher",
    decorators: [
@@ -37,10 +133,9 @@ export default {
 export const NoOpenModals = {
    render: () => {
       return (
-         <div style={{ padding: 16 }}>
-            <p>No modals are currently open. The ModalLauncher renders nothing in this state.</p>
-            <ModalLauncher />
-         </div>
+         <ModalLauncherStoryContent
+            description={<p>No modals are currently open. The ModalLauncher renders nothing in this state.</p>}
+         />
       );
    },
    name: "No Open Modals",
@@ -51,28 +146,7 @@ export const NoOpenModals = {
  * Click "Open URL Modal" to dispatch the action and show the dialog.
  */
 export const UrlModal = {
-   render: () => {
-      const dispatch = useReduxDispatch();
-      const { Button } = useElementContext();
-      const openModal = () => {
-         dispatch(showModalUrl({
-            name: "story-url-modal",
-            modal: {
-               title: "External URL",
-               backdrop: false,
-               size: [500, 400],
-            },
-            url: "https://www.example.com",
-         }));
-      };
-      return (
-         <div style={{ padding: 16 }}>
-            <p>Click the button to open a URL modal dialog (an iframe-based dialog).</p>
-            <Button variant="primary" onClick={openModal}>Open URL Modal</Button>
-            <ModalLauncher />
-         </div>
-      );
-   },
+   render: () => <UrlModalStoryContent />,
    name: "URL Modal",
 };
 
@@ -81,28 +155,7 @@ export const UrlModal = {
  * Click "Open Component Modal" to dispatch the action and show the dialog.
  */
 export const ComponentModal = {
-   render: () => {
-      const dispatch = useReduxDispatch();
-      const { Button } = useElementContext();
-      const openModal = () => {
-         dispatch(showModalComponent({
-            name: "story-component-modal",
-            modal: {
-               title: "Component Dialog",
-               backdrop: false,
-               size: [400, 300],
-            },
-            component: "story:hello-world",
-         }));
-      };
-      return (
-         <div style={{ padding: 16 }}>
-            <p>Click the button to open a component modal dialog.</p>
-            <Button variant="primary" onClick={openModal}>Open Component Modal</Button>
-            <ModalLauncher />
-         </div>
-      );
-   },
+   render: () => <ComponentModalStoryContent />,
    name: "Component Modal",
 };
 
@@ -111,28 +164,6 @@ export const ComponentModal = {
  * Click "Open Unregistered Component Modal" to dispatch the action and see the error.
  */
 export const UnregisteredComponentModal = {
-   render: () => {
-      const dispatch = useReduxDispatch();
-      const { Button } = useElementContext();
-      const openModal = () => {
-         dispatch(showModalComponent({
-            name: "story-unknown-modal",
-            modal: {
-               title: "Unknown Component",
-               backdrop: false,
-               size: [400, 260],
-            },
-            component: "story:not-registered",
-         }));
-      };
-      return (
-         <div style={{ padding: 16 }}>
-            <p>Click the button to open a modal that references a component not in the registry.</p>
-            <p>The ModalLauncher will display an error message inside the dialog.</p>
-            <Button variant="warning" onClick={openModal}>Open Unregistered Component Modal</Button>
-            <ModalLauncher />
-         </div>
-      );
-   },
+   render: () => <UnregisteredComponentModalStoryContent />,
    name: "Unregistered Component Modal (Error State)",
 };

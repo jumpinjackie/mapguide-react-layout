@@ -138,6 +138,41 @@ const TOOLBAR_ITEMS: IItem[] = [
    },
 ];
 
+const TOOLBAR_ITEMS_WITH_SELECTED: IItem[] = [
+   {
+      label: "Home",
+      tooltip: "Go to home view",
+      bpIconName: "home",
+      invoke: action("Home invoked"),
+   },
+   {
+      label: "Search",
+      tooltip: "Search features",
+      bpIconName: "search",
+      invoke: action("Search invoked"),
+   },
+   {
+      label: "Print",
+      tooltip: "Print map",
+      bpIconName: "print",
+      invoke: action("Print invoked"),
+   },
+   { isSeparator: true },
+   {
+      label: "Select",
+      tooltip: "Select features",
+      bpIconName: "select",
+      selected: true,
+      invoke: action("Select invoked"),
+   },
+   {
+      label: "Clear",
+      tooltip: "Clear selection",
+      bpIconName: "delete",
+      invoke: action("Clear invoked"),
+   },
+];
+
 export const _Toolbar = {
    render: () => {
       const vertical = boolean("Vertical", false);
@@ -152,6 +187,22 @@ export const _Toolbar = {
       );
    },
    name: "Toolbar",
+};
+
+export const _ToolbarWithSelectedItem = {
+   render: () => {
+      const vertical = boolean("Vertical", false);
+      const hideLabels = boolean("Hide vertical labels", false);
+      return (
+         <Toolbar
+            childItems={TOOLBAR_ITEMS_WITH_SELECTED}
+            containerStyle={{ height: 32, background: "#f0f0f0" }}
+            vertical={vertical}
+            hideVerticalLabels={hideLabels}
+         />
+      );
+   },
+   name: "Toolbar (with selected item)",
 };
 
 export const _RndModalDialog = {

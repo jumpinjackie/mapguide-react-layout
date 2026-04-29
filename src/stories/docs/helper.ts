@@ -33,7 +33,7 @@ export function markdownToHtml(markdown: string): string {
     .replace(/_(.*?)_/g, '<em>$1</em>')
     // Lists
     .replace(/^- (.*?)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/(<li>[\s\S]*<\/li>)/, '<ul>$1</ul>')
     // Code blocks
     .replace(/```[\s\S]*?```/g, (match) => {
       const code = match.replace(/```/g, '').trim();

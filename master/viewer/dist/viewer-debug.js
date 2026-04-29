@@ -12087,12 +12087,14 @@ const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modu
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
+const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 /**
  * The BaseLayerSwitcher component provides a user interface for switching the active external
  * base layer of the current map
  * @param props
  */
 const BaseLayerSwitcher = (props) => {
+    const { Radio } = (0, element_context_1.useElementContext)();
     const { locale, externalBaseLayers } = props;
     const visLayers = externalBaseLayers.filter(layer => layer.visible === true);
     const [selected, setSelected] = React.useState(visLayers.length == 1 ? visLayers[0].name : string_1.STR_EMPTY);
@@ -12107,16 +12109,10 @@ const BaseLayerSwitcher = (props) => {
     }, [visLayers]);
     return React.createElement("div", null,
         React.createElement("div", { className: "base-layer-switcher-item-container" },
-            React.createElement("label", { className: "bp3-control bp3-radio" },
-                React.createElement("input", { className: "base-layer-switcher-option", type: "radio", value: string_1.STR_EMPTY, checked: (0, string_1.strIsNullOrEmpty)(selected), onChange: onBaseLayerChanged }),
-                React.createElement("span", { className: "bp3-control-indicator" }),
-                (0, i18n_1.tr)("NONE", locale))),
+            React.createElement(Radio, { value: string_1.STR_EMPTY, checked: (0, string_1.strIsNullOrEmpty)(selected), onChange: onBaseLayerChanged, label: (0, i18n_1.tr)("NONE", locale) })),
         externalBaseLayers.filter(ebl => (0, common_1.isVisualBaseLayer)(ebl)).map(layer => {
             return React.createElement("div", { className: "base-layer-switcher-item-container", key: `base-layer-${layer.name}` },
-                React.createElement("label", { className: "bp3-control bp3-radio" },
-                    React.createElement("input", { className: "base-layer-switcher-option", type: "radio", value: layer.name, checked: layer.name === selected, onChange: onBaseLayerChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    layer.name));
+                React.createElement(Radio, { value: layer.name, checked: layer.name === selected, onChange: onBaseLayerChanged, label: layer.name }));
         }));
 };
 exports.BaseLayerSwitcher = BaseLayerSwitcher;
@@ -12400,7 +12396,7 @@ const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node
  * @hidden
  */
 const BpCheckbox = (props) => {
-    return react_1.default.createElement(core_1.Checkbox, { checked: props.checked, label: props.label, onChange: props.onChange, disabled: props.disabled });
+    return react_1.default.createElement(core_1.Checkbox, { id: props.id, name: props.name, checked: props.checked, label: props.label, onChange: props.onChange, disabled: props.disabled });
 };
 exports.BpCheckbox = BpCheckbox;
 
@@ -12603,8 +12599,8 @@ const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node
 /**
  * @hidden
  */
-const BpFormGroup = ({ label, inline, children }) => {
-    return react_1.default.createElement(core_1.FormGroup, { label: label, inline: inline }, children);
+const BpFormGroup = ({ label, labelFor, inline, children }) => {
+    return react_1.default.createElement(core_1.FormGroup, { label: label, labelFor: labelFor, inline: inline }, children);
 };
 exports.BpFormGroup = BpFormGroup;
 
@@ -12644,6 +12640,40 @@ const BpHeading = ({ level, className, style, children }) => {
     }
 };
 exports.BpHeading = BpHeading;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/blueprint/html-table.tsx"
+/*!********************************************************************!*\
+  !*** ./src/components/elements/providers/blueprint/html-table.tsx ***!
+  \********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BpHtmlTable = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+/**
+ * @hidden
+ * @since 0.15
+ */
+const BpHtmlTable = ({ condensed, bordered, className, style, children }) => {
+    const classes = ["bp3-html-table"];
+    if (condensed) {
+        classes.push("bp3-html-table-condensed");
+    }
+    if (bordered) {
+        classes.push("bp3-html-table-bordered");
+    }
+    if (className) {
+        classes.push(className);
+    }
+    return react_1.default.createElement("table", { className: classes.join(" "), style: style }, children);
+};
+exports.BpHtmlTable = BpHtmlTable;
 
 
 /***/ },
@@ -12691,7 +12721,7 @@ const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node
  * @hidden
  */
 const BpInputGroup = (props) => {
-    return react_1.default.createElement(core_1.InputGroup, { round: props.round, autoFocus: props.autoFocus, leftIcon: (0, utils_1.iconName)(props.leftIcon), placeholder: props.placeholder, readOnly: props.readOnly, rightElement: props.rightElement, style: props.style, value: props.value, onClick: props.onClick, onChange: props.onChange });
+    return react_1.default.createElement(core_1.InputGroup, { round: props.round, autoFocus: props.autoFocus, disabled: props.disabled, id: props.id, name: props.name, leftIcon: (0, utils_1.iconName)(props.leftIcon), placeholder: props.placeholder, readOnly: props.readOnly, rightElement: props.rightElement, style: props.style, value: props.value, onClick: props.onClick, onChange: props.onChange });
 };
 exports.BpInputGroup = BpInputGroup;
 
@@ -12876,6 +12906,7 @@ const heading_1 = __webpack_require__(/*! ./heading */ "./src/components/element
 const text_1 = __webpack_require__(/*! ./text */ "./src/components/elements/providers/blueprint/text.tsx");
 const toaster_1 = __webpack_require__(/*! ./toaster */ "./src/components/elements/providers/blueprint/toaster.tsx");
 const dialog_1 = __webpack_require__(/*! ./dialog */ "./src/components/elements/providers/blueprint/dialog.tsx");
+const html_table_1 = __webpack_require__(/*! ./html-table */ "./src/components/elements/providers/blueprint/html-table.tsx");
 __webpack_require__(/*! ./bp-override.css */ "./src/components/elements/providers/blueprint/bp-override.css");
 const provider = {
     Text: text_1.BpText,
@@ -12908,7 +12939,8 @@ const provider = {
     DialogHeader: dialog_1.BpDialogHeader,
     DialogBody: dialog_1.BpDialogBody,
     DialogFooter: dialog_1.BpDialogFooter,
-    DialogFooterActions: dialog_1.BpDialogFooterActions
+    DialogFooterActions: dialog_1.BpDialogFooterActions,
+    HtmlTable: html_table_1.BpHtmlTable
 };
 exports["default"] = provider;
 
@@ -14773,7 +14805,7 @@ function ExprEditorInner(props) {
                 renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value"),
                 React.createElement("br", null),
                 React.createElement(Radio, { name: "edit-mode", label: (0, i18n_1.tr)("EXPR_EDITOR_EXPRESSION", locale), value: "edit-expr", checked: editMode == "edit-expr", onChange: (e) => setEditMode(e.target.value) }),
-                React.createElement("input", { disabled: editMode != "edit-expr", type: "text", className: "bp3-input", placeholder: 'e.g. ["get","propertyName"]', value: exprText, onChange: e => {
+                React.createElement(InputGroup, { disabled: editMode != "edit-expr", placeholder: 'e.g. ["get","propertyName"]', value: exprText, onChange: e => {
                         setExprText(e.target.value);
                         try {
                             const parsed = JSON.parse(e.target.value);
@@ -14804,7 +14836,8 @@ const SliderExprEditor = props => {
 };
 exports.SliderExprEditor = SliderExprEditor;
 const StringExprEditor = props => {
-    return React.createElement(ExprEditorInner, { locale: props.locale, value: props.value, onChange: props.onChange, renderValueEditor: (v, oc, loc, disabled) => React.createElement("input", { disabled: disabled, type: "text", className: "bp3-input", value: stringifyExprIf(v, "edit-value"), onChange: e => oc(e.target.value) }) });
+    const { InputGroup } = (0, element_context_1.useElementContext)();
+    return React.createElement(ExprEditorInner, { locale: props.locale, value: props.value, onChange: props.onChange, renderValueEditor: (v, oc, loc, disabled) => React.createElement(InputGroup, { disabled: disabled, value: stringifyExprIf(v, "edit-value"), onChange: e => oc(e.target.value) }) });
 };
 exports.StringExprEditor = StringExprEditor;
 const BooleanExprEditor = props => {
@@ -16422,11 +16455,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MapMenu = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 /**
  * The MapMenu component provides the ability to switch between active maps
  * @param props
  */
 const MapMenu = (props) => {
+    const { Radio } = (0, element_context_1.useElementContext)();
     const [selected, setSelected] = React.useState(undefined);
     const onActiveMapChanged = (e) => {
         var _a;
@@ -16436,10 +16471,7 @@ const MapMenu = (props) => {
     };
     return React.createElement("div", null, props.maps.map(layer => {
         return React.createElement("div", { className: "map-menu-item-container", key: `base-layer-${layer.mapName}` },
-            React.createElement("label", { className: "bp3-control bp3-radio" },
-                React.createElement("input", { className: "map-menu-option", type: "radio", value: layer.mapName, checked: layer.mapName === props.selectedMap, onChange: onActiveMapChanged }),
-                React.createElement("span", { className: "bp3-control-indicator" }),
-                layer.label));
+            React.createElement(Radio, { value: layer.mapName, checked: layer.mapName === props.selectedMap, onChange: onActiveMapChanged, label: layer.label }));
     }));
 };
 exports.MapMenu = MapMenu;
@@ -19722,6 +19754,7 @@ const dompurify_1 = tslib_1.__importDefault(__webpack_require__(/*! dompurify */
 const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 const DefaultSelectedFeature = (props) => {
     const { selectedFeature, selectedLayer, layerName, locale, allowHtmlValues, cleanHTML, formatPropertyValue } = props;
+    const { HtmlTable } = (0, element_context_1.useElementContext)();
     const featureProps = [];
     if (selectedLayer === null || selectedLayer === void 0 ? void 0 : selectedLayer.Property) {
         for (const lp of selectedLayer.Property) {
@@ -19736,7 +19769,7 @@ const DefaultSelectedFeature = (props) => {
             featureProps.push(fp);
         }
     }
-    return React.createElement("table", { className: "selection-panel-property-grid bp3-html-table bp3-html-table-condensed bp3-html-table-bordered" },
+    return React.createElement(HtmlTable, { condensed: true, bordered: true, className: "selection-panel-property-grid" },
         React.createElement("thead", null,
             React.createElement("tr", null,
                 React.createElement("th", null, (0, i18n_1.tr)("SELECTION_PROPERTY", locale)),
@@ -23044,7 +23077,7 @@ const hooks_1 = __webpack_require__(/*! ./hooks */ "./src/containers/hooks.ts");
 const hooks_mapguide_1 = __webpack_require__(/*! ./hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const CoordinateTrackerContainer = (props) => {
-    const { Callout, Card } = (0, element_context_1.useElementContext)();
+    const { Callout, Card, Heading } = (0, element_context_1.useElementContext)();
     const { projections } = props;
     const aProjections = Array.isArray(projections) ? projections : [projections];
     const locale = (0, hooks_1.useViewerLocale)();
@@ -23052,7 +23085,7 @@ const CoordinateTrackerContainer = (props) => {
     const proj = (0, hooks_mapguide_1.useActiveMapProjection)();
     if (aProjections && aProjections.length) {
         return React.createElement("div", { style: { margin: 8 } },
-            React.createElement("h4", { className: "bp3-heading" }, (0, i18n_1.tr)("COORDTRACKER", locale)),
+            React.createElement(Heading, { level: 4 }, (0, i18n_1.tr)("COORDTRACKER", locale)),
             aProjections.map(p => {
                 let x = NaN;
                 let y = NaN;
@@ -23064,7 +23097,7 @@ const CoordinateTrackerContainer = (props) => {
                     }
                 }
                 return React.createElement(Card, { key: p, style: { marginBottom: 10 } },
-                    React.createElement("h5", { className: "bp3-heading" },
+                    React.createElement(Heading, { level: 5 },
                         React.createElement("a", { href: "#" }, p)),
                     React.createElement("p", null,
                         React.createElement("strong", null, (0, i18n_1.tr)("COORDTRACKER_X", locale)),
@@ -24467,7 +24500,7 @@ const dompurify_1 = tslib_1.__importDefault(__webpack_require__(/*! dompurify */
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const MeasureContainer = () => {
     var _a;
-    const { Callout, Button } = (0, element_context_1.useElementContext)();
+    const { Callout, Button, HtmlTable } = (0, element_context_1.useElementContext)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
     const locale = (0, hooks_1.useViewerLocale)();
     const mapNames = (_a = (0, hooks_1.useAvailableMaps)()) === null || _a === void 0 ? void 0 : _a.map(m => m.value);
@@ -24603,7 +24636,7 @@ const MeasureContainer = () => {
                 React.createElement(Button, { type: "button", icon: "cross", onClick: onClearMeasurements }, (0, i18n_1.tr)("MEASUREMENT_CLEAR", locale))),
             measuring === true && (React.createElement("div", null,
                 React.createElement(Callout, { variant: "primary", title: (0, i18n_1.tr)("MEASURING", locale) }, (0, i18n_1.tr)("MEASURING_MESSAGE", locale)),
-                segments && (React.createElement("table", { className: "bp3-html-table bp3-html-table-condensed" },
+                segments && (React.createElement(HtmlTable, { condensed: true },
                     React.createElement("thead", null,
                         React.createElement("tr", null,
                             React.createElement("th", null, (0, i18n_1.tr)("MEASURE_SEGMENT", locale)),
@@ -25239,7 +25272,7 @@ function toggleMapCapturerLayer(locale, viewer, mapNames, activeMapName, showAdv
 }
 const QuickPlotContainer = () => {
     var _a, _b;
-    const { Slider, Callout, Button, Select } = (0, element_context_1.useElementContext)();
+    const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = (0, element_context_1.useElementContext)();
     const [title, setTitle] = React.useState("");
     ``;
     const [subTitle, setSubTitle] = React.useState("");
@@ -25370,59 +25403,34 @@ const QuickPlotContainer = () => {
         React.createElement("form", { id: "Form1", name: "Form1", target: "_blank", method: "post", action: url },
             React.createElement("input", { type: "hidden", id: "printId", name: "printId", value: `${Math.random() * 1000}` }),
             React.createElement("div", { className: "Title FixWidth" }, (0, i18n_1.tr)("QUICKPLOT_HEADER", locale)),
-            React.createElement("label", { className: "bp3-label" },
-                (0, i18n_1.tr)("QUICKPLOT_TITLE", locale),
-                React.createElement("input", { type: "text", className: "bp3-input bp3-fill", dir: "auto", name: "{field:title}", id: "title", maxLength: 100, value: title, onChange: onTitleChanged })),
-            React.createElement("label", { className: "bp3-label" },
-                (0, i18n_1.tr)("QUICKPLOT_SUBTITLE", locale),
-                React.createElement("input", { type: "text", className: "bp3-input bp3-fill", dir: "auto", name: "{field:sub_title}", id: "subtitle", maxLength: 100, value: subTitle, onChange: onSubTitleChanged })),
-            React.createElement("label", { className: "bp3-label" },
-                (0, i18n_1.tr)("QUICKPLOT_PAPER_SIZE", locale),
+            React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_TITLE", locale) },
+                React.createElement(InputGroup, { name: "{field:title}", id: "title", value: title, onChange: onTitleChanged })),
+            React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_SUBTITLE", locale) },
+                React.createElement(InputGroup, { name: "{field:sub_title}", id: "subtitle", value: subTitle, onChange: onSubTitleChanged })),
+            React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_PAPER_SIZE", locale) },
                 React.createElement(element_context_1.TypedSelect, { fill: true, id: "paperSizeSelect", name: "paperSizeSelect", value: paperSize, onChange: e => setPaperSize(e), items: PAPER_SIZES })),
-            React.createElement("label", { className: "bp3-label" },
-                (0, i18n_1.tr)("QUICKPLOT_ORIENTATION", locale),
+            React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_ORIENTATION", locale) },
                 React.createElement(element_context_1.TypedSelect, { fill: true, id: "orientation", name: "orientation", value: orientation, onChange: e => setOrientation(e), items: ORIENTATIONS })),
             React.createElement("input", { type: "hidden", id: "paperSize", name: "paperSize", value: ppSize }),
             React.createElement("input", { type: "hidden", id: "printSize", name: "printSize", value: prSize }),
             React.createElement("fieldset", null,
                 React.createElement("legend", null, (0, i18n_1.tr)("QUICKPLOT_SHOWELEMENTS", locale)),
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "ShowLegendCheckBox", name: "ShowLegend", checked: showLegend, onChange: onShowLegendChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_SHOWLEGEND", locale)),
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "ShowNorthArrowCheckBox", name: "ShowNorthArrow", checked: showNorthBar, onChange: onShowNorthArrowChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_SHOWNORTHARROW", locale)),
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "ShowCoordinatesCheckBox", name: "ShowCoordinates", checked: showCoordinates, onChange: onShowCoordinatesChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_SHOWCOORDINTES", locale)),
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "ShowScaleBarCheckBox", name: "ShowScaleBar", checked: showScaleBar, onChange: onShowScaleBarChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_SHOWSCALEBAR", locale)),
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "ShowDisclaimerCheckBox", name: "ShowDisclaimer", checked: showDisclaimer, onChange: onShowDisclaimerChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_SHOWDISCLAIMER", locale))),
+                React.createElement(Checkbox, { id: "ShowLegendCheckBox", name: "ShowLegend", checked: showLegend, onChange: onShowLegendChanged, label: (0, i18n_1.tr)("QUICKPLOT_SHOWLEGEND", locale) }),
+                React.createElement(Checkbox, { id: "ShowNorthArrowCheckBox", name: "ShowNorthArrow", checked: showNorthBar, onChange: onShowNorthArrowChanged, label: (0, i18n_1.tr)("QUICKPLOT_SHOWNORTHARROW", locale) }),
+                React.createElement(Checkbox, { id: "ShowCoordinatesCheckBox", name: "ShowCoordinates", checked: showCoordinates, onChange: onShowCoordinatesChanged, label: (0, i18n_1.tr)("QUICKPLOT_SHOWCOORDINTES", locale) }),
+                React.createElement(Checkbox, { id: "ShowScaleBarCheckBox", name: "ShowScaleBar", checked: showScaleBar, onChange: onShowScaleBarChanged, label: (0, i18n_1.tr)("QUICKPLOT_SHOWSCALEBAR", locale) }),
+                React.createElement(Checkbox, { id: "ShowDisclaimerCheckBox", name: "ShowDisclaimer", checked: showDisclaimer, onChange: onShowDisclaimerChanged, label: (0, i18n_1.tr)("QUICKPLOT_SHOWDISCLAIMER", locale) })),
             React.createElement("div", { className: "HPlaceholder5px" }),
             React.createElement("div", null,
-                React.createElement("label", { className: "bp3-control bp3-checkbox" },
-                    React.createElement("input", { type: "checkbox", id: "AdvancedOptionsCheckBox", onChange: onAdvancedOptionsChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("QUICKPLOT_ADVANCED_OPTIONS", locale))),
+                React.createElement(Checkbox, { id: "AdvancedOptionsCheckBox", onChange: onAdvancedOptionsChanged, label: (0, i18n_1.tr)("QUICKPLOT_ADVANCED_OPTIONS", locale) })),
             (() => {
                 if (showAdvanced) {
                     return React.createElement("div", null,
-                        React.createElement("label", { className: "bp3-label" },
-                            (0, i18n_1.tr)("QUICKPLOT_SCALING", locale),
+                        React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_SCALING", locale) },
                             React.createElement(element_context_1.TypedSelect, { fill: true, id: "scaleDenominator", name: "scaleDenominator", value: scale, onChange: e => setScale(e), items: SCALES })),
-                        React.createElement("label", { className: "bp3-label" },
-                            (0, i18n_1.tr)("QUICKPLOT_DPI", locale),
+                        React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_DPI", locale) },
                             React.createElement(element_context_1.TypedSelect, { fill: true, id: "dpi", name: "dpi", onChange: e => setDpi(e), items: DPIS })),
-                        React.createElement("label", { className: "bp3-label noselect" },
-                            (0, i18n_1.tr)("QUICKPLOT_BOX_ROTATION", locale),
+                        React.createElement(FormGroup, { label: (0, i18n_1.tr)("QUICKPLOT_BOX_ROTATION", locale) },
                             React.createElement("div", { style: { paddingLeft: 16, paddingRight: 16 } },
                                 React.createElement(Slider, { min: 0, max: 360, labelStepSize: 90, stepSize: 1, value: rotation, onChange: onRotationChanged }))));
                 }
@@ -26183,7 +26191,7 @@ const context_1 = __webpack_require__(/*! ../components/map-providers/context */
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const ViewerOptions = () => {
     var _a, _b, _c;
-    const { Slider, Select, Heading } = (0, element_context_1.useElementContext)();
+    const { Slider, Select, Heading, Switch, FormGroup } = (0, element_context_1.useElementContext)();
     const externalBaseLayers = (_a = (0, hooks_1.useActiveMapExternalBaseLayers)()) === null || _a === void 0 ? void 0 : _a.filter(ebl => (0, common_1.isVisualBaseLayer)(ebl));
     const mapName = (0, hooks_1.useActiveMapName)();
     const layerTransparency = (0, hooks_mapguide_1.useActiveMapLayerTransparency)();
@@ -26217,8 +26225,10 @@ const ViewerOptions = () => {
     const onMgSelOpacityChanged = (value) => {
         onMgLayerOpacityChanged(mapName, constants_1.LAYER_ID_MG_SEL_OVERLAY, value);
     };
-    const onViewSizeUnitsChanged = (e) => {
-        setViewSizeDisplayUnitsAction(e.target.value);
+    const onViewSizeUnitsChanged = (value) => {
+        if (value !== undefined) {
+            setViewSizeDisplayUnitsAction(parseInt(value, 10));
+        }
     };
     const onFeatureTooltipsChanged = (e) => {
         toggleMapTipsAction(e.target.checked);
@@ -26259,47 +26269,33 @@ const ViewerOptions = () => {
     return React.createElement("div", { className: "component-viewer-options" },
         React.createElement(Heading, { level: 5 }, (0, i18n_1.tr)("VIEWER_OPTIONS", locale)),
         React.createElement("hr", null),
-        !isStateless && React.createElement("label", { className: "bp3-control bp3-switch" },
-            React.createElement("input", { type: "checkbox", checked: featureTooltipsEnabled, onChange: onFeatureTooltipsChanged }),
-            React.createElement("span", { className: "bp3-control-indicator" }),
-            (0, i18n_1.tr)("FEATURE_TOOLTIPS", locale)),
+        !isStateless && React.createElement(Switch, { checked: featureTooltipsEnabled, onChange: onFeatureTooltipsChanged, label: (0, i18n_1.tr)("FEATURE_TOOLTIPS", locale) }),
         (() => {
             if (!isStateless && featureTooltipsEnabled) {
-                return React.createElement("label", { className: "bp3-control bp3-switch" },
-                    React.createElement("input", { type: "checkbox", checked: manualFeatureTooltips, onChange: onManualFeatureTooltipsChanged }),
-                    React.createElement("span", { className: "bp3-control-indicator" }),
-                    (0, i18n_1.tr)("MANUAL_FEATURE_TOOLTIPS", locale));
+                return React.createElement(Switch, { checked: manualFeatureTooltips, onChange: onManualFeatureTooltipsChanged, label: (0, i18n_1.tr)("MANUAL_FEATURE_TOOLTIPS", locale) });
             }
         })(),
-        React.createElement("label", { className: "bp3-control bp3-switch" },
-            React.createElement("input", { type: "checkbox", checked: selectDragPanEnabled, onChange: onSelectDragPanEnabled }),
-            React.createElement("span", { className: "bp3-control-indicator" }),
-            (0, i18n_1.tr)("ENABLE_SELECT_DRAGPAN", locale)),
+        React.createElement(Switch, { checked: selectDragPanEnabled, onChange: onSelectDragPanEnabled, label: (0, i18n_1.tr)("ENABLE_SELECT_DRAGPAN", locale) }),
         React.createElement("fieldset", null,
             React.createElement("legend", null, (0, i18n_1.tr)("LAYER_TRANSPARENCY", locale)),
             (() => {
                 if (externalBaseLayers) {
-                    return React.createElement("label", { className: "bp3-label noselect" },
-                        (0, i18n_1.tr)("LAYER_ID_BASE", locale),
+                    return React.createElement(FormGroup, { label: (0, i18n_1.tr)("LAYER_ID_BASE", locale) },
                         React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
                             React.createElement(Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opBase, onChange: onBaseOpacityChanged })));
                 }
             })(),
-            hasMgBaseLayers && React.createElement("label", { className: "bp3-label noselect" },
-                (0, i18n_1.tr)("LAYER_ID_MG_BASE_LAYERS", locale),
+            hasMgBaseLayers && React.createElement(FormGroup, { label: (0, i18n_1.tr)("LAYER_ID_MG_BASE_LAYERS", locale) },
                 React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
                     React.createElement(Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgBase, onChange: onMgOpacityChanged }))),
-            React.createElement("label", { className: "bp3-label noselect" },
-                map ? (0, i18n_1.tr)("LAYER_ID_MG_BASE", locale) : (0, i18n_1.tr)("LAYER_ID_SUBJECT", locale),
+            React.createElement(FormGroup, { label: map ? (0, i18n_1.tr)("LAYER_ID_MG_BASE", locale) : (0, i18n_1.tr)("LAYER_ID_SUBJECT", locale) },
                 React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
                     React.createElement(Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgDynamicOverlay, onChange: onMgDynamicOverlayOpacityChanged }))),
-            !isStateless && React.createElement("label", { className: "bp3-label noselect" },
-                (0, i18n_1.tr)("LAYER_ID_MG_SEL_OVERLAY", locale),
+            !isStateless && React.createElement(FormGroup, { label: (0, i18n_1.tr)("LAYER_ID_MG_SEL_OVERLAY", locale) },
                 React.createElement("div", { style: { paddingLeft: 8, paddingRight: 8 } },
                     React.createElement(Slider, { min: 0, max: 1.0, stepSize: 0.01, value: opMgSelOverlay, onChange: onMgSelOpacityChanged })))),
-        React.createElement("label", { className: "bp3-label" },
-            (0, i18n_1.tr)("MAP_SIZE_DISPLAY_UNITS", locale),
-            React.createElement(Select, { value: `${viewSizeUnits}`, onChange: onViewSizeUnitsChanged, items: units.map(uom => ({ value: `${uom}`, label: (0, units_1.getUnitOfMeasure)(uom).localizedName(locale) })) })));
+        React.createElement(FormGroup, { label: (0, i18n_1.tr)("MAP_SIZE_DISPLAY_UNITS", locale), labelFor: "viewSizeUnitsSelect" },
+            React.createElement(Select, { id: "viewSizeUnitsSelect", value: `${viewSizeUnits}`, onChange: onViewSizeUnitsChanged, items: units.map(uom => ({ value: `${uom}`, label: (0, units_1.getUnitOfMeasure)(uom).localizedName(locale) })) })));
 };
 exports.ViewerOptions = ViewerOptions;
 
@@ -28166,7 +28162,7 @@ const map_viewer_swipe_1 = __webpack_require__(/*! ../components/map-viewer-swip
 const MapToolbar = (props) => {
     const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
     const swipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
-    const { Button, Card, Popover } = (0, element_context_1.useElementContext)();
+    const { Button, Card, Popover, Heading } = (0, element_context_1.useElementContext)();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return React.createElement(React.Fragment, null,
         React.createElement(element_context_1.ElementGroup, { vertical: true, style: { zIndex: 10, position: "absolute", left: 30, top: 30 } },
@@ -28182,10 +28178,10 @@ const MapToolbar = (props) => {
             React.createElement(Popover, { usePortal: false, position: "right", minimal: false },
                 React.createElement(Button, { icon: "map" }),
                 React.createElement(Card, { style: { minWidth: 200 } },
-                    React.createElement("h5", { className: "bp3-heading" },
+                    React.createElement(Heading, { level: 5 },
                         React.createElement("a", { href: "#" }, "Active Base Layer")),
                     React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.BaseMapSwitcher, locale: locale }),
-                    React.createElement("h5", { className: "bp3-heading" },
+                    React.createElement(Heading, { level: 5 },
                         React.createElement("a", { href: "#" }, "Current Map")),
                     React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.MapMenu, locale: locale }))),
             React.createElement(Popover, { usePortal: false, position: "right", minimal: false },

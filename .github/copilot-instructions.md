@@ -54,6 +54,8 @@
     * This comment only spans a single line
     */
 ```
+- When generating TypeScript code, you must respect the module target specified in the `tsconfig.json` file. For example, if the module target is `ES2015` do not use APIs or constructs introduced in later versions of ECMAScript, such as `Object.fromEntries` or `Array.prototype.flat`.
+   - If you need to use an API or construct that is not supported by the module target, you must provide a polyfill for it in the generated code.
 
 # Story generation for Storybook
 

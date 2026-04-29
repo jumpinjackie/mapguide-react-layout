@@ -46,6 +46,7 @@ const markerIcon = require('./data/marker.png');
 
 export default {
     title: 'Compact Viewer',
+    tags: ['no-visual-regression'],
     parameters: {
         docs: {
             description: {

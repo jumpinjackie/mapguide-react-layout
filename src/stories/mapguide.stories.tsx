@@ -12,6 +12,7 @@ import mapGuideSpecificDocs from "./docs/mapguide-specific.md";
 
 export default {
   title: "Map and Map Interaction Components / MapGuide-specific",
+  tags: ['no-visual-regression'],
   parameters: {
     docs: {
       description: {

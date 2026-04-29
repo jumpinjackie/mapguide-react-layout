@@ -35,9 +35,9 @@
     "ci:gha": "yarn run lint && yarn run test:gha",
     "i18n:check": "tsx tools/i18n-tools.ts",
     "i18n:translate": "tsx tools/i18n-tools.ts --translate",
-    "test:visual": "test-storybook --config-dir .storybook",
+    "test:visual": "test-storybook --config-dir .storybook --url http://localhost:4000 --excludeTags no-visual-regression",
     "test:visual:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"storybook dev -p 4000 -c .storybook --ci --quiet\" \"wait-on http://localhost:4000 && yarn test:visual\"",
-    "test:visual:update": "test-storybook --config-dir .storybook -u",
+    "test:visual:update": "test-storybook --config-dir .storybook --url http://localhost:4000 --excludeTags no-visual-regression -u",
     "capture:story": "tsx tools/capture-story.ts",
     "mcp:storybook": "tsx tools/capture-story.ts --mcp"
   },

@@ -6,6 +6,7 @@ import {
   IAccordionPanelContentDimensions,
 } from "../components/accordion";
 import { withKnobs, text, boolean } from "@storybook/addon-knobs";
+import accordionDocs from "./docs/accordion.md";
 
 import "../styles/index.css";
 import "ol/ol.css";
@@ -50,6 +51,13 @@ const PANELS: IAccordionPanelSpec[] = [
 export default {
   title: "Accordion (Slate)",
   decorators: [withKnobs],
+  parameters: {
+    docs: {
+      description: {
+        component: accordionDocs,
+      },
+    },
+  },
 };
 
 export const Default = () => (

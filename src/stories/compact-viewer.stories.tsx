@@ -37,6 +37,7 @@ import type { Map, View } from 'ol';
 import OLVectorLayer from 'ol/layer/Vector';
 import OLVectorSource from 'ol/source/Vector';
 import { recursiveFindLayer } from '../components/map-providers/base';
+import compactViewerDocs from './docs/compact-viewer.md';
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
 const buildings = require('./data/gisborne-futures.json');
@@ -45,6 +46,13 @@ const markerIcon = require('./data/marker.png');
 
 export default {
     title: 'Compact Viewer',
+    parameters: {
+        docs: {
+            description: {
+                component: compactViewerDocs,
+            },
+        },
+    },
     decorators: [
         withKnobs,
         (storyFn: () => boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined) => (

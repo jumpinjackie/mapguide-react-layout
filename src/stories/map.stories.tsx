@@ -18,6 +18,7 @@ import { ViewerOptions } from "../containers/viewer-options";
 import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
 import { useElementContext } from "../components/elements/element-context";
+import mapInteractionDocs from "./docs/map-and-map-interaction-components.md";
 
 //import MeasureContainer from '../containers/measure';
 
@@ -40,6 +41,13 @@ export function getQueryMapFeaturesResponse(activeMapName: string) {
 
 export default {
   title: "Map and Map Interaction Components",
+  parameters: {
+    docs: {
+      description: {
+        component: mapInteractionDocs,
+      },
+    },
+  },
 
   decorators: [
     withKnobs,

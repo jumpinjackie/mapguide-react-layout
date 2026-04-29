@@ -23,10 +23,18 @@ import {
   ColorBrewerSwatch,
   getColorBrewerRamps,
 } from "../components/layer-manager/color-brewer";
+import commonComponentsDocs from "./docs/common-components.md";
 
 export default {
   title: "Common Components",
   decorators: [withKnobs],
+  parameters: {
+    docs: {
+      description: {
+        component: commonComponentsDocs,
+      },
+    },
+  },
 };
 
 export const _StringExprEditor = () => {

@@ -243,6 +243,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
       Button: ({ children, onClick }: React.PropsWithChildren<{ onClick?: () => void }>) => <button data-testid="ctx-btn" onClick={onClick}>{children}</button>,
       Callout: ({ children, title }: React.PropsWithChildren<{ title?: string }>) => <div data-testid="callout">{title}{children}</div>,
       Card: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="card">{children}</div>,
+      Heading: ({ children, level }: React.PropsWithChildren<{ level: number }>) => React.createElement(`h${level}`, {}, children),
       NonIdealState: ({ description }: { description?: string }) => <div data-testid="non-ideal-state">{description}</div>,
       Dialog: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="dialog">{children}</div>,
       DialogBody: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="dialog-body">{children}</div>,

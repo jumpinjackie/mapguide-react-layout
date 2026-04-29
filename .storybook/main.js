@@ -1,6 +1,9 @@
 module.exports = {
     framework: "@storybook/react-webpack5",
     stories: ["../src/stories/*.stories.tsx"],
+    typescript: {
+        reactDocgen: false
+    },
 
     core: {
         builder: "webpack5",
@@ -10,6 +13,7 @@ module.exports = {
     staticDirs: ['../src/stories/static'],
 
     addons: [
+        "@storybook/addon-docs",
         "@storybook/addon-knobs",
         "@storybook/addon-viewport",
         "@storybook/addon-links",
@@ -18,5 +22,13 @@ module.exports = {
 
     docs: {
         autodocs: true
+    },
+
+    webpackFinal: async (config) => {
+        config.module.rules.push({
+            test: /\.md$/,
+            type: "asset/source"
+        });
+        return config;
     }
 };

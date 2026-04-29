@@ -8,9 +8,17 @@ import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
 import { useElementContext } from "../components/elements/element-context";
 import { About } from "../components/about";
+import mapGuideSpecificDocs from "./docs/mapguide-specific.md";
 
 export default {
   title: "Map and Map Interaction Components / MapGuide-specific",
+  parameters: {
+    docs: {
+      description: {
+        component: mapGuideSpecificDocs,
+      },
+    },
+  },
 
   decorators: [
     withKnobs,

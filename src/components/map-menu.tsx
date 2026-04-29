@@ -1,5 +1,6 @@
 import * as React from "react";
 import { IMapMenuEntry } from "../api/common";
+import { useElementContext } from "./elements/element-context";
 
 /**
  * MapMenu component props
@@ -18,6 +19,7 @@ export interface IMapMenuProps {
  * @param props 
  */
 export const MapMenu = (props: IMapMenuProps) => {
+    const { Radio } = useElementContext();
     const [selected, setSelected] = React.useState(undefined);
     const onActiveMapChanged = (e: any) => {
         const value = e.currentTarget.value;
@@ -27,11 +29,7 @@ export const MapMenu = (props: IMapMenuProps) => {
     return <div>
         {props.maps.map(layer => {
             return <div className="map-menu-item-container" key={`base-layer-${layer.mapName}`}>
-                <label className="bp3-control bp3-radio">
-                    <input className="map-menu-option" type="radio" value={layer.mapName} checked={layer.mapName === props.selectedMap} onChange={onActiveMapChanged} />
-                    <span className="bp3-control-indicator" />
-                    {layer.label}
-                </label>
+                <Radio value={layer.mapName} checked={layer.mapName === props.selectedMap} onChange={onActiveMapChanged} label={layer.label} />
             </div>;
         })}
     </div>;

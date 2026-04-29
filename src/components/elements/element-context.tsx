@@ -73,6 +73,10 @@ export type CheckboxProps = {
     label?: string;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
+    /** @since 0.15 */
+    id?: string;
+    /** @since 0.15 */
+    name?: string;
 };
 
 /**
@@ -119,6 +123,12 @@ export type InputGroupProps = {
     placeholder?: string;
     value?: string;
     readOnly?: boolean;
+    /** @since 0.15 */
+    disabled?: boolean;
+    /** @since 0.15 */
+    id?: string;
+    /** @since 0.15 */
+    name?: string;
     rightElement?: JSX.Element;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClick?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -190,6 +200,8 @@ export type FileInputProps = {
  */
 export type FormGroupProps = {
     label?: React.ReactNode;
+    /** @since 0.15 */
+    labelFor?: string;
     inline?: boolean;
 }
 
@@ -373,6 +385,18 @@ export type TextProps = {
 }
 
 /**
+ * Props for a styled HTML table
+ *
+ * @since 0.15
+ */
+export type HtmlTableProps = {
+    condensed?: boolean;
+    bordered?: boolean;
+    className?: string;
+    style?: React.CSSProperties;
+}
+
+/**
  * Defines a toolkit/design-system agnostic context for requesting UI atoms
  * 
  * The mounted provider determines the underlying toolkit/design-system backing the
@@ -412,6 +436,11 @@ export interface IElementContext {
     DialogBody: React.ComponentType<React.PropsWithChildren<DialogBodyProps>>;
     DialogFooter: React.ComponentType<React.PropsWithChildren<DialogFooterProps>>;
     DialogFooterActions: React.ComponentType<React.PropsWithChildren<DialogFooterActionsProps>>;
+    /**
+     * A styled HTML table element
+     * @since 0.15
+     */
+    HtmlTable: React.ComponentType<React.PropsWithChildren<HtmlTableProps>>;
 }
 
 const ElementContext = React.createContext<IElementContext>(BpProvider);

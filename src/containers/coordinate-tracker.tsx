@@ -11,7 +11,7 @@ export interface ICoordinateTrackerContainerProps {
 
 
 export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerProps) => {
-    const { Callout, Card } = useElementContext();
+    const { Callout, Card, Heading } = useElementContext();
     const { projections } = props;
     const aProjections = Array.isArray(projections) ? projections : [projections];
     const locale = useViewerLocale();
@@ -19,7 +19,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
     const proj = useActiveMapProjection();
     if (aProjections && aProjections.length) {
         return <div style={{ margin: 8 }}>
-            <h4 className="bp3-heading">{tr("COORDTRACKER", locale)}</h4>
+            <Heading level={4}>{tr("COORDTRACKER", locale)}</Heading>
             {aProjections.map(p => {
                 let x = NaN;
                 let y = NaN;
@@ -31,7 +31,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
                     }
                 }
                 return <Card key={p} style={{ marginBottom: 10 }}>
-                    <h5 className="bp3-heading"><a href="#">{p}</a></h5>
+                    <Heading level={5}><a href="#">{p}</a></Heading>
                     <p><strong>{tr("COORDTRACKER_X", locale)}</strong> {x}</p>
                     <p><strong>{tr("COORDTRACKER_Y", locale)}</strong> {y}</p>
                 </Card>;

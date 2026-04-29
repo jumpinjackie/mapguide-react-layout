@@ -18,6 +18,8 @@ declare const __BRANCH__: string;
 declare module "*.png";
 declare module "*.cur";
 declare module "*.gif";
+declare module "*.md";
+declare module "*.css";
 
 declare module "papaparse";
 declare module "stickybits";

@@ -75,9 +75,11 @@
   },
   "devDependencies": {
     "@storybook/addon-actions": "^8.6.18",
+    "@storybook/addon-docs": "^8.6.18",
     "@storybook/addon-knobs": "^8.0.1",
     "@storybook/addon-links": "^8.6.18",
     "@storybook/addon-viewport": "^8.6.18",
+    "@storybook/blocks": "^8.6.18",
     "@storybook/react": "^8.6.18",
     "@storybook/react-webpack5": "^8.6.18",
     "@storybook/test": "^8.6.15",

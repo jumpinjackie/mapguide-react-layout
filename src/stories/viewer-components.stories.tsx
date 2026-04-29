@@ -13,12 +13,20 @@ import { FlyoutRegion } from "../components/flyout-region";
 import { SplitterLayout } from "../components/splitter-layout";
 import type { MapLoadIndicatorPositioning } from "../api/common";
 import { DEFAULT_LOCALE } from "../api/i18n";
+import viewerComponentsDocs from "./docs/viewer-components.md";
 
 import "../styles/index.css";
 
 export default {
    title: "Viewer Components",
    decorators: [withKnobs],
+   parameters: {
+      docs: {
+         description: {
+            component: viewerComponentsDocs,
+         },
+      },
+   },
 };
 
 export const _Error = {

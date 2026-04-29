@@ -15,10 +15,18 @@ import {
 import { action } from "@storybook/addon-actions";
 import { strIsNullOrEmpty } from "../utils/string";
 import { getIconNames } from "../components/icon-names";
+import commonElementsDocs from "./docs/common-elements.md";
 
 export default {
   title: "Common Elements",
   decorators: [withKnobs],
+  parameters: {
+    docs: {
+      description: {
+        component: commonElementsDocs,
+      },
+    },
+  },
 };
 
 export const _Heading = {

@@ -123,6 +123,15 @@ vi.mock("../../src/components/elements/element-context", () => ({
       Button: ({ children }: React.PropsWithChildren<{}>) => <button>{children}</button>,
       Select: () => <select />,
       Toaster: React.forwardRef((_props: any, _ref: any) => <div data-testid="toaster" />),
+      Checkbox: ({ label, checked, onChange, id, name }: any) => (
+         <label><input type="checkbox" id={id} name={name} checked={checked} onChange={onChange} />{label}</label>
+      ),
+      FormGroup: ({ label, children }: React.PropsWithChildren<{ label?: string }>) => (
+         <div><label>{label}</label>{children}</div>
+      ),
+      InputGroup: ({ value, onChange, id, name }: any) => (
+         <input type="text" id={id} name={name} value={value} onChange={onChange} />
+      ),
    }),
 }));
 vi.mock("../../src/api/i18n", () => ({

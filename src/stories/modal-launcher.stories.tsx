@@ -7,6 +7,7 @@ import { registerComponentFactory } from "../api/registry/component";
 import { useReduxDispatch } from "../components/map-providers/context";
 import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { useElementContext } from "../components/elements/element-context";
+import modalLauncherDocs from "./docs/viewer-containers-modal-launcher.md";
 
 import "../styles/index.css";
 
@@ -116,6 +117,13 @@ const UnregisteredComponentModalStoryContent: React.FC = () => {
 
 export default {
    title: "Viewer Containers / Modal Launcher",
+   parameters: {
+      docs: {
+         description: {
+            component: modalLauncherDocs,
+         },
+      },
+   },
    decorators: [
       withKnobs,
       (storyFn: () => boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined) => (

@@ -35,7 +35,7 @@ type MapToolbarProps = {
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
     const swipeInfo = useMapSwipeInfo();
     const swipeActive = useIsMapSwipeActive();
-    const { Button, Card, Popover } = useElementContext();
+    const { Button, Card, Popover, Heading } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
         <ElementGroup vertical style={{ zIndex: 10, position: "absolute", left: 30, top: 30 }}>
@@ -51,9 +51,9 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
             <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="map" />
                 <Card style={{ minWidth: 200 }}>
-                    <h5 className="bp3-heading"><a href="#">Active Base Layer</a></h5>
+                    <Heading level={5}><a href="#">Active Base Layer</a></Heading>
                     <PlaceholderComponent id={DefaultComponentNames.BaseMapSwitcher} locale={locale} />
-                    <h5 className="bp3-heading"><a href="#">Current Map</a></h5>
+                    <Heading level={5}><a href="#">Current Map</a></Heading>
                     <PlaceholderComponent id={DefaultComponentNames.MapMenu} locale={locale} />
                 </Card>
             </Popover>

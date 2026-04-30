@@ -101,10 +101,10 @@ export const _ImageIconSprite = {
    render: () => {
       return (
          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-            <ImageIcon spriteClass="icon-zoom-in" />
-            <ImageIcon spriteClass="icon-zoom-out" />
-            <ImageIcon spriteClass="icon-select" />
-            <ImageIcon spriteClass="icon-pan" />
+            <ImageIcon spriteClass="zoom-in" />
+            <ImageIcon spriteClass="zoom-out-fixed" />
+            <ImageIcon spriteClass="select" />
+            <ImageIcon spriteClass="pan" />
          </div>
       );
    },

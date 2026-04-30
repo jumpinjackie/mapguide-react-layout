@@ -41,6 +41,7 @@ export function getQueryMapFeaturesResponse(activeMapName: string) {
 
 export default {
   title: "Map and Map Interaction Components",
+  tags: ['no-visual-regression'],
   parameters: {
     docs: {
       description: {

@@ -8,6 +8,7 @@
   - [Components](COMPONENTS.md)
   - [Known Issues](KNOWN_ISSUES.md)
   - [i18n / Translations](I18N.md)
+  - [Visual Regression Testing & MCP Screenshot Tool](VISUAL_REGRESSION.md)
 - [API](APIDOC.md)
   - [Browser API Overview](API_BROWSER.md)
   - [Viewer API Compatibility with AJAX/Fusion viewer](API_COMPAT.md)

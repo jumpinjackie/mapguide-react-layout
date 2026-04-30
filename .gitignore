@@ -37,3 +37,7 @@ docker/devenv/packages/*
 !docker/devenv/packages/README.md
 docker/devenv/server-data/*
 !docker/devenv/server-data/README.md
+
+# Visual regression test outputs (keep baselines, ignore reports and temp files)
+playwright-report/
+test-results/

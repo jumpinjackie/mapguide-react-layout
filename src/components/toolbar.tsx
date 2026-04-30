@@ -95,7 +95,9 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
     const pad = ((size - 16) / 2);
     const vertPad = 6;
     const style: React.CSSProperties = {
-        display: vertical === true ? "block" : "inline-block",
+        display: vertical === true ? "block" : "inline-flex",
+        alignItems: vertical === true ? undefined : "center",
+        gap: vertical === true ? undefined : 4,
         //height: height,
         paddingLeft: pad,
         paddingRight: pad,

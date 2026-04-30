@@ -1,5 +1,6 @@
 import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
+import MinimalProvider from './providers/minimal/provider';
 import type { IItem } from '../toolbar';
 
 /**
@@ -443,7 +444,23 @@ export interface IElementContext {
     HtmlTable: React.ComponentType<React.PropsWithChildren<HtmlTableProps>>;
 }
 
-const ElementContext = React.createContext<IElementContext>(BpProvider);
+const ElementContext = React.createContext<IElementContext>(MinimalProvider);
+
+/**
+ * The built-in lightweight provider that implements all abstract UI elements using
+ * HTML intrinsic elements and plain CSS. This is the default provider.
+ *
+ * @since 0.15
+ */
+export { MinimalProvider };
+
+/**
+ * The Blueprint.js provider that implements all abstract UI elements using Blueprint.js components.
+ * Use this if you prefer the Blueprint.js look and feel, or if your application already uses Blueprint.js.
+ *
+ * @since 0.15
+ */
+export { BpProvider };
 
 /**
  * Accesses the UI element context

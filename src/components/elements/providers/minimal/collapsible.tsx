@@ -12,5 +12,5 @@ export const MnCollapsible: React.FC<React.PropsWithChildren<CollapsibleProps>> 
       overflow: isOpen ? "visible" : "hidden",
       transition: "max-height var(--mrl-transition-speed, 150ms) ease-in-out",
    };
-   return <div style={style}>{children}</div>;
+   return <div style={style} aria-hidden={!isOpen || undefined}>{children}</div>;
 };

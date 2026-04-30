@@ -16,8 +16,8 @@ describe("components/menu", () => {
             { label: "Bar" }
         ];
         const fnInvoke = vi.fn();
-        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
-        const eItems = container.querySelectorAll("a.bp3-menu-item");
+        const { getAllByRole } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
+        const eItems = getAllByRole("menuitem");
         expect(eItems).toHaveLength(2);
     });
     it("Raises onInvoke if a child item is clicked", () => {
@@ -25,8 +25,8 @@ describe("components/menu", () => {
             { label: "Foo" }
         ];
         const fnInvoke = vi.fn();
-        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
-        const eItems = container.querySelectorAll("a.bp3-menu-item");
+        const { getAllByRole } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
+        const eItems = getAllByRole("menuitem");
         fireEvent.click(eItems[0]);
         expect(fnInvoke.mock.calls).toHaveLength(1);
     });
@@ -36,8 +36,8 @@ describe("components/menu", () => {
         const items: IItem[] = [
             { label: "Foo", invoke: fnInvoke2 }
         ];
-        const { container } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
-        const eItems = container.querySelectorAll("a.bp3-menu-item");
+        const { getAllByRole } = render(<MenuImpl items={items} onInvoked={fnInvoke} />);
+        const eItems = getAllByRole("menuitem");
         fireEvent.click(eItems[0]);
         expect(fnInvoke.mock.calls).toHaveLength(1);
         expect(fnInvoke2.mock.calls).toHaveLength(1);

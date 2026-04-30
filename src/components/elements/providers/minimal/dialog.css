@@ -23,7 +23,8 @@
   background: var(--mrl-color-bg);
   border-radius: var(--mrl-radius-lg);
   box-shadow: var(--mrl-shadow-md);
-  min-width: 360px;
+  overflow: hidden;
+  min-width: 440px;
   max-width: 90vw;
   max-height: 90vh;
   display: flex;
@@ -42,13 +43,26 @@
 
 .mrl-dialog-header h5 {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--mrl-spacing-sm);
   font-size: var(--mrl-font-size-lg);
   font-weight: 600;
   color: var(--mrl-color-text);
 }
 
+.mrl-dialog-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--mrl-color-text-muted);
+}
+
 .mrl-dialog-close {
-  padding: var(--mrl-spacing-xs);
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0;
+  margin: 0 4px 0 8px;
   line-height: 1;
 }
 
@@ -56,12 +70,13 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--mrl-spacing-lg);
+  background: var(--mrl-color-bg-elevated);
 }
 
 .mrl-dialog-footer {
-  padding: var(--mrl-spacing-md) var(--mrl-spacing-lg);
-  border-top: 1px solid var(--mrl-color-border);
+  padding: var(--mrl-spacing-sm) var(--mrl-spacing-md);
   flex-shrink: 0;
+  background: var(--mrl-color-bg-elevated);
 }
 
 .mrl-dialog-footer-actions {

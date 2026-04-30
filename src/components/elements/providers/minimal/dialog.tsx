@@ -2,6 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { X } from "lucide-react";
+import { MnIcon } from "./icon";
 import type {
    DialogProps,
    DialogContainerProps,
@@ -17,7 +18,7 @@ import "./dialog.css";
  * @hidden
  * @since 0.15
  */
-export const MnDialog: React.FC<React.PropsWithChildren<DialogProps>> = ({ isOpen, title, onClose, children }) => {
+export const MnDialog: React.FC<React.PropsWithChildren<DialogProps>> = ({ icon, isOpen, title, onClose, children }) => {
    if (typeof document === "undefined" || !isOpen) {
       return null;
    }
@@ -27,13 +28,18 @@ export const MnDialog: React.FC<React.PropsWithChildren<DialogProps>> = ({ isOpe
          <div className="mrl-dialog-shell" role="dialog" aria-modal="true">
             {title && (
                <div className="mrl-dialog-header">
-                  <h5>{title}</h5>
+                  <h5>
+                     {icon && (
+                        <span className="mrl-dialog-icon" aria-hidden="true">
+                           <MnIcon icon={icon} iconSize={18} />
+                        </span>
+                     )}
+                     <span>{title}</span>
+                  </h5>
                   <button className="mrl-dialog-close mrl-btn mrl-btn--minimal" onClick={onClose} aria-label="Close"><X size={14} /></button>
                </div>
             )}
-            <div className="mrl-dialog-body">
-               {children}
-            </div>
+            {children}
          </div>
       </div>,
       document.body

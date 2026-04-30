@@ -7,6 +7,7 @@ import {
    ArrowLeftRight,
    ArrowRight,
    Ban,
+   Check,
    ChevronDown,
    ChevronRight,
    ChevronUp,
@@ -73,6 +74,7 @@ export const ICON_MAP: Record<string, LucideIcon | null> = {
    "stop": Square,
    "tag": Tag,
    "th": LayoutGrid,
+   "tick": Check,
    "warning-sign": AlertTriangle,
 };
 

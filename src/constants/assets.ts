@@ -210,5 +210,6 @@ export type BlueprintSvgIconNames =
     "small-cross" |
     "stop" |
     "tag" |
+    "tick" |
     "th" |
     "warning-sign";

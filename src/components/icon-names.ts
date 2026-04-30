@@ -31,6 +31,7 @@ export function getIconNames() {
         "cross",
         "print",
         "th",
+        "tick",
         "application",
         "plus",
         "minus",

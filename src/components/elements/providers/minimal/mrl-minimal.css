@@ -69,6 +69,10 @@
   margin: 0 0 var(--mrl-spacing-sm) 0;
 }
 
+.mrl-heading--h5 {
+  font-size: var(--mrl-font-size-lg);
+}
+
 .mrl-text {
   font-family: inherit;
   font-size: var(--mrl-font-size-base);

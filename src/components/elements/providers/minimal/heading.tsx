@@ -8,7 +8,7 @@ import { assertNever } from "../../../../utils/never";
  * @since 0.15
  */
 export const MnHeading: React.FC<React.PropsWithChildren<HeadingProps>> = ({ level, style, className, children }) => {
-   const cls = ["mrl-heading", className].filter(Boolean).join(" ");
+   const cls = ["mrl-heading", `mrl-heading--h${level}`, className].filter(Boolean).join(" ");
    switch (level) {
       case 1:
          return <h1 className={cls} style={style}>{children}</h1>;

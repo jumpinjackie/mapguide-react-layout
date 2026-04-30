@@ -29,8 +29,8 @@ const ICON_SEARCH: BlueprintSvgIconNames = "search";
 
 const UL_LIST_STYLE = (baseSize: number) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
-const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
-const CHK_STYLE = (baseSize: number) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 1, verticalAlign: "middle" });
+const ROW_ITEM_ELEMENT_STYLE = { display: "inline-flex", alignItems: "center", verticalAlign: "middle" };
+const CHK_STYLE = (baseSize: number) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 0, verticalAlign: "middle" });
 const EMPTY_STYLE = (baseSize: number) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 const EXTRAS_STYLE = (baseSize: number) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 
@@ -803,7 +803,7 @@ export const Legend = /*React.memo(*/(props: ILegendProps) => {
                     externalBaseLayers.length > 0 &&
                     props.inlineBaseLayerSwitcher) {
                     return <Card style={{ marginBottom: 10 }}>
-                        <Heading level={5}><a href="#">{tr("EXTERNAL_BASE_LAYERS", props.locale)}</a></Heading>
+                        <Heading level={5}>{tr("EXTERNAL_BASE_LAYERS", props.locale)}</Heading>
                         <BaseLayerSwitcher locale={props.locale} externalBaseLayers={externalBaseLayers} onBaseLayerChanged={onBaseLayerChanged} />
                     </Card>;
                 }

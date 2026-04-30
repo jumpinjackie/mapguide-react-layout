@@ -6,6 +6,7 @@
   - [Developer Guide](DEVELOPING.md)
   - [Application Definiton Reference](APPDEF.md)
   - [Components](COMPONENTS.md)
+  - [Style Customization](STYLE_CUSTOMIZATION.md)
   - [Known Issues](KNOWN_ISSUES.md)
   - [i18n / Translations](I18N.md)
   - [Visual Regression Testing & MCP Screenshot Tool](VISUAL_REGRESSION.md)

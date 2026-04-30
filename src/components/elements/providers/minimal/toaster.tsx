@@ -2,6 +2,8 @@
 import React from "react";
 import toast, { Toaster as HotToaster } from "react-hot-toast";
 import type { IToasterRef, ToasterProps, ToastPosition, ElementVariant } from "../../element-context";
+import { MnIcon } from "./icon";
+import "./toaster.css";
 
 function mapPosition(position: ToastPosition | undefined): "top-center" | "top-left" | "top-right" | "bottom-center" | "bottom-left" | "bottom-right" {
    switch (position) {
@@ -22,15 +24,22 @@ function mapPosition(position: ToastPosition | undefined): "top-center" | "top-l
 export const MnToaster = React.forwardRef<IToasterRef, ToasterProps>((props, ref) => {
    React.useImperativeHandle(ref, () => ({
       show(message) {
-         const text = message.message as string;
          const variant: ElementVariant | undefined = message.variant;
-         if (variant === "danger") {
-            return toast.error(text);
-         } else if (variant === "success") {
-            return toast.success(text);
-         } else {
-            return toast(text);
-         }
+         const classes = [
+            "mrl-toast",
+            variant ? `mrl-toast--${variant}` : null,
+         ].filter(Boolean).join(" ");
+
+         return toast.custom(
+            <div className={classes} role="status" aria-live="polite">
+               {message.icon && (
+                  <span className="mrl-toast-icon" aria-hidden="true">
+                     <MnIcon icon={message.icon} iconSize={16} />
+                  </span>
+               )}
+               <div className="mrl-toast-message">{message.message}</div>
+            </div>
+         );
       },
       dismiss(key) {
          toast.dismiss(key);

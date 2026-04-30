@@ -1,6 +1,7 @@
 // Minimal provider – Button component
 import React from "react";
 import type { ButtonProps } from "../../element-context";
+import { MnIcon } from "./icon";
 import "./button.css";
 
 /**
@@ -9,6 +10,7 @@ import "./button.css";
  */
 export const MnButton: React.FC<React.PropsWithChildren<ButtonProps>> = ({
    type = "button",
+   icon,
    variant,
    minimal,
    active,
@@ -39,6 +41,7 @@ export const MnButton: React.FC<React.PropsWithChildren<ButtonProps>> = ({
          style={style}
       >
          {loading && <span className="mrl-btn-spinner" aria-hidden="true" />}
+         {icon && <MnIcon icon={icon} iconSize={16} />}
          <span className="mrl-btn-text">{children}</span>
       </button>
    );

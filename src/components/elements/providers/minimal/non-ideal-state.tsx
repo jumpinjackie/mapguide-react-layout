@@ -1,6 +1,7 @@
 // Minimal provider – NonIdealState component
 import React from "react";
 import type { NonIdealStateProps } from "../../element-context";
+import { MnIcon } from "./icon";
 import "./non-ideal-state.css";
 
 /**
@@ -12,7 +13,7 @@ export const MnNonIdealState: React.FC<NonIdealStateProps> = ({ icon, title, des
       <div className="mrl-non-ideal-state">
          {icon && (
             <div className="mrl-non-ideal-state-icon">
-               {icon}
+               {typeof icon === "string" ? <MnIcon icon={icon} iconSize={40} /> : icon}
             </div>
          )}
          {title && (

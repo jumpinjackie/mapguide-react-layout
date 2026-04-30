@@ -8,9 +8,11 @@
 .mrl-tab-list {
   display: flex;
   flex-direction: row;
+  align-items: flex-end;
   border-bottom: 2px solid var(--mrl-color-border);
   gap: 0;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .mrl-tab {
@@ -19,6 +21,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
+  line-height: 1;
   cursor: pointer;
   font-size: var(--mrl-font-size-base);
   font-family: inherit;
@@ -26,6 +29,12 @@
   transition: color var(--mrl-transition-speed) ease,
               border-bottom-color var(--mrl-transition-speed) ease;
   white-space: nowrap;
+}
+
+.mrl-tab > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mrl-spacing-xs);
 }
 
 .mrl-tab:hover:not(.mrl-tab--active) {

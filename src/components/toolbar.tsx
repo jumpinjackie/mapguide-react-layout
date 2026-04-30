@@ -234,7 +234,7 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
     const ttip = getTooltip(item);
     const iconEl = getIconElement(item, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
-        <div data-flyout-id={`flyout-${item.flyoutId}`}>
+        <div data-flyout-id={`flyout-${item.flyoutId}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;
@@ -290,7 +290,7 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
     const ttip = getTooltip(menu);
     const iconEl = getIconElement(menu, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
-        <div data-flyout-id={`flyout-${menu.flyoutId}`}>
+        <div data-flyout-id={`flyout-${menu.flyoutId}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;

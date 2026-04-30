@@ -1,7 +1,9 @@
 /* Minimal provider – Spinner styles */
 
 .mrl-spinner {
-  display: inline-block;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 50%;
   border: 3px solid var(--mrl-color-surface);
   border-top-color: var(--mrl-color-primary);

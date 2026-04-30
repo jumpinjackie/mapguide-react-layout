@@ -8,7 +8,6 @@ export function getIconNames() {
     return [
         "chevron-up",
         "error",
-        "menu-open",
         "small-cross",
         "arrows-horizontal",
         "info-sign",

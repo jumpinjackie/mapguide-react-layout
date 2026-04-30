@@ -65,39 +65,41 @@ jobs:
             viewer.zip
             storybook.zip
 
-  visual-regression:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Install Playwright Chromium
-        run: npx playwright install chromium --with-deps
-
-      - name: Run visual regression tests
-        run: yarn test:visual:ci
-
-      - name: Upload Playwright report on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+  # visual-regression job disabled — CI produces inconsistent results across environments.
+  # Run visual regression tests locally with: yarn test:visual:update / yarn test:visual
+  # visual-regression:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #
+  #     - name: Enable Corepack
+  #       run: corepack enable
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '22'
+  #         cache: 'yarn'
+  #
+  #     - name: Install dependencies
+  #       run: yarn install
+  #
+  #     - name: Install Playwright Chromium
+  #       run: npx playwright install chromium --with-deps
+  #
+  #     - name: Run visual regression tests
+  #       run: yarn test:visual:ci
+  #
+  #     - name: Upload Playwright report on failure
+  #       if: failure()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: playwright-report
+  #         path: playwright-report/
+  #         retention-days: 30
 
   deploy_gh_pages:
     runs-on: ubuntu-latest

@@ -1,0 +1,36 @@
+/* Minimal provider – Callout styles */
+
+.mrl-callout {
+  padding: var(--mrl-spacing-md) var(--mrl-spacing-lg);
+  border-radius: var(--mrl-radius-md);
+  border-left: 4px solid var(--mrl-color-border);
+  background: var(--mrl-color-bg-elevated);
+  margin-bottom: var(--mrl-spacing-md);
+}
+
+.mrl-callout-title {
+  font-weight: 600;
+  margin: 0 0 var(--mrl-spacing-xs) 0;
+  font-size: var(--mrl-font-size-base);
+  color: var(--mrl-color-text);
+}
+
+.mrl-callout--primary {
+  border-left-color: var(--mrl-color-primary);
+  background: rgba(41,101,204,0.06);
+}
+
+.mrl-callout--danger {
+  border-left-color: var(--mrl-color-danger);
+  background: rgba(192,57,43,0.06);
+}
+
+.mrl-callout--warning {
+  border-left-color: var(--mrl-color-warning);
+  background: rgba(230,126,34,0.06);
+}
+
+.mrl-callout--success {
+  border-left-color: var(--mrl-color-success);
+  background: rgba(30,132,73,0.06);
+}

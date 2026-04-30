@@ -1,0 +1,25 @@
+/* Minimal provider – FormGroup styles */
+
+.mrl-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mrl-spacing-xs);
+  margin-bottom: var(--mrl-spacing-md);
+}
+
+.mrl-form-group label {
+  font-size: var(--mrl-font-size-sm);
+  font-weight: 600;
+  color: var(--mrl-color-text);
+}
+
+.mrl-form-group--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--mrl-spacing-sm);
+}
+
+.mrl-form-group--inline label {
+  white-space: nowrap;
+  flex-shrink: 0;
+}

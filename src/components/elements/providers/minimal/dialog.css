@@ -1,0 +1,71 @@
+/* Minimal provider – Dialog styles */
+
+.mrl-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16,22,26,0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mrl-dialog-container {
+  position: relative;
+  z-index: 1101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mrl-dialog-shell {
+  background: var(--mrl-color-bg);
+  border-radius: var(--mrl-radius-lg);
+  box-shadow: var(--mrl-shadow-md);
+  min-width: 360px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  pointer-events: all;
+}
+
+.mrl-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mrl-spacing-md) var(--mrl-spacing-lg);
+  border-bottom: 1px solid var(--mrl-color-border);
+  flex-shrink: 0;
+}
+
+.mrl-dialog-header h5 {
+  margin: 0;
+  font-size: var(--mrl-font-size-lg);
+  font-weight: 600;
+  color: var(--mrl-color-text);
+}
+
+.mrl-dialog-close {
+  padding: var(--mrl-spacing-xs);
+  line-height: 1;
+}
+
+.mrl-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--mrl-spacing-lg);
+}
+
+.mrl-dialog-footer {
+  padding: var(--mrl-spacing-md) var(--mrl-spacing-lg);
+  border-top: 1px solid var(--mrl-color-border);
+  flex-shrink: 0;
+}
+
+.mrl-dialog-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mrl-spacing-sm);
+}

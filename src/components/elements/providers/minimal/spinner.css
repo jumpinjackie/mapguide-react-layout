@@ -1,0 +1,48 @@
+/* Minimal provider – Spinner styles */
+
+.mrl-spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border: 3px solid var(--mrl-color-surface);
+  border-top-color: var(--mrl-color-primary);
+  animation: mrl-spin 0.75s linear infinite;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* Size variants */
+.mrl-spinner--small {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.mrl-spinner--standard {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+
+.mrl-spinner--large {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+/* Color variants */
+.mrl-spinner--primary {
+  border-top-color: var(--mrl-color-primary);
+}
+
+.mrl-spinner--danger {
+  border-top-color: var(--mrl-color-danger);
+}
+
+.mrl-spinner--warning {
+  border-top-color: var(--mrl-color-warning);
+}
+
+.mrl-spinner--success {
+  border-top-color: var(--mrl-color-success);
+}

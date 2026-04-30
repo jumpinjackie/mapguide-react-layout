@@ -1,0 +1,9 @@
+/* Minimal provider – Card styles */
+
+.mrl-card {
+  background: var(--mrl-color-bg);
+  border: 1px solid var(--mrl-color-border);
+  border-radius: var(--mrl-radius-md);
+  box-shadow: var(--mrl-shadow-sm);
+  padding: var(--mrl-spacing-lg);
+}

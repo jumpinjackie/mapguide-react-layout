@@ -1,0 +1,59 @@
+/* Minimal provider – Switch styles */
+
+.mrl-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mrl-spacing-sm);
+  cursor: pointer;
+  font-size: var(--mrl-font-size-base);
+  color: var(--mrl-color-text);
+  user-select: none;
+}
+
+.mrl-switch input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.mrl-switch-track {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+  background: var(--mrl-color-border);
+  border-radius: 9px;
+  transition: background var(--mrl-transition-speed) ease;
+  flex-shrink: 0;
+}
+
+.mrl-switch input:checked ~ .mrl-switch-track {
+  background: var(--mrl-color-primary);
+}
+
+.mrl-switch input:disabled ~ .mrl-switch-track {
+  opacity: 0.5;
+}
+
+.mrl-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--mrl-color-bg);
+  border-radius: 50%;
+  box-shadow: var(--mrl-shadow-sm);
+  transition: transform var(--mrl-transition-speed) ease;
+}
+
+.mrl-switch input:checked ~ .mrl-switch-track .mrl-switch-thumb {
+  transform: translateX(14px);
+}
+
+.mrl-switch:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

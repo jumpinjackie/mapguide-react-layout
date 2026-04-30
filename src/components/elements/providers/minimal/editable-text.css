@@ -1,0 +1,44 @@
+/* Minimal provider – EditableText styles */
+
+.mrl-editable-text {
+  display: inline-block;
+  min-width: 80px;
+}
+
+.mrl-editable-text-display {
+  cursor: pointer;
+  padding: 3px 4px;
+  border-radius: var(--mrl-radius-sm);
+  border: 1px solid transparent;
+  display: inline-block;
+  min-width: 60px;
+  transition: background var(--mrl-transition-speed) ease,
+              border-color var(--mrl-transition-speed) ease;
+  color: var(--mrl-color-text);
+  font-size: var(--mrl-font-size-base);
+}
+
+.mrl-editable-text-display:hover {
+  background: var(--mrl-color-surface);
+  border-color: var(--mrl-color-border);
+}
+
+.mrl-editable-text-display:empty::after {
+  content: "Click to edit";
+  color: var(--mrl-color-text-muted);
+  font-style: italic;
+}
+
+.mrl-editable-text-input {
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  color: var(--mrl-color-text);
+  background: var(--mrl-color-bg);
+  border: 1px solid var(--mrl-color-border-focus);
+  border-radius: var(--mrl-radius-sm);
+  padding: 3px 4px;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(41,101,204,0.2);
+  width: 100%;
+  min-width: 60px;
+}

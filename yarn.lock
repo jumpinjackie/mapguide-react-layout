@@ -3111,6 +3111,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@szhsin/react-menu@npm:4.5.1":
+  version: 4.5.1
+  resolution: "@szhsin/react-menu@npm:4.5.1"
+  dependencies:
+    react-transition-state: "npm:^2.3.1"
+  peerDependencies:
+    react: ">=16.14.0"
+    react-dom: ">=16.14.0"
+  checksum: 10c0/69a86cc52bf9915c74d70acd031e8f86080e95dcbcc84766af879b33345f2e38d8db8f8f01d5035d916e60af462e9c6838ca016a7a85e2d86ae6f32c92bf3044
+  languageName: node
+  linkType: hard
+
 "@szmarczak/http-timer@npm:^1.1.2":
   version: 1.1.2
   resolution: "@szmarczak/http-timer@npm:1.1.2"
@@ -6144,7 +6156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.2.2":
+"csstype@npm:^3.1.3, csstype@npm:^3.2.2":
   version: 3.2.3
   resolution: "csstype@npm:3.2.3"
   checksum: 10c0/cd29c51e70fa822f1cecd8641a1445bed7063697469d35633b516e60fe8c1bde04b08f6c5b6022136bb669b64c63d4173af54864510fbb4ee23281801841a3ce
@@ -8520,6 +8532,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"goober@npm:^2.1.16":
+  version: 2.1.18
+  resolution: "goober@npm:2.1.18"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 10c0/de9bf7b6f57417900afac81a479b85d8c0bcb0322ba8b174f9287d10e7891ba7e33db5fe2b0cdd75281c69130e76eb0c694345acf45ea57e4e4a2db8e4c4f021
+  languageName: node
+  linkType: hard
+
 "gopd@npm:^1.0.1, gopd@npm:^1.2.0":
   version: 1.2.0
   resolution: "gopd@npm:1.2.0"
@@ -10697,6 +10718,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lucide-react@npm:1.14.0":
+  version: 1.14.0
+  resolution: "lucide-react@npm:1.14.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/25c5dd878945842ffb519532f1a66f59f2d461e7be7bd322091b0ecd3cd32561c1ae3d9b50161432d39a72bf8c8f1a039268f2f20a035e520dd3f49dd46ffaf2
+  languageName: node
+  linkType: hard
+
 "lunr@npm:^2.3.9":
   version: 2.3.9
   resolution: "lunr@npm:2.3.9"
@@ -10813,6 +10843,7 @@ __metadata:
     "@storybook/react-webpack5": "npm:^8.6.18"
     "@storybook/test": "npm:^8.6.15"
     "@storybook/test-runner": "npm:0.24.3"
+    "@szhsin/react-menu": "npm:4.5.1"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^12.1.5"
     "@types/dompurify": "npm:^3.2.0"
@@ -10843,6 +10874,7 @@ __metadata:
     lodash.debounce: "npm:^4.0.8"
     lodash.xor: "npm:^4.5.0"
     lodash.xorby: "npm:^4.7.0"
+    lucide-react: "npm:1.14.0"
     mini-css-extract-plugin: "npm:^2.9.2"
     ol: "npm:^10.9.0"
     papaparse: "npm:^5.5.3"
@@ -10853,9 +10885,11 @@ __metadata:
     react: "npm:^17.0.2"
     react-colorful: "npm:^5.6.1"
     react-dom: "npm:^17.0.2"
+    react-hot-toast: "npm:2.6.0"
     react-redux: "npm:^8.1.3"
     react-rnd: "npm:^10.5.2"
     react-test-renderer: "npm:17.0.2"
+    react-tiny-popover: "npm:8.1.6"
     rimraf: "npm:6.1.3"
     source-map-loader: "npm:5.0.0"
     stickybits: "npm:3.7.11"
@@ -12704,6 +12738,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hot-toast@npm:2.6.0":
+  version: 2.6.0
+  resolution: "react-hot-toast@npm:2.6.0"
+  dependencies:
+    csstype: "npm:^3.1.3"
+    goober: "npm:^2.1.16"
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 10c0/c25652e0a477ab501b365a6a2d20b314275a1d9963dd56a9803972d602845f0d44ade2c3345cd66ccd251d62e2e5a10001a55fd80fa183c0e41343f3780ffa9f
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0 || ^17.0.0 || ^18.0.0, react-is@npm:^18.0.0, react-is@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
@@ -12841,6 +12888,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-tiny-popover@npm:8.1.6":
+  version: 8.1.6
+  resolution: "react-tiny-popover@npm:8.1.6"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/5550b9a3b339ab390fc4228ae4b4d85d36a3e9d9f26018ff74ebd594dd22bfe856e0452d6f7e50f992cdf70cb2028417455e99f387ad08ea49b8ea41138d4078
+  languageName: node
+  linkType: hard
+
 "react-transition-group@npm:^2.9.0":
   version: 2.9.0
   resolution: "react-transition-group@npm:2.9.0"
@@ -12868,6 +12925,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 10c0/2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
+  languageName: node
+  linkType: hard
+
+"react-transition-state@npm:^2.3.1":
+  version: 2.3.3
+  resolution: "react-transition-state@npm:2.3.3"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/701e0adf639c0f05ee043431472211f8a7805488448a4908c9d97c431be26847acfe8ba6b0772931c305496598ea16329bdace407260fdba95be2844374c91e3
   languageName: node
   linkType: hard
 

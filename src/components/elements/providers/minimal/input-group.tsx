@@ -23,10 +23,43 @@ export const MnInputGroup: React.FC<InputGroupProps> = ({
    onChange,
    onClick,
 }) => {
+   const rightElementRef = React.useRef<HTMLSpanElement | null>(null);
+   const [rightElementWidth, setRightElementWidth] = React.useState(0);
+
+   React.useEffect(() => {
+      if (!rightElement || !rightElementRef.current) {
+         setRightElementWidth(0);
+         return;
+      }
+
+      const updateWidth = () => {
+         const width = Math.ceil(rightElementRef.current?.getBoundingClientRect().width ?? 0);
+         setRightElementWidth(width);
+      };
+
+      updateWidth();
+
+      if (typeof ResizeObserver === "undefined") {
+         return;
+      }
+
+      const observer = new ResizeObserver(updateWidth);
+      observer.observe(rightElementRef.current);
+
+      return () => {
+         observer.disconnect();
+      };
+   }, [rightElement]);
+
+   const inputStyle = rightElement
+      ? { paddingRight: `${rightElementWidth + 10}px` }
+      : undefined;
+
    const classes = [
       "mrl-input-group",
       round ? "mrl-input-group--round" : null,
       leftIcon ? "mrl-input-group--with-left-icon" : null,
+      rightElement ? "mrl-input-group--with-right-element" : null,
    ].filter(Boolean).join(" ");
 
    return (
@@ -45,11 +78,12 @@ export const MnInputGroup: React.FC<InputGroupProps> = ({
             value={value}
             readOnly={readOnly}
             disabled={disabled}
+            style={inputStyle}
             onChange={onChange}
             onClick={onClick as React.MouseEventHandler<HTMLInputElement>}
          />
          {rightElement && (
-            <span className="mrl-input-right-element">{rightElement}</span>
+            <span ref={rightElementRef} className="mrl-input-right-element">{rightElement}</span>
          )}
       </div>
    );

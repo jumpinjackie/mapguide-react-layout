@@ -58,7 +58,32 @@
 
 .mrl-input-right-element {
   position: absolute;
-  right: 0;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+}
+
+.mrl-input-right-element > * {
+  height: 100%;
+  margin: 0;
+}
+
+.mrl-input-right-element .mrl-btn {
+  border-radius: 0 var(--mrl-radius-sm) var(--mrl-radius-sm) 0;
+}
+
+.mrl-input-right-element .mrl-btn--icon-only {
+  aspect-ratio: 1 / 1;
+}
+
+.mrl-input-group--round .mrl-input-right-element {
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
+}
+
+.mrl-input-group--round .mrl-input-right-element .mrl-btn {
+  border-radius: 999px;
 }

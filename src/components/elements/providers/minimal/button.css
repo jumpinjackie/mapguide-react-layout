@@ -115,6 +115,15 @@
   opacity: 0;
 }
 
+.mrl-btn--icon-only {
+  gap: 0;
+  padding: 5px;
+}
+
+.mrl-btn--icon-only .mrl-btn-text {
+  display: none;
+}
+
 .mrl-btn-spinner {
   position: absolute;
   width: 14px;

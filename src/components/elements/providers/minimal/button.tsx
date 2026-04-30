@@ -22,12 +22,15 @@ export const MnButton: React.FC<React.PropsWithChildren<ButtonProps>> = ({
    className,
    children,
 }) => {
+   const hasChildren = React.Children.count(children) > 0;
+
    const classes = [
       "mrl-btn",
       variant ? `mrl-btn--${variant}` : null,
       minimal ? "mrl-btn--minimal" : null,
       active ? "mrl-btn--active" : null,
       loading ? "mrl-btn--loading" : null,
+      icon && !hasChildren ? "mrl-btn--icon-only" : null,
       className ?? null,
    ].filter(Boolean).join(" ");
 

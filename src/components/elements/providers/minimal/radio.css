@@ -1,0 +1,12 @@
+/* Minimal provider – Radio styles */
+
+.mrl-radio {
+  display: block;
+  cursor: pointer;
+  margin-bottom: var(--mrl-spacing-xs);
+}
+
+.mrl-radio input[type="radio"] {
+  margin-right: var(--mrl-spacing-xs);
+  cursor: pointer;
+}

@@ -1,6 +1,7 @@
 // Minimal provider – Radio component
 import React from "react";
 import type { RadioProps } from "../../element-context";
+import "./radio.css";
 
 /**
  * @hidden

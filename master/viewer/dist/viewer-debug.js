@@ -12016,7 +12016,7 @@ exports.Accordion = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
-const resize_observer_1 = tslib_1.__importDefault(__webpack_require__(/*! @react-hook/resize-observer */ "./node_modules/@react-hook/resize-observer/dist/module/index.js"));
+const use_resize_observer_1 = __webpack_require__(/*! ../utils/use-resize-observer */ "./src/utils/use-resize-observer.ts");
 const PANEL_HEADER_HEIGHT = 24;
 function validatePanelId(panels, id) {
     if (!id) {
@@ -12050,7 +12050,7 @@ exports.Accordion = React.memo((props) => {
             setDim(target.current.getBoundingClientRect());
         }
     }, [target]);
-    (0, resize_observer_1.default)(target, e => setDim(e.contentRect));
+    (0, use_resize_observer_1.useResizeObserver)({ ref: target, onResize: (size) => { var _a, _b; return setDim({ width: (_a = size.width) !== null && _a !== void 0 ? _a : -1, height: (_b = size.height) !== null && _b !== void 0 ? _b : -1 }); } });
     const onTogglePanel = (e) => {
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (openPanel != id) {
@@ -32715,6 +32715,102 @@ function appendParameters(url, parameters, bOverwriteExisting = true, bConvertTo
 function parseUrlParameters(url) {
     const parsed = new URL(url, getUrlBase());
     return urlSearchParamsToObject(parsed.searchParams);
+}
+
+
+/***/ },
+
+/***/ "./src/utils/use-resize-observer.ts"
+/*!******************************************!*\
+  !*** ./src/utils/use-resize-observer.ts ***!
+  \******************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @file use-resize-observer.ts
+ * In-house implementation of the useResizeObserver hook.
+ * Adapted from https://usehooks-ts.com/react-hook/use-resize-observer
+ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.useResizeObserver = useResizeObserver;
+const react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+function extractSize(entry, box, sizeType) {
+    if (!entry[box]) {
+        if (box === "contentBoxSize") {
+            return entry.contentRect[sizeType === "inlineSize" ? "width" : "height"];
+        }
+        return undefined;
+    }
+    return Array.isArray(entry[box])
+        ? entry[box][0][sizeType]
+        : // @ts-ignore Support Firefox's non-standard behavior
+            entry[box][sizeType];
+}
+function useIsMounted() {
+    const isMounted = (0, react_1.useRef)(false);
+    (0, react_1.useEffect)(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+    return (0, react_1.useCallback)(() => isMounted.current, []);
+}
+const initialSize = {
+    width: undefined,
+    height: undefined,
+};
+/**
+ * Custom hook that observes the size of an element using the ResizeObserver API.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+ * @since 0.15
+ * @hidden
+ */
+function useResizeObserver(options) {
+    const { ref, box = "content-box" } = options;
+    const [{ width, height }, setSize] = (0, react_1.useState)(initialSize);
+    const isMounted = useIsMounted();
+    const previousSize = (0, react_1.useRef)(Object.assign({}, initialSize));
+    const onResize = (0, react_1.useRef)(undefined);
+    onResize.current = options.onResize;
+    (0, react_1.useEffect)(() => {
+        if (!ref.current)
+            return;
+        if (typeof window === "undefined" || !("ResizeObserver" in window))
+            return;
+        const observer = new ResizeObserver(([entry]) => {
+            const boxProp = box === "border-box"
+                ? "borderBoxSize"
+                : box === "device-pixel-content-box"
+                    ? "devicePixelContentBoxSize"
+                    : "contentBoxSize";
+            const newWidth = extractSize(entry, boxProp, "inlineSize");
+            const newHeight = extractSize(entry, boxProp, "blockSize");
+            const hasChanged = previousSize.current.width !== newWidth ||
+                previousSize.current.height !== newHeight;
+            if (hasChanged) {
+                const newSize = { width: newWidth, height: newHeight };
+                previousSize.current.width = newWidth;
+                previousSize.current.height = newHeight;
+                if (onResize.current) {
+                    onResize.current(newSize);
+                }
+                else {
+                    if (isMounted()) {
+                        setSize(newSize);
+                    }
+                }
+            }
+        });
+        observer.observe(ref.current, { box });
+        return () => {
+            observer.disconnect();
+        };
+    }, [box, ref, isMounted]);
+    return { width, height };
 }
 
 

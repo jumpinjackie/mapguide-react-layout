@@ -84,3 +84,17 @@
   justify-content: flex-end;
   gap: var(--mrl-spacing-sm);
 }
+
+.mrl-dialog-header.mrl-rnd-modal-header {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 6px 12px;
+}
+
+.mrl-rnd-modal-header .mrl-heading {
+  margin: 0;
+}
+
+.mrl-dialog-body.mrl-rnd-modal-body {
+  padding: 0;
+}

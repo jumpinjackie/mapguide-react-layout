@@ -22,6 +22,10 @@
   line-height: 1.4;
 }
 
+.mrl-input-group--round input {
+  border-radius: 999px;
+}
+
 .mrl-input-group input:focus {
   outline: none;
   border-color: var(--mrl-color-border-focus);
@@ -48,7 +52,7 @@
   z-index: 1;
 }
 
-.mrl-input-group:has(.mrl-input-left-icon) input {
+.mrl-input-group--with-left-icon input {
   padding-left: 28px;
 }
 

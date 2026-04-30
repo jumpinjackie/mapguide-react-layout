@@ -1,6 +1,7 @@
 // Minimal provider – InputGroup component
 import React from "react";
 import type { InputGroupProps } from "../../element-context";
+import { MnIcon } from "./icon";
 import "./input-group.css";
 
 /**
@@ -9,6 +10,7 @@ import "./input-group.css";
  */
 export const MnInputGroup: React.FC<InputGroupProps> = ({
    style,
+   round,
    autoFocus,
    leftIcon,
    placeholder,
@@ -21,10 +23,18 @@ export const MnInputGroup: React.FC<InputGroupProps> = ({
    onChange,
    onClick,
 }) => {
+   const classes = [
+      "mrl-input-group",
+      round ? "mrl-input-group--round" : null,
+      leftIcon ? "mrl-input-group--with-left-icon" : null,
+   ].filter(Boolean).join(" ");
+
    return (
-      <div className="mrl-input-group" style={style}>
+      <div className={classes} style={style}>
          {leftIcon && (
-            <span className="mrl-input-left-icon" aria-hidden="true" />
+            <span className="mrl-input-left-icon" aria-hidden="true">
+               <MnIcon icon={leftIcon} iconSize={14} />
+            </span>
          )}
          <input
             id={id}

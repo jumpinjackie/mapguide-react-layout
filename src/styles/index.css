@@ -117,6 +117,9 @@
     box-sizing: border-box;
 }
 .component-accordion-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     padding: 3px;
     cursor: pointer;
     box-sizing: border-box;

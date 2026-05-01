@@ -300,13 +300,19 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
         meta = selLayer?.getLayerMetadata();
         layerName = selLayer?.getName();
     }
+    const selectionPanelRootStyle: React.CSSProperties = {};
     let selBodyStyle: React.CSSProperties | undefined;
     if (maxHeight) {
+        selectionPanelRootStyle.overflow = "hidden";
         selBodyStyle = {
             overflowY: "auto",
             maxHeight: maxHeight - DEFAULT_TOOLBAR_SIZE
         };
     } else {
+        selectionPanelRootStyle.position = "relative";
+        selectionPanelRootStyle.width = "100%";
+        selectionPanelRootStyle.height = "100%";
+        selectionPanelRootStyle.overflow = "hidden";
         selBodyStyle = {
             overflow: "auto",
             position: "absolute",
@@ -316,7 +322,7 @@ export const SelectionPanel = React.memo((props: ISelectionPanelProps) => {
             left: 0
         }
     }
-    return <div>
+    return <div style={selectionPanelRootStyle}>
         {(() => {
             if (selection?.getLayerCount() > 0) {
                 const selectionToolbarItems = buildToolbarItems({

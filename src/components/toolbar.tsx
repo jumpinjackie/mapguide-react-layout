@@ -98,6 +98,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
         display: vertical === true ? "block" : "inline-flex",
         alignItems: vertical === true ? undefined : "center",
         gap: vertical === true ? undefined : 4,
+        verticalAlign: vertical === true ? undefined : "top",
         //height: height,
         paddingLeft: pad,
         paddingRight: pad,

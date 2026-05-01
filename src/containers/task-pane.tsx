@@ -97,7 +97,7 @@ export const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
                 flyoutStates[fid] = !!flyouts[fid].open;
             }
         }
-        return <div>
+        return <div style={{ width: "100%", height: "100%", position: "relative" }}>
             <TaskPane currentUrl={navigationStack[navIndex]}
                 showTaskBar={hasTaskBar}
                 lastUrlPushed={lastUrlPushed}

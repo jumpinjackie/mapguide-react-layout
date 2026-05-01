@@ -1,7 +1,7 @@
 // Minimal provider – Drawer component
 import React from "react";
 import ReactDOM from "react-dom";
-import { X } from "lucide-react";
+import { SvgIcon } from "./svg-icons";
 import type { DrawerProps } from "../../element-context";
 import "./drawer.css";
 
@@ -23,7 +23,7 @@ export const MnDrawer: React.FC<React.PropsWithChildren<DrawerProps>> = ({ title
          <div className={`mrl-drawer ${posClass}${openClass}`} role="dialog" aria-modal="true">
             <div className="mrl-drawer-header">
                <span className="mrl-drawer-title">{title}</span>
-               <button className="mrl-drawer-close mrl-btn mrl-btn--minimal" onClick={onClose as React.MouseEventHandler<HTMLButtonElement>} aria-label="Close"><X size={14} /></button>
+               <button className="mrl-drawer-close mrl-btn mrl-btn--minimal" onClick={onClose as React.MouseEventHandler<HTMLButtonElement>} aria-label="Close"><SvgIcon name="X" size={14} /></button>
             </div>
             <div className="mrl-drawer-body">{children}</div>
          </div>

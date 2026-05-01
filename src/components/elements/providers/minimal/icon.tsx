@@ -1,7 +1,8 @@
 // Minimal provider – Icon component
 import React from "react";
 import type { IconProps } from "../../element-context";
-import { getIconComponent } from "./icon-map";
+import { getSvgIconName } from "./icon-map";
+import { SvgIcon } from "./svg-icons";
 
 /**
  * @hidden
@@ -11,9 +12,9 @@ export const MnIcon: React.FC<IconProps> = ({ icon, style, iconSize }) => {
    if (!icon) {
       return null;
    }
-   const LucideIcon = getIconComponent(icon);
-   if (!LucideIcon) {
+   const svgName = getSvgIconName(icon);
+   if (!svgName) {
       return null;
    }
-   return <LucideIcon size={iconSize ?? 16} style={style} />;
+   return <SvgIcon name={svgName} size={iconSize ?? 16} style={style} />;
 };

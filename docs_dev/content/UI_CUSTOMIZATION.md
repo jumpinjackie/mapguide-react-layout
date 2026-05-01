@@ -38,9 +38,10 @@ The `MinimalProvider` also uses a small number of focused third-party libraries 
 
 | Component | Library | Reason |
 |---|---|---|
-| `Icon` | `lucide-react` | Provides tree-shakeable SVG icons mapped from Blueprint icon names |
 | `Popover` | `react-tiny-popover` | Viewport-aware repositioning on scroll/resize (~1 kB gzipped) |
 | `Toaster` | `react-hot-toast` | Portal-based toast stacking with an imperative `show`/`dismiss` API |
+
+All other components — including `Icon` — are implemented with zero external dependencies. Icons are rendered as inline SVGs using path data embedded directly in the provider, so no icon library is needed.
 
 ---
 

@@ -1,7 +1,7 @@
 // Minimal provider – Dialog and dialog sub-components
 import React from "react";
 import ReactDOM from "react-dom";
-import { X } from "lucide-react";
+import { SvgIcon } from "./svg-icons";
 import { MnIcon } from "./icon";
 import type {
    DialogProps,
@@ -36,7 +36,7 @@ export const MnDialog: React.FC<React.PropsWithChildren<DialogProps>> = ({ icon,
                      )}
                      <span>{title}</span>
                   </h5>
-                  <button className="mrl-dialog-close mrl-btn mrl-btn--minimal" onClick={onClose} aria-label="Close"><X size={14} /></button>
+                  <button className="mrl-dialog-close mrl-btn mrl-btn--minimal" onClick={onClose} aria-label="Close"><SvgIcon name="X" size={14} /></button>
                </div>
             )}
             {children}

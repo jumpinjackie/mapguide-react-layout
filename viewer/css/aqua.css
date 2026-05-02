@@ -47,6 +47,7 @@
     background: linear-gradient(to bottom,  #446f86 0%,#457087 4%,#467289 4%,#457087 4%,#467289 4%,#48748b 8%,#47728a 8%,#49768d 12%,#4b788f 12%,#49768d 12%,#49768d 13%,#4b788f 13%,#49768d 13%,#4b788f 13%,#4d7a91 15%,#4d7a91 17%,#4f7d94 18%,#507f96 21%,#55849b 25%,#548399 25%,#55859c 25%,#56869e 29%,#58889f 29%,#5888a0 30%,#5b8ca2 32%,#5a8aa1 32%,#5c8ea4 33%,#6194ab 41%,#6498ae 42%,#6498af 44%,#689cb2 47%,#669ab1 47%,#689cb2 47%,#699eb4 48%,#699eb5 50%,#6da4ba 54%,#6ca2b9 55%,#70a5bc 57%,#6ea4bb 57%,#70a6bd 58%,#72a9bf 60%,#74acc3 67%,#74acc3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#446f86', endColorstr='#74acc3',GradientType=0 ); /* IE6-9 */
     border: 1px solid black;
+    box-sizing: border-box;
 }
 .aqua-toolbar .selected-item, .aqua-toolbar .mouse-over {
     color: white;

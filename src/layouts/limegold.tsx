@@ -74,7 +74,7 @@ function limegoldTemplateReducer(origState: ITemplateReducerState, state: ITempl
 }
 
 const SIDEBAR_PADDING = 0;
-const TOP_BAR_HEIGHT = 35;
+const TOP_BAR_HEIGHT = DEFAULT_TOOLBAR_SIZE;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };

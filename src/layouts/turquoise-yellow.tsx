@@ -74,7 +74,7 @@ function turquoiseYellowTemplateReducer(origState: ITemplateReducerState, state:
 }
 
 const SIDEBAR_PADDING = 3;
-const TOP_BAR_HEIGHT = 35;
+const TOP_BAR_HEIGHT = DEFAULT_TOOLBAR_SIZE;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
@@ -182,7 +182,7 @@ export const TurquoiseYellowTemplateLayout = () => {
                     }
                 })()}
                 <div>
-                    <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 }} />
+                    <ToolbarContainer id="FileMenu" containerClass="turquoise-yellow-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
                     <ToolbarContainer id="Toolbar" containerClass="turquoise-yellow-toolbar" containerStyle={{ position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 }} />
                     <ToolbarContainer id="ToolbarVertical" containerClass="turquoise-yellow-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: SIDEBAR_PADDING }} />
                     <div style={{ position: "absolute", left: (DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + DEFAULT_TOOLBAR_SIZE), bottom: SIDEBAR_PADDING, right: 0 }}>

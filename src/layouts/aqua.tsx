@@ -88,6 +88,7 @@ const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
 const STATUS_BAR_HEIGHT = 18;
+const AQUA_VERTICAL_TOOLBAR_WIDTH = DEFAULT_TOOLBAR_SIZE + 2;
 
 /**
  * A viewer template that resembles the Aqua Fusion template
@@ -128,7 +129,7 @@ export const AquaTemplateLayout = () => {
         hasLegend = capabilities.hasLegend;
     }
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-    let left = DEFAULT_TOOLBAR_SIZE;
+    let left = AQUA_VERTICAL_TOOLBAR_WIDTH;
     let right = 0;
     /*
     if (hasLegend || hasSelectionPanel) {
@@ -144,6 +145,7 @@ export const AquaTemplateLayout = () => {
         <ToolbarContainer id="FileMenu" containerClass="aqua-file-menu" containerStyle={{ position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 }} />
         <ToolbarContainer id="Toolbar" containerClass="aqua-toolbar" containerStyle={{ position: "absolute", left: 0, top: DEFAULT_TOOLBAR_SIZE, height: DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 }} />
         <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: TB_Z_INDEX, bottom: bottomOffset }} />
+            <ToolbarContainer id="ToolbarVertical" containerClass="aqua-toolbar-vertical" vertical={true} containerStyle={{ position: "absolute", left: 0, top: ((DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: TB_Z_INDEX, bottom: bottomOffset, width: AQUA_VERTICAL_TOOLBAR_WIDTH }} />
         <div style={{ position: "absolute", left: left, top: (DEFAULT_TOOLBAR_SIZE * 2), bottom: bottomOffset, right: right }}>
             {(() => {
                 //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with

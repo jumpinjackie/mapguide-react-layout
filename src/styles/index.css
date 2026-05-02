@@ -194,6 +194,19 @@
     border-left: 1px solid black;
 }
 
+.toolbar-scroll-container {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.toolbar-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.toolbar-scroll-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
 .selected-item {
     border-style: solid;
 }

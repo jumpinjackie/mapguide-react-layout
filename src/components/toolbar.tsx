@@ -446,21 +446,124 @@ export const Toolbar = (props: IToolbarProps) => {
         openComponent: openComponent,
         closeComponent: closeComponent
     };
+
+    const { Icon } = useElementContext();
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const [canScrollBefore, setCanScrollBefore] = React.useState(false);
+    const [canScrollAfter, setCanScrollAfter] = React.useState(false);
+
+    const updateScrollState = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        if (vertical === true) {
+            setCanScrollBefore(el.scrollTop > 0);
+            setCanScrollAfter(Math.ceil(el.scrollTop + el.clientHeight) < el.scrollHeight);
+        } else {
+            setCanScrollBefore(el.scrollLeft > 0);
+            setCanScrollAfter(Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth);
+        }
+    }, [vertical]);
+
+    React.useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        el.addEventListener("scroll", updateScrollState, { passive: true });
+        const ro = new ResizeObserver(updateScrollState);
+        ro.observe(el);
+        updateScrollState();
+        return () => {
+            el.removeEventListener("scroll", updateScrollState);
+            ro.disconnect();
+        };
+    }, [updateScrollState]);
+
+    // Re-check scroll state after each render in case item count/content changed
+    React.useLayoutEffect(() => {
+        updateScrollState();
+    }, [childItems, updateScrollState]);
+
+    const onScrollBefore = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: -amount, behavior: "smooth" });
+        } else {
+            el.scrollBy({ left: -amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+
+    const onScrollAfter = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: amount, behavior: "smooth" });
+        } else {
+            el.scrollBy({ left: amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+
+    const outerStyle: React.CSSProperties = {
+        ...containerStyle,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: vertical === true ? "column" : "row",
+    };
+
+    const scrollContainerStyle: React.CSSProperties = vertical === true
+        ? { flex: "1 1 0", minHeight: 0, overflowY: "scroll", overflowX: "hidden" }
+        : { flex: "1 1 0", minWidth: 0, overflowX: "scroll", overflowY: "hidden", whiteSpace: "nowrap" };
+
+    const scrollBtnStyle: React.CSSProperties = {
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        cursor: "pointer",
+        width: vertical === true ? "100%" : height,
+        height: vertical === true ? height : "100%",
+    };
+
+    const iconSize = height * SVG_SIZE_RATIO;
+
     return <ToolbarContext.Provider value={providerImpl}>
-        <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
-            {childItems.map((item, index) => {
-                if (isComponentFlyout(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (isMenuRef(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (item.isSeparator === true) {
-                    return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
-                } else {
-                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
-                }
-            })}
+        <div style={outerStyle} className={`has-flyout noselect ${containerClass}`}>
+            {canScrollBefore && (
+                <div
+                    className="noselect toolbar-scroll-btn"
+                    style={scrollBtnStyle}
+                    onClick={onScrollBefore}
+                    title={vertical === true ? "Scroll up" : "Scroll left"}
+                >
+                    <Icon icon={vertical === true ? "chevron-up" : "chevron-left"} iconSize={iconSize} />
+                </div>
+            )}
+            <div ref={scrollContainerRef} className="toolbar-scroll-container" style={scrollContainerStyle}>
+                {childItems.map((item, index) => {
+                    if (isComponentFlyout(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (isMenuRef(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (item.isSeparator === true) {
+                        return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
+                    } else {
+                        return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
+                    }
+                })}
+            </div>
+            {canScrollAfter && (
+                <div
+                    className="noselect toolbar-scroll-btn"
+                    style={scrollBtnStyle}
+                    onClick={onScrollAfter}
+                    title={vertical === true ? "Scroll down" : "Scroll right"}
+                >
+                    <Icon icon={vertical === true ? "chevron-down" : "chevron-right"} iconSize={iconSize} />
+                </div>
+            )}
         </div>
     </ToolbarContext.Provider>;
 }

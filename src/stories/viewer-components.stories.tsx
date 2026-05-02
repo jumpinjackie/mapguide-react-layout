@@ -213,6 +213,55 @@ export const _ToolbarWithSelectedItem = {
    name: "Toolbar (with selected item)",
 };
 
+const OVERFLOW_TOOLBAR_ITEMS: IItem[] = [
+   { label: "Home",       tooltip: "Home",        svgIconName: "home",         invoke: action("Home") },
+   { label: "Search",     tooltip: "Search",       svgIconName: "search",       invoke: action("Search") },
+   { label: "Print",      tooltip: "Print",        svgIconName: "print",        invoke: action("Print") },
+   { isSeparator: true },
+   { label: "Select",     tooltip: "Select",       svgIconName: "select",       invoke: action("Select") },
+   { label: "Multi",      tooltip: "Multi-select", svgIconName: "multi-select", invoke: action("Multi-select") },
+   { label: "Clear",      tooltip: "Clear",        svgIconName: "delete",       invoke: action("Clear") },
+   { isSeparator: true },
+   { label: "Layers",     tooltip: "Layers",       svgIconName: "layers",       invoke: action("Layers") },
+   { label: "New Layer",  tooltip: "New Layer",    svgIconName: "new-layer",    invoke: action("New Layer") },
+   { label: "Properties", tooltip: "Properties",   svgIconName: "properties",   invoke: action("Properties") },
+   { isSeparator: true },
+   { label: "Map",        tooltip: "Map",          svgIconName: "map",          invoke: action("Map") },
+   { label: "GeoSearch",  tooltip: "GeoSearch",    svgIconName: "geosearch",    invoke: action("GeoSearch") },
+   { label: "Path",       tooltip: "Path Search",  svgIconName: "path-search",  invoke: action("Path Search") },
+   { isSeparator: true },
+   { label: "Upload",     tooltip: "Upload",       svgIconName: "upload",       invoke: action("Upload") },
+   { label: "Edit",       tooltip: "Edit",         svgIconName: "edit",         invoke: action("Edit") },
+   { label: "Trash",      tooltip: "Trash",        svgIconName: "trash",        invoke: action("Trash") },
+   { label: "Settings",   tooltip: "Settings",     svgIconName: "cog",          invoke: action("Settings") },
+];
+
+export const _ToolbarHorizontalOverflow = {
+   render: () => (
+      <div style={{ width: 300, border: "1px solid #ccc" }}>
+         <Toolbar
+            childItems={OVERFLOW_TOOLBAR_ITEMS}
+            containerStyle={{ height: 29, background: "#f0f0f0" }}
+         />
+      </div>
+   ),
+   name: "Toolbar (horizontal overflow)",
+};
+
+export const _ToolbarVerticalOverflow = {
+   render: () => (
+      <div style={{ height: 200, border: "1px solid #ccc", display: "inline-flex" }}>
+         <Toolbar
+            childItems={OVERFLOW_TOOLBAR_ITEMS}
+            containerStyle={{ width: 29, background: "#f0f0f0" }}
+            vertical={true}
+            hideVerticalLabels={true}
+         />
+      </div>
+   ),
+   name: "Toolbar (vertical overflow)",
+};
+
 export const _RndModalDialog = {
    render: () => {
       const [isOpen, setIsOpen] = React.useState(true);

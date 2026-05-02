@@ -5,6 +5,7 @@ export type SvgIconName = "application" |
     "caret-down" |
     "caret-up" |
     "chevron-down" |
+    "chevron-left" |
     "chevron-right" |
     "chevron-up" |
     "cog" |
@@ -61,6 +62,7 @@ export function getIconNames(): SvgIconName[] {
         "caret-down",
         "caret-up",
         "chevron-down",
+        "chevron-left",
         "chevron-right",
         "chevron-up",
         "cog",

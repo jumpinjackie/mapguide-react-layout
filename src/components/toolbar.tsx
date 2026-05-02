@@ -4,12 +4,10 @@ import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/co
 import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { ImageIcon } from "./icon";
-import {
-    BlueprintSvgIconNames
-} from "../constants/assets";
 import { NBSP } from '../constants';
 import { useElementContext } from "./elements/element-context";
 import { getText } from "../utils/menu";
+import { SvgIconName } from "./icon-names";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -47,7 +45,7 @@ export function getEnabled(item: IItem): boolean {
     return true;
 }
 
-type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["bpIconName"], iconSize: number };
+type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["svgIconName"], iconSize: number };
 
 const OpacityIcon: React.FC<OpacityIconProps> = React.memo(({ opacity, icon, iconSize }) => {
     const { Icon } = useElementContext();
@@ -58,9 +56,9 @@ function getIconElement(item: IItem, enabled: boolean, size: number): React.Reac
     const iconStyle = getIconStyle(enabled, size);
     if (item.iconClass || item.icon) {
         return <ImageIcon style={iconStyle} url={item.icon} spriteClass={item.iconClass} />
-    } else if (item.bpIconName) {
+    } else if (item.svgIconName) {
         const { opacity } = iconStyle; //For SVG, we only care about opacity
-        return <OpacityIcon opacity={opacity} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
+        return <OpacityIcon opacity={opacity} icon={item.svgIconName} iconSize={size * SVG_SIZE_RATIO} />
     } else {
         return <></>;
     }
@@ -359,7 +357,10 @@ export interface IItem {
     tooltip?: string | (() => string);
     icon?: string;
     iconClass?: string;
-    bpIconName?: BlueprintSvgIconNames;
+    /**
+     * @since 0.15 Renamed from bpIconName to svgIconName
+     */
+    svgIconName?: SvgIconName;
     invoke?: () => void;
     enabled?: boolean | (() => boolean);
     selected?: boolean | (() => boolean);

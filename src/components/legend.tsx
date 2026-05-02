@@ -8,24 +8,24 @@ import { isLayer } from "../utils/type-guards";
 import { Icon, ImageIcon } from "./icon";
 import { scaleRangeBetween } from "../utils/number";
 import { tr } from "../api/i18n";
-import { BlueprintSvgIconNames } from '../constants/assets';
 import { NBSP } from '../constants';
 import { strIsNullOrEmpty } from '../utils/string';
 import { useReduxDispatch } from "./map-providers/context";
 import { setMapLayerVisibility } from "../actions/map";
 import DOMPurify from "dompurify";
 import { useElementContext } from "./elements/element-context";
+import type { SvgIconName } from "./icon-names";
 
-const ICON_LEGEND_LAYER: BlueprintSvgIconNames = "layer";
-const ICON_SELECT: BlueprintSvgIconNames = "select";
-const ICON_LC_UNSELECT: BlueprintSvgIconNames = "disable";
-const ICON_LEGEND_THEME: BlueprintSvgIconNames = "multi-select";
-const ICON_LEGEND_TOGGLE: BlueprintSvgIconNames = "chevron-down";
-const ICON_LEGEND_TOGGLE_EXPAND: BlueprintSvgIconNames = "chevron-right";
-const ICON_LEGEND_RASTER: BlueprintSvgIconNames = "media";
-const ICON_FOLDER_HORIZONTAL: BlueprintSvgIconNames = "folder-close";
-const ICON_CLEAR: BlueprintSvgIconNames = "cross";
-const ICON_SEARCH: BlueprintSvgIconNames = "search";
+const ICON_LEGEND_LAYER: SvgIconName = "layer";
+const ICON_SELECT: SvgIconName = "select";
+const ICON_LC_UNSELECT: SvgIconName = "disable";
+const ICON_LEGEND_THEME: SvgIconName = "multi-select";
+const ICON_LEGEND_TOGGLE: SvgIconName = "chevron-down";
+const ICON_LEGEND_TOGGLE_EXPAND: SvgIconName = "chevron-right";
+const ICON_LEGEND_RASTER: SvgIconName = "media";
+const ICON_FOLDER_HORIZONTAL: SvgIconName = "folder-close";
+const ICON_CLEAR: SvgIconName = "cross";
+const ICON_SEARCH: SvgIconName = "search";
 
 const UL_LIST_STYLE = (baseSize: number) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
@@ -301,7 +301,7 @@ const ExternalLayerNode: React.FC<{ layer: ILayerInfo }> = ({ layer }) => {
         style={CHK_STYLE(legendCtx.getBaseIconSize())}
         onChange={e => onVisibilityChanged(e.target.checked)}
         checked={layer.visible} />;
-    let iconToUse: string = ICON_LEGEND_LAYER;
+    let iconToUse: SvgIconName = ICON_LEGEND_LAYER;
     if (layer.type == "WMS") {
         iconToUse = ICON_LEGEND_RASTER;
     }

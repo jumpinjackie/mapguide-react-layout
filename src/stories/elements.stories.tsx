@@ -14,7 +14,7 @@ import {
 } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import { strIsNullOrEmpty } from "../utils/string";
-import { getIconNames } from "../components/icon-names";
+import { getIconNames, SvgIconName } from "../components/icon-names";
 import commonElementsDocs from "./docs/common-elements.md";
 
 export default {
@@ -73,7 +73,7 @@ export const _Button = {
   render: () => {
     const { Button } = useElementContext();
     const label = text("Label", "Click me");
-    let icon: string | undefined = select("Icon name", getIconNames(), "");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), undefined);
     const variant = select(
       "Variant",
       ["primary", "warning", "success", "danger"],
@@ -295,7 +295,7 @@ export const _InputGroup = {
     const round = boolean("Round", false);
     const placeholder = text("Placeholder", "Type some text here ...");
     const [localValue, setLocalValue] = React.useState("");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const act = action("Value changed");
     const onChange: React.ComponentProps<typeof InputGroup>["onChange"] = (
@@ -323,7 +323,7 @@ export const _InputGroupWithRightElement = {
     const round = boolean("Round", false);
     const placeholder = text("Placeholder", "Type some text here ...");
     const [localValue, setLocalValue] = React.useState("");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const act = action("Value changed");
     const onChange: React.ComponentProps<typeof InputGroup>["onChange"] = (
@@ -353,7 +353,7 @@ export const _NonIdealState = {
     const { NonIdealState } = useElementContext();
     const title = text("Title", "Title");
     const desc = text("Description", "Some description");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return <NonIdealState icon={icon} title={title} description={desc} />;
   },
@@ -365,7 +365,7 @@ export const _NonIdealStateWithAction = {
     const { NonIdealState, Button } = useElementContext();
     const title = text("Title", "Title");
     const desc = text("Description", "Some description");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return (
       <NonIdealState
@@ -547,7 +547,7 @@ export const _Toaster = {
       "primary"
     );
     const message = text("Message", "This is a toast notification");
-    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "info-sign");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const onShow = () => {
       toasterRef.current?.show({ message, variant, icon });
@@ -569,7 +569,7 @@ export const _Dialog = {
     const { Dialog, Button, DialogBody, DialogFooter, DialogFooterActions } = useElementContext();
     const [isOpen, setIsOpen] = React.useState(false);
     const title = text("Title", "Dialog Title");
-    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "info-sign");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return (
       <>

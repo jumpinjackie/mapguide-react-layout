@@ -3,8 +3,9 @@ import React from "react";
 import type { CalloutProps } from "../../element-context";
 import { MnIcon } from "./icon";
 import "./callout.css";
+import { SvgIconName } from "../../../icon-names";
 
-const DEFAULT_ICON_BY_VARIANT: Record<NonNullable<CalloutProps["variant"]>, string> = {
+const DEFAULT_ICON_BY_VARIANT: Record<NonNullable<CalloutProps["variant"]>, SvgIconName> = {
    primary: "info-sign",
    warning: "warning-sign",
    success: "tick",

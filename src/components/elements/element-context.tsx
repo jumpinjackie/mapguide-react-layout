@@ -2,6 +2,7 @@ import * as React from 'react';
 import BpProvider from './providers/blueprint/provider';
 import MinimalProvider from './providers/minimal/provider';
 import type { IItem } from '../toolbar';
+import { SvgIconName } from '../icon-names';
 
 /**
  * @since 0.15
@@ -13,7 +14,7 @@ export type ElementVariant = 'primary' | 'danger' | 'success' | 'warning';
  */
 export type ButtonProps = {
     type?: "submit" | "reset" | "button";
-    icon?: string;
+    icon?: SvgIconName;
     variant?: ElementVariant;
     onClick?: (event: React.MouseEvent<HTMLElement>) => void;
     disabled?: boolean;
@@ -63,7 +64,7 @@ export type CollapsibleProps = {
 export type CalloutProps = {
     variant?: ElementVariant;
     title?: React.ReactNode;
-    icon?: string;
+    icon?: SvgIconName;
 };
 
 /**
@@ -84,7 +85,7 @@ export type CheckboxProps = {
  * @since 0.15
  */
 export type IconProps = {
-    icon?: string;
+    icon?: SvgIconName;
     style?: React.CSSProperties;
     iconSize?: number;
 };
@@ -120,7 +121,7 @@ export type InputGroupProps = {
     style?: React.CSSProperties;
     round?: boolean;
     autoFocus?: boolean;
-    leftIcon?: string;
+    leftIcon?: SvgIconName;
     placeholder?: string;
     value?: string;
     readOnly?: boolean;
@@ -139,7 +140,7 @@ export type InputGroupProps = {
  * @since 0.15
  */
 export type NonIdealStateProps = {
-    icon?: string | JSX.Element;
+    icon?: SvgIconName | JSX.Element;
     title?: string | JSX.Element;
     description?: string;
     action?: JSX.Element;
@@ -241,7 +242,7 @@ export interface TabSetProps {
  * @since 0.15
  */
 export type DrawerProps = {
-    icon?: string;
+    icon?: SvgIconName;
     onClose?: (event: React.SyntheticEvent<HTMLElement>) => void;
     title?: string;
     position?: Positioning;
@@ -259,7 +260,7 @@ export type ToastPosition = "top" | "top-left" | "top-right" | "bottom" | "botto
  * @since 0.15
  */
 export type ToastMessage = {
-    icon?: string;
+    icon?: SvgIconName;
     message: string | JSX.Element;
     variant?: ElementVariant;
 };
@@ -292,7 +293,7 @@ export type ToasterProps = {
  * @since 0.15
  */
 export type DialogProps = {
-    icon?: string;
+    icon?: SvgIconName;
     isOpen?: boolean;
     usePortal?: boolean;
     onClose?: () => void;

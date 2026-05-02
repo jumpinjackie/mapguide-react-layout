@@ -169,20 +169,20 @@ interface ISelectionPanel {
 function buildToolbarItems(selPanel: ISelectionPanel): IItem[] {
     return [
         {
-            bpIconName: "arrow-left",
+            svgIconName: "arrow-left",
             tooltip: xlate("SELECTION_PREV_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
-            bpIconName: "arrow-right",
+            svgIconName: "arrow-right",
             tooltip: xlate("SELECTION_NEXT_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
-            bpIconName: "path-search",
+            svgIconName: "path-search",
             tooltip: xlate("SELECTION_ZOOMTO_FEATURE", selPanel.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()

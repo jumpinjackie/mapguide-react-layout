@@ -60,24 +60,24 @@ export const TaskPaneContainer = (props: ITaskPaneContainerProps) => {
     const canGoBack = React.useCallback(() => navIndex > 0, [navIndex]);
     const canGoForward = React.useCallback(() => navIndex < navigationStack.length - 1, [navIndex, navigationStack]);
 
-    const homeAction: IItem = React.useMemo(() => ({
-        bpIconName: "home",
+    const homeAction = React.useMemo(() => ({
+        svgIconName: "home",
         tooltip: tr("TT_GO_HOME", locale),
         enabled: canGoHome,
         invoke: goHomeAction
-    }), [locale, canGoHome, goHomeAction]);
-    const backAction: IItem = React.useMemo(() => ({
-        bpIconName: "arrow-left",
+    } as IItem), [locale, canGoHome, goHomeAction]);
+    const backAction = React.useMemo(() => ({
+        svgIconName: "arrow-left",
         tooltip: tr("TT_GO_BACK", locale),
         enabled: canGoBack,
         invoke: goBackAction
-    }), [locale, canGoBack, goBackAction]);
-    const forwardAction: IItem = React.useMemo(() => ({
-        bpIconName: "arrow-right",
+    } as IItem), [locale, canGoBack, goBackAction]);
+    const forwardAction = React.useMemo(() => ({
+        svgIconName: "arrow-right",
         tooltip: tr("TT_GO_FORWARD", locale),
         enabled: canGoForward,
         invoke: goForwardAction
-    }), [locale, canGoForward, goForwardAction]);
+    } as IItem), [locale, canGoForward, goForwardAction]);
 
     const onCloseFlyout = React.useCallback((id: string) => closeFlyoutAction(id), [closeFlyoutAction]);
     const onOpenFlyout = React.useCallback((id: string, metrics: IDOMElementMetrics) => openFlyoutAction(id, metrics), [openFlyoutAction]);

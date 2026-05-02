@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { batch } from 'react-redux';
 import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
@@ -58,6 +57,7 @@ import { ClientSelectionFeature } from "../../api/contracts/common";
 import type { OLFeature, OLLayer } from "../../api/ol-types";
 import { supportsTouch } from "../../utils/browser-support";
 import { getRenderPixel } from 'ol/render';
+import { SvgIconName } from "../icon-names";
 
 function isValidView(view: IMapView) {
     if (view.resolution) {
@@ -779,16 +779,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     setViewRotationEnabled(enabled: boolean): void {
         this._comp?.onDispatch(setViewRotationEnabled(enabled));
     }
-    toastSuccess(iconName: string, message: string | JSX.Element): string | undefined {
+    toastSuccess(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "success" });
     }
-    toastWarning(iconName: string, message: string | JSX.Element): string | undefined {
+    toastWarning(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "warning" });
     }
-    toastError(iconName: string, message: string | JSX.Element): string | undefined {
+    toastError(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "danger" });
     }
-    toastPrimary(iconName: string, message: string | JSX.Element): string | undefined {
+    toastPrimary(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "primary" });
     }
     dismissToast(key: string): void {

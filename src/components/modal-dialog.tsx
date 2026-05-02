@@ -3,6 +3,7 @@ import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
 import { ModalChangeArgs } from "../actions/defs";
 import { useElementContext } from "./elements/element-context";
+import { SvgIconName } from "./icon-names";
 
 export interface IRndModalDialogProps {
     x: number;
@@ -11,10 +12,7 @@ export interface IRndModalDialogProps {
     height: number;
     title: string;
     isOpen: boolean;
-    /**
-     * @since 0.15 changed from blueprint IconName to string
-     */
-    icon?: string;
+    icon?: SvgIconName;
     onClose?: () => void;
     children: (bodyDim: [number, number]) => React.ReactNode;
     locale: string;

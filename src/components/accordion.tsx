@@ -3,7 +3,7 @@ import {
     GenericEvent
 } from "../api/common";
 import { useElementContext } from "./elements/element-context";
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../utils/use-resize-observer';
 
 /**
  * Accordion panel dimensions
@@ -75,7 +75,7 @@ export const Accordion = React.memo((props: IAccordionProps) => {
             setDim(target.current.getBoundingClientRect());
         }
     }, [target]);
-    useResizeObserver(target, e => setDim(e.contentRect));
+    useResizeObserver({ ref: target, onResize: (size) => setDim({ width: size.width ?? -1, height: size.height ?? -1 }) });
     const onTogglePanel = (e: GenericEvent) => {
         const id = e.currentTarget.attributes["data-accordion-panel-id"].value;
         if (openPanel != id) {

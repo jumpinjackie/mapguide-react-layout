@@ -58,7 +58,6 @@
   "homepage": "https://github.com/jumpinjackie/mapguide-react-layout#readme",
   "dependencies": {
     "@blueprintjs/core": "^3.54.0",
-    "@react-hook/resize-observer": "^2.0.2",
     "@reduxjs/toolkit": "^2.11.2",
     "colorbrewer": "^1.6.1",
     "dompurify": "^3.4.0",

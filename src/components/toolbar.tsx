@@ -4,7 +4,6 @@ import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/co
 import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { ImageIcon } from "./icon";
-import { NBSP } from '../constants';
 import { useElementContext } from "./elements/element-context";
 import { getText } from "../utils/menu";
 import { SvgIconName } from "./icon-names";
@@ -113,7 +112,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
     return style;
 }
 
-function getToolbarSeparatorItemStyle(vertical?: boolean): React.CSSProperties {
+function getToolbarSeparatorItemStyle(size: number, vertical?: boolean): React.CSSProperties {
     const style: React.CSSProperties = {
         display: vertical === true ? "block" : "inline-block"
     };
@@ -123,10 +122,18 @@ function getToolbarSeparatorItemStyle(vertical?: boolean): React.CSSProperties {
         style.marginLeft = 0;
         style.marginRight = 0;
     } else {
+        const vertPad = 6; // Must match the vertPad used in getItemStyle
+        const separatorHeight = Math.max(1, size - (vertPad * 2));
+        const separatorOffset = Math.max(0, Math.floor((size - separatorHeight) / 2));
+        style.height = separatorHeight;
+        style.marginTop = separatorOffset;
+        style.marginBottom = separatorOffset;
+        style.verticalAlign = "top";
+        style.boxSizing = "border-box";
         style.paddingTop = 0;
         style.paddingBottom = 0;
         style.marginLeft = 2;
-        style.marginRight = -2;
+        style.marginRight = 2;
     }
     return style;
 }
@@ -301,11 +308,11 @@ interface IToolbarSeparatorProps {
 }
 
 const ToolbarSeparator = (props: IToolbarSeparatorProps) => {
-    const style = getToolbarSeparatorItemStyle(props.vertical);
+    const style = getToolbarSeparatorItemStyle(props.size, props.vertical);
     if (props.vertical === true) {
         return <div className="noselect toolbar-separator-vertical" style={style} />;
     } else {
-        return <div className="noselect toolbar-separator-horizontal" style={style}>{NBSP}</div>;
+        return <div className="noselect toolbar-separator-horizontal" style={style} aria-hidden="true" />;
     }
 }
 

@@ -5,6 +5,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   text-align: center;
   padding: var(--mrl-spacing-xl);
   gap: var(--mrl-spacing-sm);

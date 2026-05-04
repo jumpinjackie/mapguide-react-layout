@@ -47,6 +47,12 @@ All other components — including `Icon` — are implemented with zero external
 
 ## Swapping the provider
 
+> **Context:** Provider swapping applies to two specific consumer scenarios:
+> 1. **Custom viewer bundle** — you are building your own `library.tsx` entry point (as in the [mapguide-react-layout-example](https://github.com/jumpinjackie/mapguide-react-layout-example) repo), giving you full control over which providers are included. Wrap your bundle entry with `<ElementProvider>` before rendering.
+> 2. **Direct React integration** — you are embedding the viewer as a React component inside a parent React application that manages its own bundler. In this case you render the component tree yourself and can include `<ElementProvider>` in that tree.
+>
+> If you are using `Application.mount()` to embed the viewer in a static HTML page from the pre-built `viewer.js` bundle, `MinimalProvider` is permanently baked in. Customisation in that scenario is done through [CSS variable overrides](#overriding-css-variables-design-tokens) only.
+
 ### Blueprint.js provider (optional)
 
 `@blueprintjs/core` is an **optional peer dependency**. It is **not** included in the default `viewer.js` bundle, so your users only download it if you explicitly opt in.
@@ -76,11 +82,37 @@ yarn add @blueprintjs/core @blueprintjs/icons
 import { ElementProvider } from 'mapguide-react-layout';
 import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
 
+// In your custom bundle entry or parent React app render:
 function App() {
     return (
         <ElementProvider value={BpProvider}>
             {/* All viewer components inside will use Blueprint.js */}
         </ElementProvider>
+    );
+}
+```
+
+### Scoping a provider to a subtree
+
+You can also wrap only a portion of the component tree. `MinimalProvider` is exported from `mapguide-react-layout` as part of its public API:
+
+```tsx
+import { ElementProvider, MinimalProvider } from 'mapguide-react-layout';
+import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
+
+function MyLayout() {
+    return (
+        <div>
+            {/* This section uses the Minimal provider (default) */}
+            <ElementProvider value={MinimalProvider}>
+                <Sidebar />
+            </ElementProvider>
+
+            {/* This section uses Blueprint (requires @blueprintjs/core installed) */}
+            <ElementProvider value={BpProvider}>
+                <MapPanel />
+            </ElementProvider>
+        </div>
     );
 }
 ```
@@ -204,13 +236,13 @@ All component class names use the `mrl-` prefix. You can override specific compo
 
 ## Full replacement: writing a custom `IElementContext`
 
-If you want to implement the viewer's UI atoms using a completely different component library (e.g. MUI, Ant Design, Radix UI), you can provide a full custom implementation.
+If you want to implement the viewer's UI atoms using a completely different component library (e.g. MUI, Ant Design, Radix UI), you can provide a full custom implementation. This is only applicable in the two scenarios described above (custom bundle or direct React integration).
 
 > **Note:** The example below is **abbreviated** — it shows only 2 of the 32 required slots. For a complete reference implementation, see [`src/components/elements/providers/minimal/provider.tsx`](../src/components/elements/providers/minimal/provider.tsx) or the Blueprint provider at [`src/components/elements/providers/blueprint/provider.tsx`](../src/components/elements/providers/blueprint/provider.tsx).
 
 ```tsx
-import type { IElementContext, IApplicationMountOptions } from 'mapguide-react-layout';
-import { Application } from 'mapguide-react-layout';
+import type { IElementContext } from 'mapguide-react-layout';
+import { ElementProvider } from 'mapguide-react-layout';
 import { Button } from '@mui/material';
 // ... other MUI imports
 
@@ -234,13 +266,14 @@ const MyCustomProvider: IElementContext = {
     // ...
 };
 
-const app = new Application();
-app.mount(document.getElementById('viewer-root'), {
-    layout: 'sidebar',
-    resourceId: '/mapguide/library/Samples/Sheboygan/Maps/Sheboygan.MapDefinition',
-    elementProvider: MyCustomProvider,
-    // ... other options
-} as IApplicationMountOptions);
+// In your custom bundle entry or parent React app render:
+function App() {
+    return (
+        <ElementProvider value={MyCustomProvider}>
+            {/* viewer components */}
+        </ElementProvider>
+    );
+}
 ```
 
 ### The `IElementContext` interface contract

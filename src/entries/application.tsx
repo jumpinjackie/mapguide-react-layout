@@ -11,7 +11,6 @@ import { IViewerInitCommand } from '../actions/init-command';
 import { MapContextProvider, MapProviderContextProvider, ReduxProvider } from "../components/map-providers/context";
 import { DefaultViewerInitCommand } from "../actions/init-mapguide";
 import { MapGuideMapProviderContext } from "../components/map-providers/mapguide";
-import { ElementProvider, IElementContext } from "../components/elements/element-context";
 
 /**
  * Extra application mount options.
@@ -34,17 +33,6 @@ export interface IApplicationMountOptions {
      * @type {Partial<IConfigurationReducerState>}
      */
     initialConfig: Partial<IConfigurationReducerState>;
-    /**
-     * An optional custom UI element provider. When supplied, all viewer UI atoms (buttons, dialogs,
-     * menus, etc.) will be rendered using this provider instead of the default `MinimalProvider`.
-     *
-     * Use this to integrate with an external component library (e.g. Blueprint.js, MUI, Ant Design)
-     * or to apply a fully custom look and feel.
-     *
-     * @since 0.15
-     * @type {IElementContext}
-     */
-    elementProvider?: IElementContext;
 }
 
 /**
@@ -112,16 +100,10 @@ export class ApplicationViewModel {
             initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         // Register our MapGuide-specific viewer implementation
         const provider = new MapGuideMapProviderContext();
-        const viewerTree = <MapContextProvider value={provider} store={this._store}>
+        ReactDOM.render(<MapContextProvider value={provider} store={this._store}>
             <App {...props} initCommand={initCommand} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-        </MapContextProvider>;
-        ReactDOM.render(
-            props.elementProvider
-                ? <ElementProvider value={props.elementProvider}>{viewerTree}</ElementProvider>
-                : viewerTree,
-            node
-        );
+        </MapContextProvider>, node);
     }
     /**
      * Dispatches the given action

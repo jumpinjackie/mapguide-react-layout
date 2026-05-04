@@ -1,0 +1,51 @@
+/* Minimal provider – FileInput styles */
+
+.mrl-file-input {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--mrl-color-border);
+  border-radius: var(--mrl-radius-sm);
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mrl-file-input--fill {
+  display: flex;
+}
+
+.mrl-file-input input[type="file"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mrl-file-input-text {
+  flex: 1;
+  padding: 5px 8px;
+  color: var(--mrl-color-text-muted);
+  background: var(--mrl-color-bg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.mrl-file-input-btn {
+  padding: 5px 10px;
+  background: var(--mrl-color-surface);
+  color: var(--mrl-color-text);
+  border-left: 1px solid var(--mrl-color-border);
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.mrl-file-input:hover .mrl-file-input-btn {
+  background: var(--mrl-color-border);
+}

@@ -1,6 +1,7 @@
 // Minimal provider – NumericInput component
 import React from "react";
 import type { NumericInputProps } from "../../element-context";
+import "./numeric-input.css";
 
 /**
  * @hidden

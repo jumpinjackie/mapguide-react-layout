@@ -1,0 +1,29 @@
+/* Minimal provider – NumericInput styles */
+
+.mrl-numeric-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  color: var(--mrl-color-text);
+  background: var(--mrl-color-bg);
+  border: 1px solid var(--mrl-color-border);
+  border-radius: var(--mrl-radius-sm);
+  transition: border-color var(--mrl-transition-speed) ease,
+              box-shadow var(--mrl-transition-speed) ease;
+  line-height: 1.4;
+}
+
+.mrl-numeric-input:focus {
+  outline: none;
+  border-color: var(--mrl-color-border-focus);
+  box-shadow: 0 0 0 2px rgba(41,101,204,0.2);
+}
+
+.mrl-numeric-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--mrl-color-surface);
+}

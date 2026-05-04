@@ -7,7 +7,7 @@
   margin-bottom: var(--mrl-spacing-md);
 }
 
-.mrl-form-group label {
+.mrl-form-group > label {
   font-size: var(--mrl-font-size-sm);
   font-weight: 600;
   color: var(--mrl-color-text);
@@ -19,7 +19,7 @@
   gap: var(--mrl-spacing-sm);
 }
 
-.mrl-form-group--inline label {
+.mrl-form-group--inline > label {
   white-space: nowrap;
   flex-shrink: 0;
 }

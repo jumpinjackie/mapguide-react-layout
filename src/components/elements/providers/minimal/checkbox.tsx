@@ -1,6 +1,7 @@
 // Minimal provider – Checkbox component
 import React from "react";
 import type { CheckboxProps } from "../../element-context";
+import "./checkbox.css";
 
 /**
  * @hidden

@@ -1,6 +1,7 @@
 // Minimal provider – FileInput component
 import React from "react";
 import type { FileInputProps } from "../../element-context";
+import "./file-input.css";
 
 /**
  * @hidden

@@ -87,7 +87,7 @@ function App() {
 
 ### Scoping a provider to a subtree
 
-You can also wrap only a portion of the component tree. `MinimalProvider` is exported from `mapguide-react-layout` (it is already part of the main bundle as the default):
+You can also wrap only a portion of the component tree. `MinimalProvider` is exported from `mapguide-react-layout` as part of its public API:
 
 ```tsx
 import { ElementProvider, MinimalProvider } from 'mapguide-react-layout';
@@ -229,11 +229,13 @@ All component class names use the `mrl-` prefix. You can override specific compo
 
 ## Full replacement: writing a custom `IElementContext`
 
-If you want to implement the viewer's UI atoms using a completely different component library (e.g. MUI, Ant Design, Radix UI), you can provide a full custom implementation:
+If you want to implement the viewer's UI atoms using a completely different component library (e.g. MUI, Ant Design, Radix UI), you can provide a full custom implementation.
+
+> **Note:** The example below is **abbreviated** — it shows only 2 of the 32 required slots. For a complete reference implementation, see [`src/components/elements/providers/minimal/provider.tsx`](../src/components/elements/providers/minimal/provider.tsx) or the Blueprint provider at [`src/components/elements/providers/blueprint/provider.tsx`](../src/components/elements/providers/blueprint/provider.tsx).
 
 ```tsx
-import type { IElementContext } from 'mapguide-react-layout';
-import { ElementProvider } from 'mapguide-react-layout';
+import type { IElementContext, IApplicationMountOptions } from 'mapguide-react-layout';
+import { Application } from 'mapguide-react-layout';
 import { Button } from '@mui/material';
 // ... other MUI imports
 
@@ -247,23 +249,23 @@ const MyCustomProvider: IElementContext = {
             {children}
         </Button>
     ),
-    // ... implement every other slot
+    // ... implement every other slot (32 slots total)
     Dialog: ({ isOpen, title, onClose, children }) => (
         <MuiDialog open={!!isOpen} onClose={onClose}>
             {title && <MuiDialogTitle>{title}</MuiDialogTitle>}
             <MuiDialogContent>{children}</MuiDialogContent>
         </MuiDialog>
     ),
-    // ... all 31 slots must be provided
+    // ...
 };
 
-function App() {
-    return (
-        <ElementProvider value={MyCustomProvider}>
-            <MapViewer ... />
-        </ElementProvider>
-    );
-}
+const app = new Application();
+app.mount(document.getElementById('viewer-root'), {
+    layout: 'sidebar',
+    resourceId: '/mapguide/library/Samples/Sheboygan/Maps/Sheboygan.MapDefinition',
+    elementProvider: MyCustomProvider,
+    // ... other options
+} as IApplicationMountOptions);
 ```
 
 ### The `IElementContext` interface contract
@@ -317,22 +319,22 @@ npm install mapguide-react-layout
 }
 ```
 
-**Step 4 — Render the viewer inside your layout:**
+**Step 4 — Mount the viewer inside your page:**
 
-```tsx
-import { Viewer } from 'mapguide-react-layout';
+The viewer is mounted imperatively via the `Application` class. Create a container element in your page and call `mount()`:
 
-export function GisPage() {
-    return (
-        <div className="gis-page-layout">
-            <header>My App Header</header>
-            <main>
-                {/* The viewer inherits all --mrl-* variable overrides from :root */}
-                <Viewer ... />
-            </main>
-        </div>
-    );
-}
+```html
+<!-- Your HTML page -->
+<div id="gis-viewer-container"></div>
 ```
 
-No `ElementProvider` wrapping is necessary in this case because you are using the default `MinimalProvider` and have simply restyled it via CSS variables.
+```typescript
+import { Application } from 'mapguide-react-layout';
+
+const app = new Application();
+app.mount(document.getElementById('gis-viewer-container'), {
+    // ... your viewer configuration
+});
+```
+
+The viewer inherits all `--mrl-*` variable overrides from `:root`, so no additional `ElementProvider` wrapping is required when using the default `MinimalProvider` with CSS variable overrides.

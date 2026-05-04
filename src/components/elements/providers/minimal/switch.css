@@ -1,13 +1,20 @@
 /* Minimal provider – Switch styles */
 
 .mrl-switch {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--mrl-spacing-sm);
   cursor: pointer;
   font-size: var(--mrl-font-size-base);
   color: var(--mrl-color-text);
   user-select: none;
+}
+
+/* Ensure any span used as labelElement (e.g. icon + text) aligns vertically */
+.mrl-switch > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mrl-spacing-xs);
 }
 
 .mrl-switch input[type="checkbox"] {

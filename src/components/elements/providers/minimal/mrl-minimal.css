@@ -79,3 +79,27 @@
   color: var(--mrl-color-text);
   line-height: 1.5;
 }
+
+/* Control-common: bottom margin shared by all form input controls */
+.mrl-switch,
+.mrl-checkbox,
+.mrl-radio,
+.mrl-select,
+.mrl-input-group,
+.mrl-numeric-input,
+.mrl-file-input,
+.mrl-slider-wrapper {
+  margin-bottom: 10px;
+}
+
+/* Suppress control bottom margin inside inline form groups */
+.mrl-form-group--inline > .mrl-switch,
+.mrl-form-group--inline > .mrl-checkbox,
+.mrl-form-group--inline > .mrl-radio,
+.mrl-form-group--inline > .mrl-select,
+.mrl-form-group--inline > .mrl-input-group,
+.mrl-form-group--inline > .mrl-numeric-input,
+.mrl-form-group--inline > .mrl-file-input,
+.mrl-form-group--inline > .mrl-slider-wrapper {
+  margin-bottom: 0;
+}

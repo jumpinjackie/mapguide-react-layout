@@ -36,4 +36,18 @@
 
 .mrl-non-ideal-state-action {
   margin-top: var(--mrl-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: var(--mrl-spacing-sm);
+}
+
+.mrl-non-ideal-state-action > * {
+  width: 100%;
+  text-align: left;
+}
+
+.mrl-non-ideal-state-action > .mrl-element-group {
+  justify-content: center;
 }

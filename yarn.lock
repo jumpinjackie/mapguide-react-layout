@@ -10858,8 +10858,11 @@ __metadata:
     webpack-cli: "npm:^6.0.1"
   peerDependencies:
     "@blueprintjs/core": ^3.54.0
+    "@blueprintjs/icons": ^3.33.0
   peerDependenciesMeta:
     "@blueprintjs/core":
+      optional: true
+    "@blueprintjs/icons":
       optional: true
   languageName: unknown
   linkType: soft

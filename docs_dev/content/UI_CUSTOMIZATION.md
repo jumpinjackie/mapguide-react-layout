@@ -47,12 +47,34 @@ All other components — including `Icon` — are implemented with zero external
 
 ## Swapping the provider
 
-### Restoring the Blueprint.js provider globally
+### Blueprint.js provider (optional)
 
-If you prefer the Blueprint.js look and feel, or if your application already uses Blueprint.js, you can restore the original provider at the top of your app:
+`@blueprintjs/core` is an **optional peer dependency**. It is **not** included in the default `viewer.js` bundle, so your users only download it if you explicitly opt in.
+
+> **Bundle impact**: Because Blueprint is excluded from the default bundle, every user of the viewer benefits from a smaller download — even if some deployments choose to enable the Blueprint provider.
+
+**Step 1 — Install the optional dependencies:**
+
+```bash
+npm install @blueprintjs/core @blueprintjs/icons
+# or
+yarn add @blueprintjs/core @blueprintjs/icons
+```
+
+**Step 2 — Import Blueprint's CSS** (required for correct Blueprint rendering):
+
+```css
+@import '@blueprintjs/core/lib/css/blueprint.css';
+@import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+```
+
+**Step 3 — Import and activate the Blueprint provider.**
+
+> **Note:** `BpProvider` is **not** exported from the main `mapguide-react-layout` bundle, because including it would unconditionally add Blueprint.js (~120 KB) to every user's download. It is intended for use in **custom bundle scenarios** where you control your own webpack/Rollup configuration. Import it directly from its source path:
 
 ```tsx
-import { ElementProvider, BpProvider } from 'mapguide-react-layout';
+import { ElementProvider } from 'mapguide-react-layout';
+import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
 
 function App() {
     return (
@@ -65,20 +87,21 @@ function App() {
 
 ### Scoping a provider to a subtree
 
-You can also wrap only a portion of the component tree:
+You can also wrap only a portion of the component tree. `MinimalProvider` is exported from `mapguide-react-layout` (it is already part of the main bundle as the default):
 
 ```tsx
-import { ElementProvider, BpProvider, MinimalProvider } from 'mapguide-react-layout';
+import { ElementProvider, MinimalProvider } from 'mapguide-react-layout';
+import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
 
 function MyLayout() {
     return (
         <div>
-            {/* This section uses the Minimal provider */}
-            <MinimalProvider>
+            {/* This section uses the Minimal provider (default) */}
+            <ElementProvider value={MinimalProvider}>
                 <Sidebar />
-            </MinimalProvider>
+            </ElementProvider>
 
-            {/* This section uses Blueprint */}
+            {/* This section uses Blueprint (requires @blueprintjs/core installed) */}
             <ElementProvider value={BpProvider}>
                 <MapPanel />
             </ElementProvider>

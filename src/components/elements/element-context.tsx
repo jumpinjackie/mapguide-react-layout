@@ -1,5 +1,6 @@
 import * as React from 'react';
 import MinimalProvider from './providers/minimal/provider';
+export { default as MinimalProvider } from './providers/minimal/provider';
 import type { IItem } from '../toolbar';
 import { SvgIconName } from '../icon-names';
 

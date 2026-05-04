@@ -10856,6 +10856,11 @@ __metadata:
     wait-on: "npm:9.0.5"
     webpack: "npm:5.106.2"
     webpack-cli: "npm:^6.0.1"
+  peerDependencies:
+    "@blueprintjs/core": ^3.54.0
+  peerDependenciesMeta:
+    "@blueprintjs/core":
+      optional: true
   languageName: unknown
   linkType: soft
 

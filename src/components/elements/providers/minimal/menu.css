@@ -23,6 +23,20 @@
   user-select: none;
 }
 
+.mrl-menu-item-icon-slot {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 16px;
+}
+
+.mrl-menu-item-icon-slot > .icon {
+  width: 16px;
+  height: 16px;
+}
+
 .mrl-menu-item:hover:not(.mrl-menu-item--disabled) {
   background: var(--mrl-color-bg-elevated);
 }

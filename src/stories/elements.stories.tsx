@@ -15,7 +15,7 @@ import {
 import { action } from "@storybook/addon-actions";
 import { strIsNullOrEmpty } from "../utils/string";
 import { getIconNames, SvgIconName } from "../components/icon-names";
-import type { IItem } from "../components/toolbar";
+import type { IInlineMenu, IItem } from "../components/toolbar";
 import commonElementsDocs from "./docs/common-elements.md";
 
 export default {
@@ -638,13 +638,27 @@ export const _EditableText = {
 export const _MenuComponent = {
   render: () => {
     const { MenuComponent } = useElementContext();
+    const recentFilesSubMenu: IInlineMenu = {
+      label: "Recent Files",
+      iconClass: "folder-close",
+      childItems: [
+        { label: "Parcels.geojson", invoke: action("Parcels clicked") },
+        { label: "Roads.geojson", invoke: action("Roads clicked") },
+        { label: "Utilities.sdf", enabled: false },
+      ],
+    };
     const items: IItem[] = [
-      { label: "Open", iconClass: "sprite-icon-open", invoke: action("Open clicked") },
-      { label: "Save", iconClass: "sprite-icon-save", invoke: action("Save clicked") },
+      { label: "Open", iconClass: "folder-horizontal-open", invoke: action("Open clicked") },
+      { label: "Save", iconClass: "file-save", invoke: action("Save clicked") },
+      recentFilesSubMenu,
       { isSeparator: true },
       { label: "Disabled item", enabled: false },
     ];
-    return <MenuComponent items={items} onInvoked={action("Menu item invoked")} />;
+    return (
+      <div style={{ width: 260 }}>
+        <MenuComponent items={items} onInvoked={action("Menu item invoked")} />
+      </div>
+    );
   },
   name: "MenuComponent",
 };

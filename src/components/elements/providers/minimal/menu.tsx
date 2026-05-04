@@ -24,6 +24,11 @@ const MnMenuItems: React.FC<IMenuItemsProps> = ({ items, onInvoked }) => {
                return (
                   <li key={idx} className="mrl-submenu" role="none">
                      <div className="mrl-menu-item">
+                        <span className="mrl-menu-item-icon-slot" aria-hidden="true">
+                           {(item.icon || item.iconClass) && (
+                              <ImageIcon url={item.icon} spriteClass={item.iconClass} />
+                           )}
+                        </span>
                         {getText(item.label)}
                      </div>
                      <ul className="mrl-menu" role="menu">
@@ -47,9 +52,11 @@ const MnMenuItems: React.FC<IMenuItemsProps> = ({ items, onInvoked }) => {
                   aria-disabled={!enabled}
                   onClick={handleClick}
                >
-                  {(item.icon || item.iconClass) && (
-                     <ImageIcon url={item.icon} spriteClass={item.iconClass} />
-                  )}
+                  <span className="mrl-menu-item-icon-slot" aria-hidden="true">
+                     {(item.icon || item.iconClass) && (
+                        <ImageIcon url={item.icon} spriteClass={item.iconClass} />
+                     )}
+                  </span>
                   {getText(item.label)}
                </li>
             );

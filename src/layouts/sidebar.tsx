@@ -386,6 +386,8 @@ export const SidebarLayout = () => {
             onExpand={onExpand} />
         {(() => {
             if (hasToolbar) {
+                const toolbarBottom = isMobileViewport() ? 0 : 6;
+                const toolbarInnerBottom = isMobileViewport() ? 0 : 2;
                 let top = 180;
                 if (!hasSelectionPanel) {
                     top -= 40;
@@ -396,8 +398,8 @@ export const SidebarLayout = () => {
                 if (!hasTaskPane) {
                     top -= 40;
                 }
-                return <div id="toolbar-region" style={{ top: top }}>
-                    <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", left: 4, right: 6, zIndex: 100 }} />
+                return <div id="toolbar-region" style={{ top: top, bottom: toolbarBottom }}>
+                    <ToolbarContainer id={WEBLAYOUT_TOOLBAR} containerClass="sidebar-toolbar" vertical={true} hideVerticalLabels={true} containerStyle={{ position: "absolute", top: 0, bottom: toolbarInnerBottom, left: 4, right: 6, zIndex: 100 }} />
                 </div>;
             }
         })()}

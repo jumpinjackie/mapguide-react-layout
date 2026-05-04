@@ -2,7 +2,7 @@
 
 .mrl-slider-wrapper {
   width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: var(--mrl-spacing-xs);
 }
 
 .mrl-slider {

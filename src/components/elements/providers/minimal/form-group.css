@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--mrl-spacing-xs);
-  margin-bottom: var(--mrl-spacing-md);
+  margin-bottom: var(--mrl-spacing-sm);
 }
 
 .mrl-form-group > label {

@@ -89,7 +89,7 @@
 .mrl-numeric-input,
 .mrl-file-input,
 .mrl-slider-wrapper {
-  margin-bottom: 10px;
+  margin-bottom: var(--mrl-spacing-xs);
 }
 
 /* Suppress control bottom margin inside inline form groups */

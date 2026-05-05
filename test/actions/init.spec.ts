@@ -1,7 +1,31 @@
-import { describe, it, expect } from "vitest";
-import { applyInitialBaseLayerVisibility, acknowledgeInitWarnings, normalizeInitPayload } from "../../src/actions/init";
+import { describe, it, expect, vi } from "vitest";
+import { applyInitialBaseLayerVisibility, acknowledgeInitWarnings, normalizeInitPayload, initAppFromAppDef } from "../../src/actions/init";
 import { ActionType } from "../../src/constants/actions";
 import { registerLayout } from "../../src/api/registry/layout";
+import { registerRequestBuilder } from "../../src/api/builders/factory";
+import { MapAgentRequestBuilder } from "../../src/api/builders/mapagent";
+
+function makeMinimalPayload(): any {
+    return {
+        activeMapName: "Map1",
+        initialUrl: "http://example.com/task",
+        locale: "en",
+        maps: {},
+        config: {},
+        capabilities: {
+            hasTaskPane: true,
+            hasTaskBar: true,
+            hasStatusBar: true,
+            hasNavigator: true,
+            hasSelectionPanel: true,
+            hasLegend: true,
+            hasToolbar: true,
+            hasViewSize: true
+        },
+        toolbars: {},
+        warnings: []
+    };
+}
 
 describe("actions/init", () => {
     it("applyInitialBaseLayerVisibility sets first non-UTFGrid visible", () => {
@@ -72,5 +96,140 @@ describe("actions/init", () => {
         };
         const result = normalizeInitPayload(payload, "unknown-layout");
         expect(result.capabilities.hasTaskPane).toBe(true);
+    });
+
+    describe("initAppFromAppDef", () => {
+        const mockAppDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
+        const mockViewer: any = {};
+        const mockGetState = vi.fn().mockReturnValue({ config: {} });
+
+        it("dispatches INIT_APP when command supports runFromAppDefAsync", async () => {
+            const payload = makeMinimalPayload();
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
+            thunk(dispatch, mockGetState as any);
+            // Wait for async operations to complete
+            await new Promise(resolve => setTimeout(resolve, 0));
+            expect(cmd.runFromAppDefAsync).toHaveBeenCalledWith(mockAppDef, expect.objectContaining({ locale: "en" }));
+            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_APP }));
+        });
+
+        it("dispatches INIT_ERROR when command does not support runFromAppDefAsync", () => {
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn()
+                // runFromAppDefAsync is intentionally absent
+            };
+            const dispatch = vi.fn();
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
+            thunk(dispatch, mockGetState as any);
+            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_ERROR }));
+        });
+
+        it("dispatches INIT_ERROR when runFromAppDefAsync rejects", async () => {
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockRejectedValue(new Error("Init failed"))
+            };
+            const dispatch = vi.fn();
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
+            thunk(dispatch, mockGetState as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_ERROR }));
+        });
+
+        it("applies initialView override to payload", async () => {
+            const payload = makeMinimalPayload();
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const initialView = { x: 1, y: 2, scale: 3 };
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy", initialView });
+            thunk(dispatch, mockGetState as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
+            expect(dispatchedAction?.payload?.initialView).toEqual(initialView);
+        });
+
+        it("applies initialActiveMap override to payload", async () => {
+            const payload = makeMinimalPayload();
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy", initialActiveMap: "MapB" });
+            thunk(dispatch, mockGetState as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
+            expect(dispatchedAction?.payload?.activeMapName).toBe("MapB");
+        });
+
+        it("calls onInit callback with viewer after INIT_APP is dispatched", async () => {
+            const payload = makeMinimalPayload();
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const onInit = vi.fn();
+            const viewer: any = { someViewerProp: true };
+            const thunk = initAppFromAppDef(mockAppDef, cmd, viewer, { locale: "en", resourceId: "dummy", onInit });
+            thunk(dispatch, mockGetState as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            expect(onInit).toHaveBeenCalledWith(viewer);
+        });
+
+        it("attaches a client from config agentUri/agentKind before calling runFromAppDefAsync", async () => {
+            registerRequestBuilder("mapagent", (agentUri, locale) => new MapAgentRequestBuilder(agentUri, locale));
+            const payload = makeMinimalPayload();
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const getStateWithAgent = vi.fn().mockReturnValue({
+                config: { agentUri: "http://mapserver/mapagent", agentKind: "mapagent" }
+            });
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
+            thunk(dispatch, getStateWithAgent as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            expect(cmd.attachClient).toHaveBeenCalled();
+        });
+
+        it("merges appSettings from payload with options appSettings", async () => {
+            const payload = makeMinimalPayload();
+            payload.appSettings = { fromAppDef: "value1", shared: "appDefValue" };
+            const cmd: any = {
+                attachClient: vi.fn(),
+                runAsync: vi.fn(),
+                runFromAppDefAsync: vi.fn().mockResolvedValue(payload)
+            };
+            const dispatch = vi.fn();
+            const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, {
+                locale: "en",
+                resourceId: "dummy",
+                appSettings: { fromOptions: "value2", shared: "optionsValue" }
+            });
+            thunk(dispatch, mockGetState as any);
+            await new Promise(resolve => setTimeout(resolve, 0));
+            const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
+            // appDef settings should overwrite options settings for shared keys
+            expect(dispatchedAction?.payload?.appSettings?.fromOptions).toBe("value2");
+            expect(dispatchedAction?.payload?.appSettings?.fromAppDef).toBe("value1");
+            expect(dispatchedAction?.payload?.appSettings?.shared).toBe("appDefValue");
+        });
     });
 });

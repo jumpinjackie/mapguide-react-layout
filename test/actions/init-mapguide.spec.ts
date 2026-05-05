@@ -526,4 +526,41 @@ describe("actions/init-mapguide", () => {
 
         expect(dict["NoMatchGroup"]).toBeUndefined();
     });
+
+    describe("runFromAppDefAsync", () => {
+        it("is defined on DefaultViewerInitCommand", () => {
+            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+            expect(typeof cmd.runFromAppDefAsync).toBe("function");
+        });
+
+        it("delegates to initWithSessionAsync with the provided appdef", async () => {
+            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+            const fakePayload: any = {
+                maps: {},
+                activeMapName: "Map1",
+                locale: "en"
+            };
+            const initWithSessionSpy = vi.spyOn(cmd as any, "initWithSessionAsync").mockResolvedValue(fakePayload);
+
+            const appDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
+            const opts: any = { locale: "en", resourceId: "dummy", session: "SESSION_REUSE" };
+
+            const result = await cmd.runFromAppDefAsync(appDef, opts);
+
+            expect(initWithSessionSpy).toHaveBeenCalledOnce();
+            expect(result).toBe(fakePayload);
+        });
+
+        it("calls initLocaleAsync before delegating to initWithSessionAsync", async () => {
+            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+            const fakePayload: any = { maps: {}, activeMapName: "Map1", locale: "en" };
+            vi.spyOn(cmd as any, "initWithSessionAsync").mockResolvedValue(fakePayload);
+            const localeSpy = vi.spyOn(cmd as any, "initLocaleAsync").mockResolvedValue(undefined);
+
+            const appDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
+            await cmd.runFromAppDefAsync(appDef, { locale: "fr", resourceId: "dummy" } as any);
+
+            expect(localeSpy).toHaveBeenCalledOnce();
+        });
+    });
 });

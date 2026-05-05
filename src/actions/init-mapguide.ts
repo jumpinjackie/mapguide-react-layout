@@ -661,20 +661,43 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
     public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
         this.options = options;
         await this.initLocaleAsync(this.options);
+        return this.initWithSessionAsync(options, (session, sessionWasReused) =>
+            this.sessionAcquiredAsync(session, sessionWasReused)
+        );
+    }
+    /**
+     * Runs the viewer initialization from the given pre-loaded application definition.
+     *
+     * @param appDef The pre-loaded application definition
+     * @param options The initialization options
+     * @returns A promise that resolves to the initialization payload
+     * @since 0.15
+     */
+    public async runFromAppDefAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+        this.options = options;
+        await this.initLocaleAsync(options);
+        return this.initWithSessionAsync(options, (session, sessionWasReused) =>
+            this.initFromAppDefAsync(appDef, session, sessionWasReused)
+        );
+    }
+    private async initWithSessionAsync(
+        options: IInitAsyncOptions,
+        resolver: (session: AsyncLazy<string>, sessionWasReused: boolean) => Promise<IInitAppActionPayload>
+    ): Promise<IInitAppActionPayload> {
         let sessionWasReused = false;
         let session: AsyncLazy<string>;
-        if (!this.options.session) {
+        if (!options.session) {
             session = new AsyncLazy<string>(async () => {
                 assertIsDefined(this.client);
                 const sid = await this.client.createSession("Anonymous", "");
                 return sid;
             });
         } else {
-            info(`Re-using session: ${this.options.session}`);
+            info(`Re-using session: ${options.session}`);
             sessionWasReused = true;
-            session = new AsyncLazy<string>(() => Promise.resolve(this.options.session!));
+            session = new AsyncLazy<string>(() => Promise.resolve(options.session!));
         }
-        const payload = await this.sessionAcquiredAsync(session, sessionWasReused);
+        const payload = await resolver(session, sessionWasReused);
         payload.sessionWasReused = sessionWasReused;
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};

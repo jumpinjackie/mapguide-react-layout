@@ -218,6 +218,15 @@ export function isStateless(appDef: ApplicationDefinition) {
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
     runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
+    /**
+     * Runs the viewer initialization from the given pre-loaded application definition.
+     *
+     * @param appDef The pre-loaded application definition
+     * @param options The initialization options
+     * @returns A promise that resolves to the initialization payload
+     * @since 0.15
+     */
+    runFromAppDefAsync?(appDef: ApplicationDefinition, options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
 }
 
 export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand {

@@ -295,6 +295,35 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
 }
 
 /**
+ * Applies overrides from init options to the given payload.
+ *
+ * @hidden
+ */
+function applyInitPayloadOverrides(initPayload: IInitAppActionPayload, opts: IInitAsyncOptions): void {
+    if (opts.initialView) {
+        initPayload.initialView = {
+            ...opts.initialView
+        };
+    }
+    if (opts.initialActiveMap) {
+        initPayload.activeMapName = opts.initialActiveMap;
+    }
+    initPayload.initialHideGroups = opts.initialHideGroups;
+    initPayload.initialHideLayers = opts.initialHideLayers;
+    initPayload.initialShowGroups = opts.initialShowGroups;
+    initPayload.initialShowLayers = opts.initialShowLayers;
+    initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+    // Merge in appSettings from loaded appDef, any setting in appDef
+    // already specified at viewer mount will be overwritten
+    const appSettings = opts.appSettings ?? {};
+    const inAppSettings = initPayload.appSettings ?? {};
+    for (const k in inAppSettings) {
+        appSettings[k] = inAppSettings[k];
+    }
+    initPayload.appSettings = appSettings;
+}
+
+/**
  * Initializes the viewer
  *
  * @param {IViewerInitCommand} cmd
@@ -316,28 +345,7 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
             cmd.attachClient(client);
         }
         cmd.runAsync(options).then(payload => {
-            let initPayload = payload;
-            if (opts.initialView) {
-                initPayload.initialView = {
-                    ...opts.initialView
-                };
-            }
-            if (opts.initialActiveMap) {
-                initPayload.activeMapName = opts.initialActiveMap;
-            }
-            initPayload.initialHideGroups = opts.initialHideGroups;
-            initPayload.initialHideLayers = opts.initialHideLayers;
-            initPayload.initialShowGroups = opts.initialShowGroups;
-            initPayload.initialShowLayers = opts.initialShowLayers;
-            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-            // Merge in appSettings from loaded appDef, any setting in appDef
-            // already specified at viewer mount will be overwritten
-            const appSettings = opts.appSettings ?? {};
-            const inAppSettings = payload.appSettings ?? {};
-            for (const k in inAppSettings) {
-                appSettings[k] = inAppSettings[k];
-            }
-            initPayload.appSettings = appSettings;
+            applyInitPayloadOverrides(payload, opts);
             dispatch({
                 type: ActionType.INIT_APP,
                 payload
@@ -350,6 +358,56 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
         }).catch(err => {
             processAndDispatchInitError(err, false, dispatch, opts);
         })
+    };
+}
+
+/**
+ * Initializes the viewer from a pre-loaded application definition.
+ *
+ * This is the dispatchable thunked equivalent of the init command pattern for callers
+ * that already have an {@link ApplicationDefinition} object. Instead of going through a
+ * resource URL/resource-id, the caller supplies the appdef directly and this action handles
+ * building the {@link ActionType.INIT_APP} payload and dispatching it.
+ *
+ * @param appDef The pre-loaded application definition
+ * @param cmd The viewer init command used to process the application definition
+ * @param viewer The map provider context
+ * @param options The initialization options
+ * @returns {ReduxThunkedAction}
+ *
+ * @since 0.15
+ */
+export function initAppFromAppDef(appDef: ApplicationDefinition, cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
+    const opts: IInitAsyncOptions = { ...options };
+    return (dispatch, getState) => {
+        const args = getState().config;
+        if (args.agentUri && args.agentKind) {
+            const client = new Client(args.agentUri, args.agentKind);
+            cmd.attachClient(client);
+        }
+        if (!cmd.runFromAppDefAsync) {
+            processAndDispatchInitError(
+                new Error("This IViewerInitCommand implementation does not support initAppFromAppDef"),
+                false,
+                dispatch,
+                opts
+            );
+            return;
+        }
+        cmd.runFromAppDefAsync(appDef, opts).then(payload => {
+            applyInitPayloadOverrides(payload, opts);
+            dispatch({
+                type: ActionType.INIT_APP,
+                payload
+            });
+            if (options.onInit) {
+                if (viewer) {
+                    options.onInit(viewer);
+                }
+            }
+        }).catch(err => {
+            processAndDispatchInitError(err, false, dispatch, opts);
+        });
     };
 }
 

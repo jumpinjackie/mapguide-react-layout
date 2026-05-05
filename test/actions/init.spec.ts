@@ -112,9 +112,7 @@ describe("actions/init", () => {
             };
             const dispatch = vi.fn();
             const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
-            thunk(dispatch, mockGetState as any);
-            // Wait for async operations to complete
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             expect(cmd.runFromAppDefAsync).toHaveBeenCalledWith(mockAppDef, expect.objectContaining({ locale: "en" }));
             expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_APP }));
         });
@@ -139,8 +137,7 @@ describe("actions/init", () => {
             };
             const dispatch = vi.fn();
             const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
-            thunk(dispatch, mockGetState as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_ERROR }));
         });
 
@@ -154,8 +151,7 @@ describe("actions/init", () => {
             const dispatch = vi.fn();
             const initialView = { x: 1, y: 2, scale: 3 };
             const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy", initialView });
-            thunk(dispatch, mockGetState as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
             expect(dispatchedAction?.payload?.initialView).toEqual(initialView);
         });
@@ -169,8 +165,7 @@ describe("actions/init", () => {
             };
             const dispatch = vi.fn();
             const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy", initialActiveMap: "MapB" });
-            thunk(dispatch, mockGetState as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
             expect(dispatchedAction?.payload?.activeMapName).toBe("MapB");
         });
@@ -186,8 +181,7 @@ describe("actions/init", () => {
             const onInit = vi.fn();
             const viewer: any = { someViewerProp: true };
             const thunk = initAppFromAppDef(mockAppDef, cmd, viewer, { locale: "en", resourceId: "dummy", onInit });
-            thunk(dispatch, mockGetState as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             expect(onInit).toHaveBeenCalledWith(viewer);
         });
 
@@ -204,8 +198,7 @@ describe("actions/init", () => {
                 config: { agentUri: "http://mapserver/mapagent", agentKind: "mapagent" }
             });
             const thunk = initAppFromAppDef(mockAppDef, cmd, mockViewer, { locale: "en", resourceId: "dummy" });
-            thunk(dispatch, getStateWithAgent as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, getStateWithAgent as any);
             expect(cmd.attachClient).toHaveBeenCalled();
         });
 
@@ -223,8 +216,7 @@ describe("actions/init", () => {
                 resourceId: "dummy",
                 appSettings: { fromOptions: "value2", shared: "optionsValue" }
             });
-            thunk(dispatch, mockGetState as any);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await thunk(dispatch, mockGetState as any);
             const dispatchedAction = dispatch.mock.calls.find(([a]) => a.type === ActionType.INIT_APP)?.[0];
             // appDef settings should overwrite options settings for shared keys
             expect(dispatchedAction?.payload?.appSettings?.fromOptions).toBe("value2");

@@ -315,12 +315,7 @@ function applyInitPayloadOverrides(initPayload: IInitAppActionPayload, opts: IIn
     initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
     // Merge in appSettings from loaded appDef, any setting in appDef
     // already specified at viewer mount will be overwritten
-    const appSettings = opts.appSettings ?? {};
-    const inAppSettings = initPayload.appSettings ?? {};
-    for (const k in inAppSettings) {
-        appSettings[k] = inAppSettings[k];
-    }
-    initPayload.appSettings = appSettings;
+    initPayload.appSettings = Object.assign({}, opts.appSettings, initPayload.appSettings);
 }
 
 /**
@@ -394,7 +389,7 @@ export function initAppFromAppDef(appDef: ApplicationDefinition, cmd: IViewerIni
             );
             return;
         }
-        cmd.runFromAppDefAsync(appDef, opts).then(payload => {
+        return cmd.runFromAppDefAsync(appDef, opts).then(payload => {
             applyInitPayloadOverrides(payload, opts);
             dispatch({
                 type: ActionType.INIT_APP,

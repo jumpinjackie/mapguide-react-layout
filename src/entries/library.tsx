@@ -202,8 +202,59 @@ export const Externals = {
     ReactDOM: ReactDOM
 };
 export { ApplicationViewModel as Application } from "./application";
+export type { IApplicationMountOptions } from "./application";
 export { setAssetRoot } from "../utils/asset";
 export { DefaultViewerInitCommand as MapGuideViewerInitCommand } from "../actions/init-mapguide";
+
+// UI element customization public API
+export {
+    MinimalProvider,
+    ElementProvider,
+    useElementContext,
+    ElementGroup,
+    TypedSelect
+} from "../components/elements/element-context";
+export type {
+    IElementContext,
+    ElementVariant,
+    ButtonProps,
+    RadioProps,
+    SliderProps,
+    CollapsibleProps,
+    CalloutProps,
+    CheckboxProps,
+    IconProps,
+    CardProps,
+    NumericInputProps,
+    InputGroupProps,
+    NonIdealStateProps,
+    SpinnerSize,
+    SpinnerProps,
+    SwitchProps,
+    SelectProps,
+    FileInputProps,
+    FormGroupProps,
+    EditableTextProps,
+    MenuComponentProps,
+    TabSetProps,
+    DrawerProps,
+    PopoverProps,
+    ToasterProps,
+    IToasterRef,
+    ToastMessage,
+    ToastPosition,
+    DialogProps,
+    DialogContainerProps,
+    DialogShellProps,
+    DialogHeaderProps,
+    DialogBodyProps,
+    DialogFooterProps,
+    DialogFooterActionsProps,
+    HeadingProps,
+    TextProps,
+    HtmlTableProps,
+    ElementGroupProps
+} from "../components/elements/element-context";
 
 export { updateUrl, getStateFromUrl } from "../containers/url-state";
 

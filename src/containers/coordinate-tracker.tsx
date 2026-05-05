@@ -19,7 +19,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
     const proj = useActiveMapProjection();
     if (aProjections && aProjections.length) {
         return <div style={{ margin: 8 }}>
-            <Heading level={4}>{tr("COORDTRACKER", locale)}</Heading>
+            <Heading level={3}>{tr("COORDTRACKER", locale)}</Heading>
             {aProjections.map(p => {
                 let x = NaN;
                 let y = NaN;
@@ -31,7 +31,7 @@ export const CoordinateTrackerContainer = (props: ICoordinateTrackerContainerPro
                     }
                 }
                 return <Card key={p} style={{ marginBottom: 10 }}>
-                    <Heading level={5}><a href="#">{p}</a></Heading>
+                    <Heading level={5}>{p}</Heading>
                     <p><strong>{tr("COORDTRACKER_X", locale)}</strong> {x}</p>
                     <p><strong>{tr("COORDTRACKER_Y", locale)}</strong> {y}</p>
                 </Card>;

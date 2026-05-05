@@ -1,0 +1,37 @@
+/* Minimal provider – HtmlTable styles */
+
+.mrl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--mrl-font-size-base);
+  color: var(--mrl-color-text);
+}
+
+.mrl-table th,
+.mrl-table td {
+  padding: var(--mrl-spacing-sm) var(--mrl-spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--mrl-color-border);
+}
+
+.mrl-table th {
+  font-weight: 600;
+  background: var(--mrl-color-bg-elevated);
+  color: var(--mrl-color-text);
+}
+
+.mrl-table tbody tr:hover {
+  background: var(--mrl-color-bg-elevated);
+}
+
+/* Condensed */
+.mrl-table--condensed th,
+.mrl-table--condensed td {
+  padding: var(--mrl-spacing-xs) var(--mrl-spacing-sm);
+}
+
+/* Bordered */
+.mrl-table--bordered th,
+.mrl-table--bordered td {
+  border: 1px solid var(--mrl-color-border);
+}

@@ -33,6 +33,33 @@ export interface IFlyoutRegionProps {
  */
 export const FlyoutRegion = (props: IFlyoutRegionProps) => {
     const { MenuComponent } = useElementContext();
+    const contextMenuRef = React.useRef<HTMLDivElement | null>(null);
+    const isContextMenuOpen = !!props.flyoutConf?.[WEBLAYOUT_CONTEXTMENU]?.open;
+
+    React.useEffect(() => {
+        if (!isContextMenuOpen) {
+            return;
+        }
+
+        const dismissContextMenu = (evt: MouseEvent | TouchEvent) => {
+            const target = evt.target;
+            if (!(target instanceof Node)) {
+                return;
+            }
+            if (contextMenuRef.current?.contains(target)) {
+                return;
+            }
+            props.onCloseFlyout(WEBLAYOUT_CONTEXTMENU);
+        };
+
+        document.addEventListener("mousedown", dismissContextMenu, true);
+        document.addEventListener("touchstart", dismissContextMenu, true);
+        return () => {
+            document.removeEventListener("mousedown", dismissContextMenu, true);
+            document.removeEventListener("touchstart", dismissContextMenu, true);
+        };
+    }, [isContextMenuOpen, props.onCloseFlyout]);
+
     return <div>
         {(() => {
             const children = [] as JSX.Element[];
@@ -75,7 +102,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                         className = "mg-flyout-component-container";
                     }
 
-                    children.push(<div key={flyoutId} className={className} style={containerStyle}>
+                    children.push(<div key={flyoutId} ref={flyoutId === WEBLAYOUT_CONTEXTMENU ? contextMenuRef : undefined} className={className} style={containerStyle}>
                         {(() => {
                             if (flyout.componentName) {
                                 return <PlaceholderComponent id={flyout.componentName} componentProps={flyout.componentProps} locale={props.locale} />;

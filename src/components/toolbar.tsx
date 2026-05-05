@@ -4,12 +4,9 @@ import { IDOMElementMetrics, FlyoutVisibilitySet, GenericEvent } from "../api/co
 import { ToolbarContext } from "./context";
 import { STR_EMPTY } from "../utils/string";
 import { ImageIcon } from "./icon";
-import {
-    BlueprintSvgIconNames
-} from "../constants/assets";
-import { NBSP } from '../constants';
 import { useElementContext } from "./elements/element-context";
 import { getText } from "../utils/menu";
+import { SvgIconName } from "./icon-names";
 
 export const DEFAULT_TOOLBAR_SIZE = 29;
 export const TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
@@ -47,7 +44,7 @@ export function getEnabled(item: IItem): boolean {
     return true;
 }
 
-type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["bpIconName"], iconSize: number };
+type OpacityIconProps = { opacity: React.CSSProperties["opacity"], icon: IItem["svgIconName"], iconSize: number };
 
 const OpacityIcon: React.FC<OpacityIconProps> = React.memo(({ opacity, icon, iconSize }) => {
     const { Icon } = useElementContext();
@@ -58,9 +55,9 @@ function getIconElement(item: IItem, enabled: boolean, size: number): React.Reac
     const iconStyle = getIconStyle(enabled, size);
     if (item.iconClass || item.icon) {
         return <ImageIcon style={iconStyle} url={item.icon} spriteClass={item.iconClass} />
-    } else if (item.bpIconName) {
+    } else if (item.svgIconName) {
         const { opacity } = iconStyle; //For SVG, we only care about opacity
-        return <OpacityIcon opacity={opacity} icon={item.bpIconName} iconSize={size * SVG_SIZE_RATIO} />
+        return <OpacityIcon opacity={opacity} icon={item.svgIconName} iconSize={size * SVG_SIZE_RATIO} />
     } else {
         return <></>;
     }
@@ -95,7 +92,10 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
     const pad = ((size - 16) / 2);
     const vertPad = 6;
     const style: React.CSSProperties = {
-        display: vertical === true ? "block" : "inline-block",
+        display: vertical === true ? "block" : "inline-flex",
+        alignItems: vertical === true ? undefined : "center",
+        gap: vertical === true ? undefined : 4,
+        verticalAlign: vertical === true ? undefined : "top",
         //height: height,
         paddingLeft: pad,
         paddingRight: pad,
@@ -112,7 +112,7 @@ function getItemStyle(enabled: boolean, selected: boolean, size: number, isMouse
     return style;
 }
 
-function getToolbarSeparatorItemStyle(vertical?: boolean): React.CSSProperties {
+function getToolbarSeparatorItemStyle(size: number, vertical?: boolean): React.CSSProperties {
     const style: React.CSSProperties = {
         display: vertical === true ? "block" : "inline-block"
     };
@@ -122,10 +122,18 @@ function getToolbarSeparatorItemStyle(vertical?: boolean): React.CSSProperties {
         style.marginLeft = 0;
         style.marginRight = 0;
     } else {
+        const vertPad = 6; // Must match the vertPad used in getItemStyle
+        const separatorHeight = Math.max(1, size - (vertPad * 2));
+        const separatorOffset = Math.max(0, Math.floor((size - separatorHeight) / 2));
+        style.height = separatorHeight;
+        style.marginTop = separatorOffset;
+        style.marginBottom = separatorOffset;
+        style.verticalAlign = "top";
+        style.boxSizing = "border-box";
         style.paddingTop = 0;
         style.paddingBottom = 0;
         style.marginLeft = 2;
-        style.marginRight = -2;
+        style.marginRight = 2;
     }
     return style;
 }
@@ -232,7 +240,7 @@ const ComponentFlyoutItem = (props: IComponentFlyoutItemProps) => {
     const ttip = getTooltip(item);
     const iconEl = getIconElement(item, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
-        <div data-flyout-id={`flyout-${item.flyoutId}`}>
+        <div data-flyout-id={`flyout-${item.flyoutId}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;
@@ -288,7 +296,7 @@ const FlyoutMenuReferenceItem = (props: IFlyoutMenuReferenceItemProps) => {
     const ttip = getTooltip(menu);
     const iconEl = getIconElement(menu, enabled, size);
     return <div className={`noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} style={style} title={ttip}>
-        <div data-flyout-id={`flyout-${menu.flyoutId}`}>
+        <div data-flyout-id={`flyout-${menu.flyoutId}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
             {iconEl} {label} {getFlyoutIconElement(isFlownOut, size)}
         </div>
     </div>;
@@ -300,11 +308,11 @@ interface IToolbarSeparatorProps {
 }
 
 const ToolbarSeparator = (props: IToolbarSeparatorProps) => {
-    const style = getToolbarSeparatorItemStyle(props.vertical);
+    const style = getToolbarSeparatorItemStyle(props.size, props.vertical);
     if (props.vertical === true) {
         return <div className="noselect toolbar-separator-vertical" style={style} />;
     } else {
-        return <div className="noselect toolbar-separator-horizontal" style={style}>{NBSP}</div>;
+        return <div className="noselect toolbar-separator-horizontal" style={style} aria-hidden="true" />;
     }
 }
 
@@ -356,7 +364,10 @@ export interface IItem {
     tooltip?: string | (() => string);
     icon?: string;
     iconClass?: string;
-    bpIconName?: BlueprintSvgIconNames;
+    /**
+     * @since 0.15 Renamed from bpIconName to svgIconName
+     */
+    svgIconName?: SvgIconName;
     invoke?: () => void;
     enabled?: boolean | (() => boolean);
     selected?: boolean | (() => boolean);
@@ -435,21 +446,124 @@ export const Toolbar = (props: IToolbarProps) => {
         openComponent: openComponent,
         closeComponent: closeComponent
     };
+
+    const { Icon } = useElementContext();
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const [canScrollBefore, setCanScrollBefore] = React.useState(false);
+    const [canScrollAfter, setCanScrollAfter] = React.useState(false);
+
+    const updateScrollState = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        if (vertical === true) {
+            setCanScrollBefore(el.scrollTop > 0);
+            setCanScrollAfter(Math.ceil(el.scrollTop + el.clientHeight) < el.scrollHeight);
+        } else {
+            setCanScrollBefore(el.scrollLeft > 0);
+            setCanScrollAfter(Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth);
+        }
+    }, [vertical]);
+
+    React.useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        el.addEventListener("scroll", updateScrollState, { passive: true });
+        const ro = new ResizeObserver(updateScrollState);
+        ro.observe(el);
+        updateScrollState();
+        return () => {
+            el.removeEventListener("scroll", updateScrollState);
+            ro.disconnect();
+        };
+    }, [updateScrollState]);
+
+    // Re-check scroll state after each render in case item count/content changed
+    React.useLayoutEffect(() => {
+        updateScrollState();
+    }, [childItems, updateScrollState]);
+
+    const onScrollBefore = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: -amount, behavior: "smooth" });
+        } else {
+            el.scrollBy({ left: -amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+
+    const onScrollAfter = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el) return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: amount, behavior: "smooth" });
+        } else {
+            el.scrollBy({ left: amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+
+    const outerStyle: React.CSSProperties = {
+        ...containerStyle,
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: vertical === true ? "column" : "row",
+    };
+
+    const scrollContainerStyle: React.CSSProperties = vertical === true
+        ? { flex: "1 1 0", minHeight: 0, overflowY: "scroll", overflowX: "hidden" }
+        : { flex: "1 1 0", minWidth: 0, overflowX: "scroll", overflowY: "hidden", whiteSpace: "nowrap" };
+
+    const scrollBtnStyle: React.CSSProperties = {
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        cursor: "pointer",
+        width: vertical === true ? "100%" : height,
+        height: vertical === true ? height : "100%",
+    };
+
+    const iconSize = height * SVG_SIZE_RATIO;
+
     return <ToolbarContext.Provider value={providerImpl}>
-        <div style={containerStyle} className={`has-flyout noselect ${containerClass}`}>
-            {childItems.map((item, index) => {
-                if (isComponentFlyout(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (isMenuRef(item)) {
-                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                    return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
-                } else if (item.isSeparator === true) {
-                    return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
-                } else {
-                    return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
-                }
-            })}
+        <div style={outerStyle} className={`has-flyout noselect ${containerClass}`}>
+            {canScrollBefore && (
+                <div
+                    className="noselect toolbar-scroll-btn"
+                    style={scrollBtnStyle}
+                    onClick={onScrollBefore}
+                    title={vertical === true ? "Scroll up" : "Scroll left"}
+                >
+                    <Icon icon={vertical === true ? "chevron-up" : "chevron-left"} iconSize={iconSize} />
+                </div>
+            )}
+            <div ref={scrollContainerRef} className="toolbar-scroll-container" style={scrollContainerStyle}>
+                {childItems.map((item, index) => {
+                    if (isComponentFlyout(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <ComponentFlyoutItem key={index} size={height} item={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (isMenuRef(item)) {
+                        const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                        return <FlyoutMenuReferenceItem key={index} size={height} menu={item} vertical={vertical} isFlownOut={isFlownOut} />;
+                    } else if (item.isSeparator === true) {
+                        return <ToolbarSeparator key={index} size={height} vertical={vertical} />;
+                    } else {
+                        return <ToolbarButton key={index} height={height} item={item} vertical={vertical} hideVerticalLabels={hideVerticalLabels} />;
+                    }
+                })}
+            </div>
+            {canScrollAfter && (
+                <div
+                    className="noselect toolbar-scroll-btn"
+                    style={scrollBtnStyle}
+                    onClick={onScrollAfter}
+                    title={vertical === true ? "Scroll down" : "Scroll right"}
+                >
+                    <Icon icon={vertical === true ? "chevron-down" : "chevron-right"} iconSize={iconSize} />
+                </div>
+            )}
         </div>
     </ToolbarContext.Provider>;
 }

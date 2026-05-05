@@ -1,0 +1,56 @@
+/* Minimal provider – TabSet styles */
+
+.mrl-tab-set {
+  display: flex;
+  flex-direction: column;
+}
+
+.mrl-tab-list {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.mrl-tab {
+  padding: var(--mrl-spacing-sm) var(--mrl-spacing-lg);
+  background: transparent;
+  border: none;
+  box-shadow: inset 0 -3px 0 transparent;
+  margin-bottom: 0;
+  line-height: 1;
+  cursor: pointer;
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  color: var(--mrl-color-text-muted);
+  transition: color var(--mrl-transition-speed) ease,
+              box-shadow var(--mrl-transition-speed) ease;
+  white-space: nowrap;
+}
+
+.mrl-tab > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mrl-spacing-xs);
+}
+
+.mrl-tab:hover:not(.mrl-tab--active) {
+  color: var(--mrl-color-text);
+}
+
+.mrl-tab--active {
+  color: var(--mrl-color-primary);
+  box-shadow: inset 0 -3px 0 var(--mrl-color-primary);
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.mrl-tab-panel {
+  padding: var(--mrl-spacing-lg) 0;
+}
+
+.mrl-tab-panel[hidden] {
+  display: none;
+}

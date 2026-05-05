@@ -3,6 +3,7 @@ import { Rnd } from "react-rnd";
 import { tr } from '../api/i18n';
 import { ModalChangeArgs } from "../actions/defs";
 import { useElementContext } from "./elements/element-context";
+import { SvgIconName } from "./icon-names";
 
 export interface IRndModalDialogProps {
     x: number;
@@ -11,10 +12,7 @@ export interface IRndModalDialogProps {
     height: number;
     title: string;
     isOpen: boolean;
-    /**
-     * @since 0.15 changed from blueprint IconName to string
-     */
-    icon?: string;
+    icon?: SvgIconName;
     onClose?: () => void;
     children: (bodyDim: [number, number]) => React.ReactNode;
     locale: string;
@@ -43,6 +41,7 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
     const modalBodyStyle: React.CSSProperties = {
         margin: 0,
         height: diagHeight - DIAG_HEADER_HEIGHT,
+        boxSizing: "border-box",
         overflow: "hidden"
     };
     if (!props.disableYOverflow) {
@@ -57,6 +56,8 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
     const modalStyle: React.CSSProperties = {
         width: diagWidth,
         height: diagHeight,
+        minWidth: diagWidth,
+        maxWidth: diagWidth,
         //bp defaults this to 30, which invisibly offsets the 
         //position of expected rnd drag/resize handles
         marginTop: 0,
@@ -113,15 +114,16 @@ export const RndModalDialog = (props: IRndModalDialogProps) => {
             props.onChange?.(args);
         }}
         dragHandleClassName="mrl-modal-diag-drag-handle"
+        cancel=".mrl-modal-diag-close-btn"
         default={{ x: props.x, y: props.y, width: props.width, height: props.height }}>
         <DialogContainer>
             <DialogShell style={modalStyle}>
-                <DialogHeader className="noselect">
+                <DialogHeader className="noselect mrl-modal-diag-drag-handle mrl-rnd-modal-header">
                     {props.icon && <Icon icon={props.icon} />}
-                    <Heading level={4} className="mrl-modal-diag-drag-handle">{props.title}</Heading>
-                    <Button onClick={props.onClose} aria-label={tr("ACTION_CLOSE", props.locale)} minimal icon="small-cross" />
+                    <Heading level={4}>{props.title}</Heading>
+                    <Button className="mrl-modal-diag-close-btn" onClick={props.onClose} aria-label={tr("ACTION_CLOSE", props.locale)} minimal icon="small-cross" />
                 </DialogHeader>
-                <DialogBody style={modalBodyStyle}>
+                <DialogBody className="mrl-rnd-modal-body" style={modalBodyStyle}>
                     {(() => {
                         //We use NonIdealState as a visual mask to suppress unwanted mouse 
                         //interaction during the act of dragging/resizing, similar to what the

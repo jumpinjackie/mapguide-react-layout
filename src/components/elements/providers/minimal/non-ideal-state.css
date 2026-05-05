@@ -1,0 +1,47 @@
+/* Minimal provider – NonIdealState styles */
+
+.mrl-non-ideal-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: var(--mrl-spacing-xl);
+  gap: var(--mrl-spacing-sm);
+  color: var(--mrl-color-text-muted);
+}
+
+.mrl-non-ideal-state-icon {
+  font-size: 40px;
+  line-height: 1;
+  opacity: 0.5;
+  margin-bottom: var(--mrl-spacing-sm);
+}
+
+.mrl-non-ideal-state-title {
+  font-size: var(--mrl-font-size-lg);
+  font-weight: 600;
+  color: var(--mrl-color-text);
+  margin: 0;
+}
+
+.mrl-non-ideal-state-description {
+  font-size: var(--mrl-font-size-base);
+  margin: 0;
+  max-width: 360px;
+}
+
+.mrl-non-ideal-state-action {
+  margin-top: var(--mrl-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mrl-spacing-sm);
+}
+
+.mrl-non-ideal-state-action > .mrl-element-group {
+  justify-content: center;
+}

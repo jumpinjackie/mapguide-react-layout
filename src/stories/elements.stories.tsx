@@ -14,7 +14,8 @@ import {
 } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import { strIsNullOrEmpty } from "../utils/string";
-import { getIconNames } from "../components/icon-names";
+import { getIconNames, SvgIconName } from "../components/icon-names";
+import type { IInlineMenu, IItem } from "../components/toolbar";
 import commonElementsDocs from "./docs/common-elements.md";
 
 export default {
@@ -73,7 +74,7 @@ export const _Button = {
   render: () => {
     const { Button } = useElementContext();
     const label = text("Label", "Click me");
-    let icon: string | undefined = select("Icon name", getIconNames(), "");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), undefined);
     const variant = select(
       "Variant",
       ["primary", "warning", "success", "danger"],
@@ -295,7 +296,7 @@ export const _InputGroup = {
     const round = boolean("Round", false);
     const placeholder = text("Placeholder", "Type some text here ...");
     const [localValue, setLocalValue] = React.useState("");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const act = action("Value changed");
     const onChange: React.ComponentProps<typeof InputGroup>["onChange"] = (
@@ -323,7 +324,7 @@ export const _InputGroupWithRightElement = {
     const round = boolean("Round", false);
     const placeholder = text("Placeholder", "Type some text here ...");
     const [localValue, setLocalValue] = React.useState("");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const act = action("Value changed");
     const onChange: React.ComponentProps<typeof InputGroup>["onChange"] = (
@@ -353,7 +354,7 @@ export const _NonIdealState = {
     const { NonIdealState } = useElementContext();
     const title = text("Title", "Title");
     const desc = text("Description", "Some description");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return <NonIdealState icon={icon} title={title} description={desc} />;
   },
@@ -365,7 +366,7 @@ export const _NonIdealStateWithAction = {
     const { NonIdealState, Button } = useElementContext();
     const title = text("Title", "Title");
     const desc = text("Description", "Some description");
-    let icon: string | undefined = select("Icon name", getIconNames(), "error");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "error");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return (
       <NonIdealState
@@ -547,7 +548,7 @@ export const _Toaster = {
       "primary"
     );
     const message = text("Message", "This is a toast notification");
-    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "info-sign");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     const onShow = () => {
       toasterRef.current?.show({ message, variant, icon });
@@ -569,7 +570,7 @@ export const _Dialog = {
     const { Dialog, Button, DialogBody, DialogFooter, DialogFooterActions } = useElementContext();
     const [isOpen, setIsOpen] = React.useState(false);
     const title = text("Title", "Dialog Title");
-    let icon: string | undefined = select("Icon name", getIconNames(), "info-sign");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "info-sign");
     if (strIsNullOrEmpty(icon)) icon = undefined;
     return (
       <>
@@ -598,4 +599,382 @@ export const _Dialog = {
     );
   },
   name: "Dialog",
+};
+
+export const _FileInput = {
+  render: () => {
+    const { FileInput } = useElementContext();
+    const fill = boolean("Fill", false);
+    const fileText = text("Text", "Choose file...");
+    const buttonText = text("Button text", "Browse");
+    return (
+      <FileInput
+        fill={fill}
+        text={fileText}
+        buttonText={buttonText}
+        onInputChange={action("Input changed")}
+      />
+    );
+  },
+  name: "FileInput",
+};
+
+export const _EditableText = {
+  render: () => {
+    const { EditableText } = useElementContext();
+    const [localValue, setLocalValue] = React.useState("Click to edit me");
+    const act = action("Value changed");
+    const onChange: React.ComponentProps<typeof EditableText>["onChange"] = (
+      value
+    ) => {
+      act(value);
+      setLocalValue(value);
+    };
+    return <EditableText value={localValue} onChange={onChange} />;
+  },
+  name: "EditableText",
+};
+
+export const _MenuComponent = {
+  render: () => {
+    const { MenuComponent } = useElementContext();
+    const recentFilesSubMenu: IInlineMenu = {
+      label: "Recent Files",
+      iconClass: "folder-close",
+      childItems: [
+        { label: "Parcels.geojson", invoke: action("Parcels clicked") },
+        { label: "Roads.geojson", invoke: action("Roads clicked") },
+        { label: "Utilities.sdf", enabled: false },
+      ],
+    };
+    const items: IItem[] = [
+      { label: "Open", iconClass: "folder-horizontal-open", invoke: action("Open clicked") },
+      { label: "Save", iconClass: "file-save", invoke: action("Save clicked") },
+      recentFilesSubMenu,
+      { isSeparator: true },
+      { label: "Disabled item", enabled: false },
+    ];
+    return (
+      <div style={{ width: 260 }}>
+        <MenuComponent items={items} onInvoked={action("Menu item invoked")} />
+      </div>
+    );
+  },
+  name: "MenuComponent",
+};
+
+export const _TabSet = {
+  render: () => {
+    const { TabSet } = useElementContext();
+    const [activeTabId, setActiveTabId] = React.useState<string | number>("tab-1");
+    const act = action("Tab changed");
+    const onTabChanged: React.ComponentProps<typeof TabSet>["onTabChanged"] = (
+      tabId
+    ) => {
+      act(tabId);
+      setActiveTabId(tabId);
+    };
+    return (
+      <TabSet
+        id="demo-tabs"
+        activeTabId={activeTabId}
+        onTabChanged={onTabChanged}
+        tabs={[
+          {
+            id: "tab-1",
+            title: "Overview",
+            content: <p>This is the overview tab content.</p>,
+          },
+          {
+            id: "tab-2",
+            title: "Details",
+            content: <p>This is the details tab content.</p>,
+          },
+          {
+            id: "tab-3",
+            title: "Settings",
+            content: <p>This is the settings tab content.</p>,
+          },
+        ]}
+      />
+    );
+  },
+  name: "TabSet",
+};
+
+export const _Popover = {
+  render: () => {
+    const { Popover, Button, Card } = useElementContext();
+    const position = select("Position", ["left", "bottom", "right", "top"], "right");
+    const minimal = boolean("Minimal", false);
+    return (
+      <Popover usePortal={false} minimal={minimal} position={position}>
+        <Button variant="primary">Toggle Popover</Button>
+        <Card>
+          <p style={{ margin: 0 }}>This is popover content.</p>
+        </Card>
+      </Popover>
+    );
+  },
+  name: "Popover",
+};
+
+export const _Drawer = {
+  render: () => {
+    const { Drawer, Button } = useElementContext();
+    const [isOpen, setIsOpen] = React.useState(false);
+    const position = select("Position", ["left", "bottom", "right", "top"], "right");
+    let icon: SvgIconName | undefined = select("Icon name", getIconNames(), "cog");
+    if (strIsNullOrEmpty(icon)) icon = undefined;
+    return (
+      <>
+        <Button variant="primary" onClick={() => setIsOpen(true)}>
+          Open Drawer
+        </Button>
+        <Drawer
+          isOpen={isOpen}
+          position={position}
+          title="Drawer Title"
+          icon={icon}
+          onClose={() => setIsOpen(false)}
+        >
+          <p>This is the drawer content.</p>
+          <Button variant="primary" onClick={() => setIsOpen(false)}>
+            Close Drawer
+          </Button>
+        </Drawer>
+      </>
+    );
+  },
+  name: "Drawer",
+};
+
+export const _HtmlTable = {
+  render: () => {
+    const { HtmlTable } = useElementContext();
+    const condensed = boolean("Condensed", false);
+    const bordered = boolean("Bordered", false);
+    return (
+      <HtmlTable condensed={condensed} bordered={bordered}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Main Roads</td>
+            <td>Visible</td>
+            <td>Vector</td>
+          </tr>
+          <tr>
+            <td>Parcels</td>
+            <td>Hidden</td>
+            <td>Vector</td>
+          </tr>
+          <tr>
+            <td>Aerial</td>
+            <td>Visible</td>
+            <td>Raster</td>
+          </tr>
+        </tbody>
+      </HtmlTable>
+    );
+  },
+  name: "HtmlTable",
+};
+
+export const _DialogComposition = {
+  render: () => {
+    const {
+      Button,
+      DialogContainer,
+      DialogShell,
+      DialogHeader,
+      DialogBody,
+      DialogFooter,
+      DialogFooterActions,
+    } = useElementContext();
+    return (
+      <DialogContainer style={{ position: "relative", minHeight: 280 }}>
+        <DialogShell style={{ width: 460, margin: "0 auto" }}>
+          <DialogHeader>
+            <h5 style={{ margin: 0 }}>Composed Dialog Layout</h5>
+          </DialogHeader>
+          <DialogBody>
+            <p>This story demonstrates the low-level dialog composition primitives.</p>
+          </DialogBody>
+          <DialogFooter>
+            <DialogFooterActions>
+              <Button minimal={true} onClick={action("Cancel clicked")}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={action("Save clicked")}>
+                Save
+              </Button>
+            </DialogFooterActions>
+          </DialogFooter>
+        </DialogShell>
+      </DialogContainer>
+    );
+  },
+  name: "Dialog composition",
+};
+
+export const _FormGroupWithCommonFields = {
+  render: () => {
+    const {
+      FormGroup,
+      InputGroup,
+      NumericInput,
+      Checkbox,
+      Radio,
+      Switch,
+      Select,
+      FileInput,
+      EditableText,
+      Slider,
+    } = useElementContext();
+
+    const inline = boolean("Inline FormGroup Layout", false);
+
+    const [nameValue, setNameValue] = React.useState("Jane Doe");
+    const [ageValue, setAgeValue] = React.useState(28);
+    const [subscribed, setSubscribed] = React.useState(true);
+    const [advancedMode, setAdvancedMode] = React.useState(false);
+    const [theme, setTheme] = React.useState<string | undefined>("light");
+    const [bio, setBio] = React.useState("Click to edit biography");
+    const [quality, setQuality] = React.useState(75);
+    const [plan, setPlan] = React.useState("basic");
+
+    const onNameChanged: React.ComponentProps<typeof InputGroup>["onChange"] = (
+      e
+    ) => {
+      action("Name changed")(e.target.value);
+      setNameValue(e.target.value);
+    };
+    const onAgeChanged: React.ComponentProps<typeof NumericInput>["onChange"] = (
+      value
+    ) => {
+      action("Age changed")(value);
+      setAgeValue(value);
+    };
+    const onSubscribedChanged: React.ComponentProps<typeof Checkbox>["onChange"] = (
+      e
+    ) => {
+      action("Subscribe changed")(e.target.checked);
+      setSubscribed(e.target.checked);
+    };
+    const onPlanChanged: React.ComponentProps<typeof Radio>["onChange"] = (e) => {
+      action("Plan changed")(e.target.value);
+      setPlan(e.target.value);
+    };
+    const onAdvancedModeChanged: React.ComponentProps<typeof Switch>["onChange"] = (
+      e
+    ) => {
+      action("Advanced mode changed")(e.target.checked);
+      setAdvancedMode(e.target.checked);
+    };
+    const onThemeChanged: React.ComponentProps<typeof Select>["onChange"] = (value) => {
+      action("Theme changed")(value);
+      setTheme(value);
+    };
+    const onBioChanged: React.ComponentProps<typeof EditableText>["onChange"] = (
+      value
+    ) => {
+      action("Bio changed")(value);
+      setBio(value);
+    };
+    const onQualityChanged: React.ComponentProps<typeof Slider>["onChange"] = (
+      value
+    ) => {
+      action("Quality changed")(value);
+      setQuality(value);
+    };
+
+    return (
+      <div style={{ maxWidth: 480 }}>
+        <FormGroup label="Name" labelFor="fg-name" inline={inline}>
+          <InputGroup id="fg-name" value={nameValue} onChange={onNameChanged} />
+        </FormGroup>
+
+        <FormGroup label="Age" inline={inline}>
+          <NumericInput min={0} max={120} value={ageValue} onChange={onAgeChanged} />
+        </FormGroup>
+
+        <FormGroup label="Theme" labelFor="fg-theme" inline={inline}>
+          <Select
+            id="fg-theme"
+            value={theme}
+            onChange={onThemeChanged}
+            items={[
+              { value: "light", label: "Light" },
+              { value: "dark", label: "Dark" },
+              { value: "contrast", label: "High Contrast" },
+            ]}
+          />
+        </FormGroup>
+
+        <FormGroup label="Plan" inline={inline}>
+          <Radio
+            name="plan"
+            value="basic"
+            label="Basic"
+            checked={plan === "basic"}
+            onChange={onPlanChanged}
+          />
+          <Radio
+            name="plan"
+            value="pro"
+            label="Pro"
+            checked={plan === "pro"}
+            onChange={onPlanChanged}
+          />
+        </FormGroup>
+
+        <FormGroup label="Subscribe" labelFor="fg-subscribe" inline={inline}>
+          <Checkbox
+            id="fg-subscribe"
+            checked={subscribed}
+            onChange={onSubscribedChanged}
+            label="Subscribe to newsletter"
+          />
+        </FormGroup>
+
+        <FormGroup label="Advanced mode" inline={inline}>
+          <Switch
+            checked={advancedMode}
+            onChange={onAdvancedModeChanged}
+            label="Enable advanced features"
+          />
+        </FormGroup>
+
+        <FormGroup label="Attachment" inline={inline}>
+          <FileInput
+            text="No file chosen"
+            buttonText="Select file"
+            onInputChange={action("Attachment changed")}
+          />
+        </FormGroup>
+
+        <FormGroup label="Biography" inline={inline}>
+          <EditableText value={bio} onChange={onBioChanged} />
+        </FormGroup>
+
+        <FormGroup label="Quality" inline={inline}>
+          <Slider
+            min={0}
+            max={100}
+            stepSize={5}
+            labelStepSize={20}
+            value={quality}
+            onChange={onQualityChanged}
+          />
+        </FormGroup>
+      </div>
+    );
+  },
+  name: "FormGroup with common fields",
 };

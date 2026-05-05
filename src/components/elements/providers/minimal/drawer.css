@@ -1,0 +1,83 @@
+/* Minimal provider – Drawer styles */
+
+.mrl-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16,22,26,0.5);
+  z-index: 1000;
+}
+
+.mrl-drawer {
+  position: fixed;
+  z-index: 1001;
+  background: var(--mrl-color-bg);
+  box-shadow: var(--mrl-shadow-md);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--mrl-transition-speed) ease;
+}
+
+/* Position variants */
+.mrl-drawer--left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  transform: translateX(-100%);
+}
+
+.mrl-drawer--right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  transform: translateX(100%);
+}
+
+.mrl-drawer--top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 320px;
+  transform: translateY(-100%);
+}
+
+.mrl-drawer--bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 320px;
+  transform: translateY(100%);
+}
+
+/* Open state */
+.mrl-drawer--open {
+  transform: translate(0, 0);
+}
+
+.mrl-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mrl-spacing-md) var(--mrl-spacing-lg);
+  border-bottom: 1px solid var(--mrl-color-border);
+  flex-shrink: 0;
+}
+
+.mrl-drawer-title {
+  font-size: var(--mrl-font-size-lg);
+  font-weight: 600;
+  color: var(--mrl-color-text);
+}
+
+.mrl-drawer-close {
+  padding: var(--mrl-spacing-xs);
+  font-size: var(--mrl-font-size-base);
+  line-height: 1;
+}
+
+.mrl-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--mrl-spacing-lg);
+}

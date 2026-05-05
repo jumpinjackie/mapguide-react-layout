@@ -4,8 +4,8 @@ import { ILayerInfo } from "../../api/common";
 import { strIsNullOrEmpty } from "../../utils/string";
 import { IVectorLayerStyle, VectorStyleSource } from '../../api/ol-style-contracts';
 import { VectorLayerStyleEditor } from '../vector-style-editor';
-import { BlueprintSvgIconNames } from '../../constants/assets';
 import { ElementGroup, useElementContext } from "../elements/element-context";
+import { SvgIconName } from "../icon-names";
 
 function isBoundsZoomable(layer: ILayerInfo) {
     //TODO: See if WGS84_BBOX [is/can be] surfaced to ILayerInfo
@@ -92,7 +92,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
         </Card>;
     }
     const canZoom = isBoundsZoomable(layer);
-    let iconName: BlueprintSvgIconNames = "layer";
+    let iconName: SvgIconName = "layer";
     if (layer.type == "WMS") {
         iconName = "media";
     }

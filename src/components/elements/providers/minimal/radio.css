@@ -1,0 +1,18 @@
+/* Minimal provider – Radio styles */
+
+.mrl-radio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: var(--mrl-font-size-base);
+  line-height: 1.4;
+  margin-bottom: var(--mrl-spacing-xs);
+}
+
+.mrl-radio input[type="radio"] {
+  flex-shrink: 0;
+  margin: 0 var(--mrl-spacing-xs) 0 0;
+  padding: 0;
+  cursor: pointer;
+  align-self: center;
+}

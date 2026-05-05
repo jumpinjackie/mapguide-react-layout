@@ -57,6 +57,86 @@ describe("components/flyout-region", () => {
         expect(onCloseFlyout).toHaveBeenCalledWith("MapContextMenu");
     });
 
+    it("closes context menu on outside mouse down", () => {
+        const onCloseFlyout = vi.fn();
+        render(
+            <FlyoutRegion
+                locale="en"
+                onCloseFlyout={onCloseFlyout}
+                flyoutConf={{
+                    MapContextMenu: {
+                        open: true,
+                        childItems: [{ label: "A" } as any],
+                        metrics: { posX: 100, posY: 200, width: 20, height: 30 },
+                    },
+                }}
+            />
+        );
+
+        fireEvent.mouseDown(document.body);
+        expect(onCloseFlyout).toHaveBeenCalledWith("MapContextMenu");
+    });
+
+    it("does not close context menu on inside mouse down", () => {
+        const onCloseFlyout = vi.fn();
+        render(
+            <FlyoutRegion
+                locale="en"
+                onCloseFlyout={onCloseFlyout}
+                flyoutConf={{
+                    MapContextMenu: {
+                        open: true,
+                        childItems: [{ label: "A" } as any],
+                        metrics: { posX: 100, posY: 200, width: 20, height: 30 },
+                    },
+                }}
+            />
+        );
+
+        fireEvent.mouseDown(screen.getByTestId("flyout-menu"));
+        expect(onCloseFlyout).not.toHaveBeenCalled();
+    });
+
+    it("repositions context menu when reopened at a new location", () => {
+        const onCloseFlyout = vi.fn();
+        const { container, rerender } = render(
+            <FlyoutRegion
+                locale="en"
+                onCloseFlyout={onCloseFlyout}
+                flyoutConf={{
+                    MapContextMenu: {
+                        open: true,
+                        childItems: [{ label: "A" } as any],
+                        metrics: { posX: 100, posY: 200, width: 20, height: 30 },
+                    },
+                }}
+            />
+        );
+
+        const firstRenderContainer = container.querySelector(".mg-flyout-menu-container") as HTMLElement;
+        expect(firstRenderContainer.style.top).toBe("160px");
+        expect(firstRenderContainer.style.left).toBe("120px");
+
+        rerender(
+            <FlyoutRegion
+                locale="en"
+                onCloseFlyout={onCloseFlyout}
+                flyoutConf={{
+                    MapContextMenu: {
+                        open: true,
+                        childItems: [{ label: "A" } as any],
+                        metrics: { posX: 300, posY: 260, width: 20, height: 30 },
+                    },
+                }}
+            />
+        );
+
+        const secondRenderContainer = container.querySelector(".mg-flyout-menu-container") as HTMLElement;
+        expect(secondRenderContainer.style.top).toBe("220px");
+        expect(secondRenderContainer.style.left).toBe("320px");
+        expect(onCloseFlyout).not.toHaveBeenCalled();
+    });
+
     it("renders task menu with right alignment and IE iframe hack", () => {
         const { container } = render(
             <FlyoutRegion

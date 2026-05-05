@@ -1,0 +1,49 @@
+/* Minimal provider – Toaster styles */
+
+.mrl-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mrl-spacing-sm);
+  max-width: 440px;
+  padding: 8px 12px;
+  border-radius: var(--mrl-radius-md);
+  border: 1px solid var(--mrl-color-border);
+  background: var(--mrl-color-bg-elevated);
+  color: var(--mrl-color-text);
+  box-shadow: var(--mrl-shadow-md);
+}
+
+.mrl-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mrl-toast-message {
+  min-width: 0;
+}
+
+.mrl-toast--primary {
+  background: var(--mrl-color-primary);
+  border-color: var(--mrl-color-primary);
+  color: var(--mrl-color-text-inverse);
+}
+
+.mrl-toast--danger {
+  background: var(--mrl-color-danger);
+  border-color: var(--mrl-color-danger);
+  color: var(--mrl-color-text-inverse);
+}
+
+.mrl-toast--warning {
+  background: var(--mrl-color-warning);
+  border-color: var(--mrl-color-warning);
+  color: var(--mrl-color-text-inverse);
+}
+
+.mrl-toast--success {
+  background: var(--mrl-color-success);
+  border-color: var(--mrl-color-success);
+  color: var(--mrl-color-text-inverse);
+}

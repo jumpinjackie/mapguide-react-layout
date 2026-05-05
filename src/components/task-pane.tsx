@@ -170,7 +170,10 @@ export const TaskPane: React.FC<ITaskPaneProps> = (props) => {
         flyoutId: WEBLAYOUT_TASKMENU
     }), [locale]);
 
-    const rootStyle: React.CSSProperties = {};
+    const rootStyle: React.CSSProperties = {
+        position: "relative",
+        overflow: "hidden"
+    };
     const taskBarStyle: React.CSSProperties = {
         height: DEFAULT_TOOLBAR_SIZE,
         backgroundColor: TOOLBAR_BACKGROUND_COLOR

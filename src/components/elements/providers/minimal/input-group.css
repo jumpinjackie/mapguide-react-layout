@@ -1,0 +1,90 @@
+/* Minimal provider – InputGroup styles */
+
+.mrl-input-group {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.mrl-input-group input {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  color: var(--mrl-color-text);
+  background: var(--mrl-color-bg);
+  border: 1px solid var(--mrl-color-border);
+  border-radius: var(--mrl-radius-sm);
+  transition: border-color var(--mrl-transition-speed) ease,
+              box-shadow var(--mrl-transition-speed) ease;
+  line-height: 1.4;
+}
+
+.mrl-input-group--round input {
+  border-radius: 999px;
+}
+
+.mrl-input-group input:focus {
+  outline: none;
+  border-color: var(--mrl-color-border-focus);
+  box-shadow: 0 0 0 2px rgba(41,101,204,0.2);
+}
+
+.mrl-input-group input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--mrl-color-surface);
+}
+
+.mrl-input-group input::placeholder {
+  color: var(--mrl-color-text-muted);
+}
+
+.mrl-input-left-icon {
+  position: absolute;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  color: var(--mrl-color-text-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mrl-input-group--with-left-icon input {
+  padding-left: 28px;
+}
+
+.mrl-input-right-element {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  display: flex;
+  align-items: stretch;
+}
+
+.mrl-input-right-element > * {
+  height: 100%;
+  margin: 0;
+}
+
+.mrl-input-right-element .mrl-btn {
+  border-radius: 0 var(--mrl-radius-sm) var(--mrl-radius-sm) 0;
+}
+
+.mrl-input-right-element .mrl-btn--icon-only {
+  aspect-ratio: 1 / 1;
+}
+
+.mrl-input-group--round .mrl-input-right-element {
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
+}
+
+.mrl-input-group--round .mrl-input-right-element .mrl-btn {
+  border-radius: 999px;
+}

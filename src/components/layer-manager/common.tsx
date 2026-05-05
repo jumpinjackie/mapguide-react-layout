@@ -161,7 +161,6 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                 <Heading level={5}>{tr("EXPR_EDITOR_EDIT_VALUE", locale)}</Heading>
                 <Radio name="edit-mode" label={tr("EXPR_EDITOR_VALUE", locale)} value="edit-value" checked={editMode == "edit-value"} onChange={(e: any) => setEditMode(e.target.value)} />
                 {renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value")}
-                <br />
                 <Radio name="edit-mode" label={tr("EXPR_EDITOR_EXPRESSION", locale)} value="edit-expr" checked={editMode == "edit-expr"} onChange={(e: any) => setEditMode(e.target.value)} />
                 <InputGroup
                     disabled={editMode != "edit-expr"}
@@ -178,7 +177,6 @@ function ExprEditorInner<T>(props: ExprEditorInnerProps<T>) {
                             // Keep typing; Apply button disabled until JSON is valid
                         }
                     }} />
-                <br /><br />
                 <ElementGroup>
                     <Button disabled={!isEditValid} variant="success" onClick={(e: any) => onApplyValue()}>{tr("APPLY", locale)}</Button>
                     <Button variant="danger" onClick={(e: any) => onCancelEditing()}>{tr("CANCEL", locale)}</Button>

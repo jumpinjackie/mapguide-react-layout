@@ -1,0 +1,41 @@
+/* Minimal provider – Slider styles */
+
+.mrl-slider-wrapper {
+  width: 100%;
+  padding-bottom: var(--mrl-spacing-xs);
+}
+
+.mrl-slider {
+  width: 100%;
+  display: block;
+  cursor: pointer;
+  accent-color: var(--mrl-color-primary);
+}
+
+.mrl-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mrl-slider-labels {
+  position: relative;
+  height: 16px;
+  margin-top: 4px;
+}
+
+.mrl-slider-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: var(--mrl-font-size-sm, 12px);
+  color: var(--mrl-color-text-muted, #5c7080);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.mrl-slider-label:first-child {
+  transform: none;
+}
+
+.mrl-slider-label:last-child {
+  transform: translateX(-100%);
+}

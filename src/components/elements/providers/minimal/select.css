@@ -1,0 +1,43 @@
+/* Minimal provider – Select styles */
+
+.mrl-select {
+  display: inline-block;
+  position: relative;
+}
+
+.mrl-select--fill {
+  display: block;
+  width: 100%;
+}
+
+.mrl-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 28px 5px 8px;
+  font-size: var(--mrl-font-size-base);
+  font-family: inherit;
+  color: var(--mrl-color-text);
+  background-color: var(--mrl-color-bg);
+  border: 1px solid var(--mrl-color-border);
+  border-radius: var(--mrl-radius-sm);
+  cursor: pointer;
+  transition: border-color var(--mrl-transition-speed) ease,
+              box-shadow var(--mrl-transition-speed) ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C7080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.mrl-select select:focus {
+  outline: none;
+  border-color: var(--mrl-color-border-focus);
+  box-shadow: 0 0 0 2px rgba(41,101,204,0.2);
+}
+
+.mrl-select select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

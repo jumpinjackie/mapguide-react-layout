@@ -66,6 +66,28 @@ const swipeMock = vi.hoisted(() => ({
    useMapSwipeInfo: vi.fn(),
 }));
 
+const jspdfMock = vi.hoisted(() => ({
+   save: vi.fn(),
+   addImage: vi.fn(),
+   setFontSize: vi.fn(),
+   text: vi.fn(),
+}));
+
+vi.mock("jspdf", () => ({
+   jsPDF: vi.fn().mockImplementation(() => ({
+      internal: {
+         pageSize: {
+            getWidth: () => 210,
+            getHeight: () => 297,
+         }
+      },
+      setFontSize: jspdfMock.setFontSize,
+      text: jspdfMock.text,
+      addImage: jspdfMock.addImage,
+      save: jspdfMock.save,
+   }))
+}));
+
 vi.mock("../../src/containers/hooks", () => hooksMock);
 vi.mock("../../src/containers/hooks-mapguide", () => hooksMapGuideMock);
 vi.mock("../../src/components/map-providers/context", () => mapProviderCtxMock);
@@ -120,7 +142,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
          />
       ),
       Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="callout">{children}</div>,
-      Button: ({ children }: React.PropsWithChildren<{}>) => <button>{children}</button>,
+      Button: ({ children, onClick, type, disabled }: any) => <button onClick={onClick} type={type} disabled={disabled}>{children}</button>,
       Select: () => <select />,
       Toaster: React.forwardRef((_props: any, _ref: any) => <div data-testid="toaster" />),
       Checkbox: ({ label, checked, onChange, id, name }: any) => (
@@ -437,5 +459,55 @@ describe("neo-map-viewer and quick-plot", () => {
          expect(actionMapMock.setViewRotationEnabled).toHaveBeenCalledWith(false);
       });
       expect((container.querySelector("#rotation") as HTMLInputElement).value).toBe("-15");
+   });
+
+   it("renders QuickPlotContainer in client-side mode without a MapGuide map", () => {
+      const viewer = {
+         isReady: () => true,
+         getCurrentExtent: () => [0, 0, 100, 100],
+         exportImage: vi.fn(),
+      };
+      mapProviderCtxMock.useMapProviderContext.mockReturnValue(viewer);
+      hooksMapGuideMock.useActiveMapState.mockReturnValue(undefined);
+      hooksMock.useActiveMapView.mockReturnValue({ scale: 5000 });
+      hooksMock.useActiveMapExternalBaseLayers.mockReturnValue([]);
+      hooksMock.useAvailableMaps.mockReturnValue([{ name: "Map1", value: "Map1" }]);
+      hooksMock.useActiveMapName.mockReturnValue("Map1");
+
+      const { container } = render(<QuickPlotContainer clientSide="true" />);
+
+      expect(container.querySelector(".component-quick-plot")).toBeTruthy();
+      expect(container.querySelector("input[name='sessionId']")).toBeNull();
+      expect(container.querySelector("input[name='mapName']")).toBeNull();
+      const btn = container.querySelector("button");
+      expect(btn?.getAttribute("type")).toBe("button");
+   });
+
+   it("calls exportImage and generates PDF in client-side mode when Generate is clicked", async () => {
+      const exportImage = vi.fn((opts: any) => {
+         opts.callback("data:image/png;base64,ABC123");
+      });
+      const viewer = {
+         isReady: () => true,
+         getCurrentExtent: () => [0, 0, 100, 100],
+         exportImage,
+      };
+      mapProviderCtxMock.useMapProviderContext.mockReturnValue(viewer);
+      hooksMapGuideMock.useActiveMapState.mockReturnValue(undefined);
+      hooksMock.useActiveMapView.mockReturnValue({ scale: 5000 });
+      hooksMock.useActiveMapExternalBaseLayers.mockReturnValue([]);
+      hooksMock.useAvailableMaps.mockReturnValue([{ name: "Map1", value: "Map1" }]);
+      hooksMock.useActiveMapName.mockReturnValue("Map1");
+
+      const { container } = render(<QuickPlotContainer clientSide="true" />);
+
+      const btn = container.querySelector("button") as HTMLButtonElement;
+      fireEvent.click(btn);
+
+      expect(exportImage).toHaveBeenCalled();
+      await waitFor(() => {
+         expect(jspdfMock.addImage).toHaveBeenCalledWith("data:image/png;base64,ABC123", "PNG", expect.any(Number), expect.any(Number), expect.any(Number), expect.any(Number));
+         expect(jspdfMock.save).toHaveBeenCalledWith("quickplot.pdf");
+      });
    });
 });

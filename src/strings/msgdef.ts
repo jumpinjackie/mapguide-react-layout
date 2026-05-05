@@ -123,6 +123,7 @@ export interface ILocalizedMessages {
     QUICKPLOT_BOX_INFO: string;
     QUICKPLOT_BOX_ROTATION: string;
     QUICKPLOT_GENERATE: string;
+    QUICKPLOT_GENERATING: string;
     QUICKPLOT_COMMERCIAL_LAYER_WARNING: string;
     FEATURE_TOOLTIPS: string;
     MANUAL_FEATURE_TOOLTIPS: string;

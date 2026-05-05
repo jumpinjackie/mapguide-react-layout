@@ -30,7 +30,8 @@ export function initMapGuideCommands() {
         enabled: state => !state.stateless,
         invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
-            const url = "component://QuickPlot";
+            const isClientSide = parameters?.ClientSide === "true";
+            const url = isClientSide ? "component://QuickPlot?clientSide=true" : "component://QuickPlot";
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
         }

@@ -112,6 +112,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "QUICKPLOT_BOX_INFO": "Quick Plot Map Capture box is active. Map rotation is disabled while box is active",
     "QUICKPLOT_BOX_ROTATION": "Capture Box Rotation",
     "QUICKPLOT_GENERATE": "Generate Plot",
+    "QUICKPLOT_GENERATING": "Generating PDF...",
     "QUICKPLOT_COMMERCIAL_LAYER_WARNING": "Quick Plot will NOT include any visible commercial map layers",
     "FEATURE_TOOLTIPS": "Feature Tooltips",
     "MANUAL_FEATURE_TOOLTIPS": "Manual Feature Tooltips (click to show)",

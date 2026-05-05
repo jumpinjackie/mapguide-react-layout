@@ -402,6 +402,10 @@ li.sidebar-separator {
     color: black;
 }
 
+.sidebar-toolbar .toolbar-scroll-btn:last-child {
+    margin-bottom: 6px;
+}
+
 .component-navigator {
     top: 25px;
     right: 10px;

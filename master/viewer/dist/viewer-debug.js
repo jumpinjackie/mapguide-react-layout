@@ -1382,10 +1382,283 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/bp-override.css"
+/***/ "./src/components/elements/providers/minimal/button.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/button.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/callout.css"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/callout.css ***!
+  \***************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/card.css"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/card.css ***!
+  \************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/checkbox.css"
+/*!****************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/checkbox.css ***!
+  \****************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/dialog.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/dialog.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/drawer.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/drawer.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/editable-text.css"
 /*!*********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/bp-override.css ***!
+  !*** ./src/components/elements/providers/minimal/editable-text.css ***!
   \*********************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/file-input.css"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/file-input.css ***!
+  \******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/form-group.css"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/form-group.css ***!
+  \******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/html-table.css"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/html-table.css ***!
+  \******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/input-group.css"
+/*!*******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/input-group.css ***!
+  \*******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/menu.css"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/menu.css ***!
+  \************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/mrl-minimal.css"
+/*!*******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/mrl-minimal.css ***!
+  \*******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/non-ideal-state.css"
+/*!***********************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/non-ideal-state.css ***!
+  \***********************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/numeric-input.css"
+/*!*********************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/numeric-input.css ***!
+  \*********************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/radio.css"
+/*!*************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/radio.css ***!
+  \*************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/select.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/select.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/slider.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/slider.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/spinner.css"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/spinner.css ***!
+  \***************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/switch.css"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/switch.css ***!
+  \**************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/tab-set.css"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/tab-set.css ***!
+  \***************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/toaster.css"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/toaster.css ***!
+  \***************************************************************/
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12250,11 +12523,13 @@ exports.ToolbarContext = React.createContext({
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ElementGroup = exports.ElementProvider = exports.useElementContext = void 0;
+exports.ElementGroup = exports.ElementProvider = exports.useElementContext = exports.MinimalProvider = void 0;
 exports.TypedSelect = TypedSelect;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const provider_1 = tslib_1.__importDefault(__webpack_require__(/*! ./providers/blueprint/provider */ "./src/components/elements/providers/blueprint/provider.tsx"));
+const provider_1 = tslib_1.__importDefault(__webpack_require__(/*! ./providers/minimal/provider */ "./src/components/elements/providers/minimal/provider.tsx"));
+var provider_2 = __webpack_require__(/*! ./providers/minimal/provider */ "./src/components/elements/providers/minimal/provider.tsx");
+Object.defineProperty(exports, "MinimalProvider", ({ enumerable: true, get: function () { return tslib_1.__importDefault(provider_2).default; } }));
 const ElementContext = React.createContext(provider_1.default);
 /**
  * Accesses the UI element context
@@ -12301,932 +12576,1349 @@ exports.ElementGroup = ElementGroup;
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/button.tsx"
-/*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/button.tsx ***!
-  \****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpButton = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpButton = (props) => {
-    return react_1.default.createElement(core_1.Button, { type: props.type, className: props.className, icon: (0, utils_1.iconName)(props.icon), loading: props.loading, onClick: props.onClick, active: props.active, title: props.title, style: props.style, minimal: props.minimal, intent: (0, utils_1.variantToIntent)(props.variant), disabled: props.disabled }, props.children);
-};
-exports.BpButton = BpButton;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/callout.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/callout.tsx ***!
-  \*****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpCallout = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-/**
- * @hidden
- */
-const BpCallout = (props) => {
-    const title = props.title;
-    const content = title ? react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("h5", { className: "bp3-heading" }, title),
-        props.children) : props.children;
-    return react_1.default.createElement(core_1.Callout, { intent: (0, utils_1.variantToIntent)(props.variant), icon: (0, utils_1.iconName)(props.icon) }, content);
-};
-exports.BpCallout = BpCallout;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/card.tsx"
+/***/ "./src/components/elements/providers/minimal/button.tsx"
 /*!**************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/card.tsx ***!
+  !*** ./src/components/elements/providers/minimal/button.tsx ***!
   \**************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpCard = void 0;
+exports.MnButton = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+// Minimal provider – Button component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpCard = (props) => {
-    return react_1.default.createElement(core_1.Card, { style: props.style }, props.children);
-};
-exports.BpCard = BpCard;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/checkbox.tsx"
-/*!******************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/checkbox.tsx ***!
-  \******************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpCheckbox = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpCheckbox = (props) => {
-    return react_1.default.createElement(core_1.Checkbox, { id: props.id, name: props.name, checked: props.checked, label: props.label, onChange: props.onChange, disabled: props.disabled });
-};
-exports.BpCheckbox = BpCheckbox;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/collapsible.tsx"
-/*!*********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/collapsible.tsx ***!
-  \*********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpCollapsible = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpCollapsible = (props) => {
-    return react_1.default.createElement(core_1.Collapse, { isOpen: props.isOpen }, props.children);
-};
-exports.BpCollapsible = BpCollapsible;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/dialog.tsx"
-/*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/dialog.tsx ***!
-  \****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpDialogFooterActions = exports.BpDialogFooter = exports.BpDialogBody = exports.BpDialogHeader = exports.BpDialogShell = exports.BpDialogContainer = exports.BpDialog = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-/**
- * @hidden
- */
-const BpDialog = ({ icon, isOpen, usePortal, onClose, title, children }) => {
-    return react_1.default.createElement(core_1.Dialog, { icon: (0, utils_1.iconName)(icon), isOpen: isOpen, usePortal: usePortal, onClose: onClose, title: title }, children);
-};
-exports.BpDialog = BpDialog;
-exports.BpDialog.displayName = "BpDialog";
-/**
- * @hidden
- */
-const BpDialogContainer = ({ className, style, children }) => {
-    const cls = ["bp3-dialog-container", className].filter(Boolean).join(" ");
-    return react_1.default.createElement("div", { className: cls, style: style }, children);
-};
-exports.BpDialogContainer = BpDialogContainer;
-exports.BpDialogContainer.displayName = "BpDialogContainer";
-/**
- * @hidden
- */
-const BpDialogShell = ({ style, className, children }) => {
-    const cls = ["bp3-dialog", className].filter(Boolean).join(" ");
-    const combinedStyle = Object.assign({ 
-        // Neutralize Blueprint's default padding-bottom that would otherwise shrink the
-        // available flex layout area for the dialog body when an explicit height is set.
-        paddingBottom: 0, 
-        // Clip any content that exceeds the dialog shell bounds.
-        overflow: "hidden" }, style);
-    return react_1.default.createElement("div", { className: cls, style: combinedStyle }, children);
-};
-exports.BpDialogShell = BpDialogShell;
-exports.BpDialogShell.displayName = "BpDialogShell";
-/**
- * @hidden
- */
-const BpDialogHeader = ({ className, children }) => {
-    const cls = ["bp3-dialog-header", className].filter(Boolean).join(" ");
-    return react_1.default.createElement("div", { className: cls }, children);
-};
-exports.BpDialogHeader = BpDialogHeader;
-exports.BpDialogHeader.displayName = "BpDialogHeader";
-/**
- * @hidden
- */
-const BpDialogBody = ({ style, className, children }) => {
-    const cls = ["bp3-dialog-body", className].filter(Boolean).join(" ");
-    return react_1.default.createElement("div", { className: cls, style: style }, children);
-};
-exports.BpDialogBody = BpDialogBody;
-exports.BpDialogBody.displayName = "BpDialogBody";
-/**
- * @hidden
- */
-const BpDialogFooter = ({ style, className, children }) => {
-    const cls = ["bp3-dialog-footer", className].filter(Boolean).join(" ");
-    return react_1.default.createElement("div", { className: cls, style: style }, children);
-};
-exports.BpDialogFooter = BpDialogFooter;
-exports.BpDialogFooter.displayName = "BpDialogFooter";
-/**
- * @hidden
- */
-const BpDialogFooterActions = ({ style, className, children }) => {
-    const cls = ["bp3-dialog-footer-actions", className].filter(Boolean).join(" ");
-    return react_1.default.createElement("div", { className: cls, style: style }, children);
-};
-exports.BpDialogFooterActions = BpDialogFooterActions;
-exports.BpDialogFooterActions.displayName = "BpDialogFooterActions";
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/drawer.tsx"
-/*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/drawer.tsx ***!
-  \****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpDrawer = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-/**
- * @hidden
- */
-const BpDrawer = ({ icon, onClose, title, position, isOpen, children }) => {
-    return react_1.default.createElement(core_1.Drawer, { usePortal: false, icon: (0, utils_1.iconName)(icon), size: core_1.DrawerSize.SMALL, canOutsideClickClose: true, onClose: onClose, title: title, position: position, isOpen: isOpen }, children);
-};
-exports.BpDrawer = BpDrawer;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/editable-text.tsx"
-/*!***********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/editable-text.tsx ***!
-  \***********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpEditableText = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const BpEditableText = ({ value, onChange }) => {
-    return react_1.default.createElement(core_1.EditableText, { value: value, onChange: onChange });
-};
-exports.BpEditableText = BpEditableText;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/file-input.tsx"
-/*!********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/file-input.tsx ***!
-  \********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpFileInput = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpFileInput = ({ fill, text, buttonText, onInputChange }) => {
-    return react_1.default.createElement(core_1.FileInput, { fill: fill, text: text, buttonText: buttonText, onInputChange: onInputChange });
-};
-exports.BpFileInput = BpFileInput;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/form-group.tsx"
-/*!********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/form-group.tsx ***!
-  \********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpFormGroup = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpFormGroup = ({ label, labelFor, inline, children }) => {
-    return react_1.default.createElement(core_1.FormGroup, { label: label, labelFor: labelFor, inline: inline }, children);
-};
-exports.BpFormGroup = BpFormGroup;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/heading.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/heading.tsx ***!
-  \*****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpHeading = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const never_1 = __webpack_require__(/*! ../../../../utils/never */ "./src/utils/never.ts");
-const BpHeading = ({ level, className, style, children }) => {
-    switch (level) {
-        case 1:
-            return react_1.default.createElement("h1", { className: `bp3-heading ${className}`, style: style }, children);
-        case 2:
-            return react_1.default.createElement("h2", { className: `bp3-heading ${className}`, style: style }, children);
-        case 3:
-            return react_1.default.createElement("h3", { className: `bp3-heading ${className}`, style: style }, children);
-        case 4:
-            return react_1.default.createElement("h4", { className: `bp3-heading ${className}`, style: style }, children);
-        case 5:
-            return react_1.default.createElement("h5", { className: `bp3-heading ${className}`, style: style }, children);
-        case 6:
-            return react_1.default.createElement("h6", { className: `bp3-heading ${className}`, style: style }, children);
-        default:
-            (0, never_1.assertNever)(level);
-            return null;
-    }
-};
-exports.BpHeading = BpHeading;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/html-table.tsx"
-/*!********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/html-table.tsx ***!
-  \********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpHtmlTable = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./button.css */ "./src/components/elements/providers/minimal/button.css");
 /**
  * @hidden
  * @since 0.15
  */
-const BpHtmlTable = ({ condensed, bordered, className, style, children }) => {
-    const classes = ["bp3-html-table"];
-    if (condensed) {
-        classes.push("bp3-html-table-condensed");
-    }
-    if (bordered) {
-        classes.push("bp3-html-table-bordered");
-    }
-    if (className) {
-        classes.push(className);
-    }
-    return react_1.default.createElement("table", { className: classes.join(" "), style: style }, children);
+const MnButton = ({ type = "button", icon, variant, minimal, active, loading, disabled, onClick, title, style, className, children, }) => {
+    const hasChildren = react_1.default.Children.count(children) > 0;
+    const classes = [
+        "mrl-btn",
+        variant ? `mrl-btn--${variant}` : null,
+        minimal ? "mrl-btn--minimal" : null,
+        active ? "mrl-btn--active" : null,
+        loading ? "mrl-btn--loading" : null,
+        icon && !hasChildren ? "mrl-btn--icon-only" : null,
+        className !== null && className !== void 0 ? className : null,
+    ].filter(Boolean).join(" ");
+    return (react_1.default.createElement("button", { type: type, className: classes, disabled: disabled || loading, onClick: onClick, title: title, style: style },
+        loading && react_1.default.createElement("span", { className: "mrl-btn-spinner", "aria-hidden": "true" }),
+        icon && react_1.default.createElement(icon_1.MnIcon, { icon: icon, iconSize: 16 }),
+        react_1.default.createElement("span", { className: "mrl-btn-text" }, children)));
 };
-exports.BpHtmlTable = BpHtmlTable;
+exports.MnButton = MnButton;
 
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/icon.tsx"
-/*!**************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/icon.tsx ***!
-  \**************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpIcon = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-/**
- * @hidden
- */
-const BpIcon = (props) => {
-    return react_1.default.createElement(core_1.Icon, { icon: (0, utils_1.iconName)(props.icon), style: props.style, iconSize: props.iconSize });
-};
-exports.BpIcon = BpIcon;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/input-group.tsx"
-/*!*********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/input-group.tsx ***!
-  \*********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpInputGroup = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpInputGroup = (props) => {
-    return react_1.default.createElement(core_1.InputGroup, { round: props.round, autoFocus: props.autoFocus, disabled: props.disabled, id: props.id, name: props.name, leftIcon: (0, utils_1.iconName)(props.leftIcon), placeholder: props.placeholder, readOnly: props.readOnly, rightElement: props.rightElement, style: props.style, value: props.value, onClick: props.onClick, onChange: props.onChange });
-};
-exports.BpInputGroup = BpInputGroup;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/menu.tsx"
-/*!**************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/menu.tsx ***!
-  \**************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpMenuComponent = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const type_guards_1 = __webpack_require__(/*! ../../../../utils/type-guards */ "./src/utils/type-guards.ts");
-const toolbar_1 = __webpack_require__(/*! ../../../toolbar */ "./src/components/toolbar.tsx");
-const icon_1 = __webpack_require__(/*! ../../../icon */ "./src/components/icon.tsx");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const menu_1 = __webpack_require__(/*! ../../../../utils/menu */ "./src/utils/menu.ts");
-const MENU_ITEM_HEIGHT = 30;
-/**
- * A generic menu component
- * @param props
- */
-const BpMenuComponent = (props) => {
-    const onClick = (item) => {
-        var _a, _b;
-        if ((0, toolbar_1.getEnabled)(item)) {
-            (_a = item === null || item === void 0 ? void 0 : item.invoke) === null || _a === void 0 ? void 0 : _a.call(item);
-            (_b = props.onInvoked) === null || _b === void 0 ? void 0 : _b.call(props);
-        }
-    };
-    return React.createElement(core_1.Menu, { className: "bp3-elevation-1" }, props.items.map((item, index) => {
-        if (item.isSeparator) {
-            return React.createElement(core_1.MenuDivider, { key: index });
-        }
-        else if ((0, type_guards_1.isMenu)(item)) {
-            let text = "";
-            if (typeof (item.label) == 'function') {
-                text = item.label();
-            }
-            else {
-                text = item.label || "";
-            }
-            return React.createElement(core_1.MenuItem, { key: index, text: text, icon: "menu-open" },
-                React.createElement(exports.BpMenuComponent, { items: item.childItems, onInvoked: props.onInvoked }));
-        }
-        else {
-            const height = MENU_ITEM_HEIGHT;
-            let enabled = true;
-            if (item.enabled != null) {
-                if (typeof (item.enabled) == 'function') {
-                    enabled = item.enabled();
-                }
-                else {
-                    enabled = item.enabled;
-                }
-            }
-            const imgStyle = Object.assign({ marginRight: 5 }, (0, toolbar_1.getIconStyle)(enabled, height));
-            //NOTE: Not using MenuItem here as we want fine control over the item content
-            return React.createElement("li", { key: index },
-                React.createElement("a", { className: "bp3-menu-item", onClick: () => onClick(item) },
-                    React.createElement(icon_1.ImageIcon, { style: imgStyle, url: item.icon, spriteClass: item.iconClass }),
-                    " ",
-                    (0, menu_1.getText)(item.label)));
-        }
-    }));
-};
-exports.BpMenuComponent = BpMenuComponent;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/non-ideal-state.tsx"
-/*!*************************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/non-ideal-state.tsx ***!
-  \*************************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpNonIdealState = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-/**
- * @hidden
- */
-const BpNonIdealState = ({ icon, title, description, action }) => {
-    return react_1.default.createElement(core_1.NonIdealState, { icon: typeof (icon) === 'string' ? (0, utils_1.iconName)(icon) : icon, title: title, description: description, action: action });
-};
-exports.BpNonIdealState = BpNonIdealState;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/numeric-input.tsx"
-/*!***********************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/numeric-input.tsx ***!
-  \***********************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpNumericInput = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpNumericInput = (props) => {
-    return react_1.default.createElement(core_1.NumericInput, { disabled: props.disabled, style: props.style, min: props.min, max: props.max, value: props.value, onValueChange: e => { var _a; return (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, e); } });
-};
-exports.BpNumericInput = BpNumericInput;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/popover.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/popover.tsx ***!
-  \*****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpPopover = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpPopover = ({ usePortal, position, minimal, children }) => {
-    return react_1.default.createElement(core_1.Popover, { usePortal: usePortal, position: position, minimal: minimal }, children);
-};
-exports.BpPopover = BpPopover;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/provider.tsx"
-/*!******************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/provider.tsx ***!
-  \******************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const button_1 = __webpack_require__(/*! ./button */ "./src/components/elements/providers/blueprint/button.tsx");
-const checkbox_1 = __webpack_require__(/*! ./checkbox */ "./src/components/elements/providers/blueprint/checkbox.tsx");
-const card_1 = __webpack_require__(/*! ./card */ "./src/components/elements/providers/blueprint/card.tsx");
-const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/blueprint/icon.tsx");
-const slider_1 = __webpack_require__(/*! ./slider */ "./src/components/elements/providers/blueprint/slider.tsx");
-const callout_1 = __webpack_require__(/*! ./callout */ "./src/components/elements/providers/blueprint/callout.tsx");
-const numeric_input_1 = __webpack_require__(/*! ./numeric-input */ "./src/components/elements/providers/blueprint/numeric-input.tsx");
-const collapsible_1 = __webpack_require__(/*! ./collapsible */ "./src/components/elements/providers/blueprint/collapsible.tsx");
-const radio_1 = __webpack_require__(/*! ./radio */ "./src/components/elements/providers/blueprint/radio.tsx");
-const input_group_1 = __webpack_require__(/*! ./input-group */ "./src/components/elements/providers/blueprint/input-group.tsx");
-const non_ideal_state_1 = __webpack_require__(/*! ./non-ideal-state */ "./src/components/elements/providers/blueprint/non-ideal-state.tsx");
-const spinner_1 = __webpack_require__(/*! ./spinner */ "./src/components/elements/providers/blueprint/spinner.tsx");
-const switch_1 = __webpack_require__(/*! ./switch */ "./src/components/elements/providers/blueprint/switch.tsx");
-const select_1 = __webpack_require__(/*! ./select */ "./src/components/elements/providers/blueprint/select.tsx");
-const file_input_1 = __webpack_require__(/*! ./file-input */ "./src/components/elements/providers/blueprint/file-input.tsx");
-const form_group_1 = __webpack_require__(/*! ./form-group */ "./src/components/elements/providers/blueprint/form-group.tsx");
-const editable_text_1 = __webpack_require__(/*! ./editable-text */ "./src/components/elements/providers/blueprint/editable-text.tsx");
-const menu_1 = __webpack_require__(/*! ./menu */ "./src/components/elements/providers/blueprint/menu.tsx");
-const tab_set_1 = __webpack_require__(/*! ./tab-set */ "./src/components/elements/providers/blueprint/tab-set.tsx");
-const popover_1 = __webpack_require__(/*! ./popover */ "./src/components/elements/providers/blueprint/popover.tsx");
-const drawer_1 = __webpack_require__(/*! ./drawer */ "./src/components/elements/providers/blueprint/drawer.tsx");
-const heading_1 = __webpack_require__(/*! ./heading */ "./src/components/elements/providers/blueprint/heading.tsx");
-const text_1 = __webpack_require__(/*! ./text */ "./src/components/elements/providers/blueprint/text.tsx");
-const toaster_1 = __webpack_require__(/*! ./toaster */ "./src/components/elements/providers/blueprint/toaster.tsx");
-const dialog_1 = __webpack_require__(/*! ./dialog */ "./src/components/elements/providers/blueprint/dialog.tsx");
-const html_table_1 = __webpack_require__(/*! ./html-table */ "./src/components/elements/providers/blueprint/html-table.tsx");
-__webpack_require__(/*! ./bp-override.css */ "./src/components/elements/providers/blueprint/bp-override.css");
-const provider = {
-    Text: text_1.BpText,
-    Heading: heading_1.BpHeading,
-    Button: button_1.BpButton,
-    Radio: radio_1.BpRadio,
-    Slider: slider_1.BpSlider,
-    Collapsible: collapsible_1.BpCollapsible,
-    Callout: callout_1.BpCallout,
-    Checkbox: checkbox_1.BpCheckbox,
-    Icon: icon_1.BpIcon,
-    Card: card_1.BpCard,
-    NumericInput: numeric_input_1.BpNumericInput,
-    InputGroup: input_group_1.BpInputGroup,
-    NonIdealState: non_ideal_state_1.BpNonIdealState,
-    Spinner: spinner_1.BpSpinner,
-    Switch: switch_1.BpSwitch,
-    Select: select_1.BpSelect,
-    FileInput: file_input_1.BpFileInput,
-    FormGroup: form_group_1.BpFormGroup,
-    EditableText: editable_text_1.BpEditableText,
-    MenuComponent: menu_1.BpMenuComponent,
-    TabSet: tab_set_1.BpTabSet,
-    Drawer: drawer_1.BpDrawer,
-    Popover: popover_1.BpPopover,
-    Toaster: toaster_1.BpToaster,
-    Dialog: dialog_1.BpDialog,
-    DialogContainer: dialog_1.BpDialogContainer,
-    DialogShell: dialog_1.BpDialogShell,
-    DialogHeader: dialog_1.BpDialogHeader,
-    DialogBody: dialog_1.BpDialogBody,
-    DialogFooter: dialog_1.BpDialogFooter,
-    DialogFooterActions: dialog_1.BpDialogFooterActions,
-    HtmlTable: html_table_1.BpHtmlTable
-};
-exports["default"] = provider;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/radio.tsx"
+/***/ "./src/components/elements/providers/minimal/callout.tsx"
 /*!***************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/radio.tsx ***!
+  !*** ./src/components/elements/providers/minimal/callout.tsx ***!
   \***************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpRadio = void 0;
+exports.MnCallout = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+// Minimal provider – Callout component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./callout.css */ "./src/components/elements/providers/minimal/callout.css");
+const DEFAULT_ICON_BY_VARIANT = {
+    primary: "info-sign",
+    warning: "warning-sign",
+    success: "tick",
+    danger: "error",
+};
 /**
  * @hidden
+ * @since 0.15
  */
-const BpRadio = (props) => {
-    return react_1.default.createElement(core_1.Radio, { name: props.name, value: props.value, label: props.label, checked: props.checked, onChange: props.onChange });
+const MnCallout = ({ variant, title, icon, children }) => {
+    const cls = ["mrl-callout", variant ? `mrl-callout--${variant}` : null].filter(Boolean).join(" ");
+    const resolvedIcon = icon !== null && icon !== void 0 ? icon : (variant ? DEFAULT_ICON_BY_VARIANT[variant] : undefined);
+    return (react_1.default.createElement("div", { className: cls }, resolvedIcon ? (react_1.default.createElement("div", { className: "mrl-callout-content" },
+        react_1.default.createElement("span", { className: "mrl-callout-icon", "aria-hidden": "true" },
+            react_1.default.createElement(icon_1.MnIcon, { icon: resolvedIcon, iconSize: 20 })),
+        react_1.default.createElement("div", { className: "mrl-callout-body" },
+            title && react_1.default.createElement("p", { className: "mrl-callout-title" }, title),
+            children))) : (react_1.default.createElement(react_1.default.Fragment, null,
+        title && react_1.default.createElement("p", { className: "mrl-callout-title" }, title),
+        children))));
 };
-exports.BpRadio = BpRadio;
+exports.MnCallout = MnCallout;
 
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/select.tsx"
+/***/ "./src/components/elements/providers/minimal/card.tsx"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/card.tsx ***!
+  \************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnCard = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Card component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./card.css */ "./src/components/elements/providers/minimal/card.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnCard = ({ style, children }) => {
+    return (react_1.default.createElement("div", { className: "mrl-card", style: style }, children));
+};
+exports.MnCard = MnCard;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/checkbox.tsx"
 /*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/select.tsx ***!
+  !*** ./src/components/elements/providers/minimal/checkbox.tsx ***!
   \****************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpSelect = void 0;
+exports.MnCheckbox = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Checkbox component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const string_1 = __webpack_require__(/*! ../../../../utils/string */ "./src/utils/string.ts");
+__webpack_require__(/*! ./checkbox.css */ "./src/components/elements/providers/minimal/checkbox.css");
 /**
  * @hidden
+ * @since 0.15
  */
-const BpSelect = ({ id, name, value, onChange, items, fill, placeholder, keyFunc, extraClassNames, style }) => {
-    const classes = `bp3-select ${!!fill ? 'bp3-fill' : ''} ${extraClassNames}`.trim();
-    return react_1.default.createElement("div", { className: classes },
-        react_1.default.createElement("select", { id: id, name: name, value: value, style: style, onChange: e => onChange === null || onChange === void 0 ? void 0 : onChange(e.target.value) },
-            !(0, string_1.strIsNullOrEmpty)(placeholder) && react_1.default.createElement("option", null, placeholder),
-            items.map((item, i) => {
-                let key = item.value;
-                if (typeof (keyFunc) === 'function') {
-                    key = keyFunc(item);
-                }
-                const label = item.label;
-                return react_1.default.createElement("option", { key: key, value: item.value }, label);
-            })));
+const MnCheckbox = ({ checked, label, onChange, disabled, id, name }) => {
+    return (react_1.default.createElement("label", { className: "mrl-checkbox" },
+        react_1.default.createElement("input", { type: "checkbox", id: id, name: name, checked: checked, disabled: disabled, onChange: onChange }),
+        label));
 };
-exports.BpSelect = BpSelect;
+exports.MnCheckbox = MnCheckbox;
 
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/slider.tsx"
-/*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/slider.tsx ***!
-  \****************************************************************/
+/***/ "./src/components/elements/providers/minimal/collapsible.tsx"
+/*!*******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/collapsible.tsx ***!
+  \*******************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpSlider = void 0;
+exports.MnCollapsible = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+// Minimal provider – Collapsible component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 /**
  * @hidden
+ * @since 0.15
  */
-const BpSlider = (props) => {
-    return react_1.default.createElement(core_1.Slider, { min: props.min, max: props.max, stepSize: props.stepSize, labelStepSize: props.labelStepSize, value: props.value, onChange: props.onChange, disabled: props.disabled, labelValues: props.labelValues });
+const MnCollapsible = ({ isOpen, children }) => {
+    const style = {
+        maxHeight: isOpen ? "9999px" : 0,
+        overflow: isOpen ? "visible" : "hidden",
+        transition: "max-height var(--mrl-transition-speed, 150ms) ease-in-out",
+    };
+    return react_1.default.createElement("div", { style: style, "aria-hidden": !isOpen || undefined }, children);
 };
-exports.BpSlider = BpSlider;
+exports.MnCollapsible = MnCollapsible;
 
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/spinner.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/spinner.tsx ***!
-  \*****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpSpinner = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-function presetToSize(preset) {
-    switch (preset) {
-        case "small":
-            return core_1.SpinnerSize.SMALL;
-        case "standard":
-            return core_1.SpinnerSize.STANDARD;
-        case "large":
-            return core_1.SpinnerSize.LARGE;
-    }
-    return undefined;
-}
-/**
- * @hidden
- */
-const BpSpinner = (props) => {
-    return react_1.default.createElement(core_1.Spinner, { intent: (0, utils_1.variantToIntent)(props.variant), size: presetToSize(props.sizePreset) });
-};
-exports.BpSpinner = BpSpinner;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/switch.tsx"
-/*!****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/switch.tsx ***!
-  \****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpSwitch = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-/**
- * @hidden
- */
-const BpSwitch = (props) => {
-    return react_1.default.createElement(core_1.Switch, { style: props.style, disabled: props.disabled, checked: props.checked, label: props.label, labelElement: props.labelElement, onChange: props.onChange });
-};
-exports.BpSwitch = BpSwitch;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/tab-set.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/tab-set.tsx ***!
-  \*****************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpTabSet = void 0;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const BpTabSet = (props) => {
-    const { id, className, onTabChanged, tabs, activeTabId } = props;
-    return react_1.default.createElement(core_1.Tabs, { className: className, id: id, onChange: tabId => onTabChanged === null || onTabChanged === void 0 ? void 0 : onTabChanged(tabId), selectedTabId: activeTabId }, tabs.map(tab => react_1.default.createElement(core_1.Tab, { key: `bp-tab-${tab.id}`, id: tab.id, title: tab.title, panel: tab.content })));
-};
-exports.BpTabSet = BpTabSet;
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/text.tsx"
+/***/ "./src/components/elements/providers/minimal/dialog.tsx"
 /*!**************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/text.tsx ***!
+  !*** ./src/components/elements/providers/minimal/dialog.tsx ***!
   \**************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpText = void 0;
+exports.MnDialogFooterActions = exports.MnDialogFooter = exports.MnDialogBody = exports.MnDialogHeader = exports.MnDialogShell = exports.MnDialogContainer = exports.MnDialog = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Dialog and dialog sub-components
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const BpText = ({ component, className, style, children }) => {
-    const cmp = component || "span";
+const react_dom_1 = tslib_1.__importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+const svg_icons_1 = __webpack_require__(/*! ./svg-icons */ "./src/components/elements/providers/minimal/svg-icons.tsx");
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./dialog.css */ "./src/components/elements/providers/minimal/dialog.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialog = ({ icon, isOpen, title, onClose, children }) => {
+    if (typeof document === "undefined" || !isOpen) {
+        return null;
+    }
+    return react_dom_1.default.createPortal(react_1.default.createElement("div", { className: "mrl-dialog-backdrop", onClick: (e) => { if (e.target === e.currentTarget) {
+            onClose === null || onClose === void 0 ? void 0 : onClose();
+        } } },
+        react_1.default.createElement("div", { className: "mrl-dialog-shell", role: "dialog", "aria-modal": "true" },
+            title && (react_1.default.createElement("div", { className: "mrl-dialog-header" },
+                react_1.default.createElement("h5", null,
+                    icon && (react_1.default.createElement("span", { className: "mrl-dialog-icon", "aria-hidden": "true" },
+                        react_1.default.createElement(icon_1.MnIcon, { icon: icon, iconSize: 18 }))),
+                    react_1.default.createElement("span", null, title)),
+                react_1.default.createElement("button", { className: "mrl-dialog-close mrl-btn mrl-btn--minimal", onClick: onClose, "aria-label": "Close" },
+                    react_1.default.createElement(svg_icons_1.SvgIcon, { name: "cross", size: 14 })))),
+            children)), document.body);
+};
+exports.MnDialog = MnDialog;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogContainer = ({ style, className, children }) => {
+    const cls = ["mrl-dialog-container", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.MnDialogContainer = MnDialogContainer;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogShell = ({ style, className, children }) => {
+    const cls = ["mrl-dialog-shell", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style, role: "dialog", "aria-modal": "true" }, children);
+};
+exports.MnDialogShell = MnDialogShell;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogHeader = ({ className, children }) => {
+    const cls = ["mrl-dialog-header", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls }, children);
+};
+exports.MnDialogHeader = MnDialogHeader;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogBody = ({ style, className, children }) => {
+    const cls = ["mrl-dialog-body", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.MnDialogBody = MnDialogBody;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogFooter = ({ style, className, children }) => {
+    const cls = ["mrl-dialog-footer", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.MnDialogFooter = MnDialogFooter;
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDialogFooterActions = ({ style, className, children }) => {
+    const cls = ["mrl-dialog-footer-actions", className].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, style: style }, children);
+};
+exports.MnDialogFooterActions = MnDialogFooterActions;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/drawer.tsx"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/drawer.tsx ***!
+  \**************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnDrawer = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Drawer component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_dom_1 = tslib_1.__importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+const svg_icons_1 = __webpack_require__(/*! ./svg-icons */ "./src/components/elements/providers/minimal/svg-icons.tsx");
+__webpack_require__(/*! ./drawer.css */ "./src/components/elements/providers/minimal/drawer.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnDrawer = ({ title, isOpen, position = "right", onClose, children }) => {
+    if (typeof document === "undefined") {
+        return null;
+    }
+    const posClass = `mrl-drawer--${position}`;
+    const openClass = isOpen ? " mrl-drawer--open" : "";
+    return react_dom_1.default.createPortal(react_1.default.createElement(react_1.default.Fragment, null,
+        isOpen && (react_1.default.createElement("div", { className: "mrl-drawer-backdrop", onClick: onClose })),
+        react_1.default.createElement("div", { className: `mrl-drawer ${posClass}${openClass}`, role: "dialog", "aria-modal": "true" },
+            react_1.default.createElement("div", { className: "mrl-drawer-header" },
+                react_1.default.createElement("span", { className: "mrl-drawer-title" }, title),
+                react_1.default.createElement("button", { className: "mrl-drawer-close mrl-btn mrl-btn--minimal", onClick: onClose, "aria-label": "Close" },
+                    react_1.default.createElement(svg_icons_1.SvgIcon, { name: "cross", size: 14 }))),
+            react_1.default.createElement("div", { className: "mrl-drawer-body" }, children))), document.body);
+};
+exports.MnDrawer = MnDrawer;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/editable-text.tsx"
+/*!*********************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/editable-text.tsx ***!
+  \*********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnEditableText = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – EditableText component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./editable-text.css */ "./src/components/elements/providers/minimal/editable-text.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnEditableText = ({ value, onChange }) => {
+    const [editing, setEditing] = react_1.default.useState(false);
+    const [localValue, setLocalValue] = react_1.default.useState(value !== null && value !== void 0 ? value : "");
+    react_1.default.useEffect(() => {
+        setLocalValue(value !== null && value !== void 0 ? value : "");
+    }, [value]);
+    const commit = () => {
+        setEditing(false);
+        onChange === null || onChange === void 0 ? void 0 : onChange(localValue);
+    };
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            commit();
+        }
+        else if (e.key === "Escape") {
+            setLocalValue(value !== null && value !== void 0 ? value : "");
+            setEditing(false);
+        }
+    };
+    if (editing) {
+        return (react_1.default.createElement("span", { className: "mrl-editable-text" },
+            react_1.default.createElement("input", { className: "mrl-editable-text-input", autoFocus: true, value: localValue, onChange: e => setLocalValue(e.target.value), onBlur: commit, onKeyDown: handleKeyDown })));
+    }
+    return (react_1.default.createElement("span", { className: "mrl-editable-text" },
+        react_1.default.createElement("span", { className: "mrl-editable-text-display", onClick: () => setEditing(true) }, localValue)));
+};
+exports.MnEditableText = MnEditableText;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/file-input.tsx"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/file-input.tsx ***!
+  \******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnFileInput = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – FileInput component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./file-input.css */ "./src/components/elements/providers/minimal/file-input.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnFileInput = ({ fill, text, buttonText, onInputChange }) => {
+    const cls = ["mrl-file-input", fill ? "mrl-file-input--fill" : null].filter(Boolean).join(" ");
+    return (react_1.default.createElement("label", { className: cls },
+        react_1.default.createElement("input", { type: "file", onChange: onInputChange }),
+        react_1.default.createElement("span", { className: "mrl-file-input-text" }, text !== null && text !== void 0 ? text : "Choose file…"),
+        react_1.default.createElement("span", { className: "mrl-file-input-btn" }, buttonText !== null && buttonText !== void 0 ? buttonText : "Browse")));
+};
+exports.MnFileInput = MnFileInput;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/form-group.tsx"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/form-group.tsx ***!
+  \******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnFormGroup = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – FormGroup component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./form-group.css */ "./src/components/elements/providers/minimal/form-group.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnFormGroup = ({ label, labelFor, inline, children }) => {
+    const cls = ["mrl-form-group", inline ? "mrl-form-group--inline" : null].filter(Boolean).join(" ");
+    return (react_1.default.createElement("div", { className: cls },
+        label && (react_1.default.createElement("label", { htmlFor: labelFor }, label)),
+        children));
+};
+exports.MnFormGroup = MnFormGroup;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/heading.tsx"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/heading.tsx ***!
+  \***************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnHeading = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Heading component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const never_1 = __webpack_require__(/*! ../../../../utils/never */ "./src/utils/never.ts");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnHeading = ({ level, style, className, children }) => {
+    const cls = ["mrl-heading", `mrl-heading--h${level}`, className].filter(Boolean).join(" ");
+    switch (level) {
+        case 1:
+            return react_1.default.createElement("h1", { className: cls, style: style }, children);
+        case 2:
+            return react_1.default.createElement("h2", { className: cls, style: style }, children);
+        case 3:
+            return react_1.default.createElement("h3", { className: cls, style: style }, children);
+        case 4:
+            return react_1.default.createElement("h4", { className: cls, style: style }, children);
+        case 5:
+            return react_1.default.createElement("h5", { className: cls, style: style }, children);
+        case 6:
+            return react_1.default.createElement("h6", { className: cls, style: style }, children);
+        default:
+            (0, never_1.assertNever)(level);
+            return null;
+    }
+};
+exports.MnHeading = MnHeading;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/html-table.tsx"
+/*!******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/html-table.tsx ***!
+  \******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnHtmlTable = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – HtmlTable component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./html-table.css */ "./src/components/elements/providers/minimal/html-table.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnHtmlTable = ({ condensed, bordered, className, style, children }) => {
+    const cls = [
+        "mrl-table",
+        condensed ? "mrl-table--condensed" : null,
+        bordered ? "mrl-table--bordered" : null,
+        className !== null && className !== void 0 ? className : null,
+    ].filter(Boolean).join(" ");
+    return (react_1.default.createElement("table", { className: cls, style: style }, children));
+};
+exports.MnHtmlTable = MnHtmlTable;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/icon-map.ts"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/icon-map.ts ***!
+  \***************************************************************/
+(__unused_webpack_module, exports) {
+
+"use strict";
+
+// Minimal provider – Icon map (Blueprint icon names pass-through)
+// No external icon library — all SVG data is bundled inline in svg-icons.tsx.
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getSvgIconName = getSvgIconName;
+/**
+ * Returns the incoming Blueprint icon name for SVG lookup.
+ *
+ * @hidden
+ * @since 0.15
+ */
+function getSvgIconName(blueprintName) {
+    return blueprintName;
+}
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/icon.tsx"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/icon.tsx ***!
+  \************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnIcon = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Icon component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const icon_map_1 = __webpack_require__(/*! ./icon-map */ "./src/components/elements/providers/minimal/icon-map.ts");
+const svg_icons_1 = __webpack_require__(/*! ./svg-icons */ "./src/components/elements/providers/minimal/svg-icons.tsx");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnIcon = ({ icon, style, iconSize }) => {
+    if (!icon) {
+        return null;
+    }
+    const svgName = (0, icon_map_1.getSvgIconName)(icon);
+    if (!svgName) {
+        return null;
+    }
+    return react_1.default.createElement(svg_icons_1.SvgIcon, { name: svgName, size: iconSize !== null && iconSize !== void 0 ? iconSize : 16, style: style });
+};
+exports.MnIcon = MnIcon;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/input-group.tsx"
+/*!*******************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/input-group.tsx ***!
+  \*******************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnInputGroup = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – InputGroup component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./input-group.css */ "./src/components/elements/providers/minimal/input-group.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnInputGroup = ({ style, round, autoFocus, leftIcon, placeholder, value, readOnly, disabled, id, name, rightElement, onChange, onClick, }) => {
+    const rightElementRef = react_1.default.useRef(null);
+    const [rightElementWidth, setRightElementWidth] = react_1.default.useState(0);
+    react_1.default.useEffect(() => {
+        if (!rightElement || !rightElementRef.current) {
+            setRightElementWidth(0);
+            return;
+        }
+        const updateWidth = () => {
+            var _a, _b;
+            const width = Math.ceil((_b = (_a = rightElementRef.current) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect().width) !== null && _b !== void 0 ? _b : 0);
+            setRightElementWidth(width);
+        };
+        updateWidth();
+        if (typeof ResizeObserver === "undefined") {
+            return;
+        }
+        const observer = new ResizeObserver(updateWidth);
+        observer.observe(rightElementRef.current);
+        return () => {
+            observer.disconnect();
+        };
+    }, [rightElement]);
+    const inputStyle = rightElement
+        ? { paddingRight: `${rightElementWidth + 10}px` }
+        : undefined;
+    const classes = [
+        "mrl-input-group",
+        round ? "mrl-input-group--round" : null,
+        leftIcon ? "mrl-input-group--with-left-icon" : null,
+        rightElement ? "mrl-input-group--with-right-element" : null,
+    ].filter(Boolean).join(" ");
+    return (react_1.default.createElement("div", { className: classes, style: style },
+        leftIcon && (react_1.default.createElement("span", { className: "mrl-input-left-icon", "aria-hidden": "true" },
+            react_1.default.createElement(icon_1.MnIcon, { icon: leftIcon, iconSize: 14 }))),
+        react_1.default.createElement("input", { id: id, name: name, type: "text", autoFocus: autoFocus, placeholder: placeholder, value: value, readOnly: readOnly, disabled: disabled, style: inputStyle, onChange: onChange, onClick: onClick }),
+        rightElement && (react_1.default.createElement("span", { ref: rightElementRef, className: "mrl-input-right-element" }, rightElement))));
+};
+exports.MnInputGroup = MnInputGroup;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/menu.tsx"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/menu.tsx ***!
+  \************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnMenuComponent = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – MenuComponent (plain HTML menu list)
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const type_guards_1 = __webpack_require__(/*! ../../../../utils/type-guards */ "./src/utils/type-guards.ts");
+const menu_1 = __webpack_require__(/*! ../../../../utils/menu */ "./src/utils/menu.ts");
+const toolbar_1 = __webpack_require__(/*! ../../../toolbar */ "./src/components/toolbar.tsx");
+const icon_1 = __webpack_require__(/*! ../../../icon */ "./src/components/icon.tsx");
+__webpack_require__(/*! ./menu.css */ "./src/components/elements/providers/minimal/menu.css");
+const MnMenuItems = ({ items, onInvoked }) => {
+    return (react_1.default.createElement(react_1.default.Fragment, null, items.map((item, idx) => {
+        if (item.isSeparator) {
+            return react_1.default.createElement("li", { key: idx, className: "mrl-menu-separator", role: "separator" });
+        }
+        if ((0, type_guards_1.isMenu)(item)) {
+            return (react_1.default.createElement("li", { key: idx, className: "mrl-submenu", role: "none" },
+                react_1.default.createElement("div", { className: "mrl-menu-item" },
+                    react_1.default.createElement("span", { className: "mrl-menu-item-icon-slot", "aria-hidden": "true" }, (item.icon || item.iconClass) && (react_1.default.createElement(icon_1.ImageIcon, { url: item.icon, spriteClass: item.iconClass }))),
+                    (0, menu_1.getText)(item.label)),
+                react_1.default.createElement("ul", { className: "mrl-menu", role: "menu" },
+                    react_1.default.createElement(MnMenuItems, { items: item.childItems, onInvoked: onInvoked }))));
+        }
+        const enabled = (0, toolbar_1.getEnabled)(item);
+        const handleClick = () => {
+            var _a;
+            if (enabled) {
+                (_a = item.invoke) === null || _a === void 0 ? void 0 : _a.call(item);
+                onInvoked === null || onInvoked === void 0 ? void 0 : onInvoked();
+            }
+        };
+        return (react_1.default.createElement("li", { key: idx, className: `mrl-menu-item${!enabled ? " mrl-menu-item--disabled" : ""}`, role: "menuitem", "aria-disabled": !enabled, onClick: handleClick },
+            react_1.default.createElement("span", { className: "mrl-menu-item-icon-slot", "aria-hidden": "true" }, (item.icon || item.iconClass) && (react_1.default.createElement(icon_1.ImageIcon, { url: item.icon, spriteClass: item.iconClass }))),
+            (0, menu_1.getText)(item.label)));
+    })));
+};
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnMenuComponent = ({ items, onInvoked }) => {
+    return (react_1.default.createElement("ul", { className: "mrl-menu", role: "menu" },
+        react_1.default.createElement(MnMenuItems, { items: items, onInvoked: onInvoked })));
+};
+exports.MnMenuComponent = MnMenuComponent;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/non-ideal-state.tsx"
+/*!***********************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/non-ideal-state.tsx ***!
+  \***********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnNonIdealState = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – NonIdealState component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./non-ideal-state.css */ "./src/components/elements/providers/minimal/non-ideal-state.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnNonIdealState = ({ icon, title, description, action }) => {
+    return (react_1.default.createElement("div", { className: "mrl-non-ideal-state" },
+        icon && (react_1.default.createElement("div", { className: "mrl-non-ideal-state-icon" }, typeof icon === "string" ? react_1.default.createElement(icon_1.MnIcon, { icon: icon, iconSize: 40 }) : icon)),
+        title && (react_1.default.createElement("h4", { className: "mrl-non-ideal-state-title" }, title)),
+        description && (react_1.default.createElement("p", { className: "mrl-non-ideal-state-description" }, description)),
+        action && (react_1.default.createElement("div", { className: "mrl-non-ideal-state-action" }, action))));
+};
+exports.MnNonIdealState = MnNonIdealState;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/numeric-input.tsx"
+/*!*********************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/numeric-input.tsx ***!
+  \*********************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnNumericInput = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – NumericInput component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./numeric-input.css */ "./src/components/elements/providers/minimal/numeric-input.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnNumericInput = ({ style, min, max, value, disabled, onChange }) => {
+    const handleChange = (e) => {
+        const parsed = parseFloat(e.target.value);
+        if (!isNaN(parsed)) {
+            onChange === null || onChange === void 0 ? void 0 : onChange(parsed);
+        }
+    };
+    return (react_1.default.createElement("input", { type: "number", className: "mrl-numeric-input", style: style, min: min, max: max, value: value, disabled: disabled, onChange: handleChange }));
+};
+exports.MnNumericInput = MnNumericInput;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/popover.tsx"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/popover.tsx ***!
+  \***************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnPopover = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Popover component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+const react_tiny_popover_1 = __webpack_require__(/*! react-tiny-popover */ "./node_modules/react-tiny-popover/dist/Popover.js");
+function mapPosition(position) {
+    switch (position) {
+        case "left": return "left";
+        case "right": return "right";
+        case "top": return "top";
+        case "bottom": return "bottom";
+        default: return "right";
+    }
+}
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnPopover = ({ position, children }) => {
+    const [isOpen, setIsOpen] = react_1.default.useState(false);
+    const childArray = react_1.default.Children.toArray(children);
+    const trigger = childArray[0];
+    const content = childArray[1];
+    if (!trigger) {
+        return null;
+    }
+    return (react_1.default.createElement(react_tiny_popover_1.Popover, { isOpen: isOpen, positions: [mapPosition(position)], content: react_1.default.createElement(react_1.default.Fragment, null, content), onClickOutside: () => setIsOpen(false) },
+        react_1.default.createElement("span", { onClick: () => setIsOpen(prev => !prev) }, trigger)));
+};
+exports.MnPopover = MnPopover;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/provider.tsx"
+/*!****************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/provider.tsx ***!
+  \****************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const text_1 = __webpack_require__(/*! ./text */ "./src/components/elements/providers/minimal/text.tsx");
+const heading_1 = __webpack_require__(/*! ./heading */ "./src/components/elements/providers/minimal/heading.tsx");
+const button_1 = __webpack_require__(/*! ./button */ "./src/components/elements/providers/minimal/button.tsx");
+const radio_1 = __webpack_require__(/*! ./radio */ "./src/components/elements/providers/minimal/radio.tsx");
+const slider_1 = __webpack_require__(/*! ./slider */ "./src/components/elements/providers/minimal/slider.tsx");
+const collapsible_1 = __webpack_require__(/*! ./collapsible */ "./src/components/elements/providers/minimal/collapsible.tsx");
+const callout_1 = __webpack_require__(/*! ./callout */ "./src/components/elements/providers/minimal/callout.tsx");
+const checkbox_1 = __webpack_require__(/*! ./checkbox */ "./src/components/elements/providers/minimal/checkbox.tsx");
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+const card_1 = __webpack_require__(/*! ./card */ "./src/components/elements/providers/minimal/card.tsx");
+const numeric_input_1 = __webpack_require__(/*! ./numeric-input */ "./src/components/elements/providers/minimal/numeric-input.tsx");
+const input_group_1 = __webpack_require__(/*! ./input-group */ "./src/components/elements/providers/minimal/input-group.tsx");
+const non_ideal_state_1 = __webpack_require__(/*! ./non-ideal-state */ "./src/components/elements/providers/minimal/non-ideal-state.tsx");
+const spinner_1 = __webpack_require__(/*! ./spinner */ "./src/components/elements/providers/minimal/spinner.tsx");
+const switch_1 = __webpack_require__(/*! ./switch */ "./src/components/elements/providers/minimal/switch.tsx");
+const select_1 = __webpack_require__(/*! ./select */ "./src/components/elements/providers/minimal/select.tsx");
+const file_input_1 = __webpack_require__(/*! ./file-input */ "./src/components/elements/providers/minimal/file-input.tsx");
+const form_group_1 = __webpack_require__(/*! ./form-group */ "./src/components/elements/providers/minimal/form-group.tsx");
+const editable_text_1 = __webpack_require__(/*! ./editable-text */ "./src/components/elements/providers/minimal/editable-text.tsx");
+const menu_1 = __webpack_require__(/*! ./menu */ "./src/components/elements/providers/minimal/menu.tsx");
+const tab_set_1 = __webpack_require__(/*! ./tab-set */ "./src/components/elements/providers/minimal/tab-set.tsx");
+const drawer_1 = __webpack_require__(/*! ./drawer */ "./src/components/elements/providers/minimal/drawer.tsx");
+const popover_1 = __webpack_require__(/*! ./popover */ "./src/components/elements/providers/minimal/popover.tsx");
+const toaster_1 = __webpack_require__(/*! ./toaster */ "./src/components/elements/providers/minimal/toaster.tsx");
+const dialog_1 = __webpack_require__(/*! ./dialog */ "./src/components/elements/providers/minimal/dialog.tsx");
+const html_table_1 = __webpack_require__(/*! ./html-table */ "./src/components/elements/providers/minimal/html-table.tsx");
+__webpack_require__(/*! ./mrl-minimal.css */ "./src/components/elements/providers/minimal/mrl-minimal.css");
+const provider = {
+    Text: text_1.MnText,
+    Heading: heading_1.MnHeading,
+    Button: button_1.MnButton,
+    Radio: radio_1.MnRadio,
+    Slider: slider_1.MnSlider,
+    Collapsible: collapsible_1.MnCollapsible,
+    Callout: callout_1.MnCallout,
+    Checkbox: checkbox_1.MnCheckbox,
+    Icon: icon_1.MnIcon,
+    Card: card_1.MnCard,
+    NumericInput: numeric_input_1.MnNumericInput,
+    InputGroup: input_group_1.MnInputGroup,
+    NonIdealState: non_ideal_state_1.MnNonIdealState,
+    Spinner: spinner_1.MnSpinner,
+    Switch: switch_1.MnSwitch,
+    Select: select_1.MnSelect,
+    FileInput: file_input_1.MnFileInput,
+    FormGroup: form_group_1.MnFormGroup,
+    EditableText: editable_text_1.MnEditableText,
+    MenuComponent: menu_1.MnMenuComponent,
+    TabSet: tab_set_1.MnTabSet,
+    Drawer: drawer_1.MnDrawer,
+    Popover: popover_1.MnPopover,
+    Toaster: toaster_1.MnToaster,
+    Dialog: dialog_1.MnDialog,
+    DialogContainer: dialog_1.MnDialogContainer,
+    DialogShell: dialog_1.MnDialogShell,
+    DialogHeader: dialog_1.MnDialogHeader,
+    DialogBody: dialog_1.MnDialogBody,
+    DialogFooter: dialog_1.MnDialogFooter,
+    DialogFooterActions: dialog_1.MnDialogFooterActions,
+    HtmlTable: html_table_1.MnHtmlTable,
+};
+exports["default"] = provider;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/radio.tsx"
+/*!*************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/radio.tsx ***!
+  \*************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnRadio = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Radio component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./radio.css */ "./src/components/elements/providers/minimal/radio.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnRadio = ({ name, label, value, checked, onChange }) => {
+    return (react_1.default.createElement("label", { className: "mrl-radio" },
+        react_1.default.createElement("input", { type: "radio", name: name, value: value, checked: checked, onChange: onChange }),
+        label));
+};
+exports.MnRadio = MnRadio;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/select.tsx"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/select.tsx ***!
+  \**************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnSelect = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Select component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./select.css */ "./src/components/elements/providers/minimal/select.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnSelect = ({ id, name, fill, style, placeholder, value, items, onChange, keyFunc, extraClassNames }) => {
+    const wrapperCls = ["mrl-select", fill ? "mrl-select--fill" : null, extraClassNames !== null && extraClassNames !== void 0 ? extraClassNames : null].filter(Boolean).join(" ");
+    const handleChange = (e) => {
+        const selected = e.target.value;
+        onChange === null || onChange === void 0 ? void 0 : onChange(selected === "" ? undefined : selected);
+    };
+    return (react_1.default.createElement("div", { className: wrapperCls, style: style },
+        react_1.default.createElement("select", { id: id, name: name, value: value !== null && value !== void 0 ? value : "", onChange: handleChange },
+            placeholder !== undefined && (react_1.default.createElement("option", { value: "" }, placeholder)),
+            items.map((item, idx) => {
+                const key = keyFunc ? keyFunc(item) : idx;
+                return (react_1.default.createElement("option", { key: key, value: String(item.value) }, item.label));
+            }))));
+};
+exports.MnSelect = MnSelect;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/slider.tsx"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/slider.tsx ***!
+  \**************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnSlider = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Slider component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./slider.css */ "./src/components/elements/providers/minimal/slider.css");
+function computeTickLabels(min, max, labelStepSize, labelValues) {
+    if (labelValues && labelValues.length > 0) {
+        return labelValues;
+    }
+    if (labelStepSize && labelStepSize > 0) {
+        const labels = [];
+        for (let v = min; v <= max; v += labelStepSize) {
+            labels.push(Math.round(v * 1e9) / 1e9);
+        }
+        if (labels[labels.length - 1] < max) {
+            labels.push(max);
+        }
+        return labels;
+    }
+    return [min, max];
+}
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnSlider = ({ min = 0, max = 100, stepSize, labelStepSize, labelValues, value, onChange, disabled }) => {
+    const range = max - min;
+    const ticks = computeTickLabels(min, max, labelStepSize, labelValues);
+    return (react_1.default.createElement("div", { className: "mrl-slider-wrapper" },
+        react_1.default.createElement("input", { type: "range", className: "mrl-slider", min: min, max: max, step: stepSize, value: value, disabled: disabled, onChange: e => onChange === null || onChange === void 0 ? void 0 : onChange(parseFloat(e.target.value)) }),
+        ticks.length > 0 && (react_1.default.createElement("div", { className: "mrl-slider-labels" }, ticks.map((tick, i) => (react_1.default.createElement("span", { key: i, className: "mrl-slider-label", style: { left: `${((tick - min) / range) * 100}%` } }, tick)))))));
+};
+exports.MnSlider = MnSlider;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/spinner.tsx"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/spinner.tsx ***!
+  \***************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnSpinner = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Spinner component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./spinner.css */ "./src/components/elements/providers/minimal/spinner.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnSpinner = ({ variant, sizePreset = "standard" }) => {
+    const cls = [
+        "mrl-spinner",
+        `mrl-spinner--${sizePreset}`,
+        variant ? `mrl-spinner--${variant}` : null,
+    ].filter(Boolean).join(" ");
+    return react_1.default.createElement("div", { className: cls, role: "status", "aria-label": "Loading" });
+};
+exports.MnSpinner = MnSpinner;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/svg-icons.tsx"
+/*!*****************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/svg-icons.tsx ***!
+  \*****************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SvgIcon = exports.SVG_ICONS = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Inline SVG icon renderer (no external icon library)
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+/**
+ * All icon path data, keyed by a logical name.
+ * SVG paths are replicated from our Blueprint icon path subset.
+ * @hidden
+ * @since 0.15
+ */
+function toInlineSvgIcon(paths) {
+    return paths.map((d) => ["path", { d }]);
+}
+function buildSvgIconRegistry(pathMap) {
+    return Object.fromEntries(Object.entries(pathMap).map(([name, paths]) => [name, toInlineSvgIcon(paths)]));
+}
+const BP_ICONS_20 = {
+    "arrow-left": [
+        "M18 9H4.41L8.7 4.71c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71l-6 6c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l6 6a1.003 1.003 0 001.42-1.42L4.41 11H18c.55 0 1-.45 1-1s-.45-1-1-1z"
+    ],
+    "arrow-right": [
+        "M18.71 9.29l-6-6a1.003 1.003 0 00-1.42 1.42L15.59 9H2c-.55 0-1 .45-1 1s.45 1 1 1h13.59l-4.29 4.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l6-6c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"
+    ],
+    "arrows-horizontal": [
+        "M19.7 9.3l-5-5c-.2-.2-.4-.3-.7-.3-.6 0-1 .4-1 1 0 .3.1.5.3.7L16.6 9H3.4l3.3-3.3c.2-.2.3-.4.3-.7 0-.6-.4-1-1-1-.3 0-.5.1-.7.3l-5 5c-.2.2-.3.4-.3.7s.1.5.3.7l5 5c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7L3.4 11h13.2l-3.3 3.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l5-5c.2-.2.3-.4.3-.7s-.1-.5-.3-.7z"
+    ],
+    "application": [
+        "M3.5 9h9c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-9c-.28 0-.5.22-.5.5s.22.5.5.5zm0 2h5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-5c-.28 0-.5.22-.5.5s.22.5.5.5zM19 1H1c-.55 0-1 .45-1 1v16c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm-1 16H2V6h16v11zM3.5 13h7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-7c-.28 0-.5.22-.5.5s.22.5.5.5z"
+    ],
+    "caret-down": [
+        "M16 7c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1 0 .24.1.46.24.63l-.01.01 5 6 .01-.01c.19.22.45.37.76.37s.57-.15.76-.37l.01.01 5-6-.01-.01c.14-.17.24-.39.24-.63z"
+    ],
+    "caret-up": [
+        "M15.76 12.37l.01-.01-5-6-.01.01C10.57 6.15 10.31 6 10 6s-.57.15-.76.37l-.01-.01-5 6 .01.01c-.14.17-.24.39-.24.63 0 .55.45 1 1 1h10c.55 0 1-.45 1-1 0-.24-.1-.46-.24-.63z"
+    ],
+    "chevron-down": [
+        "M16 6c-.28 0-.53.11-.71.29L10 11.59l-5.29-5.3a1.003 1.003 0 00-1.42 1.42l6 6c.18.18.43.29.71.29s.53-.11.71-.29l6-6A1.003 1.003 0 0016 6z"
+    ],
+    "chevron-left": [
+        "M8.41 10l5.29-5.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71l-6 6c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l6 6a1.003 1.003 0 001.42-1.42L8.41 10z"
+    ],
+    "chevron-right": [
+        "M13.71 9.29l-6-6a1.003 1.003 0 00-1.42 1.42l5.3 5.29-5.29 5.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l6-6c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"
+    ],
+    "chevron-up": [
+        "M16.71 12.29l-6-6C10.53 6.11 10.28 6 10 6s-.53.11-.71.29l-6 6a1.003 1.003 0 001.42 1.42L10 8.41l5.29 5.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"
+    ],
+    "cross": [
+        "M11.41 10l4.29-4.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-4.29-4.3a1.003 1.003 0 00-1.42 1.42L8.59 10 4.3 14.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4.29-4.3 4.29 4.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z"
+    ],
+    "cog": [
+        "M19 8h-2.31c-.14-.46-.33-.89-.56-1.3l1.7-1.7a.996.996 0 000-1.41l-1.41-1.41a.996.996 0 00-1.41 0l-1.7 1.7c-.41-.22-.84-.41-1.3-.55V1c0-.55-.45-1-1-1H9c-.55 0-1 .45-1 1v2.33c-.48.14-.94.34-1.37.58L5 2.28a.972.972 0 00-1.36 0L2.28 3.64c-.37.38-.37.99 0 1.36L3.9 6.62c-.24.44-.44.89-.59 1.38H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h2.31c.14.46.33.89.56 1.3L2.17 15a.996.996 0 000 1.41l1.41 1.41c.39.39 1.02.39 1.41 0l1.7-1.7c.41.22.84.41 1.3.55V19c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.33c.48-.14.94-.35 1.37-.59L15 17.72c.37.37.98.37 1.36 0l1.36-1.36c.37-.37.37-.98 0-1.36l-1.62-1.62c.24-.43.45-.89.6-1.38H19c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-9 6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+    ],
+    "comment": [
+        "M19 1H1c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h3v4a1.003 1.003 0 001.71.71l4.7-4.71H19c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM4 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"
+    ],
+    "comparison": [
+        "M6 8H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm13-6h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm0 3h-5V3h5v2zM6 14H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zM6 2H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm4-2c-.55 0-1 .45-1 1v18c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm9 14h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zm0 3h-5v-2h5v2zm0-9h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm0 3h-5V9h5v2z"
+    ],
+    "delete": [
+        "M15 6a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10l3.29-3.29c.19-.18.3-.43.3-.71zm-5-6C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+    ],
+    "disable": [
+        "M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zM2 10c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L3.69 14.9A7.902 7.902 0 012 10zm8 8c-1.85 0-3.55-.63-4.9-1.69L16.31 5.1A7.902 7.902 0 0118 10c0 4.42-3.58 8-8 8z"
+    ],
+    "double-caret-vertical": [
+        "M5 9h10c.55 0 1-.45 1-1 0-.24-.1-.46-.24-.63l.01-.01-5-6-.01.01C10.57 1.15 10.31 1 10 1s-.57.15-.76.37l-.01-.01-5 6 .01.01C4.1 7.54 4 7.76 4 8c0 .55.45 1 1 1zm10 2H5c-.55 0-1 .45-1 1 0 .24.1.46.24.63l-.01.01 5 6 .01-.01c.19.22.45.37.76.37s.57-.15.76-.37l.01.01 5-6-.01-.01c.14-.17.24-.39.24-.63 0-.55-.45-1-1-1z"
+    ],
+    "edit": [
+        "M4.59 12.59l2.83 2.83 7.65-7.65-2.83-2.83-7.65 7.65zM2 18l4.41-1.59-2.81-2.79L2 18zM16 2c-.55 0-1.05.22-1.41.59l-1.65 1.65 2.83 2.83 1.65-1.65A2.006 2.006 0 0016 2z"
+    ],
+    "error": [
+        "M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 16H9v-2h2v2zm0-3H9V4h2v9z"
+    ],
+    "folder-close": [
+        "M0 17c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V7H0v10zM19 4H9.41l-1.7-1.71A.997.997 0 007 2H1c-.55 0-1 .45-1 1v3h20V5c0-.55-.45-1-1-1z"
+    ],
+    "geosearch": [
+        "M8 18.88c-3.79 0-6.88-3.09-6.88-6.88 0-.61.08-1.22.23-1.79.03.01.06-.01.1-.01h.09v.55c0 .23.21.42.44.42.04 0 .09-.01.12-.02l.9.88c.09.09.23.09.32 0s.09-.23 0-.32l-.86-.9c0-.02.05-.04.05-.07v-.13c0-.18.1-.25.29-.41h.53c.1 0 .19-.01.27-.05.01-.01.02 0 .03-.01.02-.01.03-.02.05-.04.01-.01.02-.01.02-.02l.02-.02 1.13-1.13c-.16-.32-.3-.65-.42-.99h-.64v-.53c0-.01.06.06.06-.1h.38c-.04-.16-.08-.32-.1-.48h-.71c.2-.16.42-.31.64-.45C4.02 6.09 4 5.8 4 5.5c0-.14.01-.28.02-.43C1.62 6.46 0 9.04 0 12c0 4.41 3.59 8 8 8 3.87 0 7.09-2.77 7.82-6.44l-.97-1.1c-.26 3.57-3.23 6.42-6.85 6.42zm-2.12-3.67v-.35h.15c.29 0 .49-.23.49-.53v-.68c0-.01.01-.01 0-.02L4.71 11.8h-.77c-.29 0-.47.24-.47.53v2c0 .29.18.53.47.53h.33v2.02c0 .28.28.51.56.51s.56-.23.56-.51v-1.22h-.01c.29 0 .5-.16.5-.45zm13.83-2.92l-3.68-3.68c.14-.21.27-.42.38-.65.02-.04.04-.07.05-.11.11-.22.2-.45.28-.69v-.01c.07-.24.13-.48.17-.73l.03-.17c.04-.24.06-.49.06-.75C17 2.46 14.54 0 11.5 0S6 2.46 6 5.5 8.46 11 11.5 11c.26 0 .51-.02.76-.06l.17-.03c.25-.04.49-.1.73-.17h.01c.24-.08.47-.17.69-.28.04-.02.07-.04.11-.05.23-.11.44-.24.65-.38l3.68 3.68c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71zM11.5 9.5c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm1.93 5.33v-.65c0-.11-.13-.21-.24-.21-.11 0-.24.09-.24.21v.65c0 .11.13.21.24.21.11 0 .24-.1.24-.21zm-2.41.67h.83c.29 0 .46-.21.46-.5v-1.86l.23-.22c-.34.05-.69.08-1.04.08-.36 0-.7-.03-1.05-.08.03.05.06.1.08.16V15c.01.29.2.5.49.5z"
+    ],
+    "hand": [
+        "M17 5c-.42 0-.79.27-.93.64L14.38 10h-.77l1.34-6.67c.03-.1.05-.21.05-.33a.998.998 0 00-1.98-.19h-.01L11.57 10H11V1c0-.55-.45-1-1-1S9 .45 9 1v9h-.2L6.97 2.76a.997.997 0 00-1.73-.41l-.03.03c-.01.02-.02.03-.03.04-.01.02-.01.03-.02.04v.01c-.01.01-.02.02-.02.03v.01c-.02.01-.02.02-.03.03 0 0 0 .01-.01.01 0 .01 0 .02-.01.03 0 0 0 .01-.01.01 0 .01-.01.02-.01.03 0 0 0 .01-.01.01 0 .01-.01.02-.01.03 0 .01 0 .01-.01.02 0 .01-.01.02-.01.03 0 .01 0 .01-.01.02 0 .01-.01.02-.01.03v.02c0 .01 0 .02-.01.03V3c0 .05 0 .09.01.14l1.45 10.25L6 12.7v.01L3.84 9.45h-.01A.98.98 0 003 9c-.55 0-1 .45-1 1 0 .2.06.39.17.55L6 18.44C7.06 19.4 8.46 20 10 20c3.31 0 6-2.69 6-6v-1.84l.01-.03v-.06l1.94-5.75A1.003 1.003 0 0017 5z"
+    ],
+    "home": [
+        "M2 12v7c0 .55.45 1 1 1h5v-7h4v7h5c.55 0 1-.45 1-1v-7l-8-8-8 8zm17.71-2.71L17 6.59V3c0-.55-.45-1-1-1s-1 .45-1 1v1.59L10.71.3C10.53.11 10.28 0 10 0s-.53.11-.71.29l-9 9a1.003 1.003 0 001.42 1.42L10 2.41l8.29 8.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"
+    ],
+    "info-sign": [
+        "M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zM9 4h2v2H9V4zm4 12H7v-1h2V8H8V7h3v8h2v1z"
+    ],
+    "issue": [
+        "M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 100-16 8 8 0 000 16zm1-2H9v-2h2v2zm0-3H9V4h2v9z"
+    ],
+    "layer": [
+        "M19.5 9.1l-9-5c-.2-.1-.3-.1-.5-.1s-.3 0-.5.1l-9 5c-.3.2-.5.5-.5.9s.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9s-.2-.7-.5-.9z"
+    ],
+    "layers": [
+        "M.5 6.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9s-.2-.7-.5-.9l-9-5c-.2-.1-.3-.1-.5-.1s-.3 0-.5.1l-9 5c-.3.2-.5.5-.5.9s.2.7.5.9z",
+        "M19 9c-.2 0-.3 0-.5.1L10 13.9 1.5 9.1C1.3 9 1.2 9 1 9c-.6 0-1 .4-1 1 0 .4.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9 0-.6-.4-1-1-1z",
+        "M19 13c-.2 0-.3 0-.5.1L10 17.9l-8.5-4.7c-.2-.2-.3-.2-.5-.2-.6 0-1 .4-1 1 0 .4.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9 0-.6-.4-1-1-1z"
+    ],
+    "map": [
+        "M19.54 4.18l.01-.02-6-4-.01.02C13.39.08 13.21 0 13 0s-.39.08-.54.18l-.01-.02L7 3.8 1.55.17l-.01.01A.969.969 0 001 0C.45 0 0 .45 0 1v14c0 .35.19.64.46.82l-.01.02 6 4 .01-.02c.15.1.33.18.54.18s.39-.08.54-.18l.01.02L13 16.2l5.45 3.63.01-.02c.15.11.33.19.54.19.55 0 1-.45 1-1V5c0-.35-.19-.64-.46-.82zM6 17.13l-4-2.67V2.87l4 2.67v11.59zm6-2.67l-4 2.67V5.54l4-2.67v11.59zm6 2.67l-4-2.67V2.87l4 2.67v11.59z"
+    ],
+    "media": [
+        "M15 9c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4-7H1c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 13l-6-5-2 2-4-5-4 8V4h16v11z"
+    ],
+    "menu-closed": [
+        "M8 6h11c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM4 6c-.28 0-.53.11-.71.29l-3 3C.11 9.47 0 9.72 0 10c0 .28.11.53.29.71l3 3A1.003 1.003 0 005 13V7c0-.55-.45-1-1-1zm15 8H8c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0-5H8c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1z"
+    ],
+    "menu-open": [
+        "M12 9H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0 5H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0-10H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm7.71 5.29l-3-3A1.003 1.003 0 0015 7v6a1.003 1.003 0 001.71.71l3-3c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"
+    ],
+    "minus": [
+        "M16 9H4c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"
+    ],
+    "multi-select": [
+        "M19 3H7c-.55 0-1 .45-1 1v1h12v6h1c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-6 6H1c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H2v-4h10v4zm4-9H4c-.55 0-1 .45-1 1v1h12v6h1c.55 0 1-.45 1-1V7c0-.55-.45-1-1-1z"
+    ],
+    "new-layer": [
+        "M11.513 2.663A2 2 0 0013 6h1v1a2 2 0 104 0v-.733l1.5.833c.3.2.5.5.5.9s-.2.7-.5.9l-9 5c-.2.1-.3.1-.5.1s-.3 0-.5-.1l-9-5C.2 8.7 0 8.4 0 8s.2-.7.5-.9l9-5c.2-.1.3-.1.5-.1s.3 0 .5.1l1.013.563zM17 3h2a1 1 0 010 2h-2v2a1 1 0 01-2 0V5h-2a1 1 0 010-2h2V1a1 1 0 012 0v2z"
+    ],
+    "path-search": [
+        "M4 7c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm15 11.69l-5-2.5v-3.63c-.32.11-.66.22-1 .29v3.32l-6 2.57v-7.25c-.36-.27-.69-.57-1-.9v8.1l-5-2.5V10c.55 0 1-.45 1-1s-.45-1-1-1V1.31l3.43 1.71c.11-.31.24-.62.39-.92L.72.05A.545.545 0 00.5 0C.22 0 0 .22 0 .5v16c0 .2.12.36.28.44l6 3c.07.04.14.06.22.06.07 0 .14-.01.2-.04l6.79-2.91 5.79 2.9c.07.03.14.05.22.05.28 0 .5-.22.5-.5v-4.21c-.31.13-.64.21-1 .21v3.19zM10 5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm3-1c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm6.72-.94l-1.43-.72c.2.43.36.89.48 1.36l.23.11V5.5c-.55 0-1 .45-1 1s.45 1 1 1v1.96l1 1V3.5c0-.2-.12-.36-.28-.44zm-3.69 5.56c.14-.21.27-.42.38-.65.02-.04.04-.07.05-.11.11-.22.2-.45.28-.69v-.01c.07-.24.13-.48.17-.73l.03-.17c.04-.25.06-.5.06-.76C17 2.46 14.54 0 11.5 0S6 2.46 6 5.5 8.46 11 11.5 11c.26 0 .51-.02.76-.06l.17-.03c.25-.04.49-.1.73-.17h.01c.24-.08.47-.17.69-.28.04-.02.07-.03.11-.05.23-.11.44-.24.65-.38l.18.18 3.5 3.5c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71l-3.68-3.67zm-4.53.88c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+    ],
+    "play": [
+        "M16 10c0-.36-.2-.67-.49-.84l.01-.01-10-6-.01.01A.991.991 0 005 3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1 .19 0 .36-.07.51-.16l.01.01 10-6-.01-.01c.29-.17.49-.48.49-.84z"
+    ],
+    "plus": [
+        "M16 9h-5V4c0-.55-.45-1-1-1s-1 .45-1 1v5H4c-.55 0-1 .45-1 1s.45 1 1 1h5v5c0 .55.45 1 1 1s1-.45 1-1v-5h5c.55 0 1-.45 1-1s-.45-1-1-1z"
+    ],
+    "print": [
+        "M14 16H6v-4H4v5c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-5h-2v4zm2-13c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v1h12V3zm3 2H1c-.55 0-1 .45-1 1v7c0 .55.45 1 1 1h2v-3h14v3h2c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zm-1 4h-2V7h2v2z"
+    ],
+    "properties": [
+        "M2 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm5-4h12c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1zM2 1C.9 1 0 1.9 0 3s.9 2 2 2 2-.9 2-2-.9-2-2-2zm17 8H7c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1zm0 7H7c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"
+    ],
+    "select": [
+        "M19.71 18.29l-4.25-4.25L20 12.91 9.93 9.33c.04-.1.07-.21.07-.33V3c0-.55-.45-1-1-1H4V1c0-.55-.45-1-1-1S2 .45 2 1v1H1c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 .55.45 1 1 1h6c.12 0 .23-.03.34-.07L12.91 20l1.14-4.54 4.25 4.25c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71zM8 8H4V4h4v4z"
+    ],
+    "search": [
+        "M19.56 17.44l-4.94-4.94A8.004 8.004 0 0016 8c0-4.42-3.58-8-8-8S0 3.58 0 8s3.58 8 8 8c1.67 0 3.21-.51 4.5-1.38l4.94 4.94a1.498 1.498 0 102.12-2.12zM8 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"
+    ],
+    "small-cross": [
+        "M11.41 10l3.29-3.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z"
+    ],
+    "stop": [
+        "M16 3H4c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1z"
+    ],
+    "tag": [
+        "M2 4a2 2 0 012-2h4.588a2 2 0 011.414.586l7.41 7.41a2 2 0 010 2.828l-4.588 4.588a2 2 0 01-2.829 0l-7.41-7.41A2 2 0 012 8.588V4zm3.489-.006a1.495 1.495 0 100 2.99 1.495 1.495 0 000-2.99z"
+    ],
+    "th": [
+        "M19 1H1c-.6 0-1 .5-1 1v16c0 .5.4 1 1 1h18c.5 0 1-.5 1-1V2c0-.5-.5-1-1-1zM7 17H2v-3h5v3zm0-4H2v-3h5v3zm0-4H2V6h5v3zm11 8H8v-3h10v3zm0-4H8v-3h10v3zm0-4H8V6h10v3z"
+    ],
+    "tick": [
+        "M17 4c-.28 0-.53.11-.71.29L7 13.59 3.71 10.3A.965.965 0 003 10a1.003 1.003 0 00-.71 1.71l4 4c.18.18.43.29.71.29s.53-.11.71-.29l10-10A1.003 1.003 0 0017 4z"
+    ],
+    "trash": [
+        "M17 1h-5c0-.55-.45-1-1-1H9c-.55 0-1 .45-1 1H3c-.55 0-1 .45-1 1v1h16V2c0-.55-.45-1-1-1zm.5 3h-15c-.28 0-.5.22-.5.5s.22.5.5.5H3v14c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5h.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zM7 16c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8zm4 0c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8zm4 0c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8z"
+    ],
+    "upload": [
+        "M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm4 10c-.28 0-.53-.11-.71-.29L11 7.41V15c0 .55-.45 1-1 1s-1-.45-1-1V7.41l-2.29 2.3a1.003 1.003 0 01-1.42-1.42l4-4c.18-.18.43-.29.71-.29s.53.11.71.29l4 4A1.003 1.003 0 0114 10z"
+    ],
+    "warning-sign": [
+        "M19.86 17.52l.01-.01-9-16-.01.01C10.69 1.21 10.37 1 10 1s-.69.21-.86.52l-.01-.01-9 16 .01.01c-.08.14-.14.3-.14.48 0 .55.45 1 1 1h18c.55 0 1-.45 1-1 0-.18-.06-.34-.14-.48zM11 17H9v-2h2v2zm0-3H9V6h2v8z"
+    ],
+    "zoom-to-fit": [
+        "M1 7c.55 0 1-.45 1-1V2h4c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v5c0 .55.45 1 1 1zm5 1a1.003 1.003 0 00-1.71-.71l-2 2c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L4.41 10 5.7 8.71c.19-.18.3-.43.3-.71zm2-2c.28 0 .53-.11.71-.29L10 4.41l1.29 1.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C10.53 2.11 10.28 2 10 2s-.53.11-.71.29l-2 2A1.003 1.003 0 008 6zM6 18H2v-4c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55.45 1 1 1h5c.55 0 1-.45 1-1s-.45-1-1-1zm8-6a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42l1.3 1.29-1.29 1.29c-.19.18-.3.43-.3.71zm5-12h-5c-.55 0-1 .45-1 1s.45 1 1 1h4v4c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm-7 14c-.28 0-.53.11-.71.29L10 15.59 8.71 14.3A.965.965 0 008 14a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0012 14zm7-1c-.55 0-1 .45-1 1v4h-4c-.55 0-1 .45-1 1s.45 1 1 1h5c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1z"
+    ]
+};
+exports.SVG_ICONS = buildSvgIconRegistry(BP_ICONS_20);
+function getBlueprintIconPaths(name) {
+    const paths = BP_ICONS_20[name];
+    if (!paths) {
+        return null;
+    }
+    return { paths, viewBoxSize: 20 };
+}
+/**
+ * Renders an inline SVG icon from the SVG_ICONS registry.
+ *
+ * @since 0.15
+ * @hidden
+ */
+const SvgIcon = ({ name, size = 16, style }) => {
+    const iconData = getBlueprintIconPaths(name);
+    if (!iconData) {
+        return null;
+    }
+    const { paths, viewBoxSize } = iconData;
+    return (react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: size, height: size, viewBox: `0 0 ${viewBoxSize} ${viewBoxSize}`, fill: "currentColor", style: style, "aria-hidden": "true" }, paths.map((d, i) => react_1.default.createElement("path", { d, key: i }))));
+};
+exports.SvgIcon = SvgIcon;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/switch.tsx"
+/*!**************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/switch.tsx ***!
+  \**************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnSwitch = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Switch component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./switch.css */ "./src/components/elements/providers/minimal/switch.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnSwitch = ({ style, disabled, checked, label, labelElement, onChange }) => {
+    return (react_1.default.createElement("label", { className: "mrl-switch", style: style },
+        react_1.default.createElement("input", { type: "checkbox", checked: checked, disabled: disabled, onChange: onChange }),
+        react_1.default.createElement("span", { className: "mrl-switch-track" },
+            react_1.default.createElement("span", { className: "mrl-switch-thumb" })), labelElement !== null && labelElement !== void 0 ? labelElement : label));
+};
+exports.MnSwitch = MnSwitch;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/tab-set.tsx"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/tab-set.tsx ***!
+  \***************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnTabSet = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – TabSet component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+__webpack_require__(/*! ./tab-set.css */ "./src/components/elements/providers/minimal/tab-set.css");
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnTabSet = ({ id, className, tabs, activeTabId, onTabChanged }) => {
+    var _a;
+    const [localActive, setLocalActive] = react_1.default.useState(activeTabId !== null && activeTabId !== void 0 ? activeTabId : (_a = tabs[0]) === null || _a === void 0 ? void 0 : _a.id);
+    const activeId = activeTabId !== null && activeTabId !== void 0 ? activeTabId : localActive;
+    const handleTabClick = (tabId) => {
+        setLocalActive(tabId);
+        onTabChanged === null || onTabChanged === void 0 ? void 0 : onTabChanged(tabId);
+    };
+    const cls = ["mrl-tab-set", className].filter(Boolean).join(" ");
+    return (react_1.default.createElement("div", { id: id, className: cls },
+        react_1.default.createElement("div", { className: "mrl-tab-list", role: "tablist" }, tabs.map(tab => (react_1.default.createElement("button", { key: `mrl-tab-${tab.id}`, role: "tab", "aria-selected": tab.id === activeId, className: `mrl-tab${tab.id === activeId ? " mrl-tab--active" : ""}`, onClick: () => handleTabClick(tab.id) }, tab.title)))),
+        tabs.map(tab => (react_1.default.createElement("div", { key: `mrl-tab-panel-${tab.id}`, role: "tabpanel", className: "mrl-tab-panel", hidden: tab.id !== activeId }, tab.content)))));
+};
+exports.MnTabSet = MnTabSet;
+
+
+/***/ },
+
+/***/ "./src/components/elements/providers/minimal/text.tsx"
+/*!************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/text.tsx ***!
+  \************************************************************/
+(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MnText = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
+// Minimal provider – Text component
+const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+/**
+ * @hidden
+ * @since 0.15
+ */
+const MnText = ({ component, className, style, children }) => {
+    const cls = ["mrl-text", className].filter(Boolean).join(" ");
+    const cmp = component !== null && component !== void 0 ? component : "span";
     switch (cmp) {
         case "p":
-            return react_1.default.createElement("p", { className: `mrl-text ${className !== null && className !== void 0 ? className : ''}`, style: style }, children);
+            return react_1.default.createElement("p", { className: cls, style: style }, children);
         case "div":
-            return react_1.default.createElement("div", { className: `mrl-text ${className !== null && className !== void 0 ? className : ''}`, style: style }, children);
+            return react_1.default.createElement("div", { className: cls, style: style }, children);
         default:
-            return react_1.default.createElement("span", { className: `mrl-text ${className !== null && className !== void 0 ? className : ''}`, style: style }, children);
+            return react_1.default.createElement("span", { className: cls, style: style }, children);
     }
 };
-exports.BpText = BpText;
+exports.MnText = MnText;
 
 
 /***/ },
 
-/***/ "./src/components/elements/providers/blueprint/toaster.tsx"
-/*!*****************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/toaster.tsx ***!
-  \*****************************************************************/
+/***/ "./src/components/elements/providers/minimal/toaster.tsx"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/toaster.tsx ***!
+  \***************************************************************/
 (__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BpToaster = void 0;
+exports.MnToaster = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
+// Minimal provider – Toaster component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const utils_1 = __webpack_require__(/*! ./utils */ "./src/components/elements/providers/blueprint/utils.ts");
-function toastPositionToBp(position) {
+const react_hot_toast_1 = tslib_1.__importStar(__webpack_require__(/*! react-hot-toast */ "./node_modules/react-hot-toast/dist/index.js"));
+const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/elements/providers/minimal/icon.tsx");
+__webpack_require__(/*! ./toaster.css */ "./src/components/elements/providers/minimal/toaster.css");
+function mapPosition(position) {
     switch (position) {
-        case "top-left": return core_1.Position.TOP_LEFT;
-        case "top-right": return core_1.Position.TOP_RIGHT;
-        case "bottom": return core_1.Position.BOTTOM;
-        case "bottom-left": return core_1.Position.BOTTOM_LEFT;
-        case "bottom-right": return core_1.Position.BOTTOM_RIGHT;
+        case "top-left": return "top-left";
+        case "top-right": return "top-right";
+        case "bottom": return "bottom-center";
+        case "bottom-left": return "bottom-left";
+        case "bottom-right": return "bottom-right";
         case "top":
-        default:
-            return core_1.Position.TOP;
+        default: return "top-center";
     }
 }
 /**
  * @hidden
+ * @since 0.15
  */
-exports.BpToaster = react_1.default.forwardRef((props, ref) => {
-    const bpToasterRef = react_1.default.useRef(null);
+exports.MnToaster = react_1.default.forwardRef((props, ref) => {
     react_1.default.useImperativeHandle(ref, () => ({
         show(message) {
-            var _a;
-            return (_a = bpToasterRef.current) === null || _a === void 0 ? void 0 : _a.show({
-                icon: (0, utils_1.iconName)(message.icon),
-                message: message.message,
-                intent: (0, utils_1.variantToIntent)(message.variant)
-            });
+            const variant = message.variant;
+            const classes = [
+                "mrl-toast",
+                variant ? `mrl-toast--${variant}` : null,
+            ].filter(Boolean).join(" ");
+            return react_hot_toast_1.default.custom(react_1.default.createElement("div", { className: classes, role: "status", "aria-live": "polite" },
+                message.icon && (react_1.default.createElement("span", { className: "mrl-toast-icon", "aria-hidden": "true" },
+                    react_1.default.createElement(icon_1.MnIcon, { icon: message.icon, iconSize: 16 }))),
+                react_1.default.createElement("div", { className: "mrl-toast-message" }, message.message)));
         },
         dismiss(key) {
-            var _a;
-            (_a = bpToasterRef.current) === null || _a === void 0 ? void 0 : _a.dismiss(key);
-        }
+            react_hot_toast_1.default.dismiss(key);
+        },
     }));
-    return react_1.default.createElement(core_1.Toaster, { ref: bpToasterRef, usePortal: props.usePortal, position: toastPositionToBp(props.position) });
+    return react_1.default.createElement(react_hot_toast_1.Toaster, { position: mapPosition(props.position) });
 });
-exports.BpToaster.displayName = "BpToaster";
-
-
-/***/ },
-
-/***/ "./src/components/elements/providers/blueprint/utils.ts"
-/*!**************************************************************!*\
-  !*** ./src/components/elements/providers/blueprint/utils.ts ***!
-  \**************************************************************/
-(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.iconName = iconName;
-exports.variantToIntent = variantToIntent;
-const core_1 = __webpack_require__(/*! @blueprintjs/core */ "./node_modules/@blueprintjs/core/lib/esm/index.js");
-/**
- * @hidden
- */
-function iconName(name) {
-    return name;
-}
-/**
- * @hidden
- */
-function variantToIntent(variant) {
-    switch (variant) {
-        case "primary":
-            return core_1.Intent.PRIMARY;
-        case "warning":
-            return core_1.Intent.WARNING;
-        case "danger":
-            return core_1.Intent.DANGER;
-        case "success":
-            return core_1.Intent.SUCCESS;
-        default:
-            return undefined;
-    }
-}
+exports.MnToaster.displayName = "MnToaster";
 
 
 /***/ },
@@ -13819,7 +14511,32 @@ const element_context_1 = __webpack_require__(/*! ./elements/element-context */ 
  * A FlyoutRegion component defines a region where flyout menus can be displayed
  */
 const FlyoutRegion = (props) => {
+    var _a, _b;
     const { MenuComponent } = (0, element_context_1.useElementContext)();
+    const contextMenuRef = React.useRef(null);
+    const isContextMenuOpen = !!((_b = (_a = props.flyoutConf) === null || _a === void 0 ? void 0 : _a[constants_1.WEBLAYOUT_CONTEXTMENU]) === null || _b === void 0 ? void 0 : _b.open);
+    React.useEffect(() => {
+        if (!isContextMenuOpen) {
+            return;
+        }
+        const dismissContextMenu = (evt) => {
+            var _a;
+            const target = evt.target;
+            if (!(target instanceof Node)) {
+                return;
+            }
+            if ((_a = contextMenuRef.current) === null || _a === void 0 ? void 0 : _a.contains(target)) {
+                return;
+            }
+            props.onCloseFlyout(constants_1.WEBLAYOUT_CONTEXTMENU);
+        };
+        document.addEventListener("mousedown", dismissContextMenu, true);
+        document.addEventListener("touchstart", dismissContextMenu, true);
+        return () => {
+            document.removeEventListener("mousedown", dismissContextMenu, true);
+            document.removeEventListener("touchstart", dismissContextMenu, true);
+        };
+    }, [isContextMenuOpen, props.onCloseFlyout]);
     return React.createElement("div", null, (() => {
         const children = [];
         for (const flyoutId in props.flyoutConf) {
@@ -13863,7 +14580,7 @@ const FlyoutRegion = (props) => {
                 if (flyout.componentName) {
                     className = "mg-flyout-component-container";
                 }
-                children.push(React.createElement("div", { key: flyoutId, className: className, style: containerStyle },
+                children.push(React.createElement("div", { key: flyoutId, ref: flyoutId === constants_1.WEBLAYOUT_CONTEXTMENU ? contextMenuRef : undefined, className: className, style: containerStyle },
                     (() => {
                         if (flyout.componentName) {
                             return React.createElement(component_1.PlaceholderComponent, { id: flyout.componentName, componentProps: flyout.componentProps, locale: props.locale });
@@ -14803,7 +15520,6 @@ function ExprEditorInner(props) {
                 React.createElement(Heading, { level: 5 }, (0, i18n_1.tr)("EXPR_EDITOR_EDIT_VALUE", locale)),
                 React.createElement(Radio, { name: "edit-mode", label: (0, i18n_1.tr)("EXPR_EDITOR_VALUE", locale), value: "edit-value", checked: editMode == "edit-value", onChange: (e) => setEditMode(e.target.value) }),
                 renderValueEditor(localValue, onUpdateLocalValue, locale, editMode != "edit-value"),
-                React.createElement("br", null),
                 React.createElement(Radio, { name: "edit-mode", label: (0, i18n_1.tr)("EXPR_EDITOR_EXPRESSION", locale), value: "edit-expr", checked: editMode == "edit-expr", onChange: (e) => setEditMode(e.target.value) }),
                 React.createElement(InputGroup, { disabled: editMode != "edit-expr", placeholder: 'e.g. ["get","propertyName"]', value: exprText, onChange: e => {
                         setExprText(e.target.value);
@@ -14817,8 +15533,6 @@ function ExprEditorInner(props) {
                             // Keep typing; Apply button disabled until JSON is valid
                         }
                     } }),
-                React.createElement("br", null),
-                React.createElement("br", null),
                 React.createElement(element_context_1.ElementGroup, null,
                     React.createElement(Button, { disabled: !isEditValid, variant: "success", onClick: (e) => onApplyValue() }, (0, i18n_1.tr)("APPLY", locale)),
                     React.createElement(Button, { variant: "danger", onClick: (e) => onCancelEditing() }, (0, i18n_1.tr)("CANCEL", locale))))));
@@ -15623,8 +16337,8 @@ const ICON_CLEAR = "cross";
 const ICON_SEARCH = "search";
 const UL_LIST_STYLE = (baseSize) => ({ listStyle: "none", paddingLeft: baseSize + 4, marginTop: 2, marginBottom: 2 });
 const LI_LIST_STYLE = { listStyle: "none", marginTop: 2, marginBottom: 2 };
-const ROW_ITEM_ELEMENT_STYLE = { verticalAlign: "middle" };
-const CHK_STYLE = (baseSize) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 1, verticalAlign: "middle" });
+const ROW_ITEM_ELEMENT_STYLE = { display: "inline-flex", alignItems: "center", verticalAlign: "middle" };
+const CHK_STYLE = (baseSize) => ({ margin: 0, width: `${baseSize - 2}px`, height: `${baseSize - 2}px`, padding: 0, verticalAlign: "middle" });
 const EMPTY_STYLE = (baseSize) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 const EXTRAS_STYLE = (baseSize) => ({ display: "inline-block", margin: 0, width: `${baseSize}px`, height: `${baseSize}px`, verticalAlign: "middle" });
 const LegendLabel = (props) => {
@@ -16316,8 +17030,7 @@ const Legend = (props) => {
                     externalBaseLayers.length > 0 &&
                     props.inlineBaseLayerSwitcher) {
                     return React.createElement(Card, { style: { marginBottom: 10 } },
-                        React.createElement(Heading, { level: 5 },
-                            React.createElement("a", { href: "#" }, (0, i18n_1.tr)("EXTERNAL_BASE_LAYERS", props.locale))),
+                        React.createElement(Heading, { level: 5 }, (0, i18n_1.tr)("EXTERNAL_BASE_LAYERS", props.locale)),
                         React.createElement(base_layer_switcher_1.BaseLayerSwitcher, { locale: props.locale, externalBaseLayers: externalBaseLayers, onBaseLayerChanged: onBaseLayerChanged }));
                 }
             })(),
@@ -19365,6 +20078,7 @@ const RndModalDialog = (props) => {
     const modalBodyStyle = {
         margin: 0,
         height: diagHeight - DIAG_HEADER_HEIGHT,
+        boxSizing: "border-box",
         overflow: "hidden"
     };
     if (!props.disableYOverflow) {
@@ -19375,7 +20089,7 @@ const RndModalDialog = (props) => {
     const ZINDEX = {
         zIndex: 1980 //So flyouts will appear above it
     };
-    const modalStyle = Object.assign({ width: diagWidth, height: diagHeight, 
+    const modalStyle = Object.assign({ width: diagWidth, height: diagHeight, minWidth: diagWidth, maxWidth: diagWidth, 
         //bp defaults this to 30, which invisibly offsets the 
         //position of expected rnd drag/resize handles
         marginTop: 0 }, ZINDEX);
@@ -19420,14 +20134,14 @@ const RndModalDialog = (props) => {
             };
             //console.log("Modal Change", args);
             (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, args);
-        }, dragHandleClassName: "mrl-modal-diag-drag-handle", default: { x: props.x, y: props.y, width: props.width, height: props.height } },
+        }, dragHandleClassName: "mrl-modal-diag-drag-handle", cancel: ".mrl-modal-diag-close-btn", default: { x: props.x, y: props.y, width: props.width, height: props.height } },
         React.createElement(DialogContainer, null,
             React.createElement(DialogShell, { style: modalStyle },
-                React.createElement(DialogHeader, { className: "noselect" },
+                React.createElement(DialogHeader, { className: "noselect mrl-modal-diag-drag-handle mrl-rnd-modal-header" },
                     props.icon && React.createElement(Icon, { icon: props.icon }),
-                    React.createElement(Heading, { level: 4, className: "mrl-modal-diag-drag-handle" }, props.title),
-                    React.createElement(Button, { onClick: props.onClose, "aria-label": (0, i18n_1.tr)("ACTION_CLOSE", props.locale), minimal: true, icon: "small-cross" })),
-                React.createElement(DialogBody, { style: modalBodyStyle }, (() => {
+                    React.createElement(Heading, { level: 4 }, props.title),
+                    React.createElement(Button, { className: "mrl-modal-diag-close-btn", onClick: props.onClose, "aria-label": (0, i18n_1.tr)("ACTION_CLOSE", props.locale), minimal: true, icon: "small-cross" })),
+                React.createElement(DialogBody, { className: "mrl-rnd-modal-body", style: modalBodyStyle }, (() => {
                     //We use NonIdealState as a visual mask to suppress unwanted mouse 
                     //interaction during the act of dragging/resizing, similar to what the
                     //Task Pane does
@@ -19801,20 +20515,20 @@ const DefaultSelectedFeature = (props) => {
 function buildToolbarItems(selPanel) {
     return [
         {
-            bpIconName: "arrow-left",
+            svgIconName: "arrow-left",
             tooltip: (0, i18n_1.tr)("SELECTION_PREV_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoPrev(),
             invoke: () => selPanel.prevFeature()
         },
         {
-            bpIconName: "arrow-right",
+            svgIconName: "arrow-right",
             tooltip: (0, i18n_1.tr)("SELECTION_NEXT_FEATURE", selPanel.locale),
             enabled: () => selPanel.canGoNext(),
             invoke: () => selPanel.nextFeature()
         },
         { isSeparator: true },
         {
-            bpIconName: "path-search",
+            svgIconName: "path-search",
             tooltip: (0, i18n_1.tr)("SELECTION_ZOOMTO_FEATURE", selPanel.locale),
             enabled: () => selPanel.canZoomSelectedFeature(),
             invoke: () => selPanel.zoomSelectedFeature()
@@ -19923,14 +20637,20 @@ exports.SelectionPanel = React.memo((props) => {
         meta = selLayer === null || selLayer === void 0 ? void 0 : selLayer.getLayerMetadata();
         layerName = selLayer === null || selLayer === void 0 ? void 0 : selLayer.getName();
     }
+    const selectionPanelRootStyle = {};
     let selBodyStyle;
     if (maxHeight) {
+        selectionPanelRootStyle.overflow = "hidden";
         selBodyStyle = {
             overflowY: "auto",
             maxHeight: maxHeight - toolbar_1.DEFAULT_TOOLBAR_SIZE
         };
     }
     else {
+        selectionPanelRootStyle.position = "relative";
+        selectionPanelRootStyle.width = "100%";
+        selectionPanelRootStyle.height = "100%";
+        selectionPanelRootStyle.overflow = "hidden";
         selBodyStyle = {
             overflow: "auto",
             position: "absolute",
@@ -19940,7 +20660,7 @@ exports.SelectionPanel = React.memo((props) => {
             left: 0
         };
     }
-    return React.createElement("div", null,
+    return React.createElement("div", { style: selectionPanelRootStyle },
         (() => {
             if ((selection === null || selection === void 0 ? void 0 : selection.getLayerCount()) > 0) {
                 const selectionToolbarItems = buildToolbarItems({
@@ -20449,7 +21169,10 @@ const TaskPane = (props) => {
         flyoutAlign: "bottom left",
         flyoutId: constants_1.WEBLAYOUT_TASKMENU
     }), [locale]);
-    const rootStyle = {};
+    const rootStyle = {
+        position: "relative",
+        overflow: "hidden"
+    };
     const taskBarStyle = {
         height: toolbar_1.DEFAULT_TOOLBAR_SIZE,
         backgroundColor: toolbar_1.TOOLBAR_BACKGROUND_COLOR
@@ -20527,7 +21250,6 @@ const type_guards_1 = __webpack_require__(/*! ../utils/type-guards */ "./src/uti
 const context_1 = __webpack_require__(/*! ./context */ "./src/components/context.tsx");
 const string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 const icon_1 = __webpack_require__(/*! ./icon */ "./src/components/icon.tsx");
-const constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 const element_context_1 = __webpack_require__(/*! ./elements/element-context */ "./src/components/elements/element-context.tsx");
 const menu_1 = __webpack_require__(/*! ../utils/menu */ "./src/utils/menu.ts");
 exports.DEFAULT_TOOLBAR_SIZE = 29;
@@ -20572,9 +21294,9 @@ function getIconElement(item, enabled, size) {
     if (item.iconClass || item.icon) {
         return React.createElement(icon_1.ImageIcon, { style: iconStyle, url: item.icon, spriteClass: item.iconClass });
     }
-    else if (item.bpIconName) {
+    else if (item.svgIconName) {
         const { opacity } = iconStyle; //For SVG, we only care about opacity
-        return React.createElement(OpacityIcon, { opacity: opacity, icon: item.bpIconName, iconSize: size * SVG_SIZE_RATIO });
+        return React.createElement(OpacityIcon, { opacity: opacity, icon: item.svgIconName, iconSize: size * SVG_SIZE_RATIO });
     }
     else {
         return React.createElement(React.Fragment, null);
@@ -20607,7 +21329,10 @@ function getItemStyle(enabled, selected, size, isMouseOver, vertical) {
     const pad = ((size - 16) / 2);
     const vertPad = 6;
     const style = {
-        display: vertical === true ? "block" : "inline-block",
+        display: vertical === true ? "block" : "inline-flex",
+        alignItems: vertical === true ? undefined : "center",
+        gap: vertical === true ? undefined : 4,
+        verticalAlign: vertical === true ? undefined : "top",
         //height: height,
         paddingLeft: pad,
         paddingRight: pad,
@@ -20623,7 +21348,7 @@ function getItemStyle(enabled, selected, size, isMouseOver, vertical) {
     }
     return style;
 }
-function getToolbarSeparatorItemStyle(vertical) {
+function getToolbarSeparatorItemStyle(size, vertical) {
     const style = {
         display: vertical === true ? "block" : "inline-block"
     };
@@ -20634,10 +21359,18 @@ function getToolbarSeparatorItemStyle(vertical) {
         style.marginRight = 0;
     }
     else {
+        const vertPad = 6; // Must match the vertPad used in getItemStyle
+        const separatorHeight = Math.max(1, size - (vertPad * 2));
+        const separatorOffset = Math.max(0, Math.floor((size - separatorHeight) / 2));
+        style.height = separatorHeight;
+        style.marginTop = separatorOffset;
+        style.marginBottom = separatorOffset;
+        style.verticalAlign = "top";
+        style.boxSizing = "border-box";
         style.paddingTop = 0;
         style.paddingBottom = 0;
         style.marginLeft = 2;
-        style.marginRight = -2;
+        style.marginRight = 2;
     }
     return style;
 }
@@ -20731,7 +21464,7 @@ const ComponentFlyoutItem = (props) => {
     const ttip = getTooltip(item);
     const iconEl = getIconElement(item, enabled, size);
     return React.createElement("div", { className: `noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
-        React.createElement("div", { "data-flyout-id": `flyout-${item.flyoutId}` },
+        React.createElement("div", { "data-flyout-id": `flyout-${item.flyoutId}`, style: { display: "inline-flex", alignItems: "center", gap: 4 } },
             iconEl,
             " ",
             label,
@@ -20783,7 +21516,7 @@ const FlyoutMenuReferenceItem = (props) => {
     const ttip = getTooltip(menu);
     const iconEl = getIconElement(menu, enabled, size);
     return React.createElement("div", { className: `noselect toolbar-flyout-btn ${selected ? "selected-item" : ""} ${isMouseOver ? "mouse-over" : ""}`, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave, onClick: onClick, style: style, title: ttip },
-        React.createElement("div", { "data-flyout-id": `flyout-${menu.flyoutId}` },
+        React.createElement("div", { "data-flyout-id": `flyout-${menu.flyoutId}`, style: { display: "inline-flex", alignItems: "center", gap: 4 } },
             iconEl,
             " ",
             label,
@@ -20791,12 +21524,12 @@ const FlyoutMenuReferenceItem = (props) => {
             getFlyoutIconElement(isFlownOut, size)));
 };
 const ToolbarSeparator = (props) => {
-    const style = getToolbarSeparatorItemStyle(props.vertical);
+    const style = getToolbarSeparatorItemStyle(props.size, props.vertical);
     if (props.vertical === true) {
         return React.createElement("div", { className: "noselect toolbar-separator-vertical", style: style });
     }
     else {
-        return React.createElement("div", { className: "noselect toolbar-separator-horizontal", style: style }, constants_1.NBSP);
+        return React.createElement("div", { className: "noselect toolbar-separator-horizontal", style: style, "aria-hidden": "true" });
     }
 };
 const ToolbarButton = (props) => {
@@ -20859,23 +21592,100 @@ const Toolbar = (props) => {
         openComponent: openComponent,
         closeComponent: closeComponent
     };
+    const { Icon } = (0, element_context_1.useElementContext)();
+    const scrollContainerRef = React.useRef(null);
+    const [canScrollBefore, setCanScrollBefore] = React.useState(false);
+    const [canScrollAfter, setCanScrollAfter] = React.useState(false);
+    const updateScrollState = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el)
+            return;
+        if (vertical === true) {
+            setCanScrollBefore(el.scrollTop > 0);
+            setCanScrollAfter(Math.ceil(el.scrollTop + el.clientHeight) < el.scrollHeight);
+        }
+        else {
+            setCanScrollBefore(el.scrollLeft > 0);
+            setCanScrollAfter(Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth);
+        }
+    }, [vertical]);
+    React.useEffect(() => {
+        const el = scrollContainerRef.current;
+        if (!el)
+            return;
+        el.addEventListener("scroll", updateScrollState, { passive: true });
+        const ro = new ResizeObserver(updateScrollState);
+        ro.observe(el);
+        updateScrollState();
+        return () => {
+            el.removeEventListener("scroll", updateScrollState);
+            ro.disconnect();
+        };
+    }, [updateScrollState]);
+    // Re-check scroll state after each render in case item count/content changed
+    React.useLayoutEffect(() => {
+        updateScrollState();
+    }, [childItems, updateScrollState]);
+    const onScrollBefore = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el)
+            return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: -amount, behavior: "smooth" });
+        }
+        else {
+            el.scrollBy({ left: -amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+    const onScrollAfter = React.useCallback(() => {
+        const el = scrollContainerRef.current;
+        if (!el)
+            return;
+        const amount = height * 3;
+        if (vertical === true) {
+            el.scrollBy({ top: amount, behavior: "smooth" });
+        }
+        else {
+            el.scrollBy({ left: amount, behavior: "smooth" });
+        }
+    }, [height, vertical]);
+    const outerStyle = Object.assign(Object.assign({}, containerStyle), { overflow: "hidden", display: "flex", flexDirection: vertical === true ? "column" : "row" });
+    const scrollContainerStyle = vertical === true
+        ? { flex: "1 1 0", minHeight: 0, overflowY: "scroll", overflowX: "hidden" }
+        : { flex: "1 1 0", minWidth: 0, overflowX: "scroll", overflowY: "hidden", whiteSpace: "nowrap" };
+    const scrollBtnStyle = {
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        cursor: "pointer",
+        width: vertical === true ? "100%" : height,
+        height: vertical === true ? height : "100%",
+    };
+    const iconSize = height * SVG_SIZE_RATIO;
     return React.createElement(context_1.ToolbarContext.Provider, { value: providerImpl },
-        React.createElement("div", { style: containerStyle, className: `has-flyout noselect ${containerClass}` }, childItems.map((item, index) => {
-            if ((0, type_guards_1.isComponentFlyout)(item)) {
-                const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                return React.createElement(ComponentFlyoutItem, { key: index, size: height, item: item, vertical: vertical, isFlownOut: isFlownOut });
-            }
-            else if ((0, type_guards_1.isMenuRef)(item)) {
-                const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
-                return React.createElement(FlyoutMenuReferenceItem, { key: index, size: height, menu: item, vertical: vertical, isFlownOut: isFlownOut });
-            }
-            else if (item.isSeparator === true) {
-                return React.createElement(ToolbarSeparator, { key: index, size: height, vertical: vertical });
-            }
-            else {
-                return React.createElement(ToolbarButton, { key: index, height: height, item: item, vertical: vertical, hideVerticalLabels: hideVerticalLabels });
-            }
-        })));
+        React.createElement("div", { style: outerStyle, className: `has-flyout noselect ${containerClass}` },
+            canScrollBefore && (React.createElement("div", { className: "noselect toolbar-scroll-btn", style: scrollBtnStyle, onClick: onScrollBefore, title: vertical === true ? "Scroll up" : "Scroll left" },
+                React.createElement(Icon, { icon: vertical === true ? "chevron-up" : "chevron-left", iconSize: iconSize }))),
+            React.createElement("div", { ref: scrollContainerRef, className: "toolbar-scroll-container", style: scrollContainerStyle }, childItems.map((item, index) => {
+                if ((0, type_guards_1.isComponentFlyout)(item)) {
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return React.createElement(ComponentFlyoutItem, { key: index, size: height, item: item, vertical: vertical, isFlownOut: isFlownOut });
+                }
+                else if ((0, type_guards_1.isMenuRef)(item)) {
+                    const isFlownOut = flyoutStates && !!flyoutStates[item.flyoutId];
+                    return React.createElement(FlyoutMenuReferenceItem, { key: index, size: height, menu: item, vertical: vertical, isFlownOut: isFlownOut });
+                }
+                else if (item.isSeparator === true) {
+                    return React.createElement(ToolbarSeparator, { key: index, size: height, vertical: vertical });
+                }
+                else {
+                    return React.createElement(ToolbarButton, { key: index, height: height, item: item, vertical: vertical, hideVerticalLabels: hideVerticalLabels });
+                }
+            })),
+            canScrollAfter && (React.createElement("div", { className: "noselect toolbar-scroll-btn", style: scrollBtnStyle, onClick: onScrollAfter, title: vertical === true ? "Scroll down" : "Scroll right" },
+                React.createElement(Icon, { icon: vertical === true ? "chevron-down" : "chevron-right", iconSize: iconSize })))));
 };
 exports.Toolbar = Toolbar;
 
@@ -23085,7 +23895,7 @@ const CoordinateTrackerContainer = (props) => {
     const proj = (0, hooks_mapguide_1.useActiveMapProjection)();
     if (aProjections && aProjections.length) {
         return React.createElement("div", { style: { margin: 8 } },
-            React.createElement(Heading, { level: 4 }, (0, i18n_1.tr)("COORDTRACKER", locale)),
+            React.createElement(Heading, { level: 3 }, (0, i18n_1.tr)("COORDTRACKER", locale)),
             aProjections.map(p => {
                 let x = NaN;
                 let y = NaN;
@@ -23097,8 +23907,7 @@ const CoordinateTrackerContainer = (props) => {
                     }
                 }
                 return React.createElement(Card, { key: p, style: { marginBottom: 10 } },
-                    React.createElement(Heading, { level: 5 },
-                        React.createElement("a", { href: "#" }, p)),
+                    React.createElement(Heading, { level: 5 }, p),
                     React.createElement("p", null,
                         React.createElement("strong", null, (0, i18n_1.tr)("COORDTRACKER_X", locale)),
                         " ",
@@ -25838,19 +26647,19 @@ const TaskPaneContainer = (props) => {
     const canGoBack = React.useCallback(() => navIndex > 0, [navIndex]);
     const canGoForward = React.useCallback(() => navIndex < navigationStack.length - 1, [navIndex, navigationStack]);
     const homeAction = React.useMemo(() => ({
-        bpIconName: "home",
+        svgIconName: "home",
         tooltip: (0, i18n_1.tr)("TT_GO_HOME", locale),
         enabled: canGoHome,
         invoke: goHomeAction
     }), [locale, canGoHome, goHomeAction]);
     const backAction = React.useMemo(() => ({
-        bpIconName: "arrow-left",
+        svgIconName: "arrow-left",
         tooltip: (0, i18n_1.tr)("TT_GO_BACK", locale),
         enabled: canGoBack,
         invoke: goBackAction
     }), [locale, canGoBack, goBackAction]);
     const forwardAction = React.useMemo(() => ({
-        bpIconName: "arrow-right",
+        svgIconName: "arrow-right",
         tooltip: (0, i18n_1.tr)("TT_GO_FORWARD", locale),
         enabled: canGoForward,
         invoke: goForwardAction
@@ -25872,7 +26681,7 @@ const TaskPaneContainer = (props) => {
                 flyoutStates[fid] = !!flyouts[fid].open;
             }
         }
-        return React.createElement("div", null,
+        return React.createElement("div", { style: { width: "100%", height: "100%", position: "relative" } },
             React.createElement(task_pane_1.TaskPane, { currentUrl: navigationStack[navIndex], showTaskBar: hasTaskBar, lastUrlPushed: lastUrlPushed, homeAction: homeAction, backAction: backAction, onOpenFlyout: onOpenFlyout, onCloseFlyout: onCloseFlyout, forwardAction: forwardAction, session: (_b = (_a = map === null || map === void 0 ? void 0 : map.mapguide) === null || _a === void 0 ? void 0 : _a.runtimeMap) === null || _b === void 0 ? void 0 : _b.SessionId, mapName: (_d = (_c = map === null || map === void 0 ? void 0 : map.mapguide) === null || _c === void 0 ? void 0 : _c.runtimeMap) === null || _d === void 0 ? void 0 : _d.Name, onUrlLoaded: onUrlLoaded, maxHeight: props.maxHeight, flyoutStates: flyoutStates, locale: getLocale() }),
             props.isResizing === true && (React.createElement(TaskPaneResizingPlaceholder, { locale: getLocale() })));
     }
@@ -27614,7 +28423,7 @@ exports.ApplicationViewModel = ApplicationViewModel;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Actions = exports.getStateFromUrl = exports.updateUrl = exports.MapGuideViewerInitCommand = exports.setAssetRoot = exports.Application = exports.Externals = exports.Registry = exports.__BRANCH__ = exports.__COMMITHASH__ = exports.__VERSION__ = exports.__DEV__ = void 0;
+exports.Actions = exports.getStateFromUrl = exports.updateUrl = exports.TypedSelect = exports.ElementGroup = exports.useElementContext = exports.ElementProvider = exports.MinimalProvider = exports.MapGuideViewerInitCommand = exports.setAssetRoot = exports.Application = exports.Externals = exports.Registry = exports.__BRANCH__ = exports.__COMMITHASH__ = exports.__VERSION__ = exports.__DEV__ = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js")); // Can't use import * as React as wdyr cannot hook into that imported form of React
 /*
@@ -27792,6 +28601,13 @@ var asset_1 = __webpack_require__(/*! ../utils/asset */ "./src/utils/asset.ts");
 Object.defineProperty(exports, "setAssetRoot", ({ enumerable: true, get: function () { return asset_1.setAssetRoot; } }));
 var init_mapguide_1 = __webpack_require__(/*! ../actions/init-mapguide */ "./src/actions/init-mapguide.ts");
 Object.defineProperty(exports, "MapGuideViewerInitCommand", ({ enumerable: true, get: function () { return init_mapguide_1.DefaultViewerInitCommand; } }));
+// UI element customization public API
+var element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
+Object.defineProperty(exports, "MinimalProvider", ({ enumerable: true, get: function () { return element_context_1.MinimalProvider; } }));
+Object.defineProperty(exports, "ElementProvider", ({ enumerable: true, get: function () { return element_context_1.ElementProvider; } }));
+Object.defineProperty(exports, "useElementContext", ({ enumerable: true, get: function () { return element_context_1.useElementContext; } }));
+Object.defineProperty(exports, "ElementGroup", ({ enumerable: true, get: function () { return element_context_1.ElementGroup; } }));
+Object.defineProperty(exports, "TypedSelect", ({ enumerable: true, get: function () { return element_context_1.TypedSelect; } }));
 var url_state_1 = __webpack_require__(/*! ../containers/url-state */ "./src/containers/url-state.ts");
 Object.defineProperty(exports, "updateUrl", ({ enumerable: true, get: function () { return url_state_1.updateUrl; } }));
 Object.defineProperty(exports, "getStateFromUrl", ({ enumerable: true, get: function () { return url_state_1.getStateFromUrl; } }));
@@ -28019,6 +28835,7 @@ const SELECTION_DIALOG_HEIGHT = 300;
 const LEGEND_DIALOG_HEIGHT = 400;
 const TASK_DIALOG_HEIGHT = 500;
 const STATUS_BAR_HEIGHT = 18;
+const AQUA_VERTICAL_TOOLBAR_WIDTH = toolbar_1.DEFAULT_TOOLBAR_SIZE + 2;
 /**
  * A viewer template that resembles the Aqua Fusion template
  */
@@ -28051,7 +28868,7 @@ const AquaTemplateLayout = () => {
         hasLegend = capabilities.hasLegend;
     }
     const bottomOffset = hasStatusBar ? STATUS_BAR_HEIGHT : 0;
-    let left = toolbar_1.DEFAULT_TOOLBAR_SIZE;
+    let left = AQUA_VERTICAL_TOOLBAR_WIDTH;
     let right = 0;
     /*
     if (hasLegend || hasSelectionPanel) {
@@ -28067,6 +28884,7 @@ const AquaTemplateLayout = () => {
         React.createElement(toolbar_2.ToolbarContainer, { id: "FileMenu", containerClass: "aqua-file-menu", containerStyle: { position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 } }),
         React.createElement(toolbar_2.ToolbarContainer, { id: "Toolbar", containerClass: "aqua-toolbar", containerStyle: { position: "absolute", left: 0, top: toolbar_1.DEFAULT_TOOLBAR_SIZE, height: toolbar_1.DEFAULT_TOOLBAR_SIZE, zIndex: TB_Z_INDEX, right: 0 } }),
         React.createElement(toolbar_2.ToolbarContainer, { id: "ToolbarVertical", containerClass: "aqua-toolbar-vertical", vertical: true, containerStyle: { position: "absolute", left: 0, top: ((toolbar_1.DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: TB_Z_INDEX, bottom: bottomOffset } }),
+        React.createElement(toolbar_2.ToolbarContainer, { id: "ToolbarVertical", containerClass: "aqua-toolbar-vertical", vertical: true, containerStyle: { position: "absolute", left: 0, top: ((toolbar_1.DEFAULT_TOOLBAR_SIZE * 2) - 1), zIndex: TB_Z_INDEX, bottom: bottomOffset, width: AQUA_VERTICAL_TOOLBAR_WIDTH } }),
         React.createElement("div", { style: { position: "absolute", left: left, top: (toolbar_1.DEFAULT_TOOLBAR_SIZE * 2), bottom: bottomOffset, right: right } },
             (() => {
                 //NOTE: We have to delay render this behind an IIFE because otherwise this component may be mounted with
@@ -28438,7 +29256,7 @@ function limegoldTemplateReducer(origState, state, action) {
     return state;
 }
 const SIDEBAR_PADDING = 0;
-const TOP_BAR_HEIGHT = 35;
+const TOP_BAR_HEIGHT = toolbar_1.DEFAULT_TOOLBAR_SIZE;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
@@ -29071,6 +29889,8 @@ const SidebarLayout = () => {
         React.createElement(Sidebar, { position: "left", busy: busyCount > 0, legend: hasLegend, selection: hasSelectionPanel, taskpane: hasTaskPane, hasSelection: tbState.hasSelection || tbState.hasClientSelection, locale: locale, collapsed: collapsed || false, activeTab: activeTab || "tasks", onCollapse: onCollapse, onActivateTab: onActivateTab, onExpand: onExpand }),
         (() => {
             if (hasToolbar) {
+                const toolbarBottom = (0, browser_support_1.isMobileViewport)() ? 0 : 6;
+                const toolbarInnerBottom = (0, browser_support_1.isMobileViewport)() ? 0 : 2;
                 let top = 180;
                 if (!hasSelectionPanel) {
                     top -= 40;
@@ -29081,8 +29901,8 @@ const SidebarLayout = () => {
                 if (!hasTaskPane) {
                     top -= 40;
                 }
-                return React.createElement("div", { id: "toolbar-region", style: { top: top } },
-                    React.createElement(toolbar_1.ToolbarContainer, { id: constants_1.WEBLAYOUT_TOOLBAR, containerClass: "sidebar-toolbar", vertical: true, hideVerticalLabels: true, containerStyle: { position: "absolute", left: 4, right: 6, zIndex: 100 } }));
+                return React.createElement("div", { id: "toolbar-region", style: { top: top, bottom: toolbarBottom } },
+                    React.createElement(toolbar_1.ToolbarContainer, { id: constants_1.WEBLAYOUT_TOOLBAR, containerClass: "sidebar-toolbar", vertical: true, hideVerticalLabels: true, containerStyle: { position: "absolute", top: 0, bottom: toolbarInnerBottom, left: 4, right: 6, zIndex: 100 } }));
             }
         })(),
         (() => {
@@ -29389,7 +30209,7 @@ function turquoiseYellowTemplateReducer(origState, state, action) {
     return state;
 }
 const SIDEBAR_PADDING = 3;
-const TOP_BAR_HEIGHT = 35;
+const TOP_BAR_HEIGHT = toolbar_1.DEFAULT_TOOLBAR_SIZE;
 const TAB_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 18;
 const DEFAULT_LEGEND_COMPONENT_PROPS = { inlineBaseLayerSwitcher: false };
@@ -29475,7 +30295,7 @@ const TurquoiseYellowTemplateLayout = () => {
                     }
                 })(),
                 React.createElement("div", null,
-                    React.createElement(toolbar_2.ToolbarContainer, { id: "FileMenu", containerClass: "turquoise-yellow-file-menu", containerStyle: { position: "absolute", left: 0, top: (TOP_BAR_HEIGHT - toolbar_1.DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, right: 0 } }),
+                    React.createElement(toolbar_2.ToolbarContainer, { id: "FileMenu", containerClass: "turquoise-yellow-file-menu", containerStyle: { position: "absolute", left: 0, top: 0, zIndex: TB_Z_INDEX, right: 0 } }),
                     React.createElement(toolbar_2.ToolbarContainer, { id: "Toolbar", containerClass: "turquoise-yellow-toolbar", containerStyle: { position: "absolute", left: 0, top: TOP_BAR_HEIGHT, zIndex: TB_Z_INDEX, right: 0 } }),
                     React.createElement(toolbar_2.ToolbarContainer, { id: "ToolbarVertical", containerClass: "turquoise-yellow-toolbar-vertical", vertical: true, containerStyle: { position: "absolute", left: 0, top: (TOP_BAR_HEIGHT + toolbar_1.DEFAULT_TOOLBAR_SIZE), zIndex: TB_Z_INDEX, bottom: SIDEBAR_PADDING } }),
                     React.createElement("div", { style: { position: "absolute", left: (toolbar_1.DEFAULT_TOOLBAR_SIZE), top: (TOP_BAR_HEIGHT + toolbar_1.DEFAULT_TOOLBAR_SIZE), bottom: SIDEBAR_PADDING, right: 0 } },
@@ -32897,142 +33717,6 @@ function layerTransparencyChanged(set, other) {
 
 /***/ },
 
-/***/ "./stdassets/bp-icons.js"
-/*!*******************************!*\
-  !*** ./stdassets/bp-icons.js ***!
-  \*******************************/
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   IconSvgPaths16: () => (/* binding */ IconSvgPaths16),
-/* harmony export */   IconSvgPaths20: () => (/* binding */ IconSvgPaths20)
-/* harmony export */ });
-/**
- * bp-icons.js
- * 
- * A verbatim subset of the Blueprint.js SVG icon set that we actually use
- * 
- * All usages of the BP icon set will be replaced with this via 
- * NormalModuleReplacementPlugin in the webpack config
- * 
- * When adding icons, copy the relevant icon path definitions from
- * node_modules/@blueprintjs/icons/src/generated/iconSvgPaths.ts
- */
-
-//TODO/FIXME: This module is not used directly by sources, so changes to
-//this file does not trigger a webpack rebuild. If making changes, you'll
-//have to stop webpack and restart it again.
-
-const IconSvgPaths16 = {
-    "arrow-left": ["M13.99 6.99H4.41L7.7 3.7a1.003 1.003 0 00-1.42-1.42l-5 5a1.014 1.014 0 000 1.42l5 5a1.003 1.003 0 001.42-1.42L4.41 8.99H14c.55 0 1-.45 1-1s-.46-1-1.01-1z"],
-    "arrow-right": ["M14.7 7.29l-5-5a.965.965 0 00-.71-.3 1.003 1.003 0 00-.71 1.71l3.29 3.29H1.99c-.55 0-1 .45-1 1s.45 1 1 1h9.59l-3.29 3.29a1.003 1.003 0 001.42 1.42l5-5c.18-.18.29-.43.29-.71s-.12-.52-.3-.7z"],
-    "arrows-horizontal": ["M15.7 7.3l-4-4c-.2-.2-.4-.3-.7-.3-.6 0-1 .5-1 1 0 .3.1.5.3.7L12.6 7H3.4l2.3-2.3c.2-.2.3-.4.3-.7 0-.5-.4-1-1-1-.3 0-.5.1-.7.3l-4 4c-.2.2-.3.4-.3.7s.1.5.3.7l4 4c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7L3.4 9h9.2l-2.3 2.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l4-4c.2-.2.3-.4.3-.7s-.1-.5-.3-.7z"],
-    "application": ["M3.5 7h7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-7c-.28 0-.5.22-.5.5s.22.5.5.5zM15 1H1c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm-1 12H2V5h12v8zM3.5 9h4c.28 0 .5-.22.5-.5S7.78 8 7.5 8h-4c-.28 0-.5.22-.5.5s.22.5.5.5zm0 2h5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-5c-.28 0-.5.22-.5.5s.22.5.5.5z"],
-    "caret-down": ["M12 6.5c0-.28-.22-.5-.5-.5h-7a.495.495 0 00-.37.83l3.5 4c.09.1.22.17.37.17s.28-.07.37-.17l3.5-4c.08-.09.13-.2.13-.33z"],
-    "caret-up": ["M11.87 9.17s.01 0 0 0l-3.5-4C8.28 5.07 8.15 5 8 5s-.28.07-.37.17l-3.5 4a.495.495 0 00.37.83h7a.495.495 0 00.37-.83z"],
-    "chevron-down": ["M12 5c-.28 0-.53.11-.71.29L8 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42l4 4c.18.18.43.29.71.29s.53-.11.71-.29l4-4A1.003 1.003 0 0012 5z"],
-    "chevron-right": ["M10.71 7.29l-4-4a1.003 1.003 0 00-1.42 1.42L8.59 8 5.3 11.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4-4c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"],
-    "chevron-up": ["M12.71 9.29l-4-4C8.53 5.11 8.28 5 8 5s-.53.11-.71.29l-4 4a1.003 1.003 0 001.42 1.42L8 7.41l3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"],
-    "cross": ["M9.41 8l3.29-3.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L8 6.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L6.59 8 3.3 11.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71L8 9.41l3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L9.41 8z"],
-    "cog": ["M15.19 6.39h-1.85c-.11-.37-.27-.71-.45-1.04l1.36-1.36c.31-.31.31-.82 0-1.13l-1.13-1.13a.803.803 0 00-1.13 0l-1.36 1.36c-.33-.17-.67-.33-1.04-.44V.79c0-.44-.36-.8-.8-.8h-1.6c-.44 0-.8.36-.8.8v1.86c-.39.12-.75.28-1.1.47l-1.3-1.3c-.3-.3-.79-.3-1.09 0L1.82 2.91c-.3.3-.3.79 0 1.09l1.3 1.3c-.2.34-.36.7-.48 1.09H.79c-.44 0-.8.36-.8.8v1.6c0 .44.36.8.8.8h1.85c.11.37.27.71.45 1.04l-1.36 1.36c-.31.31-.31.82 0 1.13l1.13 1.13c.31.31.82.31 1.13 0l1.36-1.36c.33.18.67.33 1.04.44v1.86c0 .44.36.8.8.8h1.6c.44 0 .8-.36.8-.8v-1.86c.39-.12.75-.28 1.1-.47l1.3 1.3c.3.3.79.3 1.09 0l1.09-1.09c.3-.3.3-.79 0-1.09l-1.3-1.3c.19-.35.36-.71.48-1.1h1.85c.44 0 .8-.36.8-.8v-1.6a.816.816 0 00-.81-.79zm-7.2 4.6c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"],
-    "comment": ["M14 1H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h2v3a1.003 1.003 0 001.71.71L8.41 12H14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM3.5 8C2.67 8 2 7.33 2 6.5S2.67 5 3.5 5 5 5.67 5 6.5 4.33 8 3.5 8zm4 0C6.67 8 6 7.33 6 6.5S6.67 5 7.5 5 9 5.67 9 6.5 8.33 8 7.5 8zm4 0c-.83 0-1.5-.67-1.5-1.5S10.67 5 11.5 5s1.5.67 1.5 1.5S12.33 8 11.5 8z"],
-    "comparison": ["M7.99-.01c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1s1-.45 1-1v-14c0-.55-.45-1-1-1zm-3 3h-4c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zm10 0h-4c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zm0 3h-4v-2h4v2zm0 3h-4c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zm0 3h-4v-2h4v2zm-10-3h-4c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"],
-    "delete": ["M11.99 4.99a1.003 1.003 0 00-1.71-.71l-2.29 2.3L5.7 4.29a.965.965 0 00-.71-.3 1.003 1.003 0 00-.71 1.71l2.29 2.29-2.29 2.29A1.003 1.003 0 005.7 11.7l2.29-2.29 2.29 2.29a1.003 1.003 0 001.42-1.42L9.41 7.99 11.7 5.7c.18-.18.29-.43.29-.71zm-4-5c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.68 6-6 6z"],
-    "disable": ["M7.99-.01c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm-6 8c0-3.31 2.69-6 6-6 1.3 0 2.49.42 3.47 1.12l-8.35 8.35c-.7-.98-1.12-2.17-1.12-3.47zm6 6c-1.3 0-2.49-.42-3.47-1.12l8.35-8.35c.7.98 1.12 2.17 1.12 3.47 0 3.32-2.68 6-6 6z"],
-    "double-caret-vertical": ["M5 7h6a1.003 1.003 0 00.71-1.71l-3-3C8.53 2.11 8.28 2 8 2s-.53.11-.71.29l-3 3A1.003 1.003 0 005 7zm6 2H5a1.003 1.003 0 00-.71 1.71l3 3c.18.18.43.29.71.29s.53-.11.71-.29l3-3A1.003 1.003 0 0011 9z"],
-    "edit": ["M3.25 10.26l2.47 2.47 6.69-6.69-2.46-2.48-6.7 6.7zM.99 14.99l3.86-1.39-2.46-2.44-1.4 3.83zm12.25-14c-.48 0-.92.2-1.24.51l-1.44 1.44 2.47 2.47 1.44-1.44c.32-.32.51-.75.51-1.24.01-.95-.77-1.74-1.74-1.74z"],
-    "error": ["M7.99-.01c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm1 13h-2v-2h2v2zm0-3h-2v-7h2v7z"],
-    "folder-close": ["M-.01 14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V7h-16v7zm15-10H7.41L5.7 2.3a.965.965 0 00-.71-.3h-4c-.55 0-1 .45-1 1v3h16V5c0-.55-.45-1-1-1z"],
-    "geosearch": ["M8.82 12.4h.66c.23 0 .36-.17.36-.4v-1.48l.19-.18c-.27.03-.55.06-.83.06-.28 0-.56-.03-.84-.07.02.04.05.08.07.13V12c0 .23.15.4.39.4zM6.4 15.1A5.51 5.51 0 01.9 9.6c0-.49.06-.98.18-1.43.03 0 .05-.01.08-.01h.08v.44c0 .19.17.34.36.34.03 0 .07-.01.1-.01l.71.7c.07.07.19.07.26 0s.07-.19 0-.26l-.7-.72c0-.02.03-.03.03-.05v-.11c0-.15.08-.2.23-.33h.42c.08 0 .15-.01.22-.04h.02c.02-.02.03-.02.04-.04.01-.01.01-.01.02-.01l.02-.01.9-.9c-.13-.26-.24-.52-.34-.8h-.5v-.43c0-.01.05.05.04-.08h.31c-.03-.13-.06-.26-.08-.39h-.57c.16-.12.34-.24.51-.36-.02-.23-.04-.46-.04-.7 0-.12.01-.23.02-.34A6.385 6.385 0 000 9.6C0 13.13 2.87 16 6.4 16c3.1 0 5.67-2.22 6.26-5.15l-.78-.88c-.21 2.85-2.58 5.13-5.48 5.13zm-1.7-2.93v-.28h.12c.23 0 .39-.19.39-.42v-.54s.01-.01 0-.01L3.77 9.45h-.62c-.23 0-.38.19-.38.42v1.6c0 .23.14.42.38.42h.26v1.61c0 .23.22.41.45.41s.45-.18.45-.41v-.97H4.3c.24 0 .4-.13.4-.36zm11.07-2.34l-2.94-2.94c.11-.17.21-.34.3-.52.01-.03.03-.06.04-.09.08-.18.16-.36.22-.55v-.01c.06-.19.1-.38.14-.58.01-.05.01-.09.02-.14.03-.2.05-.4.05-.61a4.4 4.4 0 00-4.4-4.4C6.77 0 4.8 1.97 4.8 4.4s1.97 4.4 4.4 4.4c.21 0 .41-.02.61-.05.04 0 .09-.01.14-.02.2-.03.39-.08.58-.14h.01c.19-.06.37-.14.55-.22.03-.01.06-.03.09-.04.18-.09.35-.19.52-.3l2.94 2.94a.8.8 0 00.57.23c.44 0 .8-.36.8-.8a.895.895 0 00-.24-.57zM9.2 7.6C7.43 7.6 6 6.17 6 4.4c0-1.77 1.43-3.2 3.2-3.2s3.2 1.43 3.2 3.2c0 1.77-1.43 3.2-3.2 3.2zm1.54 4.26v-.52c0-.09-.1-.17-.19-.17s-.19.07-.19.17v.52c0 .09.1.17.19.17s.19-.07.19-.17z"],
-    "hand": ["M15 5c0-.55-.45-1-1-1-.41 0-.76.24-.91.59v.01s0 .01-.01.01L11.57 8h-.36l.78-4.84C12 3.11 12 3.05 12 3a1 1 0 00-1.99-.16v.01L9.18 8H9V1c0-.55-.45-1-1-1S7 .45 7 1v7h-.09l-.93-5.18A1 1 0 005 2c-.55 0-1 .45-1 1 0 .05 0 .11.01.16L5.26 11h-.04L2.83 7.44C2.65 7.18 2.35 7 2 7c-.55 0-1 .45-1 1 0 .17.04.33.12.47l3 5.69h.01v.01A5.002 5.002 0 0013 11v-.59l1.93-5.05c.05-.11.07-.23.07-.36z"],
-    "home": ["M2 10v5c0 .55.45 1 1 1h3v-5h4v5h3c.55 0 1-.45 1-1v-5L8 4l-6 6zm13.71-2.71L14 5.59V2c0-.55-.45-1-1-1s-1 .45-1 1v1.59L8.71.29C8.53.11 8.28 0 8 0s-.53.11-.71.29l-7 7a1.003 1.003 0 001.42 1.42L8 2.41l6.29 6.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"],
-    "info-sign": ["M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zM7 3h2v2H7V3zm3 10H6v-1h1V7H6V6h3v6h1v1z"],
-    "issue": ["M8 16A8 8 0 118 0a8 8 0 010 16zm0-2A6 6 0 108 2a6 6 0 000 12zm1-2H7v-2h2v2zm0-3H7V4h2v5z"],
-    "layer": ["M16 8c0-.37-.21-.68-.51-.85l.01-.01-7-4-.01.01C8.34 3.06 8.18 3 8 3s-.34.06-.49.15l-.01-.02-7 4 .01.01C.21 7.32 0 7.63 0 8s.21.68.51.85l-.01.01 7 4 .01-.01c.15.09.31.15.49.15s.34-.06.49-.15l.01.01 7-4-.01-.01c.3-.17.51-.48.51-.85z"],
-    "layers": ["M.55 4.89l7 3.5c.14.07.29.11.45.11s.31-.04.45-.11l7-3.5a.998.998 0 00-.06-1.81L8.4.08a1.006 1.006 0 00-.79 0l-6.99 3a.992.992 0 00-.07 1.81zM15 10c-.16 0-.31.04-.45.11L8 13.38 1.45 10.1c-.14-.06-.29-.1-.45-.1-.55 0-1 .45-1 1 0 .39.23.73.55.89l7 3.5c.14.07.29.11.45.11s.31-.04.45-.11l7-3.5c.32-.16.55-.5.55-.89 0-.55-.45-1-1-1zm0-3.5c-.16 0-.31.04-.45.11L8 9.88 1.45 6.61A.997.997 0 001 6.5c-.55 0-1 .45-1 1 0 .39.23.73.55.89l7 3.5c.14.07.29.11.45.11s.31-.04.45-.11l7-3.5c.32-.16.55-.5.55-.89 0-.55-.45-1-1-1z"],
-    "map": ["M15.55 3.17l-4.49-3A.975.975 0 009.99.15L5.53 2.82 1.56.17A1.003 1.003 0 000 1v11c0 .35.18.65.45.83l4.49 3a.975.975 0 001.07.02l4.46-2.67 3.97 2.65A1.003 1.003 0 0016 15V4c0-.35-.18-.65-.45-.83zM5 13.46l-3-2v-8.6l2.94 1.96c.02.02.04.03.06.04v8.6zm5-2.32s-.01 0-.01.01L6 13.53V4.86s.01 0 .01-.01L10 2.47v8.67zm4 1.99l-2.94-1.96c-.02-.01-.04-.02-.05-.03v-8.6l3 2v8.59z"],
-    "media": ["M11.99 6.99c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1zm3-5h-14c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-10c0-.55-.45-1-1-1zm-1 9l-5-3-1 2-3-4-3 5v-7h12v7z"],
-    "menu-closed": ["M14.99 6.99h-9c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zm-12-2c-.28 0-.53.11-.71.29l-2 2a1.014 1.014 0 000 1.42l2 2a1.003 1.003 0 001.71-.71v-4c0-.55-.45-1-1-1zm3-1h9c.55 0 1-.45 1-1s-.45-1-1-1h-9c-.55 0-1 .45-1 1s.45 1 1 1zm9 8h-9c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "menu-open": ["M9.99 11.99h-9c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zm0-5h-9c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zm0-5h-9c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zm5.71 5.3l-2-2a1.003 1.003 0 00-1.71.71v4a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71s-.11-.53-.29-.71z"],
-    "minus": ["M13 7H3c-.55 0-1 .45-1 1s.45 1 1 1h10c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "multi-select": ["M12 3.98H4c-.55 0-1 .45-1 1v1h8v5h1c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1zm3-3H7c-.55 0-1 .45-1 1v1h8v5h1c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1zm-6 6H1c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1zm-1 5H2v-3h6v3z"],
-    "new-layer": ["M13.982 6.272l1.518.868-.01.01c.3.17.51.48.51.85s-.21.68-.51.85l.01.01-7 4-.01-.01A.94.94 0 018 13a.94.94 0 01-.49-.15l-.01.01-7-4 .01-.01A.977.977 0 010 8c0-.37.21-.68.51-.86L.5 7.13l7-4 .01.02A.94.94 0 018 3c.086 0 .168.014.246.038a2 2 0 105.736 3.234zM14 3c.55 0 1 .45 1 1s-.45 1-1 1h-1v1c0 .55-.45 1-1 1s-1-.45-1-1V5h-1c-.55 0-1-.45-1-1s.45-1 1-1h1V2c0-.55.45-1 1-1s1 .45 1 1v1h1z"],
-    "path-search": ["M15 14.62l-4-2.4V9.77c-.32.09-.66.15-1 .18v2.27l-4 2.4V8.71c-.38-.31-.72-.66-1-1.06v6.97l-4-2.4V8c.55 0 1-.45 1-1s-.45-1-1-1V1.38l3.15 1.89c.08-.34.18-.66.32-.97L.76.07v.01A.496.496 0 00.5 0C.22 0 0 .22 0 .5v12c0 .18.1.33.25.42v.01l5 3v-.01c.07.05.16.08.25.08s.18-.03.25-.08v.01l4.74-2.85 4.74 2.85v-.01c.09.05.18.08.27.08.28 0 .5-.22.5-.5v-3.78c-.3.17-.63.28-1 .28v2.62zM2 5c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1zm6-1c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm7.75-.92l-1.19-.72c.18.43.29.9.36 1.38l.08.04v3.39l1 1V3.5c0-.18-.1-.33-.25-.42zM10 2c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm3.3 4.89c.44-.7.7-1.51.7-2.39C14 2.01 11.99 0 9.5 0S5 2.01 5 4.5 7.01 9 9.5 9c.88 0 1.69-.26 2.39-.7l2.41 2.41c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71l-2.41-2.4zM9.5 8C7.57 8 6 6.43 6 4.5S7.57 1 9.5 1 13 2.57 13 4.5 11.43 8 9.5 8z"],
-    "play": ["M12 8c0-.35-.19-.64-.46-.82l.01-.02-6-4-.01.02A.969.969 0 005 3c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1 .21 0 .39-.08.54-.18l.01.02 6-4-.01-.02c.27-.18.46-.47.46-.82z"],
-    "plus": ["M13 7H9V3c0-.55-.45-1-1-1s-1 .45-1 1v4H3c-.55 0-1 .45-1 1s.45 1 1 1h4v4c0 .55.45 1 1 1s1-.45 1-1V9h4c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "print": ["M12 2.02c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v1h8v-1zm3 2H1c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h1v-3h12v3h1c.55 0 1-.45 1-1v-6c0-.56-.45-1-1-1zm-1 3h-2v-1h2v1zm-3 6H5v-3H3v4c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-4h-2v3z"],
-    "properties": ["M2 6C.9 6 0 6.9 0 8s.9 2 2 2 2-.9 2-2-.9-2-2-2zm4-3h9c.55 0 1-.45 1-1s-.45-1-1-1H6c-.55 0-1 .45-1 1s.45 1 1 1zm-4 9c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm13-5H6c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zm0 6H6c-.55 0-1 .45-1 1s.45 1 1 1h9c.55 0 1-.45 1-1s-.45-1-1-1zM2 0C.9 0 0 .9 0 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"],
-    "search": ["M15.55 13.43l-2.67-2.68a6.94 6.94 0 001.11-3.76c0-3.87-3.13-7-7-7s-7 3.13-7 7 3.13 7 7 7c1.39 0 2.68-.42 3.76-1.11l2.68 2.67a1.498 1.498 0 102.12-2.12zm-8.56-1.44c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"],
-    "select": ["M16 15c0-.28-.12-.52-.31-.69l.02-.02-3.12-3.12 3.41-.84-8.05-2.86c.03-.09.05-.17.05-.27V2c0-.55-.45-1-1-1H3c0-.55-.45-1-1-1S1 .45 1 1c-.55 0-1 .45-1 1s.45 1 1 1v4c0 .55.45 1 1 1h5.2c.1 0 .18-.02.27-.05L10.33 16l.85-3.41 3.12 3.12.02-.02c.16.19.4.31.68.31.04 0 .07-.02.1-.02s.06.02.1.02c.44 0 .8-.36.8-.8 0-.04-.02-.07-.02-.1s.02-.06.02-.1zM6 6H3V3h3v3z"],
-    "small-cross": ["M9.41 8l2.29-2.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L8 6.59l-2.29-2.3a1.003 1.003 0 00-1.42 1.42L6.59 8 4.3 10.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71L8 9.41l2.29 2.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L9.41 8z"],
-    "stop": ["M12 3H4c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1z"],
-    "tag": ["M1 3a2 2 0 012-2h4.584a2 2 0 011.414.586l5.413 5.412a2 2 0 010 2.829L9.827 14.41a2 2 0 01-2.829 0L1.586 8.998A2 2 0 011 7.584V3zm3.487-.007a1.494 1.494 0 100 2.988 1.494 1.494 0 000-2.988z"],
-    "th": ["M15 1H1c-.6 0-1 .5-1 1v12c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V2c0-.5-.4-1-1-1zM6 13H2v-2h4v2zm0-3H2V8h4v2zm0-3H2V5h4v2zm8 6H7v-2h7v2zm0-3H7V8h7v2zm0-3H7V5h7v2z"],
-    "tick": ["M14 3c-.28 0-.53.11-.71.29L6 10.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42l4 4c.18.18.43.29.71.29s.53-.11.71-.29l8-8A1.003 1.003 0 0014 3z"],
-    "trash": ["M14.49 3.99h-13c-.28 0-.5.22-.5.5s.22.5.5.5h.5v10c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-10h.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm-8.5 9c0 .55-.45 1-1 1s-1-.45-1-1v-6c0-.55.45-1 1-1s1 .45 1 1v6zm3 0c0 .55-.45 1-1 1s-1-.45-1-1v-6c0-.55.45-1 1-1s1 .45 1 1v6zm3 0c0 .55-.45 1-1 1s-1-.45-1-1v-6c0-.55.45-1 1-1s1 .45 1 1v6zm2-12h-4c0-.55-.45-1-1-1h-2c-.55 0-1 .45-1 1h-4c-.55 0-1 .45-1 1v1h14v-1c0-.55-.45-1-1-1z"],
-    "upload": ["M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3 8c-.28 0-.53-.11-.71-.29L9 6.41V12c0 .55-.45 1-1 1s-1-.45-1-1V6.41l-1.29 1.3a1.003 1.003 0 01-1.42-1.42l3-3C7.47 3.11 7.72 3 8 3s.53.11.71.29l3 3A1.003 1.003 0 0111 8z"],
-    "warning-sign": ["M15.84 13.5l.01-.01-7-12-.01.01c-.17-.3-.48-.5-.85-.5s-.67.2-.85.5l-.01-.01-7 12 .01.01c-.09.15-.15.31-.15.5 0 .55.45 1 1 1h14c.55 0 1-.45 1-1 0-.19-.06-.35-.15-.5zm-6.85-.51h-2v-2h2v2zm0-3h-2v-5h2v5z"],
-    "zoom-to-fit": ["M11 10a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42L12.59 8 11.3 9.29c-.19.18-.3.43-.3.71zM1 5c.55 0 1-.45 1-1V2h2c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v3c0 .55.45 1 1 1zm4 1a1.003 1.003 0 00-1.71-.71l-2 2C1.11 7.47 1 7.72 1 8c0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L3.41 8 4.7 6.71c.19-.18.3-.43.3-.71zm1-1c.28 0 .53-.11.71-.29L8 3.41 9.29 4.7c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C8.53 1.11 8.28 1 8 1s-.53.11-.71.29l-2 2A1.003 1.003 0 006 5zm9 6c-.55 0-1 .45-1 1v2h-2c-.55 0-1 .45-1 1s.45 1 1 1h3c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1zm0-11h-3c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zM4 14H2v-2c0-.55-.45-1-1-1s-1 .45-1 1v3c0 .55.45 1 1 1h3c.55 0 1-.45 1-1s-.45-1-1-1zm6-3c-.28 0-.53.11-.71.29L8 12.59 6.71 11.3A.965.965 0 006 11a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0010 11z"]
-}
-
-const IconSvgPaths20 = {
-    "arrow-left": ["M18 9H4.41L8.7 4.71c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71l-6 6c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l6 6a1.003 1.003 0 001.42-1.42L4.41 11H18c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "arrow-right": ["M18.71 9.29l-6-6a1.003 1.003 0 00-1.42 1.42L15.59 9H2c-.55 0-1 .45-1 1s.45 1 1 1h13.59l-4.29 4.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l6-6c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"],
-    "arrows-horizontal": ["M19.7 9.3l-5-5c-.2-.2-.4-.3-.7-.3-.6 0-1 .4-1 1 0 .3.1.5.3.7L16.6 9H3.4l3.3-3.3c.2-.2.3-.4.3-.7 0-.6-.4-1-1-1-.3 0-.5.1-.7.3l-5 5c-.2.2-.3.4-.3.7s.1.5.3.7l5 5c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7L3.4 11h13.2l-3.3 3.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l5-5c.2-.2.3-.4.3-.7s-.1-.5-.3-.7z"],
-    "application": ["M3.5 9h9c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-9c-.28 0-.5.22-.5.5s.22.5.5.5zm0 2h5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-5c-.28 0-.5.22-.5.5s.22.5.5.5zM19 1H1c-.55 0-1 .45-1 1v16c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zm-1 16H2V6h16v11zM3.5 13h7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-7c-.28 0-.5.22-.5.5s.22.5.5.5z"],
-    "caret-down": ["M16 7c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1 0 .24.1.46.24.63l-.01.01 5 6 .01-.01c.19.22.45.37.76.37s.57-.15.76-.37l.01.01 5-6-.01-.01c.14-.17.24-.39.24-.63z"],
-    "caret-up": ["M15.76 12.37l.01-.01-5-6-.01.01C10.57 6.15 10.31 6 10 6s-.57.15-.76.37l-.01-.01-5 6 .01.01c-.14.17-.24.39-.24.63 0 .55.45 1 1 1h10c.55 0 1-.45 1-1 0-.24-.1-.46-.24-.63z"],
-    "chevron-down": ["M16 6c-.28 0-.53.11-.71.29L10 11.59l-5.29-5.3a1.003 1.003 0 00-1.42 1.42l6 6c.18.18.43.29.71.29s.53-.11.71-.29l6-6A1.003 1.003 0 0016 6z"],
-    "chevron-right": ["M13.71 9.29l-6-6a1.003 1.003 0 00-1.42 1.42l5.3 5.29-5.29 5.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l6-6c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"],
-    "chevron-up": ["M16.71 12.29l-6-6C10.53 6.11 10.28 6 10 6s-.53.11-.71.29l-6 6a1.003 1.003 0 001.42 1.42L10 8.41l5.29 5.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"],
-    "cross": ["M11.41 10l4.29-4.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-4.29-4.3a1.003 1.003 0 00-1.42 1.42L8.59 10 4.3 14.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l4.29-4.3 4.29 4.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z"],
-    "cog": ["M19 8h-2.31c-.14-.46-.33-.89-.56-1.3l1.7-1.7a.996.996 0 000-1.41l-1.41-1.41a.996.996 0 00-1.41 0l-1.7 1.7c-.41-.22-.84-.41-1.3-.55V1c0-.55-.45-1-1-1H9c-.55 0-1 .45-1 1v2.33c-.48.14-.94.34-1.37.58L5 2.28a.972.972 0 00-1.36 0L2.28 3.64c-.37.38-.37.99 0 1.36L3.9 6.62c-.24.44-.44.89-.59 1.38H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h2.31c.14.46.33.89.56 1.3L2.17 15a.996.996 0 000 1.41l1.41 1.41c.39.39 1.02.39 1.41 0l1.7-1.7c.41.22.84.41 1.3.55V19c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.33c.48-.14.94-.35 1.37-.59L15 17.72c.37.37.98.37 1.36 0l1.36-1.36c.37-.37.37-.98 0-1.36l-1.62-1.62c.24-.43.45-.89.6-1.38H19c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-9 6c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"],
-    "comment": ["M19 1H1c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h3v4a1.003 1.003 0 001.71.71l4.7-4.71H19c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM4 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"],
-    "comparison": ["M6 8H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm13-6h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm0 3h-5V3h5v2zM6 14H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zM6 2H1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm4-2c-.55 0-1 .45-1 1v18c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm9 14h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1zm0 3h-5v-2h5v2zm0-9h-5c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h5c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm0 3h-5V9h5v2z"],
-    "delete": ["M15 6a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10l3.29-3.29c.19-.18.3-.43.3-.71zm-5-6C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"],
-    "disable": ["M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zM2 10c0-4.42 3.58-8 8-8 1.85 0 3.55.63 4.9 1.69L3.69 14.9A7.902 7.902 0 012 10zm8 8c-1.85 0-3.55-.63-4.9-1.69L16.31 5.1A7.902 7.902 0 0118 10c0 4.42-3.58 8-8 8z"],
-    "double-caret-vertical": ["M5 9h10c.55 0 1-.45 1-1 0-.24-.1-.46-.24-.63l.01-.01-5-6-.01.01C10.57 1.15 10.31 1 10 1s-.57.15-.76.37l-.01-.01-5 6 .01.01C4.1 7.54 4 7.76 4 8c0 .55.45 1 1 1zm10 2H5c-.55 0-1 .45-1 1 0 .24.1.46.24.63l-.01.01 5 6 .01-.01c.19.22.45.37.76.37s.57-.15.76-.37l.01.01 5-6-.01-.01c.14-.17.24-.39.24-.63 0-.55-.45-1-1-1z"],
-    "edit": ["M4.59 12.59l2.83 2.83 7.65-7.65-2.83-2.83-7.65 7.65zM2 18l4.41-1.59-2.81-2.79L2 18zM16 2c-.55 0-1.05.22-1.41.59l-1.65 1.65 2.83 2.83 1.65-1.65A2.006 2.006 0 0016 2z"],
-    "error": ["M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 16H9v-2h2v2zm0-3H9V4h2v9z"],
-    "folder-close": ["M0 17c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V7H0v10zM19 4H9.41l-1.7-1.71A.997.997 0 007 2H1c-.55 0-1 .45-1 1v3h20V5c0-.55-.45-1-1-1z"],
-    "geosearch": ["M8 18.88c-3.79 0-6.88-3.09-6.88-6.88 0-.61.08-1.22.23-1.79.03.01.06-.01.1-.01h.09v.55c0 .23.21.42.44.42.04 0 .09-.01.12-.02l.9.88c.09.09.23.09.32 0s.09-.23 0-.32l-.86-.9c0-.02.05-.04.05-.07v-.13c0-.18.1-.25.29-.41h.53c.1 0 .19-.01.27-.05.01-.01.02 0 .03-.01.02-.01.03-.02.05-.04.01-.01.02-.01.02-.02l.02-.02 1.13-1.13c-.16-.32-.3-.65-.42-.99h-.64v-.53c0-.01.06.06.06-.1h.38c-.04-.16-.08-.32-.1-.48h-.71c.2-.16.42-.31.64-.45C4.02 6.09 4 5.8 4 5.5c0-.14.01-.28.02-.43C1.62 6.46 0 9.04 0 12c0 4.41 3.59 8 8 8 3.87 0 7.09-2.77 7.82-6.44l-.97-1.1c-.26 3.57-3.23 6.42-6.85 6.42zm-2.12-3.67v-.35h.15c.29 0 .49-.23.49-.53v-.68c0-.01.01-.01 0-.02L4.71 11.8h-.77c-.29 0-.47.24-.47.53v2c0 .29.18.53.47.53h.33v2.02c0 .28.28.51.56.51s.56-.23.56-.51v-1.22h-.01c.29 0 .5-.16.5-.45zm13.83-2.92l-3.68-3.68c.14-.21.27-.42.38-.65.02-.04.04-.07.05-.11.11-.22.2-.45.28-.69v-.01c.07-.24.13-.48.17-.73l.03-.17c.04-.24.06-.49.06-.75C17 2.46 14.54 0 11.5 0S6 2.46 6 5.5 8.46 11 11.5 11c.26 0 .51-.02.76-.06l.17-.03c.25-.04.49-.1.73-.17h.01c.24-.08.47-.17.69-.28.04-.02.07-.04.11-.05.23-.11.44-.24.65-.38l3.68 3.68c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71zM11.5 9.5c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm1.93 5.33v-.65c0-.11-.13-.21-.24-.21-.11 0-.24.09-.24.21v.65c0 .11.13.21.24.21.11 0 .24-.1.24-.21zm-2.41.67h.83c.29 0 .46-.21.46-.5v-1.86l.23-.22c-.34.05-.69.08-1.04.08-.36 0-.7-.03-1.05-.08.03.05.06.1.08.16V15c.01.29.2.5.49.5z"],
-    "hand": ["M17 5c-.42 0-.79.27-.93.64L14.38 10h-.77l1.34-6.67c.03-.1.05-.21.05-.33a.998.998 0 00-1.98-.19h-.01L11.57 10H11V1c0-.55-.45-1-1-1S9 .45 9 1v9h-.2L6.97 2.76a.997.997 0 00-1.73-.41l-.03.03c-.01.02-.02.03-.03.04-.01.02-.01.03-.02.04v.01c-.01.01-.02.02-.02.03v.01c-.02.01-.02.02-.03.03 0 0 0 .01-.01.01 0 .01 0 .02-.01.03 0 0 0 .01-.01.01 0 .01-.01.02-.01.03 0 0 0 .01-.01.01 0 .01-.01.02-.01.03 0 .01 0 .01-.01.02 0 .01-.01.02-.01.03 0 .01 0 .01-.01.02 0 .01-.01.02-.01.03v.02c0 .01 0 .02-.01.03V3c0 .05 0 .09.01.14l1.45 10.25L6 12.7v.01L3.84 9.45h-.01A.98.98 0 003 9c-.55 0-1 .45-1 1 0 .2.06.39.17.55L6 18.44C7.06 19.4 8.46 20 10 20c3.31 0 6-2.69 6-6v-1.84l.01-.03v-.06l1.94-5.75A1.003 1.003 0 0017 5z"],
-    "home": ["M2 12v7c0 .55.45 1 1 1h5v-7h4v7h5c.55 0 1-.45 1-1v-7l-8-8-8 8zm17.71-2.71L17 6.59V3c0-.55-.45-1-1-1s-1 .45-1 1v1.59L10.71.3C10.53.11 10.28 0 10 0s-.53.11-.71.29l-9 9a1.003 1.003 0 001.42 1.42L10 2.41l8.29 8.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71z"],
-    "info-sign": ["M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zM9 4h2v2H9V4zm4 12H7v-1h2V8H8V7h3v8h2v1z"],
-    "issue": ["M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 100-16 8 8 0 000 16zm1-2H9v-2h2v2zm0-3H9V4h2v9z"],
-    "layer": ["M19.5 9.1l-9-5c-.2-.1-.3-.1-.5-.1s-.3 0-.5.1l-9 5c-.3.2-.5.5-.5.9s.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9s-.2-.7-.5-.9z"],
-    "layers": ["M.5 6.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9s-.2-.7-.5-.9l-9-5c-.2-.1-.3-.1-.5-.1s-.3 0-.5.1l-9 5c-.3.2-.5.5-.5.9s.2.7.5.9z",
-"M19 9c-.2 0-.3 0-.5.1L10 13.9 1.5 9.1C1.3 9 1.2 9 1 9c-.6 0-1 .4-1 1 0 .4.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9 0-.6-.4-1-1-1z",
-"M19 13c-.2 0-.3 0-.5.1L10 17.9l-8.5-4.7c-.2-.2-.3-.2-.5-.2-.6 0-1 .4-1 1 0 .4.2.7.5.9l9 5c.2.1.3.1.5.1s.3 0 .5-.1l9-5c.3-.2.5-.5.5-.9 0-.6-.4-1-1-1z"],
-    "map": ["M19.54 4.18l.01-.02-6-4-.01.02C13.39.08 13.21 0 13 0s-.39.08-.54.18l-.01-.02L7 3.8 1.55.17l-.01.01A.969.969 0 001 0C.45 0 0 .45 0 1v14c0 .35.19.64.46.82l-.01.02 6 4 .01-.02c.15.1.33.18.54.18s.39-.08.54-.18l.01.02L13 16.2l5.45 3.63.01-.02c.15.11.33.19.54.19.55 0 1-.45 1-1V5c0-.35-.19-.64-.46-.82zM6 17.13l-4-2.67V2.87l4 2.67v11.59zm6-2.67l-4 2.67V5.54l4-2.67v11.59zm6 2.67l-4-2.67V2.87l4 2.67v11.59z"],
-    "media": ["M15 9c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4-7H1c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 13l-6-5-2 2-4-5-4 8V4h16v11z"],    
-    "menu-closed": ["M8 6h11c.55 0 1-.45 1-1s-.45-1-1-1H8c-.55 0-1 .45-1 1s.45 1 1 1zM4 6c-.28 0-.53.11-.71.29l-3 3C.11 9.47 0 9.72 0 10c0 .28.11.53.29.71l3 3A1.003 1.003 0 005 13V7c0-.55-.45-1-1-1zm15 8H8c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0-5H8c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1z"],    
-    "menu-open": ["M12 9H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0 5H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm0-10H1c-.55 0-1 .45-1 1s.45 1 1 1h11c.55 0 1-.45 1-1s-.45-1-1-1zm7.71 5.29l-3-3A1.003 1.003 0 0015 7v6a1.003 1.003 0 001.71.71l3-3c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"],
-    "minus": ["M16 9H4c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "multi-select": ["M19 3H7c-.55 0-1 .45-1 1v1h12v6h1c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-6 6H1c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H2v-4h10v4zm4-9H4c-.55 0-1 .45-1 1v1h12v6h1c.55 0 1-.45 1-1V7c0-.55-.45-1-1-1z"],
-    "new-layer": ["M11.513 2.663A2 2 0 0013 6h1v1a2 2 0 104 0v-.733l1.5.833c.3.2.5.5.5.9s-.2.7-.5.9l-9 5c-.2.1-.3.1-.5.1s-.3 0-.5-.1l-9-5C.2 8.7 0 8.4 0 8s.2-.7.5-.9l9-5c.2-.1.3-.1.5-.1s.3 0 .5.1l1.013.563zM17 3h2a1 1 0 010 2h-2v2a1 1 0 01-2 0V5h-2a1 1 0 010-2h2V1a1 1 0 012 0v2z"],
-    "path-search": ["M4 7c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm15 11.69l-5-2.5v-3.63c-.32.11-.66.22-1 .29v3.32l-6 2.57v-7.25c-.36-.27-.69-.57-1-.9v8.1l-5-2.5V10c.55 0 1-.45 1-1s-.45-1-1-1V1.31l3.43 1.71c.11-.31.24-.62.39-.92L.72.05A.545.545 0 00.5 0C.22 0 0 .22 0 .5v16c0 .2.12.36.28.44l6 3c.07.04.14.06.22.06.07 0 .14-.01.2-.04l6.79-2.91 5.79 2.9c.07.03.14.05.22.05.28 0 .5-.22.5-.5v-4.21c-.31.13-.64.21-1 .21v3.19zM10 5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm3-1c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm6.72-.94l-1.43-.72c.2.43.36.89.48 1.36l.23.11V5.5c-.55 0-1 .45-1 1s.45 1 1 1v1.96l1 1V3.5c0-.2-.12-.36-.28-.44zm-3.69 5.56c.14-.21.27-.42.38-.65.02-.04.04-.07.05-.11.11-.22.2-.45.28-.69v-.01c.07-.24.13-.48.17-.73l.03-.17c.04-.25.06-.5.06-.76C17 2.46 14.54 0 11.5 0S6 2.46 6 5.5 8.46 11 11.5 11c.26 0 .51-.02.76-.06l.17-.03c.25-.04.49-.1.73-.17h.01c.24-.08.47-.17.69-.28.04-.02.07-.03.11-.05.23-.11.44-.24.65-.38l.18.18 3.5 3.5c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71l-3.68-3.67zm-4.53.88c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"],
-    "play": ["M16 10c0-.36-.2-.67-.49-.84l.01-.01-10-6-.01.01A.991.991 0 005 3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1 .19 0 .36-.07.51-.16l.01.01 10-6-.01-.01c.29-.17.49-.48.49-.84z"],
-    "plus": ["M16 9h-5V4c0-.55-.45-1-1-1s-1 .45-1 1v5H4c-.55 0-1 .45-1 1s.45 1 1 1h5v5c0 .55.45 1 1 1s1-.45 1-1v-5h5c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "print": ["M14 16H6v-4H4v5c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-5h-2v4zm2-13c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1v1h12V3zm3 2H1c-.55 0-1 .45-1 1v7c0 .55.45 1 1 1h2v-3h14v3h2c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1zm-1 4h-2V7h2v2z"],
-    "properties": ["M2 15c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm5-4h12c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1zM2 1C.9 1 0 1.9 0 3s.9 2 2 2 2-.9 2-2-.9-2-2-2zm17 8H7c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1zm0 7H7c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"],
-    "select": ["M19.71 18.29l-4.25-4.25L20 12.91 9.93 9.33c.04-.1.07-.21.07-.33V3c0-.55-.45-1-1-1H4V1c0-.55-.45-1-1-1S2 .45 2 1v1H1c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 .55.45 1 1 1h6c.12 0 .23-.03.34-.07L12.91 20l1.14-4.54 4.25 4.25c.17.18.42.29.7.29a1.003 1.003 0 00.71-1.71zM8 8H4V4h4v4z"],
-    "search": ["M19.56 17.44l-4.94-4.94A8.004 8.004 0 0016 8c0-4.42-3.58-8-8-8S0 3.58 0 8s3.58 8 8 8c1.67 0 3.21-.51 4.5-1.38l4.94 4.94a1.498 1.498 0 102.12-2.12zM8 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"],
-    "small-cross": ["M11.41 10l3.29-3.29c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71L10 8.59l-3.29-3.3a1.003 1.003 0 00-1.42 1.42L8.59 10 5.3 13.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l3.29-3.3 3.29 3.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71L11.41 10z"],
-    "stop": ["M16 3H4c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1z"],
-    "tag": ["M2 4a2 2 0 012-2h4.588a2 2 0 011.414.586l7.41 7.41a2 2 0 010 2.828l-4.588 4.588a2 2 0 01-2.829 0l-7.41-7.41A2 2 0 012 8.588V4zm3.489-.006a1.495 1.495 0 100 2.99 1.495 1.495 0 000-2.99z"],
-    "th": ["M19 1H1c-.6 0-1 .5-1 1v16c0 .5.4 1 1 1h18c.5 0 1-.5 1-1V2c0-.5-.5-1-1-1zM7 17H2v-3h5v3zm0-4H2v-3h5v3zm0-4H2V6h5v3zm11 8H8v-3h10v3zm0-4H8v-3h10v3zm0-4H8V6h10v3z"],
-    "tick": ["M17 4c-.28 0-.53.11-.71.29L7 13.59 3.71 10.3A.965.965 0 003 10a1.003 1.003 0 00-.71 1.71l4 4c.18.18.43.29.71.29s.53-.11.71-.29l10-10A1.003 1.003 0 0017 4z"],
-    "trash": ["M17 1h-5c0-.55-.45-1-1-1H9c-.55 0-1 .45-1 1H3c-.55 0-1 .45-1 1v1h16V2c0-.55-.45-1-1-1zm.5 3h-15c-.28 0-.5.22-.5.5s.22.5.5.5H3v14c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5h.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zM7 16c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8zm4 0c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8zm4 0c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v8z"],
-    "upload": ["M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm4 10c-.28 0-.53-.11-.71-.29L11 7.41V15c0 .55-.45 1-1 1s-1-.45-1-1V7.41l-2.29 2.3a1.003 1.003 0 01-1.42-1.42l4-4c.18-.18.43-.29.71-.29s.53.11.71.29l4 4A1.003 1.003 0 0114 10z"],
-    "warning-sign": ["M19.86 17.52l.01-.01-9-16-.01.01C10.69 1.21 10.37 1 10 1s-.69.21-.86.52l-.01-.01-9 16 .01.01c-.08.14-.14.3-.14.48 0 .55.45 1 1 1h18c.55 0 1-.45 1-1 0-.18-.06-.34-.14-.48zM11 17H9v-2h2v2zm0-3H9V6h2v8z"],
-    "zoom-to-fit": ["M1 7c.55 0 1-.45 1-1V2h4c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v5c0 .55.45 1 1 1zm5 1a1.003 1.003 0 00-1.71-.71l-2 2c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L4.41 10 5.7 8.71c.19-.18.3-.43.3-.71zm2-2c.28 0 .53-.11.71-.29L10 4.41l1.29 1.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C10.53 2.11 10.28 2 10 2s-.53.11-.71.29l-2 2A1.003 1.003 0 008 6zM6 18H2v-4c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55.45 1 1 1h5c.55 0 1-.45 1-1s-.45-1-1-1zm8-6a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42l1.3 1.29-1.29 1.29c-.19.18-.3.43-.3.71zm5-12h-5c-.55 0-1 .45-1 1s.45 1 1 1h4v4c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm-7 14c-.28 0-.53.11-.71.29L10 15.59 8.71 14.3A.965.965 0 008 14a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0012 14zm7-1c-.55 0-1 .45-1 1v4h-4c-.55 0-1 .45-1 1s.45 1 1 1h5c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1z"]
-}
-
-/***/ },
-
 /***/ "?cdec"
 /*!**********************!*\
   !*** http (ignored) ***!
@@ -33153,36 +33837,6 @@ const IconSvgPaths20 = {
 /******/ 				() => (module);
 /******/ 			__webpack_require__.d(getter, { a: getter });
 /******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/create fake namespace object */
-/******/ 	(() => {
-/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
-/******/ 		var leafPrototypes;
-/******/ 		// create a fake namespace object
-/******/ 		// mode & 1: value is a module id, require it
-/******/ 		// mode & 2: merge all properties of value into the ns
-/******/ 		// mode & 4: return value when already ns object
-/******/ 		// mode & 16: return value when it's Promise-like
-/******/ 		// mode & 8|1: behave like require
-/******/ 		__webpack_require__.t = function(value, mode) {
-/******/ 			if(mode & 1) value = this(value);
-/******/ 			if(mode & 8) return value;
-/******/ 			if(typeof value === 'object' && value) {
-/******/ 				if((mode & 4) && value.__esModule) return value;
-/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
-/******/ 			}
-/******/ 			var ns = Object.create(null);
-/******/ 			__webpack_require__.r(ns);
-/******/ 			var def = {};
-/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
-/******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
-/******/ 			}
-/******/ 			def['default'] = () => (value);
-/******/ 			__webpack_require__.d(ns, def);
-/******/ 			return ns;
 /******/ 		};
 /******/ 	})();
 /******/ 	

@@ -1,3 +1,6 @@
+/**
+ * @since 0.15
+ */
 export type SvgIconName = "application" |
     "arrow-left" |
     "arrow-right" |

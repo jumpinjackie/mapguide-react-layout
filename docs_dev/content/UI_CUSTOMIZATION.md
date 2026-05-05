@@ -92,31 +92,6 @@ function App() {
 }
 ```
 
-### Scoping a provider to a subtree
-
-You can also wrap only a portion of the component tree. `MinimalProvider` is exported from `mapguide-react-layout` as part of its public API:
-
-```tsx
-import { ElementProvider, MinimalProvider } from 'mapguide-react-layout';
-import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
-
-function MyLayout() {
-    return (
-        <div>
-            {/* This section uses the Minimal provider (default) */}
-            <ElementProvider value={MinimalProvider}>
-                <Sidebar />
-            </ElementProvider>
-
-            {/* This section uses Blueprint (requires @blueprintjs/core installed) */}
-            <ElementProvider value={BpProvider}>
-                <MapPanel />
-            </ElementProvider>
-        </div>
-    );
-}
-```
-
 ---
 
 ## Overriding CSS variables (design tokens)

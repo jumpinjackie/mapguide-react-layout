@@ -142,7 +142,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
          />
       ),
       Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="callout">{children}</div>,
-      Button: ({ children, onClick, type, disabled }: { children?: React.ReactNode; onClick?: React.MouseEventHandler<HTMLButtonElement>; type?: string; disabled?: boolean }) => <button onClick={onClick} type={type} disabled={disabled}>{children}</button>,
+      Button: ({ children, onClick, type, disabled }: { children?: React.ReactNode; onClick?: React.MouseEventHandler<HTMLButtonElement>; type?: "button" | "reset" | "submit"; disabled?: boolean }) => <button onClick={onClick} type={type} disabled={disabled}>{children}</button>,
       Select: () => <select />,
       Toaster: React.forwardRef((_props: any, _ref: any) => <div data-testid="toaster" />),
       Checkbox: ({ label, checked, onChange, id, name }: any) => (

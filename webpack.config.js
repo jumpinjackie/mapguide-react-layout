@@ -119,7 +119,16 @@ const rules = [
     { //TypeScript React
         test: /\.tsx?$/,
         loader: 'ts-loader',
-        exclude: /(node_modules|test-utils|\.test\.ts$)/
+        exclude: /(node_modules|test-utils|\.test\.ts$)/,
+        options: {
+            // Override module to esnext so that dynamic import() expressions are
+            // preserved for webpack to code-split rather than being downleveled
+            // to CommonJS require() by the TypeScript compiler.
+            compilerOptions: {
+                module: "esnext",
+                moduleResolution: "node"
+            }
+        }
     }
 ];
 
@@ -159,7 +168,7 @@ module.exports = {
                 commons: {
                     test: /[\\/]node_modules[\\/]/,
                     name: "vendor",
-                    chunks: "all"
+                    chunks: "initial"
                 }
             }
         }

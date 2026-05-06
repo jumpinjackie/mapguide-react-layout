@@ -270,7 +270,7 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
         viewer.exportImage({
             callback: async (imageData) => {
                 try {
-                    const { jsPDF } = await import("jspdf");
+                    const { jsPDF } = await import(/* webpackChunkName: "jspdf" */ "jspdf");
                     const doc = new jsPDF({
                         orientation: orientation === "P" ? "p" : "l",
                         unit: "mm",

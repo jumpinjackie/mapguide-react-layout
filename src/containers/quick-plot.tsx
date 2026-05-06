@@ -156,7 +156,14 @@ function toggleMapCapturerLayer(locale: string,
 }
 
 export interface IQuickPlotContainerOwnProps {
-
+    /**
+     * When set to "true", the QuickPlot component operates in fully client-side mode
+     * and generates the PDF locally without requiring a MapGuide Server connection.
+     * This value is read from the widget's Extension.ClientSide property in the appdef.
+     *
+     * @since 0.15
+     */
+    clientSide?: string;
 }
 
 export interface IQuickPlotContainerConnectedState {
@@ -195,9 +202,10 @@ export interface IQuickPlotContainerState {
     normalizedBox: string;
 }
 
-export const QuickPlotContainer = () => {
+export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
+    const isClientSide = props.clientSide === "true";
     const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = useElementContext();
-    const [title, setTitle] = React.useState(""); ``
+    const [title, setTitle] = React.useState("");
     const [subTitle, setSubTitle] = React.useState("");
     const [showLegend, setShowLegend] = React.useState(false);
     const [showNorthBar, setShowNorthBar] = React.useState(false);
@@ -212,6 +220,7 @@ export const QuickPlotContainer = () => {
     const [rotation, setRotation] = React.useState(0);
     const [box, setBox] = React.useState("");
     const [normalizedBox, setNormalizedBox] = React.useState("");
+    const [isGenerating, setIsGenerating] = React.useState(false);
 
     const viewer = useMapProviderContext();
     const locale = useViewerLocale();
@@ -251,7 +260,50 @@ export const QuickPlotContainer = () => {
     const onRotationChanged = (value: number) => {
         setRotation(value);
     };
-    const onGeneratePlot = () => { };
+    const onGeneratePlot = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!isClientSide) return;
+        e.preventDefault();
+        const tokens = paperSize.split(",");
+        const baseW = parseFloat(tokens[0]);
+        const baseH = parseFloat(tokens[1]);
+        setIsGenerating(true);
+        viewer.exportImage({
+            callback: async (imageData) => {
+                try {
+                    const { jsPDF } = await import("jspdf");
+                    const doc = new jsPDF({
+                        orientation: orientation === "P" ? "p" : "l",
+                        unit: "mm",
+                        format: [baseW, baseH]
+                    });
+                    const pageW = doc.internal.pageSize.getWidth();
+                    const pageH = doc.internal.pageSize.getHeight();
+                    const margins = getMargin();
+                    let yPos = margins.top / 2;
+                    if (title) {
+                        doc.setFontSize(16);
+                        doc.text(title, pageW / 2, yPos + 8, { align: "center" });
+                        yPos += 14;
+                    }
+                    if (subTitle) {
+                        doc.setFontSize(12);
+                        doc.text(subTitle, pageW / 2, yPos + 4, { align: "center" });
+                        yPos += 10;
+                    }
+                    const mapLeft = margins.left;
+                    const mapTop = yPos;
+                    const mapWidth = pageW - margins.left - margins.right;
+                    const mapHeight = pageH - mapTop - margins.buttom;
+                    doc.addImage(imageData, "PNG", mapLeft, mapTop, mapWidth, mapHeight);
+                    doc.save("quickplot.pdf");
+                } catch (err) {
+                    console.error("QuickPlot client-side PDF generation failed:", err);
+                } finally {
+                    setIsGenerating(false);
+                }
+            }
+        });
+    };
     const updateBoxCoords = (box: string, normalizedBox: string): void => {
         setBox(box);
         setNormalizedBox(normalizedBox);
@@ -305,7 +357,10 @@ export const QuickPlotContainer = () => {
             }
         }
     }, [mapNames, activeMapName, showAdvanced, scale, paperSize, orientation, rotation, locale]);
-    if (!viewer.isReady() || !map || !view) {
+    if (!viewer.isReady() || !view) {
+        return <noscript />;
+    }
+    if (!isClientSide && !map) {
         return <noscript />;
     }
     let hasExternalBaseLayers = false;
@@ -335,7 +390,7 @@ export const QuickPlotContainer = () => {
         { value: "L" as Orientation, label: xlate("QUICKPLOT_ORIENTATION_L", locale) }
     ];
     return <div className="component-quick-plot">
-        <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
+        <form id="Form1" name="Form1" target={isClientSide ? undefined : "_blank"} method={isClientSide ? undefined : "post"} action={isClientSide ? undefined : url}>
             <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
             <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
             <FormGroup label={xlate("QUICKPLOT_TITLE", locale)}>
@@ -430,13 +485,17 @@ export const QuickPlotContainer = () => {
                 }
             })()}
             <div className="ButtonContainer FixWidth">
-                <Button type="submit" variant="primary" icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
+                <Button type={isClientSide ? "button" : "submit"} variant="primary" icon="print" onClick={onGeneratePlot} disabled={isGenerating}>
+                    {isGenerating ? xlate("QUICKPLOT_GENERATING", locale) : xlate("QUICKPLOT_GENERATE", locale)}
+                </Button>
             </div>
             <input type="hidden" id="margin" name="margin" />
             <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
             <input type="hidden" id="rotation" name="rotation" value={-(rotation || 0)} />
-            <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
-            <input type="hidden" id="mapName" name="mapName" value={map.Name} />
+            {!isClientSide && <>
+                <input type="hidden" id="sessionId" name="sessionId" value={map?.SessionId} />
+                <input type="hidden" id="mapName" name="mapName" value={map?.Name} />
+            </>}
             <input type="hidden" id="box" name="box" value={theBox} />
             <input type="hidden" id="legalNotice" name="legalNotice" />
         </form>

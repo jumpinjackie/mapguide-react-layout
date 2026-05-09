@@ -341,7 +341,7 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
         }
         cmd.setViewer?.(viewer);
         cmd.runAsync(options).then(payload => {
-            if (!payload) return; // cmd dispatched INIT_APP internally via initAppFromAppDef
+            if (!payload) return; // setViewer was used: cmd dispatched INIT_APP internally via initAppFromAppDef
             applyInitPayloadOverrides(payload, opts);
             dispatch({
                 type: ActionType.INIT_APP,

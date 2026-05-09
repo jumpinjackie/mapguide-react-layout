@@ -570,7 +570,7 @@ describe("actions/init-mapguide", () => {
         const mockViewer: any = {};
         const mockGetState = vi.fn().mockReturnValue({ config: {} });
 
-        it("does not accept a cmd parameter — creates DefaultViewerInitCommand internally", async () => {
+        it("creates DefaultViewerInitCommand internally and dispatches INIT_APP", async () => {
             const payload: any = {
                 activeMapName: "Map1",
                 locale: "en",

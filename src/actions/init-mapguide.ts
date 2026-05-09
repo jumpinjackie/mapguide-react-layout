@@ -621,6 +621,23 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
     }
+    /**
+     * When a viewer is available via {@link setViewer}, routes a fetched appdef through
+     * {@link initAppFromAppDef} (which handles locale init, session management, and INIT_APP
+     * dispatch) and returns undefined to signal that the payload was already dispatched.
+     * Falls back to the legacy in-command path when no viewer is set (e.g. custom implementations).
+     */
+    private dispatchOrProcess(
+        fl: ApplicationDefinition,
+        session: AsyncLazy<string>,
+        sessionWasReused: boolean
+    ): Promise<IInitAppActionPayload | undefined> {
+        if (this._viewer) {
+            this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
+            return Promise.resolve(undefined);
+        }
+        return this.initFromAppDefAsync(fl, session, sessionWasReused);
+    }
     private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload | undefined> {
         const { resourceId, locale } = this.options;
         if (!resourceId) {
@@ -628,11 +645,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             const cl = new Client("", "mapagent");
             try {
                 const fl = await cl.get<ApplicationDefinition>("appdef.json");
-                if (this._viewer) {
-                    this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
-                    return undefined;
-                }
-                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                return this.dispatchOrProcess(fl, session, sessionWasReused);
             } catch (e) { //The appdef.json doesn't exist at the assumed default location?
                 throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
             }
@@ -659,20 +672,12 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         } else {
                             fl = await this.client.get<ApplicationDefinition>(resourceId);
                         }
-                        if (this._viewer) {
-                            this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
-                            return undefined;
-                        }
-                        return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                        return this.dispatchOrProcess(fl, session, sessionWasReused);
                     }
                 }
             } else {
                 const fl = await resourceId();
-                if (this._viewer) {
-                    this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
-                    return undefined;
-                }
-                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                return this.dispatchOrProcess(fl, session, sessionWasReused);
             }
         }
     }
@@ -700,6 +705,8 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         return this.initWithSessionAsync(options, (session, sessionWasReused) =>
             this.initFromAppDefAsync(appDef, session, sessionWasReused)
         ) as Promise<IInitAppActionPayload>;
+        // Safe cast: when called from runFromAppDefAsync, _viewer is never set on this
+        // temporary internal command, so the resolver never returns undefined.
     }
     private async initWithSessionAsync(
         options: IInitAsyncOptions,
@@ -719,7 +726,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             session = new AsyncLazy<string>(() => Promise.resolve(options.session!));
         }
         const payload = await resolver(session, sessionWasReused);
-        if (!payload) return undefined; // initAppFromAppDef was dispatched internally
+        if (!payload) return undefined; // setViewer was used: INIT_APP was dispatched via initAppFromAppDef
         payload.sessionWasReused = sessionWasReused;
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};

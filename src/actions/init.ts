@@ -33,7 +33,7 @@ export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBas
     }
 }
 
-function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
+export function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
             type: ActionType.INIT_ERROR,
@@ -299,7 +299,7 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
  *
  * @hidden
  */
-function applyInitPayloadOverrides(initPayload: IInitAppActionPayload, opts: IInitAsyncOptions): void {
+export function applyInitPayloadOverrides(initPayload: IInitAppActionPayload, opts: IInitAsyncOptions): void {
     if (opts.initialView) {
         initPayload.initialView = {
             ...opts.initialView
@@ -339,7 +339,9 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
             const client = new Client(args.agentUri, args.agentKind);
             cmd.attachClient(client);
         }
+        cmd.setViewer?.(viewer);
         cmd.runAsync(options).then(payload => {
+            if (!payload) return; // cmd dispatched INIT_APP internally via initAppFromAppDef
             applyInitPayloadOverrides(payload, opts);
             dispatch({
                 type: ActionType.INIT_APP,
@@ -356,55 +358,6 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
     };
 }
 
-/**
- * Initializes the viewer from a pre-loaded application definition.
- *
- * This is the dispatchable thunked equivalent of the init command pattern for callers
- * that already have an {@link ApplicationDefinition} object. Instead of going through a
- * resource URL/resource-id, the caller supplies the appdef directly and this action handles
- * building the {@link ActionType.INIT_APP} payload and dispatching it.
- *
- * @param appDef The pre-loaded application definition
- * @param cmd The viewer init command used to process the application definition
- * @param viewer The map provider context
- * @param options The initialization options
- * @returns {ReduxThunkedAction}
- *
- * @since 0.15
- */
-export function initAppFromAppDef(appDef: ApplicationDefinition, cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
-    const opts: IInitAsyncOptions = { ...options };
-    return (dispatch, getState) => {
-        const args = getState().config;
-        if (args.agentUri && args.agentKind) {
-            const client = new Client(args.agentUri, args.agentKind);
-            cmd.attachClient(client);
-        }
-        if (!cmd.runFromAppDefAsync) {
-            processAndDispatchInitError(
-                new Error("This IViewerInitCommand implementation does not support initAppFromAppDef"),
-                false,
-                dispatch,
-                opts
-            );
-            return;
-        }
-        return cmd.runFromAppDefAsync(appDef, opts).then(payload => {
-            applyInitPayloadOverrides(payload, opts);
-            dispatch({
-                type: ActionType.INIT_APP,
-                payload
-            });
-            if (options.onInit) {
-                if (viewer) {
-                    options.onInit(viewer);
-                }
-            }
-        }).catch(err => {
-            processAndDispatchInitError(err, false, dispatch, opts);
-        });
-    };
-}
 
 export function acknowledgeInitWarnings(): IAcknowledgeStartupWarningsAction {
     return {

@@ -1,11 +1,12 @@
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { MapGroup, MapLayer, RuntimeMap } from '../api/contracts/runtime-map';
-import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView } from '../api/common';
+import { Dictionary, IExternalBaseLayer, ReduxDispatch, ActiveMapTool, IMapView, ReduxThunkedAction } from '../api/common';
+import type { IMapProviderContext } from '../components/map-providers/base';
 import { MapInfo, IInitAppActionPayload, IRestoredSelectionSets, IGenericSubjectMapLayer, GenericSubjectLayerType } from './defs';
 import { tr, DEFAULT_LOCALE } from '../api/i18n';
 import { isResourceId, strEndsWith, strIsNullOrEmpty } from '../utils/string';
 import { Client } from '../api/client';
-import { applyInitialBaseLayerVisibility, IInitAsyncOptions, processLayerInMapGroup } from './init';
+import { applyInitialBaseLayerVisibility, applyInitPayloadOverrides, processAndDispatchInitError, IInitAsyncOptions, IInitAppLayout, processLayerInMapGroup } from './init';
 import { ICreateRuntimeMapOptions, IDescribeRuntimeMapOptions, RuntimeMapFeatureFlags } from '../api/request-builder';
 import { info, debug } from '../utils/logger';
 import { MgError } from '../api/error';
@@ -29,6 +30,7 @@ import { tryParseArbitraryCs } from '../utils/units';
 import { ScopedId } from '../utils/scoped-id';
 import { canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
 import { supportsWebGL } from '../utils/browser-support';
+import { ActionType } from '../constants/actions';
 
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
@@ -48,11 +50,15 @@ export type SubjectLayerType = RuntimeMap | IGenericSubjectMapLayer;
 export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType> {
     private client: Client | undefined;
     private options: IInitAsyncOptions;
+    private _viewer: IMapProviderContext | undefined;
     constructor(dispatch: ReduxDispatch) {
         super(dispatch);
     }
     public attachClient(client: Client): void {
         this.client = client;
+    }
+    public setViewer(viewer: IMapProviderContext): void {
+        this._viewer = viewer;
     }
     protected isArbitraryCoordSys(subject: SubjectLayerType | undefined) {
         if (subject) {
@@ -615,13 +621,17 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
     }
-    private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+    private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload | undefined> {
         const { resourceId, locale } = this.options;
         if (!resourceId) {
             //Try assumed default location of appdef.json that we are assuming sits in the same place as the viewer html files
             const cl = new Client("", "mapagent");
             try {
                 const fl = await cl.get<ApplicationDefinition>("appdef.json");
+                if (this._viewer) {
+                    this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
+                    return undefined;
+                }
                 return await this.initFromAppDefAsync(fl, session, sessionWasReused);
             } catch (e) { //The appdef.json doesn't exist at the assumed default location?
                 throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
@@ -649,16 +659,24 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         } else {
                             fl = await this.client.get<ApplicationDefinition>(resourceId);
                         }
+                        if (this._viewer) {
+                            this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
+                            return undefined;
+                        }
                         return await this.initFromAppDefAsync(fl, session, sessionWasReused);
                     }
                 }
             } else {
                 const fl = await resourceId();
+                if (this._viewer) {
+                    this.dispatch(initAppFromAppDef(fl, this._viewer, this.options));
+                    return undefined;
+                }
                 return await this.initFromAppDefAsync(fl, session, sessionWasReused);
             }
         }
     }
-    public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+    public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload | undefined> {
         this.options = options;
         await this.initLocaleAsync(this.options);
         return this.initWithSessionAsync(options, (session, sessionWasReused) =>
@@ -667,6 +685,9 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
     }
     /**
      * Runs the viewer initialization from the given pre-loaded application definition.
+     * This method is an implementation detail of {@link initAppFromAppDef} and should not
+     * be called directly. It handles locale initialization, session setup and runtime map
+     * creation for the given appdef.
      *
      * @param appDef The pre-loaded application definition
      * @param options The initialization options
@@ -678,12 +699,12 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         await this.initLocaleAsync(options);
         return this.initWithSessionAsync(options, (session, sessionWasReused) =>
             this.initFromAppDefAsync(appDef, session, sessionWasReused)
-        );
+        ) as Promise<IInitAppActionPayload>;
     }
     private async initWithSessionAsync(
         options: IInitAsyncOptions,
-        resolver: (session: AsyncLazy<string>, sessionWasReused: boolean) => Promise<IInitAppActionPayload>
-    ): Promise<IInitAppActionPayload> {
+        resolver: (session: AsyncLazy<string>, sessionWasReused: boolean) => Promise<IInitAppActionPayload | undefined>
+    ): Promise<IInitAppActionPayload | undefined> {
         let sessionWasReused = false;
         let session: AsyncLazy<string>;
         if (!options.session) {
@@ -698,6 +719,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             session = new AsyncLazy<string>(() => Promise.resolve(options.session!));
         }
         const payload = await resolver(session, sessionWasReused);
+        if (!payload) return undefined; // initAppFromAppDef was dispatched internally
         payload.sessionWasReused = sessionWasReused;
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};
@@ -719,4 +741,46 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
 
         return payload;
     }
+}
+
+/**
+ * Initializes the viewer from a pre-loaded application definition.
+ *
+ * This action builds the {@link ActionType.INIT_APP} payload directly from an already-loaded
+ * {@link ApplicationDefinition}. Use this when you have the appdef in-hand and want to bypass
+ * the resource-URL loading step that {@link initLayout} performs.
+ *
+ * The action creates and manages its own {@link DefaultViewerInitCommand} internally — callers
+ * do not need to supply a command object.
+ *
+ * @param appDef The pre-loaded application definition
+ * @param viewer The map provider context, forwarded to the optional {@link IInitAppLayout.onInit} callback
+ * @param options The initialization options
+ * @returns {ReduxThunkedAction}
+ *
+ * @since 0.15
+ */
+export function initAppFromAppDef(appDef: ApplicationDefinition, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
+    const opts: IInitAsyncOptions = { ...options };
+    return (dispatch, getState) => {
+        const args = getState().config;
+        const cmd = new DefaultViewerInitCommand(dispatch);
+        if (args.agentUri && args.agentKind) {
+            cmd.attachClient(new Client(args.agentUri, args.agentKind));
+        }
+        return cmd.runFromAppDefAsync(appDef, opts).then(payload => {
+            applyInitPayloadOverrides(payload, opts);
+            dispatch({
+                type: ActionType.INIT_APP,
+                payload
+            });
+            if (options.onInit) {
+                if (viewer) {
+                    options.onInit(viewer);
+                }
+            }
+        }).catch(err => {
+            processAndDispatchInitError(err, false, dispatch, opts);
+        });
+    };
 }

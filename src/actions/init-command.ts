@@ -1,6 +1,7 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ActiveMapTool } from '../api/common';
 import type { ReduxDispatch, Dictionary, IMapSwipePair } from '../api/common';
+import type { IMapProviderContext } from '../components/map-providers/base';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
@@ -217,22 +218,21 @@ export function isStateless(appDef: ApplicationDefinition) {
 
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
-    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     /**
-     * Runs the viewer initialization from the given pre-loaded application definition.
+     * Optionally sets the map provider context (viewer) on the command. When set, the command
+     * will dispatch {@link initAppFromAppDef} for application-definition based resources instead
+     * of building the payload internally, routing the full init flow through the new action.
      *
-     * @param appDef The pre-loaded application definition
-     * @param options The initialization options
-     * @returns A promise that resolves to the initialization payload
      * @since 0.15
      */
-    runFromAppDefAsync?(appDef: ApplicationDefinition, options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
+    setViewer?(viewer: IMapProviderContext): void;
+    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload | undefined>;
 }
 
 export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand {
     constructor(protected readonly dispatch: ReduxDispatch) { }
     public abstract attachClient(client: Client): void;
-    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
+    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload | undefined>;
     protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
     protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo>;

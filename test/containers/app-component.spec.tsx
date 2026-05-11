@@ -12,6 +12,8 @@ const hooksMock = vi.hoisted(() => ({
    useActiveMapName: vi.fn(),
    useViewerFeatureTooltipsEnabled: vi.fn(),
    useCustomAppSettings: vi.fn(),
+   useConfiguredAgentUri: vi.fn(),
+   useConfiguredAgentKind: vi.fn(),
 }));
 
 const urlStateMock = vi.hoisted(() => ({
@@ -119,6 +121,8 @@ function setDefaultHookMocks() {
    hooksMock.useActiveMapName.mockReturnValue(undefined);
    hooksMock.useViewerFeatureTooltipsEnabled.mockReturnValue(undefined);
    hooksMock.useCustomAppSettings.mockReturnValue(undefined);
+   hooksMock.useConfiguredAgentUri.mockReturnValue(undefined);
+   hooksMock.useConfiguredAgentKind.mockReturnValue(undefined);
 }
 
 function makeMinimalInitCommand() {

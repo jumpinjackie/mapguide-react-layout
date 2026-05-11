@@ -15,12 +15,12 @@ import { getAssetRoot } from "../utils/asset";
 import { setFusionRoot } from "../api/runtime";
 import { AppContextProvider, LegendNodeExtraHTMLProps } from "../components/context";
 import type { IElementState } from '../actions/defs';
-import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled, useCustomAppSettings } from './hooks';
+import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, useActiveMapBranch, useActiveMapName, useViewerFeatureTooltipsEnabled, useCustomAppSettings, useConfiguredAgentUri, useConfiguredAgentKind } from './hooks';
 import { areStatesEqual, getStateFromUrl, type IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
-import type { IViewerInitCommand, LoadedResource } from '../actions/init-command';
-import { ApplicationDefinition } from '../api/contracts/fusion';
+import { DefaultViewerInitCommand, loadViewerResourceAsync } from '../actions/init-mapguide';
+import type { ApplicationDefinition } from '../api/contracts/fusion';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { Client } from "../api/client";
 import { ActionType } from "../constants/actions";
@@ -204,11 +204,13 @@ export interface IAppProps {
     /**
      * The command that will carry out viewer initialization
      *
-     * @type {IViewerInitCommand}
+     * @type {DefaultViewerInitCommand}
      *
      * @since 0.14
+     * @since 0.15 - Narrowed from IViewerInitCommand to DefaultViewerInitCommand so that resource
+     *   loading (via loadViewerResourceAsync) can be called directly without a dispatch thunk.
      */
-    initCommand: IViewerInitCommand;
+    initCommand: DefaultViewerInitCommand;
     /**
      * The layout to use
      * @since 0.14 type changed to include AdHocLayoutTemplate
@@ -309,6 +311,8 @@ export const App = (props: IAppProps) => {
     const dispatch = useReduxDispatch();
     const viewer = useMapProviderContext();
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
+    const agentUri = useConfiguredAgentUri();
+    const agentKind = useConfiguredAgentKind();
 
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -420,29 +424,26 @@ export const App = (props: IAppProps) => {
         // Load the viewer resource and dispatch the appropriate init action.
         // For ApplicationDefinition resources, initAppFromAppDef is dispatched with the
         // loaded appDef. For WebLayout resources the payload is dispatched inline.
-        dispatch((innerDispatch: any, getState: () => any) => {
-            const opts: IInitAsyncOptions = { ...args };
-            const config = getState().config;
-            if (config.agentUri && config.agentKind) {
-                initCommand.attachClient(new Client(config.agentUri, config.agentKind));
-            }
-            return initCommand.loadResourceAsync(opts).then((resource: LoadedResource) => {
-                if (resource.kind === 'appdef') {
-                    return innerDispatch(initAppFromAppDef(initCommand, resource.sessionOptions, resource.appDef, viewer));
-                } else {
-                    // WebLayout: payload is fully assembled by loadResourceAsync
-                    applyInitPayloadOverrides(resource.payload, opts);
-                    innerDispatch({
-                        type: ActionType.INIT_APP,
-                        payload: resource.payload
-                    });
-                    if (opts.onInit && viewer) {
-                        opts.onInit(viewer);
-                    }
+        const opts: IInitAsyncOptions = { ...args };
+        if (agentUri && agentKind) {
+            initCommand.attachClient(new Client(agentUri, agentKind));
+        }
+        loadViewerResourceAsync(initCommand, opts).then(resource => {
+            if (resource.kind === 'appdef') {
+                dispatch(initAppFromAppDef(initCommand, resource.sessionOptions, resource.appDef, viewer));
+            } else {
+                // WebLayout: payload is fully assembled by loadViewerResourceAsync
+                applyInitPayloadOverrides(resource.payload, opts);
+                dispatch({
+                    type: ActionType.INIT_APP,
+                    payload: resource.payload
+                });
+                if (opts.onInit && viewer) {
+                    opts.onInit(viewer);
                 }
-            }).catch((err: any) => {
-                processAndDispatchInitError(err, false, innerDispatch, opts);
-            });
+            }
+        }).catch((err: any) => {
+            processAndDispatchInitError(err, false, dispatch, opts);
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

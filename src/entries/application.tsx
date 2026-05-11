@@ -93,9 +93,9 @@ export class ApplicationViewModel {
         const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf, ...(props.initialConfig || {}) } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
-        let initCommand: IViewerInitCommand;
+        let initCommand: DefaultViewerInitCommand;
         if (props.initCommandFactory)
-            initCommand = props.initCommandFactory(this._store.dispatch)
+            initCommand = props.initCommandFactory(this._store.dispatch) as DefaultViewerInitCommand;
         else
             initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         // Register our MapGuide-specific viewer implementation

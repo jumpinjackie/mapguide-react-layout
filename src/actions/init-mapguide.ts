@@ -771,4 +771,35 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         } else {
             return this.runFromAppDefAsync(resource.appDef, resource.sessionOptions);
         }
-    }}
+    }
+}
+
+/**
+ * Loads the viewer resource (ApplicationDefinition or WebLayout) from the location described
+ * by `options`. This is a standalone non-dispatchable async function; callers obtain the
+ * loaded resource and then decide what action to dispatch (typically `initAppFromAppDef`
+ * for ApplicationDefinition resources).
+ *
+ * @param {DefaultViewerInitCommand} cmd - A concrete viewer init command instance. For
+ *   MapGuide resources (ApplicationDefinition or WebLayout resource IDs), the client must
+ *   already be attached via `cmd.attachClient(client)` before calling this function.
+ * @param {IInitAsyncOptions} options
+ * @returns {Promise<LoadedResource>}
+ *
+ * @example
+ * ```typescript
+ * // Attach the client for MapGuide resources, then load the resource and dispatch init:
+ * if (agentUri && agentKind) {
+ *     initCommand.attachClient(new Client(agentUri, agentKind));
+ * }
+ * const resource = await loadViewerResourceAsync(initCommand, opts);
+ * if (resource.kind === 'appdef') {
+ *     dispatch(initAppFromAppDef(initCommand, resource.sessionOptions, resource.appDef, viewer));
+ * }
+ * ```
+ *
+ * @since 0.15
+ */
+export function loadViewerResourceAsync(cmd: DefaultViewerInitCommand, options: IInitAsyncOptions): Promise<LoadedResource> {
+    return cmd.loadResourceAsync(options);
+}

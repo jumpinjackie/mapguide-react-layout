@@ -228,15 +228,6 @@ export interface IViewerInitCommand {
     attachClient(client: Client): void;
     runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     /**
-     * Fetches the viewer resource (ApplicationDefinition or WebLayout) and returns it
-     * along with session context. For WebLayout resources the full init payload is built
-     * and returned directly; for ApplicationDefinition resources only the raw appDef is
-     * returned so that callers can proceed with {@link runFromAppDefAsync}.
-     * 
-     * @since 0.15
-     */
-    loadResourceAsync(options: IInitAsyncOptions): Promise<LoadedResource>;
-    /**
      * Builds the {@link IInitAppActionPayload} from a pre-loaded ApplicationDefinition.
      * The session (if any) should already be present in `options.session`; if not a new
      * session will be created on demand.
@@ -250,7 +241,6 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
     constructor(protected readonly dispatch: ReduxDispatch) { }
     public abstract attachClient(client: Client): void;
     public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
-    public abstract loadResourceAsync(options: IInitAsyncOptions): Promise<LoadedResource>;
     public abstract runFromAppDefAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];

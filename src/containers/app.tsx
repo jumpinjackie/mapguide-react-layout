@@ -8,7 +8,7 @@ import {
     IMapViewer,
     Dictionary
 } from "../api/common";
-import { type IInitAppLayout, initLayout } from "../actions/init";
+import { type IInitAppLayout, type IInitAsyncOptions, initAppFromAppDef, applyInitPayloadOverrides, processAndDispatchInitError } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
@@ -19,9 +19,11 @@ import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, 
 import { areStatesEqual, getStateFromUrl, type IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
-import type { IViewerInitCommand } from '../actions/init-command';
+import type { IViewerInitCommand, LoadedResource } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
+import { Client } from "../api/client";
+import { ActionType } from "../constants/actions";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
@@ -282,7 +284,6 @@ export interface IAppState {
  * @interface IAppDispatch
  */
 export interface IAppDispatch {
-    initLayout: (cmd: IViewerInitCommand, args: IInitAppLayout) => void;
     setElementVisibility: (states: IElementState) => void;
 }
 
@@ -307,7 +308,6 @@ export const App = (props: IAppProps) => {
 
     const dispatch = useReduxDispatch();
     const viewer = useMapProviderContext();
-    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, viewer, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -353,73 +353,97 @@ export const App = (props: IAppProps) => {
         if (mapguide?.fusionRoot) {
             setFusionRoot(mapguide.fusionRoot);
         }
-        if (initLayoutAction) {
-            let ftArgs: Partial<IInitAppLayout> | undefined;
-            if (typeof (urlFeatureTooltip) != 'undefined') {
-                ftArgs = {
-                    featureTooltipsEnabled: urlFeatureTooltip
-                }
+        let ftArgs: Partial<IInitAppLayout> | undefined;
+        if (typeof (urlFeatureTooltip) != 'undefined') {
+            ftArgs = {
+                featureTooltipsEnabled: urlFeatureTooltip
             }
-            let amArgs: Partial<IInitAppLayout> | undefined;
-            if (urlMap) {
-                amArgs = {
-                    initialActiveMap: urlMap
-                };
-            }
-            let ivArgs: Partial<IInitAppLayout> | undefined;
-            if (urlX && urlY && urlScale) {
-                ivArgs = {
-                    initialView: {
-                        x: urlX,
-                        y: urlY,
-                        scale: urlScale
-                    }
-                };
-            }
-            let slArgs: Partial<IInitAppLayout> | undefined;
-            if (urlShowLayers) {
-                slArgs = {
-                    initialShowLayers: [...urlShowLayers]
-                };
-            }
-            let hlArgs: Partial<IInitAppLayout> | undefined;
-            if (urlHideLayers) {
-                hlArgs = {
-                    initialHideLayers: [...urlHideLayers]
-                };
-            }
-            let sgArgs: Partial<IInitAppLayout> | undefined;
-            if (urlShowGroups) {
-                sgArgs = {
-                    initialShowGroups: [...urlShowGroups]
-                };
-            }
-            let hgArgs: Partial<IInitAppLayout> | undefined;
-            if (urlHideGroups) {
-                hgArgs = {
-                    initialHideGroups: [...urlHideGroups]
-                };
-            }
-            const args: IInitAppLayout = {
-                ...{
-                    resourceId: urlResource ?? resourceId,
-                    locale: urlLocale ?? locale ?? DEFAULT_LOCALE,
-                    externalBaseLayers: externalBaseLayers,
-                    session: urlSession ?? mapguide?.session,
-                    onInit: onInit,
-                    layout: typeof (layoutProp) == 'string' ? layoutProp : undefined,
-                    appSettings: appSettings
-                },
-                ...(ftArgs ?? {}),
-                ...(amArgs ?? {}),
-                ...(ivArgs ?? {}),
-                ...(slArgs ?? {}),
-                ...(hlArgs ?? {}),
-                ...(sgArgs ?? {}),
-                ...(hgArgs ?? {})
-            };
-            initLayoutAction(initCommand, args);
         }
+        let amArgs: Partial<IInitAppLayout> | undefined;
+        if (urlMap) {
+            amArgs = {
+                initialActiveMap: urlMap
+            };
+        }
+        let ivArgs: Partial<IInitAppLayout> | undefined;
+        if (urlX && urlY && urlScale) {
+            ivArgs = {
+                initialView: {
+                    x: urlX,
+                    y: urlY,
+                    scale: urlScale
+                }
+            };
+        }
+        let slArgs: Partial<IInitAppLayout> | undefined;
+        if (urlShowLayers) {
+            slArgs = {
+                initialShowLayers: [...urlShowLayers]
+            };
+        }
+        let hlArgs: Partial<IInitAppLayout> | undefined;
+        if (urlHideLayers) {
+            hlArgs = {
+                initialHideLayers: [...urlHideLayers]
+            };
+        }
+        let sgArgs: Partial<IInitAppLayout> | undefined;
+        if (urlShowGroups) {
+            sgArgs = {
+                initialShowGroups: [...urlShowGroups]
+            };
+        }
+        let hgArgs: Partial<IInitAppLayout> | undefined;
+        if (urlHideGroups) {
+            hgArgs = {
+                initialHideGroups: [...urlHideGroups]
+            };
+        }
+        const args: IInitAppLayout = {
+            ...{
+                resourceId: urlResource ?? resourceId,
+                locale: urlLocale ?? locale ?? DEFAULT_LOCALE,
+                externalBaseLayers: externalBaseLayers,
+                session: urlSession ?? mapguide?.session,
+                onInit: onInit,
+                layout: typeof (layoutProp) == 'string' ? layoutProp : undefined,
+                appSettings: appSettings
+            },
+            ...(ftArgs ?? {}),
+            ...(amArgs ?? {}),
+            ...(ivArgs ?? {}),
+            ...(slArgs ?? {}),
+            ...(hlArgs ?? {}),
+            ...(sgArgs ?? {}),
+            ...(hgArgs ?? {})
+        };
+        // Load the viewer resource and dispatch the appropriate init action.
+        // For ApplicationDefinition resources, initAppFromAppDef is dispatched with the
+        // loaded appDef. For WebLayout resources the payload is dispatched inline.
+        dispatch((innerDispatch: any, getState: () => any) => {
+            const opts: IInitAsyncOptions = { ...args };
+            const config = getState().config;
+            if (config.agentUri && config.agentKind) {
+                initCommand.attachClient(new Client(config.agentUri, config.agentKind));
+            }
+            return initCommand.loadResourceAsync(opts).then((resource: LoadedResource) => {
+                if (resource.kind === 'appdef') {
+                    return innerDispatch(initAppFromAppDef(initCommand, resource.sessionOptions, resource.appDef, viewer));
+                } else {
+                    // WebLayout: payload is fully assembled by loadResourceAsync
+                    applyInitPayloadOverrides(resource.payload, opts);
+                    innerDispatch({
+                        type: ActionType.INIT_APP,
+                        payload: resource.payload
+                    });
+                    if (opts.onInit && viewer) {
+                        opts.onInit(viewer);
+                    }
+                }
+            }).catch((err: any) => {
+                processAndDispatchInitError(err, false, innerDispatch, opts);
+            });
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

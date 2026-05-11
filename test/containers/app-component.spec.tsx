@@ -26,7 +26,9 @@ const mapProviderMock = vi.hoisted(() => ({
 }));
 
 const initActionsMock = vi.hoisted(() => ({
-   initLayout: vi.fn(),
+   initAppFromAppDef: vi.fn(),
+   applyInitPayloadOverrides: vi.fn(),
+   processAndDispatchInitError: vi.fn(),
 }));
 
 const templateActionsMock = vi.hoisted(() => ({
@@ -119,19 +121,29 @@ function setDefaultHookMocks() {
    hooksMock.useCustomAppSettings.mockReturnValue(undefined);
 }
 
+function makeMinimalInitCommand() {
+   return {
+      loadResourceAsync: vi.fn().mockResolvedValue({ kind: "appdef", appDef: {}, sessionOptions: {} }),
+      attachClient: vi.fn(),
+   };
+}
+
 describe("App", () => {
    beforeEach(() => {
       vi.clearAllMocks();
       setDefaultHookMocks();
 
-      const dispatch = vi.fn();
+      const state = { config: {} };
+      const dispatch = vi.fn((action: any): any => {
+         if (typeof action === "function") {
+            return action(dispatch, () => state);
+         }
+         return action;
+      });
       mapProviderMock.useReduxDispatch.mockReturnValue(dispatch);
       mapProviderMock.useMapProviderContext.mockReturnValue({ id: "viewer" });
 
-      initActionsMock.initLayout.mockImplementation((_cmd: unknown, _viewer: unknown, args: unknown) => ({
-         type: "INIT_LAYOUT",
-         payload: args,
-      }));
+      initActionsMock.initAppFromAppDef.mockReturnValue({ type: "FAKE_INIT_APP" });
       templateActionsMock.setElementStates.mockImplementation((states: unknown) => ({
          type: "SET_ELEMENT_STATES",
          payload: states,
@@ -199,10 +211,15 @@ describe("App", () => {
          .mockReturnValue({ locale: "en", session: "existing-session" });
 
       const onInit = vi.fn();
+      const mockAppDef = { WidgetSet: [], MapSet: { MapGroup: [] } };
+      const mockInitCommand = {
+         loadResourceAsync: vi.fn().mockResolvedValue({ kind: "appdef", appDef: mockAppDef, sessionOptions: {} }),
+         attachClient: vi.fn(),
+      };
 
       render(
          <App
-            initCommand={{} as any}
+            initCommand={mockInitCommand as any}
             layout="test-layout"
             resourceId="Library://FromProps/Layout.WebLayout"
             locale="en"
@@ -234,10 +251,9 @@ describe("App", () => {
          selectionPanelVisible: false,
       });
 
-      expect(initActionsMock.initLayout).toHaveBeenCalledTimes(1);
-      const initLayoutCall = initActionsMock.initLayout.mock.calls[0];
-      expect(initLayoutCall[0]).toEqual({});
-      expect(initLayoutCall[2]).toEqual(expect.objectContaining({
+      // loadResourceAsync is called with the full init options built from URL state + props
+      expect(mockInitCommand.loadResourceAsync).toHaveBeenCalledTimes(1);
+      expect(mockInitCommand.loadResourceAsync).toHaveBeenCalledWith(expect.objectContaining({
          resourceId: "Library://FromUrl/Layout.WebLayout",
          locale: "fr",
          session: "url-session",
@@ -249,6 +265,15 @@ describe("App", () => {
          initialShowGroups: ["GroupA"],
          initialHideGroups: ["GroupB"],
       }));
+
+      // For an AppDef resource, initAppFromAppDef is dispatched with the loaded appDef
+      expect(initActionsMock.initAppFromAppDef).toHaveBeenCalledTimes(1);
+      expect(initActionsMock.initAppFromAppDef).toHaveBeenCalledWith(
+         mockInitCommand,
+         {},             // sessionOptions from loadResourceAsync result
+         mockAppDef,
+         { id: "viewer" }
+      );
 
       expect(urlStateMock.updateUrl).toHaveBeenCalledTimes(1);
       expect(urlStateMock.updateUrl).toHaveBeenCalledWith(
@@ -273,7 +298,7 @@ describe("App", () => {
    it("renders loading placeholder while map is not ready", () => {
       render(
          <App
-            initCommand={{} as any}
+            initCommand={makeMinimalInitCommand() as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -289,7 +314,7 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
+            initCommand={makeMinimalInitCommand() as any}
             layout="missing-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -305,7 +330,7 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
+            initCommand={makeMinimalInitCommand() as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -322,7 +347,7 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
+            initCommand={makeMinimalInitCommand() as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />

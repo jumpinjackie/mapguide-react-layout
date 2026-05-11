@@ -33,7 +33,7 @@ export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBas
     }
 }
 
-function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
+export function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
             type: ActionType.INIT_ERROR,
@@ -340,10 +340,10 @@ export function applyInitPayloadOverrides(payload: IInitAppActionPayload, opts: 
  * runtime-map creation, toolbar/widget parsing, etc.) and dispatches `INIT_APP`.
  *
  * This is the canonical initialisation path for ApplicationDefinition-based viewers.
- * `initLayout` delegates to this action after fetching the resource; callers that
- * already hold a prepared `appDef` can dispatch this action directly, enabling
- * deterministic testing of the full init payload without needing to exercise the
- * fetch infrastructure.
+ * Callers that hold a prepared `appDef` (e.g. after calling
+ * {@link IViewerInitCommand.loadResourceAsync}) can dispatch this action directly,
+ * enabling deterministic testing of the full init payload without needing to exercise
+ * the fetch infrastructure.
  *
  * @param {IViewerInitCommand} cmd
  * @param {IInitAppLayout} options
@@ -368,51 +368,6 @@ export function initAppFromAppDef(cmd: IViewerInitCommand, options: IInitAppLayo
             });
             if (opts.onInit && viewer) {
                 opts.onInit(viewer);
-            }
-        }).catch(err => {
-            processAndDispatchInitError(err, false, dispatch, opts);
-        });
-    };
-}
-
-/**
- * Initializes the viewer by fetching the configured resource and dispatching
- * `initAppFromAppDef` for ApplicationDefinition resources or building the
- * payload inline for WebLayout resources.
- *
- * @param {IViewerInitCommand} cmd
- * @param {IMapProviderContext} viewer
- * @param {IInitAppLayout} options
- * @returns {ReduxThunkedAction}
- * 
- * @since 0.15 Added viewer parameter; delegates AppDef path to initAppFromAppDef
- */
-export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
-    const opts: IInitAsyncOptions = { ...options };
-    return (dispatch, getState) => {
-        const args = getState().config;
-        //TODO: Fetch and init the string bundle earlier if "locale" is present
-        //so the English init messages are seen only for a blink if requesting a
-        //non-english string bundle
-        if (args.agentUri && args.agentKind) {
-            const client = new Client(args.agentUri, args.agentKind);
-            cmd.attachClient(client);
-        }
-        return cmd.loadResourceAsync(opts).then(resource => {
-            if (resource.kind === 'appdef') {
-                // Route through the canonical AppDef init action so all AppDef
-                // initialisation paths share the same payload-assembly logic.
-                return dispatch(initAppFromAppDef(cmd, resource.sessionOptions, resource.appDef, viewer));
-            } else {
-                // WebLayout: payload already fully assembled by loadResourceAsync
-                applyInitPayloadOverrides(resource.payload, opts);
-                dispatch({
-                    type: ActionType.INIT_APP,
-                    payload: resource.payload
-                });
-                if (opts.onInit && viewer) {
-                    opts.onInit(viewer);
-                }
             }
         }).catch(err => {
             processAndDispatchInitError(err, false, dispatch, opts);

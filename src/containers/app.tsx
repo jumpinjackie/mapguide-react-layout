@@ -8,8 +8,7 @@ import {
     IMapViewer,
     Dictionary
 } from "../api/common";
-import { type IInitAppLayout, initLayout, processAndDispatchInitError } from "../actions/init";
-import { initAppFromAppDef } from "../actions/init-mapguide";
+import { type IInitAppLayout, initLayout } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
@@ -419,16 +418,7 @@ export const App = (props: IAppProps) => {
                 ...(sgArgs ?? {}),
                 ...(hgArgs ?? {})
             };
-            if (typeof args.resourceId === 'function') {
-                // When the caller already has the appdef available as a provider function,
-                // fetch it and dispatch initAppFromAppDef directly — no init command needed.
-                const resourceFn = args.resourceId;
-                resourceFn()
-                    .then(appDef => dispatch(initAppFromAppDef(appDef, viewer, args)))
-                    .catch(err => processAndDispatchInitError(err, false, dispatch, args));
-            } else {
-                initLayoutAction(initCommand, args);
-            }
+            initLayoutAction(initCommand, args);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

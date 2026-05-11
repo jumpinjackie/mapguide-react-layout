@@ -1,7 +1,6 @@
 import { IInitAsyncOptions, normalizeInitPayload } from './init';
 import { ActiveMapTool } from '../api/common';
 import type { ReduxDispatch, Dictionary, IMapSwipePair } from '../api/common';
-import type { IMapProviderContext } from '../components/map-providers/base';
 import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
 import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
 import { makeUnique } from '../utils/array';
@@ -218,21 +217,13 @@ export function isStateless(appDef: ApplicationDefinition) {
 
 export interface IViewerInitCommand {
     attachClient(client: Client): void;
-    /**
-     * Optionally sets the map provider context (viewer) on the command. When set, the command
-     * will dispatch {@link initAppFromAppDef} for application-definition based resources instead
-     * of building the payload internally, routing the full init flow through the new action.
-     *
-     * @since 0.15
-     */
-    setViewer?(viewer: IMapProviderContext): void;
-    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload | undefined>;
+    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
 }
 
 export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand {
     constructor(protected readonly dispatch: ReduxDispatch) { }
     public abstract attachClient(client: Client): void;
-    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload | undefined>;
+    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
     protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
     protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo>;

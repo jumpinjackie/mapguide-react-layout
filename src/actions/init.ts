@@ -33,7 +33,7 @@ export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBas
     }
 }
 
-export function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
+function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
             type: ActionType.INIT_ERROR,
@@ -295,30 +295,6 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
 }
 
 /**
- * Applies overrides from init options to the given payload.
- *
- * @hidden
- */
-export function applyInitPayloadOverrides(initPayload: IInitAppActionPayload, opts: IInitAsyncOptions): void {
-    if (opts.initialView) {
-        initPayload.initialView = {
-            ...opts.initialView
-        };
-    }
-    if (opts.initialActiveMap) {
-        initPayload.activeMapName = opts.initialActiveMap;
-    }
-    initPayload.initialHideGroups = opts.initialHideGroups;
-    initPayload.initialHideLayers = opts.initialHideLayers;
-    initPayload.initialShowGroups = opts.initialShowGroups;
-    initPayload.initialShowLayers = opts.initialShowLayers;
-    initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-    // Merge in appSettings from loaded appDef, any setting in appDef
-    // already specified at viewer mount will be overwritten
-    initPayload.appSettings = Object.assign({}, opts.appSettings, initPayload.appSettings);
-}
-
-/**
  * Initializes the viewer
  *
  * @param {IViewerInitCommand} cmd
@@ -339,10 +315,29 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
             const client = new Client(args.agentUri, args.agentKind);
             cmd.attachClient(client);
         }
-        cmd.setViewer?.(viewer);
         cmd.runAsync(options).then(payload => {
-            if (!payload) return; // setViewer was used: cmd dispatched INIT_APP internally via initAppFromAppDef
-            applyInitPayloadOverrides(payload, opts);
+            let initPayload = payload;
+            if (opts.initialView) {
+                initPayload.initialView = {
+                    ...opts.initialView
+                };
+            }
+            if (opts.initialActiveMap) {
+                initPayload.activeMapName = opts.initialActiveMap;
+            }
+            initPayload.initialHideGroups = opts.initialHideGroups;
+            initPayload.initialHideLayers = opts.initialHideLayers;
+            initPayload.initialShowGroups = opts.initialShowGroups;
+            initPayload.initialShowLayers = opts.initialShowLayers;
+            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+            // Merge in appSettings from loaded appDef, any setting in appDef
+            // already specified at viewer mount will be overwritten
+            const appSettings = opts.appSettings ?? {};
+            const inAppSettings = payload.appSettings ?? {};
+            for (const k in inAppSettings) {
+                appSettings[k] = inAppSettings[k];
+            }
+            initPayload.appSettings = appSettings;
             dispatch({
                 type: ActionType.INIT_APP,
                 payload
@@ -357,7 +352,6 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
         })
     };
 }
-
 
 export function acknowledgeInitWarnings(): IAcknowledgeStartupWarningsAction {
     return {

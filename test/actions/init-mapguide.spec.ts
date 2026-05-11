@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { DefaultViewerInitCommand, initAppFromAppDef } from "../../src/actions/init-mapguide";
+import { DefaultViewerInitCommand } from "../../src/actions/init-mapguide";
 import { AsyncLazy } from "../../src/api/lazy";
-import { ActionType } from "../../src/constants/actions";
 
 function makeRuntimeMap(name: string, sessionId: string, mentorCode: string = "LL84"): any {
     return {
@@ -526,98 +525,5 @@ describe("actions/init-mapguide", () => {
         const dict = (cmd as any).setupMaps(appDef, { Other: unrelatedMap }, {}, [], "en");
 
         expect(dict["NoMatchGroup"]).toBeUndefined();
-    });
-
-    describe("runFromAppDefAsync", () => {
-        it("is defined on DefaultViewerInitCommand", () => {
-            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
-            expect(typeof cmd.runFromAppDefAsync).toBe("function");
-        });
-
-        it("delegates to initWithSessionAsync with the provided appdef", async () => {
-            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
-            const fakePayload: any = {
-                maps: {},
-                activeMapName: "Map1",
-                locale: "en"
-            };
-            const initWithSessionSpy = vi.spyOn(cmd as any, "initWithSessionAsync").mockResolvedValue(fakePayload);
-
-            const appDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
-            const opts: any = { locale: "en", resourceId: "dummy", session: "SESSION_REUSE" };
-
-            const result = await cmd.runFromAppDefAsync(appDef, opts);
-
-            expect(initWithSessionSpy).toHaveBeenCalledOnce();
-            expect(result).toBe(fakePayload);
-        });
-
-        it("calls initLocaleAsync before delegating to initWithSessionAsync", async () => {
-            const cmd = new DefaultViewerInitCommand((() => undefined) as any);
-            const fakePayload: any = { maps: {}, activeMapName: "Map1", locale: "en" };
-            vi.spyOn(cmd as any, "initWithSessionAsync").mockResolvedValue(fakePayload);
-            const localeSpy = vi.spyOn(cmd as any, "initLocaleAsync").mockResolvedValue(undefined);
-
-            const appDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
-            await cmd.runFromAppDefAsync(appDef, { locale: "fr", resourceId: "dummy" } as any);
-
-            expect(localeSpy).toHaveBeenCalledOnce();
-        });
-    });
-
-    describe("initAppFromAppDef", () => {
-        const mockAppDef: any = { WidgetSet: [], MapSet: { MapGroup: [] } };
-        const mockViewer: any = {};
-        const mockGetState = vi.fn().mockReturnValue({ config: {} });
-
-        it("creates DefaultViewerInitCommand internally and dispatches INIT_APP", async () => {
-            const payload: any = {
-                activeMapName: "Map1",
-                locale: "en",
-                maps: {},
-                config: {},
-                capabilities: { hasTaskPane: true, hasTaskBar: true, hasStatusBar: true, hasNavigator: true, hasSelectionPanel: true, hasLegend: true, hasToolbar: true, hasViewSize: true },
-                toolbars: {},
-                warnings: []
-            };
-            const spy = vi.spyOn(DefaultViewerInitCommand.prototype, "runFromAppDefAsync").mockResolvedValue(payload);
-            const dispatch = vi.fn();
-
-            const thunk = initAppFromAppDef(mockAppDef, mockViewer, { locale: "en", resourceId: "dummy" });
-            await thunk(dispatch, mockGetState as any);
-
-            expect(spy).toHaveBeenCalledWith(mockAppDef, expect.objectContaining({ locale: "en" }));
-            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_APP }));
-            spy.mockRestore();
-        });
-
-        it("dispatches INIT_ERROR when runFromAppDefAsync rejects", async () => {
-            const spy = vi.spyOn(DefaultViewerInitCommand.prototype, "runFromAppDefAsync").mockRejectedValue(new Error("Init failed"));
-            const dispatch = vi.fn();
-
-            const thunk = initAppFromAppDef(mockAppDef, mockViewer, { locale: "en", resourceId: "dummy" });
-            await thunk(dispatch, mockGetState as any);
-
-            expect(dispatch).toHaveBeenCalledWith(expect.objectContaining({ type: ActionType.INIT_ERROR }));
-            spy.mockRestore();
-        });
-
-        it("calls onInit with viewer after dispatching INIT_APP", async () => {
-            const payload: any = {
-                activeMapName: "Map1", locale: "en", maps: {}, config: {},
-                capabilities: { hasTaskPane: true, hasTaskBar: true, hasStatusBar: true, hasNavigator: true, hasSelectionPanel: true, hasLegend: true, hasToolbar: true, hasViewSize: true },
-                toolbars: {}, warnings: []
-            };
-            const spy = vi.spyOn(DefaultViewerInitCommand.prototype, "runFromAppDefAsync").mockResolvedValue(payload);
-            const dispatch = vi.fn();
-            const onInit = vi.fn();
-            const viewer: any = { theViewer: true };
-
-            const thunk = initAppFromAppDef(mockAppDef, viewer, { locale: "en", resourceId: "dummy", onInit });
-            await thunk(dispatch, mockGetState as any);
-
-            expect(onInit).toHaveBeenCalledWith(viewer);
-            spy.mockRestore();
-        });
     });
 });

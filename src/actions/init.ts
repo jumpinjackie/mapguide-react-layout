@@ -137,6 +137,14 @@ export function normalizeInitPayload(payload: IInitAppActionPayload, layout: str
 
 export interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
+    /**
+     * When set, indicates whether the session in `session` was a pre-existing session
+     * that the caller is reusing (true) or a freshly-created session (false). Used to
+     * control whether selection-set recovery should run.
+     *
+     * @since 0.15
+     */
+    sessionWasReused?: boolean;
 }
 
 let _counter = 0;
@@ -295,14 +303,89 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
 }
 
 /**
- * Initializes the viewer
+ * Applies viewer-mount overrides and appSettings merging onto an already-built
+ * {@link IInitAppActionPayload}. Mutates `payload` in place.
+ *
+ * @hidden
+ * @since 0.15
+ */
+export function applyInitPayloadOverrides(payload: IInitAppActionPayload, opts: IInitAsyncOptions): void {
+    if (opts.initialView) {
+        payload.initialView = { ...opts.initialView };
+    }
+    if (opts.initialActiveMap) {
+        payload.activeMapName = opts.initialActiveMap;
+    }
+    payload.initialHideGroups = opts.initialHideGroups;
+    payload.initialHideLayers = opts.initialHideLayers;
+    payload.initialShowGroups = opts.initialShowGroups;
+    payload.initialShowLayers = opts.initialShowLayers;
+    payload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
+    // Merge in appSettings from loaded appDef. Any setting already specified at
+    // viewer mount will be overwritten by the appDef value.
+    const appSettings = opts.appSettings ?? {};
+    const inAppSettings = payload.appSettings ?? {};
+    for (const k in inAppSettings) {
+        appSettings[k] = inAppSettings[k];
+    }
+    payload.appSettings = appSettings;
+}
+
+/**
+ * Thunked action that initialises the viewer from a pre-loaded
+ * {@link ApplicationDefinition}.
+ *
+ * Given an already-fetched `appDef`, `cmd`, `options`, and `viewer`, this action
+ * assembles the full {@link IInitAppActionPayload} (handling locale, session management,
+ * runtime-map creation, toolbar/widget parsing, etc.) and dispatches `INIT_APP`.
+ *
+ * This is the canonical initialisation path for ApplicationDefinition-based viewers.
+ * `initLayout` delegates to this action after fetching the resource; callers that
+ * already hold a prepared `appDef` can dispatch this action directly, enabling
+ * deterministic testing of the full init payload without needing to exercise the
+ * fetch infrastructure.
+ *
+ * @param {IViewerInitCommand} cmd
+ * @param {IInitAppLayout} options
+ * @param {ApplicationDefinition} appDef
+ * @param {IMapProviderContext} viewer
+ * @returns {ReduxThunkedAction}
+ *
+ * @since 0.15
+ */
+export function initAppFromAppDef(cmd: IViewerInitCommand, options: IInitAppLayout, appDef: ApplicationDefinition, viewer: IMapProviderContext): ReduxThunkedAction {
+    return (dispatch, getState) => {
+        const args = getState().config;
+        const opts: IInitAsyncOptions = { ...options };
+        if (args.agentUri && args.agentKind) {
+            cmd.attachClient(new Client(args.agentUri, args.agentKind));
+        }
+        return cmd.runFromAppDefAsync(appDef, opts).then(payload => {
+            applyInitPayloadOverrides(payload, opts);
+            dispatch({
+                type: ActionType.INIT_APP,
+                payload
+            });
+            if (opts.onInit && viewer) {
+                opts.onInit(viewer);
+            }
+        }).catch(err => {
+            processAndDispatchInitError(err, false, dispatch, opts);
+        });
+    };
+}
+
+/**
+ * Initializes the viewer by fetching the configured resource and dispatching
+ * `initAppFromAppDef` for ApplicationDefinition resources or building the
+ * payload inline for WebLayout resources.
  *
  * @param {IViewerInitCommand} cmd
  * @param {IMapProviderContext} viewer
  * @param {IInitAppLayout} options
  * @returns {ReduxThunkedAction}
  * 
- * @since 0.15 Added viewer parameter
+ * @since 0.15 Added viewer parameter; delegates AppDef path to initAppFromAppDef
  */
 export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
     const opts: IInitAsyncOptions = { ...options };
@@ -315,41 +398,25 @@ export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext,
             const client = new Client(args.agentUri, args.agentKind);
             cmd.attachClient(client);
         }
-        cmd.runAsync(options).then(payload => {
-            let initPayload = payload;
-            if (opts.initialView) {
-                initPayload.initialView = {
-                    ...opts.initialView
-                };
-            }
-            if (opts.initialActiveMap) {
-                initPayload.activeMapName = opts.initialActiveMap;
-            }
-            initPayload.initialHideGroups = opts.initialHideGroups;
-            initPayload.initialHideLayers = opts.initialHideLayers;
-            initPayload.initialShowGroups = opts.initialShowGroups;
-            initPayload.initialShowLayers = opts.initialShowLayers;
-            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-            // Merge in appSettings from loaded appDef, any setting in appDef
-            // already specified at viewer mount will be overwritten
-            const appSettings = opts.appSettings ?? {};
-            const inAppSettings = payload.appSettings ?? {};
-            for (const k in inAppSettings) {
-                appSettings[k] = inAppSettings[k];
-            }
-            initPayload.appSettings = appSettings;
-            dispatch({
-                type: ActionType.INIT_APP,
-                payload
-            });
-            if (options.onInit) {
-                if (viewer) {
-                    options.onInit(viewer);
+        return cmd.loadResourceAsync(opts).then(resource => {
+            if (resource.kind === 'appdef') {
+                // Route through the canonical AppDef init action so all AppDef
+                // initialisation paths share the same payload-assembly logic.
+                return dispatch(initAppFromAppDef(cmd, resource.sessionOptions, resource.appDef, viewer));
+            } else {
+                // WebLayout: payload already fully assembled by loadResourceAsync
+                applyInitPayloadOverrides(resource.payload, opts);
+                dispatch({
+                    type: ActionType.INIT_APP,
+                    payload: resource.payload
+                });
+                if (opts.onInit && viewer) {
+                    opts.onInit(viewer);
                 }
             }
         }).catch(err => {
             processAndDispatchInitError(err, false, dispatch, opts);
-        })
+        });
     };
 }
 

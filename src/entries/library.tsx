@@ -205,6 +205,7 @@ export { ApplicationViewModel as Application } from "./application";
 export type { IApplicationMountOptions } from "./application";
 export { setAssetRoot } from "../utils/asset";
 export { DefaultViewerInitCommand as MapGuideViewerInitCommand } from "../actions/init-mapguide";
+export { initAppFromAppDef } from "../actions/init";
 
 // UI element customization public API
 export {

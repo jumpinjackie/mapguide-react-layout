@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { DefaultViewerInitCommand } from "../../src/actions/init-mapguide";
 import { AsyncLazy } from "../../src/api/lazy";
+import type { ApplicationDefinition } from "../../src/api/contracts/fusion";
 
 function makeRuntimeMap(name: string, sessionId: string, mentorCode: string = "LL84"): any {
     return {
@@ -525,5 +526,74 @@ describe("actions/init-mapguide", () => {
         const dict = (cmd as any).setupMaps(appDef, { Other: unrelatedMap }, {}, [], "en");
 
         expect(dict["NoMatchGroup"]).toBeUndefined();
+    });
+
+    // --- runFromAppDefAsync ---
+
+    function makeStatelessSubjectLayerAppDef(): ApplicationDefinition {
+        return {
+            Extension: { Stateless: "true" },
+            WidgetSet: [{
+                Widget: [],
+                Container: []
+            }],
+            MapSet: {
+                MapGroup: [{
+                    "@id": "TestGroup",
+                    Map: [{
+                        Type: "SubjectLayer",
+                        Extension: { source_type: "GeoJSON" }
+                    }]
+                }]
+            }
+        } as any;
+    }
+
+    it("runFromAppDefAsync builds an INIT_APP payload containing the expected map group", async () => {
+        const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+        // No client is needed: stateless AppDef with only subject layers makes no API calls.
+
+        const payload = await cmd.runFromAppDefAsync(makeStatelessSubjectLayerAppDef(), { locale: "en", resourceId: "" });
+
+        expect(payload).toBeDefined();
+        expect(payload.maps).toBeDefined();
+        expect(payload.maps["TestGroup"]).toBeDefined();
+        expect(payload.locale).toBe("en");
+    });
+
+    it("runFromAppDefAsync sets sessionWasReused=false when no session is provided", async () => {
+        const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+
+        const payload = await cmd.runFromAppDefAsync(makeStatelessSubjectLayerAppDef(), { locale: "en", resourceId: "" });
+
+        expect(payload.sessionWasReused).toBe(false);
+    });
+
+    it("runFromAppDefAsync infers sessionWasReused=true when a session string is provided without explicit flag", async () => {
+        const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+
+        // Simulate direct-call path: caller provides an existing session
+        const payload = await cmd.runFromAppDefAsync(makeStatelessSubjectLayerAppDef(), {
+            locale: "en",
+            resourceId: "",
+            session: "EXISTING_SESSION"
+        });
+
+        // sessionWasReused should be inferred as true from the presence of session
+        expect(payload.sessionWasReused).toBe(true);
+    });
+
+    it("runFromAppDefAsync respects explicit sessionWasReused=false when session is present (loadResourceAsync path)", async () => {
+        const cmd = new DefaultViewerInitCommand((() => undefined) as any);
+
+        // This mimics the sessionOptions returned by loadResourceAsync for a freshly-created session
+        const payload = await cmd.runFromAppDefAsync(makeStatelessSubjectLayerAppDef(), {
+            locale: "en",
+            resourceId: "",
+            session: "NEWLY_CREATED_SESSION",
+            sessionWasReused: false
+        });
+
+        expect(payload.sessionWasReused).toBe(false);
     });
 });

@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, MapToLoad, ViewerInitCommand } from './init-command';
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, MapToLoad, ViewerInitCommand, LoadedResource } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertWebLayoutUIItems, parseCommandsInWebLayout, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
@@ -615,32 +615,86 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
     }
-    private async sessionAcquiredAsync(session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
-        const { resourceId, locale } = this.options;
+    /**
+     * Fetches the viewer resource described by `options.resourceId` and returns it
+     * together with the session context needed for `runFromAppDefAsync`.
+     *
+     * - For ApplicationDefinition resources the raw appDef is returned and the
+     *   session (if one was created) is included in `sessionOptions` so that
+     *   `runFromAppDefAsync` can reuse it without opening a second session.
+     * - For WebLayout resources the full payload is assembled here (including
+     *   optional selection-set recovery) and returned as `{ kind: 'weblayout', payload }`.
+     *
+     * @since 0.15
+     */
+    public async loadResourceAsync(options: IInitAsyncOptions): Promise<LoadedResource> {
+        this.options = options;
+        await this.initLocaleAsync(options);
+
+        const initialSessionWasReused = !!options.session;
+        // Lazily resolved session string – only evaluated when a MapGuide resource
+        // actually needs it (createSession API call is deferred until necessary).
+        let resolvedSession: string | undefined = options.session;
+        const getSession = async (): Promise<string> => {
+            if (resolvedSession === undefined) {
+                assertIsDefined(this.client);
+                resolvedSession = await this.client.createSession("Anonymous", "");
+            }
+            return resolvedSession;
+        };
+
+        // Builds a copy of options carrying the session context for runFromAppDefAsync
+        const makeSessionOpts = (): IInitAsyncOptions => ({
+            ...options,
+            session: resolvedSession,
+            sessionWasReused: initialSessionWasReused
+        });
+
+        const { resourceId, locale } = options;
+
         if (!resourceId) {
-            //Try assumed default location of appdef.json that we are assuming sits in the same place as the viewer html files
+            //Try assumed default location of appdef.json
             const cl = new Client("", "mapagent");
             try {
                 const fl = await cl.get<ApplicationDefinition>("appdef.json");
-                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
-            } catch (e) { //The appdef.json doesn't exist at the assumed default location?
+                return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
+            } catch (e) {
                 throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
             }
         } else {
             if (typeof (resourceId) == 'string') {
                 if (strEndsWith(resourceId, "WebLayout")) {
                     assertIsDefined(this.client);
-                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: await session.getValueAsync() });
-                    return await this.initFromWebLayoutAsync(wl, session, sessionWasReused);
+                    const sessionStr = await getSession();
+                    const sessionLazy = new AsyncLazy<string>(() => Promise.resolve(sessionStr));
+                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: sessionStr });
+                    const payload = await this.initFromWebLayoutAsync(wl, sessionLazy, initialSessionWasReused);
+                    payload.sessionWasReused = initialSessionWasReused;
+                    if (initialSessionWasReused) {
+                        let initSelections: IRestoredSelectionSets = {};
+                        for (const mapName in payload.maps) {
+                            const sset = await retrieveSelectionSetFromLocalStorage(sessionLazy, mapName);
+                            if (sset) {
+                                initSelections[mapName] = sset;
+                            }
+                        }
+                        payload.initialSelections = initSelections;
+                        try {
+                            await clearSessionStore();
+                        } catch (e) {
+                        }
+                    }
+                    return { kind: 'weblayout', payload };
                 } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
                     assertIsDefined(this.client);
-                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: await session.getValueAsync() });
-                    return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                    const sessionStr = await getSession();
+                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: sessionStr });
+                    return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
                 } else {
                     if (isResourceId(resourceId)) {
                         throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
                     } else {
-                        //Assume URL to a appdef json document
+                        //Assume URL to an appdef json document
                         let fl: ApplicationDefinition;
                         if (!this.client) {
                             // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
@@ -649,32 +703,49 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
                         } else {
                             fl = await this.client.get<ApplicationDefinition>(resourceId);
                         }
-                        return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                        return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
                     }
                 }
             } else {
                 const fl = await resourceId();
-                return await this.initFromAppDefAsync(fl, session, sessionWasReused);
+                return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
             }
         }
     }
-    public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+    /**
+     * Builds and returns the {@link IInitAppActionPayload} from a pre-loaded
+     * `appDef`.  When `options.session` is present it is reused (avoiding a
+     * second `createSession` round-trip); otherwise a new session is opened on
+     * demand (only if the appDef is non-stateless).
+     *
+     * `options.sessionWasReused` controls whether selection-set recovery runs.
+     * When this field is absent it is inferred from the presence of
+     * `options.session` (matching the behaviour of a direct caller that passes
+     * an existing session without having gone through `loadResourceAsync`).
+     *
+     * @since 0.15
+     */
+    public async runFromAppDefAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
         this.options = options;
-        await this.initLocaleAsync(this.options);
-        let sessionWasReused = false;
+        await this.initLocaleAsync(options);
+
+        // When sessionWasReused is not explicitly set, infer from whether a session
+        // was provided by the caller (direct-call path without loadResourceAsync).
+        const sessionWasReused = options.sessionWasReused ?? !!options.session;
         let session: AsyncLazy<string>;
-        if (!this.options.session) {
+        if (!options.session) {
             session = new AsyncLazy<string>(async () => {
                 assertIsDefined(this.client);
-                const sid = await this.client.createSession("Anonymous", "");
-                return sid;
+                return this.client.createSession("Anonymous", "");
             });
         } else {
-            info(`Re-using session: ${this.options.session}`);
-            sessionWasReused = true;
-            session = new AsyncLazy<string>(() => Promise.resolve(this.options.session!));
+            if (options.sessionWasReused) {
+                info(`Re-using session: ${options.session}`);
+            }
+            session = new AsyncLazy<string>(() => Promise.resolve(options.session!));
         }
-        const payload = await this.sessionAcquiredAsync(session, sessionWasReused);
+
+        const payload = await this.initFromAppDefAsync(appDef, session, sessionWasReused);
         payload.sessionWasReused = sessionWasReused;
         if (sessionWasReused) {
             let initSelections: IRestoredSelectionSets = {};
@@ -686,14 +757,18 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             }
             payload.initialSelections = initSelections;
             try {
-                //In the interest of being a responsible citizen, clean up all selection-related stuff from
-                //session store
                 await clearSessionStore();
             } catch (e) {
-
             }
         }
 
         return payload;
     }
-}
+    public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
+        const resource = await this.loadResourceAsync(options);
+        if (resource.kind === 'weblayout') {
+            return resource.payload;
+        } else {
+            return this.runFromAppDefAsync(resource.appDef, resource.sessionOptions);
+        }
+    }}

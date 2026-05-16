@@ -245,7 +245,7 @@ export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand 
     protected abstract isArbitraryCoordSys(map: TSubject): boolean;
     protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
     protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo>;
-    protected async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
+    public async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
         //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
         //exists for us to fetch
         const { locale } = options;

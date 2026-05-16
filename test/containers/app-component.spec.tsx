@@ -63,6 +63,10 @@ const errorMock = vi.hoisted(() => ({
    normalizeStack: vi.fn(),
 }));
 
+const initMapguideMock = vi.hoisted(() => ({
+   loadViewerResourceAsync: vi.fn(),
+}));
+
 vi.mock("../../src/containers/hooks", () => hooksMock);
 vi.mock("../../src/containers/url-state", () => urlStateMock);
 vi.mock("../../src/components/map-providers/context", () => mapProviderMock);
@@ -73,6 +77,7 @@ vi.mock("../../src/api/runtime", () => runtimeMock);
 vi.mock("../../src/api/i18n", () => i18nMock);
 vi.mock("../../src/utils/asset", () => assetMock);
 vi.mock("../../src/utils/logger", () => loggerMock);
+vi.mock("../../src/actions/init-mapguide", () => initMapguideMock);
 
 vi.mock("../../src/components/context", () => ({
    AppContextProvider: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="app-context">{children}</div>,
@@ -127,7 +132,6 @@ function setDefaultHookMocks() {
 
 function makeMinimalInitCommand() {
    return {
-      loadResourceAsync: vi.fn().mockResolvedValue({ kind: "appdef", appDef: {}, sessionOptions: {} }),
       attachClient: vi.fn(),
    };
 }
@@ -148,6 +152,7 @@ describe("App", () => {
       mapProviderMock.useMapProviderContext.mockReturnValue({ id: "viewer" });
 
       initActionsMock.initAppFromAppDef.mockReturnValue({ type: "FAKE_INIT_APP" });
+      initMapguideMock.loadViewerResourceAsync.mockResolvedValue({ kind: "appdef", appDef: {}, sessionOptions: {} });
       templateActionsMock.setElementStates.mockImplementation((states: unknown) => ({
          type: "SET_ELEMENT_STATES",
          payload: states,
@@ -217,9 +222,11 @@ describe("App", () => {
       const onInit = vi.fn();
       const mockAppDef = { WidgetSet: [], MapSet: { MapGroup: [] } };
       const mockInitCommand = {
-         loadResourceAsync: vi.fn().mockResolvedValue({ kind: "appdef", appDef: mockAppDef, sessionOptions: {} }),
          attachClient: vi.fn(),
       };
+
+      // Override loadViewerResourceAsync for this test to return a specific appDef
+      initMapguideMock.loadViewerResourceAsync.mockResolvedValueOnce({ kind: "appdef", appDef: mockAppDef, sessionOptions: {} });
 
       render(
          <App
@@ -255,20 +262,23 @@ describe("App", () => {
          selectionPanelVisible: false,
       });
 
-      // loadResourceAsync is called with the full init options built from URL state + props
-      expect(mockInitCommand.loadResourceAsync).toHaveBeenCalledTimes(1);
-      expect(mockInitCommand.loadResourceAsync).toHaveBeenCalledWith(expect.objectContaining({
-         resourceId: "Library://FromUrl/Layout.WebLayout",
-         locale: "fr",
-         session: "url-session",
-         initialActiveMap: "UrlMap",
-         featureTooltipsEnabled: false,
-         initialView: { x: 1, y: 2, scale: 1000 },
-         initialShowLayers: ["LayerA"],
-         initialHideLayers: ["LayerB"],
-         initialShowGroups: ["GroupA"],
-         initialHideGroups: ["GroupB"],
-      }));
+      // loadViewerResourceAsync is called with the init command and full init options built from URL state + props
+      expect(initMapguideMock.loadViewerResourceAsync).toHaveBeenCalledTimes(1);
+      expect(initMapguideMock.loadViewerResourceAsync).toHaveBeenCalledWith(
+         mockInitCommand,
+         expect.objectContaining({
+            resourceId: "Library://FromUrl/Layout.WebLayout",
+            locale: "fr",
+            session: "url-session",
+            initialActiveMap: "UrlMap",
+            featureTooltipsEnabled: false,
+            initialView: { x: 1, y: 2, scale: 1000 },
+            initialShowLayers: ["LayerA"],
+            initialHideLayers: ["LayerB"],
+            initialShowGroups: ["GroupA"],
+            initialHideGroups: ["GroupB"],
+         })
+      );
 
       // For an AppDef resource, initAppFromAppDef is dispatched with the loaded appDef
       expect(initActionsMock.initAppFromAppDef).toHaveBeenCalledTimes(1);

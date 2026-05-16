@@ -45,7 +45,6 @@ function makeMockCmd(payload?: IInitAppActionPayload, rejectWith?: Error): IView
     return {
         attachClient: vi.fn(),
         runAsync: vi.fn(),
-        loadResourceAsync: vi.fn(),
         runFromAppDefAsync: rejectWith
             ? vi.fn().mockRejectedValue(rejectWith)
             : vi.fn().mockResolvedValue(payload ?? makeMinimalPayload())

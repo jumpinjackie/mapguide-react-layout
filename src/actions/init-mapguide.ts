@@ -51,6 +51,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
     constructor(dispatch: ReduxDispatch) {
         super(dispatch);
     }
+    public getClient(): Client | undefined { return this.client; }
     public attachClient(client: Client): void {
         this.client = client;
     }
@@ -93,9 +94,9 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             return `Map_${scopedId.next()}`;
         }
     }
-    private async initFromWebLayoutAsync(webLayout: WebLayout, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
-        const [mapsByName, , warnings] = await this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
-        const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
+    public async initFromWebLayoutAsync(webLayout: WebLayout, options: IInitAsyncOptions, session: AsyncLazy<string>, sessionWasReused: boolean): Promise<IInitAppActionPayload> {
+        const [mapsByName, , warnings] = await this.createRuntimeMapsAsync(options, session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
+        const { locale, featureTooltipsEnabled, externalBaseLayers } = options;
         const cmdsByKey = parseCommandsInWebLayout(webLayout, registerCommand);
         const mainToolbar = (webLayout.ToolBar.Visible
             ? convertWebLayoutUIItems(webLayout.ToolBar.Button, cmdsByKey, locale)
@@ -140,7 +141,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             maps[mapName] = {
                 mapGroupId: mapName,
                 map: map,
-                externalBaseLayers: this.options.externalBaseLayers ?? [],
+                externalBaseLayers: externalBaseLayers ?? [],
                 initialView: initialView
             };
         }
@@ -225,11 +226,11 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             throw e;
         }
     }
-    private async createRuntimeMapsAsync<TLayout>(session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, Dictionary<MapToLoad>, string[]]> {
+    private async createRuntimeMapsAsync<TLayout>(options: IInitAsyncOptions, session: AsyncLazy<string>, res: TLayout, isStateless: boolean, mapDefSelector: (res: TLayout) => (MapToLoad | IGenericSubjectMapLayer)[], projectionSelector: (res: TLayout) => string[], sessionWasReused: boolean): Promise<[Dictionary<SubjectLayerType>, Dictionary<MapToLoad>, string[]]> {
         const mapDefs = mapDefSelector(res);
         const mapPromises: Promise<RuntimeMap>[] = [];
         const warnings = [] as string[];
-        const { locale } = this.options;
+        const { locale } = options;
         const subjectLayers: Dictionary<IGenericSubjectMapLayer> = {};
         const fetchEpsgs: { epsg: string, mapDef: string }[] = [];
         const pendingMapDefs: Dictionary<MapToLoad> = {};
@@ -251,7 +252,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
         // to identify which map to eagerly recover. If the URL param doesn't match any map in the
         // appdef (or is absent), fall back to the first map by position.
-        const initialActiveMapName = this.options.initialActiveMap;
+        const initialActiveMapName = options.initialActiveMap;
         const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
         if (isStateless) { 
             for (const m of mapDefs) {
@@ -612,105 +613,8 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
             }
             register(proj4);
         }
-        const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
+        const [mapsByName, pendingMapDefs, warnings] = await this.createRuntimeMapsAsync(this.options, session, appDef, isStateless(appDef), fl => getMapDefinitionsFromFlexLayout(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
         return await this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
-    }
-    /**
-     * Fetches the viewer resource described by `options.resourceId` and returns it
-     * together with the session context needed for `runFromAppDefAsync`.
-     *
-     * - For ApplicationDefinition resources the raw appDef is returned and the
-     *   session (if one was created) is included in `sessionOptions` so that
-     *   `runFromAppDefAsync` can reuse it without opening a second session.
-     * - For WebLayout resources the full payload is assembled here (including
-     *   optional selection-set recovery) and returned as `{ kind: 'weblayout', payload }`.
-     *
-     * @since 0.15
-     */
-    public async loadResourceAsync(options: IInitAsyncOptions): Promise<LoadedResource> {
-        this.options = options;
-        await this.initLocaleAsync(options);
-
-        const initialSessionWasReused = !!options.session;
-        // Lazily resolved session string – only evaluated when a MapGuide resource
-        // actually needs it (createSession API call is deferred until necessary).
-        let resolvedSession: string | undefined = options.session;
-        const getSession = async (): Promise<string> => {
-            if (resolvedSession === undefined) {
-                assertIsDefined(this.client);
-                resolvedSession = await this.client.createSession("Anonymous", "");
-            }
-            return resolvedSession;
-        };
-
-        // Builds a copy of options carrying the session context for runFromAppDefAsync
-        const makeSessionOpts = (): IInitAsyncOptions => ({
-            ...options,
-            session: resolvedSession,
-            sessionWasReused: initialSessionWasReused
-        });
-
-        const { resourceId, locale } = options;
-
-        if (!resourceId) {
-            //Try assumed default location of appdef.json
-            const cl = new Client("", "mapagent");
-            try {
-                const fl = await cl.get<ApplicationDefinition>("appdef.json");
-                return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
-            } catch (e) {
-                throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
-            }
-        } else {
-            if (typeof (resourceId) == 'string') {
-                if (strEndsWith(resourceId, "WebLayout")) {
-                    assertIsDefined(this.client);
-                    const sessionStr = await getSession();
-                    const sessionLazy = new AsyncLazy<string>(() => Promise.resolve(sessionStr));
-                    const wl = await this.client.getResource<WebLayout>(resourceId, { SESSION: sessionStr });
-                    const payload = await this.initFromWebLayoutAsync(wl, sessionLazy, initialSessionWasReused);
-                    payload.sessionWasReused = initialSessionWasReused;
-                    if (initialSessionWasReused) {
-                        let initSelections: IRestoredSelectionSets = {};
-                        for (const mapName in payload.maps) {
-                            const sset = await retrieveSelectionSetFromLocalStorage(sessionLazy, mapName);
-                            if (sset) {
-                                initSelections[mapName] = sset;
-                            }
-                        }
-                        payload.initialSelections = initSelections;
-                        try {
-                            await clearSessionStore();
-                        } catch (e) {
-                        }
-                    }
-                    return { kind: 'weblayout', payload };
-                } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
-                    assertIsDefined(this.client);
-                    const sessionStr = await getSession();
-                    const fl = await this.client.getResource<ApplicationDefinition>(resourceId, { SESSION: sessionStr });
-                    return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
-                } else {
-                    if (isResourceId(resourceId)) {
-                        throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
-                    } else {
-                        //Assume URL to an appdef json document
-                        let fl: ApplicationDefinition;
-                        if (!this.client) {
-                            // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
-                            const cl = new Client("", "mapagent");
-                            fl = await cl.get<ApplicationDefinition>(resourceId);
-                        } else {
-                            fl = await this.client.get<ApplicationDefinition>(resourceId);
-                        }
-                        return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
-                    }
-                }
-            } else {
-                const fl = await resourceId();
-                return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
-            }
-        }
     }
     /**
      * Builds and returns the {@link IInitAppActionPayload} from a pre-loaded
@@ -721,7 +625,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
      * `options.sessionWasReused` controls whether selection-set recovery runs.
      * When this field is absent it is inferred from the presence of
      * `options.session` (matching the behaviour of a direct caller that passes
-     * an existing session without having gone through `loadResourceAsync`).
+     * an existing session without having gone through `loadViewerResourceAsync`).
      *
      * @since 0.15
      */
@@ -730,7 +634,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         await this.initLocaleAsync(options);
 
         // When sessionWasReused is not explicitly set, infer from whether a session
-        // was provided by the caller (direct-call path without loadResourceAsync).
+        // was provided by the caller (direct-call path without loadViewerResourceAsync).
         const sessionWasReused = options.sessionWasReused ?? !!options.session;
         let session: AsyncLazy<string>;
         if (!options.session) {
@@ -765,7 +669,7 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
         return payload;
     }
     public async runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload> {
-        const resource = await this.loadResourceAsync(options);
+        const resource = await loadViewerResourceAsync(this, options);
         if (resource.kind === 'weblayout') {
             return resource.payload;
         } else {
@@ -800,6 +704,91 @@ export class DefaultViewerInitCommand extends ViewerInitCommand<SubjectLayerType
  *
  * @since 0.15
  */
-export function loadViewerResourceAsync(cmd: DefaultViewerInitCommand, options: IInitAsyncOptions): Promise<LoadedResource> {
-    return cmd.loadResourceAsync(options);
+export async function loadViewerResourceAsync(cmd: DefaultViewerInitCommand, options: IInitAsyncOptions): Promise<LoadedResource> {
+    await cmd.initLocaleAsync(options);
+
+    const initialSessionWasReused = !!options.session;
+    // Lazily resolved session string – only evaluated when a MapGuide resource
+    // actually needs it (createSession API call is deferred until necessary).
+    let resolvedSession: string | undefined = options.session;
+    const getSession = async (): Promise<string> => {
+        if (resolvedSession === undefined) {
+            const client = cmd.getClient();
+            assertIsDefined(client);
+            resolvedSession = await client.createSession("Anonymous", "");
+        }
+        return resolvedSession;
+    };
+
+    // Builds a copy of options carrying the session context for runFromAppDefAsync
+    const makeSessionOpts = (): IInitAsyncOptions => ({
+        ...options,
+        session: resolvedSession,
+        sessionWasReused: initialSessionWasReused
+    });
+
+    const { resourceId, locale } = options;
+
+    if (!resourceId) {
+        //Try assumed default location of appdef.json
+        const cl = new Client("", "mapagent");
+        try {
+            const fl = await cl.get<ApplicationDefinition>("appdef.json");
+            return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
+        } catch (e) {
+            throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+        }
+    } else {
+        if (typeof (resourceId) == 'string') {
+            if (strEndsWith(resourceId, "WebLayout")) {
+                const client = cmd.getClient();
+                assertIsDefined(client);
+                const sessionStr = await getSession();
+                const sessionLazy = new AsyncLazy<string>(() => Promise.resolve(sessionStr));
+                const wl = await client.getResource<WebLayout>(resourceId, { SESSION: sessionStr });
+                const payload = await cmd.initFromWebLayoutAsync(wl, options, sessionLazy, initialSessionWasReused);
+                payload.sessionWasReused = initialSessionWasReused;
+                if (initialSessionWasReused) {
+                    let initSelections: IRestoredSelectionSets = {};
+                    for (const mapName in payload.maps) {
+                        const sset = await retrieveSelectionSetFromLocalStorage(sessionLazy, mapName);
+                        if (sset) {
+                            initSelections[mapName] = sset;
+                        }
+                    }
+                    payload.initialSelections = initSelections;
+                    try {
+                        await clearSessionStore();
+                    } catch (e) {
+                    }
+                }
+                return { kind: 'weblayout', payload };
+            } else if (strEndsWith(resourceId, "ApplicationDefinition")) {
+                const client = cmd.getClient();
+                assertIsDefined(client);
+                const sessionStr = await getSession();
+                const fl = await client.getResource<ApplicationDefinition>(resourceId, { SESSION: sessionStr });
+                return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
+            } else {
+                if (isResourceId(resourceId)) {
+                    throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
+                } else {
+                    //Assume URL to an appdef json document
+                    let fl: ApplicationDefinition;
+                    const client = cmd.getClient();
+                    if (!client) {
+                        // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
+                        const cl = new Client("", "mapagent");
+                        fl = await cl.get<ApplicationDefinition>(resourceId);
+                    } else {
+                        fl = await client.get<ApplicationDefinition>(resourceId);
+                    }
+                    return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
+                }
+            }
+        } else {
+            const fl = await resourceId();
+            return { kind: 'appdef', appDef: fl, sessionOptions: makeSessionOpts() };
+        }
+    }
 }

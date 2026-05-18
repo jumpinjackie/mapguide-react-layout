@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, dispatches initAppFromDocument, and produces expected redux baseline state 1`] = `
+exports[`actions/init dispatchable integration > produces the same redux golden-master state for legacy(de-arrayified) and clean appdefs 1`] = `
 {
   "config": {
     "activeMapName": "Sheboygan",
@@ -69,7 +69,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
     },
   },
   "initError": {
-    "error": undefined,
     "includeStack": true,
     "options": {},
     "warnings": [],
@@ -77,9 +76,7 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
   "lastaction": {},
   "mapState": {
     "Melbourne": {
-      "clientSelection": undefined,
       "coordinateFormat": "Easting: {x} {units}, Northing: {y} {units}",
-      "currentView": undefined,
       "externalBaseLayers": [
         {
           "kind": "Stamen",
@@ -96,30 +93,21 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           "options": {},
         },
       ],
-      "generic": undefined,
       "history": [],
       "historyIndex": -1,
       "initialExternalLayers": [],
-      "initialView": undefined,
-      "layers": undefined,
       "mapguide": {
-        "activeSelectedFeature": undefined,
         "expandedGroups": {},
         "hideGroups": [],
         "hideLayers": [],
         "isArbitraryCs": false,
         "layerTransparency": {},
-        "runtimeMap": undefined,
         "selectableLayers": {},
-        "selectionSet": undefined,
         "showGroups": [],
         "showLayers": [],
       },
     },
     "Redding": {
-      "clientSelection": undefined,
-      "coordinateFormat": undefined,
-      "currentView": undefined,
       "externalBaseLayers": [
         {
           "kind": "Stamen",
@@ -136,28 +124,21 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           "options": {},
         },
       ],
-      "generic": undefined,
       "history": [],
       "historyIndex": -1,
       "initialExternalLayers": [],
-      "initialView": undefined,
-      "layers": undefined,
       "mapguide": {
-        "activeSelectedFeature": undefined,
         "expandedGroups": {},
         "hideGroups": [],
         "hideLayers": [],
         "isArbitraryCs": false,
         "layerTransparency": {},
-        "runtimeMap": undefined,
         "selectableLayers": {},
-        "selectionSet": undefined,
         "showGroups": [],
         "showLayers": [],
       },
     },
     "Sheboygan": {
-      "clientSelection": undefined,
       "coordinateFormat": "Lng: {x} {units}, Lat: {y} {units}",
       "currentView": {
         "scale": 70000,
@@ -165,14 +146,10 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
         "y": 43.74,
       },
       "externalBaseLayers": [],
-      "generic": undefined,
       "history": [],
       "historyIndex": -1,
       "initialExternalLayers": [],
-      "initialView": undefined,
-      "layers": undefined,
       "mapguide": {
-        "activeSelectedFeature": undefined,
         "expandedGroups": {},
         "hideGroups": [
           "G2",
@@ -260,7 +237,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           "SiteVersion": "4.0.0.0",
         },
         "selectableLayers": {},
-        "selectionSet": undefined,
         "showGroups": [
           "G1",
         ],
@@ -271,9 +247,7 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
     },
   },
   "modal": {},
-  "mouse": {
-    "coords": undefined,
-  },
+  "mouse": {},
   "taskpane": {
     "initialUrl": "http://localhost:3000/server/TaskPane.html?MAPNAME=Sheboygan&SESSION=SESSION-BASELINE&LOCALE=en",
     "lastUrlPushed": false,
@@ -299,7 +273,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "RefreshMap",
             "icon": "images/icons.png",
             "label": "Refresh",
-            "parameters": null,
             "spriteClass": "view-refresh",
             "tooltip": "Click to redraw the map",
           },
@@ -310,7 +283,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "Pan",
             "icon": "images/icons.png",
             "label": "Pan",
-            "parameters": null,
             "spriteClass": "pan",
             "tooltip": "Click and drag to pan the map",
           },
@@ -354,10 +326,7 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           },
           {
             "children": [],
-            "icon": null,
             "label": "Zoom",
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "isSeparator": true,
@@ -378,16 +347,12 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "ClearSelection",
             "icon": "images/icons.png",
             "label": "Clear Selection",
-            "parameters": null,
             "spriteClass": "select-clear",
             "tooltip": "Click to clear the current selection",
           },
           {
             "children": [],
-            "icon": null,
             "label": "Select More",
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "isSeparator": true,
@@ -575,16 +540,12 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           },
           {
             "command": "AddExternalLayers",
-            "icon": null,
             "label": "Manage External Layers",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "TaskPane",
               "Url": "component://AddManageLayers",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "CoordinateTracker",
@@ -602,33 +563,25 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           },
         ],
       },
-      "Tools_4": {
+      "Tools_<id>": {
         "children": [
           {
             "command": "AddExternalLayers",
-            "icon": null,
             "label": "Manage External Layers",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "TaskPane",
               "Url": "component://AddManageLayers",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "ShareLink",
-            "icon": null,
             "label": "Share Link to View",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "InvokeUrlWindow",
               "Url": "component://ShareLinkToView",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "Geolocation",
@@ -658,90 +611,66 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           },
         ],
       },
-      "View_2": {
+      "View_<id>": {
         "children": [
           {
             "command": "showOverview",
-            "icon": null,
             "label": "Show Overview",
             "parameters": {
               "Script": "showOverviewMap()",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "showTaskPane",
-            "icon": null,
             "label": "Show Task Pane",
             "parameters": {
               "Script": "showTaskPane()",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "showLegend",
-            "icon": null,
             "label": "Show Legend",
             "parameters": {
               "Script": "showLegend()",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "showSelectionPanel",
-            "icon": null,
             "label": "Show Selection Panel",
             "parameters": {
               "Script": "showSelectionPanel()",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
         ],
       },
-      "Viewer API_3": {
+      "Viewer API_<id>": {
         "children": [
           {
             "command": "ViewerApiExample",
-            "icon": null,
             "label": "Viewer API Example",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "TaskPane",
               "Url": "examples/taskpane/viewerapi.html",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "DrawingExample",
-            "icon": null,
             "label": "Drawing Example",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "TaskPane",
               "Url": "examples/taskpane/drawing.html",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
             "command": "SubscriberExample",
-            "icon": null,
             "label": "Subscriber API Example",
             "parameters": {
-              "AdditionalParameter": null,
               "DisableIfSelectionEmpty": "false",
               "Target": "TaskPane",
               "Url": "examples/taskpane/subscriberapi.html",
             },
-            "spriteClass": null,
-            "tooltip": null,
           },
         ],
       },
@@ -751,7 +680,7 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
         "items": [
           {
             "componentName": "MapMenu",
-            "flyoutId": "MapMenu_0",
+            "flyoutId": "MapMenu_<id>",
             "icon": "images/icons.png",
             "label": "Maps",
             "parameters": {},
@@ -760,33 +689,23 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           },
           {
             "componentName": "BaseMapSwitcher",
-            "flyoutId": "BaseMapSwitcher_1",
+            "flyoutId": "BaseMapSwitcher_<id>",
             "icon": "images/icons.png",
             "label": "External Providers",
-            "parameters": null,
             "spriteClass": "options",
             "tooltip": "Click to change the basemap",
           },
           {
-            "flyoutId": "View_2",
-            "icon": null,
+            "flyoutId": "View_<id>",
             "label": "View",
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
-            "flyoutId": "Viewer API_3",
-            "icon": null,
+            "flyoutId": "Viewer API_<id>",
             "label": "Viewer API",
-            "spriteClass": null,
-            "tooltip": null,
           },
           {
-            "flyoutId": "Tools_4",
-            "icon": null,
+            "flyoutId": "Tools_<id>",
             "label": "Tools",
-            "spriteClass": null,
-            "tooltip": null,
           },
         ],
       },
@@ -840,7 +759,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
               "ShowSubTitle": "true",
               "Target": "TaskPane",
             },
-            "spriteClass": null,
             "tooltip": "Click to create a plot quickly",
           },
           {
@@ -850,7 +768,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "RefreshMap",
             "icon": "images/icons.png",
             "label": "Refresh",
-            "parameters": null,
             "spriteClass": "view-refresh",
             "tooltip": "Click to redraw the map",
           },
@@ -907,7 +824,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "ClearSelection",
             "icon": "images/icons.png",
             "label": "Clear Selection",
-            "parameters": null,
             "spriteClass": "select-clear",
             "tooltip": "Click to clear the current selection",
           },
@@ -1034,7 +950,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
             "command": "Pan",
             "icon": "images/icons.png",
             "label": "Pan",
-            "parameters": null,
             "spriteClass": "pan",
             "tooltip": "Click and drag to pan the map",
           },
@@ -1118,7 +1033,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "Select",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "QueryActiveLayer": "false",
               "SelectionType": "INTERSECTS",
@@ -1133,15 +1047,12 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "Pan",
             "icon": "images/icons.png",
-            "label": null,
-            "parameters": null,
             "spriteClass": "pan",
             "tooltip": "Click and drag to pan the map",
           },
           {
             "command": "Zoom",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "Direction": "in",
               "Factor": "2",
@@ -1153,7 +1064,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "ZoomIn",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "Factor": "2",
             },
@@ -1163,7 +1073,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "ZoomOut",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "Factor": "0.5",
             },
@@ -1173,7 +1082,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "ZoomExtents",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "ViewType": "initial",
             },
@@ -1183,7 +1091,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "ZoomToSelection",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "MaximumZoomDimension": "-1",
               "ZoomFactor": "2",
@@ -1194,7 +1101,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "PreviousView",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "Direction": "previous",
             },
@@ -1204,7 +1110,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
           {
             "command": "NextView",
             "icon": "images/icons.png",
-            "label": null,
             "parameters": {
               "Direction": "next",
             },
@@ -1218,7 +1123,6 @@ exports[`actions/init dispatchable integration > de-arrayifies legacy appdef, di
   "viewer": {
     "busyCount": 0,
     "featureTooltipsEnabled": false,
-    "size": undefined,
     "tool": 2,
   },
 }

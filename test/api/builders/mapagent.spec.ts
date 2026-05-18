@@ -5,6 +5,7 @@ describe("api/builders/mapagent getResource", () => {
    beforeEach(() => {
       vi.restoreAllMocks();
       vi.clearAllMocks();
+      (MapAgentRequestBuilder as any).siteVersionCache.clear();
    });
 
    it("uses GETRESOURCECONTENT VERSION=4.0.0 CLEAN=1 for ApplicationDefinition on 4.0+ and skips de-arrayification", async () => {
@@ -151,5 +152,94 @@ describe("api/builders/mapagent getResource", () => {
       expect(wlUrl).toContain("OPERATION=GETRESOURCECONTENT");
       expect(wlUrl).toContain("VERSION=1.0.0");
       expect(wlUrl).not.toContain("CLEAN=1");
+   });
+
+   it("caches and reuses GETSITEVERSION responses per agent uri", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch" as any)
+         .mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({ SiteVersion: { Version: ["4.0.0.0"] } }),
+         } as Response);
+
+      const builder1 = new MapAgentRequestBuilder("http://example.test/mapagent/cache.fcgi");
+      const builder2 = new MapAgentRequestBuilder("http://example.test/mapagent/cache.fcgi");
+
+      await expect(builder1.getSiteVersion()).resolves.toEqual({ Version: "4.0.0.0" });
+      await expect(builder2.getSiteVersion()).resolves.toEqual({ Version: "4.0.0.0" });
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const siteVersionUrl = fetchSpy.mock.calls[0][0] as string;
+      expect(siteVersionUrl).toContain("OPERATION=GETSITEVERSION");
+   });
+
+   it("uses clean v4 runtime map creation and skips de-arrayification", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch" as any)
+         .mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+               RuntimeMap: {
+                  Name: "Map1",
+                  SessionId: "S1",
+                  SiteVersion: "4.0.0.0",
+                  BackgroundColor: "FF000000",
+                  DisplayDpi: 96,
+                  CoordinateSystem: { Wkt: "", MentorCode: "", EpsgCode: "4326", MetersPerUnit: 1 },
+                  Extents: {
+                     LowerLeftCoordinate: { X: 0, Y: 0 },
+                     UpperRightCoordinate: { X: 100, Y: 100 },
+                  },
+                  Group: [],
+                  Layer: [],
+               },
+            }),
+         } as Response);
+
+      const builder = new MapAgentRequestBuilder("http://example.test/mapagent/runtime-create.fcgi");
+      const map = await builder.createRuntimeMap_v4({ mapDefinition: "Library://Samples/Sheboygan.MapDefinition", targetMapName: "Map1" } as any);
+
+      expect(map.Name).toBe("Map1");
+      expect(map.Group).toEqual([]);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const url = fetchSpy.mock.calls[0][0] as string;
+      expect(url).toContain("OPERATION=CREATERUNTIMEMAP");
+      expect(url).toContain("VERSION=4.0.0");
+      expect(url).toContain("CLEAN=1");
+   });
+
+   it("uses clean v4 runtime map description and skips de-arrayification", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch" as any)
+         .mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+               RuntimeMap: {
+                  Name: "Map2",
+                  SessionId: "S2",
+                  SiteVersion: "4.0.0.0",
+                  BackgroundColor: "FF000000",
+                  DisplayDpi: 96,
+                  CoordinateSystem: { Wkt: "", MentorCode: "", EpsgCode: "4326", MetersPerUnit: 1 },
+                  Extents: {
+                     LowerLeftCoordinate: { X: 0, Y: 0 },
+                     UpperRightCoordinate: { X: 100, Y: 100 },
+                  },
+                  Group: [],
+                  Layer: [],
+               },
+            }),
+         } as Response);
+
+      const builder = new MapAgentRequestBuilder("http://example.test/mapagent/runtime-describe.fcgi");
+      const map = await builder.describeRuntimeMap_v4({ mapname: "Map2", requestedFeatures: 7 } as any);
+
+      expect(map.Name).toBe("Map2");
+      expect(map.Layer).toEqual([]);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const url = fetchSpy.mock.calls[0][0] as string;
+      expect(url).toContain("OPERATION=DESCRIBERUNTIMEMAP");
+      expect(url).toContain("VERSION=4.0.0");
+      expect(url).toContain("CLEAN=1");
    });
 });

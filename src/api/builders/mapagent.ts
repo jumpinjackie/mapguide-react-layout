@@ -40,7 +40,7 @@ export function serialize(data: any, uppercase: boolean = true): string {
  */
 export class MapAgentRequestBuilder extends RequestBuilder {
     private locale: string;
-    private cachedSiteVersion: SiteVersionResponse | null = null;
+        private static siteVersionCache = new Map<string, Promise<SiteVersionResponse>>();
     constructor(agentUri: string, locale: string = DEFAULT_LOCALE) {
         super(agentUri);
         this.locale = locale;
@@ -76,17 +76,18 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         return json;
     }
 
-    private async getCachedSiteVersion(): Promise<SiteVersionResponse> {
-        if (this.cachedSiteVersion) {
-            return this.cachedSiteVersion;
+        private extractCleanRuntimeMapJson(json: any): any {
+            if (json?.RuntimeMap) {
+                return json.RuntimeMap;
         }
-        const sv = await this.getSiteVersion();
-        this.cachedSiteVersion = sv;
-        return sv;
+            if (json?.Map) {
+                return json.Map;
+            }
+            return json;
     }
 
     private async canUseCleanResourceContent(): Promise<boolean> {
-        const sv = await this.getCachedSiteVersion();
+            const sv = await this.getSiteVersion();
         const [major] = parseSiteVersion(sv.Version);
         return major >= 4;
     }
@@ -208,9 +209,19 @@ export class MapAgentRequestBuilder extends RequestBuilder {
     }
 
     public getSiteVersion(): Promise<SiteVersionResponse> {
-        const p1 = { operation: "GETSITEVERSION", version: "1.0.0", username: "Anonymous" };
-        const url = this.stringifyGetUrl({ ...p1 });
-        return this.get<SiteVersionResponse>(url);
+            const cached = MapAgentRequestBuilder.siteVersionCache.get(this.agentUri);
+            if (cached) {
+                return cached;
+            }
+
+            const p1 = { operation: "GETSITEVERSION", version: "1.0.0", username: "Anonymous" };
+            const url = this.stringifyGetUrl({ ...p1 });
+            const pending = this.get<SiteVersionResponse>(url).catch((error) => {
+                MapAgentRequestBuilder.siteVersionCache.delete(this.agentUri);
+                throw error;
+            });
+            MapAgentRequestBuilder.siteVersionCache.set(this.agentUri, pending);
+            return pending;
     }
 
     public createRuntimeMap(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
@@ -219,10 +230,11 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         return this.get<RuntimeMap>(url);
     }
 
-    public createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
-        const p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0" };
+    public async createRuntimeMap_v4(options: ICreateRuntimeMapOptions): Promise<RuntimeMap> {
+        const p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0", clean: 1 };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<RuntimeMap>(url);
+        const json = await this.getRawJson(url);
+        return this.extractCleanRuntimeMapJson(json) as RuntimeMap;
     }
 
     public queryMapFeatures(options: IQueryMapFeaturesOptions): Promise<QueryMapFeaturesResponse> {
@@ -241,10 +253,11 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         return this.get<RuntimeMap>(url);
     }
 
-    public describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
-        const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0" };
+    public async describeRuntimeMap_v4(options: IDescribeRuntimeMapOptions): Promise<RuntimeMap> {
+        const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0", clean: 1 };
         const url = this.stringifyGetUrl({ ...options, ...p1 });
-        return this.get<RuntimeMap>(url);
+        const json = await this.getRawJson(url);
+        return this.extractCleanRuntimeMapJson(json) as RuntimeMap;
     }
 
     public getTileTemplateUrl(resourceId: string, groupName: string, xPlaceholder: string, yPlaceholder: string, zPlaceholder: string, isXYZ: boolean): string {

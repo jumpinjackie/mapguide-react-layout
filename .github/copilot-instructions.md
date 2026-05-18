@@ -8,6 +8,7 @@
 - React component prop interfaces should be suffixed with `Props` (e.g., `UserProps`).
 - Use `const` for constants and `let` for variables that may change.
 - Use `async/await` for asynchronous code.
+- NEVER USE `await import(...)` inside functions. Always use static imports at the top of the file. Depending on the use case, dynamic imports may be used at the top of the file, but they should never be used inside functions.
 - Use TypeScript mapped and utility types where possible to avoid creating new types.
 - In any exported function or class that is generated, insert a `@hidden` tag in the JSDoc comment to indicate that it is not intended for public use.
    - This tag may be removed at a later time at the author's discretion. Do not re-insert this tag if it is not already present in any JSDoc comments.

@@ -4,19 +4,23 @@ import {
     ApplicationDefinition,
     MapConfiguration
 } from "../api/contracts/fusion";
+import { WebLayout } from '../api/contracts/weblayout';
 import {
     IExternalBaseLayer,
     ReduxThunkedAction,
     IMapViewer
 } from "../api/common";
-import { strIsNullOrEmpty, strReplaceAll } from "../utils/string";
-import { IAcknowledgeStartupWarningsAction, IInitAppActionPayload } from './defs';
+import { isResourceId, strEndsWith, strIsNullOrEmpty, strReplaceAll } from "../utils/string";
+import { IAcknowledgeStartupWarningsAction, IInitAppActionPayload, IRestoredSelectionSets } from './defs';
 import { ActionType } from '../constants/actions';
 import { tr } from '../api/i18n';
-import { IViewerInitCommand } from './init-command';
 import { getLayoutCapabilities } from "../api/registry/layout";
 import { debug } from "../utils/logger";
-import { IMapProviderContext } from "../components/map-providers/base";
+import { AsyncLazy } from '../api/lazy';
+import { isAppDef, isWebLayout } from '../api/builders/deArrayify';
+import { MgError } from '../api/error';
+import { initLocaleAsync, sessionAcquiredAsync } from './init-mapguide';
+import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';
 
 export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBaseLayer[]) {
     if (externalBaseLayers.length > 0) {
@@ -33,7 +37,7 @@ export function applyInitialBaseLayerVisibility(externalBaseLayers: IExternalBas
     }
 }
 
-function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
+export function processAndDispatchInitError(error: Error, includeStack: boolean, dispatch: ReduxDispatch, opts: IInitAsyncOptions): void {
     if (error.stack) {
         dispatch({
             type: ActionType.INIT_ERROR,
@@ -63,7 +67,7 @@ function processAndDispatchInitError(error: Error, includeStack: boolean, dispat
 
 export interface IInitAppLayout {
     locale: string;
-    resourceId: string | (() => Promise<ApplicationDefinition>);
+    resourceId: string | (() => Promise<ApplicationDefinition | WebLayout>);
     externalBaseLayers?: IExternalBaseLayer[];
     session?: string;
     initialView?: IMapView;
@@ -137,8 +141,31 @@ export function normalizeInitPayload(payload: IInitAppActionPayload, layout: str
 
 export interface IInitAsyncOptions extends IInitAppLayout {
     locale: string;
+    /**
+     * @hidden Internal hint for distinguishing browser refresh session reuse
+     * from a fresh init path that may still provide a pre-created session id.
+     */
+    sessionWasReused?: boolean;
 }
 
+export type IInitAppFromDocumentOptions = Omit<IInitAsyncOptions, "resourceId" | "session" | "onInit">;
+
+/**
+ * @hidden
+ * @since 0.15
+ */
+export interface IInitDocumentResult {
+    document: ApplicationDefinition | WebLayout;
+    session: AsyncLazy<string>;
+    sessionWasReused: boolean;
+}
+
+/**
+ * Builds an INIT_APP payload from a pre-fetched init document.
+ *
+ * @hidden
+ * @since 0.15
+ */
 let _counter = 0;
 
 export function processLayerInMapGroup(map: MapConfiguration, warnings: string[], config: any, appDef: ApplicationDefinition, externalBaseLayers: IExternalBaseLayer[]) {
@@ -295,61 +322,151 @@ export function processLayerInMapGroup(map: MapConfiguration, warnings: string[]
 }
 
 /**
- * Initializes the viewer
- *
- * @param {IViewerInitCommand} cmd
- * @param {IMapProviderContext} viewer
- * @param {IInitAppLayout} options
- * @returns {ReduxThunkedAction}
- * 
- * @since 0.15 Added viewer parameter
+ * @hidden
+ * @since 0.15
  */
-export function initLayout(cmd: IViewerInitCommand, viewer: IMapProviderContext, options: IInitAppLayout): ReduxThunkedAction {
-    const opts: IInitAsyncOptions = { ...options };
-    return (dispatch, getState) => {
-        const args = getState().config;
-        //TODO: Fetch and init the string bundle earlier if "locale" is present
-        //so the English init messages are seen only for a blink if requesting a
-        //non-english string bundle
-        if (args.agentUri && args.agentKind) {
-            const client = new Client(args.agentUri, args.agentKind);
-            cmd.attachClient(client);
+export async function fetchInitDocument(options: IInitAsyncOptions, client: Client | undefined): Promise<IInitDocumentResult> {
+    const { resourceId, locale } = options;
+    let sessionWasReused = false;
+    let session: AsyncLazy<string>;
+    if (!options.session) {
+        session = new AsyncLazy<string>(async () => {
+            if (!client) {
+                throw new MgError(tr("INIT_ERROR_NO_CONNECTION", locale));
+            }
+            return await client.createSession("Anonymous", "");
+        });
+    } else {
+        sessionWasReused = true;
+        session = new AsyncLazy<string>(() => Promise.resolve(options.session!));
+    }
+
+    if (!resourceId) {
+        const cl = new Client("", "mapagent");
+        try {
+            const appDef = await cl.get<ApplicationDefinition>("appdef.json");
+            return {
+                document: appDef,
+                session,
+                sessionWasReused
+            };
+        } catch (e) {
+            throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
         }
-        cmd.runAsync(options).then(payload => {
-            let initPayload = payload;
-            if (opts.initialView) {
-                initPayload.initialView = {
-                    ...opts.initialView
-                };
+    }
+
+    if (typeof resourceId === "string") {
+        if (strEndsWith(resourceId, "WebLayout")) {
+            if (!client) {
+                throw new MgError(tr("INIT_ERROR_NO_CONNECTION", locale));
             }
-            if (opts.initialActiveMap) {
-                initPayload.activeMapName = opts.initialActiveMap;
+            const wl = await client.getResource<WebLayout>(resourceId, { SESSION: await session.getValueAsync() });
+            return {
+                document: wl,
+                session,
+                sessionWasReused
+            };
+        }
+        if (strEndsWith(resourceId, "ApplicationDefinition")) {
+            if (!client) {
+                throw new MgError(tr("INIT_ERROR_NO_CONNECTION", locale));
             }
-            initPayload.initialHideGroups = opts.initialHideGroups;
-            initPayload.initialHideLayers = opts.initialHideLayers;
-            initPayload.initialShowGroups = opts.initialShowGroups;
-            initPayload.initialShowLayers = opts.initialShowLayers;
-            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-            // Merge in appSettings from loaded appDef, any setting in appDef
-            // already specified at viewer mount will be overwritten
-            const appSettings = opts.appSettings ?? {};
-            const inAppSettings = payload.appSettings ?? {};
-            for (const k in inAppSettings) {
-                appSettings[k] = inAppSettings[k];
-            }
-            initPayload.appSettings = appSettings;
-            dispatch({
-                type: ActionType.INIT_APP,
-                payload
-            });
-            if (options.onInit) {
-                if (viewer) {
-                    options.onInit(viewer);
+            const appDef = await client.getResource<ApplicationDefinition>(resourceId, { SESSION: await session.getValueAsync() });
+            return {
+                document: appDef,
+                session,
+                sessionWasReused
+            };
+        }
+        if (isResourceId(resourceId)) {
+            throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId }));
+        }
+        if (client) {
+            const appDef = await client.get<ApplicationDefinition>(resourceId);
+            return {
+                document: appDef,
+                session,
+                sessionWasReused
+            };
+        }
+        const cl = new Client("", "mapagent");
+        const appDef = await cl.get<ApplicationDefinition>(resourceId);
+        return {
+            document: appDef,
+            session,
+            sessionWasReused
+        };
+    }
+
+    const document = await resourceId();
+    if (isAppDef(document as any) || isWebLayout(document as any)) {
+        return {
+            document,
+            session,
+            sessionWasReused
+        };
+    }
+    throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: "[function resource loader]" }));
+}
+
+/**
+ * @hidden
+ * @since 0.15
+ */
+export function initAppFromDocument(fetchResult: IInitDocumentResult, options: IInitAppFromDocumentOptions): ReduxThunkedAction {
+    return async (dispatch, getState) => {
+        const args = getState().config;
+        let client: Client | undefined;
+        if (args.agentUri && args.agentKind) {
+            client = new Client(args.agentUri, args.agentKind);
+        }
+        const fullOptions: IInitAsyncOptions = {
+            ...options,
+            resourceId: async () => fetchResult.document
+        };
+        await initLocaleAsync(dispatch, fullOptions);
+        const sessionWasReused = fetchResult.sessionWasReused;
+        const payload = await sessionAcquiredAsync(client, fullOptions, fetchResult.session, sessionWasReused);
+        payload.sessionWasReused = sessionWasReused;
+        if (sessionWasReused) {
+            const initSelections: IRestoredSelectionSets = {};
+            for (const mapName in payload.maps) {
+                const sset = await retrieveSelectionSetFromLocalStorage(fetchResult.session, mapName);
+                if (sset) {
+                    initSelections[mapName] = sset;
                 }
             }
-        }).catch(err => {
-            processAndDispatchInitError(err, false, dispatch, opts);
-        })
+            payload.initialSelections = initSelections;
+            try {
+                await clearSessionStore();
+            } catch (e) {
+                // swallow — selection store cleanup is best-effort
+            }
+        }
+        let initPayload = payload;
+        if (options.initialView) {
+            initPayload.initialView = {
+                ...options.initialView
+            };
+        }
+        if (options.initialActiveMap) {
+            initPayload.activeMapName = options.initialActiveMap;
+        }
+        initPayload.initialHideGroups = options.initialHideGroups;
+        initPayload.initialHideLayers = options.initialHideLayers;
+        initPayload.initialShowGroups = options.initialShowGroups;
+        initPayload.initialShowLayers = options.initialShowLayers;
+        initPayload.featureTooltipsEnabled = options.featureTooltipsEnabled;
+        const appSettings = options.appSettings ?? {};
+        const inAppSettings = payload.appSettings ?? {};
+        for (const k in inAppSettings) {
+            appSettings[k] = inAppSettings[k];
+        }
+        initPayload.appSettings = appSettings;
+        dispatch({
+            type: ActionType.INIT_APP,
+            payload: initPayload
+        });
     };
 }
 

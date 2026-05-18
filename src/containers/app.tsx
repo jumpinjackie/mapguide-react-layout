@@ -8,7 +8,7 @@ import {
     IMapViewer,
     Dictionary
 } from "../api/common";
-import { type IInitAppLayout, initLayout } from "../actions/init";
+import { type IInitAppLayout, type IInitAppFromDocumentOptions, fetchInitDocument, initAppFromDocument, processAndDispatchInitError } from "../actions/init";
 import { Error, normalizeStack } from "../components/error";
 import { tr, DEFAULT_LOCALE } from "../api/i18n";
 import { getAssetRoot } from "../utils/asset";
@@ -19,13 +19,14 @@ import { useInitError, useInitErrorStack, useInitErrorOptions, useViewerLocale, 
 import { areStatesEqual, getStateFromUrl, type IAppUrlState, updateUrl } from './url-state';
 import { debug } from '../utils/logger';
 import { setElementStates } from '../actions/template';
-import type { IViewerInitCommand } from '../actions/init-command';
 import { ApplicationDefinition } from '../api/contracts/fusion';
+import { WebLayout } from '../api/contracts/weblayout';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { MapGroup, MapLayer } from "../api/contracts/runtime-map";
 import { useElementContext } from "../components/elements/element-context";
 import type { ISelectedFeatureProps } from "../components/selection-panel";
+import { Client } from '../api/client';
 
 /**
  * The app setting key used to specify URL props to ignore.
@@ -200,14 +201,6 @@ export type AdHocLayoutTemplate = {
  */
 export interface IAppProps {
     /**
-     * The command that will carry out viewer initialization
-     *
-     * @type {IViewerInitCommand}
-     *
-     * @since 0.14
-     */
-    initCommand: IViewerInitCommand;
-    /**
      * The layout to use
      * @since 0.14 type changed to include AdHocLayoutTemplate
      */
@@ -217,7 +210,7 @@ export interface IAppProps {
      *
      *
      */
-    resourceId: string | (() => Promise<ApplicationDefinition>);
+    resourceId: string | (() => Promise<ApplicationDefinition | WebLayout>);
     /**
      * The list of external base layers
      *
@@ -276,18 +269,6 @@ export interface IAppState {
     featureTooltipsEnabled: boolean;
 }
 
-/**
- * App component action dispatchers
- *
- * @interface IAppDispatch
- */
-export interface IAppDispatch {
-    initLayout: (cmd: IViewerInitCommand, args: IInitAppLayout) => void;
-    setElementVisibility: (states: IElementState) => void;
-}
-
-type AppInnerProps = IAppProps & IAppState & IAppDispatch;
-
 const AppInitError: React.FC<React.PropsWithChildren<{ locale: string }>> = (props) => {
     const { Callout } = useElementContext();
     return <Callout variant="danger" title={tr("INIT_ERROR_TITLE", props.locale)} icon="error">
@@ -307,7 +288,6 @@ export const App = (props: IAppProps) => {
 
     const dispatch = useReduxDispatch();
     const viewer = useMapProviderContext();
-    const initLayoutAction = (cmd: IViewerInitCommand, args: IInitAppLayout) => dispatch(initLayout(cmd, viewer, args));
     const setElementVisibility = (state: IElementState) => dispatch(setElementStates(state));
 
     const [isLoading, setIsLoading] = React.useState(true);
@@ -320,7 +300,6 @@ export const App = (props: IAppProps) => {
             locale,
             resourceId,
             externalBaseLayers,
-            initCommand,
             appSettings,
             layout: layoutProp,
             urlPropsIgnore
@@ -353,7 +332,7 @@ export const App = (props: IAppProps) => {
         if (mapguide?.fusionRoot) {
             setFusionRoot(mapguide.fusionRoot);
         }
-        if (initLayoutAction) {
+        const initialize = async () => {
             let ftArgs: Partial<IInitAppLayout> | undefined;
             if (typeof (urlFeatureTooltip) != 'undefined') {
                 ftArgs = {
@@ -418,8 +397,26 @@ export const App = (props: IAppProps) => {
                 ...(sgArgs ?? {}),
                 ...(hgArgs ?? {})
             };
-            initLayoutAction(initCommand, args);
-        }
+            let fetchClient: Client | undefined;
+            if (mapguide?.agentUri) {
+                try {
+                    fetchClient = new Client(mapguide.agentUri, mapguide.agentKind ?? "mapagent");
+                } catch (e) {
+                    fetchClient = undefined;
+                }
+            }
+            try {
+                const fetchResult = await fetchInitDocument(args, fetchClient);
+                const { resourceId: _resourceId, session: _session, onInit: _onInit, ...initArgs } = args;
+                await dispatch(initAppFromDocument(fetchResult, initArgs as IInitAppFromDocumentOptions) as any);
+                if (onInit) {
+                    onInit(viewer);
+                }
+            } catch (e) {
+                processAndDispatchInitError(e as Error, false, dispatch as any, args);
+            }
+        };
+        initialize();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

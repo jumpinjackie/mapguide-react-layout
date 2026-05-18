@@ -1,17 +1,7 @@
-import { IInitAsyncOptions, normalizeInitPayload } from './init';
-import { ActiveMapTool } from '../api/common';
-import type { ReduxDispatch, Dictionary, IMapSwipePair } from '../api/common';
-import { IGenericSubjectMapLayer, IInitAppActionPayload, MapInfo } from './defs';
-import { ToolbarConf, convertFlexLayoutUIItems, parseWidgetsInAppDef, prepareSubMenus } from '../api/registry/command-spec';
+import type { IMapSwipePair } from '../api/common';
+import { IGenericSubjectMapLayer } from './defs';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration, MapSetGroup } from '../api/contracts/fusion';
-import { warn, info } from '../utils/logger';
-import { registerCommand } from '../api/registry/command';
-import { tr, registerStringBundle, DEFAULT_LOCALE } from '../api/i18n';
-import { WEBLAYOUT_CONTEXTMENU } from "../constants";
-import { Client } from '../api/client';
-import { ActionType } from '../constants/actions';
-import { ensureParameters } from '../utils/url';
 import { MgError } from '../api/error';
 import { strStartsWith } from '../utils/string';
 import { IClusterSettings } from '../api/ol-style-contracts';
@@ -215,133 +205,27 @@ export function isStateless(appDef: ApplicationDefinition) {
     }
 }
 
-export interface IViewerInitCommand {
-    attachClient(client: Client): void;
-    runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
-}
-
-export abstract class ViewerInitCommand<TSubject> implements IViewerInitCommand {
-    constructor(protected readonly dispatch: ReduxDispatch) { }
-    public abstract attachClient(client: Client): void;
-    public abstract runAsync(options: IInitAsyncOptions): Promise<IInitAppActionPayload>;
-    protected abstract isArbitraryCoordSys(map: TSubject): boolean;
-    protected abstract establishInitialMapNameAndSession(mapsByName: Dictionary<TSubject>): [string, string];
-    protected abstract setupMaps(appDef: ApplicationDefinition, mapsByName: Dictionary<TSubject>, config: any, warnings: string[], locale: string, pendingMapDefs?: Dictionary<MapToLoad>): Dictionary<MapInfo>;
-    protected async initLocaleAsync(options: IInitAsyncOptions): Promise<void> {
-        //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
-        //exists for us to fetch
-        const { locale } = options;
-        if (locale != DEFAULT_LOCALE) {
-            const r = await fetch(`strings/${locale}.json`);
-            if (r.ok) {
-                const res = await r.json();
-                registerStringBundle(locale, res);
-                // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
-                this.dispatch({
-                    type: ActionType.SET_LOCALE,
-                    payload: locale
-                });
-                info(`Registered string bundle for locale: ${locale}`);
-            } else {
-                //TODO: Push warning to init error/warning reducer when we implement it
-                warn(`Failed to register string bundle for locale: ${locale}`);
-            }
-        }
-    }
-    protected getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
-        //The only widget we care about is the coordinate tracker
-        const epsgs: string[] = [];
-        for (const ws of appDef.WidgetSet) {
-            for (const w of ws.Widget) {
-                if (w.Type == "CoordinateTracker") {
-                    const ps = w.Extension.Projection || [];
-                    for (const p of ps) {
-                        epsgs.push(p.split(':')[1]);
-                    }
-                } else if (w.Type == "CursorPosition") {
-                    const dp = w.Extension.DisplayProjection;
-                    if (dp) {
-                        epsgs.push(dp.split(':')[1]);
-                    }
+/**
+ * @hidden
+ * @since 0.15
+ */
+export function getExtraProjectionsFromFlexLayout(appDef: ApplicationDefinition): string[] {
+    // The only widgets we care about are coordinate-related widgets.
+    const epsgs: string[] = [];
+    for (const ws of appDef.WidgetSet) {
+        for (const w of ws.Widget) {
+            if (w.Type == "CoordinateTracker") {
+                const ps = w.Extension.Projection || [];
+                for (const p of ps) {
+                    epsgs.push(p.split(':')[1]);
+                }
+            } else if (w.Type == "CursorPosition") {
+                const dp = w.Extension.DisplayProjection;
+                if (dp) {
+                    epsgs.push(dp.split(':')[1]);
                 }
             }
         }
-        return makeUnique(epsgs);
     }
-    
-    protected async initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: IInitAsyncOptions, mapsByName: Dictionary<TSubject | IGenericSubjectMapLayer>, warnings: string[], pendingMapDefs?: Dictionary<MapToLoad>): Promise<IInitAppActionPayload> {
-        const {
-            taskPane,
-            hasTaskBar,
-            hasStatus,
-            hasNavigator,
-            hasSelectionPanel,
-            hasLegend,
-            viewSize,
-            widgetsByKey,
-            isStateless,
-            initialTask
-        } = parseWidgetsInAppDef(appDef, registerCommand);
-        const { locale, featureTooltipsEnabled } = options;
-        const config: any = {};
-        config.isStateless = isStateless;
-        const tbConf: Dictionary<ToolbarConf> = {};
-        
-        //Now build toolbar layouts
-        for (const widgetSet of appDef.WidgetSet) {
-            for (const cont of widgetSet.Container) {
-                let tbName = cont.Name;
-                tbConf[tbName] = { items: convertFlexLayoutUIItems(isStateless, cont.Item, widgetsByKey, locale) };
-            }
-            for (const w of widgetSet.Widget) {
-                if (w.Type == "CursorPosition") {
-                    config.coordinateProjection = w.Extension.DisplayProjection;
-                    config.coordinateDecimals = w.Extension.Precision;
-                    config.coordinateDisplayFormat = w.Extension.Template;
-                }
-            }
-        }
-
-        const mapsDict: any  = mapsByName; //HACK: TS generics doesn't want to play nice with us
-        const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale, pendingMapDefs);
-        if (appDef.Title) {
-            document.title = appDef.Title || document.title;
-        }
-        const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsDict);
-        const [tb, bFoundContextMenu] = prepareSubMenus(tbConf);
-        if (!bFoundContextMenu) {
-            warnings.push(tr("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: WEBLAYOUT_CONTEXTMENU }));
-        }
-        const settings: Record<string, string> = {};
-        if (Array.isArray(appDef.Extension?.ViewerSettings?.Setting)) {
-            for (const s of appDef.Extension.ViewerSettings.Setting) {
-                const [sn] = s["@name"];
-                const [sv] = s["@value"];
-                settings[sn] = sv;
-            }
-        }
-        return normalizeInitPayload({
-            appSettings: settings,
-            activeMapName: firstMapName,
-            initialUrl: ensureParameters(initialTask, firstMapName, firstSessionId, locale),
-            featureTooltipsEnabled: featureTooltipsEnabled,
-            locale: locale,
-            maps: maps,
-            config: config,
-            capabilities: {
-                hasTaskPane: (taskPane != null),
-                hasTaskBar: hasTaskBar,
-                hasStatusBar: hasStatus,
-                hasNavigator: hasNavigator,
-                hasSelectionPanel: hasSelectionPanel,
-                hasLegend: hasLegend,
-                hasToolbar: (Object.keys(tbConf).length > 0),
-                hasViewSize: (viewSize != null)
-            },
-            toolbars: tb,
-            warnings: warnings,
-            initialActiveTool: ActiveMapTool.Pan,
-            mapSwipePairs: parseSwipePairs(appDef)
-        }, options.layout);
-    }
+    return makeUnique(epsgs);
 }

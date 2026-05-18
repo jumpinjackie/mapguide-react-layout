@@ -1,15 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { App, IAppProps } from "../containers/app";
-import { ReduxThunkedAction, ICommand, IApplicationState, ReduxDispatch, IConfigurationReducerState } from "../api/common";
+import { ReduxThunkedAction, ICommand, IApplicationState, IConfigurationReducerState } from "../api/common";
 import { configureStore } from "../store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../reducers/config";
 import { getCommand as getRegisteredCommand } from "../api/registry/command";
 import { ViewerAction } from '../actions/defs';
 import { Subscriber, ISubscriberProps } from '../containers/subscriber';
-import { IViewerInitCommand } from '../actions/init-command';
-import { MapContextProvider, MapProviderContextProvider, ReduxProvider } from "../components/map-providers/context";
-import { DefaultViewerInitCommand } from "../actions/init-mapguide";
+import { MapContextProvider } from "../components/map-providers/context";
 import { MapGuideMapProviderContext } from "../components/map-providers/mapguide";
 
 /**
@@ -19,7 +17,6 @@ import { MapGuideMapProviderContext } from "../components/map-providers/mapguide
  * @interface IApplicationMountOptions
  */
 export interface IApplicationMountOptions {
-    initCommandFactory: ((dispatch: ReduxDispatch) => IViewerInitCommand) | undefined;
     /**
      * An array of subscribers to application state
      * 
@@ -93,15 +90,10 @@ export class ApplicationViewModel {
         const initState = { ...{ config: { ...CONFIG_INITIAL_STATE, ...agentConf, ...(props.initialConfig || {}) } }, ...this.getExtraInitialState() };
         const extraReducers = this.getExtraReducers();
         this._store = configureStore(initState, extraReducers);
-        let initCommand: IViewerInitCommand;
-        if (props.initCommandFactory)
-            initCommand = props.initCommandFactory(this._store.dispatch)
-        else
-            initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         // Register our MapGuide-specific viewer implementation
         const provider = new MapGuideMapProviderContext();
         ReactDOM.render(<MapContextProvider value={provider} store={this._store}>
-            <App {...props} initCommand={initCommand} />
+            <App {...props} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
         </MapContextProvider>, node);
     }

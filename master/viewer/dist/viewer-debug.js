@@ -1908,24 +1908,14 @@ function closeComponent(id) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ViewerInitCommand = void 0;
 exports.parseSwipePairs = parseSwipePairs;
 exports.parseMapGroupCoordinateFormat = parseMapGroupCoordinateFormat;
 exports.buildSubjectLayerDefn = buildSubjectLayerDefn;
 exports.getMapDefinitionsFromFlexLayout = getMapDefinitionsFromFlexLayout;
 exports.isMapDefinition = isMapDefinition;
 exports.isStateless = isStateless;
-const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
-const init_1 = __webpack_require__(/*! ./init */ "./src/actions/init.ts");
-const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
-const command_spec_1 = __webpack_require__(/*! ../api/registry/command-spec */ "./src/api/registry/command-spec.ts");
+exports.getExtraProjectionsFromFlexLayout = getExtraProjectionsFromFlexLayout;
 const array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts");
-const logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
-const command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
-const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
-const constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
-const actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
-const url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
 const error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
 const string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 /**
@@ -2109,122 +2099,31 @@ function isStateless(appDef) {
         return true;
     }
 }
-class ViewerInitCommand {
-    constructor(dispatch) {
-        this.dispatch = dispatch;
-    }
-    initLocaleAsync(options) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            //English strings are baked into this bundle. For non-en locales, we assume a strings/{locale}.json
-            //exists for us to fetch
-            const { locale } = options;
-            if (locale != i18n_1.DEFAULT_LOCALE) {
-                const r = yield fetch(`strings/${locale}.json`);
-                if (r.ok) {
-                    const res = yield r.json();
-                    (0, i18n_1.registerStringBundle)(locale, res);
-                    // Dispatch the SET_LOCALE as it is safe to change UI strings at this point
-                    this.dispatch({
-                        type: actions_1.ActionType.SET_LOCALE,
-                        payload: locale
-                    });
-                    (0, logger_1.info)(`Registered string bundle for locale: ${locale}`);
-                }
-                else {
-                    //TODO: Push warning to init error/warning reducer when we implement it
-                    (0, logger_1.warn)(`Failed to register string bundle for locale: ${locale}`);
+/**
+ * @hidden
+ * @since 0.15
+ */
+function getExtraProjectionsFromFlexLayout(appDef) {
+    // The only widgets we care about are coordinate-related widgets.
+    const epsgs = [];
+    for (const ws of appDef.WidgetSet) {
+        for (const w of ws.Widget) {
+            if (w.Type == "CoordinateTracker") {
+                const ps = w.Extension.Projection || [];
+                for (const p of ps) {
+                    epsgs.push(p.split(':')[1]);
                 }
             }
-        });
-    }
-    getExtraProjectionsFromFlexLayout(appDef) {
-        //The only widget we care about is the coordinate tracker
-        const epsgs = [];
-        for (const ws of appDef.WidgetSet) {
-            for (const w of ws.Widget) {
-                if (w.Type == "CoordinateTracker") {
-                    const ps = w.Extension.Projection || [];
-                    for (const p of ps) {
-                        epsgs.push(p.split(':')[1]);
-                    }
-                }
-                else if (w.Type == "CursorPosition") {
-                    const dp = w.Extension.DisplayProjection;
-                    if (dp) {
-                        epsgs.push(dp.split(':')[1]);
-                    }
+            else if (w.Type == "CursorPosition") {
+                const dp = w.Extension.DisplayProjection;
+                if (dp) {
+                    epsgs.push(dp.split(':')[1]);
                 }
             }
         }
-        return (0, array_1.makeUnique)(epsgs);
     }
-    initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingMapDefs) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            const { taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask } = (0, command_spec_1.parseWidgetsInAppDef)(appDef, command_1.registerCommand);
-            const { locale, featureTooltipsEnabled } = options;
-            const config = {};
-            config.isStateless = isStateless;
-            const tbConf = {};
-            //Now build toolbar layouts
-            for (const widgetSet of appDef.WidgetSet) {
-                for (const cont of widgetSet.Container) {
-                    let tbName = cont.Name;
-                    tbConf[tbName] = { items: (0, command_spec_1.convertFlexLayoutUIItems)(isStateless, cont.Item, widgetsByKey, locale) };
-                }
-                for (const w of widgetSet.Widget) {
-                    if (w.Type == "CursorPosition") {
-                        config.coordinateProjection = w.Extension.DisplayProjection;
-                        config.coordinateDecimals = w.Extension.Precision;
-                        config.coordinateDisplayFormat = w.Extension.Template;
-                    }
-                }
-            }
-            const mapsDict = mapsByName; //HACK: TS generics doesn't want to play nice with us
-            const maps = this.setupMaps(appDef, mapsDict, config, warnings, locale, pendingMapDefs);
-            if (appDef.Title) {
-                document.title = appDef.Title || document.title;
-            }
-            const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsDict);
-            const [tb, bFoundContextMenu] = (0, command_spec_1.prepareSubMenus)(tbConf);
-            if (!bFoundContextMenu) {
-                warnings.push((0, i18n_1.tr)("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: constants_1.WEBLAYOUT_CONTEXTMENU }));
-            }
-            const settings = {};
-            if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.ViewerSettings) === null || _b === void 0 ? void 0 : _b.Setting)) {
-                for (const s of appDef.Extension.ViewerSettings.Setting) {
-                    const [sn] = s["@name"];
-                    const [sv] = s["@value"];
-                    settings[sn] = sv;
-                }
-            }
-            return (0, init_1.normalizeInitPayload)({
-                appSettings: settings,
-                activeMapName: firstMapName,
-                initialUrl: (0, url_1.ensureParameters)(initialTask, firstMapName, firstSessionId, locale),
-                featureTooltipsEnabled: featureTooltipsEnabled,
-                locale: locale,
-                maps: maps,
-                config: config,
-                capabilities: {
-                    hasTaskPane: (taskPane != null),
-                    hasTaskBar: hasTaskBar,
-                    hasStatusBar: hasStatus,
-                    hasNavigator: hasNavigator,
-                    hasSelectionPanel: hasSelectionPanel,
-                    hasLegend: hasLegend,
-                    hasToolbar: (Object.keys(tbConf).length > 0),
-                    hasViewSize: (viewSize != null)
-                },
-                toolbars: tb,
-                warnings: warnings,
-                initialActiveTool: common_1.ActiveMapTool.Pan,
-                mapSwipePairs: parseSwipePairs(appDef)
-            }, options.layout);
-        });
-    }
+    return (0, array_1.makeUnique)(epsgs);
 }
-exports.ViewerInitCommand = ViewerInitCommand;
 
 
 /***/ },
@@ -2238,7 +2137,15 @@ exports.ViewerInitCommand = ViewerInitCommand;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DefaultViewerInitCommand = void 0;
+exports.isArbitraryCoordSys = isArbitraryCoordSys;
+exports.establishInitialMapNameAndSession = establishInitialMapNameAndSession;
+exports.initLocaleAsync = initLocaleAsync;
+exports.createRuntimeMap = createRuntimeMap;
+exports.describeRuntimeMap = describeRuntimeMap;
+exports.tryDescribeRuntimeMapAsync = tryDescribeRuntimeMapAsync;
+exports.describeRuntimeMapStateless = describeRuntimeMapStateless;
+exports.setupMaps = setupMaps;
+exports.sessionAcquiredAsync = sessionAcquiredAsync;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const defs_1 = __webpack_require__(/*! ./defs */ "./src/actions/defs.ts");
@@ -2254,7 +2161,6 @@ const proj4_1 = __webpack_require__(/*! ol/proj/proj4 */ "./node_modules/ol/proj
 const proj4_2 = tslib_1.__importDefault(__webpack_require__(/*! proj4 */ "./node_modules/proj4/lib/index.js"));
 const init_command_1 = __webpack_require__(/*! ./init-command */ "./src/actions/init-command.ts");
 const command_spec_1 = __webpack_require__(/*! ../api/registry/command-spec */ "./src/api/registry/command-spec.ts");
-const session_store_1 = __webpack_require__(/*! ../api/session-store */ "./src/api/session-store.ts");
 const constants_1 = __webpack_require__(/*! ../constants */ "./src/constants.ts");
 const command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 const url_1 = __webpack_require__(/*! ../utils/url */ "./src/utils/url.ts");
@@ -2265,677 +2171,739 @@ const units_1 = __webpack_require__(/*! ../utils/units */ "./src/utils/units.tsx
 const scoped_id_1 = __webpack_require__(/*! ../utils/scoped-id */ "./src/utils/scoped-id.ts");
 const site_version_1 = __webpack_require__(/*! ../utils/site-version */ "./src/utils/site-version.ts");
 const browser_support_1 = __webpack_require__(/*! ../utils/browser-support */ "./src/utils/browser-support.ts");
+const deArrayify_1 = __webpack_require__(/*! ../api/builders/deArrayify */ "./src/api/builders/deArrayify.ts");
+const actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 const TYPE_SUBJECT = "SubjectLayer";
 const TYPE_EXTERNAL = "External";
 const scopedId = new scoped_id_1.ScopedId();
 /**
- * Default viewer init commmand
- *
- * @since 0.14
+ * Returns whether the supplied runtime map uses an arbitrary coordinate system.
  */
-class DefaultViewerInitCommand extends init_command_1.ViewerInitCommand {
-    constructor(dispatch) {
-        super(dispatch);
+function isArbitraryCoordSys(subject) {
+    if (subject) {
+        if ((0, type_guards_1.isRuntimeMap)(subject)) {
+            const arbCs = (0, units_1.tryParseArbitraryCs)(subject.CoordinateSystem.MentorCode);
+            return arbCs != null;
+        }
     }
-    attachClient(client) {
-        this.client = client;
-    }
-    isArbitraryCoordSys(subject) {
-        if (subject) {
-            if ((0, type_guards_1.isRuntimeMap)(subject)) {
-                const arbCs = (0, units_1.tryParseArbitraryCs)(subject.CoordinateSystem.MentorCode);
-                return arbCs != null;
+    return false;
+}
+/**
+ * Finds the first runtime map entry and returns its map name and session id.
+ */
+function establishInitialMapNameAndSession(mapsByName) {
+    let firstMapName = "";
+    let firstSessionId = "";
+    for (const mapName in mapsByName) {
+        if (!firstMapName && !firstSessionId) {
+            const map = mapsByName[mapName];
+            if ((0, type_guards_1.isRuntimeMap)(map)) {
+                firstMapName = map.Name;
+                firstSessionId = map.SessionId;
+                break;
             }
         }
-        return false;
     }
-    /**
-     * @override
-     * @protected
-     * @param {Dictionary<RuntimeMap>} mapsByName
-     *
-     */
-    establishInitialMapNameAndSession(mapsByName) {
-        let firstMapName = "";
-        let firstSessionId = "";
-        for (const mapName in mapsByName) {
-            if (!firstMapName && !firstSessionId) {
-                const map = mapsByName[mapName];
-                if ((0, type_guards_1.isRuntimeMap)(map)) {
-                    firstMapName = map.Name;
-                    firstSessionId = map.SessionId;
-                    break;
+    return [firstMapName, firstSessionId];
+}
+/**
+ * Loads and registers the localized string bundle when a non-default locale is requested.
+ */
+function initLocaleAsync(dispatch, options) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        const { locale } = options;
+        if (locale != i18n_1.DEFAULT_LOCALE) {
+            const r = yield fetch(`strings/${locale}.json`);
+            if (r.ok) {
+                const res = yield r.json();
+                (0, i18n_1.registerStringBundle)(locale, res);
+                dispatch({
+                    type: actions_1.ActionType.SET_LOCALE,
+                    payload: locale
+                });
+                (0, logger_1.info)(`Registered string bundle for locale: ${locale}`);
+            }
+            else {
+                (0, logger_1.warn)(`Failed to register string bundle for locale: ${locale}`);
+            }
+        }
+    });
+}
+/**
+ * Builds the normalized init payload from an ApplicationDefinition and map state.
+ */
+function initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingMapDefs) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
+        const { taskPane, hasTaskBar, hasStatus, hasNavigator, hasSelectionPanel, hasLegend, viewSize, widgetsByKey, isStateless, initialTask } = (0, command_spec_1.parseWidgetsInAppDef)(appDef, command_1.registerCommand);
+        const { locale, featureTooltipsEnabled } = options;
+        const config = {};
+        config.isStateless = isStateless;
+        const tbConf = {};
+        for (const widgetSet of appDef.WidgetSet) {
+            for (const cont of widgetSet.Container) {
+                const tbName = cont.Name;
+                tbConf[tbName] = { items: (0, command_spec_1.convertFlexLayoutUIItems)(isStateless, cont.Item, widgetsByKey, locale) };
+            }
+            for (const w of widgetSet.Widget) {
+                if (w.Type == "CursorPosition") {
+                    config.coordinateProjection = w.Extension.DisplayProjection;
+                    config.coordinateDecimals = w.Extension.Precision;
+                    config.coordinateDisplayFormat = w.Extension.Template;
                 }
             }
         }
-        return [firstMapName, firstSessionId];
+        const mapsDict = mapsByName;
+        const maps = setupMaps(appDef, mapsDict, config, warnings, locale, pendingMapDefs);
+        if (appDef.Title) {
+            document.title = appDef.Title || document.title;
+        }
+        const [firstMapName, firstSessionId] = establishInitialMapNameAndSession(mapsDict);
+        const [tb, bFoundContextMenu] = (0, command_spec_1.prepareSubMenus)(tbConf);
+        if (!bFoundContextMenu) {
+            warnings.push((0, i18n_1.tr)("INIT_WARNING_NO_CONTEXT_MENU", locale, { containerName: constants_1.WEBLAYOUT_CONTEXTMENU }));
+        }
+        const settings = {};
+        if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.ViewerSettings) === null || _b === void 0 ? void 0 : _b.Setting)) {
+            for (const s of appDef.Extension.ViewerSettings.Setting) {
+                const [sn] = s["@name"];
+                const [sv] = s["@value"];
+                settings[sn] = sv;
+            }
+        }
+        return (0, init_1.normalizeInitPayload)({
+            appSettings: settings,
+            activeMapName: firstMapName,
+            initialUrl: (0, url_1.ensureParameters)(initialTask, firstMapName, firstSessionId, locale),
+            featureTooltipsEnabled: featureTooltipsEnabled,
+            locale: locale,
+            maps: maps,
+            config: config,
+            capabilities: {
+                hasTaskPane: (taskPane != null),
+                hasTaskBar: hasTaskBar,
+                hasStatusBar: hasStatus,
+                hasNavigator: hasNavigator,
+                hasSelectionPanel: hasSelectionPanel,
+                hasLegend: hasLegend,
+                hasToolbar: (Object.keys(tbConf).length > 0),
+                hasViewSize: (viewSize != null)
+            },
+            toolbars: tb,
+            warnings: warnings,
+            initialActiveTool: common_1.ActiveMapTool.Pan,
+            mapSwipePairs: (0, init_command_1.parseSwipePairs)(appDef)
+        }, options.layout);
+    });
+}
+/**
+ * Derives a stable target runtime map name from a map definition resource id.
+ */
+function getDesiredTargetMapName(mapDef) {
+    const lastSlash = mapDef.lastIndexOf("/");
+    const lastDot = mapDef.lastIndexOf(".");
+    if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
+        return `${mapDef.substring(lastSlash + 1, lastDot)}`;
     }
-    getDesiredTargetMapName(mapDef) {
-        const lastSlash = mapDef.lastIndexOf("/");
-        const lastDot = mapDef.lastIndexOf(".");
-        if (lastSlash >= 0 && lastDot >= 0 && lastDot > lastSlash) {
-            return `${mapDef.substring(lastSlash + 1, lastDot)}`;
+    else {
+        return `Map_${scopedId.next()}`;
+    }
+}
+/**
+ * Initializes viewer payload from a WebLayout document.
+ */
+function initFromWebLayoutAsync(client, options, webLayout, session, sessionWasReused) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a;
+        const [mapsByName, , warnings] = yield createRuntimeMapsAsync(client, options, session, webLayout, false, wl => [{ name: getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
+        const { locale, featureTooltipsEnabled, externalBaseLayers } = options;
+        const cmdsByKey = (0, command_spec_1.parseCommandsInWebLayout)(webLayout, command_1.registerCommand);
+        const mainToolbar = (webLayout.ToolBar.Visible
+            ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.ToolBar.Button, cmdsByKey, locale)
+            : []);
+        const taskBar = (webLayout.TaskPane.TaskBar.Visible
+            ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
+            : []);
+        const contextMenu = (webLayout.ContextMenu.Visible
+            ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
+            : []);
+        const config = {};
+        if (webLayout.SelectionColor != null) {
+            config.selectionColor = webLayout.SelectionColor;
+        }
+        if (webLayout.MapImageFormat != null) {
+            config.imageFormat = webLayout.MapImageFormat;
+        }
+        if (webLayout.SelectionImageFormat != null) {
+            config.selectionImageFormat = webLayout.SelectionImageFormat;
+        }
+        if (webLayout.PointSelectionBuffer != null) {
+            config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
+        }
+        let initialView = null;
+        if (webLayout.Map.InitialView != null) {
+            initialView = {
+                x: webLayout.Map.InitialView.CenterX,
+                y: webLayout.Map.InitialView.CenterY,
+                scale: webLayout.Map.InitialView.Scale
+            };
+        }
+        if (webLayout.Title != "") {
+            document.title = webLayout.Title || document.title;
+        }
+        const maps = {};
+        const [firstMapName, firstSessionId] = establishInitialMapNameAndSession(mapsByName);
+        for (const mapName in mapsByName) {
+            const map = mapsByName[mapName];
+            maps[mapName] = {
+                mapGroupId: mapName,
+                map: map,
+                externalBaseLayers: (_a = options.externalBaseLayers) !== null && _a !== void 0 ? _a : [],
+                initialView: initialView
+            };
+        }
+        const menus = {};
+        menus[constants_1.WEBLAYOUT_TOOLBAR] = {
+            items: mainToolbar
+        };
+        menus[constants_1.WEBLAYOUT_TASKMENU] = {
+            items: taskBar
+        };
+        menus[constants_1.WEBLAYOUT_CONTEXTMENU] = {
+            items: contextMenu
+        };
+        const tb = (0, command_spec_1.prepareSubMenus)(menus)[0];
+        return {
+            activeMapName: firstMapName,
+            featureTooltipsEnabled: featureTooltipsEnabled,
+            initialUrl: (0, url_1.ensureParameters)(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, locale),
+            initialTaskPaneWidth: webLayout.TaskPane.Width,
+            initialInfoPaneWidth: webLayout.InformationPane.Width,
+            maps: maps,
+            locale: locale,
+            config: config,
+            capabilities: {
+                hasTaskPane: webLayout.TaskPane.Visible,
+                hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
+                hasStatusBar: webLayout.StatusBar.Visible,
+                hasNavigator: webLayout.ZoomControl.Visible,
+                hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
+                hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
+                hasToolbar: webLayout.ToolBar.Visible,
+                hasViewSize: webLayout.StatusBar.Visible
+            },
+            toolbars: tb,
+            warnings: warnings,
+            initialActiveTool: common_1.ActiveMapTool.Pan
+        };
+    });
+}
+/**
+ * Creates a runtime map using the API variant supported by the current site version.
+ */
+function createRuntimeMap(client, options, siteVersion) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        let map;
+        const sv = yield siteVersion.getValueAsync();
+        if ((0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) {
+            map = yield client.createRuntimeMap_v4(options);
         }
         else {
-            return `Map_${scopedId.next()}`;
+            map = yield client.createRuntimeMap(options);
         }
-    }
-    initFromWebLayoutAsync(webLayout, session, sessionWasReused) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const [mapsByName, , warnings] = yield this.createRuntimeMapsAsync(session, webLayout, false, wl => [{ name: this.getDesiredTargetMapName(wl.Map.ResourceId), mapDef: wl.Map.ResourceId, metadata: {} }], () => [], sessionWasReused);
-            const { locale, featureTooltipsEnabled, externalBaseLayers } = this.options;
-            const cmdsByKey = (0, command_spec_1.parseCommandsInWebLayout)(webLayout, command_1.registerCommand);
-            const mainToolbar = (webLayout.ToolBar.Visible
-                ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.ToolBar.Button, cmdsByKey, locale)
-                : []);
-            const taskBar = (webLayout.TaskPane.TaskBar.Visible
-                ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.TaskPane.TaskBar.MenuButton, cmdsByKey, locale, false)
-                : []);
-            const contextMenu = (webLayout.ContextMenu.Visible
-                ? (0, command_spec_1.convertWebLayoutUIItems)(webLayout.ContextMenu.MenuItem, cmdsByKey, locale, false)
-                : []);
-            const config = {};
-            if (webLayout.SelectionColor != null) {
-                config.selectionColor = webLayout.SelectionColor;
-            }
-            if (webLayout.MapImageFormat != null) {
-                config.imageFormat = webLayout.MapImageFormat;
-            }
-            if (webLayout.SelectionImageFormat != null) {
-                config.selectionImageFormat = webLayout.SelectionImageFormat;
-            }
-            if (webLayout.PointSelectionBuffer != null) {
-                config.pointSelectionBuffer = webLayout.PointSelectionBuffer;
-            }
-            let initialView = null;
-            if (webLayout.Map.InitialView != null) {
-                initialView = {
-                    x: webLayout.Map.InitialView.CenterX,
-                    y: webLayout.Map.InitialView.CenterY,
-                    scale: webLayout.Map.InitialView.Scale
-                };
-            }
-            if (webLayout.Title != "") {
-                document.title = webLayout.Title || document.title;
-            }
-            const maps = {};
-            const [firstMapName, firstSessionId] = this.establishInitialMapNameAndSession(mapsByName);
-            for (const mapName in mapsByName) {
-                const map = mapsByName[mapName];
-                maps[mapName] = {
-                    mapGroupId: mapName,
-                    map: map,
-                    externalBaseLayers: (_a = this.options.externalBaseLayers) !== null && _a !== void 0 ? _a : [],
-                    initialView: initialView
-                };
-            }
-            const menus = {};
-            menus[constants_1.WEBLAYOUT_TOOLBAR] = {
-                items: mainToolbar
-            };
-            menus[constants_1.WEBLAYOUT_TASKMENU] = {
-                items: taskBar
-            };
-            menus[constants_1.WEBLAYOUT_CONTEXTMENU] = {
-                items: contextMenu
-            };
-            const tb = (0, command_spec_1.prepareSubMenus)(menus)[0];
-            return {
-                activeMapName: firstMapName,
-                featureTooltipsEnabled: featureTooltipsEnabled,
-                initialUrl: (0, url_1.ensureParameters)(webLayout.TaskPane.InitialTask || "server/TaskPane.html", firstMapName, firstSessionId, locale),
-                initialTaskPaneWidth: webLayout.TaskPane.Width,
-                initialInfoPaneWidth: webLayout.InformationPane.Width,
-                maps: maps,
-                locale: locale,
-                config: config,
-                capabilities: {
-                    hasTaskPane: webLayout.TaskPane.Visible,
-                    hasTaskBar: webLayout.TaskPane.TaskBar.Visible,
-                    hasStatusBar: webLayout.StatusBar.Visible,
-                    hasNavigator: webLayout.ZoomControl.Visible,
-                    hasSelectionPanel: webLayout.InformationPane.Visible && webLayout.InformationPane.PropertiesVisible,
-                    hasLegend: webLayout.InformationPane.Visible && webLayout.InformationPane.LegendVisible,
-                    hasToolbar: webLayout.ToolBar.Visible,
-                    hasViewSize: webLayout.StatusBar.Visible
-                },
-                toolbars: tb,
-                warnings: warnings,
-                initialActiveTool: common_1.ActiveMapTool.Pan
-            };
-        });
-    }
-    createRuntimeMap(options, siteVersion) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            (0, assert_1.assertIsDefined)(this.client);
-            let map;
-            const sv = yield siteVersion.getValueAsync();
-            if ((0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) {
-                map = yield this.client.createRuntimeMap_v4(options);
-            }
-            else {
-                map = yield this.client.createRuntimeMap(options);
-            }
+        return map;
+    });
+}
+/**
+ * Describes an existing runtime map using the API variant supported by the current site version.
+ */
+function describeRuntimeMap(client, options, siteVersion) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        let map;
+        const sv = yield siteVersion.getValueAsync();
+        if ((0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) {
+            map = yield client.describeRuntimeMap_v4(options);
+        }
+        else {
+            map = yield client.describeRuntimeMap(options);
+        }
+        return map;
+    });
+}
+/**
+ * Attempts to describe an existing runtime map and creates it if the resource does not exist.
+ */
+function tryDescribeRuntimeMapAsync(client, mapName, session, mapDef, siteVersion) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        try {
+            const map = yield describeRuntimeMap(client, {
+                mapname: mapName,
+                requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                session: yield session.getValueAsync()
+            }, siteVersion);
             return map;
-        });
-    }
-    describeRuntimeMap(options, siteVersion) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            (0, assert_1.assertIsDefined)(this.client);
-            let map;
-            const sv = yield siteVersion.getValueAsync();
-            if ((0, site_version_1.canUseQueryMapFeaturesV4)((0, site_version_1.parseSiteVersion)(sv.Version))) {
-                map = yield this.client.describeRuntimeMap_v4(options);
-            }
-            else {
-                map = yield this.client.describeRuntimeMap(options);
-            }
-            return map;
-        });
-    }
-    tryDescribeRuntimeMapAsync(mapName, session, mapDef, siteVersion) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            (0, assert_1.assertIsDefined)(this.client);
-            try {
-                const map = yield this.describeRuntimeMap({
-                    mapname: mapName,
+        }
+        catch (e) {
+            if (e.message === "MgResourceNotFoundException") {
+                const map = yield createRuntimeMap(client, {
+                    mapDefinition: mapDef,
                     requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                    session: yield session.getValueAsync()
+                    session: yield session.getValueAsync(),
+                    targetMapName: mapName
                 }, siteVersion);
                 return map;
             }
-            catch (e) {
-                if (e.message === "MgResourceNotFoundException") {
-                    const map = yield this.createRuntimeMap({
-                        mapDefinition: mapDef,
-                        requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                        session: yield session.getValueAsync(),
-                        targetMapName: mapName
-                    }, siteVersion);
-                    return map;
+            throw e;
+        }
+    });
+}
+/**
+ * Creates and/or recovers runtime maps and collects pending lazy maps for deferred creation.
+ */
+function createRuntimeMapsAsync(client, options, session, res, isStateless, mapDefSelector, projectionSelector, sessionWasReused) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a;
+        const mapDefs = mapDefSelector(res);
+        const mapPromises = [];
+        const warnings = [];
+        const { locale } = options;
+        const subjectLayers = {};
+        const fetchEpsgs = [];
+        const pendingMapDefs = {};
+        // We use an AsyncLazy because we only want to fetch the site version *iff* we are required to
+        const siteVersion = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () {
+            (0, assert_1.assertIsDefined)(client);
+            const sv = yield client.getSiteVersion();
+            return sv;
+        }));
+        // Collect only the MapDefinition entries for lazy-load eligibility check
+        const mapDefItems = mapDefs.filter(init_command_1.isMapDefinition);
+        // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
+        // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
+        // (where the session is reused), non-active maps should still be deferred because they may
+        // never have been created in the previous session (the user may not have switched to them).
+        // These deferred maps will be lazily initialized via activateMap() when the user switches
+        // to them, which now tries to describe the existing map first before creating a new one.
+        const canLazyLoad = !isStateless && mapDefItems.length > 1;
+        // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
+        // to identify which map to eagerly recover. If the URL param doesn't match any map in the
+        // appdef (or is absent), fall back to the first map by position.
+        const initialActiveMapName = options.initialActiveMap;
+        const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
+        if (isStateless) {
+            for (const m of mapDefs) {
+                if ((0, init_command_1.isMapDefinition)(m)) {
+                    const siteVer = yield siteVersion.getValueAsync();
+                    (0, assert_1.assertIsDefined)(client);
+                    mapPromises.push(describeRuntimeMapStateless(client, siteVer.Version, m));
                 }
-                throw e;
-            }
-        });
-    }
-    createRuntimeMapsAsync(session, res, isStateless, mapDefSelector, projectionSelector, sessionWasReused) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const mapDefs = mapDefSelector(res);
-            const mapPromises = [];
-            const warnings = [];
-            const { locale } = this.options;
-            const subjectLayers = {};
-            const fetchEpsgs = [];
-            const pendingMapDefs = {};
-            // We use an AsyncLazy because we only want to fetch the site version *iff* we are required to
-            const siteVersion = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                (0, assert_1.assertIsDefined)(this.client);
-                const sv = yield this.client.getSiteVersion();
-                return sv;
-            }));
-            // Collect only the MapDefinition entries for lazy-load eligibility check
-            const mapDefItems = mapDefs.filter(init_command_1.isMapDefinition);
-            // Lazy creation only applies when: not stateless and there are multiple MapGuide maps.
-            // Note: We intentionally do NOT exclude sessionWasReused here. Even on a browser refresh
-            // (where the session is reused), non-active maps should still be deferred because they may
-            // never have been created in the previous session (the user may not have switched to them).
-            // These deferred maps will be lazily initialized via activateMap() when the user switches
-            // to them, which now tries to describe the existing map first before creating a new one.
-            const canLazyLoad = !isStateless && mapDefItems.length > 1;
-            // When the session is reused (browser refresh), use initialActiveMap from the URL (?map=)
-            // to identify which map to eagerly recover. If the URL param doesn't match any map in the
-            // appdef (or is absent), fall back to the first map by position.
-            const initialActiveMapName = this.options.initialActiveMap;
-            const activeMapExistsInAppDef = !!initialActiveMapName && mapDefItems.some(mi => mi.name === initialActiveMapName);
-            if (isStateless) {
-                for (const m of mapDefs) {
-                    if ((0, init_command_1.isMapDefinition)(m)) {
-                        const siteVer = yield siteVersion.getValueAsync();
-                        (0, assert_1.assertIsDefined)(this.client);
-                        mapPromises.push(this.describeRuntimeMapStateless(this.client, siteVer.Version, m));
-                    }
-                    else {
-                        const proj = (_a = m.meta) === null || _a === void 0 ? void 0 : _a.projection;
-                        if (!(0, string_1.strIsNullOrEmpty)(proj)) {
-                            //Must be registered to proj4js if not 4326 or 3857
-                            const [_, epsg] = proj.split(':');
-                            if (!proj4_2.default.defs[`EPSG:${epsg}`]) {
-                                fetchEpsgs.push({ epsg: epsg, mapDef: m.name });
-                            }
+                else {
+                    const proj = (_a = m.meta) === null || _a === void 0 ? void 0 : _a.projection;
+                    if (!(0, string_1.strIsNullOrEmpty)(proj)) {
+                        //Must be registered to proj4js if not 4326 or 3857
+                        const [_, epsg] = proj.split(':');
+                        if (!proj4_2.default.defs[`EPSG:${epsg}`]) {
+                            fetchEpsgs.push({ epsg: epsg, mapDef: m.name });
                         }
                     }
-                }
-            }
-            else {
-                let isFirstMapDef = true;
-                for (const m of mapDefs) {
-                    if ((0, init_command_1.isMapDefinition)(m)) {
-                        // Determine if this is the "primary" map to eagerly load/recover.
-                        // - For new sessions: the primary is always the first map in the appdef.
-                        // - For reused sessions (browser refresh): the primary is the map the user was
-                        //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
-                        //   URL param is absent or does not match any map, fall back to first-by-position.
-                        const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
-                            ? m.name === initialActiveMapName
-                            : isFirstMapDef;
-                        if (canLazyLoad && !isPrimaryMap) {
-                            // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
-                            // This applies regardless of whether the session is being reused.
-                            (0, logger_1.info)(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
-                            pendingMapDefs[m.name] = m;
-                        }
-                        else if (sessionWasReused) {
-                            //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
-                            (0, logger_1.info)(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
-                            mapPromises.push(this.tryDescribeRuntimeMapAsync(m.name, session, m.mapDef, siteVersion));
-                        }
-                        else {
-                            (0, logger_1.info)(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
-                            (0, assert_1.assertIsDefined)(this.client);
-                            mapPromises.push(this.createRuntimeMap({
-                                mapDefinition: m.mapDef,
-                                requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
-                                session: yield session.getValueAsync(),
-                                targetMapName: m.name
-                            }, siteVersion));
-                        }
-                        isFirstMapDef = false;
-                    }
-                }
-            }
-            const maps = yield Promise.all(mapPromises);
-            //All must be non-zero
-            for (const m of maps) {
-                const epsg = m.CoordinateSystem.EpsgCode;
-                const mapDef = m.MapDefinition;
-                const arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
-                if (!arbCs) {
-                    if (epsg == "0") {
-                        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || i18n_1.DEFAULT_LOCALE, { mapDefinition: mapDef }));
-                    }
-                    //Must be registered to proj4js if not 4326 or 3857
-                    if (!proj4_2.default.defs[`EPSG:${epsg}`]) {
-                        fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
-                    }
-                }
-            }
-            const extraEpsgs = projectionSelector(res);
-            for (const e of extraEpsgs) {
-                if (!proj4_2.default.defs[`EPSG:${e}`]) {
-                    fetchEpsgs.push({ epsg: e, mapDef: "" });
-                }
-            }
-            const epsgs = yield Promise.all(fetchEpsgs.filter(fe => !(0, string_1.strIsNullOrEmpty)(fe.epsg)).map(f => (0, projections_1.resolveProjectionFromEpsgCodeAsync)(f.epsg, locale, f.mapDef)));
-            //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
-            //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
-            //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
-            //step has been relocated here, after all the custom projections have been fetched and registered
-            //with proj4
-            (0, logger_1.debug)(`Register proj4 with OpenLayers`);
-            (0, proj4_1.register)(proj4_2.default);
-            //Build the Dictionary<MgSubjectLayerType> from loaded maps
-            const mapsByName = {};
-            for (const map of maps) {
-                mapsByName[map.Name] = map;
-            }
-            for (const gs of mapDefs) {
-                if (!(0, init_command_1.isMapDefinition)(gs)) {
-                    mapsByName[gs.name] = gs;
-                }
-            }
-            return [mapsByName, pendingMapDefs, warnings];
-        });
-    }
-    describeRuntimeMapStateless(client, siteVersion, m) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
-            const { name, mapDef, metadata } = m;
-            const mdf = yield ((_a = this.client) === null || _a === void 0 ? void 0 : _a.getResource(mapDef, { username: "Anonymous" }));
-            if (!mdf)
-                throw new Error("Failed to fetch map def");
-            const rt = {
-                SessionId: "",
-                Extents: {
-                    LowerLeftCoordinate: {
-                        X: mdf.Extents.MinX,
-                        Y: mdf.Extents.MinY
-                    },
-                    UpperRightCoordinate: {
-                        X: mdf.Extents.MaxX,
-                        Y: mdf.Extents.MaxY
-                    }
-                },
-                SiteVersion: siteVersion,
-                Name: name,
-                DisplayDpi: 96,
-                BackgroundColor: mdf.BackgroundColor,
-                MapDefinition: mapDef,
-                CoordinateSystem: {
-                    // We are assuming the app def specifies this data in each <Map> entry as extension properties
-                    // beginning with "Meta_" (eg. Meta_MentorCode, Meta_EpsgCode, etc)
-                    MentorCode: metadata.MentorCode,
-                    EpsgCode: metadata.EpsgCode,
-                    MetersPerUnit: metadata.MetersPerUnit,
-                    Wkt: mdf.CoordinateSystem
-                },
-                IconMimeType: "image/png",
-            };
-            const groups = [];
-            const layers = [];
-            if (mdf.TileSetSource) {
-                rt.TileSetDefinition = mdf.TileSetSource.ResourceId;
-                const tsd = yield client.getResource(mdf.TileSetSource.ResourceId);
-                if (tsd.TileStoreParameters.TileProvider == "Default") {
-                    const sTileWidth = (_b = tsd.TileStoreParameters.Parameter.find(p => p.Name == "TileWidth")) === null || _b === void 0 ? void 0 : _b.Value;
-                    const sTileHeight = (_c = tsd.TileStoreParameters.Parameter.find(p => p.Name == "TileHeight")) === null || _c === void 0 ? void 0 : _c.Value;
-                    if (!(0, string_1.strIsNullOrEmpty)(sTileWidth) && !(0, string_1.strIsNullOrEmpty)(sTileHeight)) {
-                        rt.TileWidth = parseInt(sTileWidth, 10);
-                        rt.TileHeight = parseInt(sTileHeight, 10);
-                    }
-                }
-                else if (tsd.TileStoreParameters.TileProvider == "XYZ") {
-                    rt.TileHeight = 256;
-                    rt.TileHeight = 256;
-                }
-                for (const bg of tsd.BaseMapLayerGroup) {
-                    groups.push({
-                        Name: bg.Name,
-                        DisplayInLegend: bg.ShowInLegend,
-                        LegendLabel: bg.LegendLabel,
-                        ObjectId: bg.Name,
-                        ExpandInLegend: bg.ExpandInLegend,
-                        Visible: bg.Visible,
-                        ActuallyVisible: bg.Visible,
-                        Type: 3 /* BaseMapFromTileSet */
-                    });
-                    for (const lyr of bg.BaseMapLayer) {
-                        layers.push({
-                            Name: lyr.Name,
-                            DisplayInLegend: lyr.ShowInLegend,
-                            // We don't have stateless QUERYMAPFEATURES (yet), so there is no point actually respecting this flag
-                            Selectable: false, //lyr.Selectable,
-                            LegendLabel: lyr.LegendLabel,
-                            ExpandInLegend: lyr.ExpandInLegend,
-                            Visible: true,
-                            ParentId: bg.Name,
-                            ActuallyVisible: true,
-                            LayerDefinition: lyr.ResourceId,
-                            ObjectId: lyr.Name,
-                            Type: 2 /* BaseMap */
-                        });
-                    }
-                }
-            }
-            for (const grp of mdf.MapLayerGroup) {
-                groups.push({
-                    Name: grp.Name,
-                    DisplayInLegend: grp.ShowInLegend,
-                    LegendLabel: grp.LegendLabel,
-                    ObjectId: grp.Name,
-                    ExpandInLegend: grp.ExpandInLegend,
-                    Visible: grp.Visible,
-                    ActuallyVisible: grp.Visible,
-                    Type: 1 /* Normal */
-                });
-            }
-            for (const lyr of mdf.MapLayer) {
-                layers.push({
-                    Name: lyr.Name,
-                    DisplayInLegend: lyr.ShowInLegend,
-                    // We don't have stateless QUERYMAPFEATURES (yet), so there is no point actually respecting this flag
-                    Selectable: false, // lyr.Selectable,
-                    LegendLabel: lyr.LegendLabel,
-                    ExpandInLegend: lyr.ExpandInLegend,
-                    Visible: true,
-                    ParentId: lyr.Group,
-                    ActuallyVisible: true,
-                    LayerDefinition: lyr.ResourceId,
-                    ObjectId: lyr.Name,
-                    Type: 1 /* Dynamic */
-                });
-            }
-            rt.Group = groups;
-            rt.Layer = layers;
-            return rt;
-        });
-    }
-    /**
-     * @override
-     * @protected
-     * @param {ApplicationDefinition} appDef
-     * @param {Dictionary<SubjectLayerType>} mapsByName
-     * @param {*} config
-     * @param {string[]} warnings
-     * @param {string} locale
-     * @param {Dictionary<MapToLoad>} [pendingMapDefs]
-     * @returns {Dictionary<MapInfo>}
-     *
-     */
-    setupMaps(appDef, mapsByName, config, warnings, locale, pendingMapDefs) {
-        const dict = {};
-        if (appDef.MapSet) {
-            for (const mGroup of appDef.MapSet.MapGroup) {
-                let mapName;
-                //Setup external layers
-                const initExternalLayers = [];
-                const externalBaseLayers = [];
-                let subject;
-                //Need to do this in 2 passes. 1st pass to try and get the MG map
-                for (const map of mGroup.Map) {
-                    if (map.Type === "MapGuide") {
-                        //TODO: Based on the schema, different MG map groups could have different
-                        //settings here and our redux tree should reflect that. Currently the first one "wins"
-                        if (!config.selectionColor && map.Extension.SelectionColor != null) {
-                            config.selectionColor = map.Extension.SelectionColor;
-                        }
-                        if (!config.imageFormat && map.Extension.ImageFormat != null) {
-                            config.imageFormat = map.Extension.ImageFormat;
-                        }
-                        if (!config.selectionImageFormat && map.Extension.SelectionFormat != null) {
-                            config.selectionImageFormat = map.Extension.SelectionFormat;
-                        }
-                        //NOTE: Although non-sensical, if the same map definition exists across multiple
-                        //MapGroups, we might be matching the wrong one. We just assume such non-sensical
-                        //AppDefs won't exist
-                        for (const name in mapsByName) {
-                            const mapDef = mapsByName[name];
-                            if ((0, type_guards_1.isRuntimeMap)(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
-                                mapName = name;
-                                subject = mapDef;
-                                break;
-                            }
-                        }
-                        // If not found in the eagerly-loaded maps, check if it is a pending lazy map
-                        if (!mapName && pendingMapDefs) {
-                            const groupId = mGroup["@id"];
-                            if (pendingMapDefs[groupId]) {
-                                mapName = groupId;
-                                // subject remains undefined for pending maps
-                            }
-                        }
-                    }
-                }
-                const isArbitrary = this.isArbitraryCoordSys(subject);
-                //2nd pass to process non-MG maps
-                for (const map of mGroup.Map) {
-                    if (map.Type == "MapGuide") {
-                        continue;
-                    }
-                    if (map.Type == TYPE_SUBJECT) {
-                        mapName = mGroup["@id"];
-                    }
-                    else {
-                        if (isArbitrary) {
-                            warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER", locale, { mapId: mGroup["@id"], type: map.Type }));
-                        }
-                        else {
-                            if (map.Type == TYPE_EXTERNAL) {
-                                const layer = (0, init_command_1.buildSubjectLayerDefn)(map.Extension.layer_name, map);
-                                if (layer.type == defs_1.GenericSubjectLayerType.GeoTIFF && !(0, browser_support_1.supportsWebGL)()) {
-                                    warnings.push((0, i18n_1.tr)("INIT_WARNING_WEBGL_UNSUPPORTED", locale));
-                                }
-                                initExternalLayers.push(layer);
-                            }
-                            else {
-                                (0, init_1.processLayerInMapGroup)(map, warnings, config, appDef, externalBaseLayers);
-                            }
-                        }
-                    }
-                }
-                if (isArbitrary) {
-                    //Check for incompatible widgets
-                    for (const wset of appDef.WidgetSet) {
-                        for (const widget of wset.Widget) {
-                            switch (widget.Type) {
-                                case "CoordinateTracker":
-                                    warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, { mapId: mGroup["@id"], widget: widget.Type }));
-                                    break;
-                            }
-                        }
-                    }
-                }
-                (0, init_1.applyInitialBaseLayerVisibility)(externalBaseLayers);
-                //Setup initial view
-                let initialView;
-                if (mGroup.InitialView) {
-                    initialView = {
-                        x: mGroup.InitialView.CenterX,
-                        y: mGroup.InitialView.CenterY,
-                        scale: mGroup.InitialView.Scale
-                    };
-                }
-                if (mapName) {
-                    const coordinateFormat = (0, init_command_1.parseMapGroupCoordinateFormat)(mGroup);
-                    const pendingEntry = pendingMapDefs === null || pendingMapDefs === void 0 ? void 0 : pendingMapDefs[mapName];
-                    dict[mapName] = Object.assign({ mapGroupId: mGroup["@id"], map: mapsByName[mapName], initialView: initialView, externalBaseLayers: externalBaseLayers, initialExternalLayers: initExternalLayers, coordinateFormat: coordinateFormat }, (pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {}));
                 }
             }
         }
-        return dict;
-    }
-    initFromAppDefAsync(appDef, session, sessionWasReused) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.CustomProjections) === null || _b === void 0 ? void 0 : _b.Projection)) {
-                for (const pd of appDef.Extension.CustomProjections.Projection) {
-                    let k, v;
-                    if (typeof (pd.epsg) === 'string' && typeof (pd.text) === 'string') { // appdef json form
-                        k = pd.epsg;
-                        v = pd.text;
+        else {
+            let isFirstMapDef = true;
+            for (const m of mapDefs) {
+                if ((0, init_command_1.isMapDefinition)(m)) {
+                    // Determine if this is the "primary" map to eagerly load/recover.
+                    // - For new sessions: the primary is always the first map in the appdef.
+                    // - For reused sessions (browser refresh): the primary is the map the user was
+                    //   viewing, identified via initialActiveMap (from the ?map= URL param). If the
+                    //   URL param is absent or does not match any map, fall back to first-by-position.
+                    const isPrimaryMap = (sessionWasReused && activeMapExistsInAppDef)
+                        ? m.name === initialActiveMapName
+                        : isFirstMapDef;
+                    if (canLazyLoad && !isPrimaryMap) {
+                        // Defer non-primary maps in a multi-map layout to avoid loading them upfront.
+                        // This applies regardless of whether the session is being reused.
+                        (0, logger_1.info)(`Deferring lazy creation of runtime map (${m.name}) for: ${m.mapDef}`);
+                        pendingMapDefs[m.name] = m;
                     }
-                    else { // appdef xml translated form
-                        const [epsg] = pd["@epsg"];
-                        const [projStr] = pd["#text"];
-                        k = epsg;
-                        v = projStr;
-                    }
-                    if (!(0, string_1.strIsNullOrEmpty)(k) && !(0, string_1.strIsNullOrEmpty)(v)) {
-                        proj4_2.default.defs(`EPSG:${k}`, v);
-                        (0, logger_1.debug)(`Registered proj4 defn from appdef for EPSG:${k}`, v);
-                    }
-                }
-                (0, proj4_1.register)(proj4_2.default);
-            }
-            const [mapsByName, pendingMapDefs, warnings] = yield this.createRuntimeMapsAsync(session, appDef, (0, init_command_1.isStateless)(appDef), fl => (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl), fl => this.getExtraProjectionsFromFlexLayout(fl), sessionWasReused);
-            return yield this.initFromAppDefCoreAsync(appDef, this.options, mapsByName, warnings, pendingMapDefs);
-        });
-    }
-    sessionAcquiredAsync(session, sessionWasReused) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const { resourceId, locale } = this.options;
-            if (!resourceId) {
-                //Try assumed default location of appdef.json that we are assuming sits in the same place as the viewer html files
-                const cl = new client_1.Client("", "mapagent");
-                try {
-                    const fl = yield cl.get("appdef.json");
-                    return yield this.initFromAppDefAsync(fl, session, sessionWasReused);
-                }
-                catch (e) { //The appdef.json doesn't exist at the assumed default location?
-                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
-                }
-            }
-            else {
-                if (typeof (resourceId) == 'string') {
-                    if ((0, string_1.strEndsWith)(resourceId, "WebLayout")) {
-                        (0, assert_1.assertIsDefined)(this.client);
-                        const wl = yield this.client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
-                        return yield this.initFromWebLayoutAsync(wl, session, sessionWasReused);
-                    }
-                    else if ((0, string_1.strEndsWith)(resourceId, "ApplicationDefinition")) {
-                        (0, assert_1.assertIsDefined)(this.client);
-                        const fl = yield this.client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
-                        return yield this.initFromAppDefAsync(fl, session, sessionWasReused);
+                    else if (sessionWasReused) {
+                        //FIXME: If the map state we're recovering has a selection, we need to re-init the selection client-side
+                        (0, logger_1.info)(`Session ID re-used. Attempting recovery of map state of: ${m.name}`);
+                        (0, assert_1.assertIsDefined)(client);
+                        mapPromises.push(tryDescribeRuntimeMapAsync(client, m.name, session, m.mapDef, siteVersion));
                     }
                     else {
-                        if ((0, string_1.isResourceId)(resourceId)) {
-                            throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
-                        }
-                        else {
-                            //Assume URL to a appdef json document
-                            let fl;
-                            if (!this.client) {
-                                // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
-                                const cl = new client_1.Client("", "mapagent");
-                                fl = yield cl.get(resourceId);
-                            }
-                            else {
-                                fl = yield this.client.get(resourceId);
-                            }
-                            return yield this.initFromAppDefAsync(fl, session, sessionWasReused);
+                        (0, logger_1.info)(`Creating runtime map state (${m.name}) for: ${m.mapDef}`);
+                        (0, assert_1.assertIsDefined)(client);
+                        mapPromises.push(createRuntimeMap(client, {
+                            mapDefinition: m.mapDef,
+                            requestedFeatures: request_builder_1.RuntimeMapFeatureFlags.LayerFeatureSources | request_builder_1.RuntimeMapFeatureFlags.LayerIcons | request_builder_1.RuntimeMapFeatureFlags.LayersAndGroups,
+                            session: yield session.getValueAsync(),
+                            targetMapName: m.name
+                        }, siteVersion));
+                    }
+                    isFirstMapDef = false;
+                }
+            }
+        }
+        const maps = yield Promise.all(mapPromises);
+        //All must be non-zero
+        for (const m of maps) {
+            const epsg = m.CoordinateSystem.EpsgCode;
+            const mapDef = m.MapDefinition;
+            const arbCs = (0, units_1.tryParseArbitraryCs)(m.CoordinateSystem.MentorCode);
+            if (!arbCs) {
+                if (epsg == "0") {
+                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNSUPPORTED_COORD_SYS", locale || i18n_1.DEFAULT_LOCALE, { mapDefinition: mapDef }));
+                }
+                //Must be registered to proj4js if not 4326 or 3857
+                if (!proj4_2.default.defs[`EPSG:${epsg}`]) {
+                    fetchEpsgs.push({ epsg: epsg, mapDef: mapDef });
+                }
+            }
+        }
+        const extraEpsgs = projectionSelector(res);
+        for (const e of extraEpsgs) {
+            if (!proj4_2.default.defs[`EPSG:${e}`]) {
+                fetchEpsgs.push({ epsg: e, mapDef: "" });
+            }
+        }
+        const epsgs = yield Promise.all(fetchEpsgs.filter(fe => !(0, string_1.strIsNullOrEmpty)(fe.epsg)).map(f => (0, projections_1.resolveProjectionFromEpsgCodeAsync)(f.epsg, locale, f.mapDef)));
+        //Previously, we register proj4 with OpenLayers on the bootstrap phase way before this init
+        //process is started. This no longer works for OL6 where it doesn't seem to pick up the extra
+        //projections we've registered with proj4 after linking proj4 to OpenLayers. So that registration
+        //step has been relocated here, after all the custom projections have been fetched and registered
+        //with proj4
+        (0, logger_1.debug)(`Register proj4 with OpenLayers`);
+        (0, proj4_1.register)(proj4_2.default);
+        //Build the Dictionary<MgSubjectLayerType> from loaded maps
+        const mapsByName = {};
+        for (const map of maps) {
+            mapsByName[map.Name] = map;
+        }
+        for (const gs of mapDefs) {
+            if (!(0, init_command_1.isMapDefinition)(gs)) {
+                mapsByName[gs.name] = gs;
+            }
+        }
+        return [mapsByName, pendingMapDefs, warnings];
+    });
+}
+/**
+ * Builds a synthetic runtime map from a MapDefinition for stateless map operation.
+ */
+function describeRuntimeMapStateless(client, siteVersion, m) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
+        const { name, mapDef, metadata } = m;
+        const mdf = yield client.getResource(mapDef, { username: "Anonymous" });
+        if (!mdf)
+            throw new Error("Failed to fetch map def");
+        const rt = {
+            SessionId: "",
+            Extents: {
+                LowerLeftCoordinate: {
+                    X: mdf.Extents.MinX,
+                    Y: mdf.Extents.MinY
+                },
+                UpperRightCoordinate: {
+                    X: mdf.Extents.MaxX,
+                    Y: mdf.Extents.MaxY
+                }
+            },
+            SiteVersion: siteVersion,
+            Name: name,
+            DisplayDpi: 96,
+            BackgroundColor: mdf.BackgroundColor,
+            MapDefinition: mapDef,
+            CoordinateSystem: {
+                // We are assuming the app def specifies this data in each <Map> entry as extension properties
+                // beginning with "Meta_" (eg. Meta_MentorCode, Meta_EpsgCode, etc)
+                MentorCode: metadata.MentorCode,
+                EpsgCode: metadata.EpsgCode,
+                MetersPerUnit: metadata.MetersPerUnit,
+                Wkt: mdf.CoordinateSystem
+            },
+            IconMimeType: "image/png",
+        };
+        const groups = [];
+        const layers = [];
+        if (mdf.TileSetSource) {
+            rt.TileSetDefinition = mdf.TileSetSource.ResourceId;
+            const tsd = yield client.getResource(mdf.TileSetSource.ResourceId);
+            if (tsd.TileStoreParameters.TileProvider == "Default") {
+                const sTileWidth = (_a = tsd.TileStoreParameters.Parameter.find(p => p.Name == "TileWidth")) === null || _a === void 0 ? void 0 : _a.Value;
+                const sTileHeight = (_b = tsd.TileStoreParameters.Parameter.find(p => p.Name == "TileHeight")) === null || _b === void 0 ? void 0 : _b.Value;
+                if (!(0, string_1.strIsNullOrEmpty)(sTileWidth) && !(0, string_1.strIsNullOrEmpty)(sTileHeight)) {
+                    rt.TileWidth = parseInt(sTileWidth, 10);
+                    rt.TileHeight = parseInt(sTileHeight, 10);
+                }
+            }
+            else if (tsd.TileStoreParameters.TileProvider == "XYZ") {
+                rt.TileHeight = 256;
+                rt.TileHeight = 256;
+            }
+            for (const bg of tsd.BaseMapLayerGroup) {
+                groups.push({
+                    Name: bg.Name,
+                    DisplayInLegend: bg.ShowInLegend,
+                    LegendLabel: bg.LegendLabel,
+                    ObjectId: bg.Name,
+                    ExpandInLegend: bg.ExpandInLegend,
+                    Visible: bg.Visible,
+                    ActuallyVisible: bg.Visible,
+                    Type: 3 /* BaseMapFromTileSet */
+                });
+                for (const lyr of bg.BaseMapLayer) {
+                    layers.push({
+                        Name: lyr.Name,
+                        DisplayInLegend: lyr.ShowInLegend,
+                        // We don't have stateless QUERYMAPFEATURES (yet), so there is no point actually respecting this flag
+                        Selectable: false, //lyr.Selectable,
+                        LegendLabel: lyr.LegendLabel,
+                        ExpandInLegend: lyr.ExpandInLegend,
+                        Visible: true,
+                        ParentId: bg.Name,
+                        ActuallyVisible: true,
+                        LayerDefinition: lyr.ResourceId,
+                        ObjectId: lyr.Name,
+                        Type: 2 /* BaseMap */
+                    });
+                }
+            }
+        }
+        for (const grp of mdf.MapLayerGroup) {
+            groups.push({
+                Name: grp.Name,
+                DisplayInLegend: grp.ShowInLegend,
+                LegendLabel: grp.LegendLabel,
+                ObjectId: grp.Name,
+                ExpandInLegend: grp.ExpandInLegend,
+                Visible: grp.Visible,
+                ActuallyVisible: grp.Visible,
+                Type: 1 /* Normal */
+            });
+        }
+        for (const lyr of mdf.MapLayer) {
+            layers.push({
+                Name: lyr.Name,
+                DisplayInLegend: lyr.ShowInLegend,
+                // We don't have stateless QUERYMAPFEATURES (yet), so there is no point actually respecting this flag
+                Selectable: false, // lyr.Selectable,
+                LegendLabel: lyr.LegendLabel,
+                ExpandInLegend: lyr.ExpandInLegend,
+                Visible: true,
+                ParentId: lyr.Group,
+                ActuallyVisible: true,
+                LayerDefinition: lyr.ResourceId,
+                ObjectId: lyr.Name,
+                Type: 1 /* Dynamic */
+            });
+        }
+        rt.Group = groups;
+        rt.Layer = layers;
+        return rt;
+    });
+}
+/**
+ * Converts AppDef map groups into viewer map entries with runtime map and layer metadata.
+ */
+function setupMaps(appDef, mapsByName, config, warnings, locale, pendingMapDefs) {
+    const dict = {};
+    if (appDef.MapSet) {
+        for (const mGroup of appDef.MapSet.MapGroup) {
+            let mapName;
+            //Setup external layers
+            const initExternalLayers = [];
+            const externalBaseLayers = [];
+            let subject;
+            //Need to do this in 2 passes. 1st pass to try and get the MG map
+            for (const map of mGroup.Map) {
+                if (map.Type === "MapGuide") {
+                    //TODO: Based on the schema, different MG map groups could have different
+                    //settings here and our redux tree should reflect that. Currently the first one "wins"
+                    if (!config.selectionColor && map.Extension.SelectionColor != null) {
+                        config.selectionColor = map.Extension.SelectionColor;
+                    }
+                    if (!config.imageFormat && map.Extension.ImageFormat != null) {
+                        config.imageFormat = map.Extension.ImageFormat;
+                    }
+                    if (!config.selectionImageFormat && map.Extension.SelectionFormat != null) {
+                        config.selectionImageFormat = map.Extension.SelectionFormat;
+                    }
+                    //NOTE: Although non-sensical, if the same map definition exists across multiple
+                    //MapGroups, we might be matching the wrong one. We just assume such non-sensical
+                    //AppDefs won't exist
+                    for (const name in mapsByName) {
+                        const mapDef = mapsByName[name];
+                        if ((0, type_guards_1.isRuntimeMap)(mapDef) && mapDef.MapDefinition == map.Extension.ResourceId) {
+                            mapName = name;
+                            subject = mapDef;
+                            break;
                         }
                     }
+                    // If not found in the eagerly-loaded maps, check if it is a pending lazy map
+                    if (!mapName && pendingMapDefs) {
+                        const groupId = mGroup["@id"];
+                        if (pendingMapDefs[groupId]) {
+                            mapName = groupId;
+                            // subject remains undefined for pending maps
+                        }
+                    }
+                }
+            }
+            const isArbitrary = isArbitraryCoordSys(subject);
+            //2nd pass to process non-MG maps
+            for (const map of mGroup.Map) {
+                if (map.Type == "MapGuide") {
+                    continue;
+                }
+                if (map.Type == TYPE_SUBJECT) {
+                    mapName = mGroup["@id"];
                 }
                 else {
-                    const fl = yield resourceId();
-                    return yield this.initFromAppDefAsync(fl, session, sessionWasReused);
-                }
-            }
-        });
-    }
-    runAsync(options) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            this.options = options;
-            yield this.initLocaleAsync(this.options);
-            let sessionWasReused = false;
-            let session;
-            if (!this.options.session) {
-                session = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    (0, assert_1.assertIsDefined)(this.client);
-                    const sid = yield this.client.createSession("Anonymous", "");
-                    return sid;
-                }));
-            }
-            else {
-                (0, logger_1.info)(`Re-using session: ${this.options.session}`);
-                sessionWasReused = true;
-                session = new lazy_1.AsyncLazy(() => Promise.resolve(this.options.session));
-            }
-            const payload = yield this.sessionAcquiredAsync(session, sessionWasReused);
-            payload.sessionWasReused = sessionWasReused;
-            if (sessionWasReused) {
-                let initSelections = {};
-                for (const mapName in payload.maps) {
-                    const sset = yield (0, session_store_1.retrieveSelectionSetFromLocalStorage)(session, mapName);
-                    if (sset) {
-                        initSelections[mapName] = sset;
+                    if (isArbitrary) {
+                        warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_INCOMPATIBLE_LAYER", locale, { mapId: mGroup["@id"], type: map.Type }));
+                    }
+                    else {
+                        if (map.Type == TYPE_EXTERNAL) {
+                            const layer = (0, init_command_1.buildSubjectLayerDefn)(map.Extension.layer_name, map);
+                            if (layer.type == defs_1.GenericSubjectLayerType.GeoTIFF && !(0, browser_support_1.supportsWebGL)()) {
+                                warnings.push((0, i18n_1.tr)("INIT_WARNING_WEBGL_UNSUPPORTED", locale));
+                            }
+                            initExternalLayers.push(layer);
+                        }
+                        else {
+                            (0, init_1.processLayerInMapGroup)(map, warnings, config, appDef, externalBaseLayers);
+                        }
                     }
                 }
-                payload.initialSelections = initSelections;
-                try {
-                    //In the interest of being a responsible citizen, clean up all selection-related stuff from
-                    //session store
-                    yield (0, session_store_1.clearSessionStore)();
-                }
-                catch (e) {
+            }
+            if (isArbitrary) {
+                //Check for incompatible widgets
+                for (const wset of appDef.WidgetSet) {
+                    for (const widget of wset.Widget) {
+                        switch (widget.Type) {
+                            case "CoordinateTracker":
+                                warnings.push((0, i18n_1.tr)("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, { mapId: mGroup["@id"], widget: widget.Type }));
+                                break;
+                        }
+                    }
                 }
             }
-            return payload;
-        });
+            (0, init_1.applyInitialBaseLayerVisibility)(externalBaseLayers);
+            //Setup initial view
+            let initialView;
+            if (mGroup.InitialView) {
+                initialView = {
+                    x: mGroup.InitialView.CenterX,
+                    y: mGroup.InitialView.CenterY,
+                    scale: mGroup.InitialView.Scale
+                };
+            }
+            if (mapName) {
+                const coordinateFormat = (0, init_command_1.parseMapGroupCoordinateFormat)(mGroup);
+                const pendingEntry = pendingMapDefs === null || pendingMapDefs === void 0 ? void 0 : pendingMapDefs[mapName];
+                dict[mapName] = Object.assign({ mapGroupId: mGroup["@id"], map: mapsByName[mapName], initialView: initialView, externalBaseLayers: externalBaseLayers, initialExternalLayers: initExternalLayers, coordinateFormat: coordinateFormat }, (pendingEntry ? { mapDef: pendingEntry.mapDef, metadata: pendingEntry.metadata } : {}));
+            }
+        }
     }
+    return dict;
 }
-exports.DefaultViewerInitCommand = DefaultViewerInitCommand;
+/**
+ * Initializes viewer payload from an ApplicationDefinition document.
+ */
+function initFromAppDefAsync(client, options, appDef, session, sessionWasReused) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
+        if (Array.isArray((_b = (_a = appDef.Extension) === null || _a === void 0 ? void 0 : _a.CustomProjections) === null || _b === void 0 ? void 0 : _b.Projection)) {
+            for (const pd of appDef.Extension.CustomProjections.Projection) {
+                let k, v;
+                if (typeof (pd.epsg) === 'string' && typeof (pd.text) === 'string') { // appdef json form
+                    k = pd.epsg;
+                    v = pd.text;
+                }
+                else { // appdef xml translated form
+                    const [epsg] = pd["@epsg"];
+                    const [projStr] = pd["#text"];
+                    k = epsg;
+                    v = projStr;
+                }
+                if (!(0, string_1.strIsNullOrEmpty)(k) && !(0, string_1.strIsNullOrEmpty)(v)) {
+                    proj4_2.default.defs(`EPSG:${k}`, v);
+                    (0, logger_1.debug)(`Registered proj4 defn from appdef for EPSG:${k}`, v);
+                }
+            }
+            (0, proj4_1.register)(proj4_2.default);
+        }
+        const [mapsByName, pendingMapDefs, warnings] = yield createRuntimeMapsAsync(client, options, session, appDef, (0, init_command_1.isStateless)(appDef), fl => (0, init_command_1.getMapDefinitionsFromFlexLayout)(fl), fl => (0, init_command_1.getExtraProjectionsFromFlexLayout)(fl), sessionWasReused);
+        return yield initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingMapDefs);
+    });
+}
+/**
+ * Resolves the init document source and returns the normalized viewer init payload.
+ */
+function sessionAcquiredAsync(client, options, session, sessionWasReused) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        const { resourceId, locale } = options;
+        if (!resourceId) {
+            //Try assumed default location of appdef.json that we are assuming sits in the same place as the viewer html files
+            const cl = new client_1.Client("", "mapagent");
+            try {
+                const fl = yield cl.get("appdef.json");
+                return yield initFromAppDefAsync(client, options, fl, session, sessionWasReused);
+            }
+            catch (e) { //The appdef.json doesn't exist at the assumed default location?
+                throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
+            }
+        }
+        else {
+            if (typeof (resourceId) == 'string') {
+                if ((0, string_1.strEndsWith)(resourceId, "WebLayout")) {
+                    (0, assert_1.assertIsDefined)(client);
+                    const wl = yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
+                    return yield initFromWebLayoutAsync(client, options, wl, session, sessionWasReused);
+                }
+                else if ((0, string_1.strEndsWith)(resourceId, "ApplicationDefinition")) {
+                    (0, assert_1.assertIsDefined)(client);
+                    const fl = yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
+                    return yield initFromAppDefAsync(client, options, fl, session, sessionWasReused);
+                }
+                else {
+                    if ((0, string_1.isResourceId)(resourceId)) {
+                        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: resourceId }));
+                    }
+                    else {
+                        //Assume URL to a appdef json document
+                        let fl;
+                        if (!client) {
+                            // This wasn't set up with a mapagent URI (probably a non-MG viewer template), so make a new client on-the-fly
+                            const cl = new client_1.Client("", "mapagent");
+                            fl = yield cl.get(resourceId);
+                        }
+                        else {
+                            fl = yield client.get(resourceId);
+                        }
+                        return yield initFromAppDefAsync(client, options, fl, session, sessionWasReused);
+                    }
+                }
+            }
+            else {
+                const doc = yield resourceId();
+                if ((0, deArrayify_1.isWebLayout)(doc)) {
+                    const wl = doc;
+                    return yield initFromWebLayoutAsync(client, options, wl, session, sessionWasReused);
+                }
+                if ((0, deArrayify_1.isAppDef)(doc)) {
+                    const appDef = doc;
+                    return yield initFromAppDefAsync(client, options, appDef, session, sessionWasReused);
+                }
+                throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: "[function resource loader]" }));
+            }
+        }
+    });
+}
 
 
 /***/ },
@@ -2950,16 +2918,24 @@ exports.DefaultViewerInitCommand = DefaultViewerInitCommand;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.applyInitialBaseLayerVisibility = applyInitialBaseLayerVisibility;
+exports.processAndDispatchInitError = processAndDispatchInitError;
 exports.normalizeInitPayload = normalizeInitPayload;
 exports.processLayerInMapGroup = processLayerInMapGroup;
-exports.initLayout = initLayout;
+exports.fetchInitDocument = fetchInitDocument;
+exports.initAppFromDocument = initAppFromDocument;
 exports.acknowledgeInitWarnings = acknowledgeInitWarnings;
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
 const string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 const actions_1 = __webpack_require__(/*! ../constants/actions */ "./src/constants/actions.ts");
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
 const layout_1 = __webpack_require__(/*! ../api/registry/layout */ "./src/api/registry/layout.ts");
 const logger_1 = __webpack_require__(/*! ../utils/logger */ "./src/utils/logger.ts");
+const lazy_1 = __webpack_require__(/*! ../api/lazy */ "./src/api/lazy.ts");
+const deArrayify_1 = __webpack_require__(/*! ../api/builders/deArrayify */ "./src/api/builders/deArrayify.ts");
+const error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
+const init_mapguide_1 = __webpack_require__(/*! ./init-mapguide */ "./src/actions/init-mapguide.ts");
+const session_store_1 = __webpack_require__(/*! ../api/session-store */ "./src/api/session-store.ts");
 function applyInitialBaseLayerVisibility(externalBaseLayers) {
     if (externalBaseLayers.length > 0) {
         // First visual base layer, first served
@@ -3017,6 +2993,12 @@ function normalizeInitPayload(payload, layout) {
     }
     return payload;
 }
+/**
+ * Builds an INIT_APP payload from a pre-fetched init document.
+ *
+ * @hidden
+ * @since 0.15
+ */
 let _counter = 0;
 function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers) {
     var _a;
@@ -3171,61 +3153,149 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
     }
 }
 /**
- * Initializes the viewer
- *
- * @param {IViewerInitCommand} cmd
- * @param {IMapProviderContext} viewer
- * @param {IInitAppLayout} options
- * @returns {ReduxThunkedAction}
- *
- * @since 0.15 Added viewer parameter
+ * @hidden
+ * @since 0.15
  */
-function initLayout(cmd, viewer, options) {
-    const opts = Object.assign({}, options);
-    return (dispatch, getState) => {
-        const args = getState().config;
-        //TODO: Fetch and init the string bundle earlier if "locale" is present
-        //so the English init messages are seen only for a blink if requesting a
-        //non-english string bundle
-        if (args.agentUri && args.agentKind) {
-            const client = new client_1.Client(args.agentUri, args.agentKind);
-            cmd.attachClient(client);
+function fetchInitDocument(options, client) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        const { resourceId, locale } = options;
+        let sessionWasReused = false;
+        let session;
+        if (!options.session) {
+            session = new lazy_1.AsyncLazy(() => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                if (!client) {
+                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_NO_CONNECTION", locale));
+                }
+                return yield client.createSession("Anonymous", "");
+            }));
         }
-        cmd.runAsync(options).then(payload => {
-            var _a, _b;
-            let initPayload = payload;
-            if (opts.initialView) {
-                initPayload.initialView = Object.assign({}, opts.initialView);
+        else {
+            sessionWasReused = true;
+            session = new lazy_1.AsyncLazy(() => Promise.resolve(options.session));
+        }
+        if (!resourceId) {
+            const cl = new client_1.Client("", "mapagent");
+            try {
+                const appDef = yield cl.get("appdef.json");
+                return {
+                    document: appDef,
+                    session,
+                    sessionWasReused
+                };
             }
-            if (opts.initialActiveMap) {
-                initPayload.activeMapName = opts.initialActiveMap;
+            catch (e) {
+                throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
             }
-            initPayload.initialHideGroups = opts.initialHideGroups;
-            initPayload.initialHideLayers = opts.initialHideLayers;
-            initPayload.initialShowGroups = opts.initialShowGroups;
-            initPayload.initialShowLayers = opts.initialShowLayers;
-            initPayload.featureTooltipsEnabled = opts.featureTooltipsEnabled;
-            // Merge in appSettings from loaded appDef, any setting in appDef
-            // already specified at viewer mount will be overwritten
-            const appSettings = (_a = opts.appSettings) !== null && _a !== void 0 ? _a : {};
-            const inAppSettings = (_b = payload.appSettings) !== null && _b !== void 0 ? _b : {};
-            for (const k in inAppSettings) {
-                appSettings[k] = inAppSettings[k];
+        }
+        if (typeof resourceId === "string") {
+            if ((0, string_1.strEndsWith)(resourceId, "WebLayout")) {
+                if (!client) {
+                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_NO_CONNECTION", locale));
+                }
+                const wl = yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
+                return {
+                    document: wl,
+                    session,
+                    sessionWasReused
+                };
             }
-            initPayload.appSettings = appSettings;
-            dispatch({
-                type: actions_1.ActionType.INIT_APP,
-                payload
-            });
-            if (options.onInit) {
-                if (viewer) {
-                    options.onInit(viewer);
+            if ((0, string_1.strEndsWith)(resourceId, "ApplicationDefinition")) {
+                if (!client) {
+                    throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_NO_CONNECTION", locale));
+                }
+                const appDef = yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() });
+                return {
+                    document: appDef,
+                    session,
+                    sessionWasReused
+                };
+            }
+            if ((0, string_1.isResourceId)(resourceId)) {
+                throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId }));
+            }
+            if (client) {
+                const appDef = yield client.get(resourceId);
+                return {
+                    document: appDef,
+                    session,
+                    sessionWasReused
+                };
+            }
+            const cl = new client_1.Client("", "mapagent");
+            const appDef = yield cl.get(resourceId);
+            return {
+                document: appDef,
+                session,
+                sessionWasReused
+            };
+        }
+        const document = yield resourceId();
+        if ((0, deArrayify_1.isAppDef)(document) || (0, deArrayify_1.isWebLayout)(document)) {
+            return {
+                document,
+                session,
+                sessionWasReused
+            };
+        }
+        throw new error_1.MgError((0, i18n_1.tr)("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId: "[function resource loader]" }));
+    });
+}
+/**
+ * @hidden
+ * @since 0.15
+ */
+function initAppFromDocument(fetchResult, options) {
+    return (dispatch, getState) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
+        const args = getState().config;
+        let client;
+        if (args.agentUri && args.agentKind) {
+            client = new client_1.Client(args.agentUri, args.agentKind);
+        }
+        const fullOptions = Object.assign(Object.assign({}, options), { resourceId: () => tslib_1.__awaiter(this, void 0, void 0, function* () { return fetchResult.document; }) });
+        yield (0, init_mapguide_1.initLocaleAsync)(dispatch, fullOptions);
+        const sessionWasReused = fetchResult.sessionWasReused;
+        const payload = yield (0, init_mapguide_1.sessionAcquiredAsync)(client, fullOptions, fetchResult.session, sessionWasReused);
+        payload.sessionWasReused = sessionWasReused;
+        if (sessionWasReused) {
+            const initSelections = {};
+            for (const mapName in payload.maps) {
+                const sset = yield (0, session_store_1.retrieveSelectionSetFromLocalStorage)(fetchResult.session, mapName);
+                if (sset) {
+                    initSelections[mapName] = sset;
                 }
             }
-        }).catch(err => {
-            processAndDispatchInitError(err, false, dispatch, opts);
+            payload.initialSelections = initSelections;
+            try {
+                yield (0, session_store_1.clearSessionStore)();
+            }
+            catch (e) {
+                // swallow — selection store cleanup is best-effort
+            }
+        }
+        let initPayload = payload;
+        if (options.initialView) {
+            initPayload.initialView = Object.assign({}, options.initialView);
+        }
+        if (options.initialActiveMap) {
+            initPayload.activeMapName = options.initialActiveMap;
+        }
+        initPayload.initialHideGroups = options.initialHideGroups;
+        initPayload.initialHideLayers = options.initialHideLayers;
+        initPayload.initialShowGroups = options.initialShowGroups;
+        initPayload.initialShowLayers = options.initialShowLayers;
+        initPayload.featureTooltipsEnabled = options.featureTooltipsEnabled;
+        const appSettings = (_a = options.appSettings) !== null && _a !== void 0 ? _a : {};
+        const inAppSettings = (_b = payload.appSettings) !== null && _b !== void 0 ? _b : {};
+        for (const k in inAppSettings) {
+            appSettings[k] = inAppSettings[k];
+        }
+        initPayload.appSettings = appSettings;
+        dispatch({
+            type: actions_1.ActionType.INIT_APP,
+            payload: initPayload
         });
-    };
+    });
 }
 function acknowledgeInitWarnings() {
     return {
@@ -23530,6 +23600,7 @@ const template_1 = __webpack_require__(/*! ../actions/template */ "./src/actions
 const context_2 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const dompurify_1 = tslib_1.__importDefault(__webpack_require__(/*! dompurify */ "./node_modules/dompurify/dist/purify.cjs.js"));
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
+const client_1 = __webpack_require__(/*! ../api/client */ "./src/api/client.ts");
 /**
  * The app setting key used to specify URL props to ignore.
  * The value should be a comma-separated list of URL parameter names.
@@ -23606,13 +23677,11 @@ const App = (props) => {
     const configuredAppSettings = (0, hooks_1.useCustomAppSettings)();
     const dispatch = (0, context_2.useReduxDispatch)();
     const viewer = (0, context_2.useMapProviderContext)();
-    const initLayoutAction = (cmd, args) => dispatch((0, init_1.initLayout)(cmd, viewer, args));
     const setElementVisibility = (state) => dispatch((0, template_1.setElementStates)(state));
     const [isLoading, setIsLoading] = React.useState(true);
     // --- Begin logic from AppInner ---
     React.useEffect(() => {
-        var _a;
-        const { onInit, mapguide, locale, resourceId, externalBaseLayers, initCommand, appSettings, layout: layoutProp, urlPropsIgnore } = props;
+        const { onInit, mapguide, locale, resourceId, externalBaseLayers, appSettings, layout: layoutProp, urlPropsIgnore } = props;
         const effectiveUrlPropsIgnore = getEffectiveUrlPropsIgnore(urlPropsIgnore, appSettings === null || appSettings === void 0 ? void 0 : appSettings[exports.APP_SETTING_URL_PROPS_IGNORE]);
         const { locale: urlLocale, resource: urlResource, session: urlSession, x: urlX, y: urlY, ft: urlFeatureTooltip, scale: urlScale, map: urlMap, sl: urlShowLayers, hl: urlHideLayers, sg: urlShowGroups, hg: urlHideGroups } = (0, url_state_1.getStateFromUrl)(effectiveUrlPropsIgnore);
         if (setElementVisibility && (mapguide === null || mapguide === void 0 ? void 0 : mapguide.initialElementVisibility)) {
@@ -23628,7 +23697,8 @@ const App = (props) => {
         if (mapguide === null || mapguide === void 0 ? void 0 : mapguide.fusionRoot) {
             (0, runtime_1.setFusionRoot)(mapguide.fusionRoot);
         }
-        if (initLayoutAction) {
+        const initialize = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
             let ftArgs;
             if (typeof (urlFeatureTooltip) != 'undefined') {
                 ftArgs = {
@@ -23684,8 +23754,28 @@ const App = (props) => {
                 layout: typeof (layoutProp) == 'string' ? layoutProp : undefined,
                 appSettings: appSettings
             }, (ftArgs !== null && ftArgs !== void 0 ? ftArgs : {})), (amArgs !== null && amArgs !== void 0 ? amArgs : {})), (ivArgs !== null && ivArgs !== void 0 ? ivArgs : {})), (slArgs !== null && slArgs !== void 0 ? slArgs : {})), (hlArgs !== null && hlArgs !== void 0 ? hlArgs : {})), (sgArgs !== null && sgArgs !== void 0 ? sgArgs : {})), (hgArgs !== null && hgArgs !== void 0 ? hgArgs : {}));
-            initLayoutAction(initCommand, args);
-        }
+            let fetchClient;
+            if (mapguide === null || mapguide === void 0 ? void 0 : mapguide.agentUri) {
+                try {
+                    fetchClient = new client_1.Client(mapguide.agentUri, (_b = mapguide.agentKind) !== null && _b !== void 0 ? _b : "mapagent");
+                }
+                catch (e) {
+                    fetchClient = undefined;
+                }
+            }
+            try {
+                const fetchResult = yield (0, init_1.fetchInitDocument)(args, fetchClient);
+                const { resourceId: _resourceId, session: _session, onInit: _onInit } = args, initArgs = tslib_1.__rest(args, ["resourceId", "session", "onInit"]);
+                yield dispatch((0, init_1.initAppFromDocument)(fetchResult, initArgs));
+                if (onInit) {
+                    onInit(viewer);
+                }
+            }
+            catch (e) {
+                (0, init_1.processAndDispatchInitError)(e, false, dispatch, args);
+            }
+        });
+        initialize();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     React.useEffect(() => {
@@ -28307,7 +28397,6 @@ const config_1 = __webpack_require__(/*! ../reducers/config */ "./src/reducers/c
 const command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 const subscriber_1 = __webpack_require__(/*! ../containers/subscriber */ "./src/containers/subscriber.tsx");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
-const init_mapguide_1 = __webpack_require__(/*! ../actions/init-mapguide */ "./src/actions/init-mapguide.ts");
 const mapguide_1 = __webpack_require__(/*! ../components/map-providers/mapguide */ "./src/components/map-providers/mapguide.ts");
 /**
  * This is the entry point to the Application component
@@ -28365,15 +28454,10 @@ class ApplicationViewModel {
         const initState = Object.assign({ config: Object.assign(Object.assign(Object.assign({}, config_1.CONFIG_INITIAL_STATE), agentConf), (props.initialConfig || {})) }, this.getExtraInitialState());
         const extraReducers = this.getExtraReducers();
         this._store = (0, configure_store_1.configureStore)(initState, extraReducers);
-        let initCommand;
-        if (props.initCommandFactory)
-            initCommand = props.initCommandFactory(this._store.dispatch);
-        else
-            initCommand = new init_mapguide_1.DefaultViewerInitCommand(this._store.dispatch);
         // Register our MapGuide-specific viewer implementation
         const provider = new mapguide_1.MapGuideMapProviderContext();
         ReactDOM.render(React.createElement(context_1.MapContextProvider, { value: provider, store: this._store },
-            React.createElement(app_1.App, Object.assign({}, props, { initCommand: initCommand })),
+            React.createElement(app_1.App, Object.assign({}, props)),
             subs.map((s, i) => React.createElement(subscriber_1.Subscriber, Object.assign({ key: `subscriber-${i}-${s.name}` }, s)))), node);
     }
     /**
@@ -28423,7 +28507,7 @@ exports.ApplicationViewModel = ApplicationViewModel;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Actions = exports.getStateFromUrl = exports.updateUrl = exports.TypedSelect = exports.ElementGroup = exports.useElementContext = exports.ElementProvider = exports.MinimalProvider = exports.MapGuideViewerInitCommand = exports.setAssetRoot = exports.Application = exports.Externals = exports.Registry = exports.__BRANCH__ = exports.__COMMITHASH__ = exports.__VERSION__ = exports.__DEV__ = void 0;
+exports.Actions = exports.getStateFromUrl = exports.updateUrl = exports.TypedSelect = exports.ElementGroup = exports.useElementContext = exports.ElementProvider = exports.MinimalProvider = exports.setAssetRoot = exports.Application = exports.Externals = exports.Registry = exports.__BRANCH__ = exports.__COMMITHASH__ = exports.__VERSION__ = exports.__DEV__ = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js")); // Can't use import * as React as wdyr cannot hook into that imported form of React
 /*
@@ -28599,8 +28683,6 @@ var application_1 = __webpack_require__(/*! ./application */ "./src/entries/appl
 Object.defineProperty(exports, "Application", ({ enumerable: true, get: function () { return application_1.ApplicationViewModel; } }));
 var asset_1 = __webpack_require__(/*! ../utils/asset */ "./src/utils/asset.ts");
 Object.defineProperty(exports, "setAssetRoot", ({ enumerable: true, get: function () { return asset_1.setAssetRoot; } }));
-var init_mapguide_1 = __webpack_require__(/*! ../actions/init-mapguide */ "./src/actions/init-mapguide.ts");
-Object.defineProperty(exports, "MapGuideViewerInitCommand", ({ enumerable: true, get: function () { return init_mapguide_1.DefaultViewerInitCommand; } }));
 // UI element customization public API
 var element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 Object.defineProperty(exports, "MinimalProvider", ({ enumerable: true, get: function () { return element_context_1.MinimalProvider; } }));

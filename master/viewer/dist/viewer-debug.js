@@ -5813,6 +5813,7 @@ const error_1 = __webpack_require__(/*! ../error */ "./src/api/error.ts");
 const deArrayify_1 = __webpack_require__(/*! ./deArrayify */ "./src/api/builders/deArrayify.ts");
 const i18n_1 = __webpack_require__(/*! ../i18n */ "./src/api/i18n.ts");
 const request_builder_1 = __webpack_require__(/*! ../request-builder */ "./src/api/request-builder.ts");
+const site_version_1 = __webpack_require__(/*! ../../utils/site-version */ "./src/utils/site-version.ts");
 const MG_MAPAGENT_ERROR_CODE = 559;
 /**
  * Indicates if the given response is an error response
@@ -5845,6 +5846,52 @@ class MapAgentRequestBuilder extends request_builder_1.RequestBuilder {
     constructor(agentUri, locale = i18n_1.DEFAULT_LOCALE) {
         super(agentUri);
         this.locale = locale;
+    }
+    getRawJson(url) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const response = yield fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "GET"
+            });
+            if (isErrorResponse(response)) {
+                throw new error_1.MgError(response.statusText);
+            }
+            return yield response.json();
+        });
+    }
+    extractCleanResourceJson(json) {
+        if (json === null || json === void 0 ? void 0 : json.ApplicationDefinition) {
+            return json.ApplicationDefinition;
+        }
+        if (json === null || json === void 0 ? void 0 : json.WebLayout) {
+            return json.WebLayout;
+        }
+        if (json === null || json === void 0 ? void 0 : json.MapDefinition) {
+            return json.MapDefinition;
+        }
+        if (json === null || json === void 0 ? void 0 : json.TileSetDefinition) {
+            return json.TileSetDefinition;
+        }
+        return json;
+    }
+    extractCleanRuntimeMapJson(json) {
+        if (json === null || json === void 0 ? void 0 : json.RuntimeMap) {
+            return json.RuntimeMap;
+        }
+        if (json === null || json === void 0 ? void 0 : json.Map) {
+            return json.Map;
+        }
+        return json;
+    }
+    canUseCleanResourceContent() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const sv = yield this.getSiteVersion();
+            const [major] = (0, site_version_1.parseSiteVersion)(sv.Version);
+            return major >= 4;
+        });
     }
     get(url) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -5952,20 +5999,38 @@ class MapAgentRequestBuilder extends request_builder_1.RequestBuilder {
         });
     }
     getResource(resourceId, args) {
-        if (args != null) {
-            const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
-            const url = this.stringifyGetUrl(Object.assign(Object.assign({}, args), p1));
-            return this.get(url);
-        }
-        else {
-            const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
-            return this.get(url);
-        }
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            if (args != null) {
+                const isAppDef = typeof resourceId === "string" && /applicationdefinition$/i.test(resourceId.trim());
+                if (isAppDef && (yield this.canUseCleanResourceContent())) {
+                    const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId, version: "4.0.0", clean: 1 };
+                    const url = this.stringifyGetUrl(Object.assign(Object.assign({}, args), p1));
+                    const json = yield this.getRawJson(url);
+                    return this.extractCleanResourceJson(json);
+                }
+                const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
+                const url = this.stringifyGetUrl(Object.assign(Object.assign({}, args), p1));
+                return yield this.get(url);
+            }
+            else {
+                const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
+                return yield this.get(url);
+            }
+        });
     }
     getSiteVersion() {
+        const cached = MapAgentRequestBuilder.siteVersionCache.get(this.agentUri);
+        if (cached) {
+            return cached;
+        }
         const p1 = { operation: "GETSITEVERSION", version: "1.0.0", username: "Anonymous" };
         const url = this.stringifyGetUrl(Object.assign({}, p1));
-        return this.get(url);
+        const pending = this.get(url).catch((error) => {
+            MapAgentRequestBuilder.siteVersionCache.delete(this.agentUri);
+            throw error;
+        });
+        MapAgentRequestBuilder.siteVersionCache.set(this.agentUri, pending);
+        return pending;
     }
     createRuntimeMap(options) {
         const p1 = { operation: "CREATERUNTIMEMAP", version: "3.0.0" };
@@ -5973,9 +6038,12 @@ class MapAgentRequestBuilder extends request_builder_1.RequestBuilder {
         return this.get(url);
     }
     createRuntimeMap_v4(options) {
-        const p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0" };
-        const url = this.stringifyGetUrl(Object.assign(Object.assign({}, options), p1));
-        return this.get(url);
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const p1 = { operation: "CREATERUNTIMEMAP", version: "4.0.0", clean: 1 };
+            const url = this.stringifyGetUrl(Object.assign(Object.assign({}, options), p1));
+            const json = yield this.getRawJson(url);
+            return this.extractCleanRuntimeMapJson(json);
+        });
     }
     queryMapFeatures(options) {
         const p1 = { operation: "QUERYMAPFEATURES", version: "2.6.0" };
@@ -5991,9 +6059,12 @@ class MapAgentRequestBuilder extends request_builder_1.RequestBuilder {
         return this.get(url);
     }
     describeRuntimeMap_v4(options) {
-        const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0" };
-        const url = this.stringifyGetUrl(Object.assign(Object.assign({}, options), p1));
-        return this.get(url);
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const p1 = { operation: "DESCRIBERUNTIMEMAP", version: "4.0.0", clean: 1 };
+            const url = this.stringifyGetUrl(Object.assign(Object.assign({}, options), p1));
+            const json = yield this.getRawJson(url);
+            return this.extractCleanRuntimeMapJson(json);
+        });
     }
     getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ) {
         if (isXYZ)
@@ -6003,6 +6074,7 @@ class MapAgentRequestBuilder extends request_builder_1.RequestBuilder {
     }
 }
 exports.MapAgentRequestBuilder = MapAgentRequestBuilder;
+MapAgentRequestBuilder.siteVersionCache = new Map();
 
 
 /***/ },
@@ -10913,7 +10985,8 @@ function isCommandSpec(cmd) {
     return !(0, string_1.strIsNullOrEmpty)(cmd.command);
 }
 function isUIWidget(widget) {
-    return widget.WidgetType === "UiWidgetType";
+    return widget.WidgetType === "UiWidgetType"
+        || widget["@xsi:type"] === "UiWidgetType";
 }
 /**
  * @hidden
@@ -11027,7 +11100,7 @@ function convertWidget(widget, locale, noToolbarLabels) {
  * @returns
  */
 function convertFlexLayoutUIItems(isStateless, items, widgetsByKey, locale, noToolbarLabels = false) {
-    const converted = items.map(item => {
+    const converted = (items || []).map(item => {
         switch (item.Function) {
             case "Widget":
                 {

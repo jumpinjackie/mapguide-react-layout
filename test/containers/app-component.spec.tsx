@@ -26,7 +26,9 @@ const mapProviderMock = vi.hoisted(() => ({
 }));
 
 const initActionsMock = vi.hoisted(() => ({
-   initLayout: vi.fn(),
+   fetchInitDocument: vi.fn(),
+   initAppFromDocument: vi.fn(),
+   processAndDispatchInitError: vi.fn(),
 }));
 
 const templateActionsMock = vi.hoisted(() => ({
@@ -128,8 +130,13 @@ describe("App", () => {
       mapProviderMock.useReduxDispatch.mockReturnValue(dispatch);
       mapProviderMock.useMapProviderContext.mockReturnValue({ id: "viewer" });
 
-      initActionsMock.initLayout.mockImplementation((_cmd: unknown, _viewer: unknown, args: unknown) => ({
-         type: "INIT_LAYOUT",
+      initActionsMock.fetchInitDocument.mockResolvedValue({
+         document: {},
+         session: { getValueAsync: vi.fn().mockResolvedValue("SESSION") },
+         sessionWasReused: false,
+      });
+      initActionsMock.initAppFromDocument.mockImplementation((_fetchResult: unknown, args: unknown) => ({
+         type: "INIT_APP_FROM_DOCUMENT",
          payload: args,
       }));
       templateActionsMock.setElementStates.mockImplementation((states: unknown) => ({
@@ -202,7 +209,6 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
             layout="test-layout"
             resourceId="Library://FromProps/Layout.WebLayout"
             locale="en"
@@ -234,13 +240,25 @@ describe("App", () => {
          selectionPanelVisible: false,
       });
 
-      expect(initActionsMock.initLayout).toHaveBeenCalledTimes(1);
-      const initLayoutCall = initActionsMock.initLayout.mock.calls[0];
-      expect(initLayoutCall[0]).toEqual({});
-      expect(initLayoutCall[2]).toEqual(expect.objectContaining({
+      expect(initActionsMock.fetchInitDocument).toHaveBeenCalledTimes(1);
+      const fetchCall = initActionsMock.fetchInitDocument.mock.calls[0];
+      expect(fetchCall[0]).toEqual(expect.objectContaining({
          resourceId: "Library://FromUrl/Layout.WebLayout",
          locale: "fr",
          session: "url-session",
+         initialActiveMap: "UrlMap",
+         featureTooltipsEnabled: false,
+         initialView: { x: 1, y: 2, scale: 1000 },
+         initialShowLayers: ["LayerA"],
+         initialHideLayers: ["LayerB"],
+         initialShowGroups: ["GroupA"],
+         initialHideGroups: ["GroupB"],
+      }));
+
+      expect(initActionsMock.initAppFromDocument).toHaveBeenCalledTimes(1);
+      const initCall = initActionsMock.initAppFromDocument.mock.calls[0];
+      expect(initCall[1]).toEqual(expect.objectContaining({
+         locale: "fr",
          initialActiveMap: "UrlMap",
          featureTooltipsEnabled: false,
          initialView: { x: 1, y: 2, scale: 1000 },
@@ -273,7 +291,6 @@ describe("App", () => {
    it("renders loading placeholder while map is not ready", () => {
       render(
          <App
-            initCommand={{} as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -289,7 +306,6 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
             layout="missing-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -305,7 +321,6 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />
@@ -322,7 +337,6 @@ describe("App", () => {
 
       render(
          <App
-            initCommand={{} as any}
             layout="test-layout"
             resourceId="Library://Samples/Layout.WebLayout"
          />

@@ -10,8 +10,6 @@ import { QueryMapFeaturesResponse } from '../api/contracts/query';
 import { deArrayify } from '../api/builders/deArrayify';
 import { registerLayout } from '../api/registry/layout';
 import { IConfigurationReducerState, IViewerReducerState, ClientKind } from '../api/common';
-import { DefaultViewerInitCommand } from '../actions/init-mapguide';
-import { IViewerInitCommand } from '../actions/init-command';
 import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
@@ -101,7 +99,6 @@ export class FakeApp extends React.Component<IFakeAppProps> {
     private _store: any;
     private _agentUri: string;
     private _agentKind: ClientKind;
-    private _initCommand: IViewerInitCommand;
     constructor(props: IFakeAppProps) {
         super(props);
         registerRequestBuilder("mapagent", (uri, locale) => new FakeMapAgent(uri, locale));
@@ -134,12 +131,11 @@ export class FakeApp extends React.Component<IFakeAppProps> {
             }
         };
         this._store = configureStore(initState);
-        this._initCommand = new DefaultViewerInitCommand(this._store.dispatch);
         PROVIDER_IMPL.setMockMode(props.mgMockMode);
     }
     render() {
         return <MapContextProvider value={PROVIDER_IMPL} store={this._store}>
-            <App initCommand={this._initCommand}
+            <App
                 mapguide={{
                     fusionRoot: ".",
                     agentUri: this._agentUri,

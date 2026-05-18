@@ -18,6 +18,13 @@ import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLa
 import { isRuntimeMap } from "../../../src/utils/type-guards";
 
 describe("de-arrayify", () => {
+    it("convertFlexLayoutUIItems handles nullish items", () => {
+        const result1 = convertFlexLayoutUIItems(false, undefined as any, {}, "en");
+        const result2 = convertFlexLayoutUIItems(false, null as any, {}, "en");
+        expect(result1).toEqual([]);
+        expect(result2).toEqual([]);
+    });
+
     it("Fixes #631", () => {
         const appDef = deArrayify(TEST_DATA);
         const valid = isAppDef(appDef);

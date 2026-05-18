@@ -5,6 +5,7 @@ import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDe
 import { RuntimeMap } from '../contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../contracts/query';
 import { ResourceIdentifier, ResourceBase, SiteVersionResponse } from '../contracts/common';
+import { parseSiteVersion } from '../../utils/site-version';
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -39,9 +40,55 @@ export function serialize(data: any, uppercase: boolean = true): string {
  */
 export class MapAgentRequestBuilder extends RequestBuilder {
     private locale: string;
+    private cachedSiteVersion: SiteVersionResponse | null = null;
     constructor(agentUri: string, locale: string = DEFAULT_LOCALE) {
         super(agentUri);
         this.locale = locale;
+    }
+
+    private async getRawJson(url: string): Promise<any> {
+        const response = await fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            } as any,
+            method: "GET"
+        });
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        }
+        return await response.json();
+    }
+
+    private extractCleanResourceJson(json: any): any {
+        if (json?.ApplicationDefinition) {
+            return json.ApplicationDefinition;
+        }
+        if (json?.WebLayout) {
+            return json.WebLayout;
+        }
+        if (json?.MapDefinition) {
+            return json.MapDefinition;
+        }
+        if (json?.TileSetDefinition) {
+            return json.TileSetDefinition;
+        }
+        return json;
+    }
+
+    private async getCachedSiteVersion(): Promise<SiteVersionResponse> {
+        if (this.cachedSiteVersion) {
+            return this.cachedSiteVersion;
+        }
+        const sv = await this.getSiteVersion();
+        this.cachedSiteVersion = sv;
+        return sv;
+    }
+
+    private async canUseCleanResourceContent(): Promise<boolean> {
+        const sv = await this.getCachedSiteVersion();
+        const [major] = parseSiteVersion(sv.Version);
+        return major >= 4;
     }
 
     public async get<T>(url: string): Promise<T> {
@@ -141,14 +188,22 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         }
     }
 
-    public getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T> {
+    public async getResource<T extends ResourceBase>(resourceId: ResourceIdentifier, args?: any): Promise<T> {
         if (args != null) {
+            const isAppDef = typeof resourceId === "string" && /applicationdefinition$/i.test(resourceId.trim());
+            if (isAppDef && await this.canUseCleanResourceContent()) {
+                const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId, version: "4.0.0", clean: 1 };
+                const url = this.stringifyGetUrl({ ...args, ...p1 });
+                const json = await this.getRawJson(url);
+                return this.extractCleanResourceJson(json) as T;
+            }
+
             const p1 = { operation: "GETRESOURCECONTENT", resourceId: resourceId };
             const url = this.stringifyGetUrl({ ...args, ...p1 });
-            return this.get<T>(url);
+            return await this.get<T>(url);
         } else {
             const url = this.stringifyGetUrl({ operation: "GETRESOURCE", resourceId: resourceId });
-            return this.get<T>(url);
+            return await this.get<T>(url);
         }
     }
 

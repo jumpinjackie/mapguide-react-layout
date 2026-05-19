@@ -8,6 +8,7 @@
 - React component prop interfaces should be suffixed with `Props` (e.g., `UserProps`).
 - Use `const` for constants and `let` for variables that may change.
 - Use `async/await` for asynchronous code.
+- NEVER USE `await import(...)` inside functions. Always use static imports at the top of the file. Depending on the use case, dynamic imports may be used at the top of the file, but they should never be used inside functions.
 - Use TypeScript mapped and utility types where possible to avoid creating new types.
 - In any exported function or class that is generated, insert a `@hidden` tag in the JSDoc comment to indicate that it is not intended for public use.
    - This tag may be removed at a later time at the author's discretion. Do not re-insert this tag if it is not already present in any JSDoc comments.
@@ -111,3 +112,8 @@
 - If the pull request includes changes to the public API of the library, ensure that the pull request description includes a clear explanation of the changes to the API, including any new functions, classes, or types that have been added, as well as any changes to existing functions, classes, or types.
 - If the pull request includes changes to the documentation of the library, ensure that the pull request description includes a clear explanation of the changes to the documentation, including any new sections that have been added
 - Please include a manual testing plan in the pull request description if the changes made in the pull request are user-facing. This plan should include a clear explanation of the steps that need to be taken to test the changes, as well as any relevant information about the expected behavior of the library after the changes have been made.
+
+# Commits
+
+- Commit messages should be clear and concise, describing the changes made in the commit.
+- Commit early and often, with small, focused commits that make it easier to review and understand the changes.

@@ -1,0 +1,1129 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`actions/init dispatchable integration > produces the same redux golden-master state for legacy(de-arrayified) and clean appdefs 1`] = `
+{
+  "config": {
+    "activeMapName": "Sheboygan",
+    "agentKind": "mapagent",
+    "agentUri": "http://example.com/mapagent/mapagent.fcgi",
+    "appSettings": {
+      "baseline": "legacy-appdef",
+    },
+    "availableMaps": [
+      {
+        "name": "Sheboygan",
+        "value": "Sheboygan",
+      },
+      {
+        "name": "Redding",
+        "value": "Redding",
+      },
+      {
+        "name": "Melbourne",
+        "value": "Melbourne",
+      },
+    ],
+    "cancelDigitizationKey": 27,
+    "capabilities": {
+      "hasLegend": true,
+      "hasNavigator": true,
+      "hasSelectionPanel": true,
+      "hasStatusBar": true,
+      "hasTaskBar": true,
+      "hasTaskPane": true,
+      "hasToolbar": true,
+      "hasViewSize": true,
+    },
+    "coordinates": {
+      "decimals": "4",
+      "format": "X: {x} {units}, Y: {y} {units}",
+    },
+    "locale": "en",
+    "manualFeatureTooltips": false,
+    "mapSwipePairs": [],
+    "pendingMaps": {
+      "Melbourne": {
+        "mapDef": "Library://Samples/Melbourne/Maps/Melbourne.MapDefinition",
+        "metadata": {},
+      },
+      "Redding": {
+        "mapDef": "Library://Redding/Maps/Redding.MapDefinition",
+        "metadata": {},
+      },
+    },
+    "selectCanDragPan": false,
+    "sessionWasReused": false,
+    "undoLastPointKey": 85,
+    "viewRotation": 0,
+    "viewRotationEnabled": true,
+    "viewSizeUnits": 8,
+    "viewer": {
+      "activeSelectedFeatureColor": "0xFF0000AA",
+      "imageFormat": "PNG",
+      "isStateless": false,
+      "loadIndicatorColor": "rgba(34, 153, 221, 0.9)",
+      "loadIndicatorPositioning": "top",
+      "pointSelectionBuffer": 2,
+      "selectionColor": "0x0000FFAA",
+      "selectionImageFormat": "PNG8",
+    },
+  },
+  "initError": {
+    "includeStack": true,
+    "options": {},
+    "warnings": [],
+  },
+  "lastaction": {},
+  "mapState": {
+    "Melbourne": {
+      "coordinateFormat": "Easting: {x} {units}, Northing: {y} {units}",
+      "externalBaseLayers": [
+        {
+          "kind": "Stamen",
+          "name": "Stamen (Toner)",
+          "options": {
+            "key": "d3d5b6ec-2786-453e-8767-23a2fc938c84",
+            "layer": "toner",
+          },
+          "visible": true,
+        },
+        {
+          "kind": "OSM",
+          "name": "Open Street Map",
+          "options": {},
+        },
+      ],
+      "history": [],
+      "historyIndex": -1,
+      "initialExternalLayers": [],
+      "mapguide": {
+        "expandedGroups": {},
+        "hideGroups": [],
+        "hideLayers": [],
+        "isArbitraryCs": false,
+        "layerTransparency": {},
+        "selectableLayers": {},
+        "showGroups": [],
+        "showLayers": [],
+      },
+    },
+    "Redding": {
+      "externalBaseLayers": [
+        {
+          "kind": "Stamen",
+          "name": "Stamen (Toner)",
+          "options": {
+            "key": "d3d5b6ec-2786-453e-8767-23a2fc938c84",
+            "layer": "toner",
+          },
+          "visible": true,
+        },
+        {
+          "kind": "OSM",
+          "name": "Open Street Map",
+          "options": {},
+        },
+      ],
+      "history": [],
+      "historyIndex": -1,
+      "initialExternalLayers": [],
+      "mapguide": {
+        "expandedGroups": {},
+        "hideGroups": [],
+        "hideLayers": [],
+        "isArbitraryCs": false,
+        "layerTransparency": {},
+        "selectableLayers": {},
+        "showGroups": [],
+        "showLayers": [],
+      },
+    },
+    "Sheboygan": {
+      "coordinateFormat": "Lng: {x} {units}, Lat: {y} {units}",
+      "currentView": {
+        "scale": 70000,
+        "x": -87.72,
+        "y": 43.74,
+      },
+      "externalBaseLayers": [],
+      "history": [],
+      "historyIndex": -1,
+      "initialExternalLayers": [],
+      "mapguide": {
+        "expandedGroups": {},
+        "hideGroups": [
+          "G2",
+        ],
+        "hideLayers": [
+          "L2",
+        ],
+        "isArbitraryCs": false,
+        "layerTransparency": {},
+        "runtimeMap": {
+          "BackgroundColor": "0xFFFFFFFF",
+          "CoordinateSystem": {
+            "EpsgCode": "4326",
+            "MentorCode": "LL84",
+            "MetersPerUnit": 1,
+            "Wkt": "WKT-CS",
+          },
+          "DisplayDpi": 96,
+          "Extents": {
+            "LowerLeftCoordinate": {
+              "X": -88,
+              "Y": 43,
+            },
+            "UpperRightCoordinate": {
+              "X": -87,
+              "Y": 44,
+            },
+          },
+          "Group": [
+            {
+              "ActuallyVisible": false,
+              "DisplayInLegend": true,
+              "ExpandInLegend": true,
+              "LegendLabel": "Infrastructure",
+              "Name": "Infrastructure",
+              "ObjectId": "G1",
+              "Type": 1,
+              "Visible": false,
+            },
+            {
+              "ActuallyVisible": true,
+              "DisplayInLegend": true,
+              "ExpandInLegend": true,
+              "LegendLabel": "Parcels",
+              "Name": "Parcels",
+              "ObjectId": "G2",
+              "Type": 1,
+              "Visible": true,
+            },
+          ],
+          "IconMimeType": "image/png",
+          "Layer": [
+            {
+              "ActuallyVisible": false,
+              "DisplayInLegend": true,
+              "ExpandInLegend": true,
+              "LayerDefinition": "Library://Samples/Sheboygan/Layers/Parcels.LayerDefinition",
+              "LegendLabel": "Parcels Layer",
+              "Name": "Parcels Layer",
+              "ObjectId": "L1",
+              "ParentId": "G2",
+              "ScaleRange": [],
+              "Selectable": true,
+              "Type": 1,
+              "Visible": false,
+            },
+            {
+              "ActuallyVisible": true,
+              "DisplayInLegend": true,
+              "ExpandInLegend": true,
+              "LayerDefinition": "Library://Samples/Sheboygan/Layers/RoadCenterLines.LayerDefinition",
+              "LegendLabel": "Roads Layer",
+              "Name": "Roads Layer",
+              "ObjectId": "L2",
+              "ParentId": "G1",
+              "ScaleRange": [],
+              "Selectable": true,
+              "Type": 1,
+              "Visible": true,
+            },
+          ],
+          "MapDefinition": "Library://Samples/Sheboygan/Maps/Sheboygan.MapDefinition",
+          "Name": "Sheboygan",
+          "SessionId": "SESSION-BASELINE",
+          "SiteVersion": "4.0.0.0",
+        },
+        "selectableLayers": {},
+        "showGroups": [
+          "G1",
+        ],
+        "showLayers": [
+          "L1",
+        ],
+      },
+    },
+  },
+  "modal": {},
+  "mouse": {},
+  "taskpane": {
+    "initialUrl": "http://localhost:3000/server/TaskPane.html?MAPNAME=Sheboygan&SESSION=SESSION-BASELINE&LOCALE=en",
+    "lastUrlPushed": false,
+    "navIndex": 0,
+    "navigation": [
+      "http://localhost:3000/server/TaskPane.html?MAPNAME=Sheboygan&SESSION=SESSION-BASELINE&LOCALE=en",
+    ],
+  },
+  "template": {
+    "autoDisplaySelectionPanelOnSelection": true,
+    "initialInfoPaneWidth": 250,
+    "initialTaskPaneWidth": 300,
+    "legendVisible": true,
+    "selectionPanelVisible": true,
+    "taskPaneVisible": true,
+    "templateData": {},
+  },
+  "toolbar": {
+    "flyouts": {
+      "MapContextMenu": {
+        "children": [
+          {
+            "command": "RefreshMap",
+            "icon": "images/icons.png",
+            "label": "Refresh",
+            "spriteClass": "view-refresh",
+            "tooltip": "Click to redraw the map",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "Pan",
+            "icon": "images/icons.png",
+            "label": "Pan",
+            "spriteClass": "pan",
+            "tooltip": "Click and drag to pan the map",
+          },
+          {
+            "command": "Zoom",
+            "icon": "images/icons.png",
+            "label": "Zoom Rectangle",
+            "parameters": {
+              "Direction": "in",
+              "Factor": "2",
+              "Tolerance": "5",
+            },
+            "spriteClass": "zoom-in",
+            "tooltip": "Click or click and drag on the map to zoom in",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "ZoomIn",
+            "icon": "images/icons.png",
+            "label": "Zoom In",
+            "parameters": {
+              "Factor": "2",
+            },
+            "spriteClass": "zoom-in-fixed",
+            "tooltip": "Zoom in by a preset increment",
+          },
+          {
+            "command": "ZoomOut",
+            "icon": "images/icons.png",
+            "label": "Zoom Out",
+            "parameters": {
+              "Factor": "0.5",
+            },
+            "spriteClass": "zoom-out-fixed",
+            "tooltip": "Zoom out by a preset increment",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "children": [],
+            "label": "Zoom",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "Select",
+            "icon": "images/icons.png",
+            "label": "Select",
+            "parameters": {
+              "QueryActiveLayer": "false",
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select",
+            "tooltip": "Click to select features",
+          },
+          {
+            "command": "ClearSelection",
+            "icon": "images/icons.png",
+            "label": "Clear Selection",
+            "spriteClass": "select-clear",
+            "tooltip": "Click to clear the current selection",
+          },
+          {
+            "children": [],
+            "label": "Select More",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "Buffer",
+            "icon": "images/icons.png",
+            "label": "Buffer",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "buffer",
+            "tooltip": "Measure distances and areas on the map",
+          },
+          {
+            "command": "Measure",
+            "icon": "images/icons.png",
+            "label": "Measure",
+            "parameters": {
+              "AreaPrecision": "0",
+              "DistancePrecision": "0",
+              "MeasureTooltipContainer": "MeasureResult",
+              "MeasureTooltipType": "dynamic",
+              "Target": "TaskPane",
+              "Type": "both",
+              "Units": "meters",
+            },
+            "spriteClass": "measure",
+            "tooltip": "Measure",
+          },
+          {
+            "command": "FeatureInfo",
+            "icon": "images/icons.png",
+            "label": "Feature Info",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "feature-info",
+            "tooltip": "Click to display selected feature info",
+          },
+          {
+            "command": "Query",
+            "icon": "images/icons.png",
+            "label": "Query",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "query",
+            "tooltip": "Click to execute a custom query",
+          },
+          {
+            "command": "Theme",
+            "icon": "images/icons.png",
+            "label": "Theme",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "theme",
+            "tooltip": "Click to create a themed layer",
+          },
+          {
+            "command": "Redline",
+            "icon": "images/icons.png",
+            "label": "Redline",
+            "parameters": {
+              "AutoCreateOnStartup": "true",
+              "AutogenerateLayerNames": "true",
+              "RedlineGeometryFormat": "7",
+              "StylizationType": "basic",
+              "Target": "TaskPane",
+              "UseMapMessage": "true",
+            },
+            "spriteClass": "redline",
+            "tooltip": "Click to draw redline features",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "ViewerOptions",
+            "icon": "images/icons.png",
+            "label": "Options",
+            "parameters": {},
+            "spriteClass": "options",
+            "tooltip": "Click to change the units displayed",
+          },
+          {
+            "command": "Help",
+            "icon": "images/icons.png",
+            "label": "Help",
+            "parameters": {
+              "Target": "HelpWindow",
+              "Url": "widgets/Help/Help.html",
+            },
+            "spriteClass": "help",
+            "tooltip": "Click to get help",
+          },
+          {
+            "command": "About",
+            "icon": "images/icons.png",
+            "label": "About",
+            "parameters": {
+              "AboutURL": "widgets/About/About.html",
+            },
+            "spriteClass": "about",
+            "tooltip": "Click to show information about this application",
+          },
+        ],
+      },
+      "TaskMenu": {
+        "children": [
+          {
+            "command": "Measure",
+            "icon": "images/icons.png",
+            "label": "Measure",
+            "parameters": {
+              "AreaPrecision": "0",
+              "DistancePrecision": "0",
+              "MeasureTooltipContainer": "MeasureResult",
+              "MeasureTooltipType": "dynamic",
+              "Target": "TaskPane",
+              "Type": "both",
+              "Units": "meters",
+            },
+            "spriteClass": "measure",
+            "tooltip": "Measure",
+          },
+          {
+            "command": "Buffer",
+            "icon": "images/icons.png",
+            "label": "Buffer",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "buffer",
+            "tooltip": "Measure distances and areas on the map",
+          },
+          {
+            "command": "FeatureInfo",
+            "icon": "images/icons.png",
+            "label": "Feature Info",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "feature-info",
+            "tooltip": "Click to display selected feature info",
+          },
+          {
+            "command": "Query",
+            "icon": "images/icons.png",
+            "label": "Query",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "query",
+            "tooltip": "Click to execute a custom query",
+          },
+          {
+            "command": "Theme",
+            "icon": "images/icons.png",
+            "label": "Theme",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "theme",
+            "tooltip": "Click to create a themed layer",
+          },
+          {
+            "command": "Redline",
+            "icon": "images/icons.png",
+            "label": "Redline",
+            "parameters": {
+              "AutoCreateOnStartup": "true",
+              "AutogenerateLayerNames": "true",
+              "RedlineGeometryFormat": "7",
+              "StylizationType": "basic",
+              "Target": "TaskPane",
+              "UseMapMessage": "true",
+            },
+            "spriteClass": "redline",
+            "tooltip": "Click to draw redline features",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "AddExternalLayers",
+            "label": "Manage External Layers",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "TaskPane",
+              "Url": "component://AddManageLayers",
+            },
+          },
+          {
+            "command": "CoordinateTracker",
+            "icon": "images/icons.png",
+            "label": "Coordinate Tracker",
+            "parameters": {
+              "Projection": [
+                "EPSG:4326",
+                "EPSG:3857",
+              ],
+              "Target": "TaskPane",
+            },
+            "spriteClass": "coordinate-tracker",
+            "tooltip": "Click to view mouse coordinates in various projections",
+          },
+        ],
+      },
+      "Tools_<id>": {
+        "children": [
+          {
+            "command": "AddExternalLayers",
+            "label": "Manage External Layers",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "TaskPane",
+              "Url": "component://AddManageLayers",
+            },
+          },
+          {
+            "command": "ShareLink",
+            "label": "Share Link to View",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "InvokeUrlWindow",
+              "Url": "component://ShareLinkToView",
+            },
+          },
+          {
+            "command": "Geolocation",
+            "icon": "images/icons.png",
+            "label": "My Location",
+            "parameters": {
+              "EnableHighAccuracy": "false",
+              "MaximumAge": "0",
+              "Timeout": "5000",
+            },
+            "spriteClass": "geolocation",
+            "tooltip": "Click to zoom to your current geographic location",
+          },
+          {
+            "command": "CoordinateTracker",
+            "icon": "images/icons.png",
+            "label": "Coordinate Tracker",
+            "parameters": {
+              "Projection": [
+                "EPSG:4326",
+                "EPSG:3857",
+              ],
+              "Target": "TaskPane",
+            },
+            "spriteClass": "coordinate-tracker",
+            "tooltip": "Click to view mouse coordinates in various projections",
+          },
+        ],
+      },
+      "View_<id>": {
+        "children": [
+          {
+            "command": "showOverview",
+            "label": "Show Overview",
+            "parameters": {
+              "Script": "showOverviewMap()",
+            },
+          },
+          {
+            "command": "showTaskPane",
+            "label": "Show Task Pane",
+            "parameters": {
+              "Script": "showTaskPane()",
+            },
+          },
+          {
+            "command": "showLegend",
+            "label": "Show Legend",
+            "parameters": {
+              "Script": "showLegend()",
+            },
+          },
+          {
+            "command": "showSelectionPanel",
+            "label": "Show Selection Panel",
+            "parameters": {
+              "Script": "showSelectionPanel()",
+            },
+          },
+        ],
+      },
+      "Viewer API_<id>": {
+        "children": [
+          {
+            "command": "ViewerApiExample",
+            "label": "Viewer API Example",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "TaskPane",
+              "Url": "examples/taskpane/viewerapi.html",
+            },
+          },
+          {
+            "command": "DrawingExample",
+            "label": "Drawing Example",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "TaskPane",
+              "Url": "examples/taskpane/drawing.html",
+            },
+          },
+          {
+            "command": "SubscriberExample",
+            "label": "Subscriber API Example",
+            "parameters": {
+              "DisableIfSelectionEmpty": "false",
+              "Target": "TaskPane",
+              "Url": "examples/taskpane/subscriberapi.html",
+            },
+          },
+        ],
+      },
+    },
+    "toolbars": {
+      "FileMenu": {
+        "items": [
+          {
+            "componentName": "MapMenu",
+            "flyoutId": "MapMenu_<id>",
+            "icon": "images/icons.png",
+            "label": "Maps",
+            "parameters": {},
+            "spriteClass": "legend-map",
+            "tooltip": "Choose a map theme",
+          },
+          {
+            "componentName": "BaseMapSwitcher",
+            "flyoutId": "BaseMapSwitcher_<id>",
+            "icon": "images/icons.png",
+            "label": "External Providers",
+            "spriteClass": "options",
+            "tooltip": "Click to change the basemap",
+          },
+          {
+            "flyoutId": "View_<id>",
+            "label": "View",
+          },
+          {
+            "flyoutId": "Viewer API_<id>",
+            "label": "Viewer API",
+          },
+          {
+            "flyoutId": "Tools_<id>",
+            "label": "Tools",
+          },
+        ],
+      },
+      "Statusbar": {
+        "items": [
+          {
+            "isSeparator": true,
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "isSeparator": true,
+          },
+        ],
+      },
+      "Toolbar": {
+        "items": [
+          {
+            "command": "Print",
+            "icon": "images/icons.png",
+            "label": "Print",
+            "parameters": {
+              "ShowLegend": "false",
+              "ShowNorthArrow": "false",
+              "ShowPrintUI": "true",
+              "ShowTitle": "false",
+            },
+            "spriteClass": "file-print",
+            "tooltip": "Print the current map view",
+          },
+          {
+            "command": "QuickPlot",
+            "icon": "images/icons/print.png",
+            "label": "Quick Plot",
+            "parameters": {
+              "AllowDisclaimerToggle": "true",
+              "DefaultDpi": "96",
+              "DefaultMargin": "25.4,12.7,12.7,12.7",
+              "Disclaimer": "The materials available at this web site are for informational purposes only and do not constitute a legal document.",
+              "RememberPlotOptions": "false",
+              "ShowCoordinateLabels": "true",
+              "ShowCoordinates": "false",
+              "ShowLegalDisclaimer": "true",
+              "ShowLegend": "false",
+              "ShowNorthArrow": "false",
+              "ShowScaleBar": "false",
+              "ShowSubTitle": "true",
+              "Target": "TaskPane",
+            },
+            "tooltip": "Click to create a plot quickly",
+          },
+          {
+            "isSeparator": true,
+          },
+          {
+            "command": "RefreshMap",
+            "icon": "images/icons.png",
+            "label": "Refresh",
+            "spriteClass": "view-refresh",
+            "tooltip": "Click to redraw the map",
+          },
+          {
+            "command": "MapTip",
+            "icon": "images/icons.png",
+            "label": "Maptip",
+            "parameters": {
+              "Delay": "350",
+              "Target": "MaptipWindow",
+              "Tolerance": "2",
+              "WinFeatures": "menubar=no,location=no,resizable=no,status=no",
+            },
+            "spriteClass": "maptip",
+            "tooltip": "Click to Enable/Disable get information about features from Server",
+          },
+          {
+            "command": "Select",
+            "icon": "images/icons.png",
+            "label": "Select",
+            "parameters": {
+              "QueryActiveLayer": "false",
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select",
+            "tooltip": "Click to select features",
+          },
+          {
+            "command": "SelectRadius",
+            "icon": "images/icons.png",
+            "label": "Select Radius",
+            "parameters": {
+              "DefaultRadius": "20",
+              "RadiusTooltipType": "dynamic",
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select-radius",
+            "tooltip": "Click to select within a radius",
+          },
+          {
+            "command": "SelectPolygon",
+            "icon": "images/icons.png",
+            "label": "Select Polygon",
+            "parameters": {
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select-polygon",
+            "tooltip": "Draw a polygon to perform a selection",
+          },
+          {
+            "command": "ClearSelection",
+            "icon": "images/icons.png",
+            "label": "Clear Selection",
+            "spriteClass": "select-clear",
+            "tooltip": "Click to clear the current selection",
+          },
+          {
+            "command": "Buffer",
+            "icon": "images/icons.png",
+            "label": "Buffer",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "buffer",
+            "tooltip": "Measure distances and areas on the map",
+          },
+          {
+            "command": "Measure",
+            "icon": "images/icons.png",
+            "label": "Measure",
+            "parameters": {
+              "AreaPrecision": "0",
+              "DistancePrecision": "0",
+              "MeasureTooltipContainer": "MeasureResult",
+              "MeasureTooltipType": "dynamic",
+              "Target": "TaskPane",
+              "Type": "both",
+              "Units": "meters",
+            },
+            "spriteClass": "measure",
+            "tooltip": "Measure",
+          },
+          {
+            "command": "FeatureInfo",
+            "icon": "images/icons.png",
+            "label": "Feature Info",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "feature-info",
+            "tooltip": "Click to display selected feature info",
+          },
+          {
+            "command": "Query",
+            "icon": "images/icons.png",
+            "label": "Query",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "query",
+            "tooltip": "Click to execute a custom query",
+          },
+          {
+            "command": "Theme",
+            "icon": "images/icons.png",
+            "label": "Theme",
+            "parameters": {
+              "Target": "TaskPane",
+            },
+            "spriteClass": "theme",
+            "tooltip": "Click to create a themed layer",
+          },
+          {
+            "command": "Redline",
+            "icon": "images/icons.png",
+            "label": "Redline",
+            "parameters": {
+              "AutoCreateOnStartup": "true",
+              "AutogenerateLayerNames": "true",
+              "RedlineGeometryFormat": "7",
+              "StylizationType": "basic",
+              "Target": "TaskPane",
+              "UseMapMessage": "true",
+            },
+            "spriteClass": "redline",
+            "tooltip": "Click to draw redline features",
+          },
+          {
+            "command": "ViewerOptions",
+            "icon": "images/icons.png",
+            "label": "Options",
+            "parameters": {},
+            "spriteClass": "options",
+            "tooltip": "Click to change the units displayed",
+          },
+          {
+            "command": "About",
+            "icon": "images/icons.png",
+            "label": "About",
+            "parameters": {
+              "AboutURL": "widgets/About/About.html",
+            },
+            "spriteClass": "about",
+            "tooltip": "Click to show information about this application",
+          },
+          {
+            "command": "Help",
+            "icon": "images/icons.png",
+            "label": "Help",
+            "parameters": {
+              "Target": "HelpWindow",
+              "Url": "widgets/Help/Help.html",
+            },
+            "spriteClass": "help",
+            "tooltip": "Click to get help",
+          },
+        ],
+      },
+      "ToolbarSecondary": {
+        "items": [
+          {
+            "command": "Select",
+            "icon": "images/icons.png",
+            "label": "Select",
+            "parameters": {
+              "QueryActiveLayer": "false",
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select",
+            "tooltip": "Click to select features",
+          },
+          {
+            "error": "This button references an unknown or unsupported widget: WmsQuery",
+          },
+          {
+            "command": "Pan",
+            "icon": "images/icons.png",
+            "label": "Pan",
+            "spriteClass": "pan",
+            "tooltip": "Click and drag to pan the map",
+          },
+          {
+            "command": "Zoom",
+            "icon": "images/icons.png",
+            "label": "Zoom Rectangle",
+            "parameters": {
+              "Direction": "in",
+              "Factor": "2",
+              "Tolerance": "5",
+            },
+            "spriteClass": "zoom-in",
+            "tooltip": "Click or click and drag on the map to zoom in",
+          },
+          {
+            "command": "ZoomIn",
+            "icon": "images/icons.png",
+            "label": "Zoom In",
+            "parameters": {
+              "Factor": "2",
+            },
+            "spriteClass": "zoom-in-fixed",
+            "tooltip": "Zoom in by a preset increment",
+          },
+          {
+            "command": "ZoomOut",
+            "icon": "images/icons.png",
+            "label": "Zoom Out",
+            "parameters": {
+              "Factor": "0.5",
+            },
+            "spriteClass": "zoom-out-fixed",
+            "tooltip": "Zoom out by a preset increment",
+          },
+          {
+            "command": "ZoomExtents",
+            "icon": "images/icons.png",
+            "label": "Zoom Extents",
+            "parameters": {
+              "ViewType": "initial",
+            },
+            "spriteClass": "zoom-full",
+            "tooltip": "Click to zoom to the full map extents",
+          },
+          {
+            "command": "ZoomToSelection",
+            "icon": "images/icons.png",
+            "label": "Zoom Selection",
+            "parameters": {
+              "MaximumZoomDimension": "-1",
+              "ZoomFactor": "2",
+            },
+            "spriteClass": "select-zoom",
+            "tooltip": "Click to zoom to the selection",
+          },
+          {
+            "command": "PreviousView",
+            "icon": "images/icons.png",
+            "label": "Previous",
+            "parameters": {
+              "Direction": "previous",
+            },
+            "spriteClass": "view-back",
+            "tooltip": "Go to previous view",
+          },
+          {
+            "command": "NextView",
+            "icon": "images/icons.png",
+            "label": "Next",
+            "parameters": {
+              "Direction": "next",
+            },
+            "spriteClass": "view-forward",
+            "tooltip": "Go to next view",
+          },
+        ],
+      },
+      "ToolbarVertical": {
+        "items": [
+          {
+            "command": "Select",
+            "icon": "images/icons.png",
+            "parameters": {
+              "QueryActiveLayer": "false",
+              "SelectionType": "INTERSECTS",
+              "Tolerance": "3",
+            },
+            "spriteClass": "select",
+            "tooltip": "Click to select features",
+          },
+          {
+            "error": "This button references an unknown or unsupported widget: WmsQuery",
+          },
+          {
+            "command": "Pan",
+            "icon": "images/icons.png",
+            "spriteClass": "pan",
+            "tooltip": "Click and drag to pan the map",
+          },
+          {
+            "command": "Zoom",
+            "icon": "images/icons.png",
+            "parameters": {
+              "Direction": "in",
+              "Factor": "2",
+              "Tolerance": "5",
+            },
+            "spriteClass": "zoom-in",
+            "tooltip": "Click or click and drag on the map to zoom in",
+          },
+          {
+            "command": "ZoomIn",
+            "icon": "images/icons.png",
+            "parameters": {
+              "Factor": "2",
+            },
+            "spriteClass": "zoom-in-fixed",
+            "tooltip": "Zoom in by a preset increment",
+          },
+          {
+            "command": "ZoomOut",
+            "icon": "images/icons.png",
+            "parameters": {
+              "Factor": "0.5",
+            },
+            "spriteClass": "zoom-out-fixed",
+            "tooltip": "Zoom out by a preset increment",
+          },
+          {
+            "command": "ZoomExtents",
+            "icon": "images/icons.png",
+            "parameters": {
+              "ViewType": "initial",
+            },
+            "spriteClass": "zoom-full",
+            "tooltip": "Click to zoom to the full map extents",
+          },
+          {
+            "command": "ZoomToSelection",
+            "icon": "images/icons.png",
+            "parameters": {
+              "MaximumZoomDimension": "-1",
+              "ZoomFactor": "2",
+            },
+            "spriteClass": "select-zoom",
+            "tooltip": "Click to zoom to the selection",
+          },
+          {
+            "command": "PreviousView",
+            "icon": "images/icons.png",
+            "parameters": {
+              "Direction": "previous",
+            },
+            "spriteClass": "view-back",
+            "tooltip": "Go to previous view",
+          },
+          {
+            "command": "NextView",
+            "icon": "images/icons.png",
+            "parameters": {
+              "Direction": "next",
+            },
+            "spriteClass": "view-forward",
+            "tooltip": "Go to next view",
+          },
+        ],
+      },
+    },
+  },
+  "viewer": {
+    "busyCount": 0,
+    "featureTooltipsEnabled": false,
+    "tool": 2,
+  },
+}
+`;

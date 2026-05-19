@@ -19,7 +19,8 @@ function isCommandSpec(cmd: ICommandSpec | IUnknownCommandSpec): cmd is ICommand
 }
 
 export function isUIWidget(widget: any): widget is UIWidget {
-    return widget.WidgetType === "UiWidgetType";
+    return widget.WidgetType === "UiWidgetType"
+        || widget["@xsi:type"] === "UiWidgetType";
 }
 
 /**
@@ -189,7 +190,7 @@ function convertWidget(widget: UIWidget, locale: string, noToolbarLabels: boolea
  * @returns 
  */
 export function convertFlexLayoutUIItems(isStateless: boolean, items: ContainerItem[], widgetsByKey: Dictionary<Widget>, locale: string, noToolbarLabels = false): (IFlyoutSpec | ISeparatorSpec | IUnknownCommandSpec | ICommandSpec)[] {
-    const converted = items.map(item => {
+    const converted = (items || []).map(item => {
         switch (item.Function) {
             case "Widget":
                 {

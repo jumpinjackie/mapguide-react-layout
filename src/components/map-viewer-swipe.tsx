@@ -352,8 +352,8 @@ export const MapComparisonControl: React.FC = () => {
                             lineHeight: 1.6
                         }}
                     >
-                        <div style={{ fontWeight: "bold" }}>⬤ {pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}</div>
-                        <div style={{ fontWeight: "bold" }}>◯ {pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}</div>
+                        <div style={{ fontWeight: "bold" }}>{tr("MAP_SWIPE_PRIMARY_LABEL", locale)}: {pair.primaryLabel ?? pair.primaryMapName}</div>
+                        <div style={{ fontWeight: "bold" }}>{tr("MAP_SWIPE_SECONDARY_LABEL", locale)}: {pair.secondaryLabel ?? pair.secondaryMapName}</div>
                         <div style={{ opacity: 0.75, fontSize: 10, marginTop: 3 }}>{tr("MAP_SPY_ESC_HINT", locale)}</div>
                     </div>
                 </>

@@ -1577,6 +1577,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "./src/components/elements/providers/minimal/popover.css"
+/*!***************************************************************!*\
+  !*** ./src/components/elements/providers/minimal/popover.css ***!
+  \***************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
 /***/ "./src/components/elements/providers/minimal/radio.css"
 /*!*************************************************************!*\
   !*** ./src/components/elements/providers/minimal/radio.css ***!
@@ -1908,7 +1921,8 @@ function closeComponent(id) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseSwipePairs = parseSwipePairs;
+exports.parseSwipePairs = void 0;
+exports.parseComparisonPairs = parseComparisonPairs;
 exports.parseMapGroupCoordinateFormat = parseMapGroupCoordinateFormat;
 exports.buildSubjectLayerDefn = buildSubjectLayerDefn;
 exports.getMapDefinitionsFromFlexLayout = getMapDefinitionsFromFlexLayout;
@@ -1919,14 +1933,14 @@ const array_1 = __webpack_require__(/*! ../utils/array */ "./src/utils/array.ts"
 const error_1 = __webpack_require__(/*! ../api/error */ "./src/api/error.ts");
 const string_1 = __webpack_require__(/*! ../utils/string */ "./src/utils/string.ts");
 /**
- * Parses swipe pair declarations from the application definition's MapSet.
+ * Parses comparison pair declarations from the application definition's MapSet.
  *
- * A swipe pair is declared by adding Extension.SwipePairWith (the paired map group id)
- * and Extension.SwipePrimary ("true" or "false") to a MapGroup element.
+ * A comparison pair is declared by adding Extension.ComparisonPairWith (the paired map group id)
+ * and Extension.ComparisonPrimary ("true" or "false") to a MapGroup element.
  *
  * @since 0.15
  */
-function parseSwipePairs(appDef) {
+function parseComparisonPairs(appDef) {
     var _a;
     const pairs = [];
     const seen = new Set();
@@ -1938,21 +1952,22 @@ function parseSwipePairs(appDef) {
         if (!ext) {
             continue;
         }
-        const swipePairWith = ext.SwipePairWith;
-        const swipePrimary = ext.SwipePrimary;
-        if (swipePairWith && (swipePrimary === null || swipePrimary === void 0 ? void 0 : swipePrimary.toLowerCase()) === "true") {
+        const comparisonPairWith = ext.ComparisonPairWith;
+        const comparisonPrimary = ext.ComparisonPrimary;
+        if (comparisonPairWith && (comparisonPrimary === null || comparisonPrimary === void 0 ? void 0 : comparisonPrimary.toLowerCase()) === "true") {
             const primaryId = mg["@id"];
-            const pairKey = [primaryId, swipePairWith].sort().join("|");
+            const pairKey = [primaryId, comparisonPairWith].sort().join("|");
             if (!seen.has(pairKey)) {
                 seen.add(pairKey);
-                const primaryLabel = ext.SwipePrimaryLabel;
-                const secondaryLabel = ext.SwipeSecondaryLabel;
-                pairs.push(Object.assign(Object.assign({ primaryMapName: primaryId, secondaryMapName: swipePairWith }, (primaryLabel ? { primaryLabel } : {})), (secondaryLabel ? { secondaryLabel } : {})));
+                const primaryLabel = ext.ComparisonPrimaryLabel;
+                const secondaryLabel = ext.ComparisonSecondaryLabel;
+                pairs.push(Object.assign(Object.assign({ primaryMapName: primaryId, secondaryMapName: comparisonPairWith }, (primaryLabel ? { primaryLabel } : {})), (secondaryLabel ? { secondaryLabel } : {})));
             }
         }
     }
     return pairs;
 }
+exports.parseSwipePairs = parseComparisonPairs;
 /**
  * Parses a map-level mouse coordinate format override from the first map
  * configuration inside a MapGroup.
@@ -2271,6 +2286,7 @@ function initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingM
                 settings[sn] = sv;
             }
         }
+        const comparisonPairs = (0, init_command_1.parseComparisonPairs)(appDef);
         return (0, init_1.normalizeInitPayload)({
             appSettings: settings,
             activeMapName: firstMapName,
@@ -2292,7 +2308,8 @@ function initFromAppDefCoreAsync(appDef, options, mapsByName, warnings, pendingM
             toolbars: tb,
             warnings: warnings,
             initialActiveTool: common_1.ActiveMapTool.Pan,
-            mapSwipePairs: (0, init_command_1.parseSwipePairs)(appDef)
+            comparisonPairs,
+            mapSwipePairs: comparisonPairs
         }, options.layout);
     });
 }
@@ -3457,8 +3474,11 @@ exports.addMapLayerBusyWorker = addMapLayerBusyWorker;
 exports.removeMapLayerBusyWorker = removeMapLayerBusyWorker;
 exports.addClientSelectedFeature = addClientSelectedFeature;
 exports.clearClientSelection = clearClientSelection;
+exports.setComparisonMode = setComparisonMode;
 exports.setMapSwipeMode = setMapSwipeMode;
+exports.setSwipePosition = setSwipePosition;
 exports.updateMapSwipePosition = updateMapSwipePosition;
+exports.setSpyCursorRadius = setSpyCursorRadius;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const number_1 = __webpack_require__(/*! ../utils/number */ "./src/utils/number.ts");
@@ -4304,16 +4324,26 @@ function clearClientSelection(mapName) {
     };
 }
 /**
- * Sets the map swipe mode active or inactive
+ * Sets the active comparison mode.
  *
- * @param {boolean} active
- * @returns {ISetMapSwipeModeAction}
+ * @param {ComparisonMode} mode
+ * @returns {ISetComparisonModeAction}
  * @since 0.15
  */
+function setComparisonMode(mode) {
+    return {
+        type: actions_1.ActionType.MAP_SET_COMPARISON_MODE,
+        payload: {
+            mode,
+            active: mode !== "none"
+        }
+    };
+}
 function setMapSwipeMode(active) {
     return {
-        type: actions_1.ActionType.MAP_SET_SWIPE_MODE,
+        type: actions_1.ActionType.MAP_SET_COMPARISON_MODE,
         payload: {
+            mode: active ? "swipe" : "none",
             active
         }
     };
@@ -4322,14 +4352,32 @@ function setMapSwipeMode(active) {
  * Updates the swipe position
  *
  * @param {number} position A value between 0 and 100 representing the swipe slider position
- * @returns {IUpdateMapSwipePositionAction}
+ * @returns {ISetSwipePositionAction}
  * @since 0.15
  */
-function updateMapSwipePosition(position) {
+function setSwipePosition(position) {
     return {
-        type: actions_1.ActionType.MAP_UPDATE_SWIPE_POSITION,
+        type: actions_1.ActionType.MAP_SET_SWIPE_POSITION,
         payload: {
             position
+        }
+    };
+}
+function updateMapSwipePosition(position) {
+    return setSwipePosition(position);
+}
+/**
+ * Updates the spy cursor radius.
+ *
+ * @param {number} radius
+ * @returns {ISetSpyCursorRadiusAction}
+ * @since 0.15
+ */
+function setSpyCursorRadius(radius) {
+    return {
+        type: actions_1.ActionType.MAP_SET_SPY_CURSOR_RADIUS,
+        payload: {
+            radius
         }
     };
 }
@@ -7284,9 +7332,10 @@ function initDefaultCommands() {
     //MapSwipe
     (0, command_1.registerCommand)(command_1.DefaultCommands.MapSwipe, {
         iconClass: assets_1.SPRITE_MAP_SWIPE,
-        selected: (state) => state.swipeActive,
+        selected: (state) => { var _a; return ((_a = state.comparisonMode) !== null && _a !== void 0 ? _a : (state.swipeActive ? "swipe" : "none")) !== "none"; },
         enabled: (state) => {
-            const pairs = state.mapSwipePairs;
+            var _a;
+            const pairs = (_a = state.comparisonPairs) !== null && _a !== void 0 ? _a : state.mapSwipePairs;
             if (!pairs || pairs.length === 0) {
                 return false;
             }
@@ -7296,9 +7345,13 @@ function initDefaultCommands() {
             return pairs.some(p => p.primaryMapName === activeMapName);
         },
         invoke: (dispatch, getState) => {
-            const state = getState();
-            const swipeActive = state.config.swipeActive === true;
-            dispatch((0, map_1.setMapSwipeMode)(!swipeActive));
+            var _a, _b;
+            const config = getState().config;
+            const currentMode = (_a = config.comparisonMode) !== null && _a !== void 0 ? _a : (config.swipeActive ? "swipe" : "none");
+            const nextMode = currentMode === "none"
+                ? ((_b = config.lastComparisonMode) !== null && _b !== void 0 ? _b : "swipe")
+                : "none";
+            dispatch((0, map_1.setComparisonMode)(nextMode));
         }
     });
     //Fusion template helper commands
@@ -11555,7 +11608,7 @@ function mapToolbarReference(tb, state, commandInvoker) {
  * @since 0.13
  */
 function reduceAppToToolbarState(state) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     let hasSelection = false;
     let hasClientSelection = false;
     let hasPreviousView = false;
@@ -11579,8 +11632,10 @@ function reduceAppToToolbarState(state) {
         hasNextView,
         activeTool: state.viewer.tool,
         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
+        comparisonMode: (_b = state.config.comparisonMode) !== null && _b !== void 0 ? _b : "none",
         swipeActive: state.config.swipeActive === true,
-        mapSwipePairs: (_b = state.config.mapSwipePairs) !== null && _b !== void 0 ? _b : [],
+        comparisonPairs: (_c = state.config.comparisonPairs) !== null && _c !== void 0 ? _c : [],
+        mapSwipePairs: (_d = state.config.comparisonPairs) !== null && _d !== void 0 ? _d : [],
         activeMapName: state.config.activeMapName
     };
 }
@@ -13460,6 +13515,7 @@ const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6
 // Minimal provider – Popover component
 const react_1 = tslib_1.__importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 const react_tiny_popover_1 = __webpack_require__(/*! react-tiny-popover */ "./node_modules/react-tiny-popover/dist/Popover.js");
+__webpack_require__(/*! ./popover.css */ "./src/components/elements/providers/minimal/popover.css");
 function mapPosition(position) {
     switch (position) {
         case "left": return "left";
@@ -13481,7 +13537,7 @@ const MnPopover = ({ position, children }) => {
     if (!trigger) {
         return null;
     }
-    return (react_1.default.createElement(react_tiny_popover_1.Popover, { isOpen: isOpen, positions: [mapPosition(position)], content: react_1.default.createElement(react_1.default.Fragment, null, content), onClickOutside: () => setIsOpen(false) },
+    return (react_1.default.createElement(react_tiny_popover_1.Popover, { isOpen: isOpen, positions: [mapPosition(position)], content: react_1.default.createElement(react_1.default.Fragment, null, content), containerClassName: "mrl-popover-container", onClickOutside: () => setIsOpen(false) },
         react_1.default.createElement("span", { onClick: () => setIsOpen(prev => !prev) }, trigger)));
 };
 exports.MnPopover = MnPopover;
@@ -17493,6 +17549,9 @@ class BaseMapProviderContext {
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
         this._swipePosition = 50;
+        this._comparisonMode = "none";
+        this._spyCursorPixel = undefined;
+        this._spyCursorRadius = 75;
         /** The secondary map name when swipe is active; used to route click events to the correct map. */
         this._swipeSecondaryMapName = undefined;
         this.onBeginDigitization = (callback) => {
@@ -17742,10 +17801,30 @@ class BaseMapProviderContext {
         this._swipePreRenderHandlers.set(layer, preRenderHandler);
         this._swipePostRenderHandlers.set(layer, postRenderHandler);
     }
+    addSecondaryComparisonLayers(secondaryMapName, makeClipPath) {
+        if (!this._map) {
+            return false;
+        }
+        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
+        if (!secondaryLayerSet) {
+            this.deactivateMapComparison();
+            return false;
+        }
+        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
+            this._map.removeLayer(topLayer);
+            this._map.addLayer(topLayer);
+            this._swipeSecondaryTopLayers.push(topLayer);
+            for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                this.attachClipHandler(leaf, makeClipPath);
+                this._swipeSecondaryClipLayers.push(leaf);
+            }
+        }
+        return true;
+    }
     /**
      * @since 0.15
      */
-    activateMapSwipe(secondaryMapName, position) {
+    activateMapComparisonSwipe(secondaryMapName, position) {
         if (!this._map) {
             return false;
         }
@@ -17755,7 +17834,8 @@ class BaseMapProviderContext {
             return false;
         }
         // First deactivate any existing swipe
-        this.deactivateMapSwipe();
+        this.deactivateMapComparison();
+        this._comparisonMode = "swipe";
         this._swipePosition = position;
         this._swipeSecondaryMapName = secondaryMapName;
         // === Primary map layers: clip to LEFT side ===
@@ -17783,40 +17863,56 @@ class BaseMapProviderContext {
             }
         }
         // === Secondary map layers: clip to RIGHT side ===
-        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
-        if (!secondaryLayerSet) {
-            // Secondary map not yet initialized — undo primary clip and bail
-            this.deactivateMapSwipe();
+        const added = this.addSecondaryComparisonLayers(secondaryMapName, (event, ctx, size) => {
+            const width = this.getSwipeWidth(size[0]);
+            const tl = (0, render_1.getRenderPixel)(event, [width, 0]);
+            const tr = (0, render_1.getRenderPixel)(event, [size[0], 0]);
+            const bl = (0, render_1.getRenderPixel)(event, [width, size[1]]);
+            const br = (0, render_1.getRenderPixel)(event, size);
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(tl[0], tl[1]);
+            ctx.lineTo(bl[0], bl[1]);
+            ctx.lineTo(br[0], br[1]);
+            ctx.lineTo(tr[0], tr[1]);
+            ctx.closePath();
+            ctx.clip();
+        });
+        if (!added) {
             return false;
-        }
-        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
-            // Always remove and re-add to ensure correct z-ordering (base layers are added
-            // first, custom layers last so they appear on top). removeLayer is a no-op if the
-            // layer is not yet on the map.
-            this._map.removeLayer(topLayer);
-            this._map.addLayer(topLayer);
-            this._swipeSecondaryTopLayers.push(topLayer);
-            for (const leaf of this.getLeafLayersForClip(topLayer)) {
-                this.attachClipHandler(leaf, (event, ctx, size) => {
-                    const width = this.getSwipeWidth(size[0]);
-                    const tl = (0, render_1.getRenderPixel)(event, [width, 0]);
-                    const tr = (0, render_1.getRenderPixel)(event, [size[0], 0]);
-                    const bl = (0, render_1.getRenderPixel)(event, [width, size[1]]);
-                    const br = (0, render_1.getRenderPixel)(event, size);
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(tl[0], tl[1]);
-                    ctx.lineTo(bl[0], bl[1]);
-                    ctx.lineTo(br[0], br[1]);
-                    ctx.lineTo(tr[0], tr[1]);
-                    ctx.closePath();
-                    ctx.clip();
-                });
-                this._swipeSecondaryClipLayers.push(leaf);
-            }
         }
         // Secondary swipe layers are re-added on top; re-promote active helper overlays so
         // hover highlight and selection overlays remain visible on both swipe sides.
+        primaryLayerSet === null || primaryLayerSet === void 0 ? void 0 : primaryLayerSet.ensureHelperLayersOnTop(this._map);
+        this._map.render();
+        return true;
+    }
+    activateMapComparisonSpy(secondaryMapName, radius) {
+        if (!this._map) {
+            return false;
+        }
+        if (secondaryMapName === this._state.mapName) {
+            return false;
+        }
+        this.deactivateMapComparison();
+        this._comparisonMode = "spy";
+        this._swipeSecondaryMapName = secondaryMapName;
+        this._spyCursorRadius = radius;
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        const added = this.addSecondaryComparisonLayers(secondaryMapName, (event, ctx) => {
+            ctx.save();
+            ctx.beginPath();
+            if (this._spyCursorPixel) {
+                const center = (0, render_1.getRenderPixel)(event, this._spyCursorPixel);
+                const offset = (0, render_1.getRenderPixel)(event, [this._spyCursorPixel[0] + this._spyCursorRadius, this._spyCursorPixel[1]]);
+                const canvasRadius = Math.sqrt(Math.pow(offset[0] - center[0], 2) + Math.pow(offset[1] - center[1], 2));
+                ctx.arc(center[0], center[1], canvasRadius, 0, 2 * Math.PI);
+            }
+            ctx.clip();
+        });
+        if (!added) {
+            return false;
+        }
         primaryLayerSet === null || primaryLayerSet === void 0 ? void 0 : primaryLayerSet.ensureHelperLayersOnTop(this._map);
         this._map.render();
         return true;
@@ -17832,6 +17928,9 @@ class BaseMapProviderContext {
      * @since 0.15
      */
     getEffectiveMapNameAtPixel(pixelX) {
+        if (this._comparisonMode === "spy") {
+            return this._state.mapName;
+        }
         if (this._swipeSecondaryMapName && this._map) {
             const mapSize = this._map.getSize();
             if (mapSize && pixelX > this.getSwipeWidth(mapSize[0])) {
@@ -17843,7 +17942,7 @@ class BaseMapProviderContext {
     /**
      * @since 0.15
      */
-    deactivateMapSwipe() {
+    deactivateMapComparison() {
         if (!this._map)
             return;
         const allClipLayers = [...this._swipePrimaryClipLayers, ...this._swipeSecondaryClipLayers];
@@ -17866,12 +17965,14 @@ class BaseMapProviderContext {
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
         this._swipeSecondaryMapName = undefined;
+        this._comparisonMode = "none";
+        this._spyCursorPixel = undefined;
         this._map.render();
     }
     /**
      * @since 0.15
      */
-    updateSwipePosition(position) {
+    updateComparisonSwipePosition(position) {
         var _a;
         this._swipePosition = position;
         (_a = this._map) === null || _a === void 0 ? void 0 : _a.render();
@@ -17879,15 +17980,30 @@ class BaseMapProviderContext {
     /**
      * @since 0.15
      */
-    refreshSwipeClips() {
+    updateSpyCursor(pixel) {
+        var _a;
+        this._spyCursorPixel = pixel;
+        (_a = this._map) === null || _a === void 0 ? void 0 : _a.render();
+    }
+    updateSpyCursorRadius(radius) {
+        var _a;
+        this._spyCursorRadius = radius;
+        (_a = this._map) === null || _a === void 0 ? void 0 : _a.render();
+    }
+    refreshMapComparison() {
         if (this._swipeSecondaryMapName) {
-            this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+            if (this._comparisonMode === "swipe") {
+                this.activateMapComparisonSwipe(this._swipeSecondaryMapName, this._swipePosition);
+            }
+            else if (this._comparisonMode === "spy") {
+                this.activateMapComparisonSpy(this._swipeSecondaryMapName, this._spyCursorRadius);
+            }
         }
     }
     /**
      * @since 0.15
      */
-    transferLayerToSwipeSecondary(layerName) {
+    transferLayerToComparisonSecondary(layerName) {
         if (!this._map || !this._swipeSecondaryMapName)
             return;
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
@@ -17903,8 +18019,23 @@ class BaseMapProviderContext {
         primaryLayerSet.transferLayerOut(layerName);
         // Register in secondary's layer set group with the captured OL layer index
         secondaryLayerSet.transferLayerIn(layerName, olLayer, order >= 0 ? order : this._map.getLayers().getLength());
-        // Re-activate to set up the correct (right-side) clip for this layer
-        this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+        // Re-activate to set up the correct comparison clip for this layer
+        this.refreshMapComparison();
+    }
+    activateMapSwipe(secondaryMapName, position) {
+        return this.activateMapComparisonSwipe(secondaryMapName, position);
+    }
+    deactivateMapSwipe() {
+        this.deactivateMapComparison();
+    }
+    updateSwipePosition(position) {
+        this.updateComparisonSwipePosition(position);
+    }
+    refreshSwipeClips() {
+        this.refreshMapComparison();
+    }
+    transferLayerToSwipeSecondary(layerName) {
+        this.transferLayerToComparisonSecondary(layerName);
     }
     //#region IMapViewer
     /**
@@ -18109,9 +18240,17 @@ class BaseMapProviderContext {
      *
      */
     onMouseMove(e) {
+        var _a;
         if (this._comp) {
             this.handleMouseTooltipMouseMove(e);
-            this.handleHighlightHover(e);
+            if (!this.isComparisonInteractionSuppressed()) {
+                this.handleHighlightHover(e);
+            }
+            else if (this._highlightedFeature && this._state.mapName) {
+                (_a = this.getLayerSetGroup(this._state.mapName)) === null || _a === void 0 ? void 0 : _a.removeHighlightedFeature(this._highlightedFeature);
+                this._highlightedFeature = undefined;
+                this._highlightedLayer = undefined;
+            }
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
@@ -18247,6 +18386,12 @@ class BaseMapProviderContext {
         var _a, _b;
         (_b = (_a = this._mouseTooltip) === null || _a === void 0 ? void 0 : _a.onMouseMove) === null || _b === void 0 ? void 0 : _b.call(_a, e);
     }
+    isSpyComparisonActive() {
+        return this._comparisonMode === "spy";
+    }
+    isComparisonInteractionSuppressed() {
+        return this.isSpyComparisonActive();
+    }
     isLayerHoverable(layer) {
         return !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_HOVER_HIGHLIGHT)) == true)
             && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.IS_WMS_SELECTION_OVERLAY)) == true)
@@ -18255,6 +18400,9 @@ class BaseMapProviderContext {
             && !((layer === null || layer === void 0 ? void 0 : layer.get(common_1.LayerProperty.DISABLE_HOVER)) == true);
     }
     handleHighlightHover(e) {
+        if (this.isComparisonInteractionSuppressed()) {
+            return;
+        }
         if (e.dragging) {
             return;
         }
@@ -18313,6 +18461,9 @@ class BaseMapProviderContext {
     }
     queryWmsFeatures(mapName, coord, bAppendMode) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            if (this.isComparisonInteractionSuppressed()) {
+                return false;
+            }
             if (mapName && this._map) {
                 const activeLayerSet = this.getLayerSetGroup(mapName);
                 const layerMgr = this.getLayerManager(mapName);
@@ -18389,7 +18540,11 @@ class BaseMapProviderContext {
         if (this.isDigitizing()) {
             return;
         }
-        // When swipe is active, determine which map owns the click position.
+        if (this.isComparisonInteractionSuppressed()) {
+            this.hideSelectedVectorFeaturesTooltip();
+            return;
+        }
+        // When comparison swipe is active, determine which map owns the click position.
         // Clicks to the right of the swipe divider belong to the secondary map.
         const effectiveMapName = this.getEffectiveMapNameAtPixel(e.pixel[0]);
         //TODO: Our selected feature tooltip only shows properties of a single feature
@@ -19316,7 +19471,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
     onProviderMapClick(px) {
         var _a;
         if (this._state.mapName && this._state.sessionId) {
-            if (this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
+            if (!this.isSpyComparisonActive() && this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
                 this.queryFeatureTooltip(px);
             }
             else if (this._state.activeTool === common_1.ActiveMapTool.Select) {
@@ -19347,7 +19502,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
-            if (!this._state.manualFeatureTooltips) {
+            if (!this._state.manualFeatureTooltips && !this.isSpyComparisonActive()) {
                 this.handleFeatureTooltipMouseMove(e);
             }
             if (this._utfGridTooltip) {
@@ -19370,7 +19525,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
     }
     enableFeatureTooltips(enabled) {
         var _a;
-        (_a = this._featureTooltip) === null || _a === void 0 ? void 0 : _a.setEnabled(enabled);
+        (_a = this._featureTooltip) === null || _a === void 0 ? void 0 : _a.setEnabled(enabled && !this.isSpyComparisonActive());
     }
     refreshMapInternal(name, mode = common_1.RefreshMode.LayersOnly | common_1.RefreshMode.SelectionOnly) {
         const layerSet = this.getLayerSetGroup(name);
@@ -19540,9 +19695,21 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
      * @override
      * @since 0.15
      */
-    activateMapSwipe(secondaryMapName, position) {
+    activateMapComparisonSwipe(secondaryMapName, position) {
         this.ensureMapLayerSetGroup(secondaryMapName);
-        return super.activateMapSwipe(secondaryMapName, position);
+        return super.activateMapComparisonSwipe(secondaryMapName, position);
+    }
+    activateMapComparisonSpy(secondaryMapName, radius) {
+        this.ensureMapLayerSetGroup(secondaryMapName);
+        const activated = super.activateMapComparisonSpy(secondaryMapName, radius);
+        if (activated) {
+            this.enableFeatureTooltips(false);
+        }
+        return activated;
+    }
+    deactivateMapComparison() {
+        super.deactivateMapComparison();
+        this.enableFeatureTooltips(this._state.featureTooltipsEnabled);
     }
     getLayerManager(mapName) {
         if (mapName && mapName !== this._state.mapName) {
@@ -19605,7 +19772,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
                 getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
                 openTooltipLink: (url) => this.onOpenTooltipLink(url)
             });
-            this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled);
+            this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled && !this.isSpyComparisonActive());
         }
     }
     /**
@@ -19633,7 +19800,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
      *
      */
     setProviderState(nextState) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         // If viewer not mounted yet, just accept the next state and bail
         if (!this._comp || !this._map) {
             if (nextState.agentUri) {
@@ -19663,10 +19830,10 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
             // The swipe activation adds secondary map layers directly to the OL map,
             // and if we don't remove them now, `attach` will throw a "Duplicate item"
             // error when it tries to add those same layers again for the new active map.
-            const swipeWasActive = ((_c = (_b = (_a = this._reduxStore) === null || _a === void 0 ? void 0 : _a.getState()) === null || _b === void 0 ? void 0 : _b.config) === null || _c === void 0 ? void 0 : _c.swipeActive) === true;
-            if (swipeWasActive) {
-                this.deactivateMapSwipe();
-                (_d = this._reduxStore) === null || _d === void 0 ? void 0 : _d.dispatch((0, map_1.setMapSwipeMode)(false));
+            const comparisonMode = (_d = (_c = (_b = (_a = this._reduxStore) === null || _a === void 0 ? void 0 : _a.getState()) === null || _b === void 0 ? void 0 : _b.config) === null || _c === void 0 ? void 0 : _c.comparisonMode) !== null && _d !== void 0 ? _d : "none";
+            if (comparisonMode !== "none") {
+                this.deactivateMapComparison();
+                (_e = this._reduxStore) === null || _e === void 0 ? void 0 : _e.dispatch((0, map_1.setComparisonMode)("none"));
             }
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);
@@ -19735,7 +19902,7 @@ class MapGuideMapProviderContext extends base_1.BaseMapProviderContext {
         }
         //viewRotation
         if (this._state.viewRotation != nextState.viewRotation) {
-            (_e = this._map) === null || _e === void 0 ? void 0 : _e.getView().setRotation(nextState.viewRotation);
+            (_f = this._map) === null || _f === void 0 ? void 0 : _f.getView().setRotation(nextState.viewRotation);
         }
         //viewRotationEnabled
         if (this._state.viewRotationEnabled != nextState.viewRotationEnabled) {
@@ -19898,41 +20065,29 @@ exports.MapGuideMapProviderContext = MapGuideMapProviderContext;
 "use strict";
 
 /**
- * map-viewer-swipe.tsx
- *
- * Provides the map swipe (layer compare) UI control. When swipe mode is active,
- * this component renders an interactive vertical slider that reveals two map layers
- * side by side for visual comparison.
+ * Comparison overlay controls and hooks.
  */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MapSwipeControl = void 0;
-exports.useMapSwipeInfo = useMapSwipeInfo;
+exports.MapSwipeControl = exports.useMapSwipeInfo = exports.MapComparisonControl = exports.SPY_CURSOR_RADIUS_STEP = exports.MAX_SPY_CURSOR_RADIUS = exports.MIN_SPY_CURSOR_RADIUS = exports.DEFAULT_SPY_CURSOR_RADIUS = exports.DEFAULT_SWIPE_POSITION = void 0;
+exports.useMapComparisonInfo = useMapComparisonInfo;
+exports.useComparisonMode = useComparisonMode;
+exports.useIsComparisonActive = useIsComparisonActive;
 exports.useIsMapSwipeActive = useIsMapSwipeActive;
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.mjs");
 const React = tslib_1.__importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-const context_1 = __webpack_require__(/*! ./map-providers/context */ "./src/components/map-providers/context.tsx");
-const context_2 = __webpack_require__(/*! ./map-providers/context */ "./src/components/map-providers/context.tsx");
 const map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 const i18n_1 = __webpack_require__(/*! ../api/i18n */ "./src/api/i18n.ts");
-/**
- * Returns swipe context for the currently active map if it belongs to a declared
- * swipe pair, or `undefined` if the active map is not part of any pair.
- *
- * The returned object includes the full pair descriptor and an `isSwipePrimary`
- * flag that is `true` when the active map is the primary side of the pair. Only
- * use the swipe command when `isSwipePrimary` is `true`.
- *
- * @example
- * ```tsx
- * const swipeInfo = useMapSwipeInfo();
- * // Show swipe button only for the primary map
- * {swipeInfo?.isSwipePrimary && <Button onClick={...}>Compare</Button>}
- * ```
- *
- * @since 0.15
- */
-function useMapSwipeInfo() {
-    const pairs = (0, context_1.useAppState)(state => state.config.mapSwipePairs);
+const context_1 = __webpack_require__(/*! ./map-providers/context */ "./src/components/map-providers/context.tsx");
+exports.DEFAULT_SWIPE_POSITION = 50;
+exports.DEFAULT_SPY_CURSOR_RADIUS = 75;
+exports.MIN_SPY_CURSOR_RADIUS = 25;
+exports.MAX_SPY_CURSOR_RADIUS = 150;
+exports.SPY_CURSOR_RADIUS_STEP = 5;
+function clampSpyCursorRadius(radius) {
+    return Math.max(exports.MIN_SPY_CURSOR_RADIUS, Math.min(exports.MAX_SPY_CURSOR_RADIUS, radius));
+}
+function useMapComparisonInfo() {
+    const pairs = (0, context_1.useAppState)(state => { var _a; return (_a = state.config.comparisonPairs) !== null && _a !== void 0 ? _a : state.config.mapSwipePairs; });
     const activeMapName = (0, context_1.useAppState)(state => state.config.activeMapName);
     return React.useMemo(() => {
         if (!pairs || !activeMapName) {
@@ -19944,221 +20099,282 @@ function useMapSwipeInfo() {
         }
         return {
             pair,
-            isSwipePrimary: pair.primaryMapName === activeMapName
+            isComparisonPrimary: pair.primaryMapName === activeMapName
         };
     }, [pairs, activeMapName]);
 }
-/**
- * Returns `true` when the map swipe (layer compare) mode is currently active.
- * Components can use this hook to react to swipe mode changes, for example to
- * update the visual state of a toolbar button.
- *
- * @example
- * ```tsx
- * const swipeActive = useIsMapSwipeActive();
- * <Button variant={swipeActive ? "primary" : undefined} onClick={...}>Compare</Button>
- * ```
- *
- * @since 0.15
- */
-function useIsMapSwipeActive() {
-    return (0, context_1.useAppState)(state => state.config.swipeActive === true);
+function useComparisonMode() {
+    return (0, context_1.useAppState)(state => {
+        if (state.config.comparisonMode) {
+            return state.config.comparisonMode;
+        }
+        return state.config.swipeActive ? "swipe" : "none";
+    });
 }
-/**
- * Returns the current swipe state from Redux.
- *
- * @hidden
- */
-function useSwipeState() {
-    const active = (0, context_1.useAppState)(state => state.config.swipeActive === true);
+function useIsComparisonActive() {
+    return useComparisonMode() !== "none";
+}
+function useComparisonState() {
+    const mode = useComparisonMode();
     const swipePosition = (0, context_1.useAppState)(state => state.config.swipePosition);
+    const spyCursorRadius = (0, context_1.useAppState)(state => state.config.spyCursorRadius);
     const locale = (0, context_1.useAppState)(state => state.config.locale);
     return {
-        active,
-        position: swipePosition !== null && swipePosition !== void 0 ? swipePosition : 50,
+        mode,
+        swipePosition: swipePosition !== null && swipePosition !== void 0 ? swipePosition : exports.DEFAULT_SWIPE_POSITION,
+        spyCursorRadius: spyCursorRadius !== null && spyCursorRadius !== void 0 ? spyCursorRadius : exports.DEFAULT_SPY_CURSOR_RADIUS,
         locale
     };
 }
-/**
- * The MapSwipeControl renders an interactive vertical slider that enables comparison
- * between two map layers. It is rendered as an absolute-positioned overlay on top
- * of the map viewer when map swipe mode is active.
- *
- * @remarks
- * The component automatically activates/deactivates the OL-level swipe when
- * the Redux swipe state changes. Only the divider line and handle area capture
- * pointer events; the rest of the map remains fully interactive (pan, zoom,
- * feature selection etc.).
- *
- * @example
- * ```tsx
- * // Typically used inside a MapViewer as a child component:
- * <MapSwipeControl />
- * ```
- *
- * @since 0.15
- */
-const MapSwipeControl = () => {
-    var _a, _b;
+const SWIPE_LABEL_STYLE = {
+    background: "rgba(255,255,255,0.85)",
+    border: "1px solid rgba(0,0,0,0.2)",
+    borderRadius: 4,
+    padding: "2px 8px",
+    fontSize: 12,
+    fontWeight: "bold",
+    pointerEvents: "none",
+    boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+    whiteSpace: "nowrap",
+};
+const MapComparisonControl = () => {
+    var _a, _b, _c, _d;
     const dispatch = (0, context_1.useReduxDispatch)();
-    const viewer = (0, context_2.useMapProviderContext)();
-    const { active, position, locale } = useSwipeState();
-    const swipeInfo = useMapSwipeInfo();
-    const swipePair = swipeInfo === null || swipeInfo === void 0 ? void 0 : swipeInfo.pair;
+    const viewer = (0, context_1.useMapProviderContext)();
+    const comparisonInfo = useMapComparisonInfo();
+    const { mode, swipePosition, spyCursorRadius, locale } = useComparisonState();
     const containerRef = React.useRef(null);
     const [isDragging, setIsDragging] = React.useState(false);
-    // Activate / deactivate the OL-level swipe when Redux state changes
+    const [spyCursor, setSpyCursor] = React.useState(undefined);
     React.useEffect(() => {
         if (!viewer.isReady()) {
             return;
         }
-        if (active && swipePair) {
-            // Activate at the current Redux position
-            viewer.activateMapSwipe(swipePair.secondaryMapName, position);
+        if (!(comparisonInfo === null || comparisonInfo === void 0 ? void 0 : comparisonInfo.pair) || mode === "none") {
+            viewer.deactivateMapComparison();
+            return () => {
+                viewer.deactivateMapComparison();
+            };
         }
-        else {
-            viewer.deactivateMapSwipe();
+        const secondaryMapName = comparisonInfo.pair.secondaryMapName;
+        const activated = mode === "swipe"
+            ? viewer.activateMapComparisonSwipe(secondaryMapName, swipePosition)
+            : viewer.activateMapComparisonSpy(secondaryMapName, spyCursorRadius);
+        if (!activated) {
+            dispatch((0, map_1.setComparisonMode)("none"));
         }
         return () => {
-            viewer.deactivateMapSwipe();
+            viewer.deactivateMapComparison();
         };
-        // We only re-run when the active flag or swipePair changes - position changes
-        // are handled separately via updateSwipePosition
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [active, swipePair]);
-    // Sync swipe position changes to the OL provider
+    }, [comparisonInfo, dispatch, mode, spyCursorRadius, swipePosition, viewer]);
     React.useEffect(() => {
-        if (active && viewer.isReady()) {
-            viewer.updateSwipePosition(position);
+        if (!viewer.isReady()) {
+            return;
         }
-    }, [active, position, viewer]);
-    if (!active || !swipePair) {
+        if (mode === "swipe") {
+            viewer.updateComparisonSwipePosition(swipePosition);
+        }
+        else if (mode === "spy") {
+            viewer.updateSpyCursorRadius(spyCursorRadius);
+        }
+    }, [mode, spyCursorRadius, swipePosition, viewer]);
+    React.useEffect(() => {
+        if (mode !== "spy" || !viewer.isReady()) {
+            viewer.updateSpyCursor(undefined);
+            return;
+        }
+        viewer.updateSpyCursor((spyCursor === null || spyCursor === void 0 ? void 0 : spyCursor.visible) ? spyCursor.pixel : undefined);
+    }, [mode, spyCursor, viewer]);
+    React.useEffect(() => {
+        if (mode !== "spy") {
+            setSpyCursor(undefined);
+            return;
+        }
+        const overlayEl = containerRef.current;
+        const host = overlayEl === null || overlayEl === void 0 ? void 0 : overlayEl.parentElement;
+        if (!overlayEl || !host) {
+            return;
+        }
+        const onPointerMove = (event) => {
+            const rect = host.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            setSpyCursor({
+                pixel: [x, y],
+                visible: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height
+            });
+        };
+        const onPointerLeave = () => {
+            setSpyCursor(undefined);
+        };
+        const onKeyDown = (event) => {
+            if (event.key === "Escape") {
+                dispatch((0, map_1.setComparisonMode)("none"));
+                event.preventDefault();
+                return;
+            }
+            if (document.activeElement !== host) {
+                return;
+            }
+            if (event.key === "ArrowUp") {
+                dispatch((0, map_1.setSpyCursorRadius)(clampSpyCursorRadius(spyCursorRadius + exports.SPY_CURSOR_RADIUS_STEP)));
+                event.preventDefault();
+            }
+            else if (event.key === "ArrowDown") {
+                dispatch((0, map_1.setSpyCursorRadius)(clampSpyCursorRadius(spyCursorRadius - exports.SPY_CURSOR_RADIUS_STEP)));
+                event.preventDefault();
+            }
+        };
+        host.addEventListener("pointermove", onPointerMove);
+        host.addEventListener("pointerleave", onPointerLeave);
+        document.addEventListener("keydown", onKeyDown);
+        return () => {
+            host.removeEventListener("pointermove", onPointerMove);
+            host.removeEventListener("pointerleave", onPointerLeave);
+            document.removeEventListener("keydown", onKeyDown);
+        };
+    }, [dispatch, mode, spyCursorRadius]);
+    if (mode === "none" || !(comparisonInfo === null || comparisonInfo === void 0 ? void 0 : comparisonInfo.pair)) {
         return null;
     }
-    const handlePointerDown = (e) => {
-        e.currentTarget.setPointerCapture(e.pointerId);
-        setIsDragging(true);
-        e.stopPropagation();
-    };
-    const handlePointerMove = (e) => {
-        if (!isDragging || !containerRef.current)
-            return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const newPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
-        dispatch((0, map_1.updateMapSwipePosition)(Math.round(newPosition)));
-        e.stopPropagation();
-    };
-    const handlePointerUp = (e) => {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-        setIsDragging(false);
-        e.stopPropagation();
-    };
+    const { pair } = comparisonInfo;
     const handleClose = (e) => {
         e.stopPropagation();
-        dispatch((0, map_1.setMapSwipeMode)(false));
+        dispatch((0, map_1.setComparisonMode)("none"));
     };
     return (React.createElement("div", { ref: containerRef, style: {
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            // Pass all pointer events through except where explicitly overridden
+            inset: 0,
             pointerEvents: "none",
             zIndex: 10
         } },
-        React.createElement("div", { onPointerDown: handlePointerDown, onPointerMove: handlePointerMove, onPointerUp: handlePointerUp, style: {
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                // Wide-ish hit zone around the divider line
-                left: `calc(${position}% - 16px)`,
-                width: 32,
-                cursor: "ew-resize",
-                pointerEvents: "all",
-                zIndex: 11
-            } },
-            React.createElement("div", { style: {
+        mode === "swipe" && (React.createElement(React.Fragment, null,
+            React.createElement("div", { onPointerDown: (e) => {
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    setIsDragging(true);
+                    e.stopPropagation();
+                }, onPointerMove: (e) => {
+                    if (!isDragging || !containerRef.current) {
+                        return;
+                    }
+                    const rect = containerRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const nextPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                    dispatch((0, map_1.setSwipePosition)(Math.round(nextPosition)));
+                    e.stopPropagation();
+                }, onPointerUp: (e) => {
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+                    setIsDragging(false);
+                    e.stopPropagation();
+                }, style: {
                     position: "absolute",
                     top: 0,
                     bottom: 0,
-                    left: "50%",
-                    width: 3,
-                    background: "rgba(255,255,255,0.9)",
-                    boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+                    left: `calc(${swipePosition}% - 16px)`,
+                    width: 32,
+                    cursor: "ew-resize",
+                    pointerEvents: "all",
+                    zIndex: 11
+                } },
+                React.createElement("div", { style: {
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        left: "50%",
+                        width: 3,
+                        background: "rgba(255,255,255,0.9)",
+                        boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+                        transform: "translateX(-50%)",
+                        pointerEvents: "none"
+                    } }),
+                React.createElement("div", { style: {
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        background: "rgba(255,255,255,0.9)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "ew-resize",
+                        pointerEvents: "none",
+                        userSelect: "none"
+                    } },
+                    React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 20 20", fill: "none" },
+                        React.createElement("path", { d: "M7 4L3 10L7 16M13 4L17 10L13 16", stroke: "#555", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })))),
+            React.createElement("div", { style: {
+                    position: "absolute",
+                    top: 8,
+                    left: `${swipePosition}%`,
                     transform: "translateX(-50%)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    zIndex: 12,
                     pointerEvents: "none"
+                } },
+                React.createElement("div", { style: SWIPE_LABEL_STYLE }, (_a = pair.primaryLabel) !== null && _a !== void 0 ? _a : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale)),
+                React.createElement("button", { onClick: handleClose, title: (0, i18n_1.tr)("MAP_SWIPE_CLOSE", locale), style: {
+                        background: "rgba(255,255,255,0.9)",
+                        border: "1px solid rgba(0,0,0,0.3)",
+                        borderRadius: 4,
+                        padding: "2px 8px",
+                        cursor: "pointer",
+                        fontSize: 12,
+                        pointerEvents: "all",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
+                        whiteSpace: "nowrap",
+                    } },
+                    "\u2715 ",
+                    (0, i18n_1.tr)("MAP_SWIPE_CLOSE", locale)),
+                React.createElement("div", { style: SWIPE_LABEL_STYLE }, (_b = pair.secondaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale))))),
+        mode === "spy" && (spyCursor === null || spyCursor === void 0 ? void 0 : spyCursor.visible) && (React.createElement(React.Fragment, null,
+            React.createElement("div", { style: {
+                    position: "absolute",
+                    left: spyCursor.pixel[0] - spyCursorRadius,
+                    top: spyCursor.pixel[1] - spyCursorRadius,
+                    width: spyCursorRadius * 2,
+                    height: spyCursorRadius * 2,
+                    borderRadius: "50%",
+                    border: "4px solid rgba(0,0,0,0.5)",
+                    boxShadow: "0 0 0 2px rgba(255,255,255,0.85)",
+                    pointerEvents: "none",
+                    zIndex: 12
                 } }),
             React.createElement("div", { style: {
                     position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    background: "rgba(255,255,255,0.9)",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "ew-resize",
+                    left: spyCursor.pixel[0] + spyCursorRadius + 12,
+                    top: spyCursor.pixel[1],
+                    transform: "translateY(-50%)",
+                    background: "rgba(0,0,0,0.72)",
+                    color: "white",
+                    borderRadius: 4,
+                    padding: "6px 10px",
+                    fontSize: 11,
                     pointerEvents: "none",
-                    userSelect: "none"
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+                    whiteSpace: "nowrap",
+                    zIndex: 13,
+                    lineHeight: 1.6
                 } },
-                React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 20 20", fill: "none" },
-                    React.createElement("path", { d: "M7 4L3 10L7 16M13 4L17 10L13 16", stroke: "#555", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" })))),
-        React.createElement("button", { onClick: handleClose, title: (0, i18n_1.tr)("MAP_SWIPE_CLOSE", locale), style: {
-                position: "absolute",
-                top: 8,
-                left: `${position}%`,
-                transform: "translateX(-50%)",
-                background: "rgba(255,255,255,0.9)",
-                border: "1px solid rgba(0,0,0,0.3)",
-                borderRadius: 4,
-                padding: "2px 8px",
-                cursor: "pointer",
-                fontSize: 12,
-                pointerEvents: "all",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-                whiteSpace: "nowrap",
-                zIndex: 12
-            } },
-            "\u2715 ",
-            (0, i18n_1.tr)("MAP_SWIPE_CLOSE", locale)),
-        React.createElement("div", { style: {
-                position: "absolute",
-                top: 8,
-                left: 8,
-                background: "rgba(255,255,255,0.85)",
-                border: "1px solid rgba(0,0,0,0.2)",
-                borderRadius: 4,
-                padding: "2px 8px",
-                fontSize: 12,
-                fontWeight: "bold",
-                pointerEvents: "none",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-                whiteSpace: "nowrap",
-                zIndex: 12
-            } }, (_a = swipePair === null || swipePair === void 0 ? void 0 : swipePair.primaryLabel) !== null && _a !== void 0 ? _a : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale)),
-        React.createElement("div", { style: {
-                position: "absolute",
-                top: 8,
-                right: 8,
-                background: "rgba(255,255,255,0.85)",
-                border: "1px solid rgba(0,0,0,0.2)",
-                borderRadius: 4,
-                padding: "2px 8px",
-                fontSize: 12,
-                fontWeight: "bold",
-                pointerEvents: "none",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-                whiteSpace: "nowrap",
-                zIndex: 12
-            } }, (_b = swipePair === null || swipePair === void 0 ? void 0 : swipePair.secondaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale))));
+                React.createElement("div", { style: { fontWeight: "bold" } },
+                    (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
+                    ": ", (_c = pair.primaryLabel) !== null && _c !== void 0 ? _c : pair.primaryMapName),
+                React.createElement("div", { style: { fontWeight: "bold" } },
+                    (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
+                    ": ", (_d = pair.secondaryLabel) !== null && _d !== void 0 ? _d : pair.secondaryMapName),
+                React.createElement("div", { style: { opacity: 0.75, fontSize: 10, marginTop: 3 } }, (0, i18n_1.tr)("MAP_SPY_ESC_HINT", locale)))))));
 };
-exports.MapSwipeControl = MapSwipeControl;
+exports.MapComparisonControl = MapComparisonControl;
+exports.useMapSwipeInfo = useMapComparisonInfo;
+function useIsMapSwipeActive() {
+    return useComparisonMode() === "swipe";
+}
+exports.MapSwipeControl = exports.MapComparisonControl;
 
 
 /***/ },
@@ -23120,11 +23336,17 @@ var ActionType;
     /**
      * @since 0.15
      */
-    ActionType["MAP_SET_SWIPE_MODE"] = "Map/SET_SWIPE_MODE";
+    ActionType["MAP_SET_COMPARISON_MODE"] = "Map/SET_COMPARISON_MODE";
+    ActionType["MAP_SET_SWIPE_MODE"] = "Map/SET_COMPARISON_MODE";
     /**
      * @since 0.15
      */
-    ActionType["MAP_UPDATE_SWIPE_POSITION"] = "Map/UPDATE_SWIPE_POSITION";
+    ActionType["MAP_SET_SWIPE_POSITION"] = "Map/SET_SWIPE_POSITION";
+    ActionType["MAP_UPDATE_SWIPE_POSITION"] = "Map/SET_SWIPE_POSITION";
+    /**
+     * @since 0.15
+     */
+    ActionType["MAP_SET_SPY_CURSOR_RADIUS"] = "Map/SET_SPY_CURSOR_RADIUS";
 })(ActionType || (exports.ActionType = ActionType = {}));
 
 
@@ -23472,29 +23694,29 @@ const AddManageLayersContainer = () => {
     const locale = (0, hooks_1.useViewerLocale)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
     const viewer = (0, context_1.useMapProviderContext)();
-    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
-    const isSwipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
+    const comparisonInfo = (0, map_viewer_swipe_1.useMapComparisonInfo)();
+    const isComparisonActive = (0, map_viewer_swipe_1.useIsComparisonActive)();
     // When swipe is active, the user can select which map's layers to manage/add to.
     // Default to the primary (active) map; reset to active map when swipe ends.
     const [selectedMapForLayers, setSelectedMapForLayers] = React.useState(activeMapName);
     React.useEffect(() => {
-        if (!isSwipeActive) {
+        if (!isComparisonActive) {
             setSelectedMapForLayers(activeMapName);
         }
-    }, [isSwipeActive, activeMapName]);
+    }, [isComparisonActive, activeMapName]);
     // The map targeted for both Add Layer and Manage Layers operations.
     // When swipe is active, this follows the dropdown selection.
-    const targetMapName = isSwipeActive ? (selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) : activeMapName;
+    const targetMapName = isComparisonActive ? (selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) : activeMapName;
     // The layer manager for the target map. When swipe is active and the secondary map is
     // selected, use the secondary map's layer manager so that layers are added directly to
     // the secondary's layer set (avoiding the "layer name already exists" collision that would
     // occur if a layer with the same name was already added to the primary side).
     const targetLayerManager = React.useMemo(() => {
-        if (isSwipeActive && targetMapName && targetMapName !== activeMapName) {
+        if (isComparisonActive && targetMapName && targetMapName !== activeMapName) {
             return viewer.getLayerManager(targetMapName);
         }
         return undefined; // undefined means AddLayer will fall back to the active map's layer manager
-    }, [isSwipeActive, targetMapName, activeMapName, viewer]);
+    }, [isComparisonActive, targetMapName, activeMapName, viewer]);
     // Primary map layers — used as the ready-gate. Until these are defined the map hasn't
     // finished initialising and we should not render the UI at all.
     const primaryLayers = (0, context_1.useAppState)(state => {
@@ -23534,8 +23756,8 @@ const AddManageLayersContainer = () => {
         }
         // After adding a layer while swipe is active, refresh the swipe clips so the new layer
         // is correctly clipped to its target side (primary = left, secondary = right).
-        if (isSwipeActive) {
-            viewer.refreshSwipeClips();
+        if (isComparisonActive) {
+            viewer.refreshMapComparison();
         }
     };
     const onAddLayerBusyWorker = (name) => {
@@ -23600,16 +23822,16 @@ const AddManageLayersContainer = () => {
     const selectorContainerStyle = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
     const selectorLabelStyle = { whiteSpace: "nowrap" };
     const selectorSelectStyle = { flex: 1 };
-    const swipeMapSelector = isSwipeActive && swipeInfo ? (React.createElement("div", { style: selectorContainerStyle },
+    const comparisonMapSelector = isComparisonActive && comparisonInfo ? (React.createElement("div", { style: selectorContainerStyle },
         React.createElement("label", { style: selectorLabelStyle }, (0, i18n_1.tr)("MAP_SWIPE_LAYER_MANAGER_FOR", locale)),
         React.createElement("select", { value: (_a = selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) !== null && _a !== void 0 ? _a : "", onChange: e => setSelectedMapForLayers(e.target.value), style: selectorSelectStyle },
-            React.createElement("option", { value: swipeInfo.pair.primaryMapName }, (_b = swipeInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
+            React.createElement("option", { value: comparisonInfo.pair.primaryMapName }, (_b = comparisonInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
                 " (",
-                swipeInfo.pair.primaryMapName,
+                comparisonInfo.pair.primaryMapName,
                 ")"),
-            React.createElement("option", { value: swipeInfo.pair.secondaryMapName }, (_c = swipeInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
+            React.createElement("option", { value: comparisonInfo.pair.secondaryMapName }, (_c = comparisonInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
                 " (",
-                swipeInfo.pair.secondaryMapName,
+                comparisonInfo.pair.secondaryMapName,
                 ")")))) : null;
     if (primaryLayers) {
         const tabProps = {
@@ -23634,7 +23856,7 @@ const AddManageLayersContainer = () => {
             ]
         };
         return React.createElement("div", { style: { padding: 8 } },
-            swipeMapSelector,
+            comparisonMapSelector,
             React.createElement(TabSet, Object.assign({}, tabProps)));
     }
     else {
@@ -25942,10 +26164,10 @@ const MapViewer = ({ children }) => {
     // Secondary map layer sync for swipe mode: when the secondary map's layer styles change
     // in Redux (e.g. user edits a layer style in the secondary map panel), apply those changes
     // to the secondary map's OL layer manager so they are reflected immediately.
-    const isSwipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
-    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
+    const isComparisonActive = (0, map_viewer_swipe_1.useIsComparisonActive)();
+    const comparisonInfo = (0, map_viewer_swipe_1.useMapComparisonInfo)();
     // Only watch the secondary map name; the primary is already handled by useViewerSideEffects.
-    const secondaryMapName = isSwipeActive ? swipeInfo === null || swipeInfo === void 0 ? void 0 : swipeInfo.pair.secondaryMapName : undefined;
+    const secondaryMapName = isComparisonActive ? comparisonInfo === null || comparisonInfo === void 0 ? void 0 : comparisonInfo.pair.secondaryMapName : undefined;
     const secondaryLayers = (0, hooks_1.useNamedMapLayers)(secondaryMapName);
     React.useEffect(() => {
         if (context.isReady() && secondaryMapName && secondaryLayers) {
@@ -26033,7 +26255,15 @@ const MapViewer = ({ children }) => {
         showContextMenuAction([e.clientX, e.clientY]);
     };
     // Mouse events
-    const onMouseDown = () => {
+    const onMouseDown = (e) => {
+        var _a;
+        // Only focus the map viewer when clicking the map canvas itself, not toolbar
+        // buttons or other interactive elements — otherwise we steal focus before the
+        // button's click event fires and break popover toggles.
+        const target = e.target;
+        if (!target.closest("button, input, select, textarea, [role='button']")) {
+            (_a = mapViewerRef.current) === null || _a === void 0 ? void 0 : _a.focus();
+        }
         setIsMouseDown(true);
     };
     const onMouseUp = () => {
@@ -26087,11 +26317,11 @@ const MapViewer = ({ children }) => {
     if (nextState.isReady) {
         return (React.createElement(React.Fragment, null,
             React.createElement(Toaster, { usePortal: false, position: "top", ref: toasterRef }),
-            React.createElement("div", { className: "map-viewer-component", ref: mapViewerRef, style: style, onContextMenu: onContextMenu, onMouseDown: onMouseDown, onMouseUp: onMouseUp },
+            React.createElement("div", { className: "map-viewer-component", ref: mapViewerRef, style: style, tabIndex: 0, onContextMenu: onContextMenu, onMouseDown: onMouseDown, onMouseUp: onMouseUp },
                 React.createElement(map_load_indicator_1.MapLoadIndicator, { loaded: loaded || 0, loading: loading || 0, position: loadIndicatorPositioning, color: loadIndicatorColor }),
                 subscribers.map((s, i) => (React.createElement(subscriber_1.Subscriber, Object.assign({ key: `subscriber-${i}-${s.name}` }, s)))),
                 children,
-                React.createElement(map_viewer_swipe_1.MapSwipeControl, null))));
+                React.createElement(map_viewer_swipe_1.MapComparisonControl, null))));
     }
     else {
         return React.createElement("div", null, (0, i18n_1.tr)("LOADING_MSG", locale));
@@ -26549,17 +26779,17 @@ const SelectionPanelContainer = (props) => {
     const locale = (0, hooks_1.useViewerLocale)();
     const dispatch = (0, context_2.useReduxDispatch)();
     const activeMapName = (0, hooks_1.useActiveMapName)();
-    const isSwipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
-    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
+    const isComparisonActive = (0, map_viewer_swipe_1.useIsComparisonActive)();
+    const comparisonInfo = (0, map_viewer_swipe_1.useMapComparisonInfo)();
     // When swipe is active, the user can choose which map's selection to display.
     // Default to the primary (active) map; reset to the active map when swipe ends.
     const [selectedMapForSelection, setSelectedMapForSelection] = React.useState(activeMapName);
     React.useEffect(() => {
-        if (!isSwipeActive) {
+        if (!isComparisonActive) {
             setSelectedMapForSelection(activeMapName);
         }
-    }, [isSwipeActive, activeMapName]);
-    const targetMapName = isSwipeActive ? (selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) : activeMapName;
+    }, [isComparisonActive, activeMapName]);
+    const targetMapName = isComparisonActive ? (selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) : activeMapName;
     const map = (0, context_2.useAppState)(state => {
         var _a;
         if (targetMapName && state.mapState[targetMapName]) {
@@ -26605,21 +26835,21 @@ const SelectionPanelContainer = (props) => {
             showSelectedFeatureAction(targetMapName, layerId, selectionKey);
         }
     };
-    const swipeMapSelector = isSwipeActive && swipeInfo ? (React.createElement("div", { style: selectorContainerStyle },
+    const comparisonMapSelector = isComparisonActive && comparisonInfo ? (React.createElement("div", { style: selectorContainerStyle },
         React.createElement("label", { htmlFor: "selection-panel-map-select", style: selectorLabelStyle }, (0, i18n_1.tr)("MAP_SWIPE_SELECTION_FOR", locale)),
         React.createElement("select", { id: "selection-panel-map-select", value: (_a = selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) !== null && _a !== void 0 ? _a : "", onChange: e => setSelectedMapForSelection(e.target.value), style: selectorSelectStyle },
-            React.createElement("option", { value: swipeInfo.pair.primaryMapName }, (_b = swipeInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
+            React.createElement("option", { value: comparisonInfo.pair.primaryMapName }, (_b = comparisonInfo.pair.primaryLabel) !== null && _b !== void 0 ? _b : (0, i18n_1.tr)("MAP_SWIPE_PRIMARY_LABEL", locale),
                 " (",
-                swipeInfo.pair.primaryMapName,
+                comparisonInfo.pair.primaryMapName,
                 ")"),
-            React.createElement("option", { value: swipeInfo.pair.secondaryMapName }, (_c = swipeInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
+            React.createElement("option", { value: comparisonInfo.pair.secondaryMapName }, (_c = comparisonInfo.pair.secondaryLabel) !== null && _c !== void 0 ? _c : (0, i18n_1.tr)("MAP_SWIPE_SECONDARY_LABEL", locale),
                 " (",
-                swipeInfo.pair.secondaryMapName,
+                comparisonInfo.pair.secondaryMapName,
                 ")")))) : null;
     const withSwipeSelectorLayout = (content) => {
-        if (swipeMapSelector) {
+        if (comparisonMapSelector) {
             return React.createElement("div", { style: swipeSelectionRootStyle },
-                swipeMapSelector,
+                comparisonMapSelector,
                 React.createElement("div", { style: swipeSelectionPanelSlotStyle }, content));
         }
         return content;
@@ -29124,6 +29354,7 @@ const flyout_region_1 = __webpack_require__(/*! ../containers/flyout-region */ "
 const init_warning_display_1 = __webpack_require__(/*! ../containers/init-warning-display */ "./src/containers/init-warning-display.tsx");
 const common_1 = __webpack_require__(/*! ../api/common */ "./src/api/common.ts");
 const map_1 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
+const map_2 = __webpack_require__(/*! ../actions/map */ "./src/actions/map.ts");
 const command_1 = __webpack_require__(/*! ../api/registry/command */ "./src/api/registry/command.ts");
 const hooks_1 = __webpack_require__(/*! ../containers/hooks */ "./src/containers/hooks.ts");
 const hooks_mapguide_1 = __webpack_require__(/*! ../containers/hooks-mapguide */ "./src/containers/hooks-mapguide.ts");
@@ -29132,9 +29363,12 @@ const hooks_2 = __webpack_require__(/*! ./hooks */ "./src/layouts/hooks.ts");
 const element_context_1 = __webpack_require__(/*! ../components/elements/element-context */ "./src/components/elements/element-context.tsx");
 const context_1 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const map_viewer_swipe_1 = __webpack_require__(/*! ../components/map-viewer-swipe */ "./src/components/map-viewer-swipe.tsx");
+const context_2 = __webpack_require__(/*! ../components/map-providers/context */ "./src/components/map-providers/context.tsx");
 const MapToolbar = (props) => {
-    const swipeInfo = (0, map_viewer_swipe_1.useMapSwipeInfo)();
-    const swipeActive = (0, map_viewer_swipe_1.useIsMapSwipeActive)();
+    const comparisonInfo = (0, map_viewer_swipe_1.useMapComparisonInfo)();
+    const comparisonMode = (0, map_viewer_swipe_1.useComparisonMode)();
+    const comparisonActive = comparisonMode !== "none";
+    const dispatch = (0, context_2.useReduxDispatch)();
     const { Button, Card, Popover, Heading } = (0, element_context_1.useElementContext)();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return React.createElement(React.Fragment, null,
@@ -29159,8 +29393,16 @@ const MapToolbar = (props) => {
                     React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.MapMenu, locale: locale }))),
             React.createElement(Popover, { usePortal: false, position: "right", minimal: false },
                 React.createElement(Button, { icon: "cog", title: (0, i18n_1.tr)("VIEWER_OPTIONS", locale) }),
-                React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.ViewerOptions })),
-            (swipeInfo === null || swipeInfo === void 0 ? void 0 : swipeInfo.isSwipePrimary) && React.createElement(Button, { icon: "comparison", variant: swipeActive ? "primary" : undefined, onClick: () => onInvokeCommand(command_1.DefaultCommands.MapSwipe) }),
+                React.createElement(Card, null,
+                    React.createElement(component_1.PlaceholderComponent, { id: component_1.DefaultComponentNames.ViewerOptions }))),
+            (comparisonInfo === null || comparisonInfo === void 0 ? void 0 : comparisonInfo.isComparisonPrimary) && React.createElement(Popover, { usePortal: false, position: "right", minimal: false },
+                React.createElement(Button, { icon: "comparison", variant: comparisonActive ? "primary" : undefined, onClick: () => undefined }),
+                React.createElement(Card, { style: { minWidth: 180 } },
+                    React.createElement(Heading, { level: 5 }, (0, i18n_1.tr)("MAP_COMPARISON", locale)),
+                    React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } },
+                        React.createElement(Button, { variant: comparisonMode === "swipe" ? "primary" : undefined, onClick: () => dispatch((0, map_2.setComparisonMode)("swipe")) }, (0, i18n_1.tr)("MAP_COMPARISON_MODE_SWIPE", locale)),
+                        React.createElement(Button, { variant: comparisonMode === "spy" ? "primary" : undefined, onClick: () => dispatch((0, map_2.setComparisonMode)("spy")) }, (0, i18n_1.tr)("MAP_COMPARISON_MODE_SPY", locale)),
+                        React.createElement(Button, { variant: !comparisonActive ? "primary" : undefined, onClick: () => dispatch((0, map_2.setComparisonMode)("none")) }, (0, i18n_1.tr)("MAP_COMPARISON_MODE_OFF", locale))))),
             React.createElement(Button, { icon: "print", onClick: () => onInvokeCommand(command_1.DefaultCommands.Print) })));
 };
 /*
@@ -30508,6 +30750,11 @@ exports.CONFIG_INITIAL_STATE = {
     viewRotationEnabled: true,
     viewSizeUnits: common_1.UnitOfMeasure.Meters,
     manualFeatureTooltips: false,
+    comparisonMode: "none",
+    lastComparisonMode: "swipe",
+    swipeActive: false,
+    swipePosition: 50,
+    spyCursorRadius: 75,
     cancelDigitizationKey: common_1.KC_ESCAPE,
     undoLastPointKey: common_1.KC_U,
     selectCanDragPan: false,
@@ -30536,7 +30783,7 @@ exports.CONFIG_INITIAL_STATE = {
     }
 };
 function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     switch (action.type) {
         case actions_1.ActionType.SET_LOCALE:
             {
@@ -30576,7 +30823,8 @@ function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
                     capabilities: payload.capabilities,
                     activeMapName: am,
                     availableMaps: availableMaps,
-                    mapSwipePairs: payload.mapSwipePairs,
+                    comparisonPairs: payload.comparisonPairs,
+                    mapSwipePairs: payload.comparisonPairs,
                     sessionWasReused: payload.sessionWasReused === true,
                     pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
@@ -30681,13 +30929,18 @@ function configReducer(state = exports.CONFIG_INITIAL_STATE, action) {
             {
                 return Object.assign(Object.assign({}, state), { manualFeatureTooltips: action.payload });
             }
-        case actions_1.ActionType.MAP_SET_SWIPE_MODE:
+        case actions_1.ActionType.MAP_SET_COMPARISON_MODE:
             {
-                return Object.assign(Object.assign({}, state), { swipeActive: action.payload.active });
+                const nextMode = (_d = action.payload.mode) !== null && _d !== void 0 ? _d : (action.payload.active ? "swipe" : "none");
+                return Object.assign(Object.assign(Object.assign({}, state), { comparisonMode: nextMode, swipeActive: nextMode === "swipe" }), (nextMode !== "none" ? { lastComparisonMode: nextMode } : {}));
             }
-        case actions_1.ActionType.MAP_UPDATE_SWIPE_POSITION:
+        case actions_1.ActionType.MAP_SET_SWIPE_POSITION:
             {
                 return Object.assign(Object.assign({}, state), { swipePosition: action.payload.position });
+            }
+        case actions_1.ActionType.MAP_SET_SPY_CURSOR_RADIUS:
+            {
+                return Object.assign(Object.assign({}, state), { spyCursorRadius: action.payload.radius });
             }
     }
     return state;
@@ -32425,6 +32678,11 @@ exports.STRINGS_EN = {
     "MAP_SWIPE_SECONDARY_LABEL": "Secondary",
     "MAP_SWIPE_LAYER_MANAGER_FOR": "Layers for:",
     "MAP_SWIPE_SELECTION_FOR": "Selection for:",
+    "MAP_COMPARISON": "Comparison",
+    "MAP_COMPARISON_MODE_SWIPE": "Swipe",
+    "MAP_COMPARISON_MODE_SPY": "Spy",
+    "MAP_COMPARISON_MODE_OFF": "Off",
+    "MAP_SPY_ESC_HINT": "Press ESC to close",
     "APPLY": "Apply",
     "EXPR_EDITOR_EDIT_VALUE": "Edit Value",
     "EXPR_EDITOR_VALUE": "Value",

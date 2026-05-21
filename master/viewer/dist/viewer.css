@@ -981,6 +981,11 @@
   padding: var(--mrl-spacing-lg);
 }
 
+/* Ensure the popover portal container is above the map viewer chrome */
+.mrl-popover-container {
+    z-index: 1002;
+}
+
 /* Minimal provider – Toaster styles */
 
 .mrl-toast {

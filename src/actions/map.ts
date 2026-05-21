@@ -47,8 +47,9 @@ import {
     ISetHeatmapLayerBlurAction,
     ISetHeatmapLayerRadiusAction,
     IEnableSelectDragPanAction,
-    ISetMapSwipeModeAction,
-    IUpdateMapSwipePositionAction,
+    ISetComparisonModeAction,
+    ISetSwipePositionAction,
+    ISetSpyCursorRadiusAction,
     IExternalLayersReadyAction
 } from './defs';
 import { persistSelectionSetToLocalStorage } from '../api/session-store';
@@ -67,6 +68,7 @@ import proj4 from "proj4";
 import { AsyncLazy } from '../api/lazy';
 import type { SiteVersionResponse } from '../api/contracts/common';
 import { tryParseArbitraryCs } from '../utils/units';
+import type { ComparisonMode } from "../api/common";
 
 function combineSelectedFeatures(oldRes: SelectedFeature[], newRes: SelectedFeature[]): SelectedFeature[] {
     // This function won't be called if we're using QUERYMAPFEATURES older than v4.0.0 (because we won't request
@@ -963,33 +965,64 @@ export function clearClientSelection(mapName: string): IClearClientSelectionActi
 }
 
 /**
- * Sets the map swipe mode active or inactive
+ * Sets the active comparison mode.
  *
- * @param {boolean} active
- * @returns {ISetMapSwipeModeAction}
+ * @param {ComparisonMode} mode
+ * @returns {ISetComparisonModeAction}
  * @since 0.15
  */
-export function setMapSwipeMode(active: boolean): ISetMapSwipeModeAction {
+export function setComparisonMode(mode: ComparisonMode): ISetComparisonModeAction {
     return {
-        type: ActionType.MAP_SET_SWIPE_MODE,
+        type: ActionType.MAP_SET_COMPARISON_MODE,
         payload: {
+            mode,
+            active: mode !== "none"
+        }
+    };
+}
+
+export function setMapSwipeMode(active: boolean): ISetComparisonModeAction {
+    return {
+        type: ActionType.MAP_SET_COMPARISON_MODE,
+        payload: {
+            mode: active ? "swipe" : "none",
             active
         }
-    }
+    };
 }
 
 /**
  * Updates the swipe position
  *
  * @param {number} position A value between 0 and 100 representing the swipe slider position
- * @returns {IUpdateMapSwipePositionAction}
+ * @returns {ISetSwipePositionAction}
  * @since 0.15
  */
-export function updateMapSwipePosition(position: number): IUpdateMapSwipePositionAction {
+export function setSwipePosition(position: number): ISetSwipePositionAction {
     return {
-        type: ActionType.MAP_UPDATE_SWIPE_POSITION,
+        type: ActionType.MAP_SET_SWIPE_POSITION,
         payload: {
             position
         }
-    }
+    };
+}
+
+export function updateMapSwipePosition(position: number): ISetSwipePositionAction {
+    return setSwipePosition(position);
+}
+
+/**
+ * Updates the spy cursor radius.
+ *
+ * @param {number} radius
+ * @returns {ISetSpyCursorRadiusAction}
+ * @since 0.15
+ */
+export function setSpyCursorRadius(radius: number): ISetSpyCursorRadiusAction {
+    return {
+        type: ActionType.MAP_SET_SPY_CURSOR_RADIUS,
+        payload: {
+            radius
+        }
+    };
 }

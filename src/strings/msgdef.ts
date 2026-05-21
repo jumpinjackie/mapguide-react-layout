@@ -369,6 +369,26 @@ export interface ILocalizedMessages {
     /**
      * @since 0.15
      */
+    MAP_COMPARISON: string;
+    /**
+     * @since 0.15
+     */
+    MAP_COMPARISON_MODE_SWIPE: string;
+    /**
+     * @since 0.15
+     */
+    MAP_COMPARISON_MODE_SPY: string;
+    /**
+     * @since 0.15
+     */
+    MAP_COMPARISON_MODE_OFF: string;
+    /**
+     * @since 0.15
+     */
+    MAP_SPY_ESC_HINT: string;
+    /**
+     * @since 0.15
+     */
     APPLY: string;
     /**
      * @since 0.15

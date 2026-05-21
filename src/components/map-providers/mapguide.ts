@@ -7,7 +7,7 @@ import { QueryMapFeaturesResponse, FeatureSet } from '../../api/contracts/query'
 import WKTFormat from "ol/format/WKT";
 import Polygon, { fromExtent } from 'ol/geom/Polygon';
 import Geometry from 'ol/geom/Geometry';
-import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled, setMapSwipeMode } from '../../actions/map';
+import { queryMapFeatures, setMouseCoordinates, setFeatureTooltipsEnabled, setComparisonMode } from '../../actions/map';
 import View from 'ol/View';
 import debounce from 'lodash.debounce';
 import { layerTransparencyChanged, areViewsCloseToEqual } from '../../utils/viewer-state';
@@ -297,7 +297,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
     }
     protected onProviderMapClick(px: [number, number]): void {
         if (this._state.mapName && this._state.sessionId) {
-            if (this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
+            if (!this.isSpyComparisonActive() && this._state.manualFeatureTooltips && this._state.featureTooltipsEnabled) {
                 this.queryFeatureTooltip(px);
             } else if (this._state.activeTool === ActiveMapTool.Select) {
                 const ptBuffer = this._state.pointSelectionBuffer ?? 2;
@@ -327,7 +327,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
-            if (!this._state.manualFeatureTooltips) {
+            if (!this._state.manualFeatureTooltips && !this.isSpyComparisonActive()) {
                 this.handleFeatureTooltipMouseMove(e);
             }
             if (this._utfGridTooltip) {
@@ -349,7 +349,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
         }
     }
     private enableFeatureTooltips(enabled: boolean): void {
-        this._featureTooltip?.setEnabled(enabled);
+        this._featureTooltip?.setEnabled(enabled && !this.isSpyComparisonActive());
     }
     private refreshMapInternal(name: string, mode: RefreshMode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly): void {
         const layerSet = this.getLayerSetGroup(name);
@@ -547,9 +547,23 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
      * @override
      * @since 0.15
      */
-    public override activateMapSwipe(secondaryMapName: string, position: number): boolean {
+    public override activateMapComparisonSwipe(secondaryMapName: string, position: number): boolean {
         this.ensureMapLayerSetGroup(secondaryMapName);
-        return super.activateMapSwipe(secondaryMapName, position);
+        return super.activateMapComparisonSwipe(secondaryMapName, position);
+    }
+
+    public override activateMapComparisonSpy(secondaryMapName: string, radius: number): boolean {
+        this.ensureMapLayerSetGroup(secondaryMapName);
+        const activated = super.activateMapComparisonSpy(secondaryMapName, radius);
+        if (activated) {
+            this.enableFeatureTooltips(false);
+        }
+        return activated;
+    }
+
+    public override deactivateMapComparison(): void {
+        super.deactivateMapComparison();
+        this.enableFeatureTooltips(this._state.featureTooltipsEnabled);
     }
 
     public override getLayerManager(mapName?: string): ILayerManager {
@@ -616,7 +630,7 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
                 getPointSelectionBox: (pt) => this.getPointSelectionBox(pt, this._state.pointSelectionBuffer),
                 openTooltipLink: (url) => this.onOpenTooltipLink(url)
             });
-            this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled);
+            this._featureTooltip.setEnabled(this._state.featureTooltipsEnabled && !this.isSpyComparisonActive());
         }
     }
     /**
@@ -675,10 +689,10 @@ export class MapGuideMapProviderContext extends BaseMapProviderContext<IMapGuide
             // The swipe activation adds secondary map layers directly to the OL map,
             // and if we don't remove them now, `attach` will throw a "Duplicate item"
             // error when it tries to add those same layers again for the new active map.
-            const swipeWasActive = this._reduxStore?.getState()?.config?.swipeActive === true;
-            if (swipeWasActive) {
-                this.deactivateMapSwipe();
-                this._reduxStore?.dispatch(setMapSwipeMode(false));
+            const comparisonMode = this._reduxStore?.getState()?.config?.comparisonMode ?? "none";
+            if (comparisonMode !== "none") {
+                this.deactivateMapComparison();
+                this._reduxStore?.dispatch(setComparisonMode("none"));
             }
             this.hideAllPopups();
             const oldLayerSet = this.getLayerSetGroup(this._state.mapName);

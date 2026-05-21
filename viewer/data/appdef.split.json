@@ -5,10 +5,10 @@
             {
                 "@id": "Australia",
                 "Extension": {
-                    "SwipePrimary": "true",
-                    "SwipePairWith": "AustraliaCompare",
-                    "SwipePrimaryLabel": "Capital Cities",
-                    "SwipeSecondaryLabel": "Natural Landmarks"
+                    "ComparisonPrimary": "true",
+                    "ComparisonPairWith": "AustraliaCompare",
+                    "ComparisonPrimaryLabel": "Capital Cities",
+                    "ComparisonSecondaryLabel": "Natural Landmarks"
                 },
                 "Map": [
                     {

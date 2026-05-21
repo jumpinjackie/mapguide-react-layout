@@ -62,6 +62,8 @@ const mapCapturerMock = vi.hoisted(() => ({
 }));
 
 const swipeMock = vi.hoisted(() => ({
+   useIsComparisonActive: vi.fn(),
+   useMapComparisonInfo: vi.fn(),
    useIsMapSwipeActive: vi.fn(),
    useMapSwipeInfo: vi.fn(),
 }));
@@ -83,6 +85,9 @@ vi.mock("../../src/containers/subscriber", () => ({
    Subscriber: () => <div data-testid="subscriber" />,
 }));
 vi.mock("../../src/components/map-viewer-swipe", () => ({
+   MapComparisonControl: () => <div data-testid="swipe" />,
+   useIsComparisonActive: swipeMock.useIsComparisonActive,
+   useMapComparisonInfo: swipeMock.useMapComparisonInfo,
    MapSwipeControl: () => <div data-testid="swipe" />,
    useIsMapSwipeActive: swipeMock.useIsMapSwipeActive,
    useMapSwipeInfo: swipeMock.useMapSwipeInfo,
@@ -162,6 +167,8 @@ describe("neo-map-viewer and quick-plot", () => {
       hooksMock.usePrevious.mockReturnValue(false);
       swipeMock.useIsMapSwipeActive.mockReturnValue(false);
       swipeMock.useMapSwipeInfo.mockReturnValue(undefined);
+      swipeMock.useIsComparisonActive.mockImplementation(() => swipeMock.useIsMapSwipeActive());
+      swipeMock.useMapComparisonInfo.mockImplementation(() => swipeMock.useMapSwipeInfo());
 
       hooksMapGuideMock.useActiveMapState.mockReturnValue(undefined);
 

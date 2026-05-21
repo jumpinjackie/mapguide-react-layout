@@ -245,7 +245,7 @@ describe("api/default-commands", () => {
 
         expect(dispatch).toHaveBeenCalledWith({
             type: ActionType.MAP_SET_SWIPE_MODE,
-            payload: { active: true }
+            payload: { mode: "swipe", active: true }
         });
     });
 

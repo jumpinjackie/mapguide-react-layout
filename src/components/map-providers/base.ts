@@ -1,6 +1,6 @@
 import * as React from "react";
 import { batch } from 'react-redux';
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions, ComparisonMode } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap, { type Options as OverviewMapOptions } from 'ol/control/OverviewMap';
@@ -258,20 +258,26 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
      * @returns {boolean} true if swipe mode was successfully activated
      * @since 0.15
      */
-    activateMapSwipe(secondaryMapName: string, position: number): boolean;
+    activateMapComparisonSwipe(secondaryMapName: string, position: number): boolean;
     /**
      * Deactivates the map swipe mode, removing the secondary map layers.
      *
      * @since 0.15
      */
-    deactivateMapSwipe(): void;
+    activateMapComparisonSpy(secondaryMapName: string, radius: number): boolean;
+    /**
+     * Deactivates the current map comparison mode, removing any secondary map layers.
+     *
+     * @since 0.15
+     */
+    deactivateMapComparison(): void;
     /**
      * Updates the swipe position when swipe mode is active.
      *
      * @param {number} position The swipe position as a percentage (0-100)
      * @since 0.15
      */
-    updateSwipePosition(position: number): void;
+    updateComparisonSwipePosition(position: number): void;
     /**
      * Re-activates swipe mode with the current stored secondary map name and position,
      * refreshing the clip event handlers for all current layers (including any newly added ones).
@@ -279,7 +285,9 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
      *
      * @since 0.15
      */
-    refreshSwipeClips(): void;
+    updateSpyCursor(pixel: [number, number] | undefined): void;
+    updateSpyCursorRadius(radius: number): void;
+    refreshMapComparison(): void;
     /**
      * Transfers a custom layer from the primary (active) map's layer set group to the
      * secondary map's layer set group in swipe mode. The layer remains on the OL map
@@ -289,6 +297,11 @@ export interface IMapProviderContext extends IMapViewer, ISelectionPopupContentO
      * @param layerName The name of the layer to transfer
      * @since 0.15
      */
+    transferLayerToComparisonSecondary(layerName: string): void;
+    activateMapSwipe(secondaryMapName: string, position: number): boolean;
+    deactivateMapSwipe(): void;
+    updateSwipePosition(position: number): void;
+    refreshSwipeClips(): void;
     transferLayerToSwipeSecondary(layerName: string): void;
 }
 
@@ -335,6 +348,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     private _swipePreRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePostRenderHandlers: WeakMap<LayerBase, (e: any) => void> = new WeakMap();
     private _swipePosition: number = 50;
+    private _comparisonMode: ComparisonMode = "none";
+    private _spyCursorPixel: [number, number] | undefined = undefined;
+    private _spyCursorRadius: number = 75;
     /** The secondary map name when swipe is active; used to route click events to the correct map. */
     private _swipeSecondaryMapName: string | undefined = undefined;
     // Redux store reference, set by MapContextProvider so swipe can lazily init secondary layer sets
@@ -582,10 +598,31 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._swipePostRenderHandlers.set(layer, postRenderHandler);
     }
 
+    private addSecondaryComparisonLayers(secondaryMapName: string, makeClipPath: (event: any, ctx: CanvasRenderingContext2D, size: number[]) => void): boolean {
+        if (!this._map) {
+            return false;
+        }
+        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
+        if (!secondaryLayerSet) {
+            this.deactivateMapComparison();
+            return false;
+        }
+        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
+            this._map.removeLayer(topLayer);
+            this._map.addLayer(topLayer);
+            this._swipeSecondaryTopLayers.push(topLayer);
+            for (const leaf of this.getLeafLayersForClip(topLayer)) {
+                this.attachClipHandler(leaf, makeClipPath);
+                this._swipeSecondaryClipLayers.push(leaf);
+            }
+        }
+        return true;
+    }
+
     /**
      * @since 0.15
      */
-    public activateMapSwipe(secondaryMapName: string, position: number): boolean {
+    public activateMapComparisonSwipe(secondaryMapName: string, position: number): boolean {
         if (!this._map) {
             return false;
         }
@@ -595,7 +632,8 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return false;
         }
         // First deactivate any existing swipe
-        this.deactivateMapSwipe();
+        this.deactivateMapComparison();
+        this._comparisonMode = "swipe";
         this._swipePosition = position;
         this._swipeSecondaryMapName = secondaryMapName;
 
@@ -625,40 +663,61 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         }
 
         // === Secondary map layers: clip to RIGHT side ===
-        const secondaryLayerSet = this.getLayerSetGroup(secondaryMapName);
-        if (!secondaryLayerSet) {
-            // Secondary map not yet initialized — undo primary clip and bail
-            this.deactivateMapSwipe();
+        const added = this.addSecondaryComparisonLayers(secondaryMapName, (event, ctx, size) => {
+            const width = this.getSwipeWidth(size[0]);
+            const tl = getRenderPixel(event, [width, 0]);
+            const tr = getRenderPixel(event, [size[0], 0]);
+            const bl = getRenderPixel(event, [width, size[1]]);
+            const br = getRenderPixel(event, size);
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(tl[0], tl[1]);
+            ctx.lineTo(bl[0], bl[1]);
+            ctx.lineTo(br[0], br[1]);
+            ctx.lineTo(tr[0], tr[1]);
+            ctx.closePath();
+            ctx.clip();
+        });
+        if (!added) {
             return false;
-        }
-        for (const topLayer of secondaryLayerSet.getSwipeableLayers()) {
-            // Always remove and re-add to ensure correct z-ordering (base layers are added
-            // first, custom layers last so they appear on top). removeLayer is a no-op if the
-            // layer is not yet on the map.
-            this._map.removeLayer(topLayer);
-            this._map.addLayer(topLayer);
-            this._swipeSecondaryTopLayers.push(topLayer);
-            for (const leaf of this.getLeafLayersForClip(topLayer)) {
-                this.attachClipHandler(leaf, (event, ctx, size) => {
-                    const width = this.getSwipeWidth(size[0]);
-                    const tl = getRenderPixel(event, [width, 0]);
-                    const tr = getRenderPixel(event, [size[0], 0]);
-                    const bl = getRenderPixel(event, [width, size[1]]);
-                    const br = getRenderPixel(event, size);
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(tl[0], tl[1]);
-                    ctx.lineTo(bl[0], bl[1]);
-                    ctx.lineTo(br[0], br[1]);
-                    ctx.lineTo(tr[0], tr[1]);
-                    ctx.closePath();
-                    ctx.clip();
-                });
-                this._swipeSecondaryClipLayers.push(leaf);
-            }
         }
         // Secondary swipe layers are re-added on top; re-promote active helper overlays so
         // hover highlight and selection overlays remain visible on both swipe sides.
+        primaryLayerSet?.ensureHelperLayersOnTop(this._map);
+        this._map.render();
+        return true;
+    }
+
+    public activateMapComparisonSpy(secondaryMapName: string, radius: number): boolean {
+        if (!this._map) {
+            return false;
+        }
+        if (secondaryMapName === this._state.mapName) {
+            return false;
+        }
+        this.deactivateMapComparison();
+        this._comparisonMode = "spy";
+        this._swipeSecondaryMapName = secondaryMapName;
+        this._spyCursorRadius = radius;
+
+        const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
+        const added = this.addSecondaryComparisonLayers(secondaryMapName, (event, ctx) => {
+            ctx.save();
+            ctx.beginPath();
+            if (this._spyCursorPixel) {
+                const center = getRenderPixel(event, this._spyCursorPixel);
+                const offset = getRenderPixel(event, [this._spyCursorPixel[0] + this._spyCursorRadius, this._spyCursorPixel[1]]);
+                const canvasRadius = Math.sqrt(
+                    Math.pow(offset[0] - center[0], 2) + Math.pow(offset[1] - center[1], 2)
+                );
+                ctx.arc(center[0], center[1], canvasRadius, 0, 2 * Math.PI);
+            }
+            ctx.clip();
+        });
+        if (!added) {
+            return false;
+        }
+
         primaryLayerSet?.ensureHelperLayersOnTop(this._map);
         this._map.render();
         return true;
@@ -676,6 +735,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
      * @since 0.15
      */
     protected getEffectiveMapNameAtPixel(pixelX: number): string | undefined {
+        if (this._comparisonMode === "spy") {
+            return this._state.mapName;
+        }
         if (this._swipeSecondaryMapName && this._map) {
             const mapSize = this._map.getSize();
             if (mapSize && pixelX > this.getSwipeWidth(mapSize[0])) {
@@ -687,7 +749,7 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     /**
      * @since 0.15
      */
-    public deactivateMapSwipe(): void {
+    public deactivateMapComparison(): void {
         if (!this._map) return;
         const allClipLayers = [...this._swipePrimaryClipLayers, ...this._swipeSecondaryClipLayers];
         for (const layer of allClipLayers) {
@@ -709,13 +771,15 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._swipePreRenderHandlers = new WeakMap();
         this._swipePostRenderHandlers = new WeakMap();
         this._swipeSecondaryMapName = undefined;
+        this._comparisonMode = "none";
+        this._spyCursorPixel = undefined;
         this._map.render();
     }
 
     /**
      * @since 0.15
      */
-    public updateSwipePosition(position: number): void {
+    public updateComparisonSwipePosition(position: number): void {
         this._swipePosition = position;
         this._map?.render();
     }
@@ -723,16 +787,30 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     /**
      * @since 0.15
      */
-    public refreshSwipeClips(): void {
+    public updateSpyCursor(pixel: [number, number] | undefined): void {
+        this._spyCursorPixel = pixel;
+        this._map?.render();
+    }
+
+    public updateSpyCursorRadius(radius: number): void {
+        this._spyCursorRadius = radius;
+        this._map?.render();
+    }
+
+    public refreshMapComparison(): void {
         if (this._swipeSecondaryMapName) {
-            this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+            if (this._comparisonMode === "swipe") {
+                this.activateMapComparisonSwipe(this._swipeSecondaryMapName, this._swipePosition);
+            } else if (this._comparisonMode === "spy") {
+                this.activateMapComparisonSpy(this._swipeSecondaryMapName, this._spyCursorRadius);
+            }
         }
     }
 
     /**
      * @since 0.15
      */
-    public transferLayerToSwipeSecondary(layerName: string): void {
+    public transferLayerToComparisonSecondary(layerName: string): void {
         if (!this._map || !this._swipeSecondaryMapName) return;
         const primaryLayerSet = this.getLayerSetGroup(this._state.mapName);
         const secondaryLayerSet = this.getLayerSetGroup(this._swipeSecondaryMapName);
@@ -745,8 +823,28 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         primaryLayerSet.transferLayerOut(layerName);
         // Register in secondary's layer set group with the captured OL layer index
         secondaryLayerSet.transferLayerIn(layerName, olLayer, order >= 0 ? order : this._map.getLayers().getLength());
-        // Re-activate to set up the correct (right-side) clip for this layer
-        this.activateMapSwipe(this._swipeSecondaryMapName, this._swipePosition);
+        // Re-activate to set up the correct comparison clip for this layer
+        this.refreshMapComparison();
+    }
+
+    public activateMapSwipe(secondaryMapName: string, position: number): boolean {
+        return this.activateMapComparisonSwipe(secondaryMapName, position);
+    }
+
+    public deactivateMapSwipe(): void {
+        this.deactivateMapComparison();
+    }
+
+    public updateSwipePosition(position: number): void {
+        this.updateComparisonSwipePosition(position);
+    }
+
+    public refreshSwipeClips(): void {
+        this.refreshMapComparison();
+    }
+
+    public transferLayerToSwipeSecondary(layerName: string): void {
+        this.transferLayerToComparisonSecondary(layerName);
     }
 
     //#region IMapViewer
@@ -943,7 +1041,13 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected onMouseMove(e: GenericEvent) {
         if (this._comp) {
             this.handleMouseTooltipMouseMove(e);
-            this.handleHighlightHover(e);
+            if (!this.isComparisonInteractionSuppressed()) {
+                this.handleHighlightHover(e);
+            } else if (this._highlightedFeature && this._state.mapName) {
+                this.getLayerSetGroup(this._state.mapName)?.removeHighlightedFeature(this._highlightedFeature);
+                this._highlightedFeature = undefined;
+                this._highlightedLayer = undefined;
+            }
             if (this._comp.isContextMenuOpen()) {
                 return;
             }
@@ -1083,6 +1187,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     protected handleMouseTooltipMouseMove(e: GenericEvent) {
         this._mouseTooltip?.onMouseMove?.(e);
     }
+    protected isSpyComparisonActive() {
+        return this._comparisonMode === "spy";
+    }
+    protected isComparisonInteractionSuppressed() {
+        return this.isSpyComparisonActive();
+    }
     private _highlightedFeature: OLFeature | undefined;
     private _highlightedLayer: OLLayer | undefined;
     private isLayerHoverable(layer: OLLayer) {
@@ -1093,6 +1203,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             && !(layer?.get(LayerProperty.DISABLE_HOVER) == true);
     }
     protected handleHighlightHover(e: GenericEvent) {
+        if (this.isComparisonInteractionSuppressed()) {
+            return;
+        }
         if (e.dragging) {
             return;
         }
@@ -1149,6 +1262,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
         this._selectTooltip?.showSelectedVectorFeatures(features, pixel, featureToLayerMap, locale);
     }
     protected async queryWmsFeatures(mapName: string | undefined, coord: Coordinate2D, bAppendMode: boolean) {
+        if (this.isComparisonInteractionSuppressed()) {
+            return false;
+        }
         if (mapName && this._map) {
             const activeLayerSet = this.getLayerSetGroup(mapName);
             const layerMgr = this.getLayerManager(mapName);
@@ -1225,7 +1341,12 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             return;
         }
 
-        // When swipe is active, determine which map owns the click position.
+        if (this.isComparisonInteractionSuppressed()) {
+            this.hideSelectedVectorFeaturesTooltip();
+            return;
+        }
+
+        // When comparison swipe is active, determine which map owns the click position.
         // Clicks to the right of the swipe divider belong to the secondary map.
         const effectiveMapName = this.getEffectiveMapNameAtPixel(e.pixel[0]);
 

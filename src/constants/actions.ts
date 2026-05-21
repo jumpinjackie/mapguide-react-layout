@@ -129,9 +129,15 @@ export enum ActionType {
     /**
      * @since 0.15
      */
-    MAP_SET_SWIPE_MODE = 'Map/SET_SWIPE_MODE',
+    MAP_SET_COMPARISON_MODE = 'Map/SET_COMPARISON_MODE',
+    MAP_SET_SWIPE_MODE = 'Map/SET_COMPARISON_MODE',
     /**
      * @since 0.15
      */
-    MAP_UPDATE_SWIPE_POSITION = 'Map/UPDATE_SWIPE_POSITION'
+    MAP_SET_SWIPE_POSITION = 'Map/SET_SWIPE_POSITION',
+    MAP_UPDATE_SWIPE_POSITION = 'Map/SET_SWIPE_POSITION',
+    /**
+     * @since 0.15
+     */
+    MAP_SET_SPY_CURSOR_RADIUS = 'Map/SET_SPY_CURSOR_RADIUS'
 }

@@ -6,6 +6,7 @@ import { FlyoutRegionContainer } from '../containers/flyout-region';
 import { InitWarningDisplay } from '../containers/init-warning-display';
 import { ActiveMapTool } from '../api/common';
 import { invokeCommand, setActiveTool, setFeatureTooltipsEnabled } from '../actions/map';
+import { setComparisonMode } from '../actions/map';
 import { getCommand, DefaultCommands } from '../api/registry/command';
 import { useReducedToolbarAppState, useViewerActiveTool } from '../containers/hooks';
 import { useActiveMapState } from "../containers/hooks-mapguide";
@@ -14,7 +15,8 @@ import { RuntimeMap } from "../api/contracts/runtime-map";
 import { useCommonTemplateState } from "./hooks";
 import { ElementGroup, useElementContext } from "../components/elements/element-context";
 import { useMapProviderContext } from "../components/map-providers/context";
-import { useMapSwipeInfo, useIsMapSwipeActive } from "../components/map-viewer-swipe";
+import { useComparisonMode, useMapComparisonInfo } from "../components/map-viewer-swipe";
+import { useReduxDispatch } from "../components/map-providers/context";
 //import { useMapProviderContext } from "../components/map-providers/context";
 
 type MapToolbarProps = {
@@ -33,8 +35,10 @@ type MapToolbarProps = {
 };
 
 const MapToolbar: React.FC<MapToolbarProps> = (props) => {
-    const swipeInfo = useMapSwipeInfo();
-    const swipeActive = useIsMapSwipeActive();
+    const comparisonInfo = useMapComparisonInfo();
+    const comparisonMode = useComparisonMode();
+    const comparisonActive = comparisonMode !== "none";
+    const dispatch = useReduxDispatch();
     const { Button, Card, Popover, Heading } = useElementContext();
     const { locale, featureTooltipsEnabled, hasSelection, map, onInvokeCommand, onSetActiveTool, activeTool, isLayerManagerOpen, setIsLayerManagerOpen, setIsLegendOpen, setIsSelectionPanelOpen, onSetFeatureTooltips } = props;
     return <>
@@ -59,9 +63,27 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
             </Popover>
             <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="cog" title={tr("VIEWER_OPTIONS", locale)} />
-                <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
+                <Card>
+                    <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
+                </Card>
             </Popover>
-            {swipeInfo?.isSwipePrimary && <Button icon="comparison" variant={swipeActive ? "primary" : undefined} onClick={() => onInvokeCommand(DefaultCommands.MapSwipe)} />}
+            {comparisonInfo?.isComparisonPrimary && <Popover usePortal={false} position="right" minimal={false}>
+                <Button icon="comparison" variant={comparisonActive ? "primary" : undefined} onClick={() => undefined} />
+                <Card style={{ minWidth: 180 }}>
+                    <Heading level={5}>{tr("MAP_COMPARISON", locale)}</Heading>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        <Button variant={comparisonMode === "swipe" ? "primary" : undefined} onClick={() => dispatch(setComparisonMode("swipe"))}>
+                            {tr("MAP_COMPARISON_MODE_SWIPE", locale)}
+                        </Button>
+                        <Button variant={comparisonMode === "spy" ? "primary" : undefined} onClick={() => dispatch(setComparisonMode("spy"))}>
+                            {tr("MAP_COMPARISON_MODE_SPY", locale)}
+                        </Button>
+                        <Button variant={!comparisonActive ? "primary" : undefined} onClick={() => dispatch(setComparisonMode("none"))}>
+                            {tr("MAP_COMPARISON_MODE_OFF", locale)}
+                        </Button>
+                    </div>
+                </Card>
+            </Popover>}
             <Button icon="print" onClick={() => onInvokeCommand(DefaultCommands.Print)} />
         </ElementGroup>
     </>

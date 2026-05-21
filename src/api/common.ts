@@ -1890,14 +1890,20 @@ export const KC_U = 85;
 export type MapLoadIndicatorPositioning = "top" | "bottom";
 
 /**
- * Describes a swipe pair of maps. When swipe mode is active, the primary map is
- * shown on the left (or covered area) and the secondary map is shown on the right
- * (or uncovered area) based on the swipe position.
+ * Supported comparison renderers for a configured comparison pair.
  *
- * @interface IMapSwipePair
  * @since 0.15
  */
-export interface IMapSwipePair {
+export type ComparisonMode = "none" | "swipe" | "spy";
+
+/**
+ * Describes a primary/secondary map pair that can be rendered using one of the
+ * supported comparison modes.
+ *
+ * @interface IComparisonPair
+ * @since 0.15
+ */
+export interface IComparisonPair {
     /**
      * The name of the primary map in the swipe pair. This is the map shown
      * in non-swipe mode.
@@ -1912,7 +1918,7 @@ export interface IMapSwipePair {
      */
     secondaryMapName: string;
     /**
-     * Optional display label for the primary (left) side of the swipe. Defaults
+     * Optional display label for the primary side of the comparison pair. Defaults
      * to the "MAP_SWIPE_PRIMARY_LABEL" i18n string ("Primary") when not set.
      *
      * @type {string | undefined}
@@ -1920,7 +1926,7 @@ export interface IMapSwipePair {
      */
     primaryLabel?: string;
     /**
-     * Optional display label for the secondary (right) side of the swipe. Defaults
+     * Optional display label for the secondary side of the comparison pair. Defaults
      * to the "MAP_SWIPE_SECONDARY_LABEL" i18n string ("Secondary") when not set.
      *
      * @type {string | undefined}
@@ -1928,6 +1934,8 @@ export interface IMapSwipePair {
      */
     secondaryLabel?: string;
 }
+
+export type IMapSwipePair = IComparisonPair;
 
 /**
  * Describes the reducer state branch for various configuration properties
@@ -2110,20 +2118,38 @@ export interface IConfigurationReducerState {
      */
     undoLastPointKey: number;
     /**
-     * The map swipe pairs declared in the application definition. When set, the
-     * viewer supports a side-by-side swipe comparison between two maps.
+     * The comparison pairs declared in the application definition.
      *
-     * @type {IMapSwipePair[]}
+     * @type {IComparisonPair[]}
      * @since 0.15
      */
-    mapSwipePairs?: IMapSwipePair[];
+    comparisonPairs?: IComparisonPair[];
     /**
-     * Indicates if map swipe mode is currently active.
+     * Compatibility alias for comparisonPairs.
      *
-     * @type {boolean}
+     * @since 0.15
+     */
+    mapSwipePairs?: IComparisonPair[];
+    /**
+     * The currently active comparison mode.
+     *
+     * @type {ComparisonMode}
+     * @since 0.15
+     */
+    comparisonMode?: ComparisonMode;
+    /**
+     * Compatibility alias for whether swipe comparison is active.
+     *
      * @since 0.15
      */
     swipeActive?: boolean;
+    /**
+     * The last non-off comparison mode used in this session.
+     *
+     * @type {ComparisonMode | undefined}
+     * @since 0.15
+     */
+    lastComparisonMode?: Exclude<ComparisonMode, "none">;
     /**
      * The current swipe position as a percentage (0-100). 
      * 50 means the slider is in the center.
@@ -2132,6 +2158,13 @@ export interface IConfigurationReducerState {
      * @since 0.15
      */
     swipePosition?: number;
+    /**
+     * The current spy cursor radius in CSS pixels.
+     *
+     * @type {number}
+     * @since 0.15
+     */
+    spyCursorRadius?: number;
 }
 
 /**

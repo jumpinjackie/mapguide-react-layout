@@ -190,14 +190,17 @@ function makeState(opts: {
 
 /** Create a mock IMapProviderContext that records calls to swipe methods. */
 function makeViewer() {
-    return {
+    const viewer = {
         isReady: vi.fn(() => false),
         transferLayerToSwipeSecondary: vi.fn(),
         refreshSwipeClips: vi.fn(),
+        refreshMapComparison: vi.fn(),
         getLayerManager: vi.fn(() => ({
             getLayer: vi.fn(() => undefined),
         })),
     };
+    viewer.refreshMapComparison.mockImplementation(() => viewer.refreshSwipeClips());
+    return viewer;
 }
 
 function renderContainer(state: Partial<IApplicationState>, viewer: ReturnType<typeof makeViewer>) {

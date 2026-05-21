@@ -9,7 +9,7 @@ import { setCurrentView, showSelectedFeature } from '../actions/map';
 import { useAppState, useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { CompositeSelection } from "../api/composite-selection";
 import { useElementContext } from "../components/elements/element-context";
-import { useIsMapSwipeActive, useMapSwipeInfo } from "../components/map-viewer-swipe";
+import { useIsComparisonActive, useMapComparisonInfo } from "../components/map-viewer-swipe";
 import type { QueryMapFeaturesResponse } from "../api/contracts/query";
 import type { RuntimeMap } from "../api/contracts/runtime-map";
 import type { ClientSelectionSet } from "../api/contracts/common";
@@ -38,19 +38,19 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     const locale = useViewerLocale();
     const dispatch = useReduxDispatch();
     const activeMapName = useActiveMapName();
-    const isSwipeActive = useIsMapSwipeActive();
-    const swipeInfo = useMapSwipeInfo();
+    const isComparisonActive = useIsComparisonActive();
+    const comparisonInfo = useMapComparisonInfo();
 
     // When swipe is active, the user can choose which map's selection to display.
     // Default to the primary (active) map; reset to the active map when swipe ends.
     const [selectedMapForSelection, setSelectedMapForSelection] = React.useState<string | undefined>(activeMapName);
     React.useEffect(() => {
-        if (!isSwipeActive) {
+        if (!isComparisonActive) {
             setSelectedMapForSelection(activeMapName);
         }
-    }, [isSwipeActive, activeMapName]);
+    }, [isComparisonActive, activeMapName]);
 
-    const targetMapName = isSwipeActive ? (selectedMapForSelection ?? activeMapName) : activeMapName;
+    const targetMapName = isComparisonActive ? (selectedMapForSelection ?? activeMapName) : activeMapName;
 
     const map = useAppState<RuntimeMap | undefined>(state => {
         if (targetMapName && state.mapState[targetMapName]) {
@@ -98,7 +98,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
         }
     };
 
-    const swipeMapSelector = isSwipeActive && swipeInfo ? (
+    const comparisonMapSelector = isComparisonActive && comparisonInfo ? (
         <div style={selectorContainerStyle}>
             <label htmlFor="selection-panel-map-select" style={selectorLabelStyle}>{tr("MAP_SWIPE_SELECTION_FOR", locale)}</label>
             <select
@@ -107,20 +107,20 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
                 onChange={e => setSelectedMapForSelection(e.target.value)}
                 style={selectorSelectStyle}
             >
-                <option value={swipeInfo.pair.primaryMapName}>
-                    {swipeInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({swipeInfo.pair.primaryMapName})
+                <option value={comparisonInfo.pair.primaryMapName}>
+                    {comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({comparisonInfo.pair.primaryMapName})
                 </option>
-                <option value={swipeInfo.pair.secondaryMapName}>
-                    {swipeInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({swipeInfo.pair.secondaryMapName})
+                <option value={comparisonInfo.pair.secondaryMapName}>
+                    {comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({comparisonInfo.pair.secondaryMapName})
                 </option>
             </select>
         </div>
     ) : null;
 
     const withSwipeSelectorLayout = (content: JSX.Element) => {
-        if (swipeMapSelector) {
+        if (comparisonMapSelector) {
             return <div style={swipeSelectionRootStyle}>
-                {swipeMapSelector}
+                {comparisonMapSelector}
                 <div style={swipeSelectionPanelSlotStyle}>
                     {content}
                 </div>

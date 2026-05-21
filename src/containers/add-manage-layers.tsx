@@ -11,7 +11,7 @@ import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeM
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { useMapProviderContext, useReduxDispatch, useAppState } from "../components/map-providers/context";
 import { TabSetProps, useElementContext } from "../components/elements/element-context";
-import { useMapSwipeInfo, useIsMapSwipeActive } from "../components/map-viewer-swipe";
+import { useMapComparisonInfo, useIsComparisonActive } from "../components/map-viewer-swipe";
 
 const EMPTY_MANAGE_LAYERS: ILayerInfo[] = [];
 
@@ -61,32 +61,32 @@ export const AddManageLayersContainer = () => {
     const locale = useViewerLocale();
     const activeMapName = useActiveMapName();
     const viewer = useMapProviderContext();
-    const swipeInfo = useMapSwipeInfo();
-    const isSwipeActive = useIsMapSwipeActive();
+    const comparisonInfo = useMapComparisonInfo();
+    const isComparisonActive = useIsComparisonActive();
 
     // When swipe is active, the user can select which map's layers to manage/add to.
     // Default to the primary (active) map; reset to active map when swipe ends.
     const [selectedMapForLayers, setSelectedMapForLayers] = React.useState<string | undefined>(activeMapName);
     React.useEffect(() => {
-        if (!isSwipeActive) {
+        if (!isComparisonActive) {
             setSelectedMapForLayers(activeMapName);
         }
-    }, [isSwipeActive, activeMapName]);
+    }, [isComparisonActive, activeMapName]);
 
     // The map targeted for both Add Layer and Manage Layers operations.
     // When swipe is active, this follows the dropdown selection.
-    const targetMapName = isSwipeActive ? (selectedMapForLayers ?? activeMapName) : activeMapName;
+    const targetMapName = isComparisonActive ? (selectedMapForLayers ?? activeMapName) : activeMapName;
 
     // The layer manager for the target map. When swipe is active and the secondary map is
     // selected, use the secondary map's layer manager so that layers are added directly to
     // the secondary's layer set (avoiding the "layer name already exists" collision that would
     // occur if a layer with the same name was already added to the primary side).
     const targetLayerManager = React.useMemo(() => {
-        if (isSwipeActive && targetMapName && targetMapName !== activeMapName) {
+        if (isComparisonActive && targetMapName && targetMapName !== activeMapName) {
             return viewer.getLayerManager(targetMapName);
         }
         return undefined; // undefined means AddLayer will fall back to the active map's layer manager
-    }, [isSwipeActive, targetMapName, activeMapName, viewer]);
+    }, [isComparisonActive, targetMapName, activeMapName, viewer]);
 
     // Primary map layers — used as the ready-gate. Until these are defined the map hasn't
     // finished initialising and we should not render the UI at all.
@@ -129,8 +129,8 @@ export const AddManageLayersContainer = () => {
         }
         // After adding a layer while swipe is active, refresh the swipe clips so the new layer
         // is correctly clipped to its target side (primary = left, secondary = right).
-        if (isSwipeActive) {
-            viewer.refreshSwipeClips();
+        if (isComparisonActive) {
+            viewer.refreshMapComparison();
         }
     };
     const onAddLayerBusyWorker = (name: string) => {
@@ -196,7 +196,7 @@ export const AddManageLayersContainer = () => {
     const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
     const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
     const selectorSelectStyle: React.CSSProperties = { flex: 1 };
-    const swipeMapSelector = isSwipeActive && swipeInfo ? (
+    const comparisonMapSelector = isComparisonActive && comparisonInfo ? (
         <div style={selectorContainerStyle}>
             <label style={selectorLabelStyle}>{tr("MAP_SWIPE_LAYER_MANAGER_FOR", locale)}</label>
             <select
@@ -204,11 +204,11 @@ export const AddManageLayersContainer = () => {
                 onChange={e => setSelectedMapForLayers(e.target.value)}
                 style={selectorSelectStyle}
             >
-                <option value={swipeInfo.pair.primaryMapName}>
-                    {swipeInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({swipeInfo.pair.primaryMapName})
+                <option value={comparisonInfo.pair.primaryMapName}>
+                    {comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({comparisonInfo.pair.primaryMapName})
                 </option>
-                <option value={swipeInfo.pair.secondaryMapName}>
-                    {swipeInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({swipeInfo.pair.secondaryMapName})
+                <option value={comparisonInfo.pair.secondaryMapName}>
+                    {comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({comparisonInfo.pair.secondaryMapName})
                 </option>
             </select>
         </div>
@@ -246,11 +246,10 @@ export const AddManageLayersContainer = () => {
             ]
         };
         return <div style={{ padding: 8 }}>
-            {swipeMapSelector}
+            {comparisonMapSelector}
             <TabSet {...tabProps} />
         </div>;
     } else {
         return <></>;
     }
 };
-

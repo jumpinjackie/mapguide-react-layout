@@ -63,7 +63,9 @@ const MapToolbar: React.FC<MapToolbarProps> = (props) => {
             </Popover>
             <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="cog" title={tr("VIEWER_OPTIONS", locale)} />
-                <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
+                <Card>
+                    <PlaceholderComponent id={DefaultComponentNames.ViewerOptions} />
+                </Card>
             </Popover>
             {comparisonInfo?.isComparisonPrimary && <Popover usePortal={false} position="right" minimal={false}>
                 <Button icon="comparison" variant={comparisonActive ? "primary" : undefined} onClick={() => undefined} />

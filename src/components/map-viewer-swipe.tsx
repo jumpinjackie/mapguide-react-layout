@@ -74,44 +74,29 @@ function useComparisonState() {
     };
 }
 
-function ComparisonLabels({ pair, locale }: { pair: IComparisonPair; locale: string; }) {
+function ComparisonLabels({ pair, locale, swipePosition }: { pair: IComparisonPair; locale: string; swipePosition: number }) {
+    const primaryCenterX = swipePosition / 2;
+    const secondaryCenterX = swipePosition + (100 - swipePosition) / 2;
+    const labelStyle: React.CSSProperties = {
+        position: "absolute",
+        top: 8,
+        background: "rgba(255,255,255,0.85)",
+        border: "1px solid rgba(0,0,0,0.2)",
+        borderRadius: 4,
+        padding: "2px 8px",
+        fontSize: 12,
+        fontWeight: "bold",
+        pointerEvents: "none",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+        whiteSpace: "nowrap",
+        zIndex: 12,
+        transform: "translateX(-50%)"
+    };
     return <>
-        <div
-            style={{
-                position: "absolute",
-                top: 8,
-                left: 8,
-                background: "rgba(255,255,255,0.85)",
-                border: "1px solid rgba(0,0,0,0.2)",
-                borderRadius: 4,
-                padding: "2px 8px",
-                fontSize: 12,
-                fontWeight: "bold",
-                pointerEvents: "none",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-                whiteSpace: "nowrap",
-                zIndex: 12
-            }}
-        >
+        <div style={{ ...labelStyle, left: `${primaryCenterX}%` }}>
             {pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}
         </div>
-        <div
-            style={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                background: "rgba(255,255,255,0.85)",
-                border: "1px solid rgba(0,0,0,0.2)",
-                borderRadius: 4,
-                padding: "2px 8px",
-                fontSize: 12,
-                fontWeight: "bold",
-                pointerEvents: "none",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-                whiteSpace: "nowrap",
-                zIndex: 12
-            }}
-        >
+        <div style={{ ...labelStyle, left: `${secondaryCenterX}%` }}>
             {pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}
         </div>
     </>;
@@ -192,6 +177,11 @@ export const MapComparisonControl: React.FC = () => {
             setSpyCursor(undefined);
         };
         const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                dispatch(setComparisonMode("none"));
+                event.preventDefault();
+                return;
+            }
             if (document.activeElement !== host) {
                 return;
             }
@@ -206,11 +196,11 @@ export const MapComparisonControl: React.FC = () => {
 
         host.addEventListener("pointermove", onPointerMove);
         host.addEventListener("pointerleave", onPointerLeave);
-        host.addEventListener("keydown", onKeyDown);
+        document.addEventListener("keydown", onKeyDown);
         return () => {
             host.removeEventListener("pointermove", onPointerMove);
             host.removeEventListener("pointerleave", onPointerLeave);
-            host.removeEventListener("keydown", onKeyDown);
+            document.removeEventListener("keydown", onKeyDown);
         };
     }, [dispatch, mode, spyCursorRadius]);
 
@@ -218,34 +208,12 @@ export const MapComparisonControl: React.FC = () => {
         return null;
     }
 
+    const { pair } = comparisonInfo;
+
     const handleClose = (e: React.MouseEvent) => {
         e.stopPropagation();
         dispatch(setComparisonMode("none"));
     };
-
-    const closeButton = <button
-        onClick={handleClose}
-        title={tr("MAP_SWIPE_CLOSE", locale)}
-        style={{
-            position: "absolute",
-            top: 8,
-            right: mode === "spy" ? 110 : undefined,
-            left: mode === "swipe" ? `${swipePosition}%` : undefined,
-            transform: mode === "swipe" ? "translateX(-50%)" : undefined,
-            background: "rgba(255,255,255,0.9)",
-            border: "1px solid rgba(0,0,0,0.3)",
-            borderRadius: 4,
-            padding: "2px 8px",
-            cursor: "pointer",
-            fontSize: 12,
-            pointerEvents: "all",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-            whiteSpace: "nowrap",
-            zIndex: 12
-        }}
-    >
-        ✕ {tr("MAP_SWIPE_CLOSE", locale)}
-    </button>;
 
     return (
         <div
@@ -258,94 +226,141 @@ export const MapComparisonControl: React.FC = () => {
             }}
         >
             {mode === "swipe" && (
-                <div
-                    onPointerDown={(e) => {
-                        e.currentTarget.setPointerCapture(e.pointerId);
-                        setIsDragging(true);
-                        e.stopPropagation();
-                    }}
-                    onPointerMove={(e) => {
-                        if (!isDragging || !containerRef.current) {
-                            return;
-                        }
-                        const rect = containerRef.current.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const nextPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
-                        dispatch(setSwipePosition(Math.round(nextPosition)));
-                        e.stopPropagation();
-                    }}
-                    onPointerUp={(e) => {
-                        e.currentTarget.releasePointerCapture(e.pointerId);
-                        setIsDragging(false);
-                        e.stopPropagation();
-                    }}
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        bottom: 0,
-                        left: `calc(${swipePosition}% - 16px)`,
-                        width: 32,
-                        cursor: "ew-resize",
-                        pointerEvents: "all",
-                        zIndex: 11
-                    }}
-                >
+                <>
                     <div
+                        onPointerDown={(e) => {
+                            e.currentTarget.setPointerCapture(e.pointerId);
+                            setIsDragging(true);
+                            e.stopPropagation();
+                        }}
+                        onPointerMove={(e) => {
+                            if (!isDragging || !containerRef.current) {
+                                return;
+                            }
+                            const rect = containerRef.current.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const nextPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                            dispatch(setSwipePosition(Math.round(nextPosition)));
+                            e.stopPropagation();
+                        }}
+                        onPointerUp={(e) => {
+                            e.currentTarget.releasePointerCapture(e.pointerId);
+                            setIsDragging(false);
+                            e.stopPropagation();
+                        }}
                         style={{
                             position: "absolute",
                             top: 0,
                             bottom: 0,
-                            left: "50%",
-                            width: 3,
-                            background: "rgba(255,255,255,0.9)",
-                            boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+                            left: `calc(${swipePosition}% - 16px)`,
+                            width: 32,
+                            cursor: "ew-resize",
+                            pointerEvents: "all",
+                            zIndex: 11
+                        }}
+                    >
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                bottom: 0,
+                                left: "50%",
+                                width: 3,
+                                background: "rgba(255,255,255,0.9)",
+                                boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+                                transform: "translateX(-50%)",
+                                pointerEvents: "none"
+                            }}
+                        />
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                width: 40,
+                                height: 40,
+                                borderRadius: "50%",
+                                background: "rgba(255,255,255,0.9)",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "ew-resize",
+                                pointerEvents: "none",
+                                userSelect: "none"
+                            }}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M7 4L3 10L7 16M13 4L17 10L13 16" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleClose}
+                        title={tr("MAP_SWIPE_CLOSE", locale)}
+                        style={{
+                            position: "absolute",
+                            top: 8,
+                            left: `${swipePosition}%`,
                             transform: "translateX(-50%)",
-                            pointerEvents: "none"
+                            background: "rgba(255,255,255,0.9)",
+                            border: "1px solid rgba(0,0,0,0.3)",
+                            borderRadius: 4,
+                            padding: "2px 8px",
+                            cursor: "pointer",
+                            fontSize: 12,
+                            pointerEvents: "all",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
+                            whiteSpace: "nowrap",
+                            zIndex: 12
+                        }}
+                    >
+                        ✕ {tr("MAP_SWIPE_CLOSE", locale)}
+                    </button>
+                    <ComparisonLabels pair={pair} locale={locale} swipePosition={swipePosition} />
+                </>
+            )}
+            {mode === "spy" && spyCursor?.visible && (
+                <>
+                    <div
+                        style={{
+                            position: "absolute",
+                            left: spyCursor.pixel[0] - spyCursorRadius,
+                            top: spyCursor.pixel[1] - spyCursorRadius,
+                            width: spyCursorRadius * 2,
+                            height: spyCursorRadius * 2,
+                            borderRadius: "50%",
+                            border: "4px solid rgba(0,0,0,0.5)",
+                            boxShadow: "0 0 0 2px rgba(255,255,255,0.85)",
+                            pointerEvents: "none",
+                            zIndex: 12
                         }}
                     />
                     <div
                         style={{
                             position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            width: 40,
-                            height: 40,
-                            borderRadius: "50%",
-                            background: "rgba(255,255,255,0.9)",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "ew-resize",
+                            left: spyCursor.pixel[0] + spyCursorRadius + 12,
+                            top: spyCursor.pixel[1],
+                            transform: "translateY(-50%)",
+                            background: "rgba(0,0,0,0.72)",
+                            color: "white",
+                            borderRadius: 4,
+                            padding: "6px 10px",
+                            fontSize: 11,
                             pointerEvents: "none",
-                            userSelect: "none"
+                            boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+                            whiteSpace: "nowrap",
+                            zIndex: 13,
+                            lineHeight: 1.6
                         }}
                     >
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M7 4L3 10L7 16M13 4L17 10L13 16" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <div style={{ fontWeight: "bold" }}>⬤ {pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}</div>
+                        <div style={{ fontWeight: "bold" }}>◯ {pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}</div>
+                        <div style={{ opacity: 0.75, fontSize: 10, marginTop: 3 }}>{tr("MAP_SPY_ESC_HINT", locale)}</div>
                     </div>
-                </div>
+                </>
             )}
-            {mode === "spy" && spyCursor?.visible && (
-                <div
-                    style={{
-                        position: "absolute",
-                        left: spyCursor.pixel[0] - spyCursorRadius,
-                        top: spyCursor.pixel[1] - spyCursorRadius,
-                        width: spyCursorRadius * 2,
-                        height: spyCursorRadius * 2,
-                        borderRadius: "50%",
-                        border: "4px solid rgba(0,0,0,0.5)",
-                        boxShadow: "0 0 0 2px rgba(255,255,255,0.85)",
-                        pointerEvents: "none",
-                        zIndex: 12
-                    }}
-                />
-            )}
-            {closeButton}
-            <ComparisonLabels pair={comparisonInfo.pair} locale={locale} />
         </div>
     );
 };

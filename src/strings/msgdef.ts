@@ -385,6 +385,10 @@ export interface ILocalizedMessages {
     /**
      * @since 0.15
      */
+    MAP_SPY_ESC_HINT: string;
+    /**
+     * @since 0.15
+     */
     APPLY: string;
     /**
      * @since 0.15

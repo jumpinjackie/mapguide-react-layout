@@ -315,6 +315,7 @@ export const STRINGS_EN: ILocalizedMessages = {
     "MAP_COMPARISON_MODE_SWIPE": "Swipe",
     "MAP_COMPARISON_MODE_SPY": "Spy",
     "MAP_COMPARISON_MODE_OFF": "Off",
+    "MAP_SPY_ESC_HINT": "Press ESC to close",
     "APPLY": "Apply",
     "EXPR_EDITOR_EDIT_VALUE": "Edit Value",
     "EXPR_EDITOR_VALUE": "Value",

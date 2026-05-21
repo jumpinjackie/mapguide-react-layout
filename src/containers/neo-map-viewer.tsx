@@ -184,8 +184,14 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     };
 
     // Mouse events
-    const onMouseDown = () => {
-        mapViewerRef.current?.focus();
+    const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Only focus the map viewer when clicking the map canvas itself, not toolbar
+        // buttons or other interactive elements — otherwise we steal focus before the
+        // button's click event fires and break popover toggles.
+        const target = e.target as HTMLElement;
+        if (!target.closest("button, input, select, textarea, [role='button']")) {
+            mapViewerRef.current?.focus();
+        }
         setIsMouseDown(true);
     };
     const onMouseUp = () => {

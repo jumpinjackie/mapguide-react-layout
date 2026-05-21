@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { MnPopover } from "../../../../../src/components/elements/providers/minimal/popover";
 
 describe("components/elements/providers/minimal/popover", () => {
-    it("renders an elevated portal container when opened", async () => {
+    it("renders a portal container with the mrl-popover-container class when opened", async () => {
         render(
             <MnPopover position="right">
                 <button type="button">Open popover</button>
@@ -21,6 +21,9 @@ describe("components/elements/providers/minimal/popover", () => {
 
         const container = document.body.querySelector<HTMLElement>(".react-tiny-popover-container");
         expect(container).not.toBeNull();
-        expect(container?.style.zIndex).toBe("1002");
+        // z-index is applied via the mrl-popover-container CSS class (synchronously at
+        // element creation), avoiding a useEffect timing gap that would cause the
+        // container to render at z-index:auto before the first browser paint.
+        expect(container?.classList.contains("mrl-popover-container")).toBe(true);
     });
 });

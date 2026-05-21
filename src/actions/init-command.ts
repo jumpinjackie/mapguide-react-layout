@@ -1,4 +1,4 @@
-import type { IMapSwipePair } from '../api/common';
+import type { IComparisonPair } from '../api/common';
 import { IGenericSubjectMapLayer } from './defs';
 import { makeUnique } from '../utils/array';
 import { ApplicationDefinition, MapConfiguration, MapSetGroup } from '../api/contracts/fusion';
@@ -7,15 +7,15 @@ import { strStartsWith } from '../utils/string';
 import { IClusterSettings } from '../api/ol-style-contracts';
 
 /**
- * Parses swipe pair declarations from the application definition's MapSet.
+ * Parses comparison pair declarations from the application definition's MapSet.
  *
- * A swipe pair is declared by adding Extension.SwipePairWith (the paired map group id)
- * and Extension.SwipePrimary ("true" or "false") to a MapGroup element.
+ * A comparison pair is declared by adding Extension.ComparisonPairWith (the paired map group id)
+ * and Extension.ComparisonPrimary ("true" or "false") to a MapGroup element.
  *
  * @since 0.15
  */
-export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] {
-    const pairs: IMapSwipePair[] = [];
+export function parseComparisonPairs(appDef: ApplicationDefinition): IComparisonPair[] {
+    const pairs: IComparisonPair[] = [];
     const seen = new Set<string>();
     if (!appDef.MapSet?.MapGroup) {
         return pairs;
@@ -25,18 +25,18 @@ export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] 
         if (!ext) {
             continue;
         }
-        const swipePairWith = ext.SwipePairWith as string | undefined;
-        const swipePrimary = ext.SwipePrimary as string | undefined;
-        if (swipePairWith && swipePrimary?.toLowerCase() === "true") {
+        const comparisonPairWith = ext.ComparisonPairWith as string | undefined;
+        const comparisonPrimary = ext.ComparisonPrimary as string | undefined;
+        if (comparisonPairWith && comparisonPrimary?.toLowerCase() === "true") {
             const primaryId = mg["@id"];
-            const pairKey = [primaryId, swipePairWith].sort().join("|");
+            const pairKey = [primaryId, comparisonPairWith].sort().join("|");
             if (!seen.has(pairKey)) {
                 seen.add(pairKey);
-                const primaryLabel = ext.SwipePrimaryLabel as string | undefined;
-                const secondaryLabel = ext.SwipeSecondaryLabel as string | undefined;
+                const primaryLabel = ext.ComparisonPrimaryLabel as string | undefined;
+                const secondaryLabel = ext.ComparisonSecondaryLabel as string | undefined;
                 pairs.push({
                     primaryMapName: primaryId,
-                    secondaryMapName: swipePairWith,
+                    secondaryMapName: comparisonPairWith,
                     ...(primaryLabel ? { primaryLabel } : {}),
                     ...(secondaryLabel ? { secondaryLabel } : {})
                 });
@@ -45,6 +45,8 @@ export function parseSwipePairs(appDef: ApplicationDefinition): IMapSwipePair[] 
     }
     return pairs;
 }
+
+export const parseSwipePairs = parseComparisonPairs;
 
 /**
  * Parses a map-level mouse coordinate format override from the first map

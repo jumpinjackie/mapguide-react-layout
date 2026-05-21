@@ -32,6 +32,7 @@ export const MnPopover: React.FC<React.PropsWithChildren<PopoverProps>> = ({ pos
          isOpen={isOpen}
          positions={[mapPosition(position)]}
          content={<>{content}</>}
+         containerStyle={{ zIndex: "1002" }}
          onClickOutside={() => setIsOpen(false)}
       >
          <span onClick={() => setIsOpen(prev => !prev)}>

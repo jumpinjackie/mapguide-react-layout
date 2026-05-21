@@ -74,33 +74,17 @@ function useComparisonState() {
     };
 }
 
-function ComparisonLabels({ pair, locale, swipePosition }: { pair: IComparisonPair; locale: string; swipePosition: number }) {
-    const primaryCenterX = swipePosition / 2;
-    const secondaryCenterX = swipePosition + (100 - swipePosition) / 2;
-    const labelStyle: React.CSSProperties = {
-        position: "absolute",
-        top: 8,
-        background: "rgba(255,255,255,0.85)",
-        border: "1px solid rgba(0,0,0,0.2)",
-        borderRadius: 4,
-        padding: "2px 8px",
-        fontSize: 12,
-        fontWeight: "bold",
-        pointerEvents: "none",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
-        whiteSpace: "nowrap",
-        zIndex: 12,
-        transform: "translateX(-50%)"
-    };
-    return <>
-        <div style={{ ...labelStyle, left: `${primaryCenterX}%` }}>
-            {pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}
-        </div>
-        <div style={{ ...labelStyle, left: `${secondaryCenterX}%` }}>
-            {pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}
-        </div>
-    </>;
-}
+const SWIPE_LABEL_STYLE: React.CSSProperties = {
+    background: "rgba(255,255,255,0.85)",
+    border: "1px solid rgba(0,0,0,0.2)",
+    borderRadius: 4,
+    padding: "2px 8px",
+    fontSize: 12,
+    fontWeight: "bold",
+    pointerEvents: "none",
+    boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+    whiteSpace: "nowrap",
+};
 
 export const MapComparisonControl: React.FC = () => {
     const dispatch = useReduxDispatch();
@@ -296,29 +280,42 @@ export const MapComparisonControl: React.FC = () => {
                             </svg>
                         </div>
                     </div>
-                    <button
-                        onClick={handleClose}
-                        title={tr("MAP_SWIPE_CLOSE", locale)}
-                        style={{
-                            position: "absolute",
-                            top: 8,
-                            left: `${swipePosition}%`,
-                            transform: "translateX(-50%)",
-                            background: "rgba(255,255,255,0.9)",
-                            border: "1px solid rgba(0,0,0,0.3)",
-                            borderRadius: 4,
-                            padding: "2px 8px",
-                            cursor: "pointer",
-                            fontSize: 12,
-                            pointerEvents: "all",
-                            boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-                            whiteSpace: "nowrap",
-                            zIndex: 12
-                        }}
-                    >
-                        ✕ {tr("MAP_SWIPE_CLOSE", locale)}
-                    </button>
-                    <ComparisonLabels pair={pair} locale={locale} swipePosition={swipePosition} />
+                    {/* Flex row centered on the divider: [Primary] [✕ Close] [Secondary] */}
+                    <div style={{
+                        position: "absolute",
+                        top: 8,
+                        left: `${swipePosition}%`,
+                        transform: "translateX(-50%)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        zIndex: 12,
+                        pointerEvents: "none"
+                    }}>
+                        <div style={SWIPE_LABEL_STYLE}>
+                            {pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)}
+                        </div>
+                        <button
+                            onClick={handleClose}
+                            title={tr("MAP_SWIPE_CLOSE", locale)}
+                            style={{
+                                background: "rgba(255,255,255,0.9)",
+                                border: "1px solid rgba(0,0,0,0.3)",
+                                borderRadius: 4,
+                                padding: "2px 8px",
+                                cursor: "pointer",
+                                fontSize: 12,
+                                pointerEvents: "all",
+                                boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            ✕ {tr("MAP_SWIPE_CLOSE", locale)}
+                        </button>
+                        <div style={SWIPE_LABEL_STYLE}>
+                            {pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)}
+                        </div>
+                    </div>
                 </>
             )}
             {mode === "spy" && spyCursor?.visible && (

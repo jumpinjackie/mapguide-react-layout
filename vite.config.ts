@@ -2,6 +2,8 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
 
+const visualizerModulePromise = import("rollup-plugin-visualizer");
+
 interface IAssetFileInfo {
    name?: string;
    originalFileNames?: string[];
@@ -59,6 +61,29 @@ const getChunkFileName = (chunkName: string, isDebugBuild: boolean) => {
    return isDebugBuild ? "chunks/[name]-debug.js" : "chunks/[name].js";
 };
 
+const getManualChunkName = (id: string) => {
+   const normalizedId = id.replace(/\\/g, "/");
+   if (normalizedId.includes("/node_modules/lerc/")
+      || normalizedId.includes("/node_modules/pako/")
+      || normalizedId.includes("/node_modules/zstddec/")) {
+      return "geotiff-codecs";
+   }
+   if (normalizedId.includes("/node_modules/@petamoriken/float16/")
+      || normalizedId.includes("/node_modules/parse-headers/")
+      || normalizedId.includes("/node_modules/quick-lru/")
+      || normalizedId.includes("/node_modules/web-worker/")
+      || normalizedId.includes("/node_modules/xml-utils/")) {
+      return "geotiff-deps";
+   }
+   if (normalizedId.includes("/node_modules/geotiff/") || normalizedId.includes("/node_modules/ol/source/GeoTIFF")) {
+      return "geotiff";
+   }
+   if (normalizedId.includes("/node_modules/")) {
+      return "vendor";
+   }
+   return undefined;
+};
+
 /**
  * Vite configuration for browser viewer bundle builds.
  *
@@ -72,7 +97,7 @@ const config = async ({ mode }: { mode: string }) => {
    const rollupPlugins = [] as any[];
 
    if (shouldAnalyze) {
-      const { visualizer } = await import("rollup-plugin-visualizer");
+      const { visualizer } = await visualizerModulePromise;
       rollupPlugins.push(visualizer({
          filename: path.resolve(__dirname, "viewer/dist/stats.html"),
          gzipSize: true,
@@ -112,7 +137,7 @@ const config = async ({ mode }: { mode: string }) => {
                format: "es",
                entryFileNames: isDebugBuild ? "viewer-debug.js" : "viewer.js",
                chunkFileNames: (chunkInfo: { name: string }) => getChunkFileName(chunkInfo.name, isDebugBuild),
-               manualChunks: (id: string) => id.includes("/node_modules/") ? "vendor" : undefined,
+               manualChunks: getManualChunkName,
                assetFileNames: (assetInfo: IAssetFileInfo) => getAssetFileName(assetInfo, isDebugBuild)
             }
          }

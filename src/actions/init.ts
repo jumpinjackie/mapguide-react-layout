@@ -17,7 +17,7 @@ import { tr } from '../api/i18n';
 import { getLayoutCapabilities } from "../api/registry/layout";
 import { debug } from "../utils/logger";
 import { AsyncLazy } from '../api/lazy';
-import { isAppDef, isWebLayout } from '../api/builders/deArrayify';
+import { isAppDef, isWebLayout } from '../api/builders/de-arrayify-guards';
 import { MgError } from '../api/error';
 import { initLocaleAsync, sessionAcquiredAsync } from './init-mapguide';
 import { clearSessionStore, retrieveSelectionSetFromLocalStorage } from '../api/session-store';

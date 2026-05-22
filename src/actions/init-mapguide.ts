@@ -28,7 +28,7 @@ import { tryParseArbitraryCs } from '../utils/units';
 import { ScopedId } from '../utils/scoped-id';
 import { canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
 import { supportsWebGL } from '../utils/browser-support';
-import { isAppDef, isWebLayout } from '../api/builders/deArrayify';
+import { isAppDef, isWebLayout } from '../api/builders/de-arrayify-guards';
 import { ActionType } from '../constants/actions';
 
 const TYPE_SUBJECT = "SubjectLayer";

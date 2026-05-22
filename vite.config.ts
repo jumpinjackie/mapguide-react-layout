@@ -65,9 +65,21 @@ const getChunkFileName = (chunkName: string, isDebugBuild: boolean) => {
  * @hidden
  * @since 0.15
  */
-const config = ({ mode }: { mode: string }) => {
+const config = async ({ mode }: { mode: string }) => {
    const isDebugBuild = process.env.DEBUG_BUILD === "1";
    const isProduction = mode === "production";
+   const shouldAnalyze = process.env.ANALYZE === "1";
+   const rollupPlugins = [] as any[];
+
+   if (shouldAnalyze) {
+      const { visualizer } = await import("rollup-plugin-visualizer");
+      rollupPlugins.push(visualizer({
+         filename: path.resolve(__dirname, "viewer/dist/stats.html"),
+         gzipSize: true,
+         brotliSize: true,
+         template: "treemap"
+      }));
+   }
 
    return {
       base: "./",
@@ -95,6 +107,7 @@ const config = ({ mode }: { mode: string }) => {
          outDir: path.resolve(__dirname, "viewer/dist"),
          rollupOptions: {
             input: path.resolve(__dirname, "src/entries/browser-global.ts"),
+            plugins: rollupPlugins,
             output: {
                format: "es",
                entryFileNames: isDebugBuild ? "viewer-debug.js" : "viewer.js",

@@ -38,11 +38,10 @@ import OLVectorLayer from 'ol/layer/Vector';
 import OLVectorSource from 'ol/source/Vector';
 import { recursiveFindLayer } from '../components/map-providers/base';
 import compactViewerDocs from './docs/compact-viewer.md';
+import buildings from './data/gisborne-futures.json';
+import markerIcon from './data/marker.png';
 
 // Source: https://data.gov.au/data/dataset/gisborne-futures-data
-const buildings = require('./data/gisborne-futures.json');
-
-const markerIcon = require('./data/marker.png');
 
 export default {
     title: 'Compact Viewer',

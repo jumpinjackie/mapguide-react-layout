@@ -6,7 +6,6 @@ import XYZ from "ol/source/XYZ";
 import OSM from "ol/source/OSM";
 import TileDebug from "ol/source/TileDebug";
 import BingMaps from "ol/source/BingMaps";
-import GeoTIFF from "ol/source/GeoTIFF";
 import UTFGrid from "ol/source/UTFGrid";
 import TileLayer from 'ol/layer/Tile';
 import WebGLTileLayer from "ol/layer/WebGLTile";
@@ -149,6 +148,7 @@ function applyVectorLayerProperties(defn: IGenericSubjectMapLayer | IInitialExte
 }
 
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] as any[] };
+const geoTiffSourceCtorPromise = import("ol/source/GeoTIFF").then(mod => mod.default);
 
 /**
  * @hidden
@@ -455,8 +455,9 @@ export function createOLLayerFromSubjectDefn(defn: IGenericSubjectMapLayer | IIn
                 const sourceArgs = {
                     ...defn.sourceParams
                 };
-                const layer = new WebGLTileLayer({
-                    source: new GeoTIFF(sourceArgs)
+                const layer = new WebGLTileLayer();
+                geoTiffSourceCtorPromise.then(GeoTIFF => {
+                    layer.setSource(new GeoTIFF(sourceArgs));
                 });
                 layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
                 layer.set(LayerProperty.LAYER_TYPE, "GeoTIFF");

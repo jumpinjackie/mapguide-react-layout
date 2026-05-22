@@ -2,6 +2,7 @@
 import React from "react";
 import { Popover as TinyPopover } from "react-tiny-popover";
 import type { PopoverProps } from "../../element-context";
+import "./popover.css";
 
 function mapPosition(position: string): "left" | "right" | "top" | "bottom" {
    switch (position) {
@@ -32,6 +33,7 @@ export const MnPopover: React.FC<React.PropsWithChildren<PopoverProps>> = ({ pos
          isOpen={isOpen}
          positions={[mapPosition(position)]}
          content={<>{content}</>}
+         containerClassName="mrl-popover-container"
          onClickOutside={() => setIsOpen(false)}
       >
          <span onClick={() => setIsOpen(prev => !prev)}>

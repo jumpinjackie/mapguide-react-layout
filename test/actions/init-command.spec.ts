@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, parseSwipePairs } from "../../src/actions/init-command";
+import { buildSubjectLayerDefn, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseComparisonPairs, parseMapGroupCoordinateFormat } from "../../src/actions/init-command";
 import { GenericSubjectLayerType, IGenericSubjectMapLayer } from "../../src/actions/defs";
 
 describe("actions/init-command", () => {
@@ -113,13 +113,13 @@ describe("actions/init-command", () => {
             .toThrow("No Map Definition or subject layer found in Application Definition");
     });
 
-    describe("parseSwipePairs", () => {
+    describe("parseComparisonPairs", () => {
         it("returns empty array when no MapSet", () => {
             const appDef = {};
-            expect(parseSwipePairs(appDef as any)).toEqual([]);
+            expect(parseComparisonPairs(appDef as any)).toEqual([]);
         });
 
-        it("returns empty array when no swipe Extension on MapGroups", () => {
+        it("returns empty array when no comparison Extension on MapGroups", () => {
             const appDef = {
                 MapSet: {
                     MapGroup: [
@@ -128,59 +128,86 @@ describe("actions/init-command", () => {
                     ]
                 }
             };
-            expect(parseSwipePairs(appDef as any)).toEqual([]);
+            expect(parseComparisonPairs(appDef as any)).toEqual([]);
         });
 
-        it("returns empty array when SwipePairWith present but SwipePrimary is not true", () => {
+        it("returns empty array when ComparisonPairWith present but ComparisonPrimary is not true", () => {
             const appDef = {
                 MapSet: {
                     MapGroup: [
-                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "false" } },
+                        { "@id": "MapA", Map: [], Extension: { ComparisonPairWith: "MapB", ComparisonPrimary: "false" } },
                         { "@id": "MapB", Map: [] }
                     ]
                 }
             };
-            expect(parseSwipePairs(appDef as any)).toEqual([]);
+            expect(parseComparisonPairs(appDef as any)).toEqual([]);
         });
 
-        it("returns a pair when primary map declares SwipePairWith and SwipePrimary=true", () => {
+        it("returns a pair when primary map declares ComparisonPairWith and ComparisonPrimary=true", () => {
             const appDef = {
                 MapSet: {
                     MapGroup: [
-                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "true" } },
+                        { "@id": "MapA", Map: [], Extension: { ComparisonPairWith: "MapB", ComparisonPrimary: "true" } },
                         { "@id": "MapB", Map: [] }
                     ]
                 }
             };
-            const pairs = parseSwipePairs(appDef as any);
+            const pairs = parseComparisonPairs(appDef as any);
             expect(pairs).toHaveLength(1);
             expect(pairs[0].primaryMapName).toBe("MapA");
             expect(pairs[0].secondaryMapName).toBe("MapB");
+        });
+
+        it("includes comparison labels when present", () => {
+            const appDef = {
+                MapSet: {
+                    MapGroup: [
+                        {
+                            "@id": "MapA",
+                            Map: [],
+                            Extension: {
+                                ComparisonPairWith: "MapB",
+                                ComparisonPrimary: "true",
+                                ComparisonPrimaryLabel: "Primary",
+                                ComparisonSecondaryLabel: "Secondary"
+                            }
+                        },
+                        { "@id": "MapB", Map: [] }
+                    ]
+                }
+            };
+            const pairs = parseComparisonPairs(appDef as any);
+            expect(pairs).toEqual([{
+                primaryMapName: "MapA",
+                secondaryMapName: "MapB",
+                primaryLabel: "Primary",
+                secondaryLabel: "Secondary"
+            }]);
         });
 
         it("deduplicates pairs if same pair is declared twice", () => {
             const appDef = {
                 MapSet: {
                     MapGroup: [
-                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "true" } },
-                        { "@id": "MapB", Map: [], Extension: { SwipePairWith: "MapA", SwipePrimary: "true" } }
+                        { "@id": "MapA", Map: [], Extension: { ComparisonPairWith: "MapB", ComparisonPrimary: "true" } },
+                        { "@id": "MapB", Map: [], Extension: { ComparisonPairWith: "MapA", ComparisonPrimary: "true" } }
                     ]
                 }
             };
-            const pairs = parseSwipePairs(appDef as any);
+            const pairs = parseComparisonPairs(appDef as any);
             expect(pairs).toHaveLength(1);
         });
 
-        it("handles case-insensitive SwipePrimary values", () => {
+        it("handles case-insensitive ComparisonPrimary values", () => {
             const appDef = {
                 MapSet: {
                     MapGroup: [
-                        { "@id": "MapA", Map: [], Extension: { SwipePairWith: "MapB", SwipePrimary: "True" } },
+                        { "@id": "MapA", Map: [], Extension: { ComparisonPairWith: "MapB", ComparisonPrimary: "True" } },
                         { "@id": "MapB", Map: [] }
                     ]
                 }
             };
-            const pairs = parseSwipePairs(appDef as any);
+            const pairs = parseComparisonPairs(appDef as any);
             expect(pairs).toHaveLength(1);
             expect(pairs[0].primaryMapName).toBe("MapA");
         });

@@ -10,7 +10,7 @@ import { MgError } from "../api/error";
 import { RuntimeMap } from "../api/contracts/runtime-map";
 import { FeatureSet, SelectedFeatureSet, QueryMapFeaturesResponse } from "../api/contracts/query";
 import { RefreshMode, ICommand, ClientKind, UnitOfMeasure, Bounds } from "../api/common";
-import { deArrayify, buildSelectionXml, isQueryMapFeaturesResponse } from "../api/builders/deArrayify";
+import { buildSelectionXml } from "../api/builders/selection-utils";
 import { FormFrameShim } from "../components/form-frame-shim";
 import { getCommand, DefaultCommands } from "../api/registry/command";
 import { tr } from "../api/i18n";
@@ -28,6 +28,8 @@ import { useActiveMapState } from './hooks-mapguide';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { IMapProviderContext } from "../components/map-providers/base";
+
+const deArrayifyModulePromise = import("../api/builders/deArrayify");
 
 function isEmptySelection(selection: QueryMapFeaturesResponse | undefined): boolean {
     if (selection && selection.FeatureSet) {
@@ -327,11 +329,13 @@ class FusionWidgetApiShim {
     processFeatureInfo(r: any): void {
         const o = JSON.parse(r.responseText);
         if (o.FeatureInformation) {
-            const norm = deArrayify(o);
-            if (isQueryMapFeaturesResponse(norm)) {
-                const selXml = buildSelectionXml(norm.FeatureSet);
-                this.setSelection(selXml, false);
-            }
+            void deArrayifyModulePromise.then(({ deArrayify, isQueryMapFeaturesResponse }) => {
+                const norm = deArrayify(o);
+                if (isQueryMapFeaturesResponse(norm)) {
+                    const selXml = buildSelectionXml(norm.FeatureSet);
+                    this.setSelection(selXml, false);
+                }
+            });
         } else if (o.Message) {
             this.warn(o.Message);
         }

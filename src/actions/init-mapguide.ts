@@ -12,7 +12,7 @@ import { MgError } from '../api/error';
 import { resolveProjectionFromEpsgCodeAsync } from '../api/registry/projections';
 import { register } from 'ol/proj/proj4';
 import proj4 from "proj4";
-import { buildSubjectLayerDefn, getExtraProjectionsFromFlexLayout, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseMapGroupCoordinateFormat, parseSwipePairs, MapToLoad } from './init-command';
+import { buildSubjectLayerDefn, getExtraProjectionsFromFlexLayout, getMapDefinitionsFromFlexLayout, isMapDefinition, isStateless, parseComparisonPairs, parseMapGroupCoordinateFormat, MapToLoad } from './init-command';
 import { WebLayout } from '../api/contracts/weblayout';
 import { convertFlexLayoutUIItems, convertWebLayoutUIItems, parseCommandsInWebLayout, parseWidgetsInAppDef, prepareSubMenus, ToolbarConf } from '../api/registry/command-spec';
 import { WEBLAYOUT_CONTEXTMENU, WEBLAYOUT_TASKMENU, WEBLAYOUT_TOOLBAR } from "../constants";
@@ -28,7 +28,7 @@ import { tryParseArbitraryCs } from '../utils/units';
 import { ScopedId } from '../utils/scoped-id';
 import { canUseQueryMapFeaturesV4, parseSiteVersion } from '../utils/site-version';
 import { supportsWebGL } from '../utils/browser-support';
-import { isAppDef, isWebLayout } from '../api/builders/deArrayify';
+import { isAppDef, isWebLayout } from '../api/builders/de-arrayify-guards';
 import { ActionType } from '../constants/actions';
 
 const TYPE_SUBJECT = "SubjectLayer";
@@ -144,6 +144,7 @@ async function initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: I
             settings[sn] = sv;
         }
     }
+    const comparisonPairs = parseComparisonPairs(appDef);
     return normalizeInitPayload({
         appSettings: settings,
         activeMapName: firstMapName,
@@ -165,7 +166,8 @@ async function initFromAppDefCoreAsync(appDef: ApplicationDefinition, options: I
         toolbars: tb,
         warnings: warnings,
         initialActiveTool: ActiveMapTool.Pan,
-        mapSwipePairs: parseSwipePairs(appDef)
+        comparisonPairs,
+        mapSwipePairs: comparisonPairs
     }, options.layout);
 }
 /**

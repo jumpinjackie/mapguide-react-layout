@@ -13,7 +13,7 @@ import {
     ALWAYS_FALSE,
     IInvokeUrlCommandParameter,
     ActiveMapTool} from "../../api/common";
-import type { IMapSwipePair } from "../../api/common";
+import type { ComparisonMode, IComparisonPair } from "../../api/common";
 import { getFusionRoot } from "../../api/runtime";
 import { IItem, IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../../components/toolbar";
 import { tr } from "../i18n";
@@ -160,11 +160,13 @@ export interface IToolbarAppState {
     /**
      * @since 0.15
      */
+    comparisonMode?: ComparisonMode;
     swipeActive: boolean;
     /**
      * @since 0.15
      */
-    mapSwipePairs: IMapSwipePair[];
+    comparisonPairs?: IComparisonPair[];
+    mapSwipePairs: IComparisonPair[];
     /**
      * @since 0.15
      */
@@ -201,8 +203,10 @@ export function reduceAppToToolbarState(state: Readonly<IApplicationState>): Rea
         hasNextView,
         activeTool: state.viewer.tool,
         featureTooltipsEnabled: state.viewer.featureTooltipsEnabled,
+        comparisonMode: state.config.comparisonMode ?? "none",
         swipeActive: state.config.swipeActive === true,
-        mapSwipePairs: state.config.mapSwipePairs ?? [],
+        comparisonPairs: state.config.comparisonPairs ?? [],
+        mapSwipePairs: state.config.comparisonPairs ?? [],
         activeMapName: state.config.activeMapName
     }
 }

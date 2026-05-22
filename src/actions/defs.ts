@@ -4,7 +4,7 @@
  * Redux action definitions
  */
 
-import type { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair, IMapSwipePair } from '../api/common';
+import type { IDOMElementMetrics, IMapView, Dictionary, IExternalBaseLayer, IModalComponentDisplayOptions, IModalDisplayOptions, UnitOfMeasure, ActiveMapTool, ILayerInfo, Bounds, INameValuePair, IComparisonPair, ComparisonMode } from '../api/common';
 import { ActionType } from '../constants/actions';
 import { PreparedSubMenuSet } from '../api/registry/command-spec';
 import { RuntimeMap } from '../api/contracts/runtime-map';
@@ -376,10 +376,11 @@ export interface IInitAppActionPayload {
      */
     appSettings?: Dictionary<string> | undefined;
     /**
-     * Swipe pairs declared in the application definition
+     * Comparison pairs declared in the application definition
      * @since 0.15
      */
-    mapSwipePairs?: IMapSwipePair[];
+    comparisonPairs?: IComparisonPair[];
+    mapSwipePairs?: IComparisonPair[];
     /**
      * Indicates whether initialization reused an existing MapGuide session.
      *
@@ -994,13 +995,14 @@ export interface IClearClientSelectionAction {
 }
 
 /**
- * Sets/toggles the map swipe mode
+ * Sets the active comparison mode
  * @since 0.15
  */
-export interface ISetMapSwipeModeAction {
-    type: ActionType.MAP_SET_SWIPE_MODE;
+export interface ISetComparisonModeAction {
+    type: ActionType.MAP_SET_COMPARISON_MODE;
     payload: {
-        active: boolean;
+        mode?: ComparisonMode;
+        active?: boolean;
     }
 }
 
@@ -1008,10 +1010,21 @@ export interface ISetMapSwipeModeAction {
  * Updates the map swipe position
  * @since 0.15
  */
-export interface IUpdateMapSwipePositionAction {
-    type: ActionType.MAP_UPDATE_SWIPE_POSITION;
+export interface ISetSwipePositionAction {
+    type: ActionType.MAP_SET_SWIPE_POSITION;
     payload: {
         position: number;
+    }
+}
+
+/**
+ * Updates the active spy cursor radius
+ * @since 0.15
+ */
+export interface ISetSpyCursorRadiusAction {
+    type: ActionType.MAP_SET_SPY_CURSOR_RADIUS;
+    payload: {
+        radius: number;
     }
 }
 
@@ -1080,5 +1093,6 @@ export type ViewerAction = IOpenFlyoutAction
     | ISetAppSettingAction //@since 0.14.8
     | IUpdateModalDimensionsAction //@since 0.14.8
     | ITemplateSetCustomDataAction //@since 0.14.8
-    | ISetMapSwipeModeAction //@since 0.15
-    | IUpdateMapSwipePositionAction; //@since 0.15
+    | ISetComparisonModeAction //@since 0.15
+    | ISetSwipePositionAction //@since 0.15
+    | ISetSpyCursorRadiusAction; //@since 0.15

@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
     <!-- Template specific css -->
     <link rel="stylesheet" href="css/generic.css" type="text/css" />
-    <script type="text/javascript" src="dist/vendor.js" charset="utf-8"></script>
-    <script type="text/javascript" src="dist/viewer.js" charset="utf-8"></script>
+    <script type="module" src="dist/viewer.js"></script>
     <style type="text/css">
         /* Prevent scrollbars due to floating modal dialogs going past the bounds of the root element */
         html {
@@ -21,6 +20,8 @@
         #map {
             padding: 0;
             margin: 0;
+            /* height: 100% ensures document.body has proper viewport height for popover boundary calculations */
+            height: 100%;
             font: 10pt Verdana, sans-serif;
         }
 
@@ -29,7 +30,7 @@
 
 <body>
     <div id="map"></div>
-    <script type="text/javascript">
+    <script type="module">
         var el = document.getElementById("map");
         var viewer = new MapGuide.Application();
         viewer.mount(el, {

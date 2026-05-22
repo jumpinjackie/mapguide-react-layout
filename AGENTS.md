@@ -10,9 +10,9 @@ This repository is a React‑based MapGuide viewer.  The following document is i
 | Task | Command | Notes |
 |------|---------|-------|
 | **Clean build artifacts** | `yarn run clean` | Removes `viewer/dist`, `package/`, `lib/`.  Use before a full rebuild.
-| **Full production build** | `yarn run build:prod` | Builds with webpack in production mode.  Produces `viewer.zip`.
-| **Development build** | `yarn run build:dev` | Starts the dev‑webpack compiler.
-| **Watch dev build** | `yarn run watch:dev` | Hot‑reload on file changes.
+| **Full production build** | `yarn run build:prod` | Builds with Vite in production mode.  Produces `viewer.zip`.
+| **Development build** | `yarn run build:dev` | Builds the viewer bundle with Vite in development mode.
+| **Watch dev build** | `yarn run watch:dev` | Rebuilds the viewer bundle with Vite on file changes.
 | **Build storybook** | `yarn run build:storybook` | Generates static Storybook at `storybook-static/` and zips it.
 | **Lint TS/TSX** | `yarn run lint` | Uses TSLint configured in `tslint.json`.
 | **Run all tests** | `yarn run test` | Executes Vitest across the `test/` folder.

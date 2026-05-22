@@ -15,7 +15,7 @@ import { ISubscriberProps, Subscriber } from './subscriber';
 import { useActiveMapClientSelectionSet, useConfiguredLoadIndicatorColor, useConfiguredLoadIndicatorPositioning, useCustomAppSettings, useNamedMapLayers, useViewerFlyouts, useViewerSelectCanDragPan } from "./hooks";
 import { closeContextMenu, openContextMenu } from "../actions/flyout";
 import { WEBLAYOUT_CONTEXTMENU } from "../constants";
-import { MapSwipeControl, useIsMapSwipeActive, useMapSwipeInfo } from "../components/map-viewer-swipe";
+import { MapComparisonControl, useIsComparisonActive, useMapComparisonInfo } from "../components/map-viewer-swipe";
 
 function useLoadingCounters() {
     const [loading, setLoading] = React.useState(0);
@@ -75,10 +75,10 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     // Secondary map layer sync for swipe mode: when the secondary map's layer styles change
     // in Redux (e.g. user edits a layer style in the secondary map panel), apply those changes
     // to the secondary map's OL layer manager so they are reflected immediately.
-    const isSwipeActive = useIsMapSwipeActive();
-    const swipeInfo = useMapSwipeInfo();
+    const isComparisonActive = useIsComparisonActive();
+    const comparisonInfo = useMapComparisonInfo();
     // Only watch the secondary map name; the primary is already handled by useViewerSideEffects.
-    const secondaryMapName = isSwipeActive ? swipeInfo?.pair.secondaryMapName : undefined;
+    const secondaryMapName = isComparisonActive ? comparisonInfo?.pair.secondaryMapName : undefined;
     const secondaryLayers = useNamedMapLayers(secondaryMapName);
     React.useEffect(() => {
         if (context.isReady() && secondaryMapName && secondaryLayers) {
@@ -184,7 +184,14 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     };
 
     // Mouse events
-    const onMouseDown = () => {
+    const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Only focus the map viewer when clicking the map canvas itself, not toolbar
+        // buttons or other interactive elements — otherwise we steal focus before the
+        // button's click event fires and break popover toggles.
+        const target = e.target as HTMLElement;
+        if (!target.closest("button, input, select, textarea, [role='button']")) {
+            mapViewerRef.current?.focus();
+        }
         setIsMouseDown(true);
     };
     const onMouseUp = () => {
@@ -245,6 +252,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
                     className="map-viewer-component"
                     ref={mapViewerRef}
                     style={style}
+                    tabIndex={0}
                     onContextMenu={onContextMenu}
                     onMouseDown={onMouseDown}
                     onMouseUp={onMouseUp}
@@ -259,7 +267,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
                         <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />
                     ))}
                     {children}
-                    <MapSwipeControl />
+                    <MapComparisonControl />
                 </div>
             </>
         );

@@ -24,6 +24,11 @@ export const CONFIG_INITIAL_STATE: IConfigurationReducerState = {
     viewRotationEnabled: true,
     viewSizeUnits: UnitOfMeasure.Meters,
     manualFeatureTooltips: false,
+    comparisonMode: "none",
+    lastComparisonMode: "swipe",
+    swipeActive: false,
+    swipePosition: 50,
+    spyCursorRadius: 75,
     cancelDigitizationKey: KC_ESCAPE,
     undoLastPointKey: KC_U,
     selectCanDragPan: false,
@@ -98,7 +103,8 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
                     capabilities: payload.capabilities,
                     activeMapName: am,
                     availableMaps: availableMaps,
-                    mapSwipePairs: payload.mapSwipePairs,
+                    comparisonPairs: payload.comparisonPairs,
+                    mapSwipePairs: payload.comparisonPairs,
                     sessionWasReused: payload.sessionWasReused === true,
                     pendingMaps: Object.keys(pendingMaps).length > 0 ? pendingMaps : undefined
                 };
@@ -203,13 +209,23 @@ export function configReducer(state = CONFIG_INITIAL_STATE, action: ViewerAction
             {
                 return { ...state, ...{ manualFeatureTooltips: action.payload } };
             }
-        case ActionType.MAP_SET_SWIPE_MODE:
+        case ActionType.MAP_SET_COMPARISON_MODE:
             {
-                return { ...state, swipeActive: action.payload.active };
+                const nextMode = action.payload.mode ?? (action.payload.active ? "swipe" : "none");
+                return {
+                    ...state,
+                    comparisonMode: nextMode,
+                    swipeActive: nextMode === "swipe",
+                    ...(nextMode !== "none" ? { lastComparisonMode: nextMode } : {})
+                };
             }
-        case ActionType.MAP_UPDATE_SWIPE_POSITION:
+        case ActionType.MAP_SET_SWIPE_POSITION:
             {
                 return { ...state, swipePosition: action.payload.position };
+            }
+        case ActionType.MAP_SET_SPY_CURSOR_RADIUS:
+            {
+                return { ...state, spyCursorRadius: action.payload.radius };
             }
     }
     return state;

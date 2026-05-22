@@ -1,7 +1,4 @@
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/button.css ***!
-  \********************************************************************************************************/
-/* Minimal provider – Button styles */
+@charset "UTF-8";/* Minimal provider – Button styles */
 
 .mrl-btn {
   display: inline-flex;
@@ -136,10 +133,6 @@
   border-radius: 50%;
   animation: mrl-spin 0.75s linear infinite;
 }
-
-/*!*******************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/radio.css ***!
-  \*******************************************************************************************************/
 /* Minimal provider – Radio styles */
 
 .mrl-radio {
@@ -158,10 +151,6 @@
   cursor: pointer;
   align-self: center;
 }
-
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/slider.css ***!
-  \********************************************************************************************************/
 /* Minimal provider – Slider styles */
 
 .mrl-slider-wrapper {
@@ -203,10 +192,6 @@
 .mrl-slider-label:last-child {
   transform: translateX(-100%);
 }
-
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/callout.css ***!
-  \*********************************************************************************************************/
 /* Minimal provider – Callout styles */
 
 .mrl-callout {
@@ -283,10 +268,6 @@
 .mrl-callout--success .mrl-callout-title {
   color: var(--mrl-color-success);
 }
-
-/*!**********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/checkbox.css ***!
-  \**********************************************************************************************************/
 /* Minimal provider – Checkbox styles */
 
 .mrl-checkbox {
@@ -312,10 +293,6 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
-
-/*!******************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/card.css ***!
-  \******************************************************************************************************/
 /* Minimal provider – Card styles */
 
 .mrl-card {
@@ -325,10 +302,6 @@
   box-shadow: var(--mrl-shadow-sm);
   padding: var(--mrl-spacing-lg);
 }
-
-/*!***************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/numeric-input.css ***!
-  \***************************************************************************************************************/
 /* Minimal provider – NumericInput styles */
 
 .mrl-numeric-input {
@@ -358,10 +331,6 @@
   cursor: not-allowed;
   background: var(--mrl-color-surface);
 }
-
-/*!*************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/input-group.css ***!
-  \*************************************************************************************************************/
 /* Minimal provider – InputGroup styles */
 
 .mrl-input-group {
@@ -452,10 +421,6 @@
 .mrl-input-group--round .mrl-input-right-element .mrl-btn {
   border-radius: 999px;
 }
-
-/*!*****************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/non-ideal-state.css ***!
-  \*****************************************************************************************************************/
 /* Minimal provider – NonIdealState styles */
 
 .mrl-non-ideal-state {
@@ -503,10 +468,6 @@
 .mrl-non-ideal-state-action > .mrl-element-group {
   justify-content: center;
 }
-
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/spinner.css ***!
-  \*********************************************************************************************************/
 /* Minimal provider – Spinner styles */
 
 .mrl-spinner {
@@ -557,10 +518,6 @@
 .mrl-spinner--success {
   border-top-color: var(--mrl-color-success);
 }
-
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/switch.css ***!
-  \********************************************************************************************************/
 /* Minimal provider – Switch styles */
 
 .mrl-switch {
@@ -627,10 +584,6 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
-
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/select.css ***!
-  \********************************************************************************************************/
 /* Minimal provider – Select styles */
 
 .mrl-select {
@@ -659,7 +612,7 @@
   cursor: pointer;
   transition: border-color var(--mrl-transition-speed) ease,
               box-shadow var(--mrl-transition-speed) ease;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath fill=%27%235C7080%27 d=%27M6 8L1 3h10z%27/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C7080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
 }
@@ -674,10 +627,6 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-/*!************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/file-input.css ***!
-  \************************************************************************************************************/
 /* Minimal provider – FileInput styles */
 
 .mrl-file-input {
@@ -729,10 +678,6 @@
 .mrl-file-input:hover .mrl-file-input-btn {
   background: var(--mrl-color-border);
 }
-
-/*!************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/form-group.css ***!
-  \************************************************************************************************************/
 /* Minimal provider – FormGroup styles */
 
 .mrl-form-group {
@@ -759,10 +704,6 @@
   flex-shrink: 0;
 }
 
-
-/*!***************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/editable-text.css ***!
-  \***************************************************************************************************************/
 /* Minimal provider – EditableText styles */
 
 .mrl-editable-text {
@@ -807,10 +748,6 @@
   width: 100%;
   min-width: 60px;
 }
-
-/*!******************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/menu.css ***!
-  \******************************************************************************************************/
 /* Minimal provider – Menu styles */
 
 .mrl-menu {
@@ -887,10 +824,6 @@
 .mrl-submenu:hover > .mrl-menu {
   display: block;
 }
-
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/tab-set.css ***!
-  \*********************************************************************************************************/
 /* Minimal provider – TabSet styles */
 
 .mrl-tab-set {
@@ -947,10 +880,6 @@
 .mrl-tab-panel[hidden] {
   display: none;
 }
-
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/drawer.css ***!
-  \********************************************************************************************************/
 /* Minimal provider – Drawer styles */
 
 .mrl-drawer-backdrop {
@@ -1034,18 +963,10 @@
   overflow-y: auto;
   padding: var(--mrl-spacing-lg);
 }
-
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/popover.css ***!
-  \*********************************************************************************************************/
 /* Ensure the popover portal container is above the map viewer chrome */
 .mrl-popover-container {
     z-index: 1002;
 }
-
-/*!*********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/toaster.css ***!
-  \*********************************************************************************************************/
 /* Minimal provider – Toaster styles */
 
 .mrl-toast {
@@ -1095,10 +1016,6 @@
   border-color: var(--mrl-color-success);
   color: var(--mrl-color-text-inverse);
 }
-
-/*!********************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/dialog.css ***!
-  \********************************************************************************************************/
 /* Minimal provider – Dialog styles */
 
 .mrl-dialog-backdrop {
@@ -1199,10 +1116,6 @@
 .mrl-dialog-body.mrl-rnd-modal-body {
   padding: 0;
 }
-
-/*!************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/html-table.css ***!
-  \************************************************************************************************************/
 /* Minimal provider – HtmlTable styles */
 
 .mrl-table {
@@ -1240,10 +1153,6 @@
 .mrl-table--bordered td {
   border: 1px solid var(--mrl-color-border);
 }
-
-/*!*************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/components/elements/providers/minimal/mrl-minimal.css ***!
-  \*************************************************************************************************************/
 /* Minimal provider – base design tokens and shared styles */
 
 @keyframes mrl-spin {
@@ -1350,369 +1259,8 @@
   margin-bottom: 0;
 }
 
-/*!**************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/ol/ol.css ***!
-  \**************************************************************************/
-:root,
-:host {
-  --ol-background-color: white;
-  --ol-accent-background-color: #F5F5F5;
-  --ol-subtle-background-color: rgba(128, 128, 128, 0.25);
-  --ol-partial-background-color: rgba(255, 255, 255, 0.75);
-  --ol-foreground-color: #333333;
-  --ol-subtle-foreground-color: #666666;
-  --ol-brand-color: #00AAFF;
-}
-
-.ol-box {
-  box-sizing: border-box;
-  border-radius: 2px;
-  border: 1.5px solid var(--ol-background-color);
-  background-color: var(--ol-partial-background-color);
-}
-
-.ol-mouse-position {
-  top: 8px;
-  right: 8px;
-  position: absolute;
-}
-
-.ol-scale-line {
-  background: var(--ol-partial-background-color);
-  border-radius: 4px;
-  bottom: 8px;
-  left: 8px;
-  padding: 2px;
-  position: absolute;
-}
-
-.ol-scale-line-inner {
-  border: 1px solid var(--ol-subtle-foreground-color);
-  border-top: none;
-  color: var(--ol-foreground-color);
-  font-size: 10px;
-  text-align: center;
-  margin: 1px;
-  will-change: contents, width;
-  transition: all 0.25s;
-}
-
-.ol-scale-bar {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-}
-
-.ol-scale-bar-inner {
-  display: flex;
-}
-
-.ol-scale-step-marker {
-  width: 1px;
-  height: 15px;
-  background-color: var(--ol-foreground-color);
-  float: right;
-  z-index: 10;
-}
-
-.ol-scale-step-text {
-  position: absolute;
-  bottom: -5px;
-  font-size: 10px;
-  z-index: 11;
-  color: var(--ol-foreground-color);
-  text-shadow: -1.5px 0 var(--ol-partial-background-color), 0 1.5px var(--ol-partial-background-color), 1.5px 0 var(--ol-partial-background-color), 0 -1.5px var(--ol-partial-background-color);
-}
-
-.ol-scale-text {
-  position: absolute;
-  font-size: 12px;
-  text-align: center;
-  bottom: 25px;
-  color: var(--ol-foreground-color);
-  text-shadow: -1.5px 0 var(--ol-partial-background-color), 0 1.5px var(--ol-partial-background-color), 1.5px 0 var(--ol-partial-background-color), 0 -1.5px var(--ol-partial-background-color);
-}
-
-.ol-scale-singlebar {
-  position: relative;
-  height: 10px;
-  z-index: 9;
-  box-sizing: border-box;
-  border: 1px solid var(--ol-foreground-color);
-}
-
-.ol-scale-singlebar-even {
-  background-color: var(--ol-subtle-foreground-color);
-}
-
-.ol-scale-singlebar-odd {
-  background-color: var(--ol-background-color);
-}
-
-.ol-unsupported {
-  display: none;
-}
-
-.ol-viewport,
-.ol-unselectable {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ol-viewport canvas {
-  all: unset;
-  overflow: hidden;
-}
-
-.ol-viewport {
-  touch-action: pan-x pan-y;
-}
-
-.ol-selectable {
-  -webkit-touch-callout: default;
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  user-select: text;
-}
-
-.ol-grabbing {
-  cursor: -webkit-grabbing;
-  cursor: -moz-grabbing;
-  cursor: grabbing;
-}
-
-.ol-grab {
-  cursor: move;
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
-  cursor: grab;
-}
-
-.ol-control {
-  position: absolute;
-  background-color: var(--ol-subtle-background-color);
-  border-radius: 4px;
-}
-
-.ol-zoom {
-  top: .5em;
-  left: .5em;
-}
-
-.ol-rotate {
-  top: .5em;
-  right: .5em;
-  transition: opacity .25s linear, visibility 0s linear;
-}
-
-.ol-rotate.ol-hidden {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .25s linear, visibility 0s linear .25s;
-}
-
-.ol-zoom-extent {
-  top: 4.643em;
-  left: .5em;
-}
-
-.ol-full-screen {
-  right: .5em;
-  top: .5em;
-}
-
-.ol-control button {
-  display: block;
-  margin: 1px;
-  padding: 0;
-  color: var(--ol-subtle-foreground-color);
-  font-weight: bold;
-  text-decoration: none;
-  font-size: inherit;
-  text-align: center;
-  height: 1.375em;
-  width: 1.375em;
-  line-height: .4em;
-  background-color: var(--ol-background-color);
-  border: none;
-  border-radius: 2px;
-}
-
-.ol-control button::-moz-focus-inner {
-  border: none;
-  padding: 0;
-}
-
-.ol-zoom-extent button {
-  line-height: 1.4em;
-}
-
-.ol-compass {
-  display: block;
-  font-weight: normal;
-  will-change: transform;
-}
-
-.ol-touch .ol-control button {
-  font-size: 1.5em;
-}
-
-.ol-touch .ol-zoom-extent {
-  top: 5.5em;
-}
-
-.ol-control button:hover,
-.ol-control button:focus {
-  text-decoration: none;
-  outline: 1px solid var(--ol-subtle-foreground-color);
-  color: var(--ol-foreground-color);
-}
-
-.ol-zoom .ol-zoom-in {
-  border-radius: 2px 2px 0 0;
-}
-
-.ol-zoom .ol-zoom-out {
-  border-radius: 0 0 2px 2px;
-}
-
-.ol-attribution {
-  text-align: right;
-  bottom: .5em;
-  right: .5em;
-  max-width: calc(100% - 1.3em);
-  display: flex;
-  flex-flow: row-reverse;
-  align-items: center;
-}
-
-.ol-attribution a {
-  color: var(--ol-subtle-foreground-color);
-  text-decoration: none;
-}
-
-.ol-attribution ul {
-  margin: 0;
-  padding: 1px .5em;
-  color: var(--ol-foreground-color);
-  text-shadow: 0 0 2px var(--ol-background-color);
-  font-size: 12px;
-}
-
-.ol-attribution li {
-  display: inline;
-  list-style: none;
-}
-
-.ol-attribution li:not(:last-child):after {
-  content: " ";
-}
-
-.ol-attribution img {
-  max-height: 2em;
-  max-width: inherit;
-  vertical-align: middle;
-}
-
-.ol-attribution button {
-  flex-shrink: 0;
-}
-
-.ol-attribution.ol-collapsed ul {
-  display: none;
-}
-
-.ol-attribution:not(.ol-collapsed) {
-  background: var(--ol-partial-background-color);
-}
-
-.ol-attribution.ol-uncollapsible {
-  bottom: 0;
-  right: 0;
-  border-radius: 4px 0 0;
-}
-
-.ol-attribution.ol-uncollapsible img {
-  margin-top: -.2em;
-  max-height: 1.6em;
-}
-
-.ol-attribution.ol-uncollapsible button {
-  display: none;
-}
-
-.ol-zoomslider {
-  top: 4.5em;
-  left: .5em;
-  height: 200px;
-}
-
-.ol-zoomslider button {
-  position: relative;
-  height: 10px;
-}
-
-.ol-touch .ol-zoomslider {
-  top: 5.5em;
-}
-
-.ol-overviewmap {
-  left: 0.5em;
-  bottom: 0.5em;
-}
-
-.ol-overviewmap.ol-uncollapsible {
-  bottom: 0;
-  left: 0;
-  border-radius: 0 4px 0 0;
-}
-
-.ol-overviewmap .ol-overviewmap-map,
-.ol-overviewmap button {
-  display: block;
-}
-
-.ol-overviewmap .ol-overviewmap-map {
-  border: 1px solid var(--ol-subtle-foreground-color);
-  height: 150px;
-  width: 150px;
-}
-
-.ol-overviewmap:not(.ol-collapsed) button {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-}
-
-.ol-overviewmap.ol-collapsed .ol-overviewmap-map,
-.ol-overviewmap.ol-uncollapsible button {
-  display: none;
-}
-
-.ol-overviewmap:not(.ol-collapsed) {
-  background: var(--ol-subtle-background-color);
-}
-
-.ol-overviewmap-box {
-  border: 1.5px dotted var(--ol-subtle-foreground-color);
-}
-
-.ol-overviewmap .ol-overviewmap-box:hover {
-  cursor: move;
-}
-
-.ol-overviewmap .ol-viewport:hover {
-  cursor: pointer;
-}
-
-/*!*******************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./stdassets/sprites/icons.css ***!
-  \*******************************************************************************/
 /* glue: 0.13 hash: 28fada1b84 */
-        .PoweredBy_en,
+.PoweredBy_en,
 .zoom-out-fixed,
 .zoom-in,
 .zoom-in-fixed,
@@ -1794,503 +1342,420 @@
 .back,
 .application-browser,
 .about {
-            background-image: url(./1bda79aa7813b7083202.png);
+            background-image: url('./stdassets/sprites/icons.png');
             background-repeat: no-repeat;
         }
-        
-        .PoweredBy_en {
+.PoweredBy_en {
             background-position: 0 0;
             width: 136px;
             height: 19px;
         }
-        
-        .zoom-out-fixed {
+.zoom-out-fixed {
             background-position: 0 -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .zoom-in {
+.zoom-in {
             background-position: -16px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .zoom-in-fixed {
+.zoom-in-fixed {
             background-position: -32px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .zoom-full {
+.zoom-full {
             background-position: -48px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .zoom-dynamic {
+.zoom-dynamic {
             background-position: -64px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .view-refresh {
+.view-refresh {
             background-position: -80px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .view-forward {
+.view-forward {
             background-position: -96px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .view-back {
+.view-back {
             background-position: -112px -19px;
             width: 16px;
             height: 16px;
         }
-        
-        .ui-menu {
+.ui-menu {
             background-position: 0 -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .toggle {
+.toggle {
             background-position: -16px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .toggle-expand {
+.toggle-expand {
             background-position: -32px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .theme {
+.theme {
             background-position: -48px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .select {
+.select {
             background-position: -64px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-zoom {
+.select-zoom {
             background-position: -80px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-radius {
+.select-radius {
             background-position: -96px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-polygon {
+.select-polygon {
             background-position: -112px -35px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-features {
+.select-features {
             background-position: 0 -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-clear {
+.select-clear {
             background-position: -16px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .select-centre {
+.select-centre {
             background-position: -32px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .search {
+.search {
             background-position: -48px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .redline {
+.redline {
             background-position: -64px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .query {
+.query {
             background-position: -80px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .property {
+.property {
             background-position: -96px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .print {
+.print {
             background-position: -112px -51px;
             width: 16px;
             height: 16px;
         }
-        
-        .preview {
+.preview {
             background-position: 0 -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .pan {
+.pan {
             background-position: -16px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .pan-west {
+.pan-west {
             background-position: -32px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .pan-south {
+.pan-south {
             background-position: -48px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .pan-north {
+.pan-north {
             background-position: -64px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .pan-east {
+.pan-east {
             background-position: -80px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .overview-map {
+.overview-map {
             background-position: -96px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .out-of-range {
+.out-of-range {
             background-position: -112px -67px;
             width: 16px;
             height: 16px;
         }
-        
-        .options {
+.options {
             background-position: 0 -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .measure {
+.measure {
             background-position: -16px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .maptip {
+.maptip {
             background-position: -32px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .legend-theme {
+.legend-theme {
             background-position: -48px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .legend-raster {
+.legend-raster {
             background-position: -64px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .legend-map {
+.legend-map {
             background-position: -80px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .legend-layer {
+.legend-layer {
             background-position: -96px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .legend-DWF {
+.legend-DWF {
             background-position: -112px -83px;
             width: 16px;
             height: 16px;
         }
-        
-        .lc_unselect {
+.lc_unselect {
             background-position: 0 -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .layer_add {
+.layer_add {
             background-position: -16px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .invoke-url {
+.invoke-url {
             background-position: -32px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .invoke-script {
+.invoke-script {
             background-position: -48px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .initial-center {
+.initial-center {
             background-position: -64px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .info {
+.info {
             background-position: -80px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_zoomselect {
+.icon_zoomselect {
             background-position: -96px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_warning {
+.icon_warning {
             background-position: -112px -99px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_select {
+.icon_select {
             background-position: 0 -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_refreshmap {
+.icon_refreshmap {
             background-position: -16px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_menuarrowup_disabled {
+.icon_menuarrowup_disabled {
             background-position: -32px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_menuarrowup {
+.icon_menuarrowup {
             background-position: -48px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_menuarrow_disabled {
+.icon_menuarrow_disabled {
             background-position: -64px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_menuarrow {
+.icon_menuarrow {
             background-position: -80px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_home {
+.icon_home {
             background-position: -96px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .icon_error {
+.icon_error {
             background-position: -112px -115px;
             width: 16px;
             height: 16px;
         }
-        
-        .iconNavigator {
+.iconNavigator {
             background-position: -136px 0;
             width: 16px;
             height: 16px;
         }
-        
-        .help {
+.help {
             background-position: -136px -16px;
             width: 16px;
             height: 16px;
         }
-        
-        .globe_add {
+.globe_add {
             background-position: -136px -32px;
             width: 16px;
             height: 16px;
         }
-        
-        .globe-share {
+.globe-share {
             background-position: -136px -48px;
             width: 16px;
             height: 16px;
         }
-        
-        .geolocation {
+.geolocation {
             background-position: -136px -64px;
             width: 16px;
             height: 16px;
         }
-        
-        .forward {
+.forward {
             background-position: -136px -80px;
             width: 16px;
             height: 16px;
         }
-        
-        .folder-horizontal {
+.folder-horizontal {
             background-position: -136px -96px;
             width: 16px;
             height: 16px;
         }
-        
-        .folder-horizontal-open {
+.folder-horizontal-open {
             background-position: -136px -112px;
             width: 16px;
             height: 16px;
         }
-        
-        .file-save {
+.file-save {
             background-position: 0 -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .file-print {
+.file-print {
             background-position: -16px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .feature-info {
+.feature-info {
             background-position: -32px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .edit-xml {
+.edit-xml {
             background-position: -48px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .edit-paste {
+.edit-paste {
             background-position: -64px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .edit-duplicate {
+.edit-duplicate {
             background-position: -80px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .edit-cut {
+.edit-cut {
             background-position: -96px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .edit-copy {
+.edit-copy {
             background-position: -112px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .coordinate-tracker {
+.coordinate-tracker {
             background-position: -128px -131px;
             width: 16px;
             height: 16px;
         }
-        
-        .control {
+.control {
             background-position: -152px 0;
             width: 16px;
             height: 16px;
         }
-        
-        .control-stop {
+.control-stop {
             background-position: -152px -16px;
             width: 16px;
             height: 16px;
         }
-        
-        .control-stop-180 {
+.control-stop-180 {
             background-position: -152px -32px;
             width: 16px;
             height: 16px;
         }
-        
-        .control-180 {
+.control-180 {
             background-position: -152px -48px;
             width: 16px;
             height: 16px;
         }
-        
-        .buffer {
+.buffer {
             background-position: -152px -64px;
             width: 16px;
             height: 16px;
         }
-        
-        .back {
+.back {
             background-position: -152px -80px;
             width: 16px;
             height: 16px;
         }
-        
-        .application-browser {
+.application-browser {
             background-position: -152px -96px;
             width: 16px;
             height: 16px;
         }
-        
-        .about {
+.about {
             background-position: -152px -112px;
             width: 16px;
             height: 16px;
         }
-        
-        @media screen and (-webkit-min-device-pixel-ratio: 1.0), screen and (min--moz-device-pixel-ratio: 1.0), screen and (-o-min-device-pixel-ratio: 100/100), screen and (min-device-pixel-ratio: 1.0), screen and (min-resolution: 1.0dppx) {
+@media screen and (-webkit-min-device-pixel-ratio: 1.0), screen and (min--moz-device-pixel-ratio: 1.0), screen and (-o-min-device-pixel-ratio: 100/100), screen and (min-device-pixel-ratio: 1.0), screen and (min-resolution: 1.0dppx) {
             .PoweredBy_en,
     .zoom-out-fixed,
     .zoom-in,
@@ -2373,16 +1838,12 @@
     .back,
     .application-browser,
     .about {
-                background-image: url(./1bda79aa7813b7083202.png);
+                background-image: url('./stdassets/sprites/icons.png');
                 -webkit-background-size: 168px 147px;
                 -moz-background-size: 168px 147px;
                 background-size: 168px 147px;
             }
         }
-        
-/*!**********************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/styles/splitter-layout.css ***!
-  \**********************************************************************************/
 .splitter-layout {
   position: absolute;
   display: flex;
@@ -2391,17 +1852,14 @@
   height: 100%;
   overflow: hidden;
 }
-
 .splitter-layout .layout-pane {
   position: relative;
   flex: 0 0 auto;
   overflow: auto;
 }
-
 .splitter-layout .layout-pane.layout-pane-primary {
   flex: 1 1 auto;
 }
-
 .splitter-layout > .layout-splitter {
   flex: 0 0 auto;
   width: 4px;
@@ -2409,59 +1867,43 @@
   cursor: col-resize;
   background-color: #ccc;
 }
-
 .splitter-layout .layout-splitter:hover {
   background-color: #bbb;
 }
-
 .splitter-layout.layout-changing {
   cursor: col-resize;
 }
-
 .splitter-layout.layout-changing > .layout-splitter {
   background-color: #aaa;
 }
-
 .splitter-layout.splitter-layout-vertical {
   flex-direction: column;
 }
-
 .splitter-layout.splitter-layout-vertical.layout-changing {
   cursor: row-resize;
 }
-
 .splitter-layout.splitter-layout-vertical > .layout-splitter {
   width: 100%;
   height: 4px;
   cursor: row-resize;
 }
-/*!************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./src/styles/index.css ***!
-  \************************************************************************/
-@charset "UTF-8";
-
 /* HACK: Clear out any trace of the font icon as HTMLSelect should be using the SVG counterpart */
 .bp3-select:after {
     content: "";
 }
-
 .legend-label-highlight-text {
     background-color: yellow;
 }
-
 .mg-toast {
     z-index: 120;
 }
-
 .map-viewer-component {
     background-color: white;
 }
-
 .map-viewer-component .ol-overlaycontainer,
 .map-viewer-component .ol-overlaycontainer-stopevent {
     z-index: 20;
 }
-
 .iframe-iehack-zindex {
     position: absolute;
     border: none;
@@ -2471,28 +1913,23 @@
     width: 100%;
     z-index: -1;
 }
-
 /* OpenLayers overrides */
-
 .ol-attribution {
     right: 10px;
     bottom: 52px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
 .ol-rotate {
     top: auto;
     right: 10px;
     bottom: 25px;
 }
-
 .ol-rotate button {
     bottom: 1px;
     left: auto;
     right: 1px;
     top: auto;
 }
-
 .ol-custom-overviewmap,
 .ol-custom-overviewmap.ol-uncollapsible {
     bottom: 79px;
@@ -2500,28 +1937,22 @@
     right: 10px;
     top: auto;
 }
-
 .ol-custom-overviewmap:not(.ol-collapsed) {
     border: 1px solid black;
 }
-
 .ol-custom-overviewmap .ol-overviewmap-map {
     border: none;
 }
-
 .ol-custom-overviewmap .ol-overviewmap-box {
     border: 2px solid red;
 }
-
 .ol-custom-overviewmap:not(.ol-collapsed) button {
     bottom: 1px;
     left: auto;
     right: 1px;
     top: auto;
 }
-
 /* ElementGroup */
-
 .mrl-element-group {
     display: inline-flex;
 }
@@ -2547,7 +1978,6 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
-
 /* Accordion */
 .component-accordion-panel {
     letter-spacing: normal;
@@ -2564,23 +1994,17 @@
     letter-spacing: normal;
     text-transform: none;
 }
-
 /* Selection Panel */
-
 .selection-panel-property-grid {
     width: 100%;
 }
-
 .selection-panel-layer-selector {
     max-width: 180px;
 }
-
 .selection-panel-layer-selector select {
     max-width: 143px;
 }
-
 /* Modal Dialogs */
-
 .modal-dialog {
     background: #fff;
     border: 1px solid black;
@@ -2589,18 +2013,15 @@
     transform: translate(-50%, -50%);
     z-index: 4999;
 }
-
 .modal-dialog-header {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
-
 .modal-dialog-body {
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
     padding-bottom: 3px;
 }
-
 .modal-dialog-backdrop {
     position: absolute;
     width: 100%;
@@ -2610,11 +2031,9 @@
     z-index: 4998;
     background: rgba(0, 0, 0, 0.3);
 }
-
 .mg-flyout-menu-container {
     position: absolute;
 }
-
 .mg-flyout-component-container {
     position: absolute;
     background-color: white;
@@ -2622,69 +2041,55 @@
     border-radius: 3px;
     border: 1px solid black;
 }
-
 /* Toolbar */
 .toolbar-separator-vertical {
     border-bottom: 1px solid black;
 }
-
 .toolbar-separator-horizontal {
     border-left: 1px solid black;
 }
-
 .toolbar-scroll-container {
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
-
 .toolbar-scroll-container::-webkit-scrollbar {
     display: none;
 }
-
 .toolbar-scroll-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
-
 .selected-item {
     border-style: solid;
 }
-
 .mouse-over {
     cursor: pointer;
     background: rgb(220, 220, 220);
     border-style: solid;
     border-color: rgb(160, 160, 160);
 }
-
 /* Begin QuickPlot */
 div.Label {
     padding: 5px 0px;
 }
-
 div.Ctrl {
     padding: 5px 0px;
 }
-
 div.Title {
     font-size: 14px;
     font-weight: bold;
     padding: 10px 0px;
 }
-
 div.HPlaceholder5px {
     font-size: 0px;
     height: 5px;
 }
-
 div.ButtonContainer {
     padding: 5px 0px;
     text-align: right;
 }
-
 .FixWidth {
     width: 100%;
 }
-
 div.InfoText {
     padding: 3px;
     background-color: #FFFFCC;
@@ -2692,14 +2097,11 @@ div.InfoText {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 8pt;
 }
-
 /* End QuickPlot */
-
 .field,
 .field-label {
     display: block;
 }
-
 /*
 .error-display {
     color: #ffffff;
@@ -2714,7 +2116,6 @@ div.InfoText {
 .error-stack {
     text-decoration: none;
 }
-
 .modal-dialog-header {
     font-weight: bold;
     padding: 5px;
@@ -2722,23 +2123,19 @@ div.InfoText {
     background-color: #cdcdcd;
     border-bottom: 1px solid black;
 }
-
 .modal-dialog-body {
     padding: 0px;
 }
-
 .context-menu-item-disabled {
     opacity: 0.4;
     cursor: none;
 }
-
 /* https://gist.github.com/aiboy/7406727 */
 .rotated-text {
     display: inline-block;
     overflow: hidden;
     width: 1.5em;
 }
-
 .rotated-text-ccw {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
@@ -2756,18 +2153,15 @@ div.InfoText {
     /* Should be unset in IE9+ I think. */
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
-
 .rotated-text__inner {
     display: inline-block;
     white-space: nowrap;
 }
-
 .rotated-text__inner:before {
     content: "";
     float: left;
     margin-top: 100%;
 }
-
 .noselect {
     -webkit-touch-callout: none;
     /* iOS Safari */
@@ -2783,27 +2177,21 @@ div.InfoText {
     /* Non-prefixed version, currently
                                     not supported by any browser */
 }
-
 .component-about-dialog-content {
     padding: 5px;
 }
-
 .component-session-expired {
     padding: 5px;
 }
-
 .component-measure {
     padding: 5px;
 }
-
 .component-quick-plot {
     padding: 5px;
 }
-
 .component-viewer-options {
     padding: 5px;
 }
-
 .component-mouse-coordinates,
 .component-selected-feature-count,
 .component-view-size {
@@ -2811,17 +2199,14 @@ div.InfoText {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 8pt;
 }
-
 .component-scale-display {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 8pt;
 }
-
 .component-scale-display .scale-input {
     margin: 0;
     padding: 0;
 }
-
 .feature-tooltip {
     position: relative;
     z-index: 30;
@@ -2833,7 +2218,6 @@ div.InfoText {
     font-size: 8pt;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
 .selected-tooltip {
     position: relative;
     z-index: 30;
@@ -2846,7 +2230,6 @@ div.InfoText {
     font-size: 8pt;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
 .selected-popup-header {
     min-width: 190px;
 }
@@ -2862,48 +2245,38 @@ div.InfoText {
 .selected-popup-header .clearit {
     clear: both;
 }
-
 .selected-popup-content-wrapper {
     clear: both;
     margin-top: 25px;
     max-height: 300px;
     overflow: auto;
 }
-
 .selected-popup-cluster-table {
     border-collapse: collapse;
 }
-
 .selected-popup-content-none {
     clear: both;
     margin-top: 20px;
 }
-
 .select-popup-single-link-wrapper {
     margin-top: 20px;
 }
-
 .selected-popup-single-properties-table {
     max-width: 400px;
 }
-
 .selected-popup-single-properties-table th,
 .selected-popup-single-properties-table td {
     text-align: left;
 }
-
 .selected-popup-single-properties-table .property-name-cell {
     font-weight: bold;
 }
-
 .selected-popup-single-properties-table .property-value-cell {
     font-weight: none;
 }
-
 .tooltip-hidden {
     display: none;
 }
-
 .tooltip {
     position: relative;
     background: rgba(0, 0, 0, 0.9);
@@ -2915,18 +2288,15 @@ div.InfoText {
     font-size: 8pt;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-
 .tooltip-measure {
     opacity: 1;
     font-weight: bold;
 }
-
 .tooltip-static {
     background-color: #ffcc33;
     color: black;
     border: 1px solid white;
 }
-
 .tooltip-measure:before,
 .tooltip-static:before {
     border-top: 6px solid rgba(0, 0, 0, 0.5);
@@ -2938,11 +2308,9 @@ div.InfoText {
     margin-left: -7px;
     left: 50%;
 }
-
 .tooltip-static:before {
     border-top-color: #ffcc33;
 }
-
 .component-navigator {
     position: absolute;
     width: 51px;
@@ -2952,16 +2320,13 @@ div.InfoText {
     right: 10px;
     top: 10px;
 }
-
 .wms-layer-info-tooltip p {
     max-width: 250px;
     word-wrap: break-word;
 }
-
 .bp3-dark {
     background-color: #30404d;
 }
-
 .colorpicker {
     position: relative;
     width: 100%;
@@ -2971,7 +2336,6 @@ div.InfoText {
     border-radius: 0.25em;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
-
 .map {
     position: absolute;
     top: 1em;
@@ -2982,19 +2346,15 @@ div.InfoText {
     user-select: none;
     border-radius: 0.25em;
 }
-
 .map.active {
     cursor: none;
 }
-
 .map.dark .pointer {
     border-color: #fff;
 }
-
 .map.light .pointer {
     border-color: #000;
 }
-
 .map .pointer {
     position: absolute;
     width: 10px;
@@ -3005,7 +2365,6 @@ div.InfoText {
     border: 1px solid #000;
     will-change: left, bottom;
 }
-
 .map .background {
     top: 0;
     left: 0;
@@ -3013,7 +2372,6 @@ div.InfoText {
     height: 100%;
     width: 100%;
 }
-
 .map .background:before,
 .map .background:after {
     display: block;
@@ -3024,20 +2382,16 @@ div.InfoText {
     bottom: 0;
     right: 0;
 }
-
 .map .background:after {
     background: linear-gradient(to bottom, transparent 0%, black 100%);
 }
-
 .map .background:before {
     background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);
 }
-
 .slider {
     position: absolute;
     user-select: none;
 }
-
 .slider.vertical {
     top: 0;
     bottom: 0;
@@ -3045,7 +2399,6 @@ div.InfoText {
     width: 10px;
     cursor: ns-resize;
 }
-
 .slider.vertical .track {
     position: absolute;
     top: 0;
@@ -3054,7 +2407,6 @@ div.InfoText {
     width: 8px;
     margin-left: -4px;
 }
-
 .slider.horizontal {
     left: 0;
     right: 0;
@@ -3062,7 +2414,6 @@ div.InfoText {
     height: 10px;
     cursor: ew-resize;
 }
-
 .slider.horizontal .track {
     position: absolute;
     left: 0;
@@ -3071,12 +2422,10 @@ div.InfoText {
     height: 8px;
     margin-top: -4px;
 }
-
 .slider .track {
     border-radius: 3px;
     background: #888;
 }
-
 .slider .pointer {
     position: absolute;
     bottom: 50%;
@@ -3090,51 +2439,40 @@ div.InfoText {
     box-shadow: inset 0 0 0 1px #ccc, 0 1px 2px #ccc;
     will-change: left, bottom;
 }
-
 .hue-slider {
     position: absolute;
     top: 1em;
     bottom: 1em;
     right: 1.3em;
 }
-
 .hue-slider .track {
     background: linear-gradient(to bottom, #FF0000 0%, #FF0099 10%, #CD00FF 20%, #3200FF 30%, #0066FF 40%, #00FFFD 50%, #00FF66 60%, #35FF00 70%, #CDFF00 80%, #FF9900 90%, #FF0000 100%);
 }
-
 .opacity-slider {
     position: absolute;
     bottom: 1.3em;
     left: 1em;
     right: 2em;
 }
-
 .opacity-slider .slider {
-    background: #fff url(data:image/gif;base64,R0lGODdhEAAQAPEAAMvLy8zMzP///wAAACwAAAAAEAAQAEACHYxvosstCAEMrq6Jj812Y59NIDQipdY5XLWqH4sVADs=) repeat;
+    background: #fff url("data:image/gif;base64,R0lGODdhEAAQAPEAAMvLy8zMzP///wAAACwAAAAAEAAQAEACHYxvosstCAEMrq6Jj812Y59NIDQipdY5XLWqH4sVADs=") repeat;
     background-size: 8px 8px;
     height: 8px;
 }
-
 .opacity-slider .slider .track {
     height: 8px;
     margin-top: -4px;
     background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #FFF 100%);
 }
-
 .with-opacity-slider {
     height: 14em;
 }
-
 .with-opacity-slider .map {
     bottom: 2em;
 }
-
 .with-opacity-slider .hue-slider {
     bottom: 2em;
 }
-
 .react-colorful {
     width: 100%;
 }
-
-/*# sourceMappingURL=viewer-debug.css.map*/

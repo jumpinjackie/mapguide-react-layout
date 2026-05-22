@@ -15,6 +15,7 @@ const getBuildMetadata = () => ({
    __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
    __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
    __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master"),
+   "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
    "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3")
 });
 

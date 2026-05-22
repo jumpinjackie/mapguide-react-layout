@@ -1,10 +1,15 @@
 const path = require("path");
 const { mergeConfig } = require("vite");
 
+/**
+ * Creates a Vite plugin that loads Markdown files as raw string modules.
+ *
+ * @returns {{name: string, transform(source: string, id: string): string | undefined}}
+ */
 const createMarkdownRawPlugin = () => ({
     name: "storybook-markdown-raw",
     transform(source, id) {
-        if (id.endsWith(".md")) {
+        if (/\.md$/i.test(id)) {
             return `export default ${JSON.stringify(source)};`;
         }
         return undefined;

@@ -5,6 +5,11 @@ import { defineConfig } from "vite";
 
 const BROWSER_GLOBAL_NAME = "MapGuide";
 
+interface IAssetFileInfo {
+   name?: string;
+   originalFileNames?: string[];
+}
+
 const getBuildMetadata = () => ({
    __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),
    __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
@@ -13,7 +18,7 @@ const getBuildMetadata = () => ({
    "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3")
 });
 
-const getAssetFileName = (assetInfo: { name?: string; originalFileNames?: string[] }, isDebugBuild: boolean) => {
+const getAssetFileName = (assetInfo: IAssetFileInfo, isDebugBuild: boolean) => {
    const originalFileName = assetInfo.originalFileNames?.[0]?.replace(/\\/g, "/") ?? assetInfo.name ?? "";
 
    if (/\.css$/i.test(originalFileName)) {
@@ -34,7 +39,13 @@ const getAssetFileName = (assetInfo: { name?: string; originalFileNames?: string
    return "assets/[name][extname]";
 };
 
-export default defineConfig(({ mode }) => {
+/**
+ * Vite configuration for browser viewer bundle builds.
+ *
+ * @hidden
+ * @since 0.15
+ */
+const config = defineConfig(({ mode }) => {
    const isDebugBuild = process.env.DEBUG_BUILD === "1";
    const isProduction = mode === "production";
 
@@ -74,3 +85,5 @@ export default defineConfig(({ mode }) => {
       }
    };
 });
+
+export default config;

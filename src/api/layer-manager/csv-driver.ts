@@ -1,9 +1,8 @@
 import GeoJSON from "ol/format/GeoJSON";
+import Papa from "papaparse";
 import { IFormatDriver } from "./format-driver";
 import { IParsedFeatures, ParsedFeatures } from './parsed-features';
 import { strIsNullOrEmpty } from '../../utils/string';
-
-const Papa = require("papaparse");
 
 interface IPapaParsedResults {
     data: any[];

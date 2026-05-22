@@ -4,15 +4,15 @@
  * A verbatim subset of the Blueprint.js SVG icon set that we actually use
  * 
  * All usages of the BP icon set will be replaced with this via 
- * NormalModuleReplacementPlugin in the webpack config
+ * bundler aliasing in the build config
  * 
  * When adding icons, copy the relevant icon path definitions from
  * node_modules/@blueprintjs/icons/src/generated/iconSvgPaths.ts
  */
 
 //TODO/FIXME: This module is not used directly by sources, so changes to
-//this file does not trigger a webpack rebuild. If making changes, you'll
-//have to stop webpack and restart it again.
+//this file may not trigger a rebuild. If making changes, you may
+//have to restart the current build process.
 
 export const IconSvgPaths16 = {
     "arrow-left": ["M13.99 6.99H4.41L7.7 3.7a1.003 1.003 0 00-1.42-1.42l-5 5a1.014 1.014 0 000 1.42l5 5a1.003 1.003 0 001.42-1.42L4.41 8.99H14c.55 0 1-.45 1-1s-.46-1-1.01-1z"],

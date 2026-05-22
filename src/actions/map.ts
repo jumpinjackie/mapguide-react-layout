@@ -14,7 +14,7 @@ import { getFiniteScaleIndexForScale } from '../utils/number';
 import { Client } from "../api/client";
 import { QueryMapFeaturesResponse, FeatureSet, SelectedFeature, SelectedFeatureSet } from '../api/contracts/query';
 import { IQueryMapFeaturesOptions, QueryFeaturesSet, RuntimeMapFeatureFlags } from '../api/request-builder';
-import { buildSelectionXml } from '../api/builders/deArrayify';
+import { buildSelectionXml } from '../api/builders/selection-utils';
 import { ActionType } from '../constants/actions';
 import {
     IMapSetBusyCountAction,

@@ -8,13 +8,13 @@
  *  c. The typings are poor quality or unusable
  */
 
-// Stamped by webpack
+// Stamped by the bundle build
 declare const __DEV__: boolean;
 declare const __VERSION__: string;
 declare const __COMMITHASH__: string;
 declare const __BRANCH__: string;
 
-// To allow file imports (that webpack will transform)
+// To allow file imports (that the bundle build will transform)
 declare module "*.png";
 declare module "*.cur";
 declare module "*.gif";

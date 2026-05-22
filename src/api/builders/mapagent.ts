@@ -1,11 +1,12 @@
 import { MgError } from '../error';
-import { deArrayify } from './deArrayify';
 import { DEFAULT_LOCALE } from "../i18n";
 import { RequestBuilder, ICreateRuntimeMapOptions, IQueryMapFeaturesOptions, IDescribeRuntimeMapOptions } from '../request-builder';
 import { RuntimeMap } from '../contracts/runtime-map';
 import { QueryMapFeaturesResponse } from '../contracts/query';
 import { ResourceIdentifier, ResourceBase, SiteVersionResponse } from '../contracts/common';
 import { parseSiteVersion } from '../../utils/site-version';
+
+const deArrayifyModulePromise = import('./deArrayify');
 
 const MG_MAPAGENT_ERROR_CODE = 559;
 
@@ -104,6 +105,7 @@ export class MapAgentRequestBuilder extends RequestBuilder {
             throw new MgError(response.statusText);
         } else {
             const json = await response.json();
+            const { deArrayify } = await deArrayifyModulePromise;
             return deArrayify(json) as T;
         }
     }
@@ -127,6 +129,7 @@ export class MapAgentRequestBuilder extends RequestBuilder {
             throw new MgError(response.statusText);
         } else {
             const json = await response.json();
+            const { deArrayify } = await deArrayifyModulePromise;
             return deArrayify(json) as T;
         }
     }

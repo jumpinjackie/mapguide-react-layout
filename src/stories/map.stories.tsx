@@ -19,11 +19,12 @@ import { MapGuideMockMode } from "../components/mapguide-debug-context";
 import { MapStoryFrame } from "./map-story-frame";
 import { useElementContext } from "../components/elements/element-context";
 import mapInteractionDocs from "./docs/map-and-map-interaction-components.md";
+import testSelectionResponseSheboyganJson from "./data/test-selection-response-sheboygan.json";
 
 //import MeasureContainer from '../containers/measure';
 
 const testSelSheboygan = deArrayify(
-  require("./data/test-selection-response-sheboygan.json"),
+  testSelectionResponseSheboyganJson,
 );
 
 export interface MapDependentContainer {

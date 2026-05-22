@@ -14,13 +14,17 @@ import { MapContextProvider } from '../components/map-providers/context';
 import { MapGuideMapProviderContext } from '../components/map-providers/mapguide';
 import { MapGuideMockMode } from '../components/mapguide-debug-context';
 import { isRuntimeMap } from "../utils/type-guards";
+import testAppDefJson from "./data/test-app-def.json";
+import testMapMelbourneJson from "./data/test-runtime-map-melbourne.json";
+import testMapReddingJson from "./data/test-runtime-map-redding.json";
+import testMapSheboyganJson from "./data/test-runtime-map-sheboygan.json";
 
 import "../styles/index.css";
 
-const testMapSheboygan = deArrayify(require("./data/test-runtime-map-sheboygan.json"));
-const testMapRedding = deArrayify(require("./data/test-runtime-map-redding.json"));
-const testMapMelbourne = deArrayify(require("./data/test-runtime-map-melbourne.json"));
-const testAppDef = deArrayify(require("./data/test-app-def.json"));
+const testMapSheboygan = deArrayify(testMapSheboyganJson);
+const testMapRedding = deArrayify(testMapReddingJson);
+const testMapMelbourne = deArrayify(testMapMelbourneJson);
+const testAppDef = deArrayify(testAppDefJson);
 
 const PROVIDER_IMPL = new MapGuideMapProviderContext();
 

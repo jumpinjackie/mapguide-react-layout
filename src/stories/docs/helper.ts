@@ -5,7 +5,7 @@
  */
 export async function loadMarkdownDoc(fileName: string): Promise<string> {
   try {
-    const module = await import(/* webpackMode: "eager" */ `./${fileName}.md?raw`);
+    const module = await import(`./${fileName}.md?raw`);
     return module.default || module;
   } catch (error) {
     console.warn(`Failed to load markdown doc: ${fileName}`, error);

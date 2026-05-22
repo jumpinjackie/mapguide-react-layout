@@ -23,14 +23,12 @@ following HTML example illustrates how to embed the viewer
 <html>
     <head>
         <title>Viewer example</title>
-        <link rel="stylesheet" href="dist/vendor.css" type="text/css" />
         <link rel="stylesheet" href="dist/viewer.css" type="text/css" />
     </head>
     <body>
         <!-- The viewer will mount at this element -->
         <div id="map"></div>
         <!-- Reference the main viewer bundle -->
-        <script type="text/javascript" src="dist/vendor.js"></script>
         <script type="text/javascript" src="dist/viewer.js"></script>
         <script type="text/javascript">
             // Get the HTML element for the mount point

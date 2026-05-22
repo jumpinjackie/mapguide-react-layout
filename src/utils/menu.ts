@@ -1,7 +1,7 @@
 import { IItem, IInlineMenu } from "../components/toolbar";
 
 // This is a "band-aid" function to work around bogus TypeScript compiler errors
-// when webpack is live-reloading
+// when the development bundler is live-reloading
 //
 // https://github.com/jumpinjackie/mapguide-react-layout/issues/61
 

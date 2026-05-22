@@ -76,7 +76,7 @@ yarn add @blueprintjs/core @blueprintjs/icons
 
 **Step 3 — Import and activate the Blueprint provider.**
 
-> **Note:** `BpProvider` is **not** exported from the main `mapguide-react-layout` bundle, because including it would unconditionally add Blueprint.js (~120 KB) to every user's download. It is intended for use in **custom bundle scenarios** where you control your own webpack/Rollup configuration. Import it directly from its source path:
+> **Note:** `BpProvider` is **not** exported from the main `mapguide-react-layout` bundle, because including it would unconditionally add Blueprint.js (~120 KB) to every user's download. It is intended for use in **custom bundle scenarios** where you control your own Vite/Rollup configuration. Import it directly from its source path:
 
 ```tsx
 import { ElementProvider } from 'mapguide-react-layout';

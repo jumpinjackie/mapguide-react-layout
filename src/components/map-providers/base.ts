@@ -1,6 +1,6 @@
 import * as React from "react";
 import { batch } from 'react-redux';
-import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions, ComparisonMode } from '../../api/common';
+import { IMapView, IExternalBaseLayer, Dictionary, ReduxDispatch, ReduxStore, Bounds, GenericEvent, ActiveMapTool, DigitizerCallback, LayerProperty, Size2, RefreshMode, KC_U, ILayerManager, Coordinate2D, KC_ESCAPE, IMapViewer, IMapGuideViewerSupport, ILayerInfo, ClientKind, IMapImageExportOptions, IMapPrintCaptureOptions, ComparisonMode } from '../../api/common';
 import { MouseTrackingTooltip } from '../tooltips/mouse';
 import Map from "ol/Map";
 import OverviewMap, { type Options as OverviewMapOptions } from 'ol/control/OverviewMap';
@@ -427,6 +427,72 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                 }
             });
             map.renderSync();
+        }
+    }
+    /**
+     * Captures the map at the specified print dimensions and DPI by temporarily resizing
+     * the map and adjusting the view resolution. After capture, the original map size and
+     * resolution are restored.
+     *
+     * @param {IMapPrintCaptureOptions} options
+     * @since 0.15
+     */
+    public captureMapPrintImage(options: IMapPrintCaptureOptions): void {
+        if (this._map) {
+            const map = this._map;
+            // Compute target pixel dimensions from paper size and DPI
+            // Formula: pixels = (mm * dpi) / 25.4
+            const targetWidth = Math.round((options.paperWidthMm * options.dpi) / 25.4);
+            const targetHeight = Math.round((options.paperHeightMm * options.dpi) / 25.4);
+            const originalSize = map.getSize();
+            const view = map.getView();
+            const originalResolution = view.getResolution();
+            if (!originalSize || originalResolution == null) {
+                return;
+            }
+            map.once('rendercomplete', () => {
+                const mapCanvas = document.createElement('canvas');
+                mapCanvas.width = targetWidth;
+                mapCanvas.height = targetHeight;
+                const mapContext = mapCanvas.getContext('2d');
+                if (mapContext) {
+                    // Fill background with the map's background color if provided.
+                    // ARGB format: parse the RGB portion (last 6 chars) and ignore alpha.
+                    if (options.backgroundColor) {
+                        const hex = options.backgroundColor.length >= 7
+                            ? `#${options.backgroundColor.slice(-6)}`
+                            : `#${options.backgroundColor}`;
+                        mapContext.fillStyle = hex;
+                        mapContext.fillRect(0, 0, targetWidth, targetHeight);
+                    }
+                    const canvasSelector = '.ol-layer canvas, .external-vector-layer canvas';
+                    Array.prototype.forEach.call(document.querySelectorAll(canvasSelector), function (canvas: HTMLCanvasElement) {
+                        if (canvas.width > 0) {
+                            const parentNode = canvas.parentNode;
+                            const opacity = (parentNode as any)?.style?.opacity ?? "";
+                            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+                            const transform = canvas.style.transform;
+                            const matrix = transform.match(/^matrix\(([^\(]*)\)$/)?.[1]?.split(',')?.map(Number);
+                            if (matrix) {
+                                CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+                                mapContext.drawImage(canvas, 0, 0);
+                            }
+                        }
+                    });
+                    // Reset global alpha for the final composited output
+                    mapContext.globalAlpha = 1;
+                    mapContext.setTransform(1, 0, 0, 1, 0, 0);
+                    options.callback(mapCanvas.toDataURL('image/jpeg'));
+                }
+                // Restore original map size and resolution
+                map.setSize(originalSize);
+                view.setResolution(originalResolution);
+            });
+            // Set print size and adjust resolution
+            const printSize: [number, number] = [targetWidth, targetHeight];
+            map.setSize(printSize);
+            const scaling = Math.min(targetWidth / originalSize[0], targetHeight / originalSize[1]);
+            view.setResolution(originalResolution / scaling);
         }
     }
 

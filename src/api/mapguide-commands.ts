@@ -27,10 +27,15 @@ export function initMapGuideCommands() {
     registerCommand(DefaultCommands.QuickPlot, {
         iconClass: SPRITE_PRINT,
         selected: () => false,
-        enabled: state => !state.stateless,
+        enabled: (state, parameters) => !state.stateless || parameters?.ClientSide === true || parameters?.ClientSide === "true",
         invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
-            const url = "component://QuickPlot";
+            let url = "component://QuickPlot";
+            // Pass ClientSide extension property as a query parameter so the container can
+            // decide whether to use server-side or client-side PDF generation
+            if (parameters?.ClientSide === true || parameters?.ClientSide === "true") {
+                url = "component://QuickPlot?clientSide=true";
+            }
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
         }

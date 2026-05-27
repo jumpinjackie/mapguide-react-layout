@@ -438,4 +438,10 @@ export interface ILocalizedMessages {
      * @since 0.15
      */
     ABOUT_HASH_LABEL: string;
+    /**
+     * The disclaimer text for QuickPlot client-side PDF output
+     *
+     * @since 0.15
+     */
+    QUICKPLOT_DISCLAIMER: string;
 }

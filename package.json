@@ -67,6 +67,7 @@
     "dompurify": "^3.4.0",
     "geojson-vt": "^4.0.2",
     "immutability-helper": "^3.1.1",
+    "jspdf": "^4.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.xor": "^4.5.0",
     "lodash.xorby": "^4.7.0",

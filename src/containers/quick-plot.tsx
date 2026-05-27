@@ -9,7 +9,8 @@ import {
     IExternalBaseLayer,
     IMapViewer,
     Size,
-    isVisualBaseLayer
+    isVisualBaseLayer,
+    IMapPrintCaptureOptions
 } from "../api/common";
 import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
 import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
@@ -156,7 +157,12 @@ function toggleMapCapturerLayer(locale: string,
 }
 
 export interface IQuickPlotContainerOwnProps {
-
+    /**
+     * When true, PDF is generated client-side via jsPDF instead of posting to PlotAsPDF.php.
+     *
+     * @since 0.15
+     */
+    clientSide?: boolean;
 }
 
 export interface IQuickPlotContainerConnectedState {
@@ -195,7 +201,109 @@ export interface IQuickPlotContainerState {
     normalizedBox: string;
 }
 
-export const QuickPlotContainer = () => {
+/**
+ * Generates a client-side PDF using jsPDF and the OpenLayers export-pdf technique.
+ *
+ * @since 0.15
+ * @hidden
+ */
+async function generateClientSidePdf(
+    viewer: IMapProviderContext,
+    paperSize: string,
+    orientation: Orientation,
+    dpi: string,
+    title: string,
+    subtitle: string,
+    showNorthBar: boolean,
+    showScaleBar: boolean,
+    showDisclaimer: boolean,
+    locale: string,
+    backgroundColor?: string
+): Promise<void> {
+    const { jsPDF } = await import('jspdf');
+    const tokens = paperSize.split(",");
+    let paperW = parseFloat(tokens[0]);
+    let paperH = parseFloat(tokens[1]);
+    // Swap for landscape
+    if (orientation === "L") {
+        paperW = parseFloat(tokens[1]);
+        paperH = parseFloat(tokens[0]);
+    }
+    const margins = getMargin();
+    const fullPrintW = paperW - margins.left - margins.right;
+    const fullPrintH = paperH - margins.top - margins.buttom;
+    // Footer space for elements below the map (scale bar, disclaimer)
+    let footerHeight = 0;
+    if (showScaleBar) footerHeight += 6;
+    if (showDisclaimer) footerHeight += 6;
+    // Map fills from the top margin down to just above the footer
+    const mapHeight = fullPrintH - footerHeight;
+    const dpiVal = parseInt(dpi, 10);
+    // Capture the map at print resolution
+    const mapImagePromise = new Promise<string>((resolve) => {
+        const captureOpts: IMapPrintCaptureOptions = {
+            paperWidthMm: fullPrintW,
+            paperHeightMm: mapHeight,
+            dpi: dpiVal,
+            backgroundColor,
+            callback: (imageDataUrl) => resolve(imageDataUrl)
+        };
+        viewer.captureMapPrintImage(captureOpts);
+    });
+    const mapImage = await mapImagePromise;
+    // Create PDF
+    const pdfOrientation = orientation === "L" ? "landscape" : "portrait";
+    const format = tokens[2]?.toLowerCase() as string || "a4";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pdf = new (jsPDF as any)(pdfOrientation, "mm", format);
+    // Map image starts at the top margin
+    const mapTop = margins.top;
+    pdf.addImage(mapImage, "JPEG", margins.left, mapTop, fullPrintW, mapHeight);
+    // Title and subtitle overlay within the top margin area, above the map
+    const TITLE_Y = 8;
+    const SUBTITLE_Y = 14;
+    if (title) {
+        pdf.setFontSize(14);
+        pdf.text(title, margins.left, TITLE_Y, { align: "left" });
+    }
+    if (subtitle) {
+        pdf.setFontSize(10);
+        pdf.text(subtitle, margins.left, SUBTITLE_Y, { align: "left" });
+    }
+    // Draw north arrow (top-right of map area)
+    if (showNorthBar) {
+        const nx = margins.left + fullPrintW - 8;
+        const ny = mapTop + 12;
+        pdf.setFillColor(0);
+        pdf.triangle(nx, ny, nx - 5, ny + 12, nx + 5, ny + 12, "F");
+        pdf.setFontSize(10);
+        pdf.text("N", nx, ny + 16, { align: "center" });
+    }
+    // Draw scale bar (bottom-left of map area)
+    if (showScaleBar) {
+        const scaleBarY = mapTop + mapHeight - 4;
+        pdf.setFontSize(8);
+        pdf.setDrawColor(0);
+        pdf.setLineWidth(0.5);
+        pdf.line(margins.left, scaleBarY, margins.left + 30, scaleBarY);
+        pdf.line(margins.left, scaleBarY - 2, margins.left, scaleBarY + 2);
+        pdf.line(margins.left + 30, scaleBarY - 2, margins.left + 30, scaleBarY + 2);
+    }
+    // Draw disclaimer (bottom of page, within bottom margin)
+    if (showDisclaimer) {
+        const disclaimerText = tr("QUICKPLOT_DISCLAIMER", locale);
+        pdf.setFontSize(8);
+        pdf.text(disclaimerText, margins.left, paperH - 5, { align: "left", maxWidth: fullPrintW });
+    }
+    // Trigger download
+    const filename = title
+        ? `${title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`
+        : "quickplot.pdf";
+    pdf.save(filename);
+}
+
+export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
+    const { clientSide } = props;
     const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = useElementContext();
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
@@ -251,7 +359,23 @@ export const QuickPlotContainer = () => {
     const onRotationChanged = (value: number) => {
         setRotation(value);
     };
-    const onGeneratePlot = () => { };
+    const onGeneratePlot = () => {
+        if (clientSide) {
+            generateClientSidePdf(
+                viewer,
+                paperSize,
+                orientation,
+                dpi,
+                title,
+                subTitle,
+                showNorthBar,
+                showScaleBar,
+                showDisclaimer,
+                locale,
+                map?.BackgroundColor
+            );
+        }
+    };
     const updateBoxCoords = (box: string, normalizedBox: string): void => {
         setBox(box);
         setNormalizedBox(normalizedBox);
@@ -335,8 +459,8 @@ export const QuickPlotContainer = () => {
         { value: "L" as Orientation, label: xlate("QUICKPLOT_ORIENTATION_L", locale) }
     ];
     return <div className="component-quick-plot">
-        <form id="Form1" name="Form1" target="_blank" method="post" action={url}>
-            <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />
+        <form id="Form1" name="Form1" target={clientSide ? undefined : "_blank"} method={clientSide ? undefined : "post"} action={clientSide ? undefined : url} onSubmit={clientSide ? (e) => { e.preventDefault(); onGeneratePlot(); } : undefined}>
+            {!clientSide && <input type="hidden" id="printId" name="printId" value={`${Math.random() * 1000}`} />}
             <div className="Title FixWidth">{xlate("QUICKPLOT_HEADER", locale)}</div>
             <FormGroup label={xlate("QUICKPLOT_TITLE", locale)}>
                 <InputGroup name="{field:title}" id="title" value={title} onChange={onTitleChanged} />
@@ -368,8 +492,10 @@ export const QuickPlotContainer = () => {
                     onChange={e => setOrientation(e)}
                     items={ORIENTATIONS} />
             </FormGroup>
-            <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
-            <input type="hidden" id="printSize" name="printSize" value={prSize} />
+            {!clientSide && <>
+                <input type="hidden" id="paperSize" name="paperSize" value={ppSize} />
+                <input type="hidden" id="printSize" name="printSize" value={prSize} />
+            </>}
             <fieldset>
                 <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
                 <Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} />
@@ -430,15 +556,17 @@ export const QuickPlotContainer = () => {
                 }
             })()}
             <div className="ButtonContainer FixWidth">
-                <Button type="submit" variant="primary" icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
+                <Button type={clientSide ? "button" : "submit"} variant="primary" icon="print" onClick={onGeneratePlot}>{xlate("QUICKPLOT_GENERATE", locale)}</Button>
             </div>
-            <input type="hidden" id="margin" name="margin" />
-            <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
-            <input type="hidden" id="rotation" name="rotation" value={-(rotation || 0)} />
-            <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
-            <input type="hidden" id="mapName" name="mapName" value={map.Name} />
-            <input type="hidden" id="box" name="box" value={theBox} />
-            <input type="hidden" id="legalNotice" name="legalNotice" />
+            {!clientSide && <>
+                <input type="hidden" id="margin" name="margin" />
+                <input type="hidden" id="normalizedBox" name="normalizedBox" value={normBox} />
+                <input type="hidden" id="rotation" name="rotation" value={-(rotation || 0)} />
+                <input type="hidden" id="sessionId" name="sessionId" value={map.SessionId} />
+                <input type="hidden" id="mapName" name="mapName" value={map.Name} />
+                <input type="hidden" id="box" name="box" value={theBox} />
+                <input type="hidden" id="legalNotice" name="legalNotice" />
+            </>}
         </form>
     </div>;
 }

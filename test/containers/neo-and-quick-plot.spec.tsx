@@ -78,6 +78,20 @@ vi.mock("../../src/api/runtime", () => runtimeMock);
 vi.mock("../../src/utils/logger", () => loggerMock);
 vi.mock("../../src/containers/map-capturer-context", () => mapCapturerMock);
 
+vi.mock("jspdf", () => ({
+   jsPDF: vi.fn().mockImplementation(() => ({
+      addImage: vi.fn(),
+      setFontSize: vi.fn(),
+      setDrawColor: vi.fn(),
+      setLineWidth: vi.fn(),
+      setFillColor: vi.fn(),
+      text: vi.fn(),
+      line: vi.fn(),
+      triangle: vi.fn(),
+      save: vi.fn(),
+   })),
+}));
+
 vi.mock("../../src/components/map-load-indicator", () => ({
    MapLoadIndicator: () => <div data-testid="load-indicator" />,
 }));
@@ -444,5 +458,65 @@ describe("neo-map-viewer and quick-plot", () => {
          expect(actionMapMock.setViewRotationEnabled).toHaveBeenCalledWith(false);
       });
       expect((container.querySelector("#rotation") as HTMLInputElement).value).toBe("-15");
+   });
+
+   it("renders client-side QuickPlot without server-side form fields when clientSide=true", () => {
+      const dispatch = vi.fn();
+      mapProviderCtxMock.useReduxDispatch.mockReturnValue(dispatch);
+      const viewer = {
+         isReady: () => true,
+         getSize: () => [800, 600],
+         getCurrentExtent: () => [1, 2, 3, 4],
+         toastPrimary: vi.fn(),
+         captureMapPrintImage: vi.fn(),
+      };
+      mapProviderCtxMock.useMapProviderContext.mockReturnValue(viewer);
+      hooksMapGuideMock.useActiveMapState.mockReturnValue({ SessionId: "S1", Name: "Map1" });
+      hooksMock.useActiveMapView.mockReturnValue({ scale: 2500 });
+      hooksMock.useActiveMapExternalBaseLayers.mockReturnValue([]);
+      hooksMock.useAvailableMaps.mockReturnValue([{ name: "Map1", value: "Map1" }]);
+      hooksMock.useActiveMapName.mockReturnValue("Map1");
+
+      const { container } = render(<QuickPlotContainer clientSide={true} />);
+
+      expect(container.querySelector(".component-quick-plot")).toBeTruthy();
+      // Server-side hidden fields should be absent in client mode
+      expect(container.querySelector("input[name='sessionId']")).toBeNull();
+      expect(container.querySelector("input[name='mapName']")).toBeNull();
+      expect(container.querySelector("input[name='paperSize']")).toBeNull();
+      expect(container.querySelector("input[name='printSize']")).toBeNull();
+      // Form should not have action/method for server posting
+      const form = container.querySelector("#Form1");
+      expect(form?.getAttribute("action")).toBeNull();
+      expect(form?.getAttribute("method")).toBeNull();
+   });
+
+   it("triggers captureMapPrintImage when generating client-side QuickPlot", async () => {
+      const dispatch = vi.fn();
+      mapProviderCtxMock.useReduxDispatch.mockReturnValue(dispatch);
+      const viewer = {
+         isReady: () => true,
+         getSize: () => [800, 600],
+         getCurrentExtent: () => [1, 2, 3, 4],
+         toastPrimary: vi.fn(),
+         captureMapPrintImage: vi.fn(),
+      };
+      mapProviderCtxMock.useMapProviderContext.mockReturnValue(viewer);
+      hooksMapGuideMock.useActiveMapState.mockReturnValue({ SessionId: "S1", Name: "Map1" });
+      hooksMock.useActiveMapView.mockReturnValue({ scale: 2500 });
+      hooksMock.useActiveMapExternalBaseLayers.mockReturnValue([]);
+      hooksMock.useAvailableMaps.mockReturnValue([{ name: "Map1", value: "Map1" }]);
+      hooksMock.useActiveMapName.mockReturnValue("Map1");
+
+      const { container } = render(<QuickPlotContainer clientSide={true} />);
+
+      // Click the generate button
+      const genButton = container.querySelector("button") as HTMLButtonElement;
+      fireEvent.click(genButton);
+
+      // The captureMapPrintImage is called asynchronously from generateClientSidePdf
+      await waitFor(() => {
+         expect(viewer.captureMapPrintImage).toHaveBeenCalled();
+      });
    });
 });

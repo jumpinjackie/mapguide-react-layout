@@ -431,8 +431,9 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     }
     /**
      * Captures the map at the specified print dimensions and DPI by temporarily resizing
-     * the map and adjusting the view resolution. After capture, the original map size and
-     * resolution are restored.
+     * the map and adjusting the view resolution. If a fitExtent is provided, the view is
+     * also re-centered on that extent with the given scale and rotation before capture,
+     * then restored afterward.
      *
      * @param {IMapPrintCaptureOptions} options
      * @since 0.15
@@ -445,11 +446,54 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
             const targetWidth = Math.round((options.paperWidthMm * options.dpi) / 25.4);
             const targetHeight = Math.round((options.paperHeightMm * options.dpi) / 25.4);
             const originalSize = map.getSize();
-            const view = map.getView();
-            const originalResolution = view.getResolution();
-            if (!originalSize || originalResolution == null) {
+            const originalView = map.getView();
+            const originalCenter = originalView.getCenter();
+            const originalResolution = originalView.getResolution();
+            if (!originalSize || originalResolution == null || !originalCenter) {
                 return;
             }
+            // If rotation is requested, create a temporary View with enableRotation
+            // set to true so the rotation can actually be applied. The current View
+            // may have enableRotation=false (set when QuickPlot advanced mode toggles
+            // on), which silently ignores setRotation() calls.
+            let view = originalView;
+            let tempView: View | undefined;
+            if (options.rotation != null) {
+                tempView = new View({
+                    enableRotation: true,
+                    center: originalCenter,
+                    resolution: originalResolution,
+                    rotation: (options.rotation * Math.PI) / 180,
+                    projection: originalView.getProjection(),
+                    resolutions: originalView.getResolutions(),
+                    minResolution: originalView.getMinResolution(),
+                    maxResolution: originalView.getMaxResolution(),
+                    maxZoom: originalView.getMaxZoom(),
+                    minZoom: originalView.getMinZoom(),
+                    zoom: originalView.getZoom()
+                });
+                map.setView(tempView);
+                view = tempView;
+            }
+            // If an extent is specified, fit the view to it before capturing
+            let fittedResolution = view.getResolution() ?? originalResolution;
+            if (options.fitExtent) {
+                const [minX, minY, maxX, maxY] = options.fitExtent;
+                const centerX = (minX + maxX) / 2;
+                const centerY = (minY + maxY) / 2;
+                view.setCenter([centerX, centerY]);
+                if (options.scale != null) {
+                    fittedResolution = this.scaleToResolution(options.scale);
+                    view.setResolution(fittedResolution);
+                }
+            }
+            // Set print size and adjust resolution to maintain the visible extent
+            const printSize: [number, number] = [targetWidth, targetHeight];
+            map.setSize(printSize);
+            const scaling = Math.min(targetWidth / originalSize[0], targetHeight / originalSize[1]);
+            view.setResolution(fittedResolution / scaling);
+            // Register the rendercomplete listener AFTER all view changes,
+            // then force a synchronous render that includes everything
             map.once('rendercomplete', () => {
                 const mapCanvas = document.createElement('canvas');
                 mapCanvas.width = targetWidth;
@@ -484,15 +528,14 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
                     mapContext.setTransform(1, 0, 0, 1, 0, 0);
                     options.callback(mapCanvas.toDataURL('image/jpeg'));
                 }
-                // Restore original map size and resolution
+                // Restore original map size and view
                 map.setSize(originalSize);
-                view.setResolution(originalResolution);
+                if (tempView) {
+                    map.setView(originalView);
+                }
             });
-            // Set print size and adjust resolution
-            const printSize: [number, number] = [targetWidth, targetHeight];
-            map.setSize(printSize);
-            const scaling = Math.min(targetWidth / originalSize[0], targetHeight / originalSize[1]);
-            view.setResolution(originalResolution / scaling);
+            // Trigger a synchronous render now that all view changes are applied
+            map.renderSync();
         }
     }
 

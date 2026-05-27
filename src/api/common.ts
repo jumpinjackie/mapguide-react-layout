@@ -612,6 +612,26 @@ export interface IMapPrintCaptureOptions {
      */
     backgroundColor?: string;
     /**
+     * Optional extent to fit the map view to before capturing, as [minX, minY, maxX, maxY].
+     * If provided, the view is centered on this extent at the given scale and rotation,
+     * then restored after capture.
+     *
+     * @since 0.15
+     */
+    fitExtent?: [number, number, number, number];
+    /**
+     * Optional rotation in degrees to apply before capture. Only used when fitExtent is set.
+     *
+     * @since 0.15
+     */
+    rotation?: number;
+    /**
+     * Optional scale denominator for the capture. Only used when fitExtent is set.
+     *
+     * @since 0.15
+     */
+    scale?: number;
+    /**
      * The callback that will receive the captured image data URL
      */
     callback: (imageBase64: string) => void;

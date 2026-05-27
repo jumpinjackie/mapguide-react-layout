@@ -202,6 +202,30 @@ export interface IQuickPlotContainerState {
 }
 
 /**
+ * Parses a comma-separated coordinate string (polygon ring) into a bounding box extent.
+ *
+ * @since 0.15
+ * @hidden
+ */
+function parseBoxToExtent(box: string): [number, number, number, number] | undefined {
+    const parts = box.split(",").map(Number);
+    if (parts.length < 8 || parts.some(isNaN)) {
+        return undefined;
+    }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (let i = 0; i < parts.length; i += 2) {
+        if (i + 1 >= parts.length) break;
+        const x = parts[i];
+        const y = parts[i + 1];
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+    }
+    return [minX, minY, maxX, maxY];
+}
+
+/**
  * Generates a client-side PDF using jsPDF and the OpenLayers export-pdf technique.
  *
  * @since 0.15
@@ -218,7 +242,10 @@ async function generateClientSidePdf(
     showScaleBar: boolean,
     showDisclaimer: boolean,
     locale: string,
-    backgroundColor?: string
+    backgroundColor?: string,
+    fitExtent?: [number, number, number, number],
+    rotationDeg?: number,
+    scaleDenom?: number
 ): Promise<void> {
     const { jsPDF } = await import('jspdf');
     const tokens = paperSize.split(",");
@@ -246,6 +273,9 @@ async function generateClientSidePdf(
             paperHeightMm: mapHeight,
             dpi: dpiVal,
             backgroundColor,
+            fitExtent,
+            rotation: rotationDeg,
+            scale: scaleDenom,
             callback: (imageDataUrl) => resolve(imageDataUrl)
         };
         viewer.captureMapPrintImage(captureOpts);
@@ -361,6 +391,18 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
     };
     const onGeneratePlot = () => {
         if (clientSide) {
+            const fitExtent = showAdvanced && normalizedBox
+                ? parseBoxToExtent(normalizedBox)
+                : undefined;
+            const rotDeg = showAdvanced ? rotation : undefined;
+            const scaleVal = showAdvanced ? parseFloat(scale) : undefined;
+            // Hide the capture box layer during PDF generation so it
+            // doesn't appear in the captured map image
+            let activeCapturer: MapCapturerContext | undefined;
+            if (showAdvanced && mapNames) {
+                activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+                activeCapturer?.setVisible(false);
+            }
             generateClientSidePdf(
                 viewer,
                 paperSize,
@@ -372,8 +414,14 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                 showScaleBar,
                 showDisclaimer,
                 locale,
-                map?.BackgroundColor
-            );
+                map?.BackgroundColor,
+                fitExtent,
+                rotDeg,
+                scaleVal
+            ).finally(() => {
+                // Restore capture box visibility after PDF generation
+                activeCapturer?.setVisible(true);
+            });
         }
     };
     const updateBoxCoords = (box: string, normalizedBox: string): void => {

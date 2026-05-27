@@ -4,6 +4,7 @@
         "allowSyntheticDefaultImports": true
     },
     "exclude": [
+        "vite.config.ts",
         "lib",
         "package",
         "e2e",

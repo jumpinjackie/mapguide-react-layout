@@ -1,0 +1,1 @@
+var e=globalThis.FEATURES?.viewportStoryGlobals?{viewport:{value:void 0,isRotated:!1}}:{viewport:`reset`,viewportRotated:!1};export{e as initialGlobals};

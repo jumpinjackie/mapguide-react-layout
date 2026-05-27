@@ -546,11 +546,11 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
             </>}
             <fieldset>
                 <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                <Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} />
-                <Checkbox id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} label={xlate("QUICKPLOT_SHOWNORTHARROW", locale)} />
-                <Checkbox id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} label={xlate("QUICKPLOT_SHOWCOORDINTES", locale)} />
-                <Checkbox id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} label={xlate("QUICKPLOT_SHOWSCALEBAR", locale)} />
-                <Checkbox id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={showDisclaimer} onChange={onShowDisclaimerChanged} label={xlate("QUICKPLOT_SHOWDISCLAIMER", locale)} />
+                <div><Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} /></div>
+                <div><Checkbox id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} label={xlate("QUICKPLOT_SHOWNORTHARROW", locale)} /></div>
+                <div><Checkbox id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} label={xlate("QUICKPLOT_SHOWCOORDINTES", locale)} /></div>
+                <div><Checkbox id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} label={xlate("QUICKPLOT_SHOWSCALEBAR", locale)} /></div>
+                <div><Checkbox id="ShowDisclaimerCheckBox" name="ShowDisclaimer" checked={showDisclaimer} onChange={onShowDisclaimerChanged} label={xlate("QUICKPLOT_SHOWDISCLAIMER", locale)} /></div>
             </fieldset>
             <div className="HPlaceholder5px"></div>
             <div>
@@ -579,6 +579,7 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                             <TypedSelect<string, false> fill
                                 id="dpi"
                                 name="dpi"
+                                value={dpi}
                                 onChange={e => setDpi(e)}
                                 items={DPIS} />
                         </FormGroup>

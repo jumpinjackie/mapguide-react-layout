@@ -546,7 +546,7 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
             </>}
             <fieldset>
                 <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                <div><Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} /></div>
+                {!clientSide && <div><Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} /></div>}
                 <div><Checkbox id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} label={xlate("QUICKPLOT_SHOWNORTHARROW", locale)} /></div>
                 <div><Checkbox id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} label={xlate("QUICKPLOT_SHOWCOORDINTES", locale)} /></div>
                 <div><Checkbox id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} label={xlate("QUICKPLOT_SHOWSCALEBAR", locale)} /></div>

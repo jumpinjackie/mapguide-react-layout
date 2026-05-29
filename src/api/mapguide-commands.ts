@@ -31,10 +31,18 @@ export function initMapGuideCommands() {
         invoke: (dispatch, getState, _viewer, parameters) => {
             const config = getState().config;
             let url = "component://QuickPlot";
+            const queryParts: string[] = [];
             // Pass ClientSide extension property as a query parameter so the container can
             // decide whether to use server-side or client-side PDF generation
             if (parameters?.ClientSide === true || parameters?.ClientSide === "true") {
-                url = "component://QuickPlot?clientSide=true";
+                queryParts.push("clientSide=true");
+            }
+            // Pass Disclaimer extension property for custom disclaimer text
+            if (parameters?.Disclaimer && typeof parameters.Disclaimer === "string") {
+                queryParts.push(`disclaimer=${encodeURIComponent(parameters.Disclaimer)}`);
+            }
+            if (queryParts.length > 0) {
+                url = `${url}?${queryParts.join("&")}`;
             }
             const cmdDef = buildTargetedCommand(config, parameters);
             openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);

@@ -56,7 +56,7 @@ function getMargin() {
     }
     return margin;
     */
-    return { top: 25.4, buttom: 12.7, left: 12.7, right: 12.7 };
+    return { top: 18, buttom: 6.4, left: 12.7, right: 12.7 };
 }
 
 function getPrintSize(viewer: IMapViewer, showAdvanced: boolean, paperSize: string, orientation: Orientation): Size {
@@ -163,6 +163,13 @@ export interface IQuickPlotContainerOwnProps {
      * @since 0.15
      */
     clientSide?: boolean;
+    /**
+     * Custom disclaimer text for client-side PDF plots. When provided, this overrides
+     * the default localized disclaimer string.
+     *
+     * @since 0.15
+     */
+    disclaimer?: string;
 }
 
 export interface IQuickPlotContainerConnectedState {
@@ -241,6 +248,8 @@ async function generateClientSidePdf(
     showNorthBar: boolean,
     showScaleBar: boolean,
     showDisclaimer: boolean,
+    showCoordinates: boolean,
+    disclaimerText: string | undefined,
     locale: string,
     backgroundColor?: string,
     fitExtent?: [number, number, number, number],
@@ -261,7 +270,7 @@ async function generateClientSidePdf(
     const fullPrintH = paperH - margins.top - margins.buttom;
     // Footer space for elements below the map (scale bar, disclaimer)
     let footerHeight = 0;
-    if (showScaleBar) footerHeight += 6;
+    if (showScaleBar) footerHeight += 12;
     if (showDisclaimer) footerHeight += 6;
     // Map fills from the top margin down to just above the footer
     const mapHeight = fullPrintH - footerHeight;
@@ -289,6 +298,10 @@ async function generateClientSidePdf(
     // Map image starts at the top margin
     const mapTop = margins.top;
     pdf.addImage(mapImage, "JPEG", margins.left, mapTop, fullPrintW, mapHeight);
+    // Black outline around the map image
+    pdf.setDrawColor(0);
+    pdf.setLineWidth(0.2);
+    pdf.rect(margins.left, mapTop, fullPrintW, mapHeight, "S");
     // Title and subtitle overlay within the top margin area, above the map
     const TITLE_Y = 8;
     const SUBTITLE_Y = 14;
@@ -300,30 +313,143 @@ async function generateClientSidePdf(
         pdf.setFontSize(10);
         pdf.text(subtitle, margins.left, SUBTITLE_Y, { align: "left" });
     }
-    // Draw north arrow (top-right of map area)
-    if (showNorthBar) {
-        const nx = margins.left + fullPrintW - 8;
-        const ny = mapTop + 12;
-        pdf.setFillColor(0);
-        pdf.triangle(nx, ny, nx - 5, ny + 12, nx + 5, ny + 12, "F");
-        pdf.setFontSize(10);
-        pdf.text("N", nx, ny + 16, { align: "center" });
-    }
-    // Draw scale bar (bottom-left of map area)
-    if (showScaleBar) {
-        const scaleBarY = mapTop + mapHeight - 4;
-        pdf.setFontSize(8);
+    // Determine map extent for coordinate labels
+    const extent = fitExtent ?? viewer.getCurrentExtent();
+    const mapBottom = mapTop + mapHeight;
+    const MAP_RIGHT = margins.left + fullPrintW;
+    const COORD_BOX_H = 5;   // height of coordinate label box at font size 8
+    const CORNER_MARGIN = 8; // mm spacing from map edges (room for watermark on bottom-right)
+    const COORD_PADDING = 2; // mm padding inside coordinate box
+    // Draw coordinates (white box with black outline)
+    if (showCoordinates) {
+        const labelFontSize = 8;
+        pdf.setFontSize(labelFontSize);
+        // Top-left (NW corner): (minX, maxY)
+        const tlLabel = `x:${extent[0].toFixed(6)}, y:${extent[3].toFixed(6)}`;
+        const tlW = pdf.getTextWidth(tlLabel) + COORD_PADDING * 2;
+        const tlX = margins.left + CORNER_MARGIN;
+        const tlY = mapTop + CORNER_MARGIN;
+        pdf.setFillColor(255, 255, 255);
         pdf.setDrawColor(0);
-        pdf.setLineWidth(0.5);
-        pdf.line(margins.left, scaleBarY, margins.left + 30, scaleBarY);
-        pdf.line(margins.left, scaleBarY - 2, margins.left, scaleBarY + 2);
-        pdf.line(margins.left + 30, scaleBarY - 2, margins.left + 30, scaleBarY + 2);
+        pdf.setLineWidth(0.3);
+        pdf.rect(tlX, tlY, tlW, COORD_BOX_H, "FD");
+        pdf.setTextColor(0);
+        pdf.text(tlLabel, tlX + COORD_PADDING, tlY + COORD_BOX_H - 1.5, { align: "left" });
+        // Bottom-right (SE corner): (maxX, minY)
+        const brLabel = `x:${extent[2].toFixed(6)}, y:${extent[1].toFixed(6)}`;
+        const brW = pdf.getTextWidth(brLabel) + COORD_PADDING * 2;
+        const brX = MAP_RIGHT - brW - CORNER_MARGIN;
+        const brY = mapBottom - COORD_BOX_H - CORNER_MARGIN;
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(0);
+        pdf.setLineWidth(0.3);
+        pdf.rect(brX, brY, brW, COORD_BOX_H, "FD");
+        pdf.text(brLabel, brX + COORD_PADDING, brY + COORD_BOX_H - 1.5, { align: "left" });
     }
-    // Draw disclaimer (bottom of page, within bottom margin)
+    // Draw north arrow at bottom-right, pointing up
+    if (showNorthBar) {
+        // Arrow sits above the bottom-right coordinate label (if visible) or near the map edge
+        const arrowBaseY = showCoordinates
+            ? mapBottom - COORD_BOX_H - CORNER_MARGIN - 3   // gap above coordinate box
+            : mapBottom - CORNER_MARGIN;                      // gap from map edge
+        const ARROW_CENTER_X = MAP_RIGHT - CORNER_MARGIN - 6;
+        const ARROW_HEIGHT = 10;
+        // Triangle pointing up: tip at top (smaller Y), base at bottom (larger Y)
+        pdf.setFillColor(0);
+        pdf.triangle(
+            ARROW_CENTER_X, arrowBaseY - ARROW_HEIGHT,   // tip (top)
+            ARROW_CENTER_X - 5, arrowBaseY,               // base left
+            ARROW_CENTER_X + 5, arrowBaseY,               // base right
+            "F"
+        );
+        pdf.setFontSize(10);
+        pdf.setTextColor(0);
+        pdf.text("N", ARROW_CENTER_X, arrowBaseY - ARROW_HEIGHT - 1, { align: "center" });
+    }
+    // Draw scale bar in footer area (below map image)
+    if (showScaleBar) {
+        const scaleBarY = mapBottom + 8; // vertically centered in footer
+        // OpenLayers ScaleLine-inspired calculation
+        // Scale 1:N means 1mm on paper = N mm on ground = N/1000 meters on ground
+        const N = scaleDenom!;
+        // pointResolution = meters per mm on paper
+        let pointResolution = N / 1000;
+        // OGC standard pixel size (0.28mm), OL's default minWidth of 64px
+        const OGC_PIXEL_MM = 0.28;
+        const MIN_WIDTH_MM = 64 * OGC_PIXEL_MM; // ~17.92mm
+        const MAX_WIDTH_MM = fullPrintW * 0.55; // prevent overflow, leave room for text
+        // Unit scaling following OL logic
+        let suffix: string;
+        let nominalCount = MIN_WIDTH_MM * pointResolution;
+        if (nominalCount < 1e-6) {
+            suffix = 'nm';
+            pointResolution *= 1e9;
+        } else if (nominalCount < 0.001) {
+            suffix = 'μm';
+            pointResolution *= 1e6;
+        } else if (nominalCount < 1) {
+            suffix = 'mm';
+            pointResolution *= 1000;
+        } else if (nominalCount < 1000) {
+            suffix = 'm';
+        } else {
+            suffix = 'km';
+            pointResolution /= 1000;
+        }
+        // Find nice round count using OL's LEADING_DIGITS approach
+        const LEADING_DIGITS = [1, 2, 5];
+        let i = 3 * Math.floor(Math.log(MIN_WIDTH_MM * pointResolution) / Math.log(10));
+        let count = 0, widthMm = 0, prevCount = 0, prevWidth = 0;
+        while (true) {
+            const decimalCount = Math.floor(i / 3);
+            const decimal = Math.pow(10, decimalCount);
+            count = LEADING_DIGITS[((i % 3) + 3) % 3] * decimal;
+            widthMm = count / pointResolution;
+            if (isNaN(widthMm)) break;
+            if (prevCount > 0 && widthMm > MAX_WIDTH_MM) {
+                count = prevCount;
+                widthMm = prevWidth;
+                break;
+            }
+            if (widthMm >= MIN_WIDTH_MM) break;
+            prevCount = count;
+            prevWidth = widthMm;
+            i++;
+        }
+        // Convert count to meters (count is in the display unit: km, m, mm, etc.)
+        const UNIT_TO_M: Record<string, number> = { 'nm': 1e-9, 'μm': 1e-6, 'mm': 0.001, 'm': 1, 'km': 1000 };
+        const groundM = count * (UNIT_TO_M[suffix] ?? 1);
+        const groundFt = Math.round(groundM * 3.28084);
+        // Actual printed scale
+        const actualScale = Math.round(N);
+        // Draw the scale bar
+        pdf.setDrawColor(0);
+        pdf.setLineWidth(0.3);
+        pdf.line(margins.left, scaleBarY, margins.left + widthMm, scaleBarY);
+        // Tick marks
+        pdf.line(margins.left, scaleBarY - 2, margins.left, scaleBarY + 2);
+        pdf.line(margins.left + widthMm, scaleBarY - 2, margins.left + widthMm, scaleBarY + 2);
+        // Unit labels: metric above the bar, imperial below the bar
+        pdf.setFontSize(7);
+        pdf.setTextColor(0);
+        const unitLabel = `${count} ${suffix}`;
+        pdf.text(unitLabel, margins.left, scaleBarY - 3, { align: "left" });
+        pdf.text(`${groundFt} ft`, margins.left, scaleBarY + 4, { align: "left" });
+        // Scale ratio and date beside the scale bar (to the right)
+        const now = new Date();
+        const dateStr = now.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+        const infoX = margins.left + widthMm + 6; // gap after scale bar
+        pdf.setFontSize(7);
+        pdf.text(`${dateStr}`, infoX, scaleBarY - 3, { align: "left" });
+        pdf.text(`Scale 1:${actualScale}`, infoX, scaleBarY + 4, { align: "left" });
+    }
+    // Draw disclaimer (bottom-right of page)
     if (showDisclaimer) {
-        const disclaimerText = tr("QUICKPLOT_DISCLAIMER", locale);
+        const discText = disclaimerText || tr("QUICKPLOT_DISCLAIMER", locale);
+        const discY = showScaleBar ? mapBottom + 16 : mapBottom + 5;
         pdf.setFontSize(8);
-        pdf.text(disclaimerText, margins.left, paperH - 5, { align: "left", maxWidth: fullPrintW });
+        pdf.setTextColor(0);
+        pdf.text(discText, MAP_RIGHT, discY, { align: "right", maxWidth: fullPrintW * 0.6 });
     }
     // Trigger download
     const filename = title
@@ -333,7 +459,7 @@ async function generateClientSidePdf(
 }
 
 export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
-    const { clientSide } = props;
+    const { clientSide, disclaimer } = props;
     const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = useElementContext();
     const [title, setTitle] = React.useState(""); ``
     const [subTitle, setSubTitle] = React.useState("");
@@ -395,11 +521,11 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                 ? parseBoxToExtent(normalizedBox)
                 : undefined;
             const rotDeg = showAdvanced ? rotation : undefined;
-            const scaleVal = showAdvanced ? parseFloat(scale) : undefined;
+            const scaleVal = showAdvanced ? parseFloat(scale) : (view?.scale ?? 5000);
             // Hide the capture box layer during PDF generation so it
             // doesn't appear in the captured map image
             let activeCapturer: MapCapturerContext | undefined;
-            if (showAdvanced && mapNames) {
+            if (showAdvanced && mapNames && activeMapName) {
                 activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
                 activeCapturer?.setVisible(false);
             }
@@ -413,6 +539,8 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                 showNorthBar,
                 showScaleBar,
                 showDisclaimer,
+                showCoordinates,
+                disclaimer,
                 locale,
                 map?.BackgroundColor,
                 fitExtent,

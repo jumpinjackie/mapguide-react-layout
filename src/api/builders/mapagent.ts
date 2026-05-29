@@ -269,4 +269,41 @@ export class MapAgentRequestBuilder extends RequestBuilder {
         else
             return `${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${xPlaceholder}&TILEROW=${yPlaceholder}&SCALEINDEX=${zPlaceholder}`;
     }
+
+    /**
+     * Fetches a legend image strip from the mapagent.
+     *
+     * @param session The MapGuide session ID
+     * @param mapName The runtime map name
+     * @param width The legend image width in pixels
+     * @param height The legend image height in pixels
+     * @param format The image format (default: "PNG")
+     * @returns A data URL string for the legend PNG image
+     * @since 0.15
+     * @hidden
+     */
+    public async getMapLegendImage(session: string, mapName: string, width: number, height: number, format: string = "PNG"): Promise<string> {
+        const params: Record<string, string> = {
+            OPERATION: "GETMAPLEGENDIMAGE",
+            VERSION: "1.0.0",
+            LOCALE: this.locale,
+            SESSION: session,
+            MAPNAME: mapName,
+            WIDTH: String(width),
+            HEIGHT: String(height),
+            FORMAT: "PNG"
+        };
+        const url = this.stringifyGetUrl(params);
+        const response = await fetch(url);
+        if (isErrorResponse(response)) {
+            throw new MgError(response.statusText);
+        }
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
 }

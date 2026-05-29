@@ -13,13 +13,14 @@ import {
     IMapPrintCaptureOptions
 } from "../api/common";
 import { MapCapturerContext, IMapCapturerContextCallback } from "./map-capturer-context";
-import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious } from './hooks';
+import { useActiveMapName, useActiveMapView, useActiveMapExternalBaseLayers, useViewerLocale, useAvailableMaps, usePrevious, useConfiguredAgentUri, useConfiguredAgentKind } from './hooks';
 import { setViewRotation, setViewRotationEnabled } from '../actions/map';
 import { debug } from '../utils/logger';
 import { useActiveMapState } from './hooks-mapguide';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { TypedSelect, useElementContext } from "../components/elements/element-context";
 import { IMapProviderContext } from "../components/map-providers/base";
+import { MapAgentRequestBuilder } from "../api/builders/mapagent";
 
 const PAPER_SIZES = [
     { value: "210.0,297.0,A4", label: "A4 (210x297 mm; 8.27x11.69 In) " },
@@ -249,7 +250,9 @@ async function generateClientSidePdf(
     showScaleBar: boolean,
     showDisclaimer: boolean,
     showCoordinates: boolean,
+    showLegend: boolean,
     disclaimerText: string | undefined,
+    legendImageDataUrl: string | undefined,
     locale: string,
     backgroundColor?: string,
     fitExtent?: [number, number, number, number],
@@ -272,13 +275,16 @@ async function generateClientSidePdf(
     let footerHeight = 0;
     if (showScaleBar) footerHeight += 12;
     if (showDisclaimer) footerHeight += 6;
+    // Legend column: 300px at capture DPI converted to mm
+    const dpiVal = parseInt(dpi, 10);
+    const LEGEND_COL_MM = showLegend ? (300 / dpiVal) * 25.4 : 0;
+    const mapPrintW = fullPrintW - LEGEND_COL_MM;
     // Map fills from the top margin down to just above the footer
     const mapHeight = fullPrintH - footerHeight;
-    const dpiVal = parseInt(dpi, 10);
-    // Capture the map at print resolution
+    // Capture the map at print resolution (map area only, excluding legend column)
     const mapImagePromise = new Promise<string>((resolve) => {
         const captureOpts: IMapPrintCaptureOptions = {
-            paperWidthMm: fullPrintW,
+            paperWidthMm: mapPrintW,
             paperHeightMm: mapHeight,
             dpi: dpiVal,
             backgroundColor,
@@ -295,13 +301,31 @@ async function generateClientSidePdf(
     const format = tokens[2]?.toLowerCase() as string || "a4";
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pdf = new (jsPDF as any)(pdfOrientation, "mm", format);
-    // Map image starts at the top margin
+    // Map image starts at the top margin, offset by legend column
     const mapTop = margins.top;
-    pdf.addImage(mapImage, "JPEG", margins.left, mapTop, fullPrintW, mapHeight);
+    const mapLeft = margins.left + LEGEND_COL_MM;
+    pdf.addImage(mapImage, "JPEG", mapLeft, mapTop, mapPrintW, mapHeight);
     // Black outline around the map image
     pdf.setDrawColor(0);
     pdf.setLineWidth(0.2);
-    pdf.rect(margins.left, mapTop, fullPrintW, mapHeight, "S");
+    pdf.rect(mapLeft, mapTop, mapPrintW, mapHeight, "S");
+    // Legend image column (left side)
+    if (showLegend) {
+        if (legendImageDataUrl) {
+            pdf.addImage(legendImageDataUrl, "PNG", margins.left, mapTop, LEGEND_COL_MM, mapHeight);
+        } else {
+            // Placeholder for failed legend fetch
+            pdf.setFillColor(220, 220, 220);
+            pdf.rect(margins.left, mapTop, LEGEND_COL_MM, mapHeight, "F");
+            pdf.setFontSize(8);
+            pdf.setTextColor(128, 128, 128);
+            pdf.text("Legend\nunavailable", margins.left + LEGEND_COL_MM / 2, mapTop + mapHeight / 2, { align: "center" });
+        }
+        // Outline around legend column
+        pdf.setDrawColor(0);
+        pdf.setLineWidth(0.2);
+        pdf.rect(margins.left, mapTop, LEGEND_COL_MM, mapHeight, "S");
+    }
     // Title and subtitle overlay within the top margin area, above the map
     const TITLE_Y = 8;
     const SUBTITLE_Y = 14;
@@ -316,7 +340,7 @@ async function generateClientSidePdf(
     // Determine map extent for coordinate labels
     const extent = fitExtent ?? viewer.getCurrentExtent();
     const mapBottom = mapTop + mapHeight;
-    const MAP_RIGHT = margins.left + fullPrintW;
+    const MAP_RIGHT = mapLeft + mapPrintW;
     const COORD_BOX_H = 5;   // height of coordinate label box at font size 8
     const CORNER_MARGIN = 8; // mm spacing from map edges (room for watermark on bottom-right)
     const COORD_PADDING = 2; // mm padding inside coordinate box
@@ -327,7 +351,7 @@ async function generateClientSidePdf(
         // Top-left (NW corner): (minX, maxY)
         const tlLabel = `x:${extent[0].toFixed(6)}, y:${extent[3].toFixed(6)}`;
         const tlW = pdf.getTextWidth(tlLabel) + COORD_PADDING * 2;
-        const tlX = margins.left + CORNER_MARGIN;
+        const tlX = mapLeft + CORNER_MARGIN;
         const tlY = mapTop + CORNER_MARGIN;
         pdf.setFillColor(255, 255, 255);
         pdf.setDrawColor(0);
@@ -479,6 +503,8 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
 
     const viewer = useMapProviderContext();
     const locale = useViewerLocale();
+    const agentUri = useConfiguredAgentUri();
+    const agentKind = useConfiguredAgentKind();
     const activeMapName = useActiveMapName();
     const mapNames = useAvailableMaps()?.map(m => m.value);
     const map = useActiveMapState();
@@ -515,7 +541,7 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
     const onRotationChanged = (value: number) => {
         setRotation(value);
     };
-    const onGeneratePlot = () => {
+    const onGeneratePlot = async () => {
         if (clientSide) {
             const fitExtent = showAdvanced && normalizedBox
                 ? parseBoxToExtent(normalizedBox)
@@ -529,6 +555,32 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                 activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
                 activeCapturer?.setVisible(false);
             }
+            // Fetch legend image if Show Legend is checked and we have a MapGuide OL layer
+            let legendDataUrl: string | undefined;
+            if (showLegend && map && agentUri && agentKind === "mapagent") {
+                try {
+                    const builder = new MapAgentRequestBuilder(agentUri, locale);
+                    const dpiVal = parseInt(dpi, 10);
+                    // Compute map image height in mm to match legend strip height
+                    const mg = getMargin();
+                    const tokens = paperSize.split(",");
+                    const pH = orientation === "L" ? parseFloat(tokens[0]) : parseFloat(tokens[1]);
+                    let fh = 0;
+                    if (showScaleBar) fh += 12;
+                    if (showDisclaimer) fh += 6;
+                    const mapH = pH - mg.top - mg.buttom - fh;
+                    const legendPxH = Math.round((mapH / 25.4) * dpiVal);
+                    legendDataUrl = await builder.getMapLegendImage(
+                        map.SessionId,
+                        map.Name,
+                        300,
+                        legendPxH
+                    );
+                } catch (e) {
+                    debug(`Failed to fetch legend image: ${e}`);
+                    // legendDataUrl stays undefined → placeholder shown
+                }
+            }
             generateClientSidePdf(
                 viewer,
                 paperSize,
@@ -540,7 +592,9 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
                 showScaleBar,
                 showDisclaimer,
                 showCoordinates,
+                showLegend,
                 disclaimer,
+                legendDataUrl,
                 locale,
                 map?.BackgroundColor,
                 fitExtent,
@@ -674,7 +728,7 @@ export const QuickPlotContainer = (props: IQuickPlotContainerOwnProps) => {
             </>}
             <fieldset>
                 <legend>{xlate("QUICKPLOT_SHOWELEMENTS", locale)}</legend>
-                {!clientSide && <div><Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} /></div>}
+                {(!clientSide || !!map) && <div><Checkbox id="ShowLegendCheckBox" name="ShowLegend" checked={showLegend} onChange={onShowLegendChanged} label={xlate("QUICKPLOT_SHOWLEGEND", locale)} /></div>}
                 <div><Checkbox id="ShowNorthArrowCheckBox" name="ShowNorthArrow" checked={showNorthBar} onChange={onShowNorthArrowChanged} label={xlate("QUICKPLOT_SHOWNORTHARROW", locale)} /></div>
                 <div><Checkbox id="ShowCoordinatesCheckBox" name="ShowCoordinates" checked={showCoordinates} onChange={onShowCoordinatesChanged} label={xlate("QUICKPLOT_SHOWCOORDINTES", locale)} /></div>
                 <div><Checkbox id="ShowScaleBarCheckBox" name="ShowScaleBar" checked={showScaleBar} onChange={onShowScaleBarChanged} label={xlate("QUICKPLOT_SHOWSCALEBAR", locale)} /></div>

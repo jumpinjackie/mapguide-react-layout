@@ -19,6 +19,8 @@ const hooksMock = vi.hoisted(() => ({
    useViewerLocale: vi.fn(),
    useAvailableMaps: vi.fn(),
    usePrevious: vi.fn(),
+   useConfiguredAgentUri: vi.fn(),
+   useConfiguredAgentKind: vi.fn(),
 }));
 
 const hooksMapGuideMock = vi.hoisted(() => ({
@@ -179,6 +181,8 @@ describe("neo-map-viewer and quick-plot", () => {
       hooksMock.useViewerLocale.mockReturnValue("en");
       hooksMock.useAvailableMaps.mockReturnValue([{ name: "Map1", value: "Map1" }]);
       hooksMock.usePrevious.mockReturnValue(false);
+      hooksMock.useConfiguredAgentUri.mockReturnValue(undefined);
+      hooksMock.useConfiguredAgentKind.mockReturnValue("mapagent");
       swipeMock.useIsMapSwipeActive.mockReturnValue(false);
       swipeMock.useMapSwipeInfo.mockReturnValue(undefined);
       swipeMock.useIsComparisonActive.mockImplementation(() => swipeMock.useIsMapSwipeActive());

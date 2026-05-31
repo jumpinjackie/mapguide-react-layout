@@ -113,6 +113,10 @@
 - If the pull request includes changes to the documentation of the library, ensure that the pull request description includes a clear explanation of the changes to the documentation, including any new sections that have been added
 - Please include a manual testing plan in the pull request description if the changes made in the pull request are user-facing. This plan should include a clear explanation of the steps that need to be taken to test the changes, as well as any relevant information about the expected behavior of the library after the changes have been made.
 
+# Bash invocations
+
+- Avoid invoking multi-line bash commands. This author has a global ble.sh extension that means that a terminal session does not immediately execute multi-line bash commands anymore, multi-line bash commands require a Ctrl-J key combination to confirm execution of such commands. This can lead to accidentally executing incomplete commands if the user forgets to press Ctrl-J after pasting a multi-line command. This is doubly complicated by the VSCode terminal suppressing Ctrl-J by default. Unless you know how to issue a Ctrl-J command in the terminal you are using, do not generate multi-line bash commands.
+
 # Commits
 
 - Commit messages should be clear and concise, describing the changes made in the commit.

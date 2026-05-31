@@ -1,0 +1,1 @@
+import{l as e}from"./iframe-CoO1VusB.js";import{t}from"./react-dom-Cv07XnM5.js";var n=e(t(),1),r=async(e,t)=>new Promise(r=>{n.render(e,t,()=>r(null))}),i=e=>{n.unmountComponentAtNode(e)};export{r as renderElement,i as unmountElement};

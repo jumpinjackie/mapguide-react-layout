@@ -2,7 +2,7 @@ const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug
 import { a as __toESM, r as __exportAll } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react_dom, i as require_jsx_runtime, o as require_react } from "./chunks/react-vendor-debug.js";
 import { $t as fromLonLat, Cr as __vitePreload, Er as init_objectSpread2, Hn as buffer, Jt as init_objectWithoutProperties, P as DEVICE_PIXEL_RATIO, Qt as equivalent, Tr as _objectSpread2, V as createXYZ, W as TileGrid, Yn as createEmpty, Yt as register, dn as getArea, fn as getDistance, fr as getTopLeft, gn as METERS_PER_UNIT, gr as isEmpty, hn as Projection, k as easeOut, ln as transform, lr as getHeight, mr as getWidth, nn as get, qn as containsXY, qt as _objectWithoutProperties, sr as getCenter, tr as extend$1, un as transformExtent, wr as _asyncToGenerator, wt as unByKey } from "./chunks/geotiff-debug.js";
-import { C as require_Popover, S as zt, _ as combineReducers, a as Z, b as require_lodash_xor, c as Rnd, d as useDispatch, f as Provider, g as createSelector, h as configureStore$1, i as index, l as require_cjs, m as import_react_dom$1, n as require_lodash_debounce, o as geojsonvt, p as useSelector, r as stickybits, s as require_papaparse_min, t as require_immutability_helper, u as purify, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
+import { S as require_Popover, _ as proj4, a as geojsonvt, b as Fe, c as require_cjs, d as Provider, f as useSelector, g as combineReducers, h as createSelector, i as Z, l as purify, m as configureStore$1, n as stickybits, o as require_papaparse_min, p as import_react_dom$1, r as index, s as Rnd, t as require_lodash_debounce, u as useDispatch, v as require_lodash_xorby, x as zt, y as require_lodash_xor } from "./vendor-debug.js";
 import { C as RegularShape, S as CircleStyle, a as WMSCapabilities, at as fromExtent, b as Stroke, c as GeoJSON, ct as LineString, d as MultiPolygon, f as MultiPoint, g as Style, h as Text, i as TopoJSON, it as fromCircle, l as GeometryCollection, m as Feature, mt as Point, n as IGC, o as MVT, p as MultiLineString, q as asArray, r as GPX, rt as Polygon, s as KML, st as LinearRing, t as WKT, w as Icon$1, x as Fill } from "./chunks/ol-formats-debug.js";
 import { A as TileWMS, B as ImageMapGuide, C as getRenderPixel, D as Cluster, E as VectorTile, F as OSM, G as UrlTile, H as defaultImageLoadFunction, I as ImageLayer, K as LayerGroup, L as TileLayer, M as UTFGrid, N as BingMaps, O as VectorSource, P as TileDebug, R as View, S as ImageWMS, T as VectorTileLayer, U as XYZ, V as ImageSource, W as TileImage, _ as Rotate, a as Circle, b as Translate, c as Map$1, d as MouseWheelZoom, f as KeyboardZoom, g as DragPan, h as DragRotate, i as Draw, j as WebGLTileLayer, k as VectorLayer, l as PinchZoom, m as DragBox, n as Snap, o as Select, p as KeyboardPan, q as Collection, r as Extent, s as OverviewMap, t as Modify, u as PinchRotate, v as Attribution, w as toContext, x as Heatmap, y as Overlay, z as Static } from "./chunks/ol-debug.js";
 //#region src/constants.ts
@@ -8486,7 +8486,7 @@ var ScopedId = class {
 //#region src/api/registry/command-spec.ts
 init_objectSpread2();
 var scopedId$2 = new ScopedId();
-function isCommandSpec(cmd) {
+function isCommandSpec$1(cmd) {
 	return !strIsNullOrEmpty(cmd.command);
 }
 function isUIWidget(widget) {
@@ -8595,7 +8595,7 @@ function convertFlexLayoutUIItems(isStateless, items, widgetsByKey, locale, noTo
 				const widget = widgetsByKey[item.Widget];
 				if (widget && isUIWidget(widget)) {
 					const cmd = convertWidget(widget, locale, noToolbarLabels);
-					if (isStateless && isCommandSpec(cmd) && !isSupportedCommandInStatelessMode(cmd.command)) console.warn(`The widget (${widget.Name}) references a command (${cmd.command}) that is not supported in stateless mode. This widget will always be disabled`);
+					if (isStateless && isCommandSpec$1(cmd) && !isSupportedCommandInStatelessMode(cmd.command)) console.warn(`The widget (${widget.Name}) references a command (${cmd.command}) that is not supported in stateless mode. This widget will always be disabled`);
 					return cmd;
 				}
 			}
@@ -25933,8 +25933,81 @@ function configReducer(state = CONFIG_INITIAL_STATE, action) {
 	return state;
 }
 //#endregion
+//#region src/utils/immutable.ts
+init_objectSpread2();
+/**
+* Checks if a value is a plain object (not null, array, or primitive).
+*
+* @hidden
+* @since 0.15
+*/
+function isPlainObject(value) {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+/**
+* Checks if a spec object contains a recognized command key ($merge or $set).
+*
+* @hidden
+* @since 0.15
+*/
+function isCommandSpec(value) {
+	return "$merge" in value || "$set" in value;
+}
+/**
+* Applies an immutable update to state given a command spec, supporting only the
+* {@code $merge} and {@code $set} commands (the only ones used by this codebase).
+*
+* @param state - The source state (never mutated)
+* @param spec  - The update specification
+* @returns A new state object with the spec applied
+*
+* @example
+* ```ts
+* // $merge: shallow merge into an existing object
+* const s1 = immutableUpdate({ a: 1, b: 2 }, { "$merge": { b: 3, c: 4 } });
+* // s1 → { a: 1, b: 3, c: 4 }
+*
+* // $set: replace entirely
+* const s2 = immutableUpdate({ a: 1 }, { "$set": { x: 10 } });
+* // s2 → { x: 10 }
+* ```
+*
+* @hidden
+* @since 0.15
+*/
+function immutableUpdate(state, spec) {
+	if (!isPlainObject(spec)) return state;
+	if (isCommandSpec(spec)) {
+		if ("$set" in spec) return spec.$set;
+		if ("$merge" in spec) {
+			const mergeVal = spec.$merge;
+			if (isPlainObject(state)) return _objectSpread2(_objectSpread2({}, state), mergeVal);
+			return mergeVal;
+		}
+		return state;
+	}
+	const keys = Object.keys(spec);
+	if (keys.length === 0) return state;
+	let result = state;
+	for (const key of keys) {
+		const subSpec = spec[key];
+		if (isPlainObject(subSpec) && isCommandSpec(subSpec)) {
+			var _result;
+			const prevValue = result != null ? result[key] : void 0;
+			result = _objectSpread2(_objectSpread2({}, (_result = result) !== null && _result !== void 0 ? _result : {}), {}, { [key]: immutableUpdate(prevValue, subSpec) });
+		} else if (isPlainObject(subSpec)) {
+			var _result2;
+			const prevValue = result != null ? result[key] : void 0;
+			result = _objectSpread2(_objectSpread2({}, (_result2 = result) !== null && _result2 !== void 0 ? _result2 : {}), {}, { [key]: immutableUpdate(prevValue, subSpec) });
+		} else {
+			var _result3;
+			result = _objectSpread2(_objectSpread2({}, (_result3 = result) !== null && _result3 !== void 0 ? _result3 : {}), {}, { [key]: subSpec });
+		}
+	}
+	return result;
+}
+//#endregion
 //#region src/reducers/toolbar.ts
-var import_immutability_helper = /* @__PURE__ */ __toESM(require_immutability_helper());
 init_objectSpread2();
 function mergeFlyoutState(flyoutId, state, flyoutPayload, flyoutUpdateAction, closeOtherFlyouts = false, bSettingStates = false) {
 	const updateSpec = { flyouts: {} };
@@ -25945,7 +26018,7 @@ function mergeFlyoutState(flyoutId, state, flyoutPayload, flyoutUpdateAction, cl
 	if (closeOtherFlyouts) {
 		for (const key in state.flyouts) if (key != flyoutId) updateSpec.flyouts[key] = { "$merge": { open: false } };
 	}
-	return (0, import_immutability_helper.default)(state, updateSpec);
+	return immutableUpdate(state, updateSpec);
 }
 function mergeFlyoutCloseState(flyoutId, state, bSettingStates = false) {
 	return mergeFlyoutState(flyoutId, state, {
@@ -26139,7 +26212,7 @@ function modalReducer(state = MODAL_INITIAL_STATE, action) {
 				size: [action.payload.args.width, action.payload.args.height],
 				position: [action.payload.args.x, action.payload.args.y]
 			} } };
-			return (0, import_immutability_helper.default)(state, newData);
+			return immutableUpdate(state, newData);
 		}
 		case ActionType.MODAL_SHOW_URL: {
 			var _state$action$payload2;

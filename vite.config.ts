@@ -186,6 +186,36 @@ const codeSplitting = {
       },
       {
          /**
+          * jsPDF core library and its required dependencies (fflate, fast-png, base64-arraybuffer).
+          * Split from vendor so it only loads when QuickPlot (client-side mode) is used.
+          */
+         name: "jspdf",
+         test: (id: string) => {
+            const normalizedId = id.replace(/\\/g, "/");
+            return normalizedId.includes("/node_modules/jspdf/")
+               || normalizedId.includes("/node_modules/fflate/")
+               || normalizedId.includes("/node_modules/fast-png/")
+               || normalizedId.includes("/node_modules/base64-arraybuffer/");
+         },
+         priority: 4
+      },
+      {
+         /**
+          * jsPDF optional plugins (canvg, html2canvas). Used for advanced PDF features
+          * like HTML/SVG-to-canvas rendering. Split separately since QuickPlot's basic
+          * usage (image + text + shapes) doesn't require them.
+          */
+         name: "jspdf-plugins",
+         test: (id: string) => {
+            const normalizedId = id.replace(/\\/g, "/");
+            return normalizedId.includes("/node_modules/canvg/")
+               || normalizedId.includes("/node_modules/svg2pdf/")
+               || normalizedId.includes("/node_modules/html2canvas/");
+         },
+         priority: 3
+      },
+      {
+         /**
           * Catch-all for remaining node_modules dependencies.
           */
          name: "vendor",

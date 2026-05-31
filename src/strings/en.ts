@@ -329,4 +329,5 @@ export const STRINGS_EN: ILocalizedMessages = {
     "MSG_PANEL_WARNING": "Warning Messages",
     "MSG_PANEL_ERROR": "Error Messages",
     "ABOUT_HASH_LABEL": "Hash:",
+    "QUICKPLOT_DISCLAIMER": "This map was generated client-side and is for reference purposes only.",
 };

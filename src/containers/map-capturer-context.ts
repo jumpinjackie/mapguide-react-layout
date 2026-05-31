@@ -113,4 +113,12 @@ export class MapCapturerContext {
         this.viewer.getLayerManager().removeLayer(this.layerName);
         this.viewer.removeInteraction(this.intTranslate);
     }
+    /**
+     * Toggles the visibility of the capture box layer without removing it.
+     *
+     * @since 0.15
+     */
+    public setVisible(visible: boolean): void {
+        this.mapCapturerLayer.setVisible(visible);
+    }
 }

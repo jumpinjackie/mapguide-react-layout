@@ -586,6 +586,58 @@ export interface IMapImageExportOptions {
 }
 
 /**
+ * Options for capturing a map image at specific print dimensions
+ *
+ * @interface IMapPrintCaptureOptions
+ * @since 0.15
+ */
+export interface IMapPrintCaptureOptions {
+    /**
+     * The paper width in millimeters
+     */
+    paperWidthMm: number;
+    /**
+     * The paper height in millimeters
+     */
+    paperHeightMm: number;
+    /**
+     * The DPI to render at
+     */
+    dpi: number;
+    /**
+     * Optional background color in ARGB hex format (e.g. "FFCCD5E0").
+     * If provided, the canvas is filled with this color before compositing layer canvases.
+     *
+     * @since 0.15
+     */
+    backgroundColor?: string;
+    /**
+     * Optional extent to fit the map view to before capturing, as [minX, minY, maxX, maxY].
+     * If provided, the view is centered on this extent at the given scale and rotation,
+     * then restored after capture.
+     *
+     * @since 0.15
+     */
+    fitExtent?: [number, number, number, number];
+    /**
+     * Optional rotation in degrees to apply before capture. Only used when fitExtent is set.
+     *
+     * @since 0.15
+     */
+    rotation?: number;
+    /**
+     * Optional scale denominator for the capture. Only used when fitExtent is set.
+     *
+     * @since 0.15
+     */
+    scale?: number;
+    /**
+     * The callback that will receive the captured image data URL
+     */
+    callback: (imageBase64: string) => void;
+}
+
+/**
  * Describes the API for interacting with the map viewer
  *
  * @interface IMapViewer
@@ -1003,6 +1055,16 @@ export interface IMapViewer {
      * @since 0.14
      */
     exportImage(options: IMapImageExportOptions): void;
+    /**
+     * Captures the map at the specified print dimensions and DPI by temporarily resizing
+     * the map and adjusting the view resolution. After capture, the original map size and
+     * resolution are restored.
+     *
+     * @param {IMapPrintCaptureOptions} options
+     *er
+     * @since 0.15
+     */
+    captureMapPrintImage(options: IMapPrintCaptureOptions): void;
 }
 
 /**

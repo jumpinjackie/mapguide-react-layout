@@ -8,7 +8,7 @@ import { useViewerLocale, useActiveMapName } from './hooks';
 import { setCurrentView, showSelectedFeature } from '../actions/map';
 import { useAppState, useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import { CompositeSelection } from "../api/composite-selection";
-import { useElementContext } from "../components/elements/element-context";
+import { TypedSelect, useElementContext } from "../components/elements/element-context";
 import { useIsComparisonActive, useMapComparisonInfo } from "../components/map-viewer-swipe";
 import type { QueryMapFeaturesResponse } from "../api/contracts/query";
 import type { RuntimeMap } from "../api/contracts/runtime-map";
@@ -21,7 +21,6 @@ export interface ISelectionPanelContainerProps {
 
 const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
 const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
-const selectorSelectStyle: React.CSSProperties = { flex: 1 };
 const swipeSelectionRootStyle: React.CSSProperties = { display: "flex", flexDirection: "column", height: "100%" };
 const swipeSelectionPanelSlotStyle: React.CSSProperties = { position: "relative", flex: 1, minHeight: 0 };
 
@@ -101,19 +100,23 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
     const comparisonMapSelector = isComparisonActive && comparisonInfo ? (
         <div style={selectorContainerStyle}>
             <label htmlFor="selection-panel-map-select" style={selectorLabelStyle}>{tr("MAP_SWIPE_SELECTION_FOR", locale)}</label>
-            <select
+            <TypedSelect<string, false>
                 id="selection-panel-map-select"
                 value={selectedMapForSelection ?? activeMapName ?? ""}
-                onChange={e => setSelectedMapForSelection(e.target.value)}
-                style={selectorSelectStyle}
-            >
-                <option value={comparisonInfo.pair.primaryMapName}>
-                    {comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({comparisonInfo.pair.primaryMapName})
-                </option>
-                <option value={comparisonInfo.pair.secondaryMapName}>
-                    {comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({comparisonInfo.pair.secondaryMapName})
-                </option>
-            </select>
+                onChange={setSelectedMapForSelection}
+                items={[
+                    {
+                        value: comparisonInfo.pair.primaryMapName,
+                        label: `${comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} (${comparisonInfo.pair.primaryMapName})`
+                    },
+                    {
+                        value: comparisonInfo.pair.secondaryMapName,
+                        label: `${comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} (${comparisonInfo.pair.secondaryMapName})`
+                    }
+                ]}
+                fill
+                style={{ minWidth: 0 }}
+            />
         </div>
     ) : null;
 

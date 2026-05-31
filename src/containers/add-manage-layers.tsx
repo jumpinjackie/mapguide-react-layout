@@ -10,7 +10,7 @@ import { transformExtent } from "ol/proj";
 import { mapLayerAdded, addMapLayerBusyWorker, removeMapLayerBusyWorker, removeMapLayer, setMapLayerIndex, setMapLayerVisibility, setMapLayerOpacity, setMapLayerVectorStyle, setHeatmapLayerBlur, setHeatmapLayerRadius } from '../actions/map';
 import { IVectorLayerStyle, VectorStyleSource } from '../api/ol-style-contracts';
 import { useMapProviderContext, useReduxDispatch, useAppState } from "../components/map-providers/context";
-import { TabSetProps, useElementContext } from "../components/elements/element-context";
+import { TabSetProps, TypedSelect, useElementContext } from "../components/elements/element-context";
 import { useMapComparisonInfo, useIsComparisonActive } from "../components/map-viewer-swipe";
 
 const EMPTY_MANAGE_LAYERS: ILayerInfo[] = [];
@@ -195,22 +195,25 @@ export const AddManageLayersContainer = () => {
     // knows which map they are targeting for both adding and managing layers.
     const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
     const selectorLabelStyle: React.CSSProperties = { whiteSpace: "nowrap" };
-    const selectorSelectStyle: React.CSSProperties = { flex: 1 };
     const comparisonMapSelector = isComparisonActive && comparisonInfo ? (
         <div style={selectorContainerStyle}>
             <label style={selectorLabelStyle}>{tr("MAP_SWIPE_LAYER_MANAGER_FOR", locale)}</label>
-            <select
+            <TypedSelect<string, false>
                 value={selectedMapForLayers ?? activeMapName ?? ""}
-                onChange={e => setSelectedMapForLayers(e.target.value)}
-                style={selectorSelectStyle}
-            >
-                <option value={comparisonInfo.pair.primaryMapName}>
-                    {comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} ({comparisonInfo.pair.primaryMapName})
-                </option>
-                <option value={comparisonInfo.pair.secondaryMapName}>
-                    {comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} ({comparisonInfo.pair.secondaryMapName})
-                </option>
-            </select>
+                onChange={setSelectedMapForLayers}
+                items={[
+                    {
+                        value: comparisonInfo.pair.primaryMapName,
+                        label: `${comparisonInfo.pair.primaryLabel ?? tr("MAP_SWIPE_PRIMARY_LABEL", locale)} (${comparisonInfo.pair.primaryMapName})`
+                    },
+                    {
+                        value: comparisonInfo.pair.secondaryMapName,
+                        label: `${comparisonInfo.pair.secondaryLabel ?? tr("MAP_SWIPE_SECONDARY_LABEL", locale)} (${comparisonInfo.pair.secondaryMapName})`
+                    }
+                ]}
+                fill
+                style={{ minWidth: 0 }}
+            />
         </div>
     ) : null;
 

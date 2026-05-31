@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   background: rgba(16,22,26,0.5);
-  z-index: 1100;
+  z-index: 2200;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +12,7 @@
 
 .mrl-dialog-container {
   position: relative;
-  z-index: 1101;
+  z-index: 2201;
   display: flex;
   align-items: center;
   justify-content: center;

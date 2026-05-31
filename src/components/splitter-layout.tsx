@@ -231,7 +231,7 @@ export const SplitterLayout: React.FC<SplitterLayoutProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resizing]);
 
-    const handleSplitterMouseDown = React.useCallback((e: React.MouseEvent) => {
+    const handleSplitterMouseDown = React.useCallback((e: React.SyntheticEvent) => {
         e.stopPropagation();
         e.preventDefault();
         clearSelection();

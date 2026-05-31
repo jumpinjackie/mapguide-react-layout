@@ -1,7 +1,7 @@
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { DEFAULT_MODAL_POSITION, DEFAULT_MODAL_SIZE, IModalParameters, IModalReducerState } from '../api/common';
-import update from "immutability-helper";
+import { immutableUpdate } from "../utils/immutable";
 
 function tryRestoreModalSizeAndPosition(modal: IModalParameters, prevModal?: Partial<Pick<IModalParameters, "size" | "position">>) {
     if (prevModal?.position) {
@@ -43,7 +43,7 @@ export function modalReducer(state = MODAL_INITIAL_STATE, action: ViewerAction):
                         }
                     }
                 }
-                const newState = update(state, newData);
+                const newState = immutableUpdate(state, newData);
                 return newState;
             }
         case ActionType.MODAL_SHOW_URL:

@@ -744,6 +744,28 @@ describe("reducers/mouse", () => {
             const newState = toolbarReducer(initialState.toolbar, action);
             expect(newState).toBe(initialState.toolbar);
         });
+        it("closes other flyouts when opening a new one", () => {
+            const initialState = createInitialState();
+            const stateWithFlyouts = {
+                ...initialState.toolbar,
+                flyouts: {
+                    "flyoutA": { open: true, metrics: { posX: 0, posY: 0, width: 100, height: 50 } },
+                    "flyoutB": { open: false, metrics: null }
+                }
+            };
+            const action: any = {
+                type: ActionType.FLYOUT_OPEN,
+                payload: {
+                    flyoutId: "flyoutB",
+                    metrics: { posX: 50, posY: 25, width: 80, height: 60 }
+                }
+            };
+            const newState = toolbarReducer(stateWithFlyouts as any, action);
+            // Target flyout should be open
+            expect((newState.flyouts["flyoutB"] as any).open).toBe(true);
+            // Other flyout should be closed
+            expect((newState.flyouts["flyoutA"] as any).open).toBe(false);
+        });
     });
 
     describe(ActionType.FLYOUT_CLOSE, () => {

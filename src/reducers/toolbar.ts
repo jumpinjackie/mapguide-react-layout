@@ -1,5 +1,5 @@
 import { IToolbarReducerState, IDOMElementMetrics } from "../api/common";
-import update from 'immutability-helper';
+import { immutableUpdate } from "../utils/immutable";
 import { ActionType } from '../constants/actions';
 import { ViewerAction } from '../actions/defs';
 import { isElementState } from './template';
@@ -27,7 +27,7 @@ function mergeFlyoutState(flyoutId: string, state: any, flyoutPayload: any, flyo
             }
         }
     }
-    const newState = update(state, updateSpec);
+    const newState = immutableUpdate(state, updateSpec);
     return newState;
 }
 

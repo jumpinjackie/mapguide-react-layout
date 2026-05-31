@@ -49,6 +49,12 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
             if (contextMenuRef.current?.contains(target)) {
                 return;
             }
+            // Don't close the context menu if the user is interacting with the
+            // split-view drag handle (layout-splitter). Dragging the splitter
+            // should not be treated as an outside click.
+            if (target instanceof Element && target.closest(".layout-splitter")) {
+                return;
+            }
             props.onCloseFlyout(WEBLAYOUT_CONTEXTMENU);
         };
 

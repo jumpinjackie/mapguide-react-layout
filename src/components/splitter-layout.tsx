@@ -231,9 +231,17 @@ export const SplitterLayout: React.FC<SplitterLayoutProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resizing]);
 
-    const handleSplitterMouseDown = React.useCallback(() => {
+    const handleSplitterMouseDown = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
         clearSelection();
         setResizing(true);
+    }, []);
+
+    const handleSplitterClick = React.useCallback((e: React.MouseEvent) => {
+        // Prevent the click event (generated after a drag mousedown+mouseup)
+        // from bubbling to body-level click listeners (e.g. react-tiny-popover's onClickOutside)
+        e.stopPropagation();
     }, []);
 
     let containerClasses = 'splitter-layout';
@@ -277,6 +285,7 @@ export const SplitterLayout: React.FC<SplitterLayoutProps> = (props) => {
                     ref={splitterRef}
                     onMouseDown={handleSplitterMouseDown}
                     onTouchStart={handleSplitterMouseDown}
+                    onClick={handleSplitterClick}
                 />
             )}
             {wrappedChildren.length > 1 && wrappedChildren[1]}

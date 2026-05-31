@@ -55,7 +55,7 @@ To build the MapGuide docker image:
 To spin up this MapGuide docker container:
 
 ```
-./mapguide-devenv.sh run --packages-dir $PWD/docker/devenv/packages --www-dir $PWD/viewer --target-dir viewer --repositories-dir $PWD/docker/devenv/server-data
+./mapguide-devenv.sh run --packages-dir $PWD/docker/devenv/packages --www-mount viewer:$PWD/viewer --repositories-dir $PWD/docker/devenv/server-data
 ```
 
 The MapGuide web tier will then be accessible from port 8008. The server's repository data is volume mounted to `docker/devenv/server-data` so your data will persist between container runs.

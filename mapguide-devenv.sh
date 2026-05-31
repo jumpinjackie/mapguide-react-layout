@@ -14,6 +14,7 @@ PACKAGES_HOST_DIR=""
 REPOSITORIES_HOST_DIR=""
 WWW_HOST_DIR=""
 TARGET_DIR=""
+WWW_MOUNTS=""
 DETACH=0
 REMOVE=1
 USE_Z=1
@@ -52,8 +53,9 @@ Build options (for build and up):
 Run options (for run and up):
   --packages-dir <host_dir>  Host dir mounted to .../server/Packages (required)
   --repositories-dir <host_dir> Host dir mounted to .../server/Repositories (required)
-  --www-dir <host_dir>       Host dir mounted to .../webserverextensions/www/<target_dir> (required)
-  --target-dir <dir_name>    Relative subdir under www (required)
+  --www-mount <target>:<host_dir> Mount host dir to .../webserverextensions/www/<target> (repeatable)
+  --www-dir <host_dir>       (legacy) Mount host dir to .../webserverextensions/www/<target_dir>
+  --target-dir <dir_name>    (legacy) Relative subdir under www for --www-dir
   --name <name>              Container name (default: mrl-devenv-mapguide)
   --host-port <port>         Host port mapped to container 8008 (default: 8008)
   --detach                   Run in background
@@ -77,6 +79,21 @@ Caveat:
 Examples:
   ./mapguide-devenv.sh build --image mrl-devenv-mapguide:optimized --no-cache
 
+  # Using --www-mount (recommended)
+  ./mapguide-devenv.sh run \
+    --packages-dir /data/mg-packages \
+    --repositories-dir /data/mg-repositories \
+    --www-mount myapp:/data/mg-web \
+    --stream-log admin
+
+  # Mounting multiple www directories
+  ./mapguide-devenv.sh run \
+    --packages-dir /data/mg-packages \
+    --repositories-dir /data/mg-repositories \
+    --www-mount viewer:/data/viewer \
+    --www-mount myapp:/data/myapp
+
+  # Using legacy --www-dir/--target-dir (still supported)
   ./mapguide-devenv.sh run \
     --packages-dir /data/mg-packages \
     --repositories-dir /data/mg-repositories \
@@ -88,8 +105,7 @@ Examples:
     --pull \
     --packages-dir /data/mg-packages \
     --repositories-dir /data/mg-repositories \
-    --www-dir /data/mg-web \
-    --target-dir myapp \
+    --www-mount myapp:/data/mg-web \
     --stream-log apache-access
 EOF
 }
@@ -135,8 +151,11 @@ build_image() {
 validate_run_inputs() {
   [ -n "${PACKAGES_HOST_DIR}" ] || { echo "error: --packages-dir is required" >&2; exit 1; }
   [ -n "${REPOSITORIES_HOST_DIR}" ] || { echo "error: --repositories-dir is required" >&2; exit 1; }
-  [ -n "${WWW_HOST_DIR}" ] || { echo "error: --www-dir is required" >&2; exit 1; }
-  [ -n "${TARGET_DIR}" ] || { echo "error: --target-dir is required" >&2; exit 1; }
+
+  if [ -z "${WWW_MOUNTS}" ]; then
+    [ -n "${WWW_HOST_DIR}" ] || { echo "error: --www-dir is required (or use --www-mount)" >&2; exit 1; }
+    [ -n "${TARGET_DIR}" ] || { echo "error: --target-dir is required (or use --www-mount)" >&2; exit 1; }
+  fi
 
   case "${HOST_PORT}" in
     ''|*[!0-9]*)
@@ -145,37 +164,55 @@ validate_run_inputs() {
     ;;
   esac
 
-  case "${TARGET_DIR}" in
-    /*)
-      echo "error: --target-dir must be relative (no leading slash)" >&2
-      exit 1
-    ;;
-    *..*)
-      echo "error: --target-dir cannot contain '..'" >&2
-      exit 1
-    ;;
-  esac
+  if [ -n "${TARGET_DIR}" ]; then
+    case "${TARGET_DIR}" in
+      /*)
+        echo "error: --target-dir must be relative (no leading slash)" >&2
+        exit 1
+      ;;
+      *..*)
+        echo "error: --target-dir cannot contain '..'" >&2
+        exit 1
+      ;;
+    esac
+  fi
 
-  mkdir -p "${PACKAGES_HOST_DIR}" "${REPOSITORIES_HOST_DIR}" "${WWW_HOST_DIR}"
+  mkdir -p "${PACKAGES_HOST_DIR}" "${REPOSITORIES_HOST_DIR}"
+  if [ -n "${WWW_HOST_DIR}" ]; then
+    mkdir -p "${WWW_HOST_DIR}"
+  fi
 
   PACKAGES_HOST_DIR="$(readlink -f "${PACKAGES_HOST_DIR}" 2>/dev/null || true)"
   REPOSITORIES_HOST_DIR="$(readlink -f "${REPOSITORIES_HOST_DIR}" 2>/dev/null || true)"
-  WWW_HOST_DIR="$(readlink -f "${WWW_HOST_DIR}" 2>/dev/null || true)"
+  if [ -n "${WWW_HOST_DIR}" ]; then
+    WWW_HOST_DIR="$(readlink -f "${WWW_HOST_DIR}" 2>/dev/null || true)"
+  fi
 
   [ -n "${PACKAGES_HOST_DIR}" ] || { echo "error: invalid --packages-dir path" >&2; exit 1; }
   [ -n "${REPOSITORIES_HOST_DIR}" ] || { echo "error: invalid --repositories-dir path" >&2; exit 1; }
-  [ -n "${WWW_HOST_DIR}" ] || { echo "error: invalid --www-dir path" >&2; exit 1; }
+  if [ -n "${WWW_HOST_DIR}" ]; then
+    [ -n "${WWW_HOST_DIR}" ] || { echo "error: invalid --www-dir path" >&2; exit 1; }
+  fi
 }
 
 run_container() {
   ENTRYPOINT_ARGS="$*"
   PACKAGES_CONTAINER_DIR="/usr/local/mapguideopensource-4.0.0/server/Packages"
   REPOSITORIES_CONTAINER_DIR="/usr/local/mapguideopensource-4.0.0/server/Repositories"
-  WWW_CONTAINER_DIR="/usr/local/mapguideopensource-4.0.0/webserverextensions/www/${TARGET_DIR}"
+  WWW_BASE_DIR="/usr/local/mapguideopensource-4.0.0/webserverextensions/www"
   MOUNT_SUFFIX=""
 
   if [ "${USE_Z}" -eq 1 ]; then
     MOUNT_SUFFIX=":Z"
+  fi
+
+  # Build the www mount list: old-style pair first, then --www-mount entries
+  WWW_MOUNT_LIST=""
+  if [ -n "${WWW_HOST_DIR}" ] && [ -n "${TARGET_DIR}" ]; then
+    WWW_MOUNT_LIST="${TARGET_DIR}:${WWW_HOST_DIR}"
+  fi
+  if [ -n "${WWW_MOUNTS}" ]; then
+    WWW_MOUNT_LIST="${WWW_MOUNT_LIST}${WWW_MOUNT_LIST:+ }${WWW_MOUNTS# }"
   fi
 
   set -- run
@@ -190,8 +227,16 @@ run_container() {
     --name "${CONTAINER_NAME}" \
     -p "${HOST_PORT}:${CONTAINER_PORT}" \
     -v "${PACKAGES_HOST_DIR}:${PACKAGES_CONTAINER_DIR}${MOUNT_SUFFIX}" \
-    -v "${REPOSITORIES_HOST_DIR}:${REPOSITORIES_CONTAINER_DIR}${MOUNT_SUFFIX}" \
-    -v "${WWW_HOST_DIR}:${WWW_CONTAINER_DIR}${MOUNT_SUFFIX}" \
+    -v "${REPOSITORIES_HOST_DIR}:${REPOSITORIES_CONTAINER_DIR}${MOUNT_SUFFIX}"
+
+  # Emit a -v flag for each www mount entry
+  for mount_entry in ${WWW_MOUNT_LIST}; do
+    mount_target="${mount_entry%%:*}"
+    mount_host="${mount_entry#*:}"
+    set -- "$@" -v "${mount_host}:${WWW_BASE_DIR}/${mount_target}${MOUNT_SUFFIX}"
+  done
+
+  set -- "$@" \
     "${IMAGE_NAME}" \
     --no-tomcat
 
@@ -274,6 +319,31 @@ while [ "$#" -gt 0 ]; do
     --target-dir)
       [ "$#" -ge 2 ] || { echo "error: --target-dir requires a value" >&2; exit 1; }
       TARGET_DIR="$2"
+      shift 2
+    ;;
+    --www-mount)
+      [ "$#" -ge 2 ] || { echo "error: --www-mount requires a value" >&2; exit 1; }
+      WWW_MOUNT_ENTRY="$2"
+      WWW_MOUNT_TARGET="${WWW_MOUNT_ENTRY%%:*}"
+      WWW_MOUNT_HOST="${WWW_MOUNT_ENTRY#*:}"
+      if [ "${WWW_MOUNT_TARGET}" = "${WWW_MOUNT_ENTRY}" ] || [ -z "${WWW_MOUNT_HOST}" ]; then
+        echo "error: --www-mount must be in the format <target>:<host_dir>" >&2
+        exit 1
+      fi
+      case "${WWW_MOUNT_TARGET}" in
+        /*)
+          echo "error: --www-mount target '${WWW_MOUNT_TARGET}' must be relative (no leading slash)" >&2
+          exit 1
+        ;;
+        *..*)
+          echo "error: --www-mount target '${WWW_MOUNT_TARGET}' cannot contain '..'" >&2
+          exit 1
+        ;;
+      esac
+      mkdir -p "${WWW_MOUNT_HOST}"
+      WWW_MOUNT_HOST="$(readlink -f "${WWW_MOUNT_HOST}" 2>/dev/null || true)"
+      [ -n "${WWW_MOUNT_HOST}" ] || { echo "error: invalid --www-mount host path '$2'" >&2; exit 1; }
+      WWW_MOUNTS="${WWW_MOUNTS} ${WWW_MOUNT_TARGET}:${WWW_MOUNT_HOST}"
       shift 2
     ;;
     --name)

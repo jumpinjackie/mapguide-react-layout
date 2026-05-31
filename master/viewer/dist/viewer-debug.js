@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-deps-debug.js","./chunks/geotiff-codecs-debug.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-deps-debug.js","./chunks/geotiff-codecs-debug.js","./chunks/jspdf-debug.js","./chunks/ol-deps-debug.js"])))=>i.map(i=>d[i]);
 import { a as __toESM, r as __exportAll } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react_dom, i as require_jsx_runtime, o as require_react } from "./chunks/react-vendor-debug.js";
 import { $t as fromLonLat, Cr as __vitePreload, Er as init_objectSpread2, Hn as buffer, Jt as init_objectWithoutProperties, P as DEVICE_PIXEL_RATIO, Qt as equivalent, Tr as _objectSpread2, V as createXYZ, W as TileGrid, Yn as createEmpty, Yt as register, dn as getArea, fn as getDistance, fr as getTopLeft, gn as METERS_PER_UNIT, gr as isEmpty, hn as Projection, k as easeOut, ln as transform, lr as getHeight, mr as getWidth, nn as get, qn as containsXY, qt as _objectWithoutProperties, sr as getCenter, tr as extend$1, un as transformExtent, wr as _asyncToGenerator, wt as unByKey } from "./chunks/geotiff-debug.js";
@@ -350,7 +350,8 @@ var STRINGS_EN = {
 	"MSG_PANEL_INFO": "Info Messages",
 	"MSG_PANEL_WARNING": "Warning Messages",
 	"MSG_PANEL_ERROR": "Error Messages",
-	"ABOUT_HASH_LABEL": "Hash:"
+	"ABOUT_HASH_LABEL": "Hash:",
+	"QUICKPLOT_DISCLAIMER": "This map was generated client-side and is for reference purposes only."
 };
 //#endregion
 //#region src/utils/logger.ts
@@ -1659,7 +1660,6 @@ function openModalUrl(name, dispatch, url, modalTitle) {
 function isSupportedCommandInStatelessMode(name) {
 	switch (name) {
 		case "MapTip":
-		case "QuickPlot":
 		case "SelectRadius":
 		case "SelectPolygon":
 		case "Buffer":
@@ -4141,6 +4141,43 @@ var MapAgentRequestBuilder = class MapAgentRequestBuilder extends RequestBuilder
 	getTileTemplateUrl(resourceId, groupName, xPlaceholder, yPlaceholder, zPlaceholder, isXYZ) {
 		if (isXYZ) return `${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${yPlaceholder}&TILEROW=${xPlaceholder}&SCALEINDEX=${zPlaceholder}`;
 		else return `${this.agentUri}?OPERATION=GETTILEIMAGE&VERSION=1.2.0&USERNAME=Anonymous&MAPDEFINITION=${resourceId}&BASEMAPLAYERGROUPNAME=${groupName}&TILECOL=${xPlaceholder}&TILEROW=${yPlaceholder}&SCALEINDEX=${zPlaceholder}`;
+	}
+	/**
+	* Fetches a legend image strip from the mapagent.
+	*
+	* @param session The MapGuide session ID
+	* @param mapName The runtime map name
+	* @param width The legend image width in pixels
+	* @param height The legend image height in pixels
+	* @param format The image format (default: "PNG")
+	* @returns A data URL string for the legend PNG image
+	* @since 0.15
+	* @hidden
+	*/
+	getMapLegendImage(session, mapName, width, height, format = "PNG") {
+		var _this7 = this;
+		return _asyncToGenerator(function* () {
+			const params = {
+				OPERATION: "GETMAPLEGENDIMAGE",
+				VERSION: "1.0.0",
+				LOCALE: _this7.locale,
+				SESSION: session,
+				MAPNAME: mapName,
+				WIDTH: String(width),
+				HEIGHT: String(height),
+				FORMAT: "PNG"
+			};
+			const url = _this7.stringifyGetUrl(params);
+			const response = yield fetch(url);
+			if (isErrorResponse(response)) throw new MgError(response.statusText);
+			const blob = yield response.blob();
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onloadend = () => resolve(reader.result);
+				reader.onerror = reject;
+				reader.readAsDataURL(blob);
+			});
+		})();
 	}
 };
 _MapAgentRequestBuilder = MapAgentRequestBuilder;
@@ -18913,10 +18950,14 @@ function initMapGuideCommands() {
 	registerCommand(DefaultCommands.QuickPlot, {
 		iconClass: SPRITE_PRINT,
 		selected: () => false,
-		enabled: (state) => !state.stateless,
+		enabled: (state, parameters) => !state.stateless || (parameters === null || parameters === void 0 ? void 0 : parameters.ClientSide) === true || (parameters === null || parameters === void 0 ? void 0 : parameters.ClientSide) === "true",
 		invoke: (dispatch, getState, _viewer, parameters) => {
 			const config = getState().config;
-			const url = "component://QuickPlot";
+			let url = "component://QuickPlot";
+			const queryParts = [];
+			if ((parameters === null || parameters === void 0 ? void 0 : parameters.ClientSide) === true || (parameters === null || parameters === void 0 ? void 0 : parameters.ClientSide) === "true") queryParts.push("clientSide=true");
+			if ((parameters === null || parameters === void 0 ? void 0 : parameters.Disclaimer) && typeof parameters.Disclaimer === "string") queryParts.push(`disclaimer=${encodeURIComponent(parameters.Disclaimer)}`);
+			if (queryParts.length > 0) url = `${url}?${queryParts.join("&")}`;
 			const cmdDef = buildTargetedCommand(config, parameters);
 			openUrlInTarget(DefaultCommands.QuickPlot, cmdDef, config.capabilities.hasTaskPane, dispatch, url);
 		}
@@ -20847,6 +20888,14 @@ var MapCapturerContext = class {
 		this.viewer.getLayerManager().removeLayer(this.layerName);
 		this.viewer.removeInteraction(this.intTranslate);
 	}
+	/**
+	* Toggles the visibility of the capture box layer without removing it.
+	*
+	* @since 0.15
+	*/
+	setVisible(visible) {
+		this.mapCapturerLayer.setVisible(visible);
+	}
 };
 //#endregion
 //#region src/containers/quick-plot.tsx
@@ -20910,8 +20959,8 @@ var SCALES = [
 ];
 function getMargin() {
 	return {
-		top: 25.4,
-		buttom: 12.7,
+		top: 18,
+		buttom: 6.4,
 		left: 12.7,
 		right: 12.7
 	};
@@ -20979,8 +21028,239 @@ function toggleMapCapturerLayer(locale, viewer, mapNames, activeMapName, showAdv
 		}
 	}
 }
-var QuickPlotContainer = () => {
+/**
+* Parses a comma-separated coordinate string (polygon ring) into a bounding box extent.
+*
+* @since 0.15
+* @hidden
+*/
+function parseBoxToExtent(box) {
+	const parts = box.split(",").map(Number);
+	if (parts.length < 8 || parts.some(isNaN)) return;
+	let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+	for (let i = 0; i < parts.length; i += 2) {
+		if (i + 1 >= parts.length) break;
+		const x = parts[i];
+		const y = parts[i + 1];
+		if (x < minX) minX = x;
+		if (y < minY) minY = y;
+		if (x > maxX) maxX = x;
+		if (y > maxY) maxY = y;
+	}
+	return [
+		minX,
+		minY,
+		maxX,
+		maxY
+	];
+}
+/**
+* Generates a client-side PDF using jsPDF and the OpenLayers export-pdf technique.
+*
+* @since 0.15
+* @hidden
+*/
+function generateClientSidePdf(_x, _x2, _x3, _x4, _x5, _x6, _x7, _x8, _x9, _x10, _x11, _x12, _x13, _x14, _x15, _x16, _x17, _x18) {
+	return _generateClientSidePdf.apply(this, arguments);
+}
+function _generateClientSidePdf() {
+	_generateClientSidePdf = _asyncToGenerator(function* (viewer, paperSize, orientation, dpi, title, subtitle, showNorthBar, showScaleBar, showDisclaimer, showCoordinates, showLegend, disclaimerText, legendImageDataUrl, locale, backgroundColor, fitExtent, rotationDeg, scaleDenom) {
+		var _tokens$;
+		const { jsPDF } = yield __vitePreload(_asyncToGenerator(function* () {
+			const { jsPDF } = yield import("./chunks/jspdf-debug.js").then((n) => n.t);
+			return { jsPDF };
+		}), __vite__mapDeps([4,0,1,2,3,5]), import.meta.url);
+		const tokens = paperSize.split(",");
+		let paperW = parseFloat(tokens[0]);
+		let paperH = parseFloat(tokens[1]);
+		if (orientation === "L") {
+			paperW = parseFloat(tokens[1]);
+			paperH = parseFloat(tokens[0]);
+		}
+		const margins = getMargin();
+		const fullPrintW = paperW - margins.left - margins.right;
+		const fullPrintH = paperH - margins.top - margins.buttom;
+		let footerHeight = 0;
+		if (showScaleBar) footerHeight += 12;
+		if (showDisclaimer) footerHeight += 6;
+		const dpiVal = parseInt(dpi, 10);
+		const LEGEND_COL_MM = showLegend ? 300 / dpiVal * 25.4 : 0;
+		const mapPrintW = fullPrintW - LEGEND_COL_MM;
+		const mapHeight = fullPrintH - footerHeight;
+		const mapImage = yield new Promise((resolve) => {
+			const captureOpts = {
+				paperWidthMm: mapPrintW,
+				paperHeightMm: mapHeight,
+				dpi: dpiVal,
+				backgroundColor,
+				fitExtent,
+				rotation: rotationDeg,
+				scale: scaleDenom,
+				callback: (imageDataUrl) => resolve(imageDataUrl)
+			};
+			viewer.captureMapPrintImage(captureOpts);
+		});
+		const pdf = new jsPDF(orientation === "L" ? "landscape" : "portrait", "mm", ((_tokens$ = tokens[2]) === null || _tokens$ === void 0 ? void 0 : _tokens$.toLowerCase()) || "a4");
+		const mapTop = margins.top;
+		const mapLeft = margins.left + LEGEND_COL_MM;
+		pdf.addImage(mapImage, "JPEG", mapLeft, mapTop, mapPrintW, mapHeight);
+		pdf.setDrawColor(0);
+		pdf.setLineWidth(.2);
+		pdf.rect(mapLeft, mapTop, mapPrintW, mapHeight, "S");
+		if (showLegend) {
+			if (legendImageDataUrl) pdf.addImage(legendImageDataUrl, "PNG", margins.left, mapTop, LEGEND_COL_MM, mapHeight);
+			else {
+				pdf.setFillColor(220, 220, 220);
+				pdf.rect(margins.left, mapTop, LEGEND_COL_MM, mapHeight, "F");
+				pdf.setFontSize(8);
+				pdf.setTextColor(128, 128, 128);
+				pdf.text("Legend\nunavailable", margins.left + LEGEND_COL_MM / 2, mapTop + mapHeight / 2, { align: "center" });
+			}
+			pdf.setDrawColor(0);
+			pdf.setLineWidth(.2);
+			pdf.rect(margins.left, mapTop, LEGEND_COL_MM, mapHeight, "S");
+		}
+		const TITLE_Y = 8;
+		const SUBTITLE_Y = 14;
+		if (title) {
+			pdf.setFontSize(14);
+			pdf.text(title, margins.left, TITLE_Y, { align: "left" });
+		}
+		if (subtitle) {
+			pdf.setFontSize(10);
+			pdf.text(subtitle, margins.left, SUBTITLE_Y, { align: "left" });
+		}
+		const extent = fitExtent !== null && fitExtent !== void 0 ? fitExtent : viewer.getCurrentExtent();
+		const mapBottom = mapTop + mapHeight;
+		const MAP_RIGHT = mapLeft + mapPrintW;
+		const COORD_BOX_H = 5;
+		const CORNER_MARGIN = 8;
+		const COORD_PADDING = 2;
+		if (showCoordinates) {
+			pdf.setFontSize(8);
+			const tlLabel = `x:${extent[0].toFixed(6)}, y:${extent[3].toFixed(6)}`;
+			const tlW = pdf.getTextWidth(tlLabel) + COORD_PADDING * 2;
+			const tlX = mapLeft + CORNER_MARGIN;
+			const tlY = mapTop + CORNER_MARGIN;
+			pdf.setFillColor(255, 255, 255);
+			pdf.setDrawColor(0);
+			pdf.setLineWidth(.3);
+			pdf.rect(tlX, tlY, tlW, COORD_BOX_H, "FD");
+			pdf.setTextColor(0);
+			pdf.text(tlLabel, tlX + COORD_PADDING, tlY + COORD_BOX_H - 1.5, { align: "left" });
+			const brLabel = `x:${extent[2].toFixed(6)}, y:${extent[1].toFixed(6)}`;
+			const brW = pdf.getTextWidth(brLabel) + COORD_PADDING * 2;
+			const brX = MAP_RIGHT - brW - CORNER_MARGIN;
+			const brY = mapBottom - COORD_BOX_H - CORNER_MARGIN;
+			pdf.setFillColor(255, 255, 255);
+			pdf.setDrawColor(0);
+			pdf.setLineWidth(.3);
+			pdf.rect(brX, brY, brW, COORD_BOX_H, "FD");
+			pdf.text(brLabel, brX + COORD_PADDING, brY + COORD_BOX_H - 1.5, { align: "left" });
+		}
+		if (showNorthBar) {
+			const arrowBaseY = showCoordinates ? mapBottom - COORD_BOX_H - CORNER_MARGIN - 3 : mapBottom - CORNER_MARGIN;
+			const ARROW_CENTER_X = MAP_RIGHT - CORNER_MARGIN - 6;
+			const ARROW_HEIGHT = 10;
+			pdf.setFillColor(0);
+			pdf.triangle(ARROW_CENTER_X, arrowBaseY - ARROW_HEIGHT, ARROW_CENTER_X - 5, arrowBaseY, ARROW_CENTER_X + 5, arrowBaseY, "F");
+			pdf.setFontSize(10);
+			pdf.setTextColor(0);
+			pdf.text("N", ARROW_CENTER_X, arrowBaseY - ARROW_HEIGHT - 1, { align: "center" });
+		}
+		if (showScaleBar) {
+			var _UNIT_TO_M$suffix;
+			const scaleBarY = mapBottom + 8;
+			const N = scaleDenom;
+			let pointResolution = N / 1e3;
+			const MIN_WIDTH_MM = 64 * .28;
+			const MAX_WIDTH_MM = fullPrintW * .55;
+			let suffix;
+			let nominalCount = MIN_WIDTH_MM * pointResolution;
+			if (nominalCount < 1e-6) {
+				suffix = "nm";
+				pointResolution *= 1e9;
+			} else if (nominalCount < .001) {
+				suffix = "μm";
+				pointResolution *= 1e6;
+			} else if (nominalCount < 1) {
+				suffix = "mm";
+				pointResolution *= 1e3;
+			} else if (nominalCount < 1e3) suffix = "m";
+			else {
+				suffix = "km";
+				pointResolution /= 1e3;
+			}
+			const LEADING_DIGITS = [
+				1,
+				2,
+				5
+			];
+			let i = 3 * Math.floor(Math.log(MIN_WIDTH_MM * pointResolution) / Math.log(10));
+			let count = 0, widthMm = 0, prevCount = 0, prevWidth = 0;
+			while (true) {
+				const decimalCount = Math.floor(i / 3);
+				const decimal = Math.pow(10, decimalCount);
+				count = LEADING_DIGITS[(i % 3 + 3) % 3] * decimal;
+				widthMm = count / pointResolution;
+				if (isNaN(widthMm)) break;
+				if (prevCount > 0 && widthMm > MAX_WIDTH_MM) {
+					count = prevCount;
+					widthMm = prevWidth;
+					break;
+				}
+				if (widthMm >= MIN_WIDTH_MM) break;
+				prevCount = count;
+				prevWidth = widthMm;
+				i++;
+			}
+			const groundM = count * ((_UNIT_TO_M$suffix = {
+				"nm": 1e-9,
+				"μm": 1e-6,
+				"mm": .001,
+				"m": 1,
+				"km": 1e3
+			}[suffix]) !== null && _UNIT_TO_M$suffix !== void 0 ? _UNIT_TO_M$suffix : 1);
+			const groundFt = Math.round(groundM * 3.28084);
+			const actualScale = Math.round(N);
+			pdf.setDrawColor(0);
+			pdf.setLineWidth(.3);
+			pdf.line(margins.left, scaleBarY, margins.left + widthMm, scaleBarY);
+			pdf.line(margins.left, scaleBarY - 2, margins.left, scaleBarY + 2);
+			pdf.line(margins.left + widthMm, scaleBarY - 2, margins.left + widthMm, scaleBarY + 2);
+			pdf.setFontSize(7);
+			pdf.setTextColor(0);
+			const unitLabel = `${count} ${suffix}`;
+			pdf.text(unitLabel, margins.left, scaleBarY - 3, { align: "left" });
+			pdf.text(`${groundFt} ft`, margins.left, scaleBarY + 4, { align: "left" });
+			const dateStr = (/* @__PURE__ */ new Date()).toLocaleDateString("en-US", {
+				month: "short",
+				day: "2-digit",
+				year: "numeric"
+			});
+			const infoX = margins.left + widthMm + 6;
+			pdf.setFontSize(7);
+			pdf.text(`${dateStr}`, infoX, scaleBarY - 3, { align: "left" });
+			pdf.text(`Scale 1:${actualScale}`, infoX, scaleBarY + 4, { align: "left" });
+		}
+		if (showDisclaimer) {
+			const discText = disclaimerText || tr("QUICKPLOT_DISCLAIMER", locale);
+			const discY = showScaleBar ? mapBottom + 16 : mapBottom + 5;
+			pdf.setFontSize(8);
+			pdf.setTextColor(0);
+			pdf.text(discText, MAP_RIGHT, discY, {
+				align: "right",
+				maxWidth: fullPrintW * .6
+			});
+		}
+		const filename = title ? `${title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf` : "quickplot.pdf";
+		pdf.save(filename);
+	});
+	return _generateClientSidePdf.apply(this, arguments);
+}
+var QuickPlotContainer = (props) => {
 	var _useAvailableMaps, _useActiveMapExternal;
+	const { clientSide, disclaimer } = props;
 	const { Slider, Callout, Button, Select, FormGroup, InputGroup, Checkbox } = useElementContext();
 	const [title, setTitle] = import_react.useState("");
 	const [subTitle, setSubTitle] = import_react.useState("");
@@ -20999,6 +21279,8 @@ var QuickPlotContainer = () => {
 	const [normalizedBox, setNormalizedBox] = import_react.useState("");
 	const viewer = useMapProviderContext();
 	const locale = useViewerLocale();
+	const agentUri = useConfiguredAgentUri();
+	const agentKind = useConfiguredAgentKind();
 	const activeMapName = useActiveMapName();
 	const mapNames = (_useAvailableMaps = useAvailableMaps()) === null || _useAvailableMaps === void 0 ? void 0 : _useAvailableMaps.map((m) => m.value);
 	const map = useActiveMapState();
@@ -21034,7 +21316,43 @@ var QuickPlotContainer = () => {
 	const onRotationChanged = (value) => {
 		setRotation(value);
 	};
-	const onGeneratePlot = () => {};
+	const onGeneratePlot = function() {
+		var _ref = _asyncToGenerator(function* () {
+			if (clientSide) {
+				var _view$scale;
+				const fitExtent = showAdvanced && normalizedBox ? parseBoxToExtent(normalizedBox) : void 0;
+				const rotDeg = showAdvanced ? rotation : void 0;
+				const scaleVal = showAdvanced ? parseFloat(scale) : (_view$scale = view === null || view === void 0 ? void 0 : view.scale) !== null && _view$scale !== void 0 ? _view$scale : 5e3;
+				let activeCapturer;
+				if (showAdvanced && mapNames && activeMapName) {
+					activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
+					activeCapturer === null || activeCapturer === void 0 || activeCapturer.setVisible(false);
+				}
+				let legendDataUrl;
+				if (showLegend && map && agentUri && agentKind === "mapagent") try {
+					const builder = new MapAgentRequestBuilder(agentUri, locale);
+					const dpiVal = parseInt(dpi, 10);
+					const mg = getMargin();
+					const tokens = paperSize.split(",");
+					const pH = orientation === "L" ? parseFloat(tokens[0]) : parseFloat(tokens[1]);
+					let fh = 0;
+					if (showScaleBar) fh += 12;
+					if (showDisclaimer) fh += 6;
+					const mapH = pH - mg.top - mg.buttom - fh;
+					const legendPxH = Math.round(mapH / 25.4 * dpiVal);
+					legendDataUrl = yield builder.getMapLegendImage(map.SessionId, map.Name, 300, legendPxH);
+				} catch (e) {
+					debug(`Failed to fetch legend image: ${e}`);
+				}
+				generateClientSidePdf(viewer, paperSize, orientation, dpi, title, subTitle, showNorthBar, showScaleBar, showDisclaimer, showCoordinates, showLegend, disclaimer, legendDataUrl, locale, map === null || map === void 0 ? void 0 : map.BackgroundColor, fitExtent, rotDeg, scaleVal).finally(() => {
+					activeCapturer === null || activeCapturer === void 0 || activeCapturer.setVisible(true);
+				});
+			}
+		});
+		return function onGeneratePlot() {
+			return _ref.apply(this, arguments);
+		};
+	}();
 	const updateBoxCoords = (box, normalizedBox) => {
 		setBox(box);
 		setNormalizedBox(normalizedBox);
@@ -21108,11 +21426,15 @@ var QuickPlotContainer = () => {
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 			id: "Form1",
 			name: "Form1",
-			target: "_blank",
-			method: "post",
-			action: url,
+			target: clientSide ? void 0 : "_blank",
+			method: clientSide ? void 0 : "post",
+			action: clientSide ? void 0 : url,
+			onSubmit: clientSide ? (e) => {
+				e.preventDefault();
+				onGeneratePlot();
+			} : void 0,
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+				!clientSide && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 					type: "hidden",
 					id: "printId",
 					name: "printId",
@@ -21162,55 +21484,54 @@ var QuickPlotContainer = () => {
 						items: ORIENTATIONS
 					})
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+				!clientSide && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 					type: "hidden",
 					id: "paperSize",
 					name: "paperSize",
 					value: ppSize
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 					type: "hidden",
 					id: "printSize",
 					name: "printSize",
 					value: prSize
-				}),
+				})] }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("fieldset", { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("legend", { children: tr("QUICKPLOT_SHOWELEMENTS", locale) }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+					(!clientSide || !!map) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
 						id: "ShowLegendCheckBox",
 						name: "ShowLegend",
 						checked: showLegend,
 						onChange: onShowLegendChanged,
 						label: tr("QUICKPLOT_SHOWLEGEND", locale)
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+					}) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
 						id: "ShowNorthArrowCheckBox",
 						name: "ShowNorthArrow",
 						checked: showNorthBar,
 						onChange: onShowNorthArrowChanged,
 						label: tr("QUICKPLOT_SHOWNORTHARROW", locale)
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+					}) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
 						id: "ShowCoordinatesCheckBox",
 						name: "ShowCoordinates",
 						checked: showCoordinates,
 						onChange: onShowCoordinatesChanged,
 						label: tr("QUICKPLOT_SHOWCOORDINTES", locale)
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+					}) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
 						id: "ShowScaleBarCheckBox",
 						name: "ShowScaleBar",
 						checked: showScaleBar,
 						onChange: onShowScaleBarChanged,
 						label: tr("QUICKPLOT_SHOWSCALEBAR", locale)
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
+					}) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
 						id: "ShowDisclaimerCheckBox",
 						name: "ShowDisclaimer",
 						checked: showDisclaimer,
 						onChange: onShowDisclaimerChanged,
 						label: tr("QUICKPLOT_SHOWDISCLAIMER", locale)
-					})
+					}) })
 				] }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "HPlaceholder5px" }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Checkbox, {
@@ -21237,6 +21558,7 @@ var QuickPlotContainer = () => {
 								fill: true,
 								id: "dpi",
 								name: "dpi",
+								value: dpi,
 								onChange: (e) => setDpi(e),
 								items: DPIS
 							})
@@ -21282,53 +21604,55 @@ var QuickPlotContainer = () => {
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "ButtonContainer FixWidth",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						type: "submit",
+						type: clientSide ? "button" : "submit",
 						variant: "primary",
 						icon: "print",
 						onClick: onGeneratePlot,
 						children: tr("QUICKPLOT_GENERATE", locale)
 					})
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "margin",
-					name: "margin"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "normalizedBox",
-					name: "normalizedBox",
-					value: normBox
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "rotation",
-					name: "rotation",
-					value: -(rotation || 0)
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "sessionId",
-					name: "sessionId",
-					value: map.SessionId
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "mapName",
-					name: "mapName",
-					value: map.Name
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "box",
-					name: "box",
-					value: theBox
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "hidden",
-					id: "legalNotice",
-					name: "legalNotice"
-				})
+				!clientSide && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "margin",
+						name: "margin"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "normalizedBox",
+						name: "normalizedBox",
+						value: normBox
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "rotation",
+						name: "rotation",
+						value: -(rotation || 0)
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "sessionId",
+						name: "sessionId",
+						value: map.SessionId
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "mapName",
+						name: "mapName",
+						value: map.Name
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "box",
+						name: "box",
+						value: theBox
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						type: "hidden",
+						id: "legalNotice",
+						name: "legalNotice"
+					})
+				] })
 			]
 		})
 	});
@@ -21924,6 +22248,93 @@ var BaseMapProviderContext = class {
 					});
 					options.callback(mapCanvas.toDataURL(options.exportMimeType));
 				}
+			});
+			map.renderSync();
+		}
+	}
+	/**
+	* Captures the map at the specified print dimensions and DPI by temporarily resizing
+	* the map and adjusting the view resolution. If a fitExtent is provided, the view is
+	* also re-centered on that extent with the given scale and rotation before capture,
+	* then restored afterward.
+	*
+	* @param {IMapPrintCaptureOptions} options
+	* @since 0.15
+	*/
+	captureMapPrintImage(options) {
+		if (this._map) {
+			var _view$getResolution;
+			const map = this._map;
+			const targetWidth = Math.round(options.paperWidthMm * options.dpi / 25.4);
+			const targetHeight = Math.round(options.paperHeightMm * options.dpi / 25.4);
+			const originalSize = map.getSize();
+			const originalView = map.getView();
+			const originalCenter = originalView.getCenter();
+			const originalResolution = originalView.getResolution();
+			if (!originalSize || originalResolution == null || !originalCenter) return;
+			let view = originalView;
+			let tempView;
+			if (options.rotation != null) {
+				tempView = new View({
+					enableRotation: true,
+					center: originalCenter,
+					resolution: originalResolution,
+					rotation: options.rotation * Math.PI / 180,
+					projection: originalView.getProjection(),
+					resolutions: originalView.getResolutions(),
+					minResolution: originalView.getMinResolution(),
+					maxResolution: originalView.getMaxResolution(),
+					maxZoom: originalView.getMaxZoom(),
+					minZoom: originalView.getMinZoom(),
+					zoom: originalView.getZoom()
+				});
+				map.setView(tempView);
+				view = tempView;
+			}
+			let fittedResolution = (_view$getResolution = view.getResolution()) !== null && _view$getResolution !== void 0 ? _view$getResolution : originalResolution;
+			if (options.fitExtent) {
+				const [minX, minY, maxX, maxY] = options.fitExtent;
+				const centerX = (minX + maxX) / 2;
+				const centerY = (minY + maxY) / 2;
+				view.setCenter([centerX, centerY]);
+				if (options.scale != null) {
+					fittedResolution = this.scaleToResolution(options.scale);
+					view.setResolution(fittedResolution);
+				}
+			}
+			const printSize = [targetWidth, targetHeight];
+			map.setSize(printSize);
+			const scaling = Math.min(targetWidth / originalSize[0], targetHeight / originalSize[1]);
+			view.setResolution(fittedResolution / scaling);
+			map.once("rendercomplete", () => {
+				const mapCanvas = document.createElement("canvas");
+				mapCanvas.width = targetWidth;
+				mapCanvas.height = targetHeight;
+				const mapContext = mapCanvas.getContext("2d");
+				if (mapContext) {
+					if (options.backgroundColor) {
+						mapContext.fillStyle = options.backgroundColor.length >= 7 ? `#${options.backgroundColor.slice(-6)}` : `#${options.backgroundColor}`;
+						mapContext.fillRect(0, 0, targetWidth, targetHeight);
+					}
+					Array.prototype.forEach.call(document.querySelectorAll(".ol-layer canvas, .external-vector-layer canvas"), function(canvas) {
+						if (canvas.width > 0) {
+							var _parentNode$style$opa2, _parentNode$style2, _transform$match2;
+							const parentNode = canvas.parentNode;
+							const opacity = (_parentNode$style$opa2 = parentNode === null || parentNode === void 0 || (_parentNode$style2 = parentNode.style) === null || _parentNode$style2 === void 0 ? void 0 : _parentNode$style2.opacity) !== null && _parentNode$style$opa2 !== void 0 ? _parentNode$style$opa2 : "";
+							mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
+							const matrix = (_transform$match2 = canvas.style.transform.match(/^matrix\(([^\(]*)\)$/)) === null || _transform$match2 === void 0 || (_transform$match2 = _transform$match2[1]) === null || _transform$match2 === void 0 || (_transform$match2 = _transform$match2.split(",")) === null || _transform$match2 === void 0 ? void 0 : _transform$match2.map(Number);
+							if (matrix) {
+								CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+								mapContext.drawImage(canvas, 0, 0);
+							}
+						}
+					});
+					mapContext.globalAlpha = 1;
+					mapContext.setTransform(1, 0, 0, 1, 0, 0);
+					options.callback(mapCanvas.toDataURL("image/jpeg"));
+				}
+				map.setSize(originalSize);
+				if (tempView) map.setView(originalView);
 			});
 			map.renderSync();
 		}

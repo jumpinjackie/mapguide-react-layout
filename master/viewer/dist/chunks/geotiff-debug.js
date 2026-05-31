@@ -1,5 +1,5 @@
 import { a as __toESM, n as __esmMin, r as __exportAll, t as __commonJSMin } from "./rolldown-runtime-debug.js";
-import { i as inflate_1, n as ZSTDDecoder, r as require_LercDecode, t as ZSTDDecoder$1 } from "./geotiff-codecs-debug.js";
+import { a as inflate_1, n as ZSTDDecoder, r as require_LercDecode, t as ZSTDDecoder$1 } from "./geotiff-codecs-debug.js";
 import { a as getFloat16, i as getAttribute, n as browser_default, r as findTagsByName, t as QuickLRU } from "./geotiff-deps-debug.js";
 //#region \0@oxc-project+runtime@0.132.0/helpers/typeof.js
 function _typeof(o) {

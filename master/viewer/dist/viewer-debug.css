@@ -886,12 +886,12 @@
   position: fixed;
   inset: 0;
   background: rgba(16,22,26,0.5);
-  z-index: 1000;
+  z-index: 2100;
 }
 
 .mrl-drawer {
   position: fixed;
-  z-index: 1001;
+  z-index: 2101;
   background: var(--mrl-color-bg);
   box-shadow: var(--mrl-shadow-md);
   display: flex;
@@ -1022,7 +1022,7 @@
   position: fixed;
   inset: 0;
   background: rgba(16,22,26,0.5);
-  z-index: 1100;
+  z-index: 2200;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1030,7 +1030,7 @@
 
 .mrl-dialog-container {
   position: relative;
-  z-index: 1101;
+  z-index: 2201;
   display: flex;
   align-items: center;
   justify-content: center;

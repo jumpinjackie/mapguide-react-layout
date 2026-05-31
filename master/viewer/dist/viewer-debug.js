@@ -6653,6 +6653,7 @@ var FlyoutRegion = (props) => {
 			const target = evt.target;
 			if (!(target instanceof Node)) return;
 			if ((_contextMenuRef$curre = contextMenuRef.current) === null || _contextMenuRef$curre === void 0 ? void 0 : _contextMenuRef$curre.contains(target)) return;
+			if (target instanceof Element && target.closest(".layout-splitter")) return;
 			props.onCloseFlyout(WEBLAYOUT_CONTEXTMENU);
 		};
 		document.addEventListener("mousedown", dismissContextMenu, true);
@@ -10097,9 +10098,14 @@ var SplitterLayout = (props) => {
 		if (resizing && props.onDragStart) props.onDragStart();
 		else if (!resizing && props.onDragEnd) props.onDragEnd();
 	}, [resizing]);
-	const handleSplitterMouseDown = import_react.useCallback(() => {
+	const handleSplitterMouseDown = import_react.useCallback((e) => {
+		e.stopPropagation();
+		e.preventDefault();
 		clearSelection();
 		setResizing(true);
+	}, []);
+	const handleSplitterClick = import_react.useCallback((e) => {
+		e.stopPropagation();
 	}, []);
 	let containerClasses = "splitter-layout";
 	if (props.customClassName) containerClasses += ` ${props.customClassName}`;
@@ -10134,7 +10140,8 @@ var SplitterLayout = (props) => {
 				className: "layout-splitter",
 				ref: splitterRef,
 				onMouseDown: handleSplitterMouseDown,
-				onTouchStart: handleSplitterMouseDown
+				onTouchStart: handleSplitterMouseDown,
+				onClick: handleSplitterClick
 			}),
 			wrappedChildren.length > 1 && wrappedChildren[1]
 		]
@@ -18273,6 +18280,9 @@ var MapComparisonControl = () => {
 				setIsDragging(false);
 				e.stopPropagation();
 			},
+			onMouseDown: (e) => e.stopPropagation(),
+			onMouseUp: (e) => e.stopPropagation(),
+			onClick: (e) => e.stopPropagation(),
 			style: {
 				position: "absolute",
 				top: 0,
@@ -18532,27 +18542,18 @@ var AddManageLayersContainer = () => {
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
 			style: { whiteSpace: "nowrap" },
 			children: tr("MAP_SWIPE_LAYER_MANAGER_FOR", locale)
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TypedSelect, {
 			value: (_ref = selectedMapForLayers !== null && selectedMapForLayers !== void 0 ? selectedMapForLayers : activeMapName) !== null && _ref !== void 0 ? _ref : "",
-			onChange: (e) => setSelectedMapForLayers(e.target.value),
-			style: { flex: 1 },
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+			onChange: setSelectedMapForLayers,
+			items: [{
 				value: comparisonInfo.pair.primaryMapName,
-				children: [
-					(_comparisonInfo$pair$ = comparisonInfo.pair.primaryLabel) !== null && _comparisonInfo$pair$ !== void 0 ? _comparisonInfo$pair$ : tr("MAP_SWIPE_PRIMARY_LABEL", locale),
-					" (",
-					comparisonInfo.pair.primaryMapName,
-					")"
-				]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+				label: `${(_comparisonInfo$pair$ = comparisonInfo.pair.primaryLabel) !== null && _comparisonInfo$pair$ !== void 0 ? _comparisonInfo$pair$ : tr("MAP_SWIPE_PRIMARY_LABEL", locale)} (${comparisonInfo.pair.primaryMapName})`
+			}, {
 				value: comparisonInfo.pair.secondaryMapName,
-				children: [
-					(_comparisonInfo$pair$2 = comparisonInfo.pair.secondaryLabel) !== null && _comparisonInfo$pair$2 !== void 0 ? _comparisonInfo$pair$2 : tr("MAP_SWIPE_SECONDARY_LABEL", locale),
-					" (",
-					comparisonInfo.pair.secondaryMapName,
-					")"
-				]
-			})]
+				label: `${(_comparisonInfo$pair$2 = comparisonInfo.pair.secondaryLabel) !== null && _comparisonInfo$pair$2 !== void 0 ? _comparisonInfo$pair$2 : tr("MAP_SWIPE_SECONDARY_LABEL", locale)} (${comparisonInfo.pair.secondaryMapName})`
+			}],
+			fill: true,
+			style: { minWidth: 0 }
 		})]
 	}) : null;
 	if (primaryLayers) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -20462,7 +20463,6 @@ var selectorContainerStyle = {
 	marginBottom: 8
 };
 var selectorLabelStyle = { whiteSpace: "nowrap" };
-var selectorSelectStyle = { flex: 1 };
 var swipeSelectionRootStyle = {
 	display: "flex",
 	flexDirection: "column",
@@ -20534,28 +20534,19 @@ var SelectionPanelContainer = (props) => {
 			htmlFor: "selection-panel-map-select",
 			style: selectorLabelStyle,
 			children: tr("MAP_SWIPE_SELECTION_FOR", locale)
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TypedSelect, {
 			id: "selection-panel-map-select",
 			value: (_ref = selectedMapForSelection !== null && selectedMapForSelection !== void 0 ? selectedMapForSelection : activeMapName) !== null && _ref !== void 0 ? _ref : "",
-			onChange: (e) => setSelectedMapForSelection(e.target.value),
-			style: selectorSelectStyle,
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+			onChange: setSelectedMapForSelection,
+			items: [{
 				value: comparisonInfo.pair.primaryMapName,
-				children: [
-					(_comparisonInfo$pair$ = comparisonInfo.pair.primaryLabel) !== null && _comparisonInfo$pair$ !== void 0 ? _comparisonInfo$pair$ : tr("MAP_SWIPE_PRIMARY_LABEL", locale),
-					" (",
-					comparisonInfo.pair.primaryMapName,
-					")"
-				]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+				label: `${(_comparisonInfo$pair$ = comparisonInfo.pair.primaryLabel) !== null && _comparisonInfo$pair$ !== void 0 ? _comparisonInfo$pair$ : tr("MAP_SWIPE_PRIMARY_LABEL", locale)} (${comparisonInfo.pair.primaryMapName})`
+			}, {
 				value: comparisonInfo.pair.secondaryMapName,
-				children: [
-					(_comparisonInfo$pair$2 = comparisonInfo.pair.secondaryLabel) !== null && _comparisonInfo$pair$2 !== void 0 ? _comparisonInfo$pair$2 : tr("MAP_SWIPE_SECONDARY_LABEL", locale),
-					" (",
-					comparisonInfo.pair.secondaryMapName,
-					")"
-				]
-			})]
+				label: `${(_comparisonInfo$pair$2 = comparisonInfo.pair.secondaryLabel) !== null && _comparisonInfo$pair$2 !== void 0 ? _comparisonInfo$pair$2 : tr("MAP_SWIPE_SECONDARY_LABEL", locale)} (${comparisonInfo.pair.secondaryMapName})`
+			}],
+			fill: true,
+			style: { minWidth: 0 }
 		})]
 	}) : null;
 	const withSwipeSelectorLayout = (content) => {

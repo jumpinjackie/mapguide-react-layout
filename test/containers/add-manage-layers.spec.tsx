@@ -72,6 +72,21 @@ vi.mock("../../src/components/elements/element-context", () => ({
         Collapsible: (props: any) => <div>{props.isOpen ? props.children : null}</div>,
         Drawer: (props: any) => <div>{props.children}</div>,
     }),
+    TypedSelect: ({ id, value, onChange, items, fill, style }: any) => (
+        <select
+            id={id}
+            role="combobox"
+            value={value}
+            style={style}
+            onChange={(e) => onChange?.(e.target.value)}
+        >
+            {items.map((item: any) => (
+                <option key={item.value} value={item.value}>
+                    {item.label}
+                </option>
+            ))}
+        </select>
+    ),
 }));
 
 // ---------------------------------------------------------------------------

@@ -8159,13 +8159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutability-helper@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "immutability-helper@npm:3.1.1"
-  checksum: 10c0/daf4f3a696b8735c5d2c9b1bac42908b66bfc18ea5484bccf6658f3e622e1486663b5ef781e1a407ee81183e16942e8b2596cc859ea94d522ba07731c2845f0e
-  languageName: node
-  linkType: hard
-
 "import-fresh@npm:^3.2.1":
   version: 3.3.1
   resolution: "import-fresh@npm:3.3.1"
@@ -10222,7 +10215,6 @@ __metadata:
     docsify-cli: "npm:4.4.4"
     dompurify: "npm:^3.4.0"
     geojson-vt: "npm:^4.0.2"
-    immutability-helper: "npm:^3.1.1"
     jest-image-snapshot: "npm:6.5.2"
     jsdom: "npm:^26.1.0"
     jsonfile: "npm:6.2.1"

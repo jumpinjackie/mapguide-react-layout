@@ -115,7 +115,7 @@
 
 # Bash invocations
 
-- Avoid invoking multi-line bash commands. This author has a global ble.sh extension that means that a terminal session does not immediately execute multi-line bash commands anymore, multi-line bash commands require a Ctrl-J key combination to confirm execution of such commands. This can lead to accidentally executing incomplete commands if the user forgets to press Ctrl-J after pasting a multi-line command. This is doubly complicated by the VSCode terminal suppressing Ctrl-J by default. Unless you know how to issue a Ctrl-J command in the terminal you are using, do not generate multi-line bash commands.
+- Avoid invoking multi-line bash commands. This author has a global ble.sh extension that means that a terminal session does not immediately execute multi-line bash commands anymore, multi-line bash commands require a Ctrl-J key combination to confirm execution of such commands. This can lead to accidentally executing incomplete commands if the user forgets to press Ctrl-J after pasting a multi-line command. This is doubly complicated by the VSCode terminal suppressing/re-mapping Ctrl-J by default. Unless you know how to issue a Ctrl-J command in the terminal you are using, do not generate multi-line bash commands.
 
 # Commits
 

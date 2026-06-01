@@ -14,6 +14,10 @@
     background-color: white;
 }
 
+.map-viewer-component:focus {
+    outline: none;
+}
+
 .map-viewer-component .ol-overlaycontainer,
 .map-viewer-component .ol-overlaycontainer-stopevent {
     z-index: 20;

@@ -4,7 +4,7 @@ import React from "react";
 // Each icon is represented as an array of [tagName, attributes] tuples.
 type SvgNode = [string, Record<string, string>];
 type SvgNodeList = SvgNode[];
-type IBlueprintPathMap = Record<string, string[]>;
+type ISvgPathMap = Record<string, string[]>;
 
 /**
  * @hidden
@@ -14,7 +14,7 @@ export type InlineSvgIcon = SvgNodeList;
 
 /**
  * All icon path data, keyed by a logical name.
- * SVG paths are replicated from our Blueprint icon path subset.
+ * SVG paths are embedded inline — no external icon library required.
  * @hidden
  * @since 0.15
  */
@@ -22,13 +22,13 @@ function toInlineSvgIcon(paths: string[]): InlineSvgIcon {
    return paths.map((d) => ["path", { d }]);
 }
 
-function buildSvgIconRegistry(pathMap: IBlueprintPathMap): Record<string, InlineSvgIcon> {
+function buildSvgIconRegistry(pathMap: ISvgPathMap): Record<string, InlineSvgIcon> {
    return Object.fromEntries(
       Object.entries(pathMap).map(([name, paths]) => [name, toInlineSvgIcon(paths)])
    );
 }
 
-const BP_ICONS_20: IBlueprintPathMap = {
+const SVG_ICON_PATHS_20: ISvgPathMap = {
    "arrow-left": [
       "M18 9H4.41L8.7 4.71c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71l-6 6c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l6 6a1.003 1.003 0 001.42-1.42L4.41 11H18c.55 0 1-.45 1-1s-.45-1-1-1z"
    ],
@@ -183,10 +183,10 @@ const BP_ICONS_20: IBlueprintPathMap = {
    ]
 };
 
-export const SVG_ICONS: Record<string, InlineSvgIcon> = buildSvgIconRegistry(BP_ICONS_20);
+export const SVG_ICONS: Record<string, InlineSvgIcon> = buildSvgIconRegistry(SVG_ICON_PATHS_20);
 
-function getBlueprintIconPaths(name: string): { paths: string[]; viewBoxSize: number } | null {
-   const paths = BP_ICONS_20[name];
+function getSvgIconPaths(name: string): { paths: string[]; viewBoxSize: number } | null {
+   const paths = SVG_ICON_PATHS_20[name];
    if (!paths) {
       return null;
    }
@@ -200,7 +200,7 @@ function getBlueprintIconPaths(name: string): { paths: string[]; viewBoxSize: nu
  * @hidden
  */
 export const SvgIcon: React.FC<{ name: string; size?: number; style?: React.CSSProperties }> = ({ name, size = 16, style }) => {
-   const iconData = getBlueprintIconPaths(name);
+   const iconData = getSvgIconPaths(name);
    if (!iconData) {
       return null;
    }

@@ -31,8 +31,8 @@ import { AddManageLayersContainer } from "../../src/containers/add-manage-layers
 import { tr } from "../../src/api/i18n";
 
 // ---------------------------------------------------------------------------
-// Mock element-context so that Blueprint components are replaced with simple
-// HTML elements that work in jsdom without any Blueprint CSS / portals.
+// Mock element-context so components are replaced with simple HTML elements
+// that work in jsdom without any external CSS / portals.
 // ---------------------------------------------------------------------------
 vi.mock("../../src/components/elements/element-context", () => ({
     useElementContext: () => ({

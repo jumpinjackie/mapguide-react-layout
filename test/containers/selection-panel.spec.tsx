@@ -31,8 +31,8 @@ import { tr } from "../../src/api/i18n";
 import { createSelectionSet, createClientSelectionSet } from "../../test-data";
 
 // ---------------------------------------------------------------------------
-// Mock element-context so Blueprint components are replaced with simple HTML
-// elements that work in jsdom without Blueprint CSS/portals.
+// Mock element-context so components are replaced with simple HTML elements
+// that work in jsdom without external CSS/portals.
 // ---------------------------------------------------------------------------
 vi.mock("../../src/components/elements/element-context", () => ({
     useElementContext: () => ({
@@ -71,7 +71,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
 }));
 
 // ---------------------------------------------------------------------------
-// Mock the SelectionPanel component to avoid deep OL / Blueprint dependencies.
+// Mock the SelectionPanel component to avoid deep OL dependencies.
 // Renders a sentinel element so tests can verify it is rendered vs. not, and
 // exposes a "Show Feature" button so tests can trigger onShowSelectedFeature.
 // ---------------------------------------------------------------------------

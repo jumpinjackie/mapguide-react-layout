@@ -40,13 +40,10 @@
 .limegold-status-bar {
     background: #FFFEBE;
 }
-.bp3-tab[aria-selected="true"], .bp3-tab:not([aria-disabled="true"]):hover {
+.mrl-tab--active, .mrl-tab:hover:not(.mrl-tab--active) {
     color: black;
 }
-.bp3-tab-indicator-wrapper .bp3-tab-indicator {
-    background-color: black;
-}
-.limegold-sidebar-tabs > .bp3-tab-list {
+.limegold-sidebar-tabs > .mrl-tab-list {
     padding-left: 8px;
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f48000+0,fabb00+100 */
     background: #f48000; /* Old browsers */

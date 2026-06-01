@@ -40,12 +40,12 @@ export const LegendWithBaseLayerSwitcher = {
 };
 
 export const SelectedFeatureCount = () => {
-  const { Card } = useElementContext();
+  const { Card, Heading } = useElementContext();
   return <>
     <Card>
-      <h5 className="bp3-heading">
+      <Heading level={5}>
         <a href="#">Selected Feature Count</a>
-      </h5>
+      </Heading>
       <p>
         Click the test select button to simulate a map selection request. The
         selection count should display below

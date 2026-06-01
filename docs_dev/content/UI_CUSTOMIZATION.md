@@ -53,45 +53,6 @@ All other components — including `Icon` — are implemented with zero external
 >
 > If you are using `Application.mount()` to embed the viewer in a static HTML page from the pre-built `viewer.js` bundle, `MinimalProvider` is permanently baked in. Customisation in that scenario is done through [CSS variable overrides](#overriding-css-variables-design-tokens) only.
 
-### Blueprint.js provider (optional)
-
-`@blueprintjs/core` is an **optional peer dependency**. It is **not** included in the default `viewer.js` bundle, so your users only download it if you explicitly opt in.
-
-> **Bundle impact**: Because Blueprint is excluded from the default bundle, every user of the viewer benefits from a smaller download — even if some deployments choose to enable the Blueprint provider.
-
-**Step 1 — Install the optional dependencies:**
-
-```bash
-npm install @blueprintjs/core @blueprintjs/icons
-# or
-yarn add @blueprintjs/core @blueprintjs/icons
-```
-
-**Step 2 — Import Blueprint's CSS** (required for correct Blueprint rendering):
-
-```css
-@import '@blueprintjs/core/lib/css/blueprint.css';
-@import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-```
-
-**Step 3 — Import and activate the Blueprint provider.**
-
-> **Note:** `BpProvider` is **not** exported from the main `mapguide-react-layout` bundle, because including it would unconditionally add Blueprint.js (~120 KB) to every user's download. It is intended for use in **custom bundle scenarios** where you control your own Vite/Rollup configuration. Import it directly from its source path:
-
-```tsx
-import { ElementProvider } from 'mapguide-react-layout';
-import BpProvider from 'mapguide-react-layout/src/components/elements/providers/blueprint/provider';
-
-// In your custom bundle entry or parent React app render:
-function App() {
-    return (
-        <ElementProvider value={BpProvider}>
-            {/* All viewer components inside will use Blueprint.js */}
-        </ElementProvider>
-    );
-}
-```
-
 ---
 
 ## Overriding CSS variables (design tokens)
@@ -213,7 +174,7 @@ All component class names use the `mrl-` prefix. You can override specific compo
 
 If you want to implement the viewer's UI atoms using a completely different component library (e.g. MUI, Ant Design, Radix UI), you can provide a full custom implementation. This is only applicable in the two scenarios described above (custom bundle or direct React integration).
 
-> **Note:** The example below is **abbreviated** — it shows only 2 of the 32 required slots. For a complete reference implementation, see [`src/components/elements/providers/minimal/provider.tsx`](../src/components/elements/providers/minimal/provider.tsx) or the Blueprint provider at [`src/components/elements/providers/blueprint/provider.tsx`](../src/components/elements/providers/blueprint/provider.tsx).
+> **Note:** The example below is **abbreviated** — it shows only 2 of the 32 required slots. For a complete reference implementation, see [`src/components/elements/providers/minimal/provider.tsx`](../src/components/elements/providers/minimal/provider.tsx).
 
 ```tsx
 import type { IElementContext } from 'mapguide-react-layout';

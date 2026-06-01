@@ -17,7 +17,7 @@ import DOMPurify from "dompurify";
 import { ElementGroup, TypedSelect, useElementContext } from "../components/elements/element-context";
 
 export const MeasureContainer = () => {
-    const { Callout, Button, HtmlTable } = useElementContext();
+    const { Callout, Button, HtmlTable, FormGroup } = useElementContext();
     const activeMapName = useActiveMapName();
     const locale = useViewerLocale();
     const mapNames = useAvailableMaps()?.map(m => m.value);
@@ -155,13 +155,12 @@ export const MeasureContainer = () => {
 
     return <div className="component-measure">
         <form className="form-inline">
-            <label className="bp3-label">
-                {tr("MEASUREMENT_TYPE", locale)}
+            <FormGroup label={tr("MEASUREMENT_TYPE", locale)} inline>
                 <TypedSelect<OLGeometryType, false>
                     value={drawType}
                     onChange={onTypeChanged}
                     items={measurementTypes} />
-            </label>
+            </FormGroup>
             <ElementGroup>
                 <Button type="button" icon="play" disabled={measuring} onClick={onStartMeasure}>{tr("MEASUREMENT_START", locale)}</Button>
                 <Button type="button" icon="stop" disabled={!measuring} onClick={onEndMeasure}>{tr("MEASUREMENT_END", locale)}</Button>

@@ -2,11 +2,6 @@
 @import "../../stdassets/sprites/icons.css";
 @import "./splitter-layout.css";
 
-/* HACK: Clear out any trace of the font icon as HTMLSelect should be using the SVG counterpart */
-.bp3-select:after {
-    content: "";
-}
-
 .legend-label-highlight-text {
     background-color: yellow;
 }
@@ -518,10 +513,6 @@ div.InfoText {
 .wms-layer-info-tooltip p {
     max-width: 250px;
     word-wrap: break-word;
-}
-
-.bp3-dark {
-    background-color: #30404d;
 }
 
 .colorpicker {

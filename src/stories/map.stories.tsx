@@ -64,11 +64,11 @@ export default {
 };
 
 export const MapViewer = () => {
-  const { Card } = useElementContext();
+  const { Card, Heading } = useElementContext();
   return <Card>
-    <h5 className="bp3-heading">
+    <Heading level={5}>
       <a href="#">Map Viewer</a>
-    </h5>
+    </Heading>
     <p>
       This story (and all sibling stories) showcases the map viewer component
       and other components that depend or interact with map viewer state
@@ -87,12 +87,12 @@ export const MapViewer = () => {
 export const TaskPane = () => <TaskPaneContainer />;
 
 export const MouseCoordinates = () => {
-  const { Card } = useElementContext();
+  const { Card, Heading } = useElementContext();
   return <>
     <Card>
-      <h5 className="bp3-heading">
+      <Heading level={5}>
         <a href="#">Mouse Coordinates</a>
-      </h5>
+      </Heading>
       <p>
         Move the mouse around the map and its geographic coordinates should be
         shown below
@@ -103,12 +103,12 @@ export const MouseCoordinates = () => {
 };
 
 export const ViewSize = () => {
-  const { Card } = useElementContext();
+  const { Card, Heading } = useElementContext();
   return <>
     <Card>
-      <h5 className="bp3-heading">
+      <Heading level={5}>
         <a href="#">View Size</a>
-      </h5>
+      </Heading>
       <p>
         Zoom in or out of the map. The physical map size should be shown below
       </p>
@@ -118,13 +118,12 @@ export const ViewSize = () => {
 };
 
 export const ScaleDisplay = () => {
-  const { Card } = useElementContext();
-  return
-  <>
+  const { Card, Heading } = useElementContext();
+  return <>
     <Card>
-      <h5 className="bp3-heading">
+      <Heading level={5}>
         <a href="#">Scale Display</a>
-      </h5>
+      </Heading>
       <p>Zoom in or out of the map. The map scale should be shown below</p>
     </Card>
     <ScaleDisplayContainer />

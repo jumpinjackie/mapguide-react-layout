@@ -27,7 +27,7 @@ This project uses [`@storybook/test-runner`](https://storybook.js.org/docs/writi
 
 Baselines are PNG files stored in `visual-snapshots/` and are committed to git.
 
-When you make an intentional visual change (e.g. replacing a Blueprint.js component):
+When you make an intentional visual change (e.g. replacing a component or restyling a UI element):
 
 ```bash
 yarn test:visual:update

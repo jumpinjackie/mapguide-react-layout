@@ -24,7 +24,7 @@ The **provider** (the concrete implementation of `IElementContext`) is installed
 
 ## Default provider: `MinimalProvider`
 
-Starting from version 0.15, the default provider is `MinimalProvider` — a lightweight implementation that uses **HTML intrinsic elements** and **plain CSS with CSS custom properties (variables)**. It has no dependency on Blueprint.js or any other large UI toolkit.
+Starting from version 0.15, the default provider is `MinimalProvider` — a lightweight implementation that uses **HTML intrinsic elements** and **plain CSS with CSS custom properties (variables)**. It has no dependency on any large UI toolkit.
 
 Key characteristics of `MinimalProvider`:
 

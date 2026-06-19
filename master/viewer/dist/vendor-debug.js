@@ -13295,7 +13295,7 @@ setBatch(import_react_dom.unstable_batchedUpdates);
 //#endregion
 //#region node_modules/dompurify/dist/purify.es.mjs
 var purify_es_exports = /* @__PURE__ */ __exportAll({ default: () => purify });
-/*! @license DOMPurify 3.4.10 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.10/LICENSE */
+/*! @license DOMPurify 3.4.11 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.11/LICENSE */
 function _arrayLikeToArray(r, a) {
 	(null == a || a > r.length) && (a = r.length);
 	for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
@@ -14243,7 +14243,7 @@ var _resolveSetOption = function _resolveSetOption(cfg, key, fallback, options) 
 function createDOMPurify() {
 	let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
 	const DOMPurify = (root) => createDOMPurify(root);
-	DOMPurify.version = "3.4.10";
+	DOMPurify.version = "3.4.11";
 	DOMPurify.removed = [];
 	if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
 		DOMPurify.isSupported = false;
@@ -14376,6 +14376,8 @@ function createDOMPurify() {
 	let SAFE_FOR_XML = true;
 	let WHOLE_DOCUMENT = false;
 	let SET_CONFIG = false;
+	let SET_CONFIG_ALLOWED_TAGS = null;
+	let SET_CONFIG_ALLOWED_ATTR = null;
 	let FORCE_BODY = false;
 	let RETURN_DOM = false;
 	let RETURN_DOM_FRAGMENT = false;
@@ -14608,8 +14610,6 @@ function createDOMPurify() {
 			if (trustedTypesPolicy === void 0) trustedTypesPolicy = _getDefaultTrustedTypesPolicy();
 			if (trustedTypesPolicy && typeof emptyHTML === "string") emptyHTML = _createTrustedHTML("");
 		}
-		if ((hooks.uponSanitizeElement.length > 0 || hooks.uponSanitizeAttribute.length > 0) && ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) ALLOWED_TAGS = clone(ALLOWED_TAGS);
-		if (hooks.uponSanitizeAttribute.length > 0 && ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) ALLOWED_ATTR = clone(ALLOWED_ATTR);
 		if (freeze) freeze(cfg);
 		CONFIG = cfg;
 	};
@@ -15296,7 +15296,12 @@ function createDOMPurify() {
 			if (typeof dirty !== "string") throw typeErrorCreate("dirty is not a string, aborting");
 		}
 		if (!DOMPurify.isSupported) return dirty;
-		if (!SET_CONFIG) _parseConfig(cfg);
+		if (SET_CONFIG) {
+			ALLOWED_TAGS = SET_CONFIG_ALLOWED_TAGS;
+			ALLOWED_ATTR = SET_CONFIG_ALLOWED_ATTR;
+		} else _parseConfig(cfg);
+		if (hooks.uponSanitizeElement.length > 0 || hooks.uponSanitizeAttribute.length > 0) ALLOWED_TAGS = clone(ALLOWED_TAGS);
+		if (hooks.uponSanitizeAttribute.length > 0) ALLOWED_ATTR = clone(ALLOWED_ATTR);
 		DOMPurify.removed = [];
 		const inPlace = IN_PLACE && typeof dirty !== "string" && _isNode(dirty);
 		if (inPlace) {
@@ -15360,10 +15365,14 @@ function createDOMPurify() {
 	DOMPurify.setConfig = function() {
 		_parseConfig(arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {});
 		SET_CONFIG = true;
+		SET_CONFIG_ALLOWED_TAGS = ALLOWED_TAGS;
+		SET_CONFIG_ALLOWED_ATTR = ALLOWED_ATTR;
 	};
 	DOMPurify.clearConfig = function() {
 		CONFIG = null;
 		SET_CONFIG = false;
+		SET_CONFIG_ALLOWED_TAGS = null;
+		SET_CONFIG_ALLOWED_ATTR = null;
 		trustedTypesPolicy = defaultTrustedTypesPolicy;
 		emptyHTML = "";
 	};
@@ -15373,9 +15382,11 @@ function createDOMPurify() {
 	};
 	DOMPurify.addHook = function(entryPoint, hookFunction) {
 		if (typeof hookFunction !== "function") return;
+		if (!objectHasOwnProperty(hooks, entryPoint)) return;
 		arrayPush(hooks[entryPoint], hookFunction);
 	};
 	DOMPurify.removeHook = function(entryPoint, hookFunction) {
+		if (!objectHasOwnProperty(hooks, entryPoint)) return;
 		if (hookFunction !== void 0) {
 			const index = arrayLastIndexOf(hooks[entryPoint], hookFunction);
 			return index === -1 ? void 0 : arraySplice(hooks[entryPoint], index, 1)[0];
@@ -15383,6 +15394,7 @@ function createDOMPurify() {
 		return arrayPop(hooks[entryPoint]);
 	};
 	DOMPurify.removeHooks = function(entryPoint) {
+		if (!objectHasOwnProperty(hooks, entryPoint)) return;
 		hooks[entryPoint] = [];
 	};
 	DOMPurify.removeAllHooks = function() {

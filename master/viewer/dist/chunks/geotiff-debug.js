@@ -1,7 +1,7 @@
 import { a as __toESM, n as __esmMin, r as __exportAll, t as __commonJSMin } from "./rolldown-runtime-debug.js";
 import { a as inflate_1, n as ZSTDDecoder, r as require_LercDecode, t as ZSTDDecoder$1 } from "./geotiff-codecs-debug.js";
 import { a as getFloat16, i as getAttribute, n as browser_default, r as findTagsByName, t as QuickLRU } from "./geotiff-deps-debug.js";
-//#region \0@oxc-project+runtime@0.132.0/helpers/typeof.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/typeof.js
 function _typeof(o) {
 	"@babel/helpers - typeof";
 	return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
@@ -12,7 +12,7 @@ function _typeof(o) {
 }
 var init_typeof = __esmMin((() => {}));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/toPrimitive.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/toPrimitive.js
 function toPrimitive(t, r) {
 	if ("object" != _typeof(t) || !t) return t;
 	var e = t[Symbol.toPrimitive];
@@ -27,7 +27,7 @@ var init_toPrimitive = __esmMin((() => {
 	init_typeof();
 }));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/toPropertyKey.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/toPropertyKey.js
 function toPropertyKey(t) {
 	var i = toPrimitive(t, "string");
 	return "symbol" == _typeof(i) ? i : i + "";
@@ -37,7 +37,7 @@ var init_toPropertyKey = __esmMin((() => {
 	init_toPrimitive();
 }));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/defineProperty.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/defineProperty.js
 function _defineProperty(e, r, t) {
 	return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
 		value: t,
@@ -50,7 +50,7 @@ var init_defineProperty = __esmMin((() => {
 	init_toPropertyKey();
 }));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/objectSpread2.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectSpread2.js
 function ownKeys(e, r) {
 	var t = Object.keys(e);
 	if (Object.getOwnPropertySymbols) {
@@ -76,7 +76,7 @@ var init_objectSpread2 = __esmMin((() => {
 	init_defineProperty();
 }));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/asyncToGenerator.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/asyncToGenerator.js
 function asyncGeneratorStep(n, t, e, r, o, a, c) {
 	try {
 		var i = n[a](c), u = i.value;
@@ -124,17 +124,20 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 				reason
 			}))));
 		}
+		function importMetaResolve(specifier) {
+			if (import.meta.resolve) return import.meta.resolve(specifier);
+			return new URL(specifier, new URL("../../../src/node/plugins/importAnalysisBuild.ts", import.meta.url)).href;
+		}
 		promise = allSettled(deps.map((dep) => {
 			dep = assetsURL(dep, importerUrl);
+			dep = importMetaResolve(dep);
 			if (dep in seen) return;
 			seen[dep] = true;
 			const isCss = dep.endsWith(".css");
-			const cssSelector = isCss ? "[rel=\"stylesheet\"]" : "";
-			if (!!importerUrl) for (let i = links.length - 1; i >= 0; i--) {
+			for (let i = links.length - 1; i >= 0; i--) {
 				const link = links[i];
 				if (link.href === dep && (!isCss || link.rel === "stylesheet")) return;
 			}
-			else if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) return;
 			const link = document.createElement("link");
 			link.rel = isCss ? "stylesheet" : scriptRel;
 			if (!isCss) link.as = "script";
@@ -2418,7 +2421,15 @@ function createProjection(projection, defaultCode) {
 * @return {TransformFunction} Transform function.
 */
 function createTransformFromCoordinateTransform(coordTransform) {
-	return (function(input, output, dimension, stride) {
+	return (
+	/**
+	* @param {Array<number>} input Input.
+	* @param {Array<number>} [output] Output.
+	* @param {number} [dimension] Dimensions that should be transformed.
+	* @param {number} [stride] Stride.
+	* @return {Array<number>} Output.
+	*/
+function(input, output, dimension, stride) {
 		var _stride;
 		const length = input.length;
 		dimension = dimension !== void 0 ? dimension : 2;
@@ -2808,7 +2819,7 @@ function _fromProjectionCode() {
 	return _fromProjectionCode.apply(this, arguments);
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/objectWithoutPropertiesLoose.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectWithoutPropertiesLoose.js
 function _objectWithoutPropertiesLoose(r, e) {
 	if (null == r) return {};
 	var t = {};
@@ -2820,7 +2831,7 @@ function _objectWithoutPropertiesLoose(r, e) {
 }
 var init_objectWithoutPropertiesLoose = __esmMin((() => {}));
 //#endregion
-//#region \0@oxc-project+runtime@0.132.0/helpers/objectWithoutProperties.js
+//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectWithoutProperties.js
 function _objectWithoutProperties(e, t) {
 	if (null == e) return {};
 	var o, r, i = _objectWithoutPropertiesLoose(e, t);
@@ -7662,7 +7673,7 @@ var ReprojDataTile = class extends DataTile {
 	constructor(options) {
 		super({
 			tileCoord: options.tileCoord,
-			loader: () => Promise.resolve(new Uint8ClampedArray(4)),
+			loader: () => Promise.resolve(/* @__PURE__ */ new Uint8ClampedArray(4)),
 			interpolate: options.interpolate,
 			transition: options.transition
 		});
@@ -8935,8 +8946,8 @@ function buildComponentData(component) {
 	const { blocksPerLine, blocksPerColumn } = component;
 	if (!blocksPerLine || !blocksPerColumn || !component.blocks) throw new Error("Missing component data");
 	const samplesPerLine = blocksPerLine << 3;
-	const R = new Int32Array(64);
-	const r = new Uint8Array(64);
+	const R = /* @__PURE__ */ new Int32Array(64);
+	const r = /* @__PURE__ */ new Uint8Array(64);
 	/**
 	* @param {Int32Array} zz
 	* @param {Uint8Array} dataOut
@@ -9143,7 +9154,7 @@ var JpegStreamReader = class {
 				const blocks = [];
 				for (let i = 0; i < blocksPerColumnForMcu; i++) {
 					const row = [];
-					for (let j = 0; j < blocksPerLineForMcu; j++) row.push(new Int32Array(64));
+					for (let j = 0; j < blocksPerLineForMcu; j++) row.push(/* @__PURE__ */ new Int32Array(64));
 					blocks.push(row);
 				}
 				component.blocksPerLine = blocksPerLine;
@@ -9207,7 +9218,7 @@ var JpegStreamReader = class {
 					const quantizationTablesEnd = readUint16() + offset - 2;
 					while (offset < quantizationTablesEnd) {
 						const quantizationTableSpec = data[offset++];
-						const tableData = new Int32Array(64);
+						const tableData = /* @__PURE__ */ new Int32Array(64);
 						if (quantizationTableSpec >> 4 === 0) for (let j = 0; j < 64; j++) {
 							const z = dctZigZag[j];
 							tableData[z] = data[offset++];
@@ -9267,7 +9278,7 @@ var JpegStreamReader = class {
 					const huffmanLength = readUint16();
 					for (let i = 2; i < huffmanLength;) {
 						const huffmanTableSpec = data[offset++];
-						const codeLengths = new Uint8Array(16);
+						const codeLengths = /* @__PURE__ */ new Uint8Array(16);
 						let codeLengthSum = 0;
 						for (let j = 0; j < 16; j++, offset++) {
 							codeLengths[j] = data[offset];
@@ -10125,8 +10136,8 @@ function appendReversed(dest, source) {
 * @param {ArrayBuffer} input
 */
 function decompress(input) {
-	const dictionaryIndex = new Uint16Array(4093);
-	const dictionaryChar = new Uint8Array(4093);
+	const dictionaryIndex = /* @__PURE__ */ new Uint16Array(4093);
+	const dictionaryChar = /* @__PURE__ */ new Uint8Array(4093);
 	for (let i = 0; i <= 257; i++) {
 		dictionaryIndex[i] = 4096;
 		dictionaryChar[i] = i;

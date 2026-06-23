@@ -3560,7 +3560,7 @@ var measureFont;
 * @type {!Object<string, number>}
 */
 var textHeights = {};
-var genericFontFamilies = new Set([
+var genericFontFamilies = /* @__PURE__ */ new Set([
 	"serif",
 	"sans-serif",
 	"monospace",
@@ -9151,7 +9151,13 @@ function parse(xml) {
 * @template T
 */
 function makeArrayExtender(valueReader, thisArg) {
-	return (function(node, objectStack) {
+	return (
+	/**
+	* @param {Node} node Node.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const array = objectStack[objectStack.length - 1];
@@ -9168,7 +9174,13 @@ function makeArrayExtender(valueReader, thisArg) {
 * @template T
 */
 function makeArrayPusher(valueReader, thisArg) {
-	return (function(node, objectStack) {
+	return (
+	/**
+	* @param {Element} node Node.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) objectStack[objectStack.length - 1].push(value);
 	});
@@ -9182,7 +9194,13 @@ function makeArrayPusher(valueReader, thisArg) {
 * @template T
 */
 function makeReplacer(valueReader, thisArg) {
-	return (function(node, objectStack) {
+	return (
+	/**
+	* @param {Node} node Node.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) objectStack[objectStack.length - 1] = value;
 	});
@@ -9197,7 +9215,13 @@ function makeReplacer(valueReader, thisArg) {
 * @template T
 */
 function makeObjectPropertyPusher(valueReader, property, thisArg) {
-	return (function(node, objectStack) {
+	return (
+	/**
+	* @param {Element} node Node.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const object = objectStack[objectStack.length - 1];
@@ -9221,7 +9245,13 @@ function makeObjectPropertyPusher(valueReader, property, thisArg) {
 * @template T
 */
 function makeObjectPropertySetter(valueReader, property, thisArg) {
-	return (function(node, objectStack) {
+	return (
+	/**
+	* @param {Element} node Node.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const object = objectStack[objectStack.length - 1];
@@ -9240,7 +9270,14 @@ function makeObjectPropertySetter(valueReader, property, thisArg) {
 * @template T, V
 */
 function makeChildAppender(nodeWriter, thisArg) {
-	return (function(node, value, objectStack) {
+	return (
+	/**
+	* @param {Element} node Node.
+	* @param {*} value Value to be written.
+	* @param {Array<*>} objectStack Object stack.
+	* @this {*}
+	*/
+function(node, value, objectStack) {
 		nodeWriter.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, value, objectStack);
 		objectStack[objectStack.length - 1].node.appendChild(node);
 	});
@@ -9284,7 +9321,14 @@ function makeArraySerializer(nodeWriter, thisArg) {
 * @return {function(*, Array<*>, string=): (Node|undefined)} Node factory.
 */
 function makeSimpleNodeFactory(fixedNodeName, fixedNamespaceURI) {
-	return (function(value, objectStack, newNodeName) {
+	return (
+	/**
+	* @param {*} value Value.
+	* @param {Array<*>} objectStack Object stack.
+	* @param {string} [newNodeName] Node name.
+	* @return {Node} Node.
+	*/
+function(value, objectStack, newNodeName) {
 		const node = objectStack[objectStack.length - 1].node;
 		let nodeName = fixedNodeName;
 		if (nodeName === void 0) nodeName = newNodeName;
@@ -10510,7 +10554,13 @@ function createNameStyleFunction(foundStyle, name) {
 * @return {import("../style/Style.js").StyleFunction} Feature style function.
 */
 function createFeatureStyleFunction(style, styleUrl, defaultStyle, sharedStyles, showPointNames) {
-	return (function(feature, resolution) {
+	return (
+	/**
+	* @param {Feature} feature feature.
+	* @param {number} resolution Resolution.
+	* @return {Array<Style>|Style} Style.
+	*/
+function(feature, resolution) {
 		let drawName = showPointNames;
 		let name = "";
 		let multiGeometryPoints = [];

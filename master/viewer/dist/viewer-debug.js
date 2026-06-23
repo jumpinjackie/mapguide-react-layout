@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-deps-debug.js","./chunks/geotiff-codecs-debug.js","./chunks/jspdf-debug.js","./chunks/ol-deps-debug.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-codecs-debug.js","./chunks/geotiff-deps-debug.js","./chunks/jspdf-debug.js","./chunks/ol-deps-debug.js"])))=>i.map(i=>d[i]);
 import { a as __toESM, r as __exportAll } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react_dom, i as require_jsx_runtime, o as require_react } from "./chunks/react-vendor-debug.js";
 import { $t as fromLonLat, Cr as __vitePreload, Er as init_objectSpread2, Hn as buffer, Jt as init_objectWithoutProperties, P as DEVICE_PIXEL_RATIO, Qt as equivalent, Tr as _objectSpread2, V as createXYZ, W as TileGrid, Yn as createEmpty, Yt as register, dn as getArea, fn as getDistance, fr as getTopLeft, gn as METERS_PER_UNIT, gr as isEmpty, hn as Projection, k as easeOut, ln as transform, lr as getHeight, mr as getWidth, nn as get, qn as containsXY, qt as _objectWithoutProperties, sr as getCenter, tr as extend$1, un as transformExtent, wr as _asyncToGenerator, wt as unByKey } from "./chunks/geotiff-debug.js";
@@ -21060,7 +21060,7 @@ function _generateClientSidePdf() {
 		const { jsPDF } = yield __vitePreload(_asyncToGenerator(function* () {
 			const { jsPDF } = yield import("./chunks/jspdf-debug.js").then((n) => n.t);
 			return { jsPDF };
-		}), __vite__mapDeps([4,0,1,2,3,5]), import.meta.url);
+		}), __vite__mapDeps([4,1,0,2,3,5]), import.meta.url);
 		const tokens = paperSize.split(",");
 		let paperW = parseFloat(tokens[0]);
 		let paperH = parseFloat(tokens[1]);
@@ -25491,7 +25491,7 @@ function getEffectiveUrlPropsIgnore(propIgnore, settingsValue) {
 	const normalizeIgnoreProp = (value) => value.trim().toLowerCase();
 	const fromProps = (_propIgnore$map$filte = propIgnore === null || propIgnore === void 0 ? void 0 : propIgnore.map(normalizeIgnoreProp).filter((s) => s.length > 0)) !== null && _propIgnore$map$filte !== void 0 ? _propIgnore$map$filte : [];
 	const fromSettings = (_settingsValue$split$ = settingsValue === null || settingsValue === void 0 ? void 0 : settingsValue.split(",").map(normalizeIgnoreProp).filter((s) => s.length > 0)) !== null && _settingsValue$split$ !== void 0 ? _settingsValue$split$ : [];
-	const merged = [...new Set([...fromProps, ...fromSettings])];
+	const merged = [.../* @__PURE__ */ new Set([...fromProps, ...fromSettings])];
 	return merged.length > 0 ? merged : void 0;
 }
 /**
@@ -25750,7 +25750,7 @@ function promiseMiddleware({ dispatch }) {
 }
 //#endregion
 //#region src/store/logger.ts
-var FILTERED_TYPES = new Set([
+var FILTERED_TYPES = /* @__PURE__ */ new Set([
 	"redux-form/BLUR",
 	"redux-form/CHANGE",
 	"redux-form/FOCUS",

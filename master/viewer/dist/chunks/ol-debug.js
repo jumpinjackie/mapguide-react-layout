@@ -1443,7 +1443,14 @@ function expandUrl(url) {
 * @return {import("./Tile.js").UrlFunction} Tile URL function.
 */
 function createFromTemplate(template, tileGrid) {
-	return (function(tileCoord, pixelRatio, projection) {
+	return (
+	/**
+	* @param {import("./tilecoord.js").TileCoord} tileCoord Tile Coordinate.
+	* @param {number} pixelRatio Pixel ratio.
+	* @param {import("./proj/Projection.js").default} projection Projection.
+	* @return {string|undefined} Tile URL.
+	*/
+function(tileCoord, pixelRatio, projection) {
 		if (!tileCoord) return;
 		let maxY;
 		const z = tileCoord[0];
@@ -1471,7 +1478,14 @@ function createFromTemplates(templates, tileGrid) {
 */
 function createFromTileUrlFunctions(tileUrlFunctions) {
 	if (tileUrlFunctions.length === 1) return tileUrlFunctions[0];
-	return (function(tileCoord, pixelRatio, projection) {
+	return (
+	/**
+	* @param {import("./tilecoord.js").TileCoord} tileCoord Tile Coordinate.
+	* @param {number} pixelRatio Pixel ratio.
+	* @param {import("./proj/Projection.js").default} projection Projection.
+	* @return {string|undefined} Tile URL.
+	*/
+function(tileCoord, pixelRatio, projection) {
 		if (!tileCoord) return;
 		return tileUrlFunctions[modulo(hash(tileCoord), tileUrlFunctions.length)](tileCoord, pixelRatio, projection);
 	});
@@ -2971,7 +2985,16 @@ var ViewProperty_default = {
 * @return {Type} The constraint.
 */
 function createExtent(extent, onlyCenter, smooth) {
-	return (function(center, resolution, size, isMoving, centerShift) {
+	return (
+	/**
+	* @param {import("./coordinate.js").Coordinate|undefined} center Center.
+	* @param {number|undefined} resolution Resolution.
+	* @param {import("./size.js").Size} size Viewport size; unused if `onlyCenter` was specified.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @param {Array<number>} [centerShift] Shift between map center and viewport center.
+	* @return {import("./coordinate.js").Coordinate|undefined} Center.
+	*/
+function(center, resolution, size, isMoving, centerShift) {
 		if (!center) return;
 		if (!resolution && !onlyCenter) return center;
 		const viewWidth = onlyCenter ? 0 : size[0] * resolution;
@@ -3061,7 +3084,15 @@ function getSmoothClampedResolution(resolution, maxResolution, minResolution) {
 */
 function createSnapToResolutions(resolutions, smooth, maxExtent, showFullExtent) {
 	smooth = smooth !== void 0 ? smooth : true;
-	return (function(resolution, direction, size, isMoving) {
+	return (
+	/**
+	* @param {number|undefined} resolution Resolution.
+	* @param {number} direction Direction.
+	* @param {import("./size.js").Size} size Viewport size.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @return {number|undefined} Resolution.
+	*/
+function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const maxResolution = resolutions[0];
 			const minResolution = resolutions[resolutions.length - 1];
@@ -3088,7 +3119,15 @@ function createSnapToResolutions(resolutions, smooth, maxExtent, showFullExtent)
 function createSnapToPower(power, maxResolution, minResolution, smooth, maxExtent, showFullExtent) {
 	smooth = smooth !== void 0 ? smooth : true;
 	minResolution = minResolution !== void 0 ? minResolution : 0;
-	return (function(resolution, direction, size, isMoving) {
+	return (
+	/**
+	* @param {number|undefined} resolution Resolution.
+	* @param {number} direction Direction.
+	* @param {import("./size.js").Size} size Viewport size.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @return {number|undefined} Resolution.
+	*/
+function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const cappedMaxRes = maxExtent ? getViewportClampedResolution(maxResolution, maxExtent, size, showFullExtent) : maxResolution;
 			if (isMoving) {
@@ -3113,7 +3152,15 @@ function createSnapToPower(power, maxResolution, minResolution, smooth, maxExten
 */
 function createMinMaxResolution(maxResolution, minResolution, smooth, maxExtent, showFullExtent) {
 	smooth = smooth !== void 0 ? smooth : true;
-	return (function(resolution, direction, size, isMoving) {
+	return (
+	/**
+	* @param {number|undefined} resolution Resolution.
+	* @param {number} direction Direction.
+	* @param {import("./size.js").Size} size Viewport size.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @return {number|undefined} Resolution.
+	*/
+function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const cappedMaxRes = maxExtent ? getViewportClampedResolution(maxResolution, maxExtent, size, showFullExtent) : maxResolution;
 			if (!smooth || !isMoving) return clamp(resolution, minResolution, cappedMaxRes);
@@ -3149,7 +3196,13 @@ function none(rotation) {
 */
 function createSnapToN(n) {
 	const theta = 2 * Math.PI / n;
-	return (function(rotation, isMoving) {
+	return (
+	/**
+	* @param {number|undefined} rotation Rotation.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @return {number|undefined} Rotation.
+	*/
+function(rotation, isMoving) {
 		if (isMoving) return rotation;
 		if (rotation !== void 0) {
 			rotation = Math.floor(rotation / theta + .5) * theta;
@@ -3163,7 +3216,13 @@ function createSnapToN(n) {
 */
 function createSnapToZero(tolerance) {
 	const t = tolerance === void 0 ? toRadians(5) : tolerance;
-	return (function(rotation, isMoving) {
+	return (
+	/**
+	* @param {number|undefined} rotation Rotation.
+	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
+	* @return {number|undefined} Rotation.
+	*/
+function(rotation, isMoving) {
 		if (isMoving || rotation === void 0) return rotation;
 		if (Math.abs(rotation) <= t) return 0;
 		return rotation;
@@ -4086,7 +4145,12 @@ var View = class extends BaseObject {
 		const maxResolution = this.getConstrainedResolution(this.maxResolution_);
 		const minResolution = this.minResolution_;
 		const max = Math.log(maxResolution / minResolution) / Math.log(power);
-		return (function(value) {
+		return (
+		/**
+		* @param {number} value Value.
+		* @return {number} Resolution.
+		*/
+function(value) {
 			return maxResolution / Math.pow(power, value * max);
 		});
 	}
@@ -4110,7 +4174,12 @@ var View = class extends BaseObject {
 		const maxResolution = this.getConstrainedResolution(this.maxResolution_);
 		const minResolution = this.minResolution_;
 		const max = Math.log(maxResolution / minResolution) / logPower;
-		return (function(resolution) {
+		return (
+		/**
+		* @param {number} resolution Resolution.
+		* @return {number} Value.
+		*/
+function(resolution) {
 			return Math.log(maxResolution / resolution) / logPower / max;
 		});
 	}
@@ -5654,7 +5723,7 @@ var CanvasLayerRenderer = class extends LayerRenderer {
 */
 function addTileToLookup(tilesByZ, tile, z) {
 	if (!(z in tilesByZ)) {
-		tilesByZ[z] = new Set([tile]);
+		tilesByZ[z] = /* @__PURE__ */ new Set([tile]);
 		return true;
 	}
 	const set = tilesByZ[z];
@@ -7695,7 +7764,14 @@ var BingMaps = class extends TileImage {
 				0
 			];
 			const imageUrl = resource.imageUrl.replace("{subdomain}", subdomain).replace("{culture}", culture);
-			return (function(tileCoord, pixelRatio, projection) {
+			return (
+			/**
+			* @param {import("../tilecoord.js").TileCoord} tileCoord Tile coordinate.
+			* @param {number} pixelRatio Pixel ratio.
+			* @param {import("../proj/Projection.js").default} projection Projection.
+			* @return {string|undefined} Tile URL.
+			*/
+function(tileCoord, pixelRatio, projection) {
 				if (!tileCoord) return;
 				createOrUpdate(tileCoord[0], tileCoord[1], tileCoord[2], quadKeyTileCoord);
 				const url = new URL(imageUrl.replace("{quadkey}", quadKey(quadKeyTileCoord)));
@@ -26056,9 +26132,9 @@ var VectorStyleRenderer = class {
 	*/
 	generateRenderInstructions_(geometryBatch, transform) {
 		return {
-			polygonInstructions: this.hasFill_ ? generatePolygonRenderInstructions(geometryBatch.polygonBatch, new Float32Array(0), this.customAttributes_, transform) : null,
-			lineStringInstructions: this.hasStroke_ ? generateLineStringRenderInstructions(geometryBatch.lineStringBatch, new Float32Array(0), this.customAttributes_, transform) : null,
-			pointInstructions: this.hasSymbol_ ? generatePointRenderInstructions(geometryBatch.pointBatch, new Float32Array(0), this.customAttributes_, transform) : null
+			polygonInstructions: this.hasFill_ ? generatePolygonRenderInstructions(geometryBatch.polygonBatch, /* @__PURE__ */ new Float32Array(0), this.customAttributes_, transform) : null,
+			lineStringInstructions: this.hasStroke_ ? generateLineStringRenderInstructions(geometryBatch.lineStringBatch, /* @__PURE__ */ new Float32Array(0), this.customAttributes_, transform) : null,
+			pointInstructions: this.hasSymbol_ ? generatePointRenderInstructions(geometryBatch.pointBatch, /* @__PURE__ */ new Float32Array(0), this.customAttributes_, transform) : null
 		};
 	}
 	/**
@@ -26227,7 +26303,7 @@ function convertStyleToShaders(style, variables) {
 * A wrapper class to simplify rendering to a texture instead of the final canvas
 * @module ol/webgl/RenderTarget
 */
-var tmpArray4 = new Uint8Array(4);
+var tmpArray4 = /* @__PURE__ */ new Uint8Array(4);
 /**
 * @classdesc
 * This class is a wrapper around the association of both a `WebGLTexture` and a `WebGLFramebuffer` instances,
@@ -26269,7 +26345,7 @@ var WebGLRenderTarget = class {
 		* @type {Uint8Array}
 		* @private
 		*/
-		this.data_ = new Uint8Array(0);
+		this.data_ = /* @__PURE__ */ new Uint8Array(0);
 		/**
 		* @type {boolean}
 		* @private

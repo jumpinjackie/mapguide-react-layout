@@ -1237,20 +1237,20 @@ function DeflateState() {
 	this.good_match = 0;
 	this.nice_match = 0;
 	this.dyn_ltree = new Uint16Array(HEAP_SIZE * 2);
-	this.dyn_dtree = new Uint16Array(122);
-	this.bl_tree = new Uint16Array(78);
+	this.dyn_dtree = /* @__PURE__ */ new Uint16Array(122);
+	this.bl_tree = /* @__PURE__ */ new Uint16Array(78);
 	zero(this.dyn_ltree);
 	zero(this.dyn_dtree);
 	zero(this.bl_tree);
 	this.l_desc = null;
 	this.d_desc = null;
 	this.bl_desc = null;
-	this.bl_count = new Uint16Array(16);
-	this.heap = new Uint16Array(573);
+	this.bl_count = /* @__PURE__ */ new Uint16Array(16);
+	this.heap = /* @__PURE__ */ new Uint16Array(573);
 	zero(this.heap);
 	this.heap_len = 0;
 	this.heap_max = 0;
-	this.depth = new Uint16Array(573);
+	this.depth = /* @__PURE__ */ new Uint16Array(573);
 	zero(this.depth);
 	this.sym_buf = 0;
 	this.lit_bufsize = 0;
@@ -1646,11 +1646,11 @@ var common = {
 };
 var STR_APPLY_UIA_OK = true;
 try {
-	String.fromCharCode.apply(null, new Uint8Array(1));
+	String.fromCharCode.apply(null, /* @__PURE__ */ new Uint8Array(1));
 } catch (__) {
 	STR_APPLY_UIA_OK = false;
 }
-var _utf8len = new Uint8Array(256);
+var _utf8len = /* @__PURE__ */ new Uint8Array(256);
 for (let q = 0; q < 256; q++) _utf8len[q] = q >= 252 ? 6 : q >= 248 ? 5 : q >= 240 ? 4 : q >= 224 ? 3 : q >= 192 ? 2 : 1;
 _utf8len[254] = _utf8len[254] = 1;
 var string2buf = (str) => {
@@ -2405,8 +2405,8 @@ var inflate_table = (type, lens, lens_index, codes, table, table_index, work, op
 	let next;
 	let base = null;
 	let match;
-	const count = new Uint16Array(16);
-	const offs = new Uint16Array(16);
+	const count = /* @__PURE__ */ new Uint16Array(16);
+	const offs = /* @__PURE__ */ new Uint16Array(16);
 	let extra = null;
 	let here_bits, here_op, here_val;
 	for (len = 0; len <= MAXBITS; len++) count[len] = 0;
@@ -2578,8 +2578,8 @@ function InflateState() {
 	this.ndist = 0;
 	this.have = 0;
 	this.next = null;
-	this.lens = new Uint16Array(320);
-	this.work = new Uint16Array(288);
+	this.lens = /* @__PURE__ */ new Uint16Array(320);
+	this.work = /* @__PURE__ */ new Uint16Array(288);
 	this.lendyn = null;
 	this.distdyn = null;
 	this.sane = 0;
@@ -2655,8 +2655,8 @@ var virgin = true;
 var lenfix, distfix;
 var fixedtables = (state) => {
 	if (virgin) {
-		lenfix = new Int32Array(512);
-		distfix = new Int32Array(32);
+		lenfix = /* @__PURE__ */ new Int32Array(512);
+		distfix = /* @__PURE__ */ new Int32Array(32);
 		let sym = 0;
 		while (sym < 144) state.lens[sym++] = 8;
 		while (sym < 256) state.lens[sym++] = 9;
@@ -2720,7 +2720,7 @@ var inflate$2 = (strm, flush) => {
 	let last_bits, last_op, last_val;
 	let len;
 	let ret;
-	const hbuf = new Uint8Array(4);
+	const hbuf = /* @__PURE__ */ new Uint8Array(4);
 	let opts;
 	let n;
 	const order = new Uint8Array([

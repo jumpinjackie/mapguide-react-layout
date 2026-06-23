@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./jspdf-plugins-debug.js","./rolldown-runtime-debug.js","../vendor-debug.js","./geotiff-debug.js","./geotiff-deps-debug.js","./geotiff-codecs-debug.js","./react-vendor-debug.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./jspdf-plugins-debug.js","./rolldown-runtime-debug.js","../vendor-debug.js","./react-vendor-debug.js","./geotiff-debug.js","./geotiff-codecs-debug.js","./geotiff-deps-debug.js"])))=>i.map(i=>d[i]);
 import { a as __toESM, r as __exportAll } from "./rolldown-runtime-debug.js";
 import { Cr as __vitePreload, Dr as _defineProperty, Or as init_defineProperty } from "./geotiff-debug.js";
 import { t as zlibSync } from "./ol-deps-debug.js";
@@ -80,7 +80,7 @@ function encode(str) {
 init_defineProperty();
 var defaultByteLength = 1024 * 8;
 var hostBigEndian = (() => {
-	const array = new Uint8Array(4);
+	const array = /* @__PURE__ */ new Uint8Array(4);
 	const view = new Uint32Array(array.buffer);
 	return !((view[0] = 1) & array[0]);
 })();
@@ -882,7 +882,7 @@ function swap16$1(val) {
 //#region node_modules/fast-png/lib-esm/helpers/decodeInterlaceNull.js
 var uint16 = new Uint16Array([255]);
 var osIsLittleEndian = new Uint8Array(uint16.buffer)[0] === 255;
-var empty = new Uint8Array(0);
+var empty = /* @__PURE__ */ new Uint8Array(0);
 function decodeInterlaceNull(params) {
 	const { data, width, height, channels, depth } = params;
 	const bytesPerPixel = Math.ceil(depth / 8) * channels;
@@ -1029,7 +1029,7 @@ var PngDecoder = class extends IOBuffer {
 			width: -1,
 			height: -1,
 			channels: -1,
-			data: new Uint8Array(0),
+			data: /* @__PURE__ */ new Uint8Array(0),
 			depth: 1,
 			text: {}
 		};
@@ -1047,7 +1047,7 @@ var PngDecoder = class extends IOBuffer {
 		this._hasPalette = false;
 		this._palette = [];
 		this._hasTransparency = false;
-		this._transparency = new Uint16Array(0);
+		this._transparency = /* @__PURE__ */ new Uint16Array(0);
 		this._compressionMethod = CompressionMethod.UNKNOWN;
 		this._filterMethod = FilterMethod.UNKNOWN;
 		this._interlaceMethod = InterlaceMethod.UNKNOWN;
@@ -1185,7 +1185,7 @@ var PngDecoder = class extends IOBuffer {
 			delayDenominator: this.readUint16(),
 			disposeOp: this.readUint8(),
 			blendOp: this.readUint8(),
-			data: new Uint8Array(0)
+			data: /* @__PURE__ */ new Uint8Array(0)
 		};
 		this._frames.push(image);
 	}
@@ -6720,7 +6720,7 @@ function ie(t) {
 	};
 }
 function ae(t, e, r, n) {
-	for (var i = t[e++], a = 1 << i, s = a + 1, u = s + 1, c = i + 1, l = (1 << c) - 1, h = 0, f = 0, d = 0, p = t[e++], g = new Int32Array(4096), m = null;;) {
+	for (var i = t[e++], a = 1 << i, s = a + 1, u = s + 1, c = i + 1, l = (1 << c) - 1, h = 0, f = 0, d = 0, p = t[e++], g = /* @__PURE__ */ new Int32Array(4096), m = null;;) {
 		for (; h < 16 && 0 !== p;) f |= t[e++] << h, h += 8, 1 === p ? p = t[e++] : --p;
 		if (h < c) break;
 		var v = f & l;
@@ -15027,7 +15027,7 @@ function le() {
 		});
 	}
 	function n() {
-		return (i.DOMPurify ? Promise.resolve(i.DOMPurify) : __vitePreload(() => import("../vendor-debug.js").then((n) => n.u), __vite__mapDeps([2,3,1,4,5,6]), import.meta.url)).catch(function(t) {
+		return (i.DOMPurify ? Promise.resolve(i.DOMPurify) : __vitePreload(() => import("../vendor-debug.js").then((n) => n.u), __vite__mapDeps([2,1,3,4,5,6]), import.meta.url)).catch(function(t) {
 			return Promise.reject(/* @__PURE__ */ new Error("Could not load dompurify: " + t));
 		}).then(function(t) {
 			return t.default ? t.default : t;

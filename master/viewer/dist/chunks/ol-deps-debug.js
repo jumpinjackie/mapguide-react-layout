@@ -432,7 +432,7 @@ var Pbf = class {
 	/**
 	* @param {Uint8Array | ArrayBuffer} [buf]
 	*/
-	constructor(buf = new Uint8Array(16)) {
+	constructor(buf = /* @__PURE__ */ new Uint8Array(16)) {
 		this.buf = ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf);
 		this.dataView = new DataView(this.buf.buffer);
 		this.pos = 0;
@@ -1296,7 +1296,7 @@ for (var i = 256; i < 280; ++i) flt[i] = 7;
 for (var i = 280; i < 288; ++i) flt[i] = 8;
 var fdt = new u8(32);
 for (var i = 0; i < 32; ++i) fdt[i] = 5;
-var flm = /* @__PURE__ */ hMap(flt, 9, 0), fdm = /* @__PURE__ */ hMap(fdt, 5, 0);
+var flm = /*#__PURE__*/ hMap(flt, 9, 0), fdm = /*#__PURE__*/ hMap(fdt, 5, 0);
 var shft = function(p) {
 	return (p + 7) / 8 | 0;
 };
@@ -1499,7 +1499,7 @@ var wblk = function(dat, out, final, syms, lf, df, eb, li, bs, bl, p) {
 	wbits16(out, p, lm[256]);
 	return p + ll[256];
 };
-var deo = /* @__PURE__ */ new i32([
+var deo = /*#__PURE__*/ new i32([
 	65540,
 	131080,
 	131088,
@@ -1510,7 +1510,7 @@ var deo = /* @__PURE__ */ new i32([
 	2114560,
 	2117632
 ]);
-var et = /* @__PURE__ */ new u8(0);
+var et = /*#__PURE__*/ new u8(0);
 var dflt = function(dat, lvl, plvl, pre, post, st) {
 	var s = st.z || dat.length;
 	var o = new u8(pre + s + 5 * (1 + Math.ceil(s / 7e3)) + post);
@@ -1664,7 +1664,7 @@ function zlibSync(data, opts) {
 	var d = dopt(data, opts, opts.dictionary ? 6 : 2, 4);
 	return zlh(d, opts), wbytes(d, d.length - 4, a.d()), d;
 }
-var td = typeof TextDecoder != "undefined" && /* @__PURE__ */ new TextDecoder();
+var td = typeof TextDecoder != "undefined" && /*#__PURE__*/ new TextDecoder();
 try {
 	td.decode(et, { stream: true });
 } catch (e) {}

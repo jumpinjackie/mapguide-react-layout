@@ -1154,7 +1154,9 @@ function writeUtf8(buf, str, pos) {
 }
 //#endregion
 //#region node_modules/fflate/esm/browser.js
-var u8 = Uint8Array, u16 = Uint16Array, i32 = Int32Array;
+var u8 = Uint8Array;
+var u16 = Uint16Array;
+var i32 = Int32Array;
 var fleb = new u8([
 	0,
 	0,
@@ -1254,7 +1256,9 @@ var freb = function(eb, start) {
 		r
 	};
 };
-var _a = freb(fleb, 2), fl = _a.b, revfl = _a.r;
+var _a = freb(fleb, 2);
+var fl = _a.b;
+var revfl = _a.r;
 fl[28] = 258, revfl[258] = 28;
 var _b = freb(fdeb, 0);
 _b.b;
@@ -1296,7 +1300,8 @@ for (var i = 256; i < 280; ++i) flt[i] = 7;
 for (var i = 280; i < 288; ++i) flt[i] = 8;
 var fdt = new u8(32);
 for (var i = 0; i < 32; ++i) fdt[i] = 5;
-var flm = /*#__PURE__*/ hMap(flt, 9, 0), fdm = /*#__PURE__*/ hMap(fdt, 5, 0);
+var flm = /*#__PURE__*/ hMap(flt, 9, 0);
+var fdm = /*#__PURE__*/ hMap(fdt, 5, 0);
 var shft = function(p) {
 	return (p + 7) / 8 | 0;
 };

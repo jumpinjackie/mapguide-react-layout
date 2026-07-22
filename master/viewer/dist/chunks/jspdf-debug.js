@@ -1,9 +1,9 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./jspdf-plugins-debug.js","./rolldown-runtime-debug.js","../vendor-debug.js","./react-vendor-debug.js","./geotiff-debug.js","./geotiff-codecs-debug.js","./geotiff-deps-debug.js"])))=>i.map(i=>d[i]);
-import { a as __toESM, r as __exportAll } from "./rolldown-runtime-debug.js";
-import { Cr as __vitePreload, Dr as _defineProperty, Or as init_defineProperty } from "./geotiff-debug.js";
+import { n as __exportAll, r as __toESM } from "./rolldown-runtime-debug.js";
+import { Sr as __vitePreload, Tr as _defineProperty } from "./geotiff-debug.js";
 import { t as zlibSync } from "./ol-deps-debug.js";
 import { a as inflate_1, i as Inflate_1 } from "./geotiff-codecs-debug.js";
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/typeof.js
+//#region node_modules/@babel/runtime/helpers/esm/typeof.js
 function _typeof(o) {
 	"@babel/helpers - typeof";
 	return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
@@ -13,12 +13,12 @@ function _typeof(o) {
 	}, _typeof(o);
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
+//#region node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
 function _arrayWithHoles(r) {
 	if (Array.isArray(r)) return r;
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
+//#region node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(r, l) {
 	var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
 	if (null != t) {
@@ -41,14 +41,14 @@ function _iterableToArrayLimit(r, l) {
 	}
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+//#region node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
 function _arrayLikeToArray(r, a) {
 	(null == a || a > r.length) && (a = r.length);
 	for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
 	return n;
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+//#region node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
 function _unsupportedIterableToArray(r, a) {
 	if (r) {
 		if ("string" == typeof r) return _arrayLikeToArray(r, a);
@@ -57,12 +57,12 @@ function _unsupportedIterableToArray(r, a) {
 	}
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
+//#region node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
 function _nonIterableRest() {
 	throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 //#endregion
-//#region node_modules/jspdf/node_modules/@babel/runtime/helpers/esm/slicedToArray.js
+//#region node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 function _slicedToArray(r, e) {
 	return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
 }
@@ -77,7 +77,6 @@ function encode(str) {
 }
 //#endregion
 //#region node_modules/iobuffer/lib-esm/IOBuffer.js
-init_defineProperty();
 var defaultByteLength = 1024 * 8;
 var hostBigEndian = (() => {
 	const array = /* @__PURE__ */ new Uint8Array(4);
@@ -1000,7 +999,6 @@ var BlendOpType = {
 };
 //#endregion
 //#region node_modules/fast-png/lib-esm/PngDecoder.js
-init_defineProperty();
 var PngDecoder = class extends IOBuffer {
 	constructor(data, options = {}) {
 		super(data);
@@ -1752,7 +1750,8 @@ var l = i.saveAs || ("object" !== ("undefined" == typeof window ? "undefined" : 
 		return 1 == t.length && (t = "0" + t), 1 == e.length && (e = "0" + e), 1 == r.length && (r = "0" + r), "#" + t + e + r;
 	};
 }
-var f = i.atob.bind(i), d = i.btoa.bind(i);
+var f = i.atob.bind(i);
+var d = i.btoa.bind(i);
 /**
 * @license
 * Joseph Myers does not specify a particular license for his work.
@@ -3898,26 +3897,34 @@ I.prototype.lsbFirstWord = function(t) {
 	for (r in e) e.hasOwnProperty(r) && n.indexOf(r) < 0 && i--;
 	return 0 === i;
 }, E.API = { events: [] }, E.version = "4.2.1";
-var R = E.API, D = 1, T = function(t) {
+var R = E.API;
+var D = 1;
+var T = function(t) {
 	return t.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
-}, z = function(t) {
+};
+var z = function(t) {
 	return t.replace(/\\\\/g, "\\").replace(/\\\(/g, "(").replace(/\\\)/g, ")");
-}, U = function(t) {
+};
+var U = function(t) {
 	return t.toString().replace(/#/g, "#23").replace(/[\s\n\r()<>[\]{}\/%]/g, function(t) {
 		var e = t.charCodeAt(0).toString(16).toUpperCase();
 		return "#" + (1 === e.length ? "0" + e : e);
 	});
-}, H = function(t) {
+};
+var H = function(t) {
 	return t.toFixed(2);
-}, W = function(t) {
+};
+var W = function(t) {
 	return t.toFixed(5);
 };
 R.__acroform__ = {};
 var V = function(t, e) {
 	t.prototype = Object.create(e.prototype), t.prototype.constructor = t;
-}, G = function(t) {
+};
+var G = function(t) {
 	return t * D;
-}, Y = function(t) {
+};
+var Y = function(t) {
 	var e = new lt(), r = At.internal.getHeight(t) || 0, n = At.internal.getWidth(t) || 0;
 	return e.BBox = [
 		0,
@@ -3925,25 +3932,32 @@ var V = function(t, e) {
 		Number(H(n)),
 		Number(H(r))
 	], e;
-}, J = R.__acroform__.setBit = function(t, e) {
+};
+var J = R.__acroform__.setBit = function(t, e) {
 	if (t = t || 0, e = e || 0, isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.setBit");
 	return t | 1 << e;
-}, X = R.__acroform__.clearBit = function(t, e) {
+};
+var X = R.__acroform__.clearBit = function(t, e) {
 	if (t = t || 0, e = e || 0, isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.clearBit");
 	return t & ~(1 << e);
-}, K = R.__acroform__.getBit = function(t, e) {
+};
+var K = R.__acroform__.getBit = function(t, e) {
 	if (isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.getBit");
 	return t & 1 << e ? 1 : 0;
-}, Z = R.__acroform__.getBitForPdf = function(t, e) {
+};
+var Z = R.__acroform__.getBitForPdf = function(t, e) {
 	if (isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.getBitForPdf");
 	return K(t, e - 1);
-}, $ = R.__acroform__.setBitForPdf = function(t, e) {
+};
+var $ = R.__acroform__.setBitForPdf = function(t, e) {
 	if (isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.setBitForPdf");
 	return J(t, e - 1);
-}, Q = R.__acroform__.clearBitForPdf = function(t, e) {
+};
+var Q = R.__acroform__.clearBitForPdf = function(t, e) {
 	if (isNaN(t) || isNaN(e)) throw new Error("Invalid arguments passed to jsPDF.API.__acroform__.clearBitForPdf");
 	return X(t, e - 1);
-}, tt = R.__acroform__.calculateCoordinates = function(t, e) {
+};
+var tt = R.__acroform__.calculateCoordinates = function(t, e) {
 	var r = e.internal.getHorizontalCoordinate, n = e.internal.getVerticalCoordinate, i = t[0], a = t[1], o = t[2], s = t[3], u = {};
 	return u.lowerLeft_X = r(i) || 0, u.lowerLeft_Y = n(a + s) || 0, u.upperRight_X = r(i + o) || 0, u.upperRight_Y = n(a) || 0, [
 		Number(H(u.lowerLeft_X)),
@@ -3951,7 +3965,8 @@ var V = function(t, e) {
 		Number(H(u.upperRight_X)),
 		Number(H(u.upperRight_Y))
 	];
-}, et = function(t) {
+};
+var et = function(t) {
 	if (t.appearanceStreamContent) return t.appearanceStreamContent;
 	if (t.V || t.DV) {
 		var e = [], n = rt(t, t._V || t.DV), i = t.scope.internal.getFont(t.fontName, t.fontStyle).id;
@@ -3959,7 +3974,8 @@ var V = function(t, e) {
 		var a = Y(t);
 		return a.scope = t.scope, a.stream = e.join("\n"), a;
 	}
-}, rt = function(t, e) {
+};
+var rt = function(t, e) {
 	var r = 0 === t.fontSize ? t.maxFontSize : t.fontSize, n = {
 		text: "",
 		fontSize: ""
@@ -4034,7 +4050,8 @@ var V = function(t, e) {
 		break;
 	}
 	return n.text = e, n.fontSize = a, n;
-}, nt = function(t, e, r) {
+};
+var nt = function(t, e, r) {
 	var n = e.scope.internal.getFont(e.fontName, e.fontStyle), i = e.scope.getStringUnitWidth(t, {
 		font: n,
 		fontSize: parseFloat(r),
@@ -4048,14 +4065,16 @@ var V = function(t, e) {
 		}) * parseFloat(r) * 1.5,
 		width: i
 	};
-}, it = {
+};
+var it = {
 	fields: [],
 	xForms: [],
 	acroFormDictionaryRoot: null,
 	printedOut: !1,
 	internal: null,
 	isInitialized: !1
-}, at = function(t, e) {
+};
+var at = function(t, e) {
 	var r = {
 		type: "reference",
 		object: t
@@ -4063,7 +4082,8 @@ var V = function(t, e) {
 	void 0 === e.internal.getPageInfo(t.page).pageContext.annotations.find(function(t) {
 		return t.type === r.type && t.object === r.object;
 	}) && e.internal.getPageInfo(t.page).pageContext.annotations.push(r);
-}, ot = function(e, r) {
+};
+var ot = function(e, r) {
 	if (r.scope = e, void 0 !== e.internal && (void 0 === e.internal.acroformPlugin || !1 === e.internal.acroformPlugin.isInitialized)) {
 		if (ft.FieldNum = 0, e.internal.acroformPlugin = JSON.parse(JSON.stringify(it)), e.internal.acroformPlugin.acroFormDictionaryRoot) throw new Error("Exception while creating AcroformDictionary");
 		D = e.internal.scaleFactor, e.internal.acroformPlugin.acroFormDictionaryRoot = new ht(), e.internal.acroformPlugin.acroFormDictionaryRoot.scope = e, e.internal.acroformPlugin.acroFormDictionaryRoot._eventID = e.internal.events.subscribe("postPutResources", function() {
@@ -4127,7 +4147,8 @@ var V = function(t, e) {
 			})(r, e);
 		}), e.internal.acroformPlugin.isInitialized = !0;
 	}
-}, st = R.__acroform__.arrayToPdfArray = function(e, r, n) {
+};
+var st = R.__acroform__.arrayToPdfArray = function(e, r, n) {
 	var i = function(t) {
 		return t;
 	};
@@ -4143,12 +4164,14 @@ var V = function(t, e) {
 		return a + "]";
 	}
 	throw new Error("Invalid argument passed to jsPDF.__acroform__.arrayToPdfArray");
-}, ut = function(t, e, r) {
+};
+var ut = function(t, e, r) {
 	var n = function(t) {
 		return t;
 	};
 	return void 0 !== e && r && (n = r.internal.getEncryptor(e)), (t = t || "").toString(), "(" + T(n(t)) + ")";
-}, ct = function() {
+};
+var ct = function() {
 	this._objId = void 0, this._scope = void 0, Object.defineProperty(this, "objId", {
 		get: function() {
 			if (void 0 === this._objId) {
@@ -5188,7 +5211,6 @@ function Pt(t) {
 	}, {});
 }
 (function(e) {
-	var r = "addImage_";
 	e.__addimage__ = {};
 	var n = "UNKNOWN", i = {
 		PNG: [[
@@ -5387,18 +5409,18 @@ function Pt(t) {
 			}), r("endobj");
 		}
 	}, s = function() {
-		var t = this.internal.collections[r + "images"];
+		var t = this.internal.collections["addImage_images"];
 		for (var e in t) o.call(this, t[e]);
 	}, u = function() {
-		var t, e = this.internal.collections[r + "images"], n = this.internal.write;
+		var t, e = this.internal.collections["addImage_images"], n = this.internal.write;
 		for (var i in e) n("/I" + (t = e[i]).index, t.objectId, "0", "R");
 	}, c = function() {
-		this.internal.collections[r + "images"] || (this.internal.collections[r + "images"] = {}, this.internal.events.subscribe("putResources", s), this.internal.events.subscribe("putXobjectDict", u));
+		this.internal.collections["addImage_images"] || (this.internal.collections["addImage_images"] = {}, this.internal.events.subscribe("putResources", s), this.internal.events.subscribe("putXobjectDict", u));
 	}, l = function() {
-		var t = this.internal.collections[r + "images"];
+		var t = this.internal.collections["addImage_images"];
 		return c.call(this), t;
 	}, h = function() {
-		return Object.keys(this.internal.collections[r + "images"]).length;
+		return Object.keys(this.internal.collections["addImage_images"]).length;
 	}, d = function(t) {
 		return "function" == typeof e["process" + t.toUpperCase()];
 	}, p = function(e) {
@@ -5425,7 +5447,7 @@ function Pt(t) {
 			return f(t.toDataURL(a, 1).split("base64,").pop());
 		}
 	}, m = function(t) {
-		var e = this.internal.collections[r + "images"];
+		var e = this.internal.collections["addImage_images"];
 		if (e) {
 			for (var n in e) if (t === e[n].alias) return e[n];
 		}
@@ -6389,7 +6411,8 @@ var kt = {
 		"oblique",
 		"italic"
 	]
-}, Ft = [
+};
+var Ft = [
 	"ultra-condensed",
 	"extra-condensed",
 	"condensed",
@@ -6399,7 +6422,9 @@ var kt = {
 	"expanded",
 	"extra-expanded",
 	"ultra-expanded"
-], It = Pt(Ft), Ct = [
+];
+var It = Pt(Ft);
+var Ct = [
 	100,
 	200,
 	300,
@@ -6409,7 +6434,8 @@ var kt = {
 	700,
 	800,
 	900
-], jt = Pt(Ct);
+];
+var jt = Pt(Ct);
 function Ot(t) {
 	var e = t.family.replace(/"|'/g, "").toLowerCase(), r = function(t) {
 		return kt[t = t || "normal"] ? t : "normal";
@@ -6447,7 +6473,8 @@ var Mt = {
 	cursive: "times",
 	fantasy: "times",
 	serif: "times"
-}, qt = {
+};
+var qt = {
 	caption: "times",
 	icon: "times",
 	menu: "times",
@@ -6477,7 +6504,12 @@ function Tt(t) {
 	var e = t.match(/^(-[a-z_]|[a-z_])[a-z0-9_-]*/i);
 	return null === e ? null : [e[0], t.substring(e[0].length)];
 }
-var zt, Ut, Ht, Wt, Vt, Gt = ["times"];
+var zt;
+var Ut;
+var Ht;
+var Wt;
+var Vt;
+var Gt = ["times"];
 function Yt(t, r, n, i, a) {
 	var o = 4, s = Kt;
 	switch (a) {
@@ -18940,7 +18972,8 @@ function le() {
 		return null == e && (e = !1), r = e ? this.lineGap : 0, (this.ascender + r - this.decender) / 1e3 * t;
 	}, t;
 }();
-var he, fe = function() {
+var he;
+var fe = function() {
 	function t(t) {
 		this.data = null != t ? t : [], this.pos = 0, this.length = this.data.length;
 	}
@@ -18997,7 +19030,8 @@ var he, fe = function() {
 		for (i = [], r = 0, n = t.length; r < n; r++) e = t[r], i.push(this.writeByte(e));
 		return i;
 	}, t;
-}(), de = function() {
+}();
+var de = function() {
 	var t;
 	function e(t) {
 		var e, r, n;
@@ -19018,7 +19052,9 @@ var he, fe = function() {
 		for (n = new fe(t), r = 0, e = 0, i = t.length; e < i; e = e += 4) r += n.readUInt32();
 		return 4294967295 & r;
 	}, e;
-}(), pe = {}.hasOwnProperty, ge = function(t, e) {
+}();
+var pe = {}.hasOwnProperty;
+var ge = function(t, e) {
 	for (var r in e) pe.call(e, r) && (t[r] = e[r]);
 	function n() {
 		this.constructor = t;
@@ -19044,7 +19080,8 @@ var me = function() {
 		var e;
 		return (e = new fe()).writeInt(this.version), e.writeInt(this.revision), e.writeInt(this.checkSumAdjustment), e.writeInt(this.magicNumber), e.writeShort(this.flags), e.writeShort(this.unitsPerEm), e.writeLongLong(this.created), e.writeLongLong(this.modified), e.writeShort(this.xMin), e.writeShort(this.yMin), e.writeShort(this.xMax), e.writeShort(this.yMax), e.writeShort(this.macStyle), e.writeShort(this.lowestRecPPEM), e.writeShort(this.fontDirectionHint), e.writeShort(t), e.writeShort(this.glyphDataFormat), e.data;
 	}, t;
-}(), ve = function() {
+}();
+var ve = function() {
 	function t(t, e) {
 		var r, n, i, a, o, s, u, c, l, h, f, d, p, g, m, v, b;
 		switch (this.platformID = t.readUInt16(), this.encodingID = t.readShort(), this.offset = e + t.readInt(), l = t.pos, t.pos = this.offset, this.format = t.readUInt16(), this.length = t.readUInt16(), this.language = t.readUInt16(), this.isUnicode = 3 === this.platformID && 1 === this.encodingID && 4 === this.format || 0 === this.platformID && 4 === this.format, this.codeMap = {}, this.format) {
@@ -19119,7 +19156,8 @@ var me = function() {
 				};
 		}
 	}, t;
-}(), be = function() {
+}();
+var be = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19131,14 +19169,16 @@ var me = function() {
 		var r, n;
 		return null == e && (e = "macroman"), r = ve.encode(t, e), (n = new fe()).writeUInt16(0), n.writeUInt16(1), r.table = n.data.concat(r.subtable), r;
 	}, t;
-}(), ye = function() {
+}();
+var ye = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
 	return ge(t, he), t.prototype.tag = "hhea", t.prototype.parse = function(t) {
 		return t.pos = this.offset, this.version = t.readInt(), this.ascender = t.readShort(), this.decender = t.readShort(), this.lineGap = t.readShort(), this.advanceWidthMax = t.readShort(), this.minLeftSideBearing = t.readShort(), this.minRightSideBearing = t.readShort(), this.xMaxExtent = t.readShort(), this.caretSlopeRise = t.readShort(), this.caretSlopeRun = t.readShort(), this.caretOffset = t.readShort(), t.pos += 8, this.metricDataFormat = t.readShort(), this.numberOfMetrics = t.readUInt16();
 	}, t;
-}(), we = function() {
+}();
+var we = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19157,7 +19197,8 @@ var me = function() {
 			return r;
 		}(), this.version > 1)) return this.xHeight = t.readShort(), this.capHeight = t.readShort(), this.defaultChar = t.readShort(), this.breakChar = t.readShort(), this.maxContext = t.readShort();
 	}, t;
-}(), Ne = function() {
+}();
+var Ne = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19179,9 +19220,11 @@ var me = function() {
 			}.call(this);
 		}
 	}, t;
-}(), Le = function(t, e) {
+}();
+var Le = function(t, e) {
 	this.raw = t, this.length = t.length, this.platformID = e.platformID, this.encodingID = e.encodingID, this.languageID = e.languageID;
-}, xe = function() {
+};
+var xe = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19204,14 +19247,16 @@ var me = function() {
 		}
 		return this.trademark = s[7], this.manufacturer = s[8], this.designer = s[9], this.description = s[10], this.vendorUrl = s[11], this.designerUrl = s[12], this.license = s[13], this.licenseUrl = s[14], this.preferredFamily = s[15], this.preferredSubfamily = s[17], this.compatibleFull = s[18], this.sampleText = s[19];
 	}, t;
-}(), Ae = function() {
+}();
+var Ae = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
 	return ge(t, he), t.prototype.tag = "maxp", t.prototype.parse = function(t) {
 		return t.pos = this.offset, this.version = t.readInt(), this.numGlyphs = t.readUInt16(), this.maxPoints = t.readUInt16(), this.maxContours = t.readUInt16(), this.maxCompositePoints = t.readUInt16(), this.maxComponentContours = t.readUInt16(), this.maxZones = t.readUInt16(), this.maxTwilightPoints = t.readUInt16(), this.maxStorage = t.readUInt16(), this.maxFunctionDefs = t.readUInt16(), this.maxInstructionDefs = t.readUInt16(), this.maxStackElements = t.readUInt16(), this.maxSizeOfInstructions = t.readUInt16(), this.maxComponentElements = t.readUInt16(), this.maxComponentDepth = t.readUInt16();
 	}, t;
-}(), Se = function() {
+}();
+var Se = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19237,7 +19282,9 @@ var me = function() {
 			lsb: this.leftSideBearings[t - this.metrics.length]
 		};
 	}, t;
-}(), _e = [].slice, Pe = function() {
+}();
+var _e = [].slice;
+var Pe = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19254,14 +19301,16 @@ var me = function() {
 			offsets: i
 		};
 	}, t;
-}(), ke = function() {
+}();
+var ke = function() {
 	function t(t, e, r, n, i, a) {
 		this.raw = t, this.numberOfContours = e, this.xMin = r, this.yMin = n, this.xMax = i, this.yMax = a, this.compound = !1;
 	}
 	return t.prototype.encode = function() {
 		return this.raw.data;
 	}, t;
-}(), Fe = function() {
+}();
+var Fe = function() {
 	function t(t, e, r, n, i) {
 		var a, o;
 		for (this.raw = t, this.xMin = e, this.yMin = r, this.xMax = n, this.yMax = i, this.compound = !0, this.glyphIDs = [], this.glyphOffsets = [], a = this.raw; o = a.readShort(), this.glyphOffsets.push(a.pos), this.glyphIDs.push(a.readUInt16()), 32 & o;) a.pos += 1 & o ? 4 : 2, 128 & o ? a.pos += 8 : 64 & o ? a.pos += 4 : 8 & o && (a.pos += 2);
@@ -19271,7 +19320,8 @@ var me = function() {
 		for (e = new fe(_e.call(this.raw.data)), t = 0, r = this.glyphIDs.length; t < r; ++t) e.pos = this.glyphOffsets[t];
 		return e.data;
 	}, t;
-}(), Ie = function() {
+}();
+var Ie = function() {
 	function t() {
 		return t.__super__.constructor.apply(this, arguments);
 	}
@@ -19299,7 +19349,8 @@ var me = function() {
 		for (var u = new Array(4 * r.length), c = 0; c < r.length; ++c) u[4 * c + 3] = 255 & r[c], u[4 * c + 2] = (65280 & r[c]) >> 8, u[4 * c + 1] = (16711680 & r[c]) >> 16, u[4 * c] = (4278190080 & r[c]) >> 24;
 		return u;
 	}, t;
-}(), Ce = function() {
+}();
+var Ce = function() {
 	function t(t) {
 		this.font = t, this.subset = {}, this.unicodes = {}, this.next = 33;
 	}
@@ -19363,6 +19414,6 @@ E.API.PDFObject = function() {
 	}, e;
 }();
 //#endregion
-export { jspdf_es_min_exports as t };
+export { _typeof as n, jspdf_es_min_exports as t };
 
 //# sourceMappingURL=jspdf-debug.js.map

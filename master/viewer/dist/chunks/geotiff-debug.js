@@ -1,7 +1,7 @@
-import { a as __toESM, n as __esmMin, r as __exportAll, t as __commonJSMin } from "./rolldown-runtime-debug.js";
+import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./rolldown-runtime-debug.js";
 import { a as inflate_1, n as ZSTDDecoder, r as require_LercDecode, t as ZSTDDecoder$1 } from "./geotiff-codecs-debug.js";
 import { a as getFloat16, i as getAttribute, n as browser_default, r as findTagsByName, t as QuickLRU } from "./geotiff-deps-debug.js";
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/typeof.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/typeof.js
 function _typeof(o) {
 	"@babel/helpers - typeof";
 	return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
@@ -10,9 +10,8 @@ function _typeof(o) {
 		return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
 	}, _typeof(o);
 }
-var init_typeof = __esmMin((() => {}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/toPrimitive.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/toPrimitive.js
 function toPrimitive(t, r) {
 	if ("object" != _typeof(t) || !t) return t;
 	var e = t[Symbol.toPrimitive];
@@ -23,21 +22,14 @@ function toPrimitive(t, r) {
 	}
 	return ("string" === r ? String : Number)(t);
 }
-var init_toPrimitive = __esmMin((() => {
-	init_typeof();
-}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/toPropertyKey.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/toPropertyKey.js
 function toPropertyKey(t) {
 	var i = toPrimitive(t, "string");
 	return "symbol" == _typeof(i) ? i : i + "";
 }
-var init_toPropertyKey = __esmMin((() => {
-	init_typeof();
-	init_toPrimitive();
-}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/defineProperty.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/defineProperty.js
 function _defineProperty(e, r, t) {
 	return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
 		value: t,
@@ -46,11 +38,8 @@ function _defineProperty(e, r, t) {
 		writable: !0
 	}) : e[r] = t, e;
 }
-var init_defineProperty = __esmMin((() => {
-	init_toPropertyKey();
-}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectSpread2.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectSpread2.js
 function ownKeys(e, r) {
 	var t = Object.keys(e);
 	if (Object.getOwnPropertySymbols) {
@@ -72,11 +61,8 @@ function _objectSpread2(e) {
 	}
 	return e;
 }
-var init_objectSpread2 = __esmMin((() => {
-	init_defineProperty();
-}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/asyncToGenerator.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/asyncToGenerator.js
 function asyncGeneratorStep(n, t, e, r, o, a, c) {
 	try {
 		var i = n[a](c), u = i.value;
@@ -103,7 +89,6 @@ function _asyncToGenerator(n) {
 }
 //#endregion
 //#region \0vite/preload-helper.js
-init_objectSpread2();
 var scriptRel = "modulepreload";
 var assetsURL = function(dep, importerUrl) {
 	return new URL(dep, importerUrl).href;
@@ -126,7 +111,11 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 		}
 		function importMetaResolve(specifier) {
 			if (import.meta.resolve) return import.meta.resolve(specifier);
-			return new URL(specifier, new URL("../../../src/node/plugins/importAnalysisBuild.ts", import.meta.url)).href;
+			return new URL(
+				specifier,
+				/** #__KEEP__ */
+				import.meta.url
+			).href;
 		}
 		promise = allSettled(deps.map((dep) => {
 			dep = assetsURL(dep, importerUrl);
@@ -2819,7 +2808,7 @@ function _fromProjectionCode() {
 	return _fromProjectionCode.apply(this, arguments);
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectWithoutPropertiesLoose.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectWithoutPropertiesLoose.js
 function _objectWithoutPropertiesLoose(r, e) {
 	if (null == r) return {};
 	var t = {};
@@ -2829,9 +2818,8 @@ function _objectWithoutPropertiesLoose(r, e) {
 	}
 	return t;
 }
-var init_objectWithoutPropertiesLoose = __esmMin((() => {}));
 //#endregion
-//#region \0@oxc-project+runtime@0.137.0/helpers/esm/objectWithoutProperties.js
+//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectWithoutProperties.js
 function _objectWithoutProperties(e, t) {
 	if (null == e) return {};
 	var o, r, i = _objectWithoutPropertiesLoose(e, t);
@@ -2841,12 +2829,8 @@ function _objectWithoutProperties(e, t) {
 	}
 	return i;
 }
-var init_objectWithoutProperties = __esmMin((() => {
-	init_objectWithoutPropertiesLoose();
-}));
 //#endregion
 //#region node_modules/ol/util.js
-init_objectWithoutProperties();
 /**
 * @module ol/util
 */
@@ -5558,7 +5542,6 @@ var Tile = class extends Target {
 };
 //#endregion
 //#region node_modules/ol/dom.js
-init_defineProperty();
 /**
 * @module ol/dom
 */
@@ -11858,7 +11841,6 @@ function create() {
 }
 //#endregion
 //#region node_modules/geotiff/dist-module/pool.js
-init_objectSpread2();
 var _excluded$1 = ["jobId", "error"];
 var defaultPoolSize = typeof navigator !== "undefined" ? navigator.hardwareConcurrency || 2 : 2;
 /**
@@ -12204,7 +12186,6 @@ var CustomAggregateError = class extends Error {
 var AggregateError = CustomAggregateError;
 //#endregion
 //#region node_modules/geotiff/dist-module/source/blockedsource.js
-init_objectSpread2();
 var Block = class {
 	/**
 	*
@@ -12581,7 +12562,6 @@ var XHRClient = class extends BaseClient {
 var import___vite_browser_external = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {};
 })))(), 1);
-init_objectSpread2();
 var HttpResponse = class extends BaseResponse {
 	/**
 	* BaseResponse facade for node HTTP/HTTPS API Response
@@ -12655,26 +12635,28 @@ var HttpClient = class extends BaseClient {
 };
 //#endregion
 //#region node_modules/geotiff/dist-module/source/remote.js
-init_objectSpread2();
-init_objectWithoutProperties();
 var _excluded = [
 	"headers",
 	"credentials",
 	"maxRanges",
 	"allowFullFile"
-], _excluded2 = [
+];
+var _excluded2 = [
 	"headers",
 	"maxRanges",
 	"allowFullFile"
-], _excluded3 = [
+];
+var _excluded3 = [
 	"headers",
 	"maxRanges",
 	"allowFullFile"
-], _excluded4 = [
+];
+var _excluded4 = [
 	"headers",
 	"maxRanges",
 	"allowFullFile"
-], _excluded5 = ["forceXHR"];
+];
+var _excluded5 = ["forceXHR"];
 /**
 * @typedef {Object} RemoteSourceOptions
 * @property {Record<string, string>} [headers={}] Additional headers to add to each request
@@ -13339,7 +13321,6 @@ var ImageFileDirectoryParser = class {
 //#endregion
 //#region node_modules/geotiff/dist-module/geotiff.js
 /** @module geotiff */
-init_objectSpread2();
 /**
 * @typedef {Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array}
 * TypedArray
@@ -14826,6 +14807,6 @@ var GeoTIFFSource = class extends DataTileSource {
 */
 GeoTIFFSource.prototype.getView;
 //#endregion
-export { TileRange as $, createOrUpdateFromFlatCoordinates as $n, fromLonLat as $t, inAndOut as A, ceil as An, memoizeOne as At, WORKER_OFFSCREEN_CANVAS as B, applyTransform as Bn, EventType_default as Bt, outerWidth as C, rotate$1 as Cn, __vitePreload as Cr, Observable as Ct, replaceNode as D, wrapX$1 as Dn, _defineProperty as Dr, FALSE as Dt, replaceChildren as E, squaredDistanceToSegment as En, init_objectSpread2 as Er, BaseEvent as Et, IMAGE_DECODE as F, round as Fn, equals as Ft, createOrUpdate as G, containsCoordinate as Gn, abstract as Gt, extentFromProjection as H, buffer as Hn, listenOnce as Ht, MAC as I, squaredDistance$1 as In, extend as It, getKeyZXY as J, coordinateRelationship as Jn, init_objectWithoutProperties as Jt, getCacheKey as K, containsExtent as Kn, getUid as Kt, PASSIVE_EVENT_LISTENERS as L, squaredSegmentDistance as Ln, linearFindNearest as Lt, TileState_default as M, floor as Mn, ascending as Mt, CREATE_IMAGE_BITMAP as N, lerp$1 as Nn, binarySearch as Nt, Tile as O, compareVersions as On, init_defineProperty as Or, TRUE as Ot, DEVICE_PIXEL_RATIO as P, modulo as Pn, descending as Pt, toSize as Q, createOrUpdateFromCoordinate as Qn, equivalent$1 as Qt, SAFARI_BUG_237906 as R, toFixed as Rn, reverseSubArray as Rt, outerHeight as S, equals$1 as Sn, warn as Sr, BaseObject as St, removeChildren as T, squaredDistance as Tn, _objectSpread2 as Tr, Target as Tt, getForProjection as U, clone as Un, unlistenByKey as Ut, createXYZ as V, boundingExtent as Vn, listen as Vt, TileGrid as W, closestSquaredDistanceXY as Wn, ObjectEventType_default as Wt, hashZXY as X, createOrUpdate$2 as Xn, createProjection as Xt, hash as Y, createEmpty as Yn, register as Yt, hasArea as Z, createOrUpdateEmpty as Zn, disableCoordinateWarning as Zt, render$1 as _, add$2 as _n, returnOrUpdate as _r, scale$2 as _t, DataTile as a, getUserProjection as an, getBottomLeft as ar, getIntersectionPoint as at, getSharedCanvasContext2D as b, closestOnSegment as bn, wrapX$2 as br, translate$1 as bt, TileEventType_default as c, toUserResolution as cn, getForViewAndSize as cr, apply as ct, Source as d, getArea as dn, getRotatedViewport as dr, equivalent as dt, fromUserCoordinate as en, equals$2 as er, intersectsLineString as et, ERROR_THRESHOLD as f, getDistance as fn, getTopLeft as fr, fromString as ft, canvasPool as g, METERS_PER_UNIT$1 as gn, isEmpty$1 as gr, rotate as gt, calculateSourceResolution as h, Projection as hn, intersects as hr, reset as ht, fromTransform as i, getTransformFromProjections as in, getArea$1 as ir, forEach as it, linear as j, clamp as jn, toPromise as jt, easeOut as k, padNumber as kn, VOID as kt, TileSource as l, transform as ln, getHeight as lr, compose as lt, calculateSourceExtentResolution as m, isEmpty as mn, getWidth as mr, multiply as mt, DataTileSource as n, get as nn, extendCoordinate as nr, intersectsLinearRingArray as nt, asArrayLike as o, toUserCoordinate as on, getBottomRight as or, linearRingsContainsXY as ot, Triangulation as p, clear as pn, getTopRight as pr, makeInverse as pt, getKey as q, containsXY as qn, _objectWithoutProperties as qt, create$1 as r, getTransform as rn, forEachCorner as rr, intersectsLinearRingMultiArray as rt, asImageLike as s, toUserExtent as sn, getCenter as sr, linearRingssContainsXY as st, GeoTIFF_exports as t, fromUserExtent as tn, extend$1 as tr, intersectsLineStringArray as tt, TileSourceEvent as u, transformExtent as un, getIntersection as ur, create$2 as ut, createCanvasContext2D as v, angleBetween as vn, scaleFromCenter as vr, setFromArray as vt, releaseCanvas as w, scale$3 as wn, _asyncToGenerator as wr, unByKey as wt, isCanvas as x, distance as xn, Relationship_default as xr, assert as xt, createMockDiv as y, closestOnCircle as yn, wrapAndSliceX as yr, toString as yt, WEBKIT as z, toRadians as zn, Disposable as zt };
+export { TileRange as $, equals$2 as $n, fromUserCoordinate as $t, inAndOut as A, clamp as An, memoizeOne as At, WORKER_OFFSCREEN_CANVAS as B, boundingExtent as Bn, EventType_default as Bt, outerWidth as C, scale$3 as Cn, _asyncToGenerator as Cr, Observable as Ct, replaceNode as D, compareVersions as Dn, FALSE as Dt, replaceChildren as E, wrapX$1 as En, BaseEvent as Et, IMAGE_DECODE as F, squaredDistance$1 as Fn, equals as Ft, createOrUpdate as G, containsExtent as Gn, abstract as Gt, extentFromProjection as H, clone as Hn, listenOnce as Ht, MAC as I, squaredSegmentDistance as In, extend as It, getKeyZXY as J, createEmpty as Jn, register as Jt, getCacheKey as K, containsXY as Kn, getUid as Kt, PASSIVE_EVENT_LISTENERS as L, toFixed as Ln, linearFindNearest as Lt, TileState_default as M, lerp$1 as Mn, ascending as Mt, CREATE_IMAGE_BITMAP as N, modulo as Nn, binarySearch as Nt, Tile as O, padNumber as On, TRUE as Ot, DEVICE_PIXEL_RATIO as P, round as Pn, descending as Pt, toSize as Q, createOrUpdateFromFlatCoordinates as Qn, fromLonLat as Qt, SAFARI_BUG_237906 as R, toRadians as Rn, reverseSubArray as Rt, outerHeight as S, rotate$1 as Sn, __vitePreload as Sr, BaseObject as St, removeChildren as T, squaredDistanceToSegment as Tn, _defineProperty as Tr, Target as Tt, getForProjection as U, closestSquaredDistanceXY as Un, unlistenByKey as Ut, createXYZ as V, buffer as Vn, listen as Vt, TileGrid as W, containsCoordinate as Wn, ObjectEventType_default as Wt, hashZXY as X, createOrUpdateEmpty as Xn, disableCoordinateWarning as Xt, hash as Y, createOrUpdate$2 as Yn, createProjection as Yt, hasArea as Z, createOrUpdateFromCoordinate as Zn, equivalent$1 as Zt, render$1 as _, angleBetween as _n, scaleFromCenter as _r, scale$2 as _t, DataTile as a, toUserCoordinate as an, getBottomRight as ar, getIntersectionPoint as at, getSharedCanvasContext2D as b, distance as bn, Relationship_default as br, translate$1 as bt, TileEventType_default as c, transform as cn, getHeight as cr, apply as ct, Source as d, getDistance as dn, getTopLeft as dr, equivalent as dt, fromUserExtent as en, extend$1 as er, intersectsLineString as et, ERROR_THRESHOLD as f, clear as fn, getTopRight as fr, fromString as ft, canvasPool as g, add$2 as gn, returnOrUpdate as gr, rotate as gt, calculateSourceResolution as h, METERS_PER_UNIT$1 as hn, isEmpty$1 as hr, reset as ht, fromTransform as i, getUserProjection as in, getBottomLeft as ir, forEach as it, linear as j, floor as jn, toPromise as jt, easeOut as k, ceil as kn, VOID as kt, TileSource as l, transformExtent as ln, getIntersection as lr, compose as lt, calculateSourceExtentResolution as m, Projection as mn, intersects as mr, multiply as mt, DataTileSource as n, getTransform as nn, forEachCorner as nr, intersectsLinearRingArray as nt, asArrayLike as o, toUserExtent as on, getCenter as or, linearRingsContainsXY as ot, Triangulation as p, isEmpty as pn, getWidth as pr, makeInverse as pt, getKey as q, coordinateRelationship as qn, _objectWithoutProperties as qt, create$1 as r, getTransformFromProjections as rn, getArea$1 as rr, intersectsLinearRingMultiArray as rt, asImageLike as s, toUserResolution as sn, getForViewAndSize as sr, linearRingssContainsXY as st, GeoTIFF_exports as t, get as tn, extendCoordinate as tr, intersectsLineStringArray as tt, TileSourceEvent as u, getArea as un, getRotatedViewport as ur, create$2 as ut, createCanvasContext2D as v, closestOnCircle as vn, wrapAndSliceX as vr, setFromArray as vt, releaseCanvas as w, squaredDistance as wn, _objectSpread2 as wr, unByKey as wt, isCanvas as x, equals$1 as xn, warn as xr, assert as xt, createMockDiv as y, closestOnSegment as yn, wrapX$2 as yr, toString as yt, WEBKIT as z, applyTransform as zn, Disposable as zt };
 
 //# sourceMappingURL=geotiff-debug.js.map

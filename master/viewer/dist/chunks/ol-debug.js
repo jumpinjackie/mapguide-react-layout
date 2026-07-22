@@ -1,8 +1,7 @@
-import { $ as TileRange, A as inAndOut, An as ceil, B as WORKER_OFFSCREEN_CANVAS, Bn as applyTransform, Bt as EventType_default$2, C as outerWidth, Cn as rotate, Ct as Observable, D as replaceNode, Dn as wrapX, Dr as _defineProperty, Dt as FALSE, E as replaceChildren, En as squaredDistanceToSegment, Er as init_objectSpread2, Et as BaseEvent, Fn as round, Ft as equals$2, G as createOrUpdate, Gn as containsCoordinate, Gt as abstract, H as extentFromProjection, Hn as buffer, Ht as listenOnce, I as MAC, In as squaredDistance, It as extend, J as getKeyZXY, Jn as coordinateRelationship, K as getCacheKey$1, Kn as containsExtent, Kt as getUid, L as PASSIVE_EVENT_LISTENERS, Lt as linearFindNearest, M as TileState_default, Mn as floor, Mt as ascending, Nn as lerp, O as Tile, On as compareVersions, Or as init_defineProperty, Ot as TRUE, P as DEVICE_PIXEL_RATIO, Pn as modulo, Pt as descending, Q as toSize, Qn as createOrUpdateFromCoordinate, Qt as equivalent, R as SAFARI_BUG_237906, Rn as toFixed, Rt as reverseSubArray, S as outerHeight, Sn as equals$1, Sr as warn, St as BaseObject, T as removeChildren, Tn as squaredDistance$1, Tr as _objectSpread2, Tt as Target, U as getForProjection, Un as clone, Ut as unlistenByKey, V as createXYZ, Vn as boundingExtent, Vt as listen, W as TileGrid, Wt as ObjectEventType_default, X as hashZXY, Xn as createOrUpdate$1, Xt as createProjection, Y as hash, Yn as createEmpty, Z as hasArea, Zn as createOrUpdateEmpty, Zt as disableCoordinateWarning, _ as render, _n as add, _t as scale, a as DataTile, an as getUserProjection, ar as getBottomLeft, at as getIntersectionPoint, b as getSharedCanvasContext2D, bn as closestOnSegment, br as wrapX$1, bt as translate, c as TileEventType_default, cn as toUserResolution, cr as getForViewAndSize, ct as apply, d as Source, dr as getRotatedViewport, dt as equivalent$1, en as fromUserCoordinate, er as equals, f as ERROR_THRESHOLD, fr as getTopLeft, ft as fromString, g as canvasPool$2, gn as METERS_PER_UNIT, gr as isEmpty, gt as rotate$1, h as calculateSourceResolution, hr as intersects, ht as reset, i as fromTransform, in as getTransformFromProjections, ir as getArea, j as linear, jn as clamp, jt as toPromise, k as easeOut, kt as VOID, l as TileSource, ln as transform, lr as getHeight, lt as compose, m as calculateSourceExtentResolution, mn as isEmpty$1, mr as getWidth, mt as multiply, n as DataTileSource, nn as get, nr as extendCoordinate, o as asArrayLike, on as toUserCoordinate, or as getBottomRight, p as Triangulation, pn as clear, pr as getTopRight, pt as makeInverse, q as getKey, r as create$2, rn as getTransform, rr as forEachCorner, s as asImageLike, sn as toUserExtent, sr as getCenter, tn as fromUserExtent, u as TileSourceEvent, un as transformExtent, ur as getIntersection, ut as create$1, v as createCanvasContext2D, vn as angleBetween, vr as scaleFromCenter, vt as setFromArray, w as releaseCanvas$1, wn as scale$1, wr as _asyncToGenerator, x as isCanvas, xn as distance, xr as Relationship_default, xt as assert, y as createMockDiv, yn as closestOnCircle, yr as wrapAndSliceX, yt as toString, z as WEBKIT, zn as toRadians, zt as Disposable } from "./geotiff-debug.js";
+import { $ as TileRange, $n as equals, $t as fromUserCoordinate, A as inAndOut, An as clamp, B as WORKER_OFFSCREEN_CANVAS, Bn as boundingExtent, Bt as EventType_default$2, C as outerWidth, Cn as scale$1, Cr as _asyncToGenerator, Ct as Observable, D as replaceNode, Dn as compareVersions, Dt as FALSE, E as replaceChildren, En as wrapX, Et as BaseEvent, Fn as squaredDistance, Ft as equals$2, G as createOrUpdate, Gn as containsExtent, Gt as abstract, H as extentFromProjection, Hn as clone, Ht as listenOnce, I as MAC, It as extend, J as getKeyZXY, Jn as createEmpty, K as getCacheKey$1, Kt as getUid, L as PASSIVE_EVENT_LISTENERS, Ln as toFixed, Lt as linearFindNearest, M as TileState_default, Mn as lerp, Mt as ascending, Nn as modulo, O as Tile, Ot as TRUE, P as DEVICE_PIXEL_RATIO, Pn as round, Pt as descending, Q as toSize, R as SAFARI_BUG_237906, Rn as toRadians, Rt as reverseSubArray, S as outerHeight, Sn as rotate, St as BaseObject, T as removeChildren, Tn as squaredDistanceToSegment, Tr as _defineProperty, Tt as Target, U as getForProjection, Ut as unlistenByKey, V as createXYZ, Vn as buffer, Vt as listen, W as TileGrid, Wn as containsCoordinate, Wt as ObjectEventType_default, X as hashZXY, Xn as createOrUpdateEmpty, Xt as disableCoordinateWarning, Y as hash, Yn as createOrUpdate$1, Yt as createProjection, Z as hasArea, Zn as createOrUpdateFromCoordinate, Zt as equivalent, _ as render, _n as angleBetween, _r as scaleFromCenter, _t as scale, a as DataTile, an as toUserCoordinate, ar as getBottomRight, at as getIntersectionPoint, b as getSharedCanvasContext2D, bn as distance, br as Relationship_default, bt as translate, c as TileEventType_default, cn as transform, cr as getHeight, ct as apply, d as Source, dr as getTopLeft, dt as equivalent$1, en as fromUserExtent, f as ERROR_THRESHOLD, fn as clear, fr as getTopRight, ft as fromString, g as canvasPool$2, gn as add, gt as rotate$1, h as calculateSourceResolution, hn as METERS_PER_UNIT, hr as isEmpty, ht as reset, i as fromTransform, in as getUserProjection, ir as getBottomLeft, j as linear, jn as floor, jt as toPromise, k as easeOut, kn as ceil, kt as VOID, l as TileSource, ln as transformExtent, lr as getIntersection, lt as compose, m as calculateSourceExtentResolution, mr as intersects, mt as multiply, n as DataTileSource, nn as getTransform, nr as forEachCorner, o as asArrayLike, on as toUserExtent, or as getCenter, p as Triangulation, pn as isEmpty$1, pr as getWidth, pt as makeInverse, q as getKey, qn as coordinateRelationship, r as create$2, rn as getTransformFromProjections, rr as getArea, s as asImageLike, sn as toUserResolution, sr as getForViewAndSize, tn as get, tr as extendCoordinate, u as TileSourceEvent, ur as getRotatedViewport, ut as create$1, v as createCanvasContext2D, vn as closestOnCircle, vr as wrapAndSliceX, vt as setFromArray, w as releaseCanvas$1, wn as squaredDistance$1, wr as _objectSpread2, x as isCanvas, xn as equals$1, xr as warn, xt as assert, y as createMockDiv, yn as closestOnSegment, yr as wrapX$1, yt as toString, z as WEBKIT, zn as applyTransform, zt as Disposable } from "./geotiff-debug.js";
 import { $ as ImageWrapper, A as defaultLineJoin, B as CLASS_CONTROL, C as RegularShape, D as defaultFont, E as defaultFillStyle, F as drawImageOrLabel, G as shared, H as CLASS_SELECTABLE, I as getTextDimensions, J as fromString$1, K as NO_COLOR, L as measureAndCacheTextWidth, M as defaultStrokeStyle, N as defaultTextAlign, O as defaultLineCap, P as defaultTextBaseline, Q as withAlpha, R as registerFont, S as CircleStyle, T as checkedFonts, U as CLASS_UNSELECTABLE, V as CLASS_HIDDEN, W as asColorLike, X as rgbaToLcha, Y as lchaToRgba, Z as toString$1, _ as createDefaultStyle$1, _t as getStrideForLayout, at as fromExtent, b as Stroke, bt as transform2D, ct as LineString, d as MultiPolygon, dt as inflateCoordinates, et as decode, f as MultiPoint, ft as inflateCoordinatesArray, g as Style, gt as SimpleGeometry, h as Text, ht as deflateCoordinate, it as fromCircle, j as defaultPadding, k as defaultLineDash, l as GeometryCollection, lt as snap, m as Feature, mt as Point, nt as ImageState_default, ot as inflateEnds, p as MultiLineString, pt as inflateMultiCoordinatesArray, q as asArray, rt as Polygon, tt as listenImage, u as RenderFeature, ut as lineStringLength, v as createEditingStyle, vt as transformGeom2D, w as Icon, x as Fill, y as toFunction, yt as rotate$2, z as CLASS_COLLAPSED } from "./ol-formats-debug.js";
 import { r as RBush$1 } from "./ol-deps-debug.js";
 //#region node_modules/ol/CollectionEventType.js
-init_defineProperty();
 /**
 * @module ol/CollectionEventType
 */
@@ -2610,7 +2609,8 @@ function createLoader$2(options) {
 		const width = getWidth(extent) / resolution;
 		const height = getHeight(extent) / resolution;
 		const size = [width * pixelRatio, height * pixelRatio];
-		return load(image, getUrl(options.url, options.params, extent, size, useOverlay, metersPerUnit, displayDpi)).then((image) => ({
+		const src = getUrl(options.url, options.params, extent, size, useOverlay, metersPerUnit, displayDpi);
+		return load(image, src).then((image) => ({
 			image,
 			extent,
 			pixelRatio
@@ -11049,7 +11049,6 @@ var WebGLLayerRenderer = class WebGLLayerRenderer extends LayerRenderer {
 /**
 * @module ol/renderer/webgl/TileLayerBase
 */
-init_objectSpread2();
 var Uniforms$2 = _objectSpread2(_objectSpread2({}, DefaultUniform), {}, {
 	TILE_TRANSFORM: "u_tileTransform",
 	TRANSITION_ALPHA: "u_transitionAlpha",
@@ -11596,7 +11595,6 @@ var WebGLBaseTileLayerRenderer = class extends WebGLLayerRenderer {
 /**
 * @module ol/renderer/webgl/TileLayer
 */
-init_objectSpread2();
 var Uniforms$1 = _objectSpread2(_objectSpread2({}, Uniforms$2), {}, {
 	TILE_TEXTURE_ARRAY: "u_tileTextures",
 	TEXTURE_PIXEL_WIDTH: "u_texturePixelWidth",
@@ -12388,7 +12386,6 @@ function generateAttributesFromContext(context) {
 /**
 * @module ol/layer/WebGLTile
 */
-init_objectSpread2();
 /**
 * @typedef {import("../source/DataTile.js").default<import("../DataTile.js").default|import("../ImageTile.js").default>} SourceType
 */
@@ -23166,7 +23163,6 @@ function getRenderPixel(event, pixel) {
 /**
 * @module ol/source/ImageWMS
 */
-init_objectSpread2();
 /**
 * @typedef {Object} Options
 * @property {import("./Source.js").AttributionLike} [attributions] Attributions.
@@ -25424,7 +25420,6 @@ function generatePolygonRenderInstructions(batch, renderInstructions, customAttr
 * Utilities for parsing flat styles for WebGL renderers
 * @module ol/render/webgl/style
 */
-init_objectSpread2();
 /**
 * see https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript
 * @param {Object|string} input The hash input, either an object or string
@@ -26524,7 +26519,6 @@ function getWorldParameters(frameState, layer) {
 /**
 * @module ol/renderer/webgl/VectorLayer
 */
-init_objectSpread2();
 var Uniforms = _objectSpread2(_objectSpread2(_objectSpread2({}, DefaultUniform), VectorUniforms), {}, {
 	RENDER_EXTENT: "u_renderExtent",
 	GLOBAL_ALPHA: "u_globalAlpha"
@@ -26880,7 +26874,6 @@ var WebGLVectorLayerRenderer = class extends WebGLLayerRenderer {
 /**
 * @module ol/layer/Heatmap
 */
-init_objectSpread2();
 /**
 * @typedef {'change:blur'|'change:radius'|'change:gradient'} HeatmapEventTypes
 */

@@ -1,6 +1,6 @@
-import { a as __toESM, i as __toCommonJS, n as __esmMin, r as __exportAll, t as __commonJSMin } from "./chunks/rolldown-runtime-debug.js";
+import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react_dom, i as require_jsx_runtime, n as require_react_is$1, o as require_react, r as require_react_is, t as require_prop_types } from "./chunks/react-vendor-debug.js";
-import { Dr as _defineProperty, Er as init_objectSpread2, Jt as init_objectWithoutProperties, Or as init_defineProperty, Tr as _objectSpread2, qt as _objectWithoutProperties, wr as _asyncToGenerator } from "./chunks/geotiff-debug.js";
+import { Cr as _asyncToGenerator, Tr as _defineProperty, qt as _objectWithoutProperties, wr as _objectSpread2 } from "./chunks/geotiff-debug.js";
 //#region node_modules/react-tiny-popover/dist/PopoverPortal.js
 var require_PopoverPortal = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -738,8 +738,8 @@ var require_Popover = /* @__PURE__ */ __commonJSMin(((exports) => {
 //#endregion
 //#region node_modules/goober/dist/goober.modern.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-init_objectSpread2();
-var e$1 = { data: "" }, t$1 = (t) => {
+var e$1 = { data: "" };
+var t$1 = (t) => {
 	if ("object" == typeof window) {
 		let e = (t ? t.querySelector("#_goober") : window._goober) || Object.assign(document.createElement("style"), {
 			innerHTML: " ",
@@ -748,22 +748,29 @@ var e$1 = { data: "" }, t$1 = (t) => {
 		return e.nonce = window.__nonce__, e.parentNode || (t || document.head).appendChild(e), e.firstChild;
 	}
 	return t || e$1;
-}, l$1 = /(?:([\u0080-\uFFFF\w-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(}\s*)/g, a$1 = /\/\*[^]*?\*\/|  +/g, n$2 = /\n+/g, o$1 = (e, t) => {
-	let r = "", l = "", a = "";
+};
+var a$1 = /(?:([\u0080-\uFFFF\w-%@]+) *:? *([^{;]+?);|([^;}{]*?) *{)|(}\s*)/g;
+var l$1 = /\/\*[^]*?\*\/|  +/g;
+var n$2 = /\n+/g;
+var o$1 = (e, t) => {
+	let r = "", a = "", l = "";
 	for (let n in e) {
 		let c = e[n];
-		"@" == n[0] ? "i" == n[1] ? r = n + " " + c + ";" : l += "f" == n[1] ? o$1(c, n) : n + "{" + o$1(c, "k" == n[1] ? "" : t) + "}" : "object" == typeof c ? l += o$1(c, t ? t.replace(/([^,])+/g, (e) => n.replace(/([^,]*:\S+\([^)]*\))|([^,])+/g, (t) => /&/.test(t) ? t.replace(/&/g, e) : e ? e + " " + t : t)) : n) : null != c && (n = /^--/.test(n) ? n : n.replace(/[A-Z]/g, "-$&").toLowerCase(), a += o$1.p ? o$1.p(n, c) : n + ":" + c + ";");
+		"@" == n[0] ? "i" == n[1] ? r = n + " " + c + ";" : a += "f" == n[1] ? o$1(c, n) : n + "{" + o$1(c, "k" == n[1] ? "" : t) + "}" : "object" == typeof c ? a += o$1(c, t ? t.replace(/([^,])+/g, (e) => n.replace(/([^,]*:\S+\([^)]*\))|([^,])+/g, (t) => /&/.test(t) ? t.replace(/&/g, e) : e ? e + " " + t : t)) : n) : null != c && (n = "-" == n[1] ? n : n.replace(/[A-Z]/g, "-$&").toLowerCase(), l += o$1.p ? o$1.p(n, c) : n + ":" + c + ";");
 	}
-	return r + (t && a ? t + "{" + a + "}" : a) + l;
-}, c$1 = {}, s$1 = (e) => {
+	return r + (t && l ? t + "{" + l + "}" : l) + a;
+};
+var c$1 = {};
+var i$1 = (e) => {
 	if ("object" == typeof e) {
 		let t = "";
-		for (let r in e) t += r + s$1(e[r]);
+		for (let r in e) t += r + i$1(e[r]);
 		return t;
 	}
 	return e;
-}, i$1 = (e, t, r, i, p) => {
-	let u = s$1(e), d = c$1[u] || (c$1[u] = ((e) => {
+};
+var s$1 = (e, t, r, s, p) => {
+	let u = i$1(e), d = c$1[u] || (c$1[u] = ((e) => {
 		let t = 0, r = 11;
 		for (; t < e.length;) r = 101 * r + e.charCodeAt(t++) >>> 0;
 		return "go" + r;
@@ -771,53 +778,58 @@ var e$1 = { data: "" }, t$1 = (t) => {
 	if (!c$1[d]) {
 		let t = u !== e ? e : ((e) => {
 			let t, r, o = [{}];
-			for (; t = l$1.exec(e.replace(a$1, ""));) t[4] ? o.shift() : t[3] ? (r = t[3].replace(n$2, " ").trim(), o.unshift(o[0][r] = o[0][r] || {})) : o[0][t[1]] = t[2].replace(n$2, " ").trim();
+			for (; t = a$1.exec(e.replace(l$1, ""));) t[4] ? o.shift() : t[3] ? (r = t[3].replace(n$2, " ").trim(), o.unshift(o[0][r] = o[0][r] || {})) : o[0][t[1]] = t[2].replace(n$2, " ").trim();
 			return o[0];
 		})(e);
 		c$1[d] = o$1(p ? { ["@keyframes " + d]: t } : t, r ? "" : "." + d);
 	}
-	let f = r && c$1.g ? c$1.g : null;
-	return r && (c$1.g = c$1[d]), ((e, t, r, l) => {
-		l ? t.data = t.data.replace(l, e) : -1 === t.data.indexOf(e) && (t.data = r ? e + t.data : t.data + e);
-	})(c$1[d], t, i, f), d;
-}, p$1 = (e, t, r) => e.reduce((e, l, a) => {
-	let n = t[a];
+	let f = r && c$1.g;
+	return r && (c$1.g = c$1[d]), ((e, t, r, a) => {
+		a ? t.data = t.data.replace(a, e) : -1 === t.data.indexOf(e) && (t.data = r ? e + t.data : t.data + e);
+	})(c$1[d], t, s, f), d;
+};
+var p$1 = (e, t, r) => e.reduce((e, a, l) => {
+	let n = t[l];
 	if (n && n.call) {
 		let e = n(r), t = e && e.props && e.props.className || /^go/.test(e) && e;
 		n = t ? "." + t : e && "object" == typeof e ? e.props ? "" : o$1(e, "") : !1 === e ? "" : e;
 	}
-	return e + l + (null == n ? "" : n);
+	return e + a + (null == n ? "" : n);
 }, "");
 function u$1(e) {
-	let r = this || {}, l = e.call ? e(r.p) : e;
-	return i$1(l.unshift ? l.raw ? p$1(l, [].slice.call(arguments, 1), r.p) : l.reduce((e, t) => Object.assign(e, t && t.call ? t(r.p) : t), {}) : l, t$1(r.target), r.g, r.o, r.k);
+	let r = this || {}, a = e.call ? e(r.p) : e;
+	return s$1(a.unshift ? a.raw ? p$1(a, [].slice.call(arguments, 1), r.p) : a.reduce((e, t) => Object.assign(e, t && t.call ? t(r.p) : t), {}) : a, t$1(r.target), r.g, r.o, r.k);
 }
-var d$1, f$2, g$1;
+var d$1;
+var f$2;
+var g$1;
 u$1.bind({ g: 1 });
 var h$2 = u$1.bind({ k: 1 });
-function m$1(e, t, r, l) {
-	o$1.p = t, d$1 = e, f$2 = r, g$1 = l;
+function m$1(e, t, r, a) {
+	o$1.p = t, d$1 = e, f$2 = r, g$1 = a;
 }
 function w$2(e, t) {
 	let r = this || {};
 	return function() {
-		let l = arguments;
-		function a(n, o) {
-			let c = Object.assign({}, n), s = c.className || a.className;
-			r.p = Object.assign({ theme: f$2 && f$2() }, c), r.o = / *go\d+/.test(s), c.className = u$1.apply(r, l) + (s ? " " + s : ""), t && (c.ref = o);
-			let i = e;
-			return e[0] && (i = c.as || e, delete c.as), g$1 && i[0] && g$1(c), d$1(i, c);
+		let a = arguments;
+		function l(n, o) {
+			let c = Object.assign({}, n), i = c.className || l.className;
+			r.p = Object.assign({ theme: f$2 && f$2() }, c), r.o = /go\d/.test(i), c.className = u$1.apply(r, a) + (i ? " " + i : ""), t && (c.ref = o);
+			let s = e;
+			return e[0] && (s = c.as || e, delete c.as), g$1 && s[0] && g$1(c), d$1(s, c);
 		}
-		return t ? t(a) : a;
+		return t ? t(l) : l;
 	};
 }
 //#endregion
 //#region node_modules/react-hot-toast/dist/index.mjs
-var Z$2 = (e) => typeof e == "function", h$1 = (e, t) => Z$2(e) ? e(t) : e;
-var W$1 = (() => {
+var Z$2 = (e) => typeof e == "function";
+var h$1 = (e, t) => Z$2(e) ? e(t) : e;
+var W = (() => {
 	let e = 0;
 	return () => (++e).toString();
-})(), E$1 = (() => {
+})();
+var E$1 = (() => {
 	let e;
 	return () => {
 		if (e === void 0 && typeof window < "u") {
@@ -827,15 +839,16 @@ var W$1 = (() => {
 		return e;
 	};
 })();
-var re$1 = 20, k$1 = "default";
-var H$1 = (e, t) => {
+var re = 20;
+var k$1 = "default";
+var H = (e, t) => {
 	let { toastLimit: o } = e.settings;
 	switch (t.type) {
 		case 0: return _objectSpread2(_objectSpread2({}, e), {}, { toasts: [t.toast, ...e.toasts].slice(0, o) });
 		case 1: return _objectSpread2(_objectSpread2({}, e), {}, { toasts: e.toasts.map((r) => r.id === t.toast.id ? _objectSpread2(_objectSpread2({}, r), t.toast) : r) });
 		case 2:
 			let { toast: s } = t;
-			return H$1(e, {
+			return H(e, {
 				type: e.toasts.find((r) => r.id === s.id) ? 1 : 0,
 				toast: s
 			});
@@ -854,24 +867,33 @@ var H$1 = (e, t) => {
 				toasts: e.toasts.map((r) => _objectSpread2(_objectSpread2({}, r), {}, { pauseDuration: r.pauseDuration + i }))
 			});
 	}
-}, v$1 = [], j$1 = {
+};
+var v$1 = [];
+var j = {
 	toasts: [],
 	pausedAt: void 0,
-	settings: { toastLimit: re$1 }
-}, f$1 = {}, Y$1 = (e, t = k$1) => {
-	f$1[t] = H$1(f$1[t] || j$1, e), v$1.forEach(([o, s]) => {
+	settings: { toastLimit: re }
+};
+var f$1 = {};
+var Y$1 = (e, t = k$1) => {
+	f$1[t] = H(f$1[t] || j, e), v$1.forEach(([o, s]) => {
 		o === t && s(f$1[t]);
 	});
-}, _$1 = (e) => Object.keys(f$1).forEach((t) => Y$1(e, t)), Q$1 = (e) => Object.keys(f$1).find((t) => f$1[t].toasts.some((o) => o.id === e)), S$1 = (e = k$1) => (t) => {
+};
+var _$1 = (e) => Object.keys(f$1).forEach((t) => Y$1(e, t));
+var Q$1 = (e) => Object.keys(f$1).find((t) => f$1[t].toasts.some((o) => o.id === e));
+var S$1 = (e = k$1) => (t) => {
 	Y$1(t, e);
-}, se$1 = {
+};
+var se = {
 	blank: 4e3,
 	error: 4e3,
 	success: 2e3,
 	loading: Infinity,
 	custom: 4e3
-}, V$2 = (e = {}, t = k$1) => {
-	let [o, s] = (0, import_react.useState)(f$1[t] || j$1), a = (0, import_react.useRef)(f$1[t]);
+};
+var V$2 = (e = {}, t = k$1) => {
+	let [o, s] = (0, import_react.useState)(f$1[t] || j), a = (0, import_react.useRef)(f$1[t]);
 	(0, import_react.useEffect)(() => (a.current !== f$1[t] && s(f$1[t]), v$1.push([t, s]), () => {
 		let r = v$1.findIndex(([l]) => l === t);
 		r > -1 && v$1.splice(r, 1);
@@ -880,13 +902,13 @@ var H$1 = (e, t) => {
 		var l, g, T;
 		return _objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({}, e), e[r.type]), r), {}, {
 			removeDelay: r.removeDelay || ((l = e[r.type]) == null ? void 0 : l.removeDelay) || (e == null ? void 0 : e.removeDelay),
-			duration: r.duration || ((g = e[r.type]) == null ? void 0 : g.duration) || (e == null ? void 0 : e.duration) || se$1[r.type],
+			duration: r.duration || ((g = e[r.type]) == null ? void 0 : g.duration) || (e == null ? void 0 : e.duration) || se[r.type],
 			style: _objectSpread2(_objectSpread2(_objectSpread2({}, e.style), (T = e[r.type]) == null ? void 0 : T.style), r.style)
 		});
 	});
 	return _objectSpread2(_objectSpread2({}, o), {}, { toasts: i });
 };
-var ie$1 = (e, t = "blank", o) => _objectSpread2(_objectSpread2({
+var ie = (e, t = "blank", o) => _objectSpread2(_objectSpread2({
 	createdAt: Date.now(),
 	visible: !0,
 	dismissed: !1,
@@ -897,13 +919,15 @@ var ie$1 = (e, t = "blank", o) => _objectSpread2(_objectSpread2({
 	},
 	message: e,
 	pauseDuration: 0
-}, o), {}, { id: (o == null ? void 0 : o.id) || W$1() }), P$1 = (e) => (t, o) => {
-	let s = ie$1(t, e, o);
+}, o), {}, { id: (o == null ? void 0 : o.id) || W() });
+var P$1 = (e) => (t, o) => {
+	let s = ie(t, e, o);
 	return S$1(s.toasterId || Q$1(s.id))({
 		type: 2,
 		toast: s
 	}), s.id;
-}, n$1 = (e, t) => P$1("blank")(e, t);
+};
+var n$1 = (e, t) => P$1("blank")(e, t);
 n$1.error = P$1("error");
 n$1.success = P$1("success");
 n$1.loading = P$1("loading");
@@ -934,8 +958,9 @@ n$1.promise = (e, t, o) => {
 		i ? n$1.error(i, _objectSpread2(_objectSpread2({ id: s }, o), o == null ? void 0 : o.error)) : n$1.dismiss(s);
 	}), e;
 };
-var ce$1 = 1e3, w$1 = (e, t = "default") => {
-	let { toasts: o, pausedAt: s } = V$2(e, t), a = (0, import_react.useRef)(/* @__PURE__ */ new Map()).current, i = (0, import_react.useCallback)((c, m = ce$1) => {
+var ce = 1e3;
+var w$1 = (e, t = "default") => {
+	let { toasts: o, pausedAt: s } = V$2(e, t), a = (0, import_react.useRef)(/* @__PURE__ */ new Map()).current, i = (0, import_react.useCallback)((c, m = ce) => {
 		if (a.has(c)) return;
 		let p = setTimeout(() => {
 			a.delete(c), r({
@@ -1004,7 +1029,7 @@ var ce$1 = 1e3, w$1 = (e, t = "default") => {
 		}
 	};
 };
-var de$1 = h$2`
+var de = h$2`
 from {
   transform: scale(0) rotate(45deg);
 	opacity: 0;
@@ -1012,7 +1037,8 @@ from {
 to {
  transform: scale(1) rotate(45deg);
   opacity: 1;
-}`, me$1 = h$2`
+}`;
+var me = h$2`
 from {
   transform: scale(0);
   opacity: 0;
@@ -1020,7 +1046,8 @@ from {
 to {
   transform: scale(1);
   opacity: 1;
-}`, le$1 = h$2`
+}`;
+var le = h$2`
 from {
   transform: scale(0) rotate(90deg);
 	opacity: 0;
@@ -1028,7 +1055,8 @@ from {
 to {
   transform: scale(1) rotate(90deg);
 	opacity: 1;
-}`, C$1 = w$2("div")`
+}`;
+var C$1 = w$2("div")`
   width: 20px;
   opacity: 0;
   height: 20px;
@@ -1037,14 +1065,14 @@ to {
   position: relative;
   transform: rotate(45deg);
 
-  animation: ${de$1} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+  animation: ${de} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     forwards;
   animation-delay: 100ms;
 
   &:after,
   &:before {
     content: '';
-    animation: ${me$1} 0.15s ease-out forwards;
+    animation: ${me} 0.15s ease-out forwards;
     animation-delay: 150ms;
     position: absolute;
     border-radius: 3px;
@@ -1057,7 +1085,7 @@ to {
   }
 
   &:before {
-    animation: ${le$1} 0.15s ease-out forwards;
+    animation: ${le} 0.15s ease-out forwards;
     animation-delay: 180ms;
     transform: rotate(90deg);
   }
@@ -1069,7 +1097,8 @@ var Te = h$2`
   to {
     transform: rotate(360deg);
   }
-`, F$1 = w$2("div")`
+`;
+var F = w$2("div")`
   width: 12px;
   height: 12px;
   box-sizing: border-box;
@@ -1079,7 +1108,7 @@ var Te = h$2`
   border-right-color: ${(e) => e.primary || "#616161"};
   animation: ${Te} 1s linear infinite;
 `;
-var ge$1 = h$2`
+var ge = h$2`
 from {
   transform: scale(0) rotate(45deg);
 	opacity: 0;
@@ -1087,7 +1116,8 @@ from {
 to {
   transform: scale(1) rotate(45deg);
 	opacity: 1;
-}`, he$1 = h$2`
+}`;
+var he = h$2`
 0% {
 	height: 0;
 	width: 0;
@@ -1101,7 +1131,8 @@ to {
 100% {
   opacity: 1;
   height: 10px;
-}`, L$1 = w$2("div")`
+}`;
+var L$1 = w$2("div")`
   width: 20px;
   opacity: 0;
   height: 20px;
@@ -1110,13 +1141,13 @@ to {
   position: relative;
   transform: rotate(45deg);
 
-  animation: ${ge$1} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+  animation: ${ge} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     forwards;
   animation-delay: 100ms;
   &:after {
     content: '';
     box-sizing: border-box;
-    animation: ${he$1} 0.2s ease-out forwards;
+    animation: ${he} 0.2s ease-out forwards;
     opacity: 0;
     animation-delay: 200ms;
     position: absolute;
@@ -1129,16 +1160,18 @@ to {
     width: 6px;
   }
 `;
-var be$1 = w$2("div")`
+var be = w$2("div")`
   position: absolute;
-`, Se = w$2("div")`
+`;
+var Se = w$2("div")`
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: 20px;
   min-height: 20px;
-`, Ae = h$2`
+`;
+var Ae = h$2`
 from {
   transform: scale(0.6);
   opacity: 0.4;
@@ -1146,24 +1179,30 @@ from {
 to {
   transform: scale(1);
   opacity: 1;
-}`, Pe = w$2("div")`
+}`;
+var Pe = w$2("div")`
   position: relative;
   transform: scale(0.6);
   opacity: 0.4;
   min-width: 20px;
   animation: ${Ae} 0.3s 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     forwards;
-`, $$1 = ({ toast: e }) => {
+`;
+var $$1 = ({ toast: e }) => {
 	let { icon: t, type: o, iconTheme: s } = e;
-	return t !== void 0 ? typeof t == "string" ? import_react.createElement(Pe, null, t) : t : o === "blank" ? null : import_react.createElement(Se, null, import_react.createElement(F$1, _objectSpread2({}, s)), o !== "loading" && import_react.createElement(be$1, null, o === "error" ? import_react.createElement(C$1, _objectSpread2({}, s)) : import_react.createElement(L$1, _objectSpread2({}, s))));
+	return t !== void 0 ? typeof t == "string" ? import_react.createElement(Pe, null, t) : t : o === "blank" ? null : import_react.createElement(Se, null, import_react.createElement(F, _objectSpread2({}, s)), o !== "loading" && import_react.createElement(be, null, o === "error" ? import_react.createElement(C$1, _objectSpread2({}, s)) : import_react.createElement(L$1, _objectSpread2({}, s))));
 };
 var Re = (e) => `
 0% {transform: translate3d(0,${e * -200}%,0) scale(.6); opacity:.5;}
 100% {transform: translate3d(0,0,0) scale(1); opacity:1;}
-`, Ee$1 = (e) => `
+`;
+var Ee = (e) => `
 0% {transform: translate3d(0,0,-1px) scale(1); opacity:1;}
 100% {transform: translate3d(0,${e * -150}%,-1px) scale(.6); opacity:0;}
-`, ve$1 = "0%{opacity:0;} 100%{opacity:1;}", De = "0%{opacity:1;} 100%{opacity:0;}", Oe$1 = w$2("div")`
+`;
+var ve = "0%{opacity:0;} 100%{opacity:1;}";
+var De = "0%{opacity:1;} 100%{opacity:0;}";
+var Oe = w$2("div")`
   display: flex;
   align-items: center;
   background: #fff;
@@ -1175,19 +1214,22 @@ var Re = (e) => `
   pointer-events: auto;
   padding: 8px 10px;
   border-radius: 8px;
-`, Ie$1 = w$2("div")`
+`;
+var Ie = w$2("div")`
   display: flex;
   justify-content: center;
   margin: 4px 10px;
   color: inherit;
   flex: 1 1 auto;
   white-space: pre-line;
-`, ke$1 = (e, t) => {
-	let s = e.includes("top") ? 1 : -1, [a, i] = E$1() ? [ve$1, De] : [Re(s), Ee$1(s)];
+`;
+var ke = (e, t) => {
+	let s = e.includes("top") ? 1 : -1, [a, i] = E$1() ? [ve, De] : [Re(s), Ee(s)];
 	return { animation: t ? `${h$2(a)} 0.35s cubic-bezier(.21,1.02,.73,1) forwards` : `${h$2(i)} 0.4s forwards cubic-bezier(.06,.71,.55,1)` };
-}, N$1 = import_react.memo(({ toast: e, position: t, style: o, children: s }) => {
-	let a = e.height ? ke$1(e.position || t || "top-center", e.visible) : { opacity: 0 }, i = import_react.createElement($$1, { toast: e }), r = import_react.createElement(Ie$1, _objectSpread2({}, e.ariaProps), h$1(e.message, e));
-	return import_react.createElement(Oe$1, {
+};
+var N = import_react.memo(({ toast: e, position: t, style: o, children: s }) => {
+	let a = e.height ? ke(e.position || t || "top-center", e.visible) : { opacity: 0 }, i = import_react.createElement($$1, { toast: e }), r = import_react.createElement(Ie, _objectSpread2({}, e.ariaProps), h$1(e.message, e));
+	return import_react.createElement(Oe, {
 		className: e.className,
 		style: _objectSpread2(_objectSpread2(_objectSpread2({}, a), o), e.style)
 	}, typeof s == "function" ? s({
@@ -1196,7 +1238,7 @@ var Re = (e) => `
 	}) : import_react.createElement(import_react.Fragment, null, i, r));
 });
 m$1(import_react.createElement);
-var we$1 = ({ id: e, className: t, style: o, onHeightUpdate: s, children: a }) => {
+var we = ({ id: e, className: t, style: o, onHeightUpdate: s, children: a }) => {
 	let i = import_react.useCallback((r) => {
 		if (r) {
 			let l = () => {
@@ -1215,7 +1257,8 @@ var we$1 = ({ id: e, className: t, style: o, onHeightUpdate: s, children: a }) =
 		className: t,
 		style: o
 	}, a);
-}, Me$1 = (e, t) => {
+};
+var Me = (e, t) => {
 	let o = e.includes("top"), s = o ? { top: 0 } : { bottom: 0 }, a = e.includes("center") ? { justifyContent: "center" } : e.includes("right") ? { justifyContent: "flex-end" } : {};
 	return _objectSpread2(_objectSpread2({
 		left: 0,
@@ -1225,40 +1268,43 @@ var we$1 = ({ id: e, className: t, style: o, onHeightUpdate: s, children: a }) =
 		transition: E$1() ? void 0 : "all 230ms cubic-bezier(.21,1.02,.73,1)",
 		transform: `translateY(${t * (o ? 1 : -1)}px)`
 	}, s), a);
-}, Ce$1 = u$1`
+};
+var Ce = u$1`
   z-index: 9999;
   > * {
     pointer-events: auto;
   }
-`, D$1 = 16, Fe = ({ reverseOrder: e, position: t = "top-center", toastOptions: o, gutter: s, children: a, toasterId: i, containerStyle: r, containerClassName: l }) => {
+`;
+var D = 16;
+var Fe = ({ reverseOrder: e, position: t = "top-center", toastOptions: o, gutter: s, children: a, toasterId: i, containerStyle: r, containerClassName: l }) => {
 	let { toasts: g, handlers: T } = w$1(o, i);
 	return import_react.createElement("div", {
 		"data-rht-toaster": i || "",
 		style: _objectSpread2({
 			position: "fixed",
 			zIndex: 9999,
-			top: D$1,
-			left: D$1,
-			right: D$1,
-			bottom: D$1,
+			top: D,
+			left: D,
+			right: D,
+			bottom: D,
 			pointerEvents: "none"
 		}, r),
 		className: l,
 		onMouseEnter: T.startPause,
 		onMouseLeave: T.endPause
 	}, g.map((d) => {
-		let c = d.position || t, p = Me$1(c, T.calculateOffset(d, {
+		let c = d.position || t, p = Me(c, T.calculateOffset(d, {
 			reverseOrder: e,
 			gutter: s,
 			defaultPosition: t
 		}));
-		return import_react.createElement(we$1, {
+		return import_react.createElement(we, {
 			id: d.id,
 			key: d.id,
 			onHeightUpdate: T.updateHeight,
-			className: d.visible ? Ce$1 : "",
+			className: d.visible ? Ce : "",
 			style: p
-		}, d.type === "custom" ? h$1(d.message, d) : a ? a(d) : import_react.createElement(N$1, {
+		}, d.type === "custom" ? h$1(d.message, d) : a ? a(d) : import_react.createElement(N, {
 			toast: d,
 			position: c
 		}));
@@ -1281,9 +1327,11 @@ var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** Used to stand-in for `undefined` hash values. */
 	var HASH_UNDEFINED = "__lodash_hash_undefined__";
 	/** Used as references for various `Number` constants. */
-	var INFINITY = Infinity, MAX_SAFE_INTEGER = 9007199254740991;
+	var INFINITY = Infinity;
+	var MAX_SAFE_INTEGER = 9007199254740991;
 	/** `Object#toString` result references. */
-	var funcTag = "[object Function]", genTag = "[object GeneratorFunction]";
+	var funcTag = "[object Function]";
+	var genTag = "[object GeneratorFunction]";
 	/**
 	* Used to match `RegExp`
 	* [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
@@ -1490,7 +1538,9 @@ var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		return result;
 	}
 	/** Used for built-in method references. */
-	var arrayProto = Array.prototype, funcProto = Function.prototype, objectProto = Object.prototype;
+	var arrayProto = Array.prototype;
+	var funcProto = Function.prototype;
+	var objectProto = Object.prototype;
 	/** Used to detect overreaching core-js shims. */
 	var coreJsData = root["__core-js_shared__"];
 	/** Used to detect methods masquerading as native. */
@@ -1513,7 +1563,9 @@ var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** Built-in value references. */
 	var splice = arrayProto.splice;
 	var nativeMax = Math.max;
-	var Map = getNative(root, "Map"), Set = getNative(root, "Set"), nativeCreate = getNative(Object, "create");
+	var Map = getNative(root, "Map");
+	var Set = getNative(root, "Set");
+	var nativeCreate = getNative(Object, "create");
 	/**
 	* Creates a hash object.
 	*
@@ -2268,14 +2320,44 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** Used to stand-in for `undefined` hash values. */
 	var HASH_UNDEFINED = "__lodash_hash_undefined__";
 	/** Used to compose bitmasks for comparison styles. */
-	var UNORDERED_COMPARE_FLAG = 1, PARTIAL_COMPARE_FLAG = 2;
+	var UNORDERED_COMPARE_FLAG = 1;
+	var PARTIAL_COMPARE_FLAG = 2;
 	/** Used as references for various `Number` constants. */
-	var INFINITY = Infinity, MAX_SAFE_INTEGER = 9007199254740991;
+	var INFINITY = Infinity;
+	var MAX_SAFE_INTEGER = 9007199254740991;
 	/** `Object#toString` result references. */
-	var argsTag = "[object Arguments]", arrayTag = "[object Array]", boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", funcTag = "[object Function]", genTag = "[object GeneratorFunction]", mapTag = "[object Map]", numberTag = "[object Number]", objectTag = "[object Object]", promiseTag = "[object Promise]", regexpTag = "[object RegExp]", setTag = "[object Set]", stringTag = "[object String]", symbolTag = "[object Symbol]", weakMapTag = "[object WeakMap]";
-	var arrayBufferTag = "[object ArrayBuffer]", dataViewTag = "[object DataView]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
+	var argsTag = "[object Arguments]";
+	var arrayTag = "[object Array]";
+	var boolTag = "[object Boolean]";
+	var dateTag = "[object Date]";
+	var errorTag = "[object Error]";
+	var funcTag = "[object Function]";
+	var genTag = "[object GeneratorFunction]";
+	var mapTag = "[object Map]";
+	var numberTag = "[object Number]";
+	var objectTag = "[object Object]";
+	var promiseTag = "[object Promise]";
+	var regexpTag = "[object RegExp]";
+	var setTag = "[object Set]";
+	var stringTag = "[object String]";
+	var symbolTag = "[object Symbol]";
+	var weakMapTag = "[object WeakMap]";
+	var arrayBufferTag = "[object ArrayBuffer]";
+	var dataViewTag = "[object DataView]";
+	var float32Tag = "[object Float32Array]";
+	var float64Tag = "[object Float64Array]";
+	var int8Tag = "[object Int8Array]";
+	var int16Tag = "[object Int16Array]";
+	var int32Tag = "[object Int32Array]";
+	var uint8Tag = "[object Uint8Array]";
+	var uint8ClampedTag = "[object Uint8ClampedArray]";
+	var uint16Tag = "[object Uint16Array]";
+	var uint32Tag = "[object Uint32Array]";
 	/** Used to match property names within property paths. */
-	var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/, reLeadingDot = /^\./, rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+	var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+	var reIsPlainProp = /^\w*$/;
+	var reLeadingDot = /^\./;
+	var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 	/**
 	* Used to match `RegExp`
 	* [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
@@ -2571,7 +2653,9 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		return result;
 	}
 	/** Used for built-in method references. */
-	var arrayProto = Array.prototype, funcProto = Function.prototype, objectProto = Object.prototype;
+	var arrayProto = Array.prototype;
+	var funcProto = Function.prototype;
+	var objectProto = Object.prototype;
 	/** Used to detect overreaching core-js shims. */
 	var coreJsData = root["__core-js_shared__"];
 	/** Used to detect methods masquerading as native. */
@@ -2592,13 +2676,28 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** Used to detect if a method is native. */
 	var reIsNative = RegExp("^" + funcToString.call(hasOwnProperty).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$");
 	/** Built-in value references. */
-	var Symbol = root.Symbol, Uint8Array = root.Uint8Array, propertyIsEnumerable = objectProto.propertyIsEnumerable, splice = arrayProto.splice;
-	var nativeKeys = overArg(Object.keys, Object), nativeMax = Math.max;
-	var DataView = getNative(root, "DataView"), Map = getNative(root, "Map"), Promise = getNative(root, "Promise"), Set = getNative(root, "Set"), WeakMap = getNative(root, "WeakMap"), nativeCreate = getNative(Object, "create");
+	var Symbol = root.Symbol;
+	var Uint8Array = root.Uint8Array;
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	var splice = arrayProto.splice;
+	var nativeKeys = overArg(Object.keys, Object);
+	var nativeMax = Math.max;
+	var DataView = getNative(root, "DataView");
+	var Map = getNative(root, "Map");
+	var Promise = getNative(root, "Promise");
+	var Set = getNative(root, "Set");
+	var WeakMap = getNative(root, "WeakMap");
+	var nativeCreate = getNative(Object, "create");
 	/** Used to detect maps, sets, and weakmaps. */
-	var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map), promiseCtorString = toSource(Promise), setCtorString = toSource(Set), weakMapCtorString = toSource(WeakMap);
+	var dataViewCtorString = toSource(DataView);
+	var mapCtorString = toSource(Map);
+	var promiseCtorString = toSource(Promise);
+	var setCtorString = toSource(Set);
+	var weakMapCtorString = toSource(WeakMap);
 	/** Used to convert symbols to primitives and strings. */
-	var symbolProto = Symbol ? Symbol.prototype : void 0, symbolValueOf = symbolProto ? symbolProto.valueOf : void 0, symbolToString = symbolProto ? symbolProto.toString : void 0;
+	var symbolProto = Symbol ? Symbol.prototype : void 0;
+	var symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
+	var symbolToString = symbolProto ? symbolProto.toString : void 0;
 	/**
 	* Creates a hash object.
 	*
@@ -3167,7 +3266,7 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			} else {
 				var stack = new Stack();
 				if (customizer) var result = customizer(objValue, srcValue, key, object, source, stack);
-				if (!(result === void 0 ? baseIsEqual(srcValue, objValue, customizer, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG, stack) : result)) return false;
+				if (!(result === void 0 ? baseIsEqual(srcValue, objValue, customizer, 3, stack) : result)) return false;
 			}
 		}
 		return true;
@@ -3246,7 +3345,7 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		if (isKey(path) && isStrictComparable(srcValue)) return matchesStrictComparable(toKey(path), srcValue);
 		return function(object) {
 			var objValue = get(object, path);
-			return objValue === void 0 && objValue === srcValue ? hasIn(object, path) : baseIsEqual(srcValue, objValue, void 0, UNORDERED_COMPARE_FLAG | PARTIAL_COMPARE_FLAG);
+			return objValue === void 0 && objValue === srcValue ? hasIn(object, path) : baseIsEqual(srcValue, objValue, void 0, 3);
 		};
 	}
 	/**
@@ -5566,7 +5665,7 @@ function phi2z_default(eccent, ts) {
 * @property {number} k
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$34() {
+function init$35() {
 	var con = this.b / this.a;
 	this.es = 1 - con * con;
 	if (!("x0" in this)) this.x0 = 0;
@@ -5577,7 +5676,7 @@ function init$34() {
 	else if (!this.k0) if (this.k) this.k0 = this.k;
 	else this.k0 = 1;
 }
-function forward$32(p) {
+function forward$33(p) {
 	var lon = p.x;
 	var lat = p.y;
 	if (lat * 57.29577951308232 > 90 && lat * 57.29577951308232 < -90 && lon * 57.29577951308232 > 180 && lon * 57.29577951308232 < -180) return null;
@@ -5598,7 +5697,7 @@ function forward$32(p) {
 		return p;
 	}
 }
-function inverse$32(p) {
+function inverse$33(p) {
 	var x = p.x - this.x0;
 	var y = p.y - this.y0;
 	var lon, lat;
@@ -5614,9 +5713,9 @@ function inverse$32(p) {
 	return p;
 }
 var merc_default = {
-	init: init$34,
-	forward: forward$32,
-	inverse: inverse$32,
+	init: init$35,
+	forward: forward$33,
+	inverse: inverse$33,
 	names: [
 		"Mercator",
 		"Popular Visualisation Pseudo Mercator",
@@ -5628,21 +5727,21 @@ var merc_default = {
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/longlat.js
-function init$33() {}
+function init$34() {}
 function identity(pt) {
 	return pt;
 }
-var names$34 = ["longlat", "identity"];
+var names$35 = ["longlat", "identity"];
 //#endregion
 //#region node_modules/proj4/lib/projections.js
 /** @type {Array<Partial<import('./Proj').default>>} */
 var projs = [merc_default, {
-	init: init$33,
+	init: init$34,
 	forward: identity,
 	inverse: identity,
-	names: names$34
+	names: names$35
 }];
-var names$33 = {};
+var names$34 = {};
 var projStore = [];
 /**
 * @param {import('./Proj').default} proj
@@ -5656,7 +5755,7 @@ function add(proj, i) {
 	}
 	projStore[len] = proj;
 	proj.names.forEach(function(n) {
-		names$33[n.toLowerCase()] = len;
+		names$34[n.toLowerCase()] = len;
 	});
 	return this;
 }
@@ -5671,9 +5770,9 @@ function getNormalizedProjName(n) {
 function get(name) {
 	if (!name) return false;
 	var n = name.toLowerCase();
-	if (typeof names$33[n] !== "undefined" && projStore[names$33[n]]) return projStore[names$33[n]];
+	if (typeof names$34[n] !== "undefined" && projStore[names$34[n]]) return projStore[names$34[n]];
 	n = getNormalizedProjName(n);
-	if (n in names$33 && projStore[names$33[n]]) return projStore[names$33[n]];
+	if (n in names$34 && projStore[names$34[n]]) return projStore[names$34[n]];
 }
 function start() {
 	projs.forEach(add);
@@ -6471,9 +6570,9 @@ for (var key in datums) {
 //#region node_modules/proj4/lib/datum.js
 function datum(datumCode, datum_params, a, b, es, ep2, nadgrids) {
 	var out = {};
-	if (datumCode === void 0 || datumCode === "none") out.datum_type = 5;
-	else out.datum_type = 4;
+	out.datum_type = 5;
 	if (datum_params) {
+		out.datum_type = 4;
 		out.datum_params = datum_params.map(parseFloat);
 		if (out.datum_params[0] !== 0 || out.datum_params[1] !== 0 || out.datum_params[2] !== 0) out.datum_type = 1;
 		if (out.datum_params.length > 3) {
@@ -6534,20 +6633,6 @@ function datum(datumCode, datum_params, a, b, es, ep2, nadgrids) {
 * @property {Array} cvs Mapped node values for the grid.
 */
 /** @typedef {{header: NadgridHeader, subgrids: Array<Subgrid>}} NADGrid */
-/**
-* @typedef {Object} GeoTIFF
-* @property {() => Promise<number>} getImageCount - Returns the number of images in the GeoTIFF.
-* @property {(index: number) => Promise<GeoTIFFImage>} getImage - Returns a GeoTIFFImage for the given index.
-*/
-/**
-* @typedef {Object} GeoTIFFImage
-* @property {() => number} getWidth - Returns the width of the image.
-* @property {() => number} getHeight - Returns the height of the image.
-* @property {() => number[]} getBoundingBox - Returns the bounding box as [minX, minY, maxX, maxY] in degrees.
-* @property {() => Promise<ArrayLike<ArrayLike<number>>>} readRasters - Returns the raster data as an array of bands.
-* @property {Object} fileDirectory - The file directory object containing metadata.
-* @property {Object} fileDirectory.ModelPixelScale - The pixel scale array [scaleX, scaleY, scaleZ] in degrees.
-*/
 var loadedNadgrids = {};
 /**
 * @overload
@@ -6559,14 +6644,14 @@ var loadedNadgrids = {};
 /**
 * @overload
 * @param {string} key - The key to associate with the loaded grid.
-* @param {GeoTIFF} data - The GeoTIFF instance to read the grid from.
+* @param {import('geotiff').GeoTIFF} data - The GeoTIFF instance to read the grid from.
 * @returns {{ready: Promise<NADGrid>}} - A promise that resolves to the loaded grid information.
 */
 /**
 * Load either a NTv2 file (.gsb) or a Geotiff (.tif) to a key that can be used in a proj string like +nadgrids=<key>. Pass the NTv2 file
 * as an ArrayBuffer. Pass Geotiff as a GeoTIFF instance from the geotiff.js library.
 * @param {string} key - The key to associate with the loaded grid.
-* @param {ArrayBuffer|GeoTIFF} data The data to load, either an ArrayBuffer for NTv2 or a GeoTIFF instance.
+* @param {ArrayBuffer|import('geotiff').GeoTIFF} data The data to load, either an ArrayBuffer for NTv2 or a GeoTIFF instance.
 * @param {NTV2GridOptions} [options] Optional parameters.
 * @returns {{ready: Promise<NADGrid>}|NADGrid} - A promise that resolves to the loaded grid information.
 */
@@ -6595,7 +6680,7 @@ function readNTV2Grid(key, data, options) {
 }
 /**
 * @param {string} key The key to associate with the loaded grid.
-* @param {GeoTIFF} tiff The GeoTIFF instance to read the grid from.
+* @param {import('geotiff').GeoTIFF} tiff The GeoTIFF instance to read the grid from.
 * @returns {Promise<NADGrid>} A promise that resolves to the loaded NAD grid information.
 */
 function readGeotiffGrid(_x, _x2) {
@@ -6610,7 +6695,8 @@ function _readGeotiffGrid() {
 			var data = yield image.readRasters();
 			var lim = [image.getWidth(), image.getHeight()];
 			var imageBBoxRadians = image.getBoundingBox().map(degreesToRadians);
-			var del = [image.fileDirectory.ModelPixelScale[0], image.fileDirectory.ModelPixelScale[1]].map(degreesToRadians);
+			var modelPixelScale = typeof image.fileDirectory.getValue === "function" ? image.fileDirectory.getValue("ModelPixelScale") : 			/** @type {any} */ image.fileDirectory.ModelPixelScale;
+			var del = [modelPixelScale[0], modelPixelScale[1]].map(degreesToRadians);
 			var maxX = imageBBoxRadians[0] + (lim[0] - 1) * del[0];
 			var minY = imageBBoxRadians[3] - (lim[1] - 1) * del[1];
 			var latitudeOffsetBand = data[0];
@@ -6779,6 +6865,8 @@ function Projection(srsCode, callback) {
 	this.init = null;
 	/** @type {string} */
 	this.name;
+	/** @type {string} */
+	this.axis;
 	/** @type {Array<string>} */
 	this.names = null;
 	/** @type {string} */
@@ -7154,43 +7242,75 @@ function nadInterpolate(pin, ct) {
 }
 //#endregion
 //#region node_modules/proj4/lib/adjust_axis.js
-function adjust_axis_default(crs, denorm, point) {
-	var xin = point.x, yin = point.y, zin = point.z || 0;
-	var v, t, i;
+var order = [
+	"x",
+	"y",
+	"z"
+];
+/**
+* Convert a point in a given CRS axis order to ENU (east/north/up) order
+* @param {import('./defs').ProjectionDefinition} crs
+* @param {import('./core').InterfaceCoordinates} point
+* @returns {import('./core').InterfaceCoordinates | null}
+*/
+function adjustAxisToEnu(crs, point) {
 	/** @type {import("./core").InterfaceCoordinates} */
-	var out = {};
-	for (i = 0; i < 3; i++) {
-		if (denorm && i === 2 && point.z === void 0) continue;
-		if (i === 0) {
-			v = xin;
-			if ("ew".indexOf(crs.axis[i]) !== -1) t = "x";
-			else t = "y";
-		} else if (i === 1) {
-			v = yin;
-			if ("ns".indexOf(crs.axis[i]) !== -1) t = "y";
-			else t = "x";
-		} else {
-			v = zin;
-			t = "z";
-		}
+	const out = {};
+	for (let i = 0, ii = crs.axis.length; i < ii; i++) {
+		if (i === 2 && point.z === void 0) continue;
+		let v = point[order[i]];
 		switch (crs.axis[i]) {
 			case "e":
-				out[t] = v;
+				out.x = v;
 				break;
 			case "w":
-				out[t] = -v;
+				out.x = -v;
 				break;
 			case "n":
-				out[t] = v;
+				out.y = v;
 				break;
 			case "s":
-				out[t] = -v;
+				out.y = -v;
 				break;
 			case "u":
-				if (point[t] !== void 0) out.z = v;
+				out.z = v;
 				break;
 			case "d":
-				if (point[t] !== void 0) out.z = -v;
+				out.z = -v;
+				break;
+			default: return null;
+		}
+	}
+	return out;
+}
+/**
+* Convert a point in ENU (east/north/up) order to the given CRS axis order.
+* @param {import('./defs').ProjectionDefinition} crs
+* @param {import('./core').InterfaceCoordinates} point
+* @returns {import('./core').InterfaceCoordinates | null}
+*/
+function adjustAxisFromEnu(crs, point) {
+	const out = {};
+	for (let i = 0, ii = crs.axis.length; i < ii; i++) {
+		if (i === 2 && point.z === void 0) continue;
+		switch (crs.axis[i]) {
+			case "e":
+				out[order[i]] = point.x;
+				break;
+			case "w":
+				out[order[i]] = -point.x;
+				break;
+			case "n":
+				out[order[i]] = point.y;
+				break;
+			case "s":
+				out[order[i]] = -point.y;
+				break;
+			case "u":
+				out[order[i]] = point.z;
+				break;
+			case "d":
+				out[order[i]] = -point.z;
 				break;
 			default: return null;
 		}
@@ -7231,29 +7351,23 @@ function checkNotWGS(source, dest) {
 	return (source.datum.datum_type === 1 || source.datum.datum_type === 2 || source.datum.datum_type === 3) && dest.datumCode !== "WGS84" || (dest.datum.datum_type === 1 || dest.datum.datum_type === 2 || dest.datum.datum_type === 3) && source.datumCode !== "WGS84";
 }
 /**
+* Internal transform: accepts an already-cloned point object, returns transformed point object.
 * @param {import('./defs').ProjectionDefinition} source
 * @param {import('./defs').ProjectionDefinition} dest
-* @param {import('./core').TemplateCoordinates} point
-* @param {boolean} enforceAxis
+* @param {import('./core').InterfaceCoordinates} point
+* @param {boolean} [enforceAxis]
 * @returns {import('./core').InterfaceCoordinates | undefined}
 */
-function transform(source, dest, point, enforceAxis) {
+function transformInternal(source, dest, point, enforceAxis) {
 	var wgs84;
-	if (Array.isArray(point)) point = toPoint_default(point);
-	else point = {
-		x: point.x,
-		y: point.y,
-		z: point.z,
-		m: point.m
-	};
 	var hasZ = point.z !== void 0;
 	checkSanity_default(point);
 	if (source.datum && dest.datum && checkNotWGS(source, dest)) {
 		wgs84 = new Projection("WGS84");
-		point = transform(source, wgs84, point, enforceAxis);
+		point = transformInternal(source, wgs84, point, enforceAxis);
 		source = wgs84;
 	}
-	if (enforceAxis && source.axis !== "enu") point = adjust_axis_default(source, false, point);
+	if (enforceAxis && source.axis !== "enu") point = adjustAxisToEnu(source, point);
 	if (source.projName === "longlat") point = {
 		x: point.x * D2R$1,
 		y: point.y * D2R$1,
@@ -7290,9 +7404,27 @@ function transform(source, dest, point, enforceAxis) {
 			z: point.z || 0
 		};
 	}
-	if (enforceAxis && dest.axis !== "enu") return adjust_axis_default(dest, true, point);
+	if (enforceAxis && dest.axis !== "enu") return adjustAxisFromEnu(dest, point);
 	if (point && !hasZ && dest.projName !== "geocent") delete point.z;
 	return point;
+}
+/**
+* @param {import('./defs').ProjectionDefinition} source
+* @param {import('./defs').ProjectionDefinition} dest
+* @param {import('./core').TemplateCoordinates} point
+* @param {boolean} [enforceAxis]
+* @returns {import('./core').InterfaceCoordinates | undefined}
+*/
+function transform(source, dest, point, enforceAxis) {
+	var pt;
+	if (Array.isArray(point)) pt = toPoint_default(point);
+	else pt = {
+		x: point.x,
+		y: point.y,
+		z: point.z,
+		m: point.m
+	};
+	return transformInternal(source, dest, pt, enforceAxis);
 }
 //#endregion
 //#region node_modules/proj4/lib/core.js
@@ -7373,32 +7505,50 @@ var wgs84 = Projection("WGS84");
 * @returns {T}
 */
 function transformer(from, to, coords, enforceAxis) {
-	var transformedArray, out, keys;
+	var out, geocent, keys;
 	if (Array.isArray(coords)) {
-		transformedArray = transform(from, to, coords, enforceAxis) || {
+		out = transformInternal(from, to, toPoint_default(coords), enforceAxis) || {
 			x: NaN,
 			y: NaN
 		};
-		if (coords.length > 2) if (typeof from.name !== "undefined" && from.name === "geocent" || typeof to.name !== "undefined" && to.name === "geocent") if (typeof transformedArray.z === "number") return [
-			transformedArray.x,
-			transformedArray.y,
-			transformedArray.z
-		].concat(coords.slice(3));
-		else return [
-			transformedArray.x,
-			transformedArray.y,
-			coords[2]
-		].concat(coords.slice(3));
-		else return [transformedArray.x, transformedArray.y].concat(coords.slice(2));
-		else return [transformedArray.x, transformedArray.y];
+		if (coords.length > 2) {
+			geocent = typeof from.name !== "undefined" && from.name === "geocent" || typeof to.name !== "undefined" && to.name === "geocent";
+			if (geocent) {
+				if (typeof out.z === "number") return [
+					out.x,
+					out.y,
+					out.z
+				].concat(coords.slice(3));
+				return [
+					out.x,
+					out.y,
+					coords[2]
+				].concat(coords.slice(3));
+			}
+			if (enforceAxis && typeof out.z === "number") return [
+				out.x,
+				out.y,
+				out.z
+			].concat(coords.slice(3));
+			return [out.x, out.y].concat(coords.slice(2));
+		}
+		return [out.x, out.y];
 	} else {
-		out = transform(from, to, coords, enforceAxis);
+		out = transformInternal(from, to, {
+			x: coords.x,
+			y: coords.y,
+			z: coords.z,
+			m: coords.m
+		}, enforceAxis) || {
+			x: NaN,
+			y: NaN
+		};
 		keys = Object.keys(coords);
 		if (keys.length === 2) return out;
+		geocent = typeof from.name !== "undefined" && from.name === "geocent" || typeof to.name !== "undefined" && to.name === "geocent";
 		keys.forEach(function(key) {
-			if (typeof from.name !== "undefined" && from.name === "geocent" || typeof to.name !== "undefined" && to.name === "geocent") {
-				if (key === "x" || key === "y" || key === "z") return;
-			} else if (key === "x" || key === "y") return;
+			if (key === "x" || key === "y") return;
+			if (key === "z" && (geocent || enforceAxis)) return;
 			out[key] = coords[key];
 		});
 		return out;
@@ -7515,14 +7665,14 @@ var SET_ORIGIN_COLUMN_LETTERS = "AJSAJS";
 * {string} @private
 */
 var SET_ORIGIN_ROW_LETTERS = "AFAFAF";
-var A$1 = 65;
+var A = 65;
 var I$1 = 73;
-var O$1 = 79;
+var O = 79;
 var V$1 = 86;
 var Z$1 = 90;
 var mgrs_default = {
-	forward: forward$31,
-	inverse: inverse$31,
+	forward: forward$32,
+	inverse: inverse$32,
 	toPoint
 };
 /**
@@ -7534,7 +7684,7 @@ var mgrs_default = {
 *      100 m, 2 for 1000 m or 1 for 10000 m). Optional, default is 5.
 * @return {string} the MGRS string for the given location and accuracy.
 */
-function forward$31(ll, accuracy) {
+function forward$32(ll, accuracy) {
 	accuracy = accuracy || 5;
 	return encode(LLtoUTM({
 		lat: ll[1],
@@ -7549,7 +7699,7 @@ function forward$31(ll, accuracy) {
 *     (longitude) and top (latitude) values in WGS84, representing the
 *     bounding box for the provided MGRS reference.
 */
-function inverse$31(mgrs) {
+function inverse$32(mgrs) {
 	var bbox = UTMtoLL(decode(mgrs.toUpperCase()));
 	if (bbox.lat && bbox.lon) return [
 		bbox.lon,
@@ -7800,25 +7950,25 @@ function getLetter100kID(column, row, parm) {
 	var rowInt = rowOrigin + row;
 	var rollover = false;
 	if (colInt > Z$1) {
-		colInt = colInt - Z$1 + A$1 - 1;
+		colInt = colInt - Z$1 + A - 1;
 		rollover = true;
 	}
 	if (colInt === I$1 || colOrigin < I$1 && colInt > I$1 || (colInt > I$1 || colOrigin < I$1) && rollover) colInt++;
-	if (colInt === O$1 || colOrigin < O$1 && colInt > O$1 || (colInt > O$1 || colOrigin < O$1) && rollover) {
+	if (colInt === O || colOrigin < O && colInt > O || (colInt > O || colOrigin < O) && rollover) {
 		colInt++;
 		if (colInt === I$1) colInt++;
 	}
-	if (colInt > Z$1) colInt = colInt - Z$1 + A$1 - 1;
+	if (colInt > Z$1) colInt = colInt - Z$1 + A - 1;
 	if (rowInt > V$1) {
-		rowInt = rowInt - V$1 + A$1 - 1;
+		rowInt = rowInt - V$1 + A - 1;
 		rollover = true;
 	} else rollover = false;
 	if (rowInt === I$1 || rowOrigin < I$1 && rowInt > I$1 || (rowInt > I$1 || rowOrigin < I$1) && rollover) rowInt++;
-	if (rowInt === O$1 || rowOrigin < O$1 && rowInt > O$1 || (rowInt > O$1 || rowOrigin < O$1) && rollover) {
+	if (rowInt === O || rowOrigin < O && rowInt > O || (rowInt > O || rowOrigin < O) && rollover) {
 		rowInt++;
 		if (rowInt === I$1) rowInt++;
 	}
-	if (rowInt > V$1) rowInt = rowInt - V$1 + A$1 - 1;
+	if (rowInt > V$1) rowInt = rowInt - V$1 + A - 1;
 	return String.fromCharCode(colInt) + String.fromCharCode(rowInt);
 }
 /**
@@ -7890,10 +8040,10 @@ function getEastingFromChar(e, set) {
 	while (curCol !== e.charCodeAt(0)) {
 		curCol++;
 		if (curCol === I$1) curCol++;
-		if (curCol === O$1) curCol++;
+		if (curCol === O) curCol++;
 		if (curCol > Z$1) {
 			if (rewindMarker) throw "Bad character: " + e;
-			curCol = A$1;
+			curCol = A;
 			rewindMarker = true;
 		}
 		eastingValue += 1e5;
@@ -7924,10 +8074,10 @@ function getNorthingFromChar(n, set) {
 	while (curRow !== n.charCodeAt(0)) {
 		curRow++;
 		if (curRow === I$1) curRow++;
-		if (curRow === O$1) curRow++;
+		if (curRow === O) curRow++;
 		if (curRow > V$1) {
 			if (rewindMarker) throw "Bad character: " + n;
-			curRow = A$1;
+			curRow = A;
 			rewindMarker = true;
 		}
 		northingValue += 1e5;
@@ -8046,7 +8196,7 @@ Point.fromMGRS = function(mgrsStr) {
 	return new Point(toPoint(mgrsStr));
 };
 Point.prototype.toMGRS = function(accuracy) {
-	return forward$31([this.x, this.y], accuracy);
+	return forward$32([this.x, this.y], accuracy);
 };
 //#endregion
 //#region node_modules/proj4/lib/common/pj_enfn.js
@@ -8104,7 +8254,7 @@ function pj_inv_mlfn_default(arg, es, en) {
 * @property {number} ml0
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$32() {
+function init$33() {
 	this.x0 = this.x0 !== void 0 ? this.x0 : 0;
 	this.y0 = this.y0 !== void 0 ? this.y0 : 0;
 	this.long0 = this.long0 !== void 0 ? this.long0 : 0;
@@ -8118,7 +8268,7 @@ function init$32() {
 Transverse Mercator Forward  - long/lat to x/y
 long/lat in radians
 */
-function forward$30(p) {
+function forward$31(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var delta_lon = adjust_lon_default(lon - this.long0, this.over);
@@ -8159,7 +8309,7 @@ function forward$30(p) {
 /**
 Transverse Mercator Inverse  -  x/y to long/lat
 */
-function inverse$30(p) {
+function inverse$31(p) {
 	var con, phi;
 	var lat, lon;
 	var x = (p.x - this.x0) * (1 / this.a);
@@ -8201,9 +8351,9 @@ function inverse$30(p) {
 	return p;
 }
 var tmerc_default = {
-	init: init$32,
-	forward: forward$30,
-	inverse: inverse$30,
+	init: init$33,
+	forward: forward$31,
+	inverse: inverse$31,
 	names: ["Fast_Transverse_Mercator", "Fast Transverse Mercator"]
 };
 //#endregion
@@ -8314,7 +8464,7 @@ function clens_cmplx_default(pp, arg_r, arg_i) {
 * @property {number} Zb
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$31() {
+function init$32() {
 	if (!this.approx && (isNaN(this.es) || this.es <= 0)) throw new Error("Incorrect elliptical usage. Try using the +approx option in the proj string, or PROJECTION[\"Fast_Transverse_Mercator\"] in the WKT.");
 	if (this.approx) {
 		tmerc_default.init.apply(this);
@@ -8370,7 +8520,7 @@ function init$31() {
 	var Z = gatg_default(this.cbg, this.lat0);
 	this.Zb = -this.Qn * (Z + clens_default(this.gtu, 2 * Z));
 }
-function forward$29(p) {
+function forward$30(p) {
 	var Ce = adjust_lon_default(p.x - this.long0, this.over);
 	var Cn = p.y;
 	Cn = gatg_default(this.cbg, Cn);
@@ -8397,7 +8547,7 @@ function forward$29(p) {
 	p.y = y;
 	return p;
 }
-function inverse$29(p) {
+function inverse$30(p) {
 	var Ce = (p.x - this.x0) * (1 / this.a);
 	var Cn = (p.y - this.y0) * (1 / this.a);
 	Cn = (Cn - this.Zb) / this.Qn;
@@ -8426,9 +8576,9 @@ function inverse$29(p) {
 	return p;
 }
 var etmerc_default = {
-	init: init$31,
-	forward: forward$29,
-	inverse: inverse$29,
+	init: init$32,
+	forward: forward$30,
+	inverse: inverse$30,
 	names: [
 		"Extended_Transverse_Mercator",
 		"Extended Transverse Mercator",
@@ -8454,7 +8604,7 @@ function adjust_zone_default(zone, lon) {
 //#region node_modules/proj4/lib/projections/utm.js
 var dependsOn = "etmerc";
 /** @this {import('../defs.js').ProjectionDefinition} */
-function init$30() {
+function init$31() {
 	var zone = adjust_zone_default(this.zone, this.long0);
 	if (zone === void 0) throw new Error("unknown utm zone");
 	this.lat0 = 0;
@@ -8467,7 +8617,7 @@ function init$30() {
 	this.inverse = etmerc_default.inverse;
 }
 var utm_default = {
-	init: init$30,
+	init: init$31,
 	names: ["Universal Transverse Mercator System", "utm"],
 	dependsOn
 };
@@ -8490,7 +8640,7 @@ var MAX_ITER$2 = 20;
 * @property {number} es
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$29() {
+function init$30() {
 	var sphi = Math.sin(this.lat0);
 	var cphi = Math.cos(this.lat0);
 	cphi *= cphi;
@@ -8500,14 +8650,14 @@ function init$29() {
 	this.ratexp = .5 * this.C * this.e;
 	this.K = Math.tan(.5 * this.phic0 + FORTPI) / (Math.pow(Math.tan(.5 * this.lat0 + FORTPI), this.C) * srat_default(this.e * sphi, this.ratexp));
 }
-function forward$28(p) {
+function forward$29(p) {
 	var lon = p.x;
 	var lat = p.y;
 	p.y = 2 * Math.atan(this.K * Math.pow(Math.tan(.5 * lat + FORTPI), this.C) * srat_default(this.e * Math.sin(lat), this.ratexp)) - HALF_PI;
 	p.x = this.C * lon;
 	return p;
 }
-function inverse$28(p) {
+function inverse$29(p) {
 	var DEL_TOL = 1e-14;
 	var lon = p.x / this.C;
 	var lat = p.y;
@@ -8523,9 +8673,9 @@ function inverse$28(p) {
 	return p;
 }
 var gauss_default = {
-	init: init$29,
-	forward: forward$28,
-	inverse: inverse$28,
+	init: init$30,
+	forward: forward$29,
+	inverse: inverse$29,
 	names: ["gauss"]
 };
 //#endregion
@@ -8539,7 +8689,7 @@ var gauss_default = {
 * @property {number} phic0
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$28() {
+function init$29() {
 	gauss_default.init.apply(this);
 	if (!this.rc) return;
 	this.sinc0 = Math.sin(this.phic0);
@@ -8547,7 +8697,7 @@ function init$28() {
 	this.R2 = 2 * this.rc;
 	if (!this.title) this.title = "Oblique Stereographic Alternative";
 }
-function forward$27(p) {
+function forward$28(p) {
 	var sinc, cosc, cosl, k;
 	p.x = adjust_lon_default(p.x - this.long0, this.over);
 	gauss_default.forward.apply(this, [p]);
@@ -8561,7 +8711,7 @@ function forward$27(p) {
 	p.y = this.a * p.y + this.y0;
 	return p;
 }
-function inverse$27(p) {
+function inverse$28(p) {
 	var sinc, cosc, lon, lat, rho;
 	p.x = (p.x - this.x0) / this.a;
 	p.y = (p.y - this.y0) / this.a;
@@ -8584,9 +8734,9 @@ function inverse$27(p) {
 	return p;
 }
 var sterea_default = {
-	init: init$28,
-	forward: forward$27,
-	inverse: inverse$27,
+	init: init$29,
+	forward: forward$28,
+	inverse: inverse$28,
 	names: [
 		"Stereographic_North_Pole",
 		"Oblique_Stereographic",
@@ -8614,7 +8764,7 @@ function ssfn_(phit, sinphi, eccen) {
 	return Math.tan(.5 * (HALF_PI + phit)) * Math.pow((1 - sinphi) / (1 + sinphi), .5 * eccen);
 }
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$27() {
+function init$28() {
 	this.x0 = this.x0 || 0;
 	this.y0 = this.y0 || 0;
 	this.lat0 = this.lat0 || 0;
@@ -8634,7 +8784,7 @@ function init$27() {
 		this.sinX0 = Math.sin(this.X0);
 	}
 }
-function forward$26(p) {
+function forward$27(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var sinlat = Math.sin(lat);
@@ -8672,7 +8822,7 @@ function forward$26(p) {
 	}
 	return p;
 }
-function inverse$26(p) {
+function inverse$27(p) {
 	p.x -= this.x0;
 	p.y -= this.y0;
 	var lon, lat, ts, ce, Chi;
@@ -8721,9 +8871,9 @@ function inverse$26(p) {
 	return p;
 }
 var stere_default = {
-	init: init$27,
-	forward: forward$26,
-	inverse: inverse$26,
+	init: init$28,
+	forward: forward$27,
+	inverse: inverse$27,
 	names: [
 		"stere",
 		"Stereographic_South_Pole",
@@ -8744,7 +8894,7 @@ var stere_default = {
 * @property {number} K
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$26() {
+function init$27() {
 	var phy0 = this.lat0;
 	this.lambda0 = this.long0;
 	var sinPhy0 = Math.sin(phy0);
@@ -8760,7 +8910,7 @@ function init$26() {
 	var k3 = Math.log((1 + e * sinPhy0) / (1 - e * sinPhy0));
 	this.K = k1 - this.alpha * k2 + this.alpha * e / 2 * k3;
 }
-function forward$25(p) {
+function forward$26(p) {
 	var Sa1 = Math.log(Math.tan(Math.PI / 4 - p.y / 2));
 	var Sa2 = this.e / 2 * Math.log((1 + this.e * Math.sin(p.y)) / (1 - this.e * Math.sin(p.y)));
 	var S = -this.alpha * (Sa1 + Sa2) + this.K;
@@ -8772,7 +8922,7 @@ function forward$25(p) {
 	p.x = this.R * rotI + this.x0;
 	return p;
 }
-function inverse$25(p) {
+function inverse$26(p) {
 	var Y = p.x - this.x0;
 	var X = p.y - this.y0;
 	var rotI = Y / this.R;
@@ -8795,9 +8945,9 @@ function inverse$25(p) {
 	return p;
 }
 var somerc_default = {
-	init: init$26,
-	forward: forward$25,
-	inverse: inverse$25,
+	init: init$27,
+	forward: forward$26,
+	inverse: inverse$26,
 	names: ["somerc"]
 };
 //#endregion
@@ -8838,7 +8988,7 @@ function isTypeA(P) {
 * Initialize the Oblique Mercator  projection
 * @this {import('../defs.js').ProjectionDefinition & LocalThis}
 */
-function init$25() {
+function init$26() {
 	var con, com, cosph0, D, F, H, L, sinph0, p, J, gamma = 0, gamma0, lamc = 0, lam1 = 0, lam2 = 0, phi1 = 0, phi2 = 0, alpha_c = 0;
 	this.no_off = isTypeA(this);
 	this.no_rot = "no_rot" in this;
@@ -8847,7 +8997,13 @@ function init$25() {
 	var gam = false;
 	if ("rectified_grid_angle" in this) gam = true;
 	if (alp) alpha_c = this.alpha;
-	if (gam) gamma = this.rectified_grid_angle;
+	if (gam) {
+		gamma = this.rectified_grid_angle;
+		if (!alp) {
+			alpha_c = 0;
+			alp = true;
+		}
+	}
 	if (alp || gam) lamc = this.longc;
 	else {
 		lam1 = this.long1;
@@ -8918,7 +9074,7 @@ function init$25() {
 	this.v_pole_n = this.ArB * Math.log(Math.tan(FORTPI - F));
 	this.v_pole_s = this.ArB * Math.log(Math.tan(FORTPI + F));
 }
-function forward$24(p) {
+function forward$25(p) {
 	var coords = {};
 	var S, T, U, V, W, temp, u, v;
 	p.x = p.x - this.lam0;
@@ -8950,7 +9106,7 @@ function forward$24(p) {
 	coords.y = this.a * coords.y + this.y0;
 	return coords;
 }
-function inverse$24(p) {
+function inverse$25(p) {
 	var u, v, Qp, Sp, Tp, Vp, Up;
 	var coords = {};
 	p.x = (p.x - this.x0) * (1 / this.a);
@@ -8980,9 +9136,9 @@ function inverse$24(p) {
 	return coords;
 }
 var omerc_default = {
-	init: init$25,
-	forward: forward$24,
-	inverse: inverse$24,
+	init: init$26,
+	forward: forward$25,
+	inverse: inverse$25,
 	names: [
 		"Hotine_Oblique_Mercator",
 		"Hotine Oblique Mercator",
@@ -9005,7 +9161,7 @@ var omerc_default = {
 * @property {number} rh
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$24() {
+function init$25() {
 	if (!this.lat2) this.lat2 = this.lat1;
 	if (!this.k0) this.k0 = 1;
 	this.x0 = this.x0 || 0;
@@ -9029,7 +9185,7 @@ function init$24() {
 	this.rh = this.a * this.f0 * Math.pow(ts0, this.ns);
 	if (!this.title) this.title = "Lambert Conformal Conic";
 }
-function forward$23(p) {
+function forward$24(p) {
 	var lon = p.x;
 	var lat = p.y;
 	if (Math.abs(2 * Math.abs(lat) - Math.PI) <= 1e-10) lat = sign_default(lat) * (HALF_PI - 2 * EPSLN);
@@ -9048,7 +9204,7 @@ function forward$23(p) {
 	p.y = this.k0 * (this.rh - rh1 * Math.cos(theta)) + this.y0;
 	return p;
 }
-function inverse$23(p) {
+function inverse$24(p) {
 	var rh1, con, ts;
 	var lat, lon;
 	var x = (p.x - this.x0) / this.k0;
@@ -9074,9 +9230,9 @@ function inverse$23(p) {
 	return p;
 }
 var lcc_default = {
-	init: init$24,
-	forward: forward$23,
-	inverse: inverse$23,
+	init: init$25,
+	forward: forward$24,
+	inverse: inverse$24,
 	names: [
 		"Lambert Tangential Conformal Conic Projection",
 		"Lambert_Conformal_Conic",
@@ -9089,7 +9245,7 @@ var lcc_default = {
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/krovak.js
-function init$23() {
+function init$24() {
 	this.a = 6377397.155;
 	this.es = .006674372230614;
 	this.e = Math.sqrt(this.es);
@@ -9113,7 +9269,7 @@ function init$23() {
 	this.ro0 = this.k1 * this.n0 / Math.tan(this.s0);
 	this.ad = this.s90 - this.uq;
 }
-function forward$22(p) {
+function forward$23(p) {
 	var gfi, u, deltav, s, d, eps, ro;
 	var lon = p.x;
 	var lat = p.y;
@@ -9133,7 +9289,7 @@ function forward$22(p) {
 	}
 	return p;
 }
-function inverse$22(p) {
+function inverse$23(p) {
 	var u, deltav, s, d, eps, ro, fi1;
 	var ok;
 	var tmp = p.x;
@@ -9163,9 +9319,9 @@ function inverse$22(p) {
 	return p;
 }
 var krovak_default = {
-	init: init$23,
-	forward: forward$22,
-	inverse: inverse$22,
+	init: init$24,
+	forward: forward$23,
+	inverse: inverse$23,
 	names: [
 		"Krovak",
 		"Krovak Modified",
@@ -9235,7 +9391,7 @@ function imlfn_default(ml, e0, e1, e2, e3) {
 * @property {number} ml0
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$22() {
+function init$23() {
 	if (!this.sphere) {
 		this.e0 = e0fn_default(this.es);
 		this.e1 = e1fn_default(this.es);
@@ -9244,7 +9400,7 @@ function init$22() {
 		this.ml0 = this.a * mlfn_default(this.e0, this.e1, this.e2, this.e3, this.lat0);
 	}
 }
-function forward$21(p) {
+function forward$22(p) {
 	var x, y;
 	var lam = p.x;
 	var phi = p.y;
@@ -9268,7 +9424,7 @@ function forward$21(p) {
 	p.y = y + this.y0;
 	return p;
 }
-function inverse$21(p) {
+function inverse$22(p) {
 	p.x -= this.x0;
 	p.y -= this.y0;
 	var x = p.x / this.a;
@@ -9299,9 +9455,9 @@ function inverse$21(p) {
 	return p;
 }
 var cass_default = {
-	init: init$22,
-	forward: forward$21,
-	inverse: inverse$21,
+	init: init$23,
+	forward: forward$22,
+	inverse: inverse$22,
 	names: [
 		"Cassini",
 		"Cassini_Soldner",
@@ -9317,11 +9473,38 @@ function qsfnz_default(eccent, sinphi) {
 		return (1 - eccent * eccent) * (sinphi / (1 - con * con) - .5 / eccent * Math.log((1 - con) / (1 + con)));
 	} else return 2 * sinphi;
 }
+//#endregion
+//#region node_modules/proj4/lib/common/authset.js
+var P00 = .3333333333333333;
+var P01 = .17222222222222222;
+var P02 = .10257936507936508;
+var P10 = .06388888888888888;
+var P11 = .0664021164021164;
+var P20 = .016415012942191543;
+function authset(es) {
+	var t;
+	var APA = [];
+	APA[0] = es * P00;
+	t = es * es;
+	APA[0] += t * P01;
+	APA[1] = t * P10;
+	t *= es;
+	APA[0] += t * P02;
+	APA[1] += t * P11;
+	APA[2] = t * P20;
+	return APA;
+}
+//#endregion
+//#region node_modules/proj4/lib/common/authlat.js
+function authlat(beta, APA) {
+	var t = beta + beta;
+	return beta + APA[0] * Math.sin(t) + APA[1] * Math.sin(t + t) + APA[2] * Math.sin(t + t + t);
+}
 /**
 * Initialize the Lambert Azimuthal Equal Area projection
 * @this {import('../defs.js').ProjectionDefinition & LocalThis}
 */
-function init$21() {
+function init$22() {
 	var t = Math.abs(this.lat0);
 	if (Math.abs(t - HALF_PI) < 1e-10) this.mode = this.lat0 < 0 ? 1 : 2;
 	else if (Math.abs(t) < 1e-10) this.mode = 3;
@@ -9359,7 +9542,7 @@ function init$21() {
 		this.cosph0 = Math.cos(this.lat0);
 	}
 }
-function forward$20(p) {
+function forward$21(p) {
 	var x, y, coslam, sinlam, sinphi, q, sinb, cosb, b, cosphi;
 	var lam = p.x;
 	var phi = p.y;
@@ -9432,7 +9615,7 @@ function forward$20(p) {
 	p.y = this.a * y + this.y0;
 	return p;
 }
-function inverse$20(p) {
+function inverse$21(p) {
 	p.x -= this.x0;
 	p.y -= this.y0;
 	var x = p.x / this.a;
@@ -9509,33 +9692,10 @@ function inverse$20(p) {
 	p.y = phi;
 	return p;
 }
-var P00 = .3333333333333333;
-var P01 = .17222222222222222;
-var P02 = .10257936507936508;
-var P10 = .06388888888888888;
-var P11 = .0664021164021164;
-var P20 = .016415012942191543;
-function authset(es) {
-	var t;
-	var APA = [];
-	APA[0] = es * P00;
-	t = es * es;
-	APA[0] += t * P01;
-	APA[1] = t * P10;
-	t *= es;
-	APA[0] += t * P02;
-	APA[1] += t * P11;
-	APA[2] = t * P20;
-	return APA;
-}
-function authlat(beta, APA) {
-	var t = beta + beta;
-	return beta + APA[0] * Math.sin(t) + APA[1] * Math.sin(t + t) + APA[2] * Math.sin(t + t + t);
-}
 var laea_default = {
-	init: init$21,
-	forward: forward$20,
-	inverse: inverse$20,
+	init: init$22,
+	forward: forward$21,
+	inverse: inverse$21,
 	names: [
 		"Lambert Azimuthal Equal Area",
 		"Lambert_Azimuthal_Equal_Area",
@@ -9577,7 +9737,7 @@ function asinz_default(x) {
 * @property {number} cos_phi
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$20() {
+function init$21() {
 	if (Math.abs(this.lat1 + this.lat2) < 1e-10) return;
 	this.temp = this.b / this.a;
 	this.es = 1 - Math.pow(this.temp, 2);
@@ -9603,7 +9763,7 @@ function init$20() {
 	this.rh = this.a * Math.sqrt(this.c - this.ns0 * this.qs0) / this.ns0;
 }
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function forward$19(p) {
+function forward$20(p) {
 	var lon = p.x;
 	var lat = p.y;
 	this.sin_phi = Math.sin(lat);
@@ -9617,7 +9777,7 @@ function forward$19(p) {
 	p.y = y;
 	return p;
 }
-function inverse$19(p) {
+function inverse$20(p) {
 	var rh1, qs, con, theta, lon, lat;
 	p.x -= this.x0;
 	p.y = this.rh - p.y + this.y0;
@@ -9658,9 +9818,9 @@ function phi1z(eccent, qs) {
 	return null;
 }
 var aea_default = {
-	init: init$20,
-	forward: forward$19,
-	inverse: inverse$19,
+	init: init$21,
+	forward: forward$20,
+	inverse: inverse$20,
 	names: [
 		"Albers_Conic_Equal_Area",
 		"Albers_Equal_Area",
@@ -9685,13 +9845,13 @@ http://mathworld.wolfram.com/GnomonicProjection.html
 Accessed: 12th November 2009
 @this {import('../defs.js').ProjectionDefinition & LocalThis}
 */
-function init$19() {
+function init$20() {
 	this.sin_p14 = Math.sin(this.lat0);
 	this.cos_p14 = Math.cos(this.lat0);
 	this.infinity_dist = 1e3 * this.a;
 	this.rc = 1;
 }
-function forward$18(p) {
+function forward$19(p) {
 	var sinphi, cosphi;
 	var dlon;
 	var coslon;
@@ -9717,7 +9877,7 @@ function forward$18(p) {
 	p.y = y;
 	return p;
 }
-function inverse$18(p) {
+function inverse$19(p) {
 	var rh;
 	var sinc, cosc;
 	var c;
@@ -9742,9 +9902,9 @@ function inverse$18(p) {
 	return p;
 }
 var gnom_default = {
-	init: init$19,
-	forward: forward$18,
-	inverse: inverse$18,
+	init: init$20,
+	forward: forward$19,
+	inverse: inverse$19,
 	names: ["gnom"]
 };
 //#endregion
@@ -9781,10 +9941,10 @@ A User's Manual" by Gerald I. Evenden,
 USGS Open File Report 90-284and Release 4 Interim Reports (2003)
 @this {import('../defs.js').ProjectionDefinition & LocalThis}
 */
-function init$18() {
+function init$19() {
 	if (!this.sphere) this.k0 = msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts));
 }
-function forward$17(p) {
+function forward$18(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var x, y;
@@ -9801,7 +9961,7 @@ function forward$17(p) {
 	p.y = y;
 	return p;
 }
-function inverse$17(p) {
+function inverse$18(p) {
 	p.x -= this.x0;
 	p.y -= this.y0;
 	var lon, lat;
@@ -9817,14 +9977,14 @@ function inverse$17(p) {
 	return p;
 }
 var cea_default = {
-	init: init$18,
-	forward: forward$17,
-	inverse: inverse$17,
+	init: init$19,
+	forward: forward$18,
+	inverse: inverse$18,
 	names: ["cea"]
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/eqc.js
-function init$17() {
+function init$18() {
 	this.x0 = this.x0 || 0;
 	this.y0 = this.y0 || 0;
 	this.lat0 = this.lat0 || 0;
@@ -9833,7 +9993,7 @@ function init$17() {
 	this.title = this.title || "Equidistant Cylindrical (Plate Carre)";
 	this.rc = Math.cos(this.lat_ts);
 }
-function forward$16(p) {
+function forward$17(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var dlon = adjust_lon_default(lon - this.long0, this.over);
@@ -9842,7 +10002,7 @@ function forward$16(p) {
 	p.y = this.y0 + this.a * dlat;
 	return p;
 }
-function inverse$16(p) {
+function inverse$17(p) {
 	var x = p.x;
 	var y = p.y;
 	p.x = adjust_lon_default(this.long0 + (x - this.x0) / (this.a * this.rc), this.over);
@@ -9850,9 +10010,9 @@ function inverse$16(p) {
 	return p;
 }
 var eqc_default = {
-	init: init$17,
-	forward: forward$16,
-	inverse: inverse$16,
+	init: init$18,
+	forward: forward$17,
+	inverse: inverse$17,
 	names: [
 		"Equirectangular",
 		"Equidistant_Cylindrical",
@@ -9875,7 +10035,7 @@ var eqc_default = {
 */
 var MAX_ITER$1 = 20;
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$16() {
+function init$17() {
 	this.temp = this.b / this.a;
 	this.es = 1 - Math.pow(this.temp, 2);
 	this.e = Math.sqrt(this.es);
@@ -9885,7 +10045,7 @@ function init$16() {
 	this.e3 = e3fn_default(this.es);
 	this.ml0 = this.a * mlfn_default(this.e0, this.e1, this.e2, this.e3, this.lat0);
 }
-function forward$15(p) {
+function forward$16(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var x, y, el;
@@ -9910,7 +10070,7 @@ function forward$15(p) {
 	p.y = y + this.y0;
 	return p;
 }
-function inverse$15(p) {
+function inverse$16(p) {
 	var lon, lat, x, y, i;
 	var al, bl;
 	var phi, dphi;
@@ -9965,9 +10125,9 @@ function inverse$15(p) {
 	return p;
 }
 var poly_default = {
-	init: init$16,
-	forward: forward$15,
-	inverse: inverse$15,
+	init: init$17,
+	forward: forward$16,
+	inverse: inverse$16,
 	names: [
 		"Polyconic",
 		"American_Polyconic",
@@ -9976,7 +10136,7 @@ var poly_default = {
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/nzmg.js
-function init$15() {
+function init$16() {
 	this.A = [];
 	this.A[1] = .6399175073;
 	this.A[2] = -.1358797613;
@@ -10031,7 +10191,7 @@ function init$15() {
 New Zealand Map Grid Forward  - long/lat to x/y
 long/lat in radians
 */
-function forward$14(p) {
+function forward$15(p) {
 	var n;
 	var lon = p.x;
 	var delta_lat = p.y - this.lat0;
@@ -10067,7 +10227,7 @@ function forward$14(p) {
 /**
 New Zealand Map Grid Inverse  -  x/y to long/lat
 */
-function inverse$14(p) {
+function inverse$15(p) {
 	var n;
 	var x = p.x;
 	var y = p.y;
@@ -10133,15 +10293,15 @@ function inverse$14(p) {
 	return p;
 }
 var nzmg_default = {
-	init: init$15,
-	forward: forward$14,
-	inverse: inverse$14,
+	init: init$16,
+	forward: forward$15,
+	inverse: inverse$15,
 	names: ["New_Zealand_Map_Grid", "nzmg"]
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/mill.js
-function init$14() {}
-function forward$13(p) {
+function init$15() {}
+function forward$14(p) {
 	var lon = p.x;
 	var lat = p.y;
 	var dlon = adjust_lon_default(lon - this.long0, this.over);
@@ -10151,7 +10311,7 @@ function forward$13(p) {
 	p.y = y;
 	return p;
 }
-function inverse$13(p) {
+function inverse$14(p) {
 	p.x -= this.x0;
 	p.y -= this.y0;
 	var lon = adjust_lon_default(this.long0 + p.x / this.a, this.over);
@@ -10161,9 +10321,9 @@ function inverse$13(p) {
 	return p;
 }
 var mill_default = {
-	init: init$14,
-	forward: forward$13,
-	inverse: inverse$13,
+	init: init$15,
+	forward: forward$14,
+	inverse: inverse$14,
 	names: ["Miller_Cylindrical", "mill"]
 };
 //#endregion
@@ -10179,7 +10339,7 @@ var MAX_ITER = 20;
 * @property {number} es
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
-function init$13() {
+function init$14() {
 	this.long0 = this.long0 || 0;
 	if (!this.sphere) this.en = pj_enfn_default(this.es);
 	else {
@@ -10190,7 +10350,7 @@ function init$13() {
 		this.C_x = this.C_y / (this.m + 1);
 	}
 }
-function forward$12(p) {
+function forward$13(p) {
 	var x, y;
 	var lon = p.x;
 	var lat = p.y;
@@ -10217,7 +10377,7 @@ function forward$12(p) {
 	p.y = y;
 	return p;
 }
-function inverse$12(p) {
+function inverse$13(p) {
 	var lat, temp, lon, s;
 	p.x -= this.x0;
 	lon = p.x / this.a;
@@ -10244,10 +10404,39 @@ function inverse$12(p) {
 	return p;
 }
 var sinu_default = {
-	init: init$13,
-	forward: forward$12,
-	inverse: inverse$12,
+	init: init$14,
+	forward: forward$13,
+	inverse: inverse$13,
 	names: ["Sinusoidal", "sinu"]
+};
+//#endregion
+//#region node_modules/proj4/lib/projections/eck6.js
+/**
+* Eckert VI projection — spherical sinusoidal variant with m=1, n=1+π/2.
+* Always forces spherical computation regardless of the ellipsoid.
+*
+* @typedef {Object} LocalThis
+* @property {number} m
+* @property {number} n
+* @property {number} C_y
+* @property {number} C_x
+* @property {number} es
+*/
+/** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
+function init$13() {
+	this.sphere = true;
+	this.b = this.a;
+	this.m = 1;
+	this.n = 2.5707963267948966;
+	this.es = 0;
+	this.C_y = Math.sqrt((this.m + 1) / this.n);
+	this.C_x = this.C_y / (this.m + 1);
+}
+var eck6_default = {
+	init: init$13,
+	forward: forward$13,
+	inverse: inverse$13,
+	names: ["Eckert_VI", "eck6"]
 };
 //#endregion
 //#region node_modules/proj4/lib/projections/moll.js
@@ -11745,26 +11934,55 @@ var geos_default = {
 * Ported to JavaScript and adapted for mapshaper-proj by Matthew Bloch August 2018
 * Modified for proj4js by Andreas Hocevar by Andreas Hocevar March 2024
 */
-var A1 = 1.340264, A2 = -.081106, A3 = 893e-6, A4 = .003796, M$1 = Math.sqrt(3) / 2;
+var A1 = 1.340264;
+var A2 = -.081106;
+var A3 = 893e-6;
+var A4 = .003796;
+var M = Math.sqrt(3) / 2;
+/**
+* @typedef {Object} LocalThis
+* @property {number} es
+* @property {number} e
+* @property {Array<number>} apa
+* @property {number} qp
+* @property {number} rqda
+*/
+/** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
 function init$2() {
-	this.es = 0;
 	this.long0 = this.long0 !== void 0 ? this.long0 : 0;
 	this.x0 = this.x0 !== void 0 ? this.x0 : 0;
 	this.y0 = this.y0 !== void 0 ? this.y0 : 0;
+	if (this.es !== 0) {
+		this.apa = authset(this.es);
+		this.qp = qsfnz_default(this.e, 1);
+		this.rqda = Math.sqrt(.5 * this.qp);
+	}
 }
+/** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
 function forward$1(p) {
 	var lam = adjust_lon_default(p.x - this.long0, this.over);
 	var phi = p.y;
-	var paramLat = Math.asin(M$1 * Math.sin(phi)), paramLatSq = paramLat * paramLat, paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
-	p.x = lam * Math.cos(paramLat) / (M$1 * (A1 + 3 * A2 * paramLatSq + paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)));
+	var sinphi = Math.sin(phi);
+	if (this.es !== 0) sinphi = qsfnz_default(this.e, sinphi) / this.qp;
+	var paramLat = Math.asin(M * sinphi), paramLatSq = paramLat * paramLat, paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
+	p.x = lam * Math.cos(paramLat) / (M * (A1 + 3 * A2 * paramLatSq + paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)));
 	p.y = paramLat * (A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq));
+	if (this.es !== 0) {
+		p.x *= this.rqda;
+		p.y *= this.rqda;
+	}
 	p.x = this.a * p.x + this.x0;
 	p.y = this.a * p.y + this.y0;
 	return p;
 }
+/** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
 function inverse$1(p) {
 	p.x = (p.x - this.x0) / this.a;
 	p.y = (p.y - this.y0) / this.a;
+	if (this.es !== 0) {
+		p.x /= this.rqda;
+		p.y /= this.rqda;
+	}
 	var EPS = 1e-9, NITER = 12, paramLat = p.y, paramLatSq, paramLatPow6, fy, fpy, dlat, i;
 	for (i = 0; i < NITER; ++i) {
 		paramLatSq = paramLat * paramLat;
@@ -11776,8 +11994,9 @@ function inverse$1(p) {
 	}
 	paramLatSq = paramLat * paramLat;
 	paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
-	p.x = M$1 * p.x * (A1 + 3 * A2 * paramLatSq + paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)) / Math.cos(paramLat);
-	p.y = Math.asin(Math.sin(paramLat) / M$1);
+	p.x = M * p.x * (A1 + 3 * A2 * paramLatSq + paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)) / Math.cos(paramLat);
+	p.y = Math.asin(Math.sin(paramLat) / M);
+	if (this.es !== 0) p.y = authlat(p.y, this.apa);
 	p.x = adjust_lon_default(p.x + this.long0, this.over);
 	return p;
 }
@@ -11961,7 +12180,7 @@ function init() {
 	this.y0 = this.y0 || 0;
 	this.long0 = this.long0 || 0;
 	this.title = this.title || "General Oblique Transformation";
-	this.isIdentity = names$34.includes(this.o_proj);
+	this.isIdentity = names$35.includes(this.o_proj);
 	/** Verify required parameters exist */
 	if (!this.o_proj) throw new Error("Missing parameter: o_proj");
 	if (this.o_proj === `ob_tran`) throw new Error("Invalid value for o_proj: " + this.o_proj);
@@ -12055,7 +12274,7 @@ function createRotation(params, how) {
 */
 function forwardOblique(self, lp) {
 	let { x: lam, y: phi } = lp;
-	lam += self.long0;
+	lam = adjust_lon_default(lam - self.long0, self.over);
 	const coslam = Math.cos(lam);
 	const sinphi = Math.sin(phi);
 	const cosphi = Math.cos(phi);
@@ -12075,7 +12294,7 @@ function forwardOblique(self, lp) {
 */
 function forwardTransverse(self, lp) {
 	let { x: lam, y: phi } = lp;
-	lam += self.long0;
+	lam = adjust_lon_default(lam - self.long0, self.over);
 	const cosphi = Math.cos(phi);
 	const coslam = Math.cos(lam);
 	lp.x = adjust_lon_default(Math.atan2(cosphi * Math.sin(lam), Math.sin(phi)) + self.lamp);
@@ -12161,6 +12380,7 @@ function projs_default(proj4) {
 	proj4.Proj.projections.add(nzmg_default);
 	proj4.Proj.projections.add(mill_default);
 	proj4.Proj.projections.add(sinu_default);
+	proj4.Proj.projections.add(eck6_default);
 	proj4.Proj.projections.add(moll_default);
 	proj4.Proj.projections.add(eqdc_default);
 	proj4.Proj.projections.add(vandg_default);
@@ -12209,7 +12429,6 @@ var proj4 = Object.assign(proj4$1, {
 projs_default(proj4);
 //#endregion
 //#region node_modules/redux/dist/redux.mjs
-init_objectSpread2();
 function formatProdErrorMessage$1(code) {
 	return `Minified Redux error #${code}; visit https://redux.js.org/Errors?code=${code} for the full message or use the non-minified dev environment for full errors. `;
 }
@@ -12391,12 +12610,8 @@ function isAction(action) {
 }
 //#endregion
 //#region node_modules/reselect/dist/reselect.mjs
-init_objectSpread2();
 function assertIsFunction(func, errorMessage = `expected a function, instead received ${typeof func}`) {
 	if (typeof func !== "function") throw new TypeError(errorMessage);
-}
-function assertIsObject(object, errorMessage = `expected an object, instead received ${typeof object}`) {
-	if (typeof object !== "object") throw new TypeError(errorMessage);
 }
 function assertIsArrayOfFunctions(array, errorMessage = `expected all items to be functions, instead received the following types: `) {
 	if (!array.every((item) => typeof item === "function")) {
@@ -12426,7 +12641,8 @@ var StrongRef = class {
 		return this.value;
 	}
 };
-var Ref = typeof WeakRef !== "undefined" ? WeakRef : StrongRef;
+var getWeakRef = () => typeof WeakRef === "undefined" ? StrongRef : WeakRef;
+var Ref = /* @__PURE__ */ getWeakRef();
 var UNTERMINATED = 0;
 var TERMINATED = 1;
 function createCacheNode() {
@@ -12436,6 +12652,10 @@ function createCacheNode() {
 		o: null,
 		p: null
 	};
+}
+function maybeDeref(r) {
+	if (r instanceof Ref) return r.deref();
+	return r;
 }
 function weakMapMemoize(func, options = {}) {
 	let fnNode = createCacheNode();
@@ -12472,13 +12692,12 @@ function weakMapMemoize(func, options = {}) {
 			result = func.apply(null, arguments);
 			resultsCount++;
 			if (resultEqualityCheck) {
-				var _lastResult$deref, _lastResult$deref2;
-				const lastResultValue = (_lastResult$deref = lastResult === null || lastResult === void 0 || (_lastResult$deref2 = lastResult.deref) === null || _lastResult$deref2 === void 0 ? void 0 : _lastResult$deref2.call(lastResult)) !== null && _lastResult$deref !== void 0 ? _lastResult$deref : lastResult;
+				const lastResultValue = maybeDeref(lastResult);
 				if (lastResultValue != null && resultEqualityCheck(lastResultValue, result)) {
 					result = lastResultValue;
 					resultsCount !== 0 && resultsCount--;
 				}
-				lastResult = typeof result === "object" && result !== null || typeof result === "function" ? new Ref(result) : result;
+				lastResult = typeof result === "object" && result !== null || typeof result === "function" ? /* @__PURE__ */ new Ref(result) : result;
 			}
 		}
 		terminatedNode.s = TERMINATED;
@@ -12511,7 +12730,7 @@ function createSelectorCreator(memoizeOrOptions, ...memoizeOptionsFromArgs) {
 			resultFunc = createSelectorArgs.pop();
 		}
 		assertIsFunction(resultFunc, `createSelector expects an output function after the inputs, but received: [${typeof resultFunc}]`);
-		const { memoize, memoizeOptions = [], argsMemoize = weakMapMemoize, argsMemoizeOptions = [], devModeChecks = {} } = _objectSpread2(_objectSpread2({}, createSelectorCreatorOptions), directlyPassedOptions);
+		const { memoize, memoizeOptions = [], argsMemoize = weakMapMemoize, argsMemoizeOptions = [] } = _objectSpread2(_objectSpread2({}, createSelectorCreatorOptions), directlyPassedOptions);
 		const finalMemoizeOptions = ensureIsArray(memoizeOptions);
 		const finalArgsMemoizeOptions = ensureIsArray(argsMemoizeOptions);
 		const dependencies = getDependencies(createSelectorArgs);
@@ -12546,16 +12765,6 @@ function createSelectorCreator(memoizeOrOptions, ...memoizeOptionsFromArgs) {
 	return createSelector2;
 }
 var createSelector = /* @__PURE__ */ createSelectorCreator(weakMapMemoize);
-var createStructuredSelector = Object.assign((inputSelectorsObject, selectorCreator = createSelector) => {
-	assertIsObject(inputSelectorsObject, `createStructuredSelector expects first argument to be an object where each property is a selector, instead received a ${typeof inputSelectorsObject}`);
-	const inputSelectorKeys = Object.keys(inputSelectorsObject);
-	return selectorCreator(inputSelectorKeys.map((key) => inputSelectorsObject[key]), (...inputSelectorResults) => {
-		return inputSelectorResults.reduce((composition, value, index) => {
-			composition[inputSelectorKeys[index]] = value;
-			return composition;
-		}, {});
-	});
-}, { withTypes: () => createStructuredSelector });
 //#endregion
 //#region node_modules/redux-thunk/dist/redux-thunk.mjs
 function createThunkMiddleware(extraArgument) {
@@ -12569,8 +12778,6 @@ var thunk = createThunkMiddleware();
 var withExtraArgument = createThunkMiddleware;
 //#endregion
 //#region node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs
-init_objectSpread2();
-init_defineProperty();
 var composeWithDevTools = typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : function() {
 	if (arguments.length === 0) return void 0;
 	if (typeof arguments[0] === "object") return compose;
@@ -12629,13 +12836,27 @@ var createQueueWithTimer = (timeout) => {
 		setTimeout(notify, timeout);
 	};
 };
+var createRafWithFallbackTimer = (raf, timeout) => {
+	return (notify) => {
+		let called = false;
+		const callback = () => {
+			if (called) return;
+			called = true;
+			cancelAnimationFrame(rafId);
+			clearTimeout(timerId);
+			notify();
+		};
+		const rafId = raf(callback);
+		const timerId = setTimeout(callback, timeout);
+	};
+};
 var autoBatchEnhancer = (options = { type: "raf" }) => (next) => (...args) => {
 	const store = next(...args);
 	let notifying = true;
 	let shouldNotifyAtEndOfTick = false;
 	let notificationQueued = false;
 	const listeners = /* @__PURE__ */ new Set();
-	const queueCallback = options.type === "tick" ? queueMicrotask : options.type === "raf" ? typeof window !== "undefined" && window.requestAnimationFrame ? window.requestAnimationFrame : createQueueWithTimer(10) : options.type === "callback" ? options.queueNotification : createQueueWithTimer(options.timeout);
+	const queueCallback = options.type === "tick" ? queueMicrotask : options.type === "raf" ? typeof window !== "undefined" && window.requestAnimationFrame ? createRafWithFallbackTimer(window.requestAnimationFrame, 100) : createQueueWithTimer(10) : options.type === "callback" ? options.queueNotification : createQueueWithTimer(options.timeout);
 	const notifyListeners = () => {
 		notificationQueued = false;
 		if (shouldNotifyAtEndOfTick) {
@@ -12704,6 +12925,7 @@ var cancelled = "cancelled";
 `${listener}${completed}`;
 var TaskAbortError = class {
 	constructor(code) {
+		_defineProperty(this, "code", void 0);
 		_defineProperty(this, "name", "TaskAbortError");
 		_defineProperty(this, "message", void 0);
 		this.code = code;
@@ -12755,7 +12977,11 @@ var require_use_sync_external_store_shim_production = /* @__PURE__ */ __commonJS
 	function is(x, y) {
 		return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
 	}
-	var objectIs = "function" === typeof Object.is ? Object.is : is, useState = React.useState, useEffect = React.useEffect, useLayoutEffect = React.useLayoutEffect, useDebugValue = React.useDebugValue;
+	var objectIs = "function" === typeof Object.is ? Object.is : is;
+	var useState = React.useState;
+	var useEffect = React.useEffect;
+	var useLayoutEffect = React.useLayoutEffect;
+	var useDebugValue = React.useDebugValue;
 	function useSyncExternalStore$2(subscribe, getSnapshot) {
 		var value = getSnapshot(), _useState = useState({ inst: {
 			value,
@@ -12812,11 +13038,17 @@ var require_shim = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 * LICENSE file in the root directory of this source tree.
 */
 var require_with_selector_production = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var React = require_react(), shim = require_shim();
+	var React = require_react();
+	var shim = require_shim();
 	function is(x, y) {
 		return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
 	}
-	var objectIs = "function" === typeof Object.is ? Object.is : is, useSyncExternalStore = shim.useSyncExternalStore, useRef = React.useRef, useEffect = React.useEffect, useMemo = React.useMemo, useDebugValue = React.useDebugValue;
+	var objectIs = "function" === typeof Object.is ? Object.is : is;
+	var useSyncExternalStore = shim.useSyncExternalStore;
+	var useRef = React.useRef;
+	var useEffect = React.useEffect;
+	var useMemo = React.useMemo;
+	var useDebugValue = React.useDebugValue;
 	exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
 		var instRef = useRef(null);
 		if (null === instRef.current) {
@@ -13336,9 +13568,17 @@ function _unsupportedIterableToArray(r, a) {
 		return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
 	}
 }
-var entries = Object.entries, setPrototypeOf = Object.setPrototypeOf, isFrozen = Object.isFrozen, getPrototypeOf = Object.getPrototypeOf, getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-var freeze = Object.freeze, seal = Object.seal, create = Object.create;
-var _ref = typeof Reflect !== "undefined" && Reflect, apply = _ref.apply, construct = _ref.construct;
+var entries = Object.entries;
+var setPrototypeOf = Object.setPrototypeOf;
+var isFrozen = Object.isFrozen;
+var getPrototypeOf = Object.getPrototypeOf;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var freeze = Object.freeze;
+var seal = Object.seal;
+var create = Object.create;
+var _ref = typeof Reflect !== "undefined" && Reflect;
+var apply = _ref.apply;
+var construct = _ref.construct;
 if (!freeze) freeze = function freeze(x) {
 	return x;
 };
@@ -15452,7 +15692,8 @@ function createDOMPurify() {
 		return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? _createTrustedHTML(serializedHTML) : serializedHTML;
 	};
 	DOMPurify.setConfig = function() {
-		_parseConfig(arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {});
+		let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+		_parseConfig(cfg);
 		SET_CONFIG = true;
 		SET_CONFIG_ALLOWED_TAGS = ALLOWED_TAGS;
 		SET_CONFIG_ALLOWED_ATTR = ALLOWED_ATTR;
@@ -15467,7 +15708,9 @@ function createDOMPurify() {
 	};
 	DOMPurify.isValidAttribute = function(tag, attr, value) {
 		if (!CONFIG) _parseConfig({});
-		return _isValidAttribute(transformCaseFunc(tag), transformCaseFunc(attr), value);
+		const lcTag = transformCaseFunc(tag);
+		const lcName = transformCaseFunc(attr);
+		return _isValidAttribute(lcTag, lcName, value);
 	};
 	DOMPurify.addHook = function(entryPoint, hookFunction) {
 		if (typeof hookFunction !== "function") return;
@@ -15493,1069 +15736,856 @@ function createDOMPurify() {
 }
 var purify = createDOMPurify();
 //#endregion
-//#region node_modules/clsx/dist/clsx.m.js
-var clsx_m_exports = /* @__PURE__ */ __exportAll({
-	clsx: () => clsx,
-	default: () => clsx
-});
+//#region node_modules/clsx/dist/clsx.mjs
+var import_prop_types = /* @__PURE__ */ __toESM(require_prop_types(), 1);
 function r$1(e) {
 	var t, f, n = "";
 	if ("string" == typeof e || "number" == typeof e) n += e;
-	else if ("object" == typeof e) if (Array.isArray(e)) for (t = 0; t < e.length; t++) e[t] && (f = r$1(e[t])) && (n && (n += " "), n += f);
-	else for (t in e) e[t] && (n && (n += " "), n += t);
+	else if ("object" == typeof e) if (Array.isArray(e)) {
+		var o = e.length;
+		for (t = 0; t < o; t++) e[t] && (f = r$1(e[t])) && (n && (n += " "), n += f);
+	} else for (f in e) e[f] && (n && (n += " "), n += f);
 	return n;
 }
 function clsx() {
-	for (var e, t, f = 0, n = ""; f < arguments.length;) (e = arguments[f++]) && (t = r$1(e)) && (n && (n += " "), n += t);
+	for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r$1(e)) && (n && (n += " "), n += t);
 	return n;
 }
-var init_clsx_m = __esmMin((() => {}));
 //#endregion
-//#region node_modules/react-draggable/build/cjs/utils/shims.js
-var require_shims = /* @__PURE__ */ __commonJSMin(((exports) => {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.dontSetMe = dontSetMe;
-	exports.findInArray = findInArray;
-	exports.int = int;
-	exports.isFunction = isFunction;
-	exports.isNum = isNum;
-	function findInArray(array, callback) {
-		for (let i = 0, length = array.length; i < length; i++) if (callback.apply(callback, [
-			array[i],
-			i,
-			array
-		])) return array[i];
-	}
-	function isFunction(func) {
-		return typeof func === "function" || Object.prototype.toString.call(func) === "[object Function]";
-	}
-	function isNum(num) {
-		return typeof num === "number" && !isNaN(num);
-	}
-	function int(a) {
-		return parseInt(a, 10);
-	}
-	function dontSetMe(props, propName, componentName) {
-		if (props[propName]) return new Error("Invalid prop ".concat(propName, " passed to ").concat(componentName, " - do not set this, set it on the child."));
-	}
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/utils/getPrefix.js
-var require_getPrefix = /* @__PURE__ */ __commonJSMin(((exports) => {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.browserPrefixToKey = browserPrefixToKey;
-	exports.browserPrefixToStyle = browserPrefixToStyle;
-	exports.default = void 0;
-	exports.getPrefix = getPrefix;
-	var prefixes = [
-		"Moz",
-		"Webkit",
-		"O",
-		"ms"
-	];
-	function getPrefix() {
-		var _window$document;
-		let prop = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "transform";
-		if (typeof window === "undefined") return "";
-		const style = (_window$document = window.document) === null || _window$document === void 0 || (_window$document = _window$document.documentElement) === null || _window$document === void 0 ? void 0 : _window$document.style;
-		if (!style) return "";
-		if (prop in style) return "";
-		for (let i = 0; i < prefixes.length; i++) if (browserPrefixToKey(prop, prefixes[i]) in style) return prefixes[i];
-		return "";
-	}
-	function browserPrefixToKey(prop, prefix) {
-		return prefix ? "".concat(prefix).concat(kebabToTitleCase(prop)) : prop;
-	}
-	function browserPrefixToStyle(prop, prefix) {
-		return prefix ? "-".concat(prefix.toLowerCase(), "-").concat(prop) : prop;
-	}
-	function kebabToTitleCase(str) {
-		let out = "";
-		let shouldCapitalize = true;
-		for (let i = 0; i < str.length; i++) if (shouldCapitalize) {
-			out += str[i].toUpperCase();
-			shouldCapitalize = false;
-		} else if (str[i] === "-") shouldCapitalize = true;
-		else out += str[i];
-		return out;
-	}
-	exports.default = getPrefix();
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/utils/domFns.js
-var require_domFns = /* @__PURE__ */ __commonJSMin(((exports) => {
-	init_objectSpread2();
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.addClassName = addClassName;
-	exports.addEvent = addEvent;
-	exports.addUserSelectStyles = addUserSelectStyles;
-	exports.createCSSTransform = createCSSTransform;
-	exports.createSVGTransform = createSVGTransform;
-	exports.getTouch = getTouch;
-	exports.getTouchIdentifier = getTouchIdentifier;
-	exports.getTranslation = getTranslation;
-	exports.innerHeight = innerHeight;
-	exports.innerWidth = innerWidth;
-	exports.matchesSelector = matchesSelector;
-	exports.matchesSelectorAndParentsTo = matchesSelectorAndParentsTo;
-	exports.offsetXYFromParent = offsetXYFromParent;
-	exports.outerHeight = outerHeight;
-	exports.outerWidth = outerWidth;
-	exports.removeClassName = removeClassName;
-	exports.removeEvent = removeEvent;
-	exports.removeUserSelectStyles = removeUserSelectStyles;
-	var _shims = require_shims();
-	var _getPrefix = _interopRequireWildcard(require_getPrefix());
-	function _getRequireWildcardCache(nodeInterop) {
-		if (typeof WeakMap !== "function") return null;
-		var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
-		var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
-		return (_getRequireWildcardCache = function(nodeInterop) {
-			return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-		})(nodeInterop);
-	}
-	function _interopRequireWildcard(obj, nodeInterop) {
-		if (!nodeInterop && obj && obj.__esModule) return obj;
-		if (obj === null || typeof obj !== "object" && typeof obj !== "function") return { default: obj };
-		var cache = _getRequireWildcardCache(nodeInterop);
-		if (cache && cache.has(obj)) return cache.get(obj);
-		var newObj = {};
-		var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-		for (var key in obj) if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-			var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-			if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
-			else newObj[key] = obj[key];
-		}
-		newObj.default = obj;
-		if (cache) cache.set(obj, newObj);
-		return newObj;
-	}
-	var matchesSelectorFunc = "";
-	function matchesSelector(el, selector) {
-		if (!matchesSelectorFunc) matchesSelectorFunc = (0, _shims.findInArray)([
-			"matches",
-			"webkitMatchesSelector",
-			"mozMatchesSelector",
-			"msMatchesSelector",
-			"oMatchesSelector"
-		], function(method) {
-			return (0, _shims.isFunction)(el[method]);
-		});
-		if (!(0, _shims.isFunction)(el[matchesSelectorFunc])) return false;
-		return el[matchesSelectorFunc](selector);
-	}
-	function matchesSelectorAndParentsTo(el, selector, baseNode) {
-		let node = el;
-		do {
-			if (matchesSelector(node, selector)) return true;
-			if (node === baseNode) return false;
-			node = node.parentNode;
-		} while (node);
-		return false;
-	}
-	function addEvent(el, event, handler, inputOptions) {
-		if (!el) return;
-		const options = _objectSpread2({ capture: true }, inputOptions);
-		if (el.addEventListener) el.addEventListener(event, handler, options);
-		else if (el.attachEvent) el.attachEvent("on" + event, handler);
-		else el["on" + event] = handler;
-	}
-	function removeEvent(el, event, handler, inputOptions) {
-		if (!el) return;
-		const options = _objectSpread2({ capture: true }, inputOptions);
-		if (el.removeEventListener) el.removeEventListener(event, handler, options);
-		else if (el.detachEvent) el.detachEvent("on" + event, handler);
-		else el["on" + event] = null;
-	}
-	function outerHeight(node) {
-		let height = node.clientHeight;
-		const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-		height += (0, _shims.int)(computedStyle.borderTopWidth);
-		height += (0, _shims.int)(computedStyle.borderBottomWidth);
-		return height;
-	}
-	function outerWidth(node) {
-		let width = node.clientWidth;
-		const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-		width += (0, _shims.int)(computedStyle.borderLeftWidth);
-		width += (0, _shims.int)(computedStyle.borderRightWidth);
-		return width;
-	}
-	function innerHeight(node) {
-		let height = node.clientHeight;
-		const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-		height -= (0, _shims.int)(computedStyle.paddingTop);
-		height -= (0, _shims.int)(computedStyle.paddingBottom);
-		return height;
-	}
-	function innerWidth(node) {
-		let width = node.clientWidth;
-		const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-		width -= (0, _shims.int)(computedStyle.paddingLeft);
-		width -= (0, _shims.int)(computedStyle.paddingRight);
-		return width;
-	}
-	function offsetXYFromParent(evt, offsetParent, scale) {
-		const offsetParentRect = offsetParent === offsetParent.ownerDocument.body ? {
-			left: 0,
-			top: 0
-		} : offsetParent.getBoundingClientRect();
-		return {
-			x: (evt.clientX + offsetParent.scrollLeft - offsetParentRect.left) / scale,
-			y: (evt.clientY + offsetParent.scrollTop - offsetParentRect.top) / scale
-		};
-	}
-	function createCSSTransform(controlPos, positionOffset) {
-		const translation = getTranslation(controlPos, positionOffset, "px");
-		return { [(0, _getPrefix.browserPrefixToKey)("transform", _getPrefix.default)]: translation };
-	}
-	function createSVGTransform(controlPos, positionOffset) {
-		return getTranslation(controlPos, positionOffset, "");
-	}
-	function getTranslation(_ref, positionOffset, unitSuffix) {
-		let { x, y } = _ref;
-		let translation = "translate(".concat(x).concat(unitSuffix, ",").concat(y).concat(unitSuffix, ")");
-		if (positionOffset) {
-			const defaultX = "".concat(typeof positionOffset.x === "string" ? positionOffset.x : positionOffset.x + unitSuffix);
-			const defaultY = "".concat(typeof positionOffset.y === "string" ? positionOffset.y : positionOffset.y + unitSuffix);
-			translation = "translate(".concat(defaultX, ", ").concat(defaultY, ")") + translation;
-		}
-		return translation;
-	}
-	function getTouch(e, identifier) {
-		return e.targetTouches && (0, _shims.findInArray)(e.targetTouches, (t) => identifier === t.identifier) || e.changedTouches && (0, _shims.findInArray)(e.changedTouches, (t) => identifier === t.identifier);
-	}
-	function getTouchIdentifier(e) {
-		if (e.targetTouches && e.targetTouches[0]) return e.targetTouches[0].identifier;
-		if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0].identifier;
-	}
-	function addUserSelectStyles(doc) {
-		if (!doc) return;
-		let styleEl = doc.getElementById("react-draggable-style-el");
-		if (!styleEl) {
-			styleEl = doc.createElement("style");
-			styleEl.type = "text/css";
-			styleEl.id = "react-draggable-style-el";
-			styleEl.innerHTML = ".react-draggable-transparent-selection *::-moz-selection {all: inherit;}\n";
-			styleEl.innerHTML += ".react-draggable-transparent-selection *::selection {all: inherit;}\n";
-			doc.getElementsByTagName("head")[0].appendChild(styleEl);
-		}
-		if (doc.body) addClassName(doc.body, "react-draggable-transparent-selection");
-	}
-	function removeUserSelectStyles(doc) {
-		if (!doc) return;
-		try {
-			if (doc.body) removeClassName(doc.body, "react-draggable-transparent-selection");
-			if (doc.selection) doc.selection.empty();
-			else {
-				const selection = (doc.defaultView || window).getSelection();
-				if (selection && selection.type !== "Caret") selection.removeAllRanges();
-			}
-		} catch (e) {}
-	}
-	function addClassName(el, className) {
-		if (el.classList) el.classList.add(className);
-		else if (!el.className.match(new RegExp("(?:^|\\s)".concat(className, "(?!\\S)")))) el.className += " ".concat(className);
-	}
-	function removeClassName(el, className) {
-		if (el.classList) el.classList.remove(className);
-		else el.className = el.className.replace(new RegExp("(?:^|\\s)".concat(className, "(?!\\S)"), "g"), "");
-	}
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/utils/positionFns.js
-var require_positionFns = /* @__PURE__ */ __commonJSMin(((exports) => {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.canDragX = canDragX;
-	exports.canDragY = canDragY;
-	exports.createCoreData = createCoreData;
-	exports.createDraggableData = createDraggableData;
-	exports.getBoundPosition = getBoundPosition;
-	exports.getControlPosition = getControlPosition;
-	exports.snapToGrid = snapToGrid;
-	var _shims = require_shims();
-	var _domFns = require_domFns();
-	function getBoundPosition(draggable, x, y) {
-		if (!draggable.props.bounds) return [x, y];
-		let { bounds } = draggable.props;
-		bounds = typeof bounds === "string" ? bounds : cloneBounds(bounds);
-		const node = findDOMNode(draggable);
-		if (typeof bounds === "string") {
-			const { ownerDocument } = node;
-			const ownerWindow = ownerDocument.defaultView;
-			let boundNode;
-			if (bounds === "parent") boundNode = node.parentNode;
-			else boundNode = ownerDocument.querySelector(bounds);
-			if (!(boundNode instanceof ownerWindow.HTMLElement)) throw new Error("Bounds selector \"" + bounds + "\" could not find an element.");
-			const boundNodeEl = boundNode;
-			const nodeStyle = ownerWindow.getComputedStyle(node);
-			const boundNodeStyle = ownerWindow.getComputedStyle(boundNodeEl);
-			bounds = {
-				left: -node.offsetLeft + (0, _shims.int)(boundNodeStyle.paddingLeft) + (0, _shims.int)(nodeStyle.marginLeft),
-				top: -node.offsetTop + (0, _shims.int)(boundNodeStyle.paddingTop) + (0, _shims.int)(nodeStyle.marginTop),
-				right: (0, _domFns.innerWidth)(boundNodeEl) - (0, _domFns.outerWidth)(node) - node.offsetLeft + (0, _shims.int)(boundNodeStyle.paddingRight) - (0, _shims.int)(nodeStyle.marginRight),
-				bottom: (0, _domFns.innerHeight)(boundNodeEl) - (0, _domFns.outerHeight)(node) - node.offsetTop + (0, _shims.int)(boundNodeStyle.paddingBottom) - (0, _shims.int)(nodeStyle.marginBottom)
-			};
-		}
-		if ((0, _shims.isNum)(bounds.right)) x = Math.min(x, bounds.right);
-		if ((0, _shims.isNum)(bounds.bottom)) y = Math.min(y, bounds.bottom);
-		if ((0, _shims.isNum)(bounds.left)) x = Math.max(x, bounds.left);
-		if ((0, _shims.isNum)(bounds.top)) y = Math.max(y, bounds.top);
-		return [x, y];
-	}
-	function snapToGrid(grid, pendingX, pendingY) {
-		return [Math.round(pendingX / grid[0]) * grid[0], Math.round(pendingY / grid[1]) * grid[1]];
-	}
-	function canDragX(draggable) {
-		return draggable.props.axis === "both" || draggable.props.axis === "x";
-	}
-	function canDragY(draggable) {
-		return draggable.props.axis === "both" || draggable.props.axis === "y";
-	}
-	function getControlPosition(e, touchIdentifier, draggableCore) {
-		const touchObj = typeof touchIdentifier === "number" ? (0, _domFns.getTouch)(e, touchIdentifier) : null;
-		if (typeof touchIdentifier === "number" && !touchObj) return null;
-		const node = findDOMNode(draggableCore);
-		const offsetParent = draggableCore.props.offsetParent || node.offsetParent || node.ownerDocument.body;
-		return (0, _domFns.offsetXYFromParent)(touchObj || e, offsetParent, draggableCore.props.scale);
-	}
-	function createCoreData(draggable, x, y) {
-		const isStart = !(0, _shims.isNum)(draggable.lastX);
-		const node = findDOMNode(draggable);
-		if (isStart) return {
-			node,
-			deltaX: 0,
-			deltaY: 0,
-			lastX: x,
-			lastY: y,
-			x,
-			y
-		};
-		else return {
-			node,
-			deltaX: x - draggable.lastX,
-			deltaY: y - draggable.lastY,
-			lastX: draggable.lastX,
-			lastY: draggable.lastY,
-			x,
-			y
-		};
-	}
-	function createDraggableData(draggable, coreData) {
-		const scale = draggable.props.scale;
-		return {
-			node: coreData.node,
-			x: draggable.state.x + coreData.deltaX / scale,
-			y: draggable.state.y + coreData.deltaY / scale,
-			deltaX: coreData.deltaX / scale,
-			deltaY: coreData.deltaY / scale,
-			lastX: draggable.state.x,
-			lastY: draggable.state.y
-		};
-	}
-	function cloneBounds(bounds) {
-		return {
-			left: bounds.left,
-			top: bounds.top,
-			right: bounds.right,
-			bottom: bounds.bottom
-		};
-	}
-	function findDOMNode(draggable) {
-		const node = draggable.findDOMNode();
-		if (!node) throw new Error("<DraggableCore>: Unmounted during event!");
-		return node;
-	}
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/utils/log.js
-var require_log = /* @__PURE__ */ __commonJSMin(((exports) => {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = log;
-	function log() {}
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/DraggableCore.js
-var require_DraggableCore = /* @__PURE__ */ __commonJSMin(((exports) => {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = void 0;
-	var React = _interopRequireWildcard(require_react());
-	var _propTypes = _interopRequireDefault(require_prop_types());
-	var _reactDom = _interopRequireDefault(require_react_dom());
-	var _domFns = require_domFns();
-	var _positionFns = require_positionFns();
-	var _shims = require_shims();
-	var _log = _interopRequireDefault(require_log());
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : { default: obj };
-	}
-	function _getRequireWildcardCache(nodeInterop) {
-		if (typeof WeakMap !== "function") return null;
-		var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
-		var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
-		return (_getRequireWildcardCache = function(nodeInterop) {
-			return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-		})(nodeInterop);
-	}
-	function _interopRequireWildcard(obj, nodeInterop) {
-		if (!nodeInterop && obj && obj.__esModule) return obj;
-		if (obj === null || typeof obj !== "object" && typeof obj !== "function") return { default: obj };
-		var cache = _getRequireWildcardCache(nodeInterop);
-		if (cache && cache.has(obj)) return cache.get(obj);
-		var newObj = {};
-		var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-		for (var key in obj) if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-			var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-			if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
-			else newObj[key] = obj[key];
-		}
-		newObj.default = obj;
-		if (cache) cache.set(obj, newObj);
-		return newObj;
-	}
-	function _defineProperty(obj, key, value) {
-		key = _toPropertyKey(key);
-		if (key in obj) Object.defineProperty(obj, key, {
-			value,
-			enumerable: true,
-			configurable: true,
-			writable: true
-		});
-		else obj[key] = value;
-		return obj;
-	}
-	function _toPropertyKey(arg) {
-		var key = _toPrimitive(arg, "string");
-		return typeof key === "symbol" ? key : String(key);
-	}
-	function _toPrimitive(input, hint) {
-		if (typeof input !== "object" || input === null) return input;
-		var prim = input[Symbol.toPrimitive];
-		if (prim !== void 0) {
-			var res = prim.call(input, hint || "default");
-			if (typeof res !== "object") return res;
-			throw new TypeError("@@toPrimitive must return a primitive value.");
-		}
-		return (hint === "string" ? String : Number)(input);
-	}
-	var eventsFor = {
-		touch: {
-			start: "touchstart",
-			move: "touchmove",
-			stop: "touchend"
-		},
-		mouse: {
-			start: "mousedown",
-			move: "mousemove",
-			stop: "mouseup"
-		}
+//#region node_modules/react-draggable/build/cjs/chunk-RXGSR3JC.mjs
+var _excluded = [
+	"axis",
+	"bounds",
+	"children",
+	"defaultPosition",
+	"defaultClassName",
+	"defaultClassNameDragging",
+	"defaultClassNameDragged",
+	"position",
+	"positionOffset",
+	"scale"
+];
+function findInArray(array, callback) {
+	for (let i = 0, length = array.length; i < length; i++) if (callback.apply(callback, [
+		array[i],
+		i,
+		array
+	])) return array[i];
+}
+function isFunction(func) {
+	return typeof func === "function" || Object.prototype.toString.call(func) === "[object Function]";
+}
+function isNum(num) {
+	return typeof num === "number" && !isNaN(num);
+}
+function int(a) {
+	return parseInt(a, 10);
+}
+function dontSetMe(props, propName, componentName) {
+	if (props[propName]) return /* @__PURE__ */ new Error(`Invalid prop ${propName} passed to ${componentName} - do not set this, set it on the child.`);
+}
+var prefixes = [
+	"Moz",
+	"Webkit",
+	"O",
+	"ms"
+];
+function getPrefix(prop = "transform") {
+	var _a, _b;
+	if (typeof window === "undefined") return "";
+	const style = (_b = (_a = window.document) == null ? void 0 : _a.documentElement) == null ? void 0 : _b.style;
+	if (!style) return "";
+	if (prop in style) return "";
+	for (let i = 0; i < prefixes.length; i++) if (browserPrefixToKey(prop, prefixes[i]) in style) return prefixes[i];
+	return "";
+}
+function browserPrefixToKey(prop, prefix) {
+	return prefix ? `${prefix}${kebabToTitleCase(prop)}` : prop;
+}
+function kebabToTitleCase(str) {
+	let out = "";
+	let shouldCapitalize = true;
+	for (let i = 0; i < str.length; i++) if (shouldCapitalize) {
+		out += str[i].toUpperCase();
+		shouldCapitalize = false;
+	} else if (str[i] === "-") shouldCapitalize = true;
+	else out += str[i];
+	return out;
+}
+var getPrefix_default = getPrefix();
+var matchesSelectorFunc = "";
+function matchesSelector(el, selector) {
+	var _a;
+	if (!matchesSelectorFunc) matchesSelectorFunc = (_a = findInArray([
+		"matches",
+		"webkitMatchesSelector",
+		"mozMatchesSelector",
+		"msMatchesSelector",
+		"oMatchesSelector"
+	], function(method) {
+		return isFunction(el[method]);
+	})) != null ? _a : "";
+	const matchFn = el[matchesSelectorFunc];
+	if (!isFunction(matchFn)) return false;
+	return Boolean(matchFn.call(el, selector));
+}
+function matchesSelectorAndParentsTo(el, selector, baseNode) {
+	let node = el;
+	do {
+		if (matchesSelector(node, selector)) return true;
+		if (node === baseNode) return false;
+		node = node.parentNode;
+	} while (node);
+	return false;
+}
+function addEvent(el, event, handler, inputOptions) {
+	if (!el) return;
+	const options = _objectSpread2({ capture: true }, inputOptions);
+	const listener = handler;
+	if (el.addEventListener) el.addEventListener(event, listener, options);
+	else if (el.attachEvent) el.attachEvent("on" + event, listener);
+	else el["on" + event] = listener;
+}
+function removeEvent(el, event, handler, inputOptions) {
+	if (!el) return;
+	const options = _objectSpread2({ capture: true }, inputOptions);
+	const listener = handler;
+	if (el.removeEventListener) el.removeEventListener(event, listener, options);
+	else if (el.detachEvent) el.detachEvent("on" + event, listener);
+	else el["on" + event] = null;
+}
+function outerHeight(node) {
+	let height = node.clientHeight;
+	const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
+	height += int(computedStyle.borderTopWidth);
+	height += int(computedStyle.borderBottomWidth);
+	return height;
+}
+function outerWidth(node) {
+	let width = node.clientWidth;
+	const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
+	width += int(computedStyle.borderLeftWidth);
+	width += int(computedStyle.borderRightWidth);
+	return width;
+}
+function innerHeight(node) {
+	let height = node.clientHeight;
+	const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
+	height -= int(computedStyle.paddingTop);
+	height -= int(computedStyle.paddingBottom);
+	return height;
+}
+function innerWidth(node) {
+	let width = node.clientWidth;
+	const computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
+	width -= int(computedStyle.paddingLeft);
+	width -= int(computedStyle.paddingRight);
+	return width;
+}
+function offsetXYFromParent(evt, offsetParent, scale) {
+	const offsetParentRect = offsetParent === offsetParent.ownerDocument.body ? {
+		left: 0,
+		top: 0
+	} : offsetParent.getBoundingClientRect();
+	return {
+		x: (evt.clientX + offsetParent.scrollLeft - offsetParentRect.left) / scale,
+		y: (evt.clientY + offsetParent.scrollTop - offsetParentRect.top) / scale
 	};
-	var dragEventFor = eventsFor.mouse;
-	var DraggableCore = class extends React.Component {
-		constructor() {
-			super(...arguments);
-			_defineProperty(this, "dragging", false);
-			_defineProperty(this, "lastX", NaN);
-			_defineProperty(this, "lastY", NaN);
-			_defineProperty(this, "touchIdentifier", null);
-			_defineProperty(this, "mounted", false);
-			_defineProperty(this, "handleDragStart", (e) => {
-				this.props.onMouseDown(e);
-				if (!this.props.allowAnyClick && typeof e.button === "number" && e.button !== 0) return false;
-				const thisNode = this.findDOMNode();
-				if (!thisNode || !thisNode.ownerDocument || !thisNode.ownerDocument.body) throw new Error("<DraggableCore> not mounted on DragStart!");
-				const { ownerDocument } = thisNode;
-				if (this.props.disabled || !(e.target instanceof ownerDocument.defaultView.Node) || this.props.handle && !(0, _domFns.matchesSelectorAndParentsTo)(e.target, this.props.handle, thisNode) || this.props.cancel && (0, _domFns.matchesSelectorAndParentsTo)(e.target, this.props.cancel, thisNode)) return;
-				if (e.type === "touchstart") e.preventDefault();
-				const touchIdentifier = (0, _domFns.getTouchIdentifier)(e);
-				this.touchIdentifier = touchIdentifier;
-				const position = (0, _positionFns.getControlPosition)(e, touchIdentifier, this);
-				if (position == null) return;
-				const { x, y } = position;
-				const coreEvent = (0, _positionFns.createCoreData)(this, x, y);
-				(0, _log.default)("DraggableCore: handleDragStart: %j", coreEvent);
-				(0, _log.default)("calling", this.props.onStart);
-				if (this.props.onStart(e, coreEvent) === false || this.mounted === false) return;
-				if (this.props.enableUserSelectHack) (0, _domFns.addUserSelectStyles)(ownerDocument);
-				this.dragging = true;
-				this.lastX = x;
-				this.lastY = y;
-				(0, _domFns.addEvent)(ownerDocument, dragEventFor.move, this.handleDrag);
-				(0, _domFns.addEvent)(ownerDocument, dragEventFor.stop, this.handleDragStop);
-			});
-			_defineProperty(this, "handleDrag", (e) => {
-				const position = (0, _positionFns.getControlPosition)(e, this.touchIdentifier, this);
-				if (position == null) return;
-				let { x, y } = position;
-				if (Array.isArray(this.props.grid)) {
-					let deltaX = x - this.lastX, deltaY = y - this.lastY;
-					[deltaX, deltaY] = (0, _positionFns.snapToGrid)(this.props.grid, deltaX, deltaY);
-					if (!deltaX && !deltaY) return;
-					x = this.lastX + deltaX, y = this.lastY + deltaY;
-				}
-				const coreEvent = (0, _positionFns.createCoreData)(this, x, y);
-				(0, _log.default)("DraggableCore: handleDrag: %j", coreEvent);
-				if (this.props.onDrag(e, coreEvent) === false || this.mounted === false) {
-					try {
-						this.handleDragStop(new MouseEvent("mouseup"));
-					} catch (err) {
-						const event = document.createEvent("MouseEvents");
-						event.initMouseEvent("mouseup", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-						this.handleDragStop(event);
-					}
-					return;
-				}
-				this.lastX = x;
-				this.lastY = y;
-			});
-			_defineProperty(this, "handleDragStop", (e) => {
-				if (!this.dragging) return;
-				const position = (0, _positionFns.getControlPosition)(e, this.touchIdentifier, this);
-				if (position == null) return;
-				let { x, y } = position;
-				if (Array.isArray(this.props.grid)) {
-					let deltaX = x - this.lastX || 0;
-					let deltaY = y - this.lastY || 0;
-					[deltaX, deltaY] = (0, _positionFns.snapToGrid)(this.props.grid, deltaX, deltaY);
-					x = this.lastX + deltaX, y = this.lastY + deltaY;
-				}
-				const coreEvent = (0, _positionFns.createCoreData)(this, x, y);
-				if (this.props.onStop(e, coreEvent) === false || this.mounted === false) return false;
-				const thisNode = this.findDOMNode();
-				if (thisNode) {
-					if (this.props.enableUserSelectHack) (0, _domFns.removeUserSelectStyles)(thisNode.ownerDocument);
-				}
-				(0, _log.default)("DraggableCore: handleDragStop: %j", coreEvent);
-				this.dragging = false;
-				this.lastX = NaN;
-				this.lastY = NaN;
-				if (thisNode) {
-					(0, _log.default)("DraggableCore: Removing handlers");
-					(0, _domFns.removeEvent)(thisNode.ownerDocument, dragEventFor.move, this.handleDrag);
-					(0, _domFns.removeEvent)(thisNode.ownerDocument, dragEventFor.stop, this.handleDragStop);
-				}
-			});
-			_defineProperty(this, "onMouseDown", (e) => {
-				dragEventFor = eventsFor.mouse;
-				return this.handleDragStart(e);
-			});
-			_defineProperty(this, "onMouseUp", (e) => {
-				dragEventFor = eventsFor.mouse;
-				return this.handleDragStop(e);
-			});
-			_defineProperty(this, "onTouchStart", (e) => {
-				dragEventFor = eventsFor.touch;
-				return this.handleDragStart(e);
-			});
-			_defineProperty(this, "onTouchEnd", (e) => {
-				dragEventFor = eventsFor.touch;
-				return this.handleDragStop(e);
-			});
+}
+function createCSSTransform(controlPos, positionOffset) {
+	const translation = getTranslation(controlPos, positionOffset, "px");
+	return { [browserPrefixToKey("transform", getPrefix_default)]: translation };
+}
+function createSVGTransform(controlPos, positionOffset) {
+	return getTranslation(controlPos, positionOffset, "");
+}
+function getTranslation({ x, y }, positionOffset, unitSuffix) {
+	let translation = `translate(${x}${unitSuffix},${y}${unitSuffix})`;
+	if (positionOffset) translation = `translate(${`${typeof positionOffset.x === "string" ? positionOffset.x : positionOffset.x + unitSuffix}`}, ${`${typeof positionOffset.y === "string" ? positionOffset.y : positionOffset.y + unitSuffix}`})` + translation;
+	return translation;
+}
+function getTouch(e, identifier) {
+	return e.targetTouches && findInArray(e.targetTouches, (t) => identifier === t.identifier) || e.changedTouches && findInArray(e.changedTouches, (t) => identifier === t.identifier);
+}
+function getTouchIdentifier(e) {
+	if (e.targetTouches && e.targetTouches[0]) return e.targetTouches[0].identifier;
+	if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0].identifier;
+}
+function getDefaultNonce() {
+	return typeof __webpack_nonce__ !== "undefined" ? __webpack_nonce__ : void 0;
+}
+function addUserSelectStyles(doc, nonce) {
+	if (!doc) return;
+	let styleEl = doc.getElementById("react-draggable-style-el");
+	if (!styleEl) {
+		styleEl = doc.createElement("style");
+		styleEl.type = "text/css";
+		styleEl.id = "react-draggable-style-el";
+		const resolvedNonce = nonce != null ? nonce : getDefaultNonce();
+		if (resolvedNonce) styleEl.setAttribute("nonce", resolvedNonce);
+		styleEl.innerHTML = ".react-draggable-transparent-selection *::-moz-selection {all: inherit;}\n";
+		styleEl.innerHTML += ".react-draggable-transparent-selection *::selection {all: inherit;}\n";
+		doc.getElementsByTagName("head")[0].appendChild(styleEl);
+	}
+	if (doc.body) addClassName(doc.body, "react-draggable-transparent-selection");
+}
+function scheduleRemoveUserSelectStyles(doc) {
+	if (window.requestAnimationFrame) window.requestAnimationFrame(() => {
+		removeUserSelectStyles(doc);
+	});
+	else removeUserSelectStyles(doc);
+}
+function removeUserSelectStyles(doc) {
+	if (!doc) return;
+	try {
+		if (doc.body) removeClassName(doc.body, "react-draggable-transparent-selection");
+		const ieSelection = doc.selection;
+		if (ieSelection) ieSelection.empty();
+		else {
+			const selection = (doc.defaultView || window).getSelection();
+			if (selection && selection.type !== "Caret") selection.removeAllRanges();
 		}
-		componentDidMount() {
-			this.mounted = true;
+	} catch (_unused) {}
+}
+function addClassName(el, className) {
+	if (el.classList) el.classList.add(className);
+	else if (!el.className.match(new RegExp(`(?:^|\\s)${className}(?!\\S)`))) el.className += ` ${className}`;
+}
+function removeClassName(el, className) {
+	if (el.classList) el.classList.remove(className);
+	else el.className = el.className.replace(new RegExp(`(?:^|\\s)${className}(?!\\S)`, "g"), "");
+}
+function getBoundPosition(draggable, x, y) {
+	if (!draggable.props.bounds) return [x, y];
+	let { bounds } = draggable.props;
+	bounds = typeof bounds === "string" ? bounds : cloneBounds(bounds);
+	const node = findDOMNode(draggable);
+	if (typeof bounds === "string") {
+		const { ownerDocument } = node;
+		const ownerWindow = ownerDocument.defaultView;
+		if (!ownerWindow) throw new Error("Cannot resolve the owner window of the draggable node.");
+		let boundNode;
+		if (bounds === "parent") boundNode = node.parentNode;
+		else boundNode = node.getRootNode().querySelector(bounds);
+		if (!(boundNode instanceof ownerWindow.HTMLElement)) throw new Error("Bounds selector \"" + bounds + "\" could not find an element.");
+		const boundNodeEl = boundNode;
+		const nodeStyle = ownerWindow.getComputedStyle(node);
+		const boundNodeStyle = ownerWindow.getComputedStyle(boundNodeEl);
+		bounds = {
+			left: -node.offsetLeft + int(boundNodeStyle.paddingLeft) + int(nodeStyle.marginLeft),
+			top: -node.offsetTop + int(boundNodeStyle.paddingTop) + int(nodeStyle.marginTop),
+			right: innerWidth(boundNodeEl) - outerWidth(node) - node.offsetLeft + int(boundNodeStyle.paddingRight) - int(nodeStyle.marginRight),
+			bottom: innerHeight(boundNodeEl) - outerHeight(node) - node.offsetTop + int(boundNodeStyle.paddingBottom) - int(nodeStyle.marginBottom)
+		};
+	}
+	if (isNum(bounds.right)) x = Math.min(x, bounds.right);
+	if (isNum(bounds.bottom)) y = Math.min(y, bounds.bottom);
+	if (isNum(bounds.left)) x = Math.max(x, bounds.left);
+	if (isNum(bounds.top)) y = Math.max(y, bounds.top);
+	return [x, y];
+}
+function snapToGrid(grid, pendingX, pendingY) {
+	return [Math.round(pendingX / grid[0]) * grid[0], Math.round(pendingY / grid[1]) * grid[1]];
+}
+function canDragX(draggable) {
+	return draggable.props.axis === "both" || draggable.props.axis === "x";
+}
+function canDragY(draggable) {
+	return draggable.props.axis === "both" || draggable.props.axis === "y";
+}
+function getControlPosition(e, touchIdentifier, draggableCore) {
+	const touchObj = typeof touchIdentifier === "number" ? getTouch(e, touchIdentifier) : null;
+	if (typeof touchIdentifier === "number" && !touchObj) return null;
+	const node = findDOMNode(draggableCore);
+	const offsetParent = draggableCore.props.offsetParent || node.offsetParent || node.ownerDocument.body;
+	return offsetXYFromParent(touchObj || e, offsetParent, draggableCore.props.scale);
+}
+function createCoreData(draggable, x, y) {
+	const isStart = !isNum(draggable.lastX);
+	const node = findDOMNode(draggable);
+	if (isStart) return {
+		node,
+		deltaX: 0,
+		deltaY: 0,
+		lastX: x,
+		lastY: y,
+		x,
+		y
+	};
+	else return {
+		node,
+		deltaX: x - draggable.lastX,
+		deltaY: y - draggable.lastY,
+		lastX: draggable.lastX,
+		lastY: draggable.lastY,
+		x,
+		y
+	};
+}
+function createDraggableData(draggable, coreData) {
+	const scale = draggable.props.scale;
+	return {
+		node: coreData.node,
+		x: draggable.state.x + coreData.deltaX / scale,
+		y: draggable.state.y + coreData.deltaY / scale,
+		deltaX: coreData.deltaX / scale,
+		deltaY: coreData.deltaY / scale,
+		lastX: draggable.state.x,
+		lastY: draggable.state.y
+	};
+}
+function cloneBounds(bounds) {
+	return {
+		left: bounds.left,
+		top: bounds.top,
+		right: bounds.right,
+		bottom: bounds.bottom
+	};
+}
+function findDOMNode(draggable) {
+	const node = draggable.findDOMNode();
+	if (!node) throw new Error("<DraggableCore>: Unmounted during event!");
+	return node;
+}
+function log(...args) {
+	if ({}.DRAGGABLE_DEBUG) console.log(...args);
+}
+var eventsFor = {
+	touch: {
+		start: "touchstart",
+		move: "touchmove",
+		stop: "touchend"
+	},
+	mouse: {
+		start: "mousedown",
+		move: "mousemove",
+		stop: "mouseup"
+	}
+};
+var dragEventFor = eventsFor.mouse;
+var DraggableCore = class extends import_react.Component {
+	constructor() {
+		super(...arguments);
+		this.dragging = false;
+		this.lastX = NaN;
+		this.lastY = NaN;
+		this.touchIdentifier = null;
+		this.mounted = false;
+		this.handleDragStart = (e) => {
+			this.props.onMouseDown(e);
+			if (!this.props.allowAnyClick && (typeof e.button === "number" && e.button !== 0 || e.ctrlKey)) return false;
 			const thisNode = this.findDOMNode();
-			if (thisNode) (0, _domFns.addEvent)(thisNode, eventsFor.touch.start, this.onTouchStart, { passive: false });
-		}
-		componentWillUnmount() {
-			this.mounted = false;
+			if (!thisNode || !thisNode.ownerDocument || !thisNode.ownerDocument.body) throw new Error("<DraggableCore> not mounted on DragStart!");
+			const { ownerDocument } = thisNode;
+			if (this.props.disabled || !(e.target instanceof ownerDocument.defaultView.Node) || this.props.handle && !matchesSelectorAndParentsTo(e.target, this.props.handle, thisNode) || this.props.cancel && matchesSelectorAndParentsTo(e.target, this.props.cancel, thisNode)) return;
+			if (e.type === "touchstart" && !this.props.allowMobileScroll) e.preventDefault();
+			const touchIdentifier = getTouchIdentifier(e);
+			this.touchIdentifier = touchIdentifier;
+			const position = getControlPosition(e, touchIdentifier, this);
+			if (position == null) return;
+			const { x, y } = position;
+			const coreEvent = createCoreData(this, x, y);
+			log("DraggableCore: handleDragStart: %j", coreEvent);
+			log("calling", this.props.onStart);
+			if (this.props.onStart(e, coreEvent) === false || this.mounted === false) return;
+			if (this.props.enableUserSelectHack) addUserSelectStyles(ownerDocument, this.props.nonce);
+			this.dragging = true;
+			this.lastX = x;
+			this.lastY = y;
+			addEvent(ownerDocument, dragEventFor.move, this.handleDrag);
+			addEvent(ownerDocument, dragEventFor.stop, this.handleDragStop);
+		};
+		this.handleDrag = (e) => {
+			const position = getControlPosition(e, this.touchIdentifier, this);
+			if (position == null) return;
+			let { x, y } = position;
+			if (Array.isArray(this.props.grid)) {
+				let deltaX = x - this.lastX, deltaY = y - this.lastY;
+				[deltaX, deltaY] = snapToGrid(this.props.grid, deltaX, deltaY);
+				if (!deltaX && !deltaY) return;
+				x = this.lastX + deltaX;
+				y = this.lastY + deltaY;
+			}
+			const coreEvent = createCoreData(this, x, y);
+			log("DraggableCore: handleDrag: %j", coreEvent);
+			if (this.props.onDrag(e, coreEvent) === false || this.mounted === false) {
+				try {
+					this.handleDragStop(new MouseEvent("mouseup"));
+				} catch (_unused2) {
+					const event = document.createEvent("MouseEvents");
+					event.initMouseEvent("mouseup", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+					this.handleDragStop(event);
+				}
+				return;
+			}
+			this.lastX = x;
+			this.lastY = y;
+		};
+		this.handleDragStop = (e) => {
+			if (!this.dragging) return;
+			const position = getControlPosition(e, this.touchIdentifier, this);
+			if (position == null) return;
+			let { x, y } = position;
+			if (Array.isArray(this.props.grid)) {
+				let deltaX = x - this.lastX || 0;
+				let deltaY = y - this.lastY || 0;
+				[deltaX, deltaY] = snapToGrid(this.props.grid, deltaX, deltaY);
+				x = this.lastX + deltaX;
+				y = this.lastY + deltaY;
+			}
+			const coreEvent = createCoreData(this, x, y);
+			if (this.props.onStop(e, coreEvent) === false || this.mounted === false) return false;
 			const thisNode = this.findDOMNode();
 			if (thisNode) {
-				const { ownerDocument } = thisNode;
-				(0, _domFns.removeEvent)(ownerDocument, eventsFor.mouse.move, this.handleDrag);
-				(0, _domFns.removeEvent)(ownerDocument, eventsFor.touch.move, this.handleDrag);
-				(0, _domFns.removeEvent)(ownerDocument, eventsFor.mouse.stop, this.handleDragStop);
-				(0, _domFns.removeEvent)(ownerDocument, eventsFor.touch.stop, this.handleDragStop);
-				(0, _domFns.removeEvent)(thisNode, eventsFor.touch.start, this.onTouchStart, { passive: false });
-				if (this.props.enableUserSelectHack) (0, _domFns.removeUserSelectStyles)(ownerDocument);
+				if (this.props.enableUserSelectHack) scheduleRemoveUserSelectStyles(thisNode.ownerDocument);
 			}
-		}
-		findDOMNode() {
-			var _this$props, _this$props2;
-			return (_this$props = this.props) !== null && _this$props !== void 0 && _this$props.nodeRef ? (_this$props2 = this.props) === null || _this$props2 === void 0 || (_this$props2 = _this$props2.nodeRef) === null || _this$props2 === void 0 ? void 0 : _this$props2.current : _reactDom.default.findDOMNode(this);
-		}
-		render() {
-			return /*#__PURE__*/ React.cloneElement(React.Children.only(this.props.children), {
-				onMouseDown: this.onMouseDown,
-				onMouseUp: this.onMouseUp,
-				onTouchEnd: this.onTouchEnd
-			});
-		}
-	};
-	exports.default = DraggableCore;
-	_defineProperty(DraggableCore, "displayName", "DraggableCore");
-	_defineProperty(DraggableCore, "propTypes", {
-		/**
-		* `allowAnyClick` allows dragging using any mouse button.
-		* By default, we only accept the left button.
-		*
-		* Defaults to `false`.
-		*/
-		allowAnyClick: _propTypes.default.bool,
-		children: _propTypes.default.node.isRequired,
-		/**
-		* `disabled`, if true, stops the <Draggable> from dragging. All handlers,
-		* with the exception of `onMouseDown`, will not fire.
-		*/
-		disabled: _propTypes.default.bool,
-		/**
-		* By default, we add 'user-select:none' attributes to the document body
-		* to prevent ugly text selection during drag. If this is causing problems
-		* for your app, set this to `false`.
-		*/
-		enableUserSelectHack: _propTypes.default.bool,
-		/**
-		* `offsetParent`, if set, uses the passed DOM node to compute drag offsets
-		* instead of using the parent node.
-		*/
-		offsetParent: function(props, propName) {
-			if (props[propName] && props[propName].nodeType !== 1) throw new Error("Draggable's offsetParent must be a DOM Node.");
-		},
-		/**
-		* `grid` specifies the x and y that dragging should snap to.
-		*/
-		grid: _propTypes.default.arrayOf(_propTypes.default.number),
-		/**
-		* `handle` specifies a selector to be used as the handle that initiates drag.
-		*
-		* Example:
-		*
-		* ```jsx
-		*   let App = React.createClass({
-		*       render: function () {
-		*         return (
-		*            <Draggable handle=".handle">
-		*              <div>
-		*                  <div className="handle">Click me to drag</div>
-		*                  <div>This is some other content</div>
-		*              </div>
-		*           </Draggable>
-		*         );
-		*       }
-		*   });
-		* ```
-		*/
-		handle: _propTypes.default.string,
-		/**
-		* `cancel` specifies a selector to be used to prevent drag initialization.
-		*
-		* Example:
-		*
-		* ```jsx
-		*   let App = React.createClass({
-		*       render: function () {
-		*           return(
-		*               <Draggable cancel=".cancel">
-		*                   <div>
-		*                     <div className="cancel">You can't drag from here</div>
-		*                     <div>Dragging here works fine</div>
-		*                   </div>
-		*               </Draggable>
-		*           );
-		*       }
-		*   });
-		* ```
-		*/
-		cancel: _propTypes.default.string,
-		nodeRef: _propTypes.default.object,
-		/**
-		* Called when dragging starts.
-		* If this function returns the boolean false, dragging will be canceled.
-		*/
-		onStart: _propTypes.default.func,
-		/**
-		* Called while dragging.
-		* If this function returns the boolean false, dragging will be canceled.
-		*/
-		onDrag: _propTypes.default.func,
-		/**
-		* Called when dragging stops.
-		* If this function returns the boolean false, the drag will remain active.
-		*/
-		onStop: _propTypes.default.func,
-		/**
-		* A workaround option which can be passed if onMouseDown needs to be accessed,
-		* since it'll always be blocked (as there is internal use of onMouseDown)
-		*/
-		onMouseDown: _propTypes.default.func,
-		/**
-		* `scale`, if set, applies scaling while dragging an element
-		*/
-		scale: _propTypes.default.number,
-		/**
-		* These properties should be defined on the child, not here.
-		*/
-		className: _shims.dontSetMe,
-		style: _shims.dontSetMe,
-		transform: _shims.dontSetMe
-	});
-	_defineProperty(DraggableCore, "defaultProps", {
-		allowAnyClick: false,
-		disabled: false,
-		enableUserSelectHack: true,
-		onStart: function() {},
-		onDrag: function() {},
-		onStop: function() {},
-		onMouseDown: function() {},
-		scale: 1
-	});
-}));
-//#endregion
-//#region node_modules/react-draggable/build/cjs/Draggable.js
-var require_Draggable = /* @__PURE__ */ __commonJSMin(((exports) => {
-	init_objectSpread2();
-	init_objectWithoutProperties();
-	var _excluded = [
-		"axis",
-		"bounds",
-		"children",
-		"defaultPosition",
-		"defaultClassName",
-		"defaultClassNameDragging",
-		"defaultClassNameDragged",
-		"position",
-		"positionOffset",
-		"scale"
-	];
-	Object.defineProperty(exports, "__esModule", { value: true });
-	Object.defineProperty(exports, "DraggableCore", {
-		enumerable: true,
-		get: function() {
-			return _DraggableCore.default;
-		}
-	});
-	exports.default = void 0;
-	var React = _interopRequireWildcard(require_react());
-	var _propTypes = _interopRequireDefault(require_prop_types());
-	var _reactDom = _interopRequireDefault(require_react_dom());
-	var _clsx = _interopRequireDefault((init_clsx_m(), __toCommonJS(clsx_m_exports)));
-	var _domFns = require_domFns();
-	var _positionFns = require_positionFns();
-	var _shims = require_shims();
-	var _DraggableCore = _interopRequireDefault(require_DraggableCore());
-	var _log = _interopRequireDefault(require_log());
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : { default: obj };
-	}
-	function _getRequireWildcardCache(nodeInterop) {
-		if (typeof WeakMap !== "function") return null;
-		var cacheBabelInterop = /* @__PURE__ */ new WeakMap();
-		var cacheNodeInterop = /* @__PURE__ */ new WeakMap();
-		return (_getRequireWildcardCache = function(nodeInterop) {
-			return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
-		})(nodeInterop);
-	}
-	function _interopRequireWildcard(obj, nodeInterop) {
-		if (!nodeInterop && obj && obj.__esModule) return obj;
-		if (obj === null || typeof obj !== "object" && typeof obj !== "function") return { default: obj };
-		var cache = _getRequireWildcardCache(nodeInterop);
-		if (cache && cache.has(obj)) return cache.get(obj);
-		var newObj = {};
-		var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-		for (var key in obj) if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-			var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-			if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
-			else newObj[key] = obj[key];
-		}
-		newObj.default = obj;
-		if (cache) cache.set(obj, newObj);
-		return newObj;
-	}
-	function _extends() {
-		_extends = Object.assign ? Object.assign.bind() : function(target) {
-			for (var i = 1; i < arguments.length; i++) {
-				var source = arguments[i];
-				for (var key in source) if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
+			log("DraggableCore: handleDragStop: %j", coreEvent);
+			this.dragging = false;
+			this.lastX = NaN;
+			this.lastY = NaN;
+			if (thisNode) {
+				log("DraggableCore: Removing handlers");
+				removeEvent(thisNode.ownerDocument, dragEventFor.move, this.handleDrag);
+				removeEvent(thisNode.ownerDocument, dragEventFor.stop, this.handleDragStop);
 			}
-			return target;
 		};
-		return _extends.apply(this, arguments);
+		this.onMouseDown = (e) => {
+			dragEventFor = eventsFor.mouse;
+			return this.handleDragStart(e);
+		};
+		this.onMouseUp = (e) => {
+			dragEventFor = eventsFor.mouse;
+			return this.handleDragStop(e);
+		};
+		this.onTouchStart = (e) => {
+			dragEventFor = eventsFor.touch;
+			return this.handleDragStart(e);
+		};
+		this.onTouchEnd = (e) => {
+			dragEventFor = eventsFor.touch;
+			return this.handleDragStop(e);
+		};
 	}
-	function _defineProperty(obj, key, value) {
-		key = _toPropertyKey(key);
-		if (key in obj) Object.defineProperty(obj, key, {
-			value,
-			enumerable: true,
-			configurable: true,
-			writable: true
+	componentDidMount() {
+		this.mounted = true;
+		const thisNode = this.findDOMNode();
+		if (thisNode) addEvent(thisNode, eventsFor.touch.start, this.onTouchStart, { passive: false });
+	}
+	componentWillUnmount() {
+		this.mounted = false;
+		const thisNode = this.findDOMNode();
+		if (thisNode) {
+			const { ownerDocument } = thisNode;
+			removeEvent(ownerDocument, eventsFor.mouse.move, this.handleDrag);
+			removeEvent(ownerDocument, eventsFor.touch.move, this.handleDrag);
+			removeEvent(ownerDocument, eventsFor.mouse.stop, this.handleDragStop);
+			removeEvent(ownerDocument, eventsFor.touch.stop, this.handleDragStop);
+			removeEvent(thisNode, eventsFor.touch.start, this.onTouchStart, { passive: false });
+			if (this.props.enableUserSelectHack) scheduleRemoveUserSelectStyles(ownerDocument);
+		}
+	}
+	findDOMNode() {
+		var _a;
+		if ((_a = this.props) == null ? void 0 : _a.nodeRef) return this.props.nodeRef.current;
+		const legacyReactDOM = import_react_dom.default;
+		if (typeof legacyReactDOM.findDOMNode === "function") return legacyReactDOM.findDOMNode(this);
+		log("react-draggable: ReactDOM.findDOMNode is not available in React 19+. You must provide a nodeRef prop. See: https://github.com/react-grid-layout/react-draggable#noderef");
+		return null;
+	}
+	render() {
+		return import_react.cloneElement(import_react.Children.only(this.props.children), {
+			onMouseDown: this.onMouseDown,
+			onMouseUp: this.onMouseUp,
+			onTouchEnd: this.onTouchEnd
 		});
-		else obj[key] = value;
-		return obj;
 	}
-	function _toPropertyKey(arg) {
-		var key = _toPrimitive(arg, "string");
-		return typeof key === "symbol" ? key : String(key);
-	}
-	function _toPrimitive(input, hint) {
-		if (typeof input !== "object" || input === null) return input;
-		var prim = input[Symbol.toPrimitive];
-		if (prim !== void 0) {
-			var res = prim.call(input, hint || "default");
-			if (typeof res !== "object") return res;
-			throw new TypeError("@@toPrimitive must return a primitive value.");
-		}
-		return (hint === "string" ? String : Number)(input);
-	}
-	var Draggable = class extends React.Component {
-		static getDerivedStateFromProps(_ref, _ref2) {
-			let { position } = _ref;
-			let { prevPropsPosition } = _ref2;
-			if (position && (!prevPropsPosition || position.x !== prevPropsPosition.x || position.y !== prevPropsPosition.y)) {
-				(0, _log.default)("Draggable: getDerivedStateFromProps %j", {
-					position,
-					prevPropsPosition
-				});
-				return {
-					x: position.x,
-					y: position.y,
-					prevPropsPosition: _objectSpread2({}, position)
-				};
-			}
-			return null;
-		}
-		constructor(props) {
-			super(props);
-			_defineProperty(this, "onDragStart", (e, coreData) => {
-				(0, _log.default)("Draggable: onDragStart: %j", coreData);
-				if (this.props.onStart(e, (0, _positionFns.createDraggableData)(this, coreData)) === false) return false;
-				this.setState({
-					dragging: true,
-					dragged: true
-				});
+};
+DraggableCore.displayName = "DraggableCore";
+DraggableCore.propTypes = {
+	/**
+	* `allowAnyClick` allows dragging using any mouse button.
+	* By default, we only accept the left button.
+	*
+	* Defaults to `false`.
+	*/
+	allowAnyClick: import_prop_types.default.bool,
+	/**
+	* `allowMobileScroll` turns off cancellation of the 'touchstart' event
+	* on mobile devices. Only enable this if you are having trouble with click
+	* events. Prefer using 'handle' / 'cancel' instead.
+	*
+	* Defaults to `false`.
+	*/
+	allowMobileScroll: import_prop_types.default.bool,
+	children: import_prop_types.default.node.isRequired,
+	/**
+	* `disabled`, if true, stops the <Draggable> from dragging. All handlers,
+	* with the exception of `onMouseDown`, will not fire.
+	*/
+	disabled: import_prop_types.default.bool,
+	/**
+	* By default, we add 'user-select:none' attributes to the document body
+	* to prevent ugly text selection during drag. If this is causing problems
+	* for your app, set this to `false`.
+	*/
+	enableUserSelectHack: import_prop_types.default.bool,
+	/**
+	* `offsetParent`, if set, uses the passed DOM node to compute drag offsets
+	* instead of using the parent node.
+	*/
+	offsetParent: function(props, propName) {
+		if (props[propName] && props[propName].nodeType !== 1) throw new Error("Draggable's offsetParent must be a DOM Node.");
+	},
+	/**
+	* `grid` specifies the x and y that dragging should snap to.
+	*/
+	grid: import_prop_types.default.arrayOf(import_prop_types.default.number),
+	/**
+	* `handle` specifies a selector to be used as the handle that initiates drag.
+	*
+	* Example:
+	*
+	* ```jsx
+	*   let App = React.createClass({
+	*       render: function () {
+	*         return (
+	*            <Draggable handle=".handle">
+	*              <div>
+	*                  <div className="handle">Click me to drag</div>
+	*                  <div>This is some other content</div>
+	*              </div>
+	*           </Draggable>
+	*         );
+	*       }
+	*   });
+	* ```
+	*/
+	handle: import_prop_types.default.string,
+	/**
+	* `cancel` specifies a selector to be used to prevent drag initialization.
+	*
+	* Example:
+	*
+	* ```jsx
+	*   let App = React.createClass({
+	*       render: function () {
+	*           return(
+	*               <Draggable cancel=".cancel">
+	*                   <div>
+	*                     <div className="cancel">You can't drag from here</div>
+	*                     <div>Dragging here works fine</div>
+	*                   </div>
+	*               </Draggable>
+	*           );
+	*       }
+	*   });
+	* ```
+	*/
+	cancel: import_prop_types.default.string,
+	nodeRef: import_prop_types.default.object,
+	/**
+	* `nonce` is applied to the dynamically-injected <style> element used by the
+	* user-select hack, so it isn't blocked under a strict Content Security
+	* Policy (`style-src` without `'unsafe-inline'`). If omitted, webpack's
+	* `__webpack_nonce__` global is used when available.
+	*/
+	nonce: import_prop_types.default.string,
+	/**
+	* Called when dragging starts.
+	* If this function returns the boolean false, dragging will be canceled.
+	*/
+	onStart: import_prop_types.default.func,
+	/**
+	* Called while dragging.
+	* If this function returns the boolean false, dragging will be canceled.
+	*/
+	onDrag: import_prop_types.default.func,
+	/**
+	* Called when dragging stops.
+	* If this function returns the boolean false, the drag will remain active.
+	*/
+	onStop: import_prop_types.default.func,
+	/**
+	* A workaround option which can be passed if onMouseDown needs to be accessed,
+	* since it'll always be blocked (as there is internal use of onMouseDown)
+	*/
+	onMouseDown: import_prop_types.default.func,
+	/**
+	* `scale`, if set, applies scaling while dragging an element
+	*/
+	scale: import_prop_types.default.number,
+	/**
+	* These properties should be defined on the child, not here.
+	*/
+	className: dontSetMe,
+	style: dontSetMe,
+	transform: dontSetMe
+};
+DraggableCore.defaultProps = {
+	allowAnyClick: false,
+	allowMobileScroll: false,
+	disabled: false,
+	enableUserSelectHack: true,
+	onStart: function() {},
+	onDrag: function() {},
+	onStop: function() {},
+	onMouseDown: function() {},
+	scale: 1
+};
+var Draggable = class extends import_react.Component {
+	constructor(props) {
+		super(props);
+		this.onDragStart = (e, coreData) => {
+			log("Draggable: onDragStart: %j", coreData);
+			if (this.props.onStart(e, createDraggableData(this, coreData)) === false) return false;
+			this.setState({
+				dragging: true,
+				dragged: true
 			});
-			_defineProperty(this, "onDrag", (e, coreData) => {
-				if (!this.state.dragging) return false;
-				(0, _log.default)("Draggable: onDrag: %j", coreData);
-				const uiData = (0, _positionFns.createDraggableData)(this, coreData);
-				const newState = {
-					x: uiData.x,
-					y: uiData.y,
-					slackX: 0,
-					slackY: 0
-				};
-				if (this.props.bounds) {
-					const { x, y } = newState;
-					newState.x += this.state.slackX;
-					newState.y += this.state.slackY;
-					const [newStateX, newStateY] = (0, _positionFns.getBoundPosition)(this, newState.x, newState.y);
-					newState.x = newStateX;
-					newState.y = newStateY;
-					newState.slackX = this.state.slackX + (x - newState.x);
-					newState.slackY = this.state.slackY + (y - newState.y);
-					uiData.x = newState.x;
-					uiData.y = newState.y;
-					uiData.deltaX = newState.x - this.state.x;
-					uiData.deltaY = newState.y - this.state.y;
-				}
-				if (this.props.onDrag(e, uiData) === false) return false;
-				this.setState(newState);
-			});
-			_defineProperty(this, "onDragStop", (e, coreData) => {
-				if (!this.state.dragging) return false;
-				if (this.props.onStop(e, (0, _positionFns.createDraggableData)(this, coreData)) === false) return false;
-				(0, _log.default)("Draggable: onDragStop: %j", coreData);
-				const newState = {
-					dragging: false,
-					slackX: 0,
-					slackY: 0
-				};
-				if (Boolean(this.props.position)) {
-					const { x, y } = this.props.position;
-					newState.x = x;
-					newState.y = y;
-				}
-				this.setState(newState);
-			});
-			this.state = {
-				dragging: false,
-				dragged: false,
-				x: props.position ? props.position.x : props.defaultPosition.x,
-				y: props.position ? props.position.y : props.defaultPosition.y,
-				prevPropsPosition: _objectSpread2({}, props.position),
+		};
+		this.onDrag = (e, coreData) => {
+			if (!this.state.dragging) return false;
+			log("Draggable: onDrag: %j", coreData);
+			const uiData = createDraggableData(this, coreData);
+			const newState = {
+				x: uiData.x,
+				y: uiData.y,
 				slackX: 0,
-				slackY: 0,
-				isElementSVG: false
+				slackY: 0
 			};
-			if (props.position && !(props.onDrag || props.onStop)) console.warn("A `position` was applied to this <Draggable>, without drag handlers. This will make this component effectively undraggable. Please attach `onDrag` or `onStop` handlers so you can adjust the `position` of this element.");
-		}
-		componentDidMount() {
-			if (typeof window.SVGElement !== "undefined" && this.findDOMNode() instanceof window.SVGElement) this.setState({ isElementSVG: true });
-		}
-		componentWillUnmount() {
-			this.setState({ dragging: false });
-		}
-		findDOMNode() {
-			var _this$props$nodeRef$c, _this$props;
-			return (_this$props$nodeRef$c = (_this$props = this.props) === null || _this$props === void 0 || (_this$props = _this$props.nodeRef) === null || _this$props === void 0 ? void 0 : _this$props.current) !== null && _this$props$nodeRef$c !== void 0 ? _this$props$nodeRef$c : _reactDom.default.findDOMNode(this);
-		}
-		render() {
-			const _this$props2 = this.props, { axis, bounds, children, defaultPosition, defaultClassName, defaultClassNameDragging, defaultClassNameDragged, position, positionOffset, scale } = _this$props2, draggableCoreProps = _objectWithoutProperties(_this$props2, _excluded);
-			let style = {};
-			let svgTransform = null;
-			const draggable = !Boolean(position) || this.state.dragging;
-			const validPosition = position || defaultPosition;
-			const transformOpts = {
-				x: (0, _positionFns.canDragX)(this) && draggable ? this.state.x : validPosition.x,
-				y: (0, _positionFns.canDragY)(this) && draggable ? this.state.y : validPosition.y
+			if (this.props.bounds) {
+				const { x, y } = newState;
+				newState.x += this.state.slackX;
+				newState.y += this.state.slackY;
+				const [newStateX, newStateY] = getBoundPosition(this, newState.x, newState.y);
+				newState.x = newStateX;
+				newState.y = newStateY;
+				newState.slackX = this.state.slackX + (x - newState.x);
+				newState.slackY = this.state.slackY + (y - newState.y);
+				uiData.x = newState.x;
+				uiData.y = newState.y;
+				uiData.deltaX = newState.x - this.state.x;
+				uiData.deltaY = newState.y - this.state.y;
+			}
+			if (this.props.onDrag(e, uiData) === false) return false;
+			this.setState(newState);
+		};
+		this.onDragStop = (e, coreData) => {
+			if (!this.state.dragging) return false;
+			if (this.props.onStop(e, createDraggableData(this, coreData)) === false) return false;
+			log("Draggable: onDragStop: %j", coreData);
+			const newState = {
+				dragging: false,
+				slackX: 0,
+				slackY: 0
 			};
-			if (this.state.isElementSVG) svgTransform = (0, _domFns.createSVGTransform)(transformOpts, positionOffset);
-			else style = (0, _domFns.createCSSTransform)(transformOpts, positionOffset);
-			const className = (0, _clsx.default)(children.props.className || "", defaultClassName, {
-				[defaultClassNameDragging]: this.state.dragging,
-				[defaultClassNameDragged]: this.state.dragged
+			if (Boolean(this.props.position)) {
+				const { x, y } = this.props.position;
+				newState.x = x;
+				newState.y = y;
+			}
+			this.setState(newState);
+		};
+		this.state = {
+			dragging: false,
+			dragged: false,
+			x: props.position ? props.position.x : props.defaultPosition.x,
+			y: props.position ? props.position.y : props.defaultPosition.y,
+			prevPropsPosition: _objectSpread2({}, props.position),
+			slackX: 0,
+			slackY: 0,
+			isElementSVG: false
+		};
+		if (props.position && !(props.onDrag || props.onStop)) console.warn("A `position` was applied to this <Draggable>, without drag handlers. This will make this component effectively undraggable. Please attach `onDrag` or `onStop` handlers so you can adjust the `position` of this element.");
+	}
+	static getDerivedStateFromProps({ position }, { prevPropsPosition }) {
+		if (position && (!prevPropsPosition || position.x !== prevPropsPosition.x || position.y !== prevPropsPosition.y)) {
+			log("Draggable: getDerivedStateFromProps %j", {
+				position,
+				prevPropsPosition
 			});
-			return /*#__PURE__*/ React.createElement(_DraggableCore.default, _extends({}, draggableCoreProps, {
-				onStart: this.onDragStart,
-				onDrag: this.onDrag,
-				onStop: this.onDragStop
-			}), /*#__PURE__*/ React.cloneElement(React.Children.only(children), {
-				className,
-				style: _objectSpread2(_objectSpread2({}, children.props.style), style),
-				transform: svgTransform
-			}));
+			return {
+				x: position.x,
+				y: position.y,
+				prevPropsPosition: _objectSpread2({}, position)
+			};
 		}
-	};
-	exports.default = Draggable;
-	_defineProperty(Draggable, "displayName", "Draggable");
-	_defineProperty(Draggable, "propTypes", _objectSpread2(_objectSpread2({}, _DraggableCore.default.propTypes), {}, {
-		/**
-		* `axis` determines which axis the draggable can move.
-		*
-		*  Note that all callbacks will still return data as normal. This only
-		*  controls flushing to the DOM.
-		*
-		* 'both' allows movement horizontally and vertically.
-		* 'x' limits movement to horizontal axis.
-		* 'y' limits movement to vertical axis.
-		* 'none' limits all movement.
-		*
-		* Defaults to 'both'.
-		*/
-		axis: _propTypes.default.oneOf([
-			"both",
-			"x",
-			"y",
-			"none"
-		]),
-		/**
-		* `bounds` determines the range of movement available to the element.
-		* Available values are:
-		*
-		* 'parent' restricts movement within the Draggable's parent node.
-		*
-		* Alternatively, pass an object with the following properties, all of which are optional:
-		*
-		* {left: LEFT_BOUND, right: RIGHT_BOUND, bottom: BOTTOM_BOUND, top: TOP_BOUND}
-		*
-		* All values are in px.
-		*
-		* Example:
-		*
-		* ```jsx
-		*   let App = React.createClass({
-		*       render: function () {
-		*         return (
-		*            <Draggable bounds={{right: 300, bottom: 300}}>
-		*              <div>Content</div>
-		*           </Draggable>
-		*         );
-		*       }
-		*   });
-		* ```
-		*/
-		bounds: _propTypes.default.oneOfType([
-			_propTypes.default.shape({
-				left: _propTypes.default.number,
-				right: _propTypes.default.number,
-				top: _propTypes.default.number,
-				bottom: _propTypes.default.number
-			}),
-			_propTypes.default.string,
-			_propTypes.default.oneOf([false])
-		]),
-		defaultClassName: _propTypes.default.string,
-		defaultClassNameDragging: _propTypes.default.string,
-		defaultClassNameDragged: _propTypes.default.string,
-		/**
-		* `defaultPosition` specifies the x and y that the dragged item should start at
-		*
-		* Example:
-		*
-		* ```jsx
-		*      let App = React.createClass({
-		*          render: function () {
-		*              return (
-		*                  <Draggable defaultPosition={{x: 25, y: 25}}>
-		*                      <div>I start with transformX: 25px and transformY: 25px;</div>
-		*                  </Draggable>
-		*              );
-		*          }
-		*      });
-		* ```
-		*/
-		defaultPosition: _propTypes.default.shape({
-			x: _propTypes.default.number,
-			y: _propTypes.default.number
+		return null;
+	}
+	componentDidMount() {
+		if (typeof window.SVGElement !== "undefined" && this.findDOMNode() instanceof window.SVGElement) this.setState({ isElementSVG: true });
+	}
+	componentWillUnmount() {
+		if (this.state.dragging) this.setState({ dragging: false });
+	}
+	findDOMNode() {
+		var _a;
+		if ((_a = this.props) == null ? void 0 : _a.nodeRef) return this.props.nodeRef.current;
+		const legacyReactDOM = import_react_dom.default;
+		if (typeof legacyReactDOM.findDOMNode === "function") return legacyReactDOM.findDOMNode(this);
+		return null;
+	}
+	render() {
+		const _this$props = this.props, { axis, bounds, children, defaultPosition, defaultClassName, defaultClassNameDragging, defaultClassNameDragged, position, positionOffset, scale } = _this$props, draggableCoreProps = _objectWithoutProperties(_this$props, _excluded);
+		let style = {};
+		let svgTransform = null;
+		const draggable = !Boolean(position) || this.state.dragging;
+		const validPosition = position || defaultPosition;
+		const transformOpts = {
+			x: canDragX(this) && draggable ? this.state.x : validPosition.x,
+			y: canDragY(this) && draggable ? this.state.y : validPosition.y
+		};
+		if (this.state.isElementSVG) svgTransform = createSVGTransform(transformOpts, positionOffset);
+		else style = createCSSTransform(transformOpts, positionOffset);
+		const onlyChild = import_react.Children.only(children);
+		const className = clsx(onlyChild.props.className || "", defaultClassName, {
+			[defaultClassNameDragging]: this.state.dragging,
+			[defaultClassNameDragged]: this.state.dragged
+		});
+		return /* @__PURE__ */ import_react.createElement(DraggableCore, _objectSpread2(_objectSpread2({}, draggableCoreProps), {}, {
+			onStart: this.onDragStart,
+			onDrag: this.onDrag,
+			onStop: this.onDragStop
+		}), import_react.cloneElement(onlyChild, {
+			className,
+			style: _objectSpread2(_objectSpread2({}, onlyChild.props.style), style),
+			transform: svgTransform
+		}));
+	}
+};
+Draggable.displayName = "Draggable";
+Draggable.propTypes = _objectSpread2(_objectSpread2({}, DraggableCore.propTypes), {}, {
+	/**
+	* `axis` determines which axis the draggable can move.
+	*
+	*  Note that all callbacks will still return data as normal. This only
+	*  controls flushing to the DOM.
+	*
+	* 'both' allows movement horizontally and vertically.
+	* 'x' limits movement to horizontal axis.
+	* 'y' limits movement to vertical axis.
+	* 'none' limits all movement.
+	*
+	* Defaults to 'both'.
+	*/
+	axis: import_prop_types.default.oneOf([
+		"both",
+		"x",
+		"y",
+		"none"
+	]),
+	/**
+	* `bounds` determines the range of movement available to the element.
+	* Available values are:
+	*
+	* 'parent' restricts movement within the Draggable's parent node.
+	*
+	* Alternatively, pass an object with the following properties, all of which are optional:
+	*
+	* {left: LEFT_BOUND, right: RIGHT_BOUND, bottom: BOTTOM_BOUND, top: TOP_BOUND}
+	*
+	* All values are in px.
+	*
+	* Example:
+	*
+	* ```jsx
+	*   let App = React.createClass({
+	*       render: function () {
+	*         return (
+	*            <Draggable bounds={{right: 300, bottom: 300}}>
+	*              <div>Content</div>
+	*           </Draggable>
+	*         );
+	*       }
+	*   });
+	* ```
+	*/
+	bounds: import_prop_types.default.oneOfType([
+		import_prop_types.default.shape({
+			left: import_prop_types.default.number,
+			right: import_prop_types.default.number,
+			top: import_prop_types.default.number,
+			bottom: import_prop_types.default.number
 		}),
-		positionOffset: _propTypes.default.shape({
-			x: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.string]),
-			y: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.string])
-		}),
-		/**
-		* `position`, if present, defines the current position of the element.
-		*
-		*  This is similar to how form elements in React work - if no `position` is supplied, the component
-		*  is uncontrolled.
-		*
-		* Example:
-		*
-		* ```jsx
-		*      let App = React.createClass({
-		*          render: function () {
-		*              return (
-		*                  <Draggable position={{x: 25, y: 25}}>
-		*                      <div>I start with transformX: 25px and transformY: 25px;</div>
-		*                  </Draggable>
-		*              );
-		*          }
-		*      });
-		* ```
-		*/
-		position: _propTypes.default.shape({
-			x: _propTypes.default.number,
-			y: _propTypes.default.number
-		}),
-		/**
-		* These properties should be defined on the child, not here.
-		*/
-		className: _shims.dontSetMe,
-		style: _shims.dontSetMe,
-		transform: _shims.dontSetMe
-	}));
-	_defineProperty(Draggable, "defaultProps", _objectSpread2(_objectSpread2({}, _DraggableCore.default.defaultProps), {}, {
-		axis: "both",
-		bounds: false,
-		defaultClassName: "react-draggable",
-		defaultClassNameDragging: "react-draggable-dragging",
-		defaultClassNameDragged: "react-draggable-dragged",
-		defaultPosition: {
-			x: 0,
-			y: 0
-		},
-		scale: 1
-	}));
-}));
+		import_prop_types.default.string,
+		import_prop_types.default.oneOf([false])
+	]),
+	defaultClassName: import_prop_types.default.string,
+	defaultClassNameDragging: import_prop_types.default.string,
+	defaultClassNameDragged: import_prop_types.default.string,
+	/**
+	* `defaultPosition` specifies the x and y that the dragged item should start at
+	*
+	* Example:
+	*
+	* ```jsx
+	*      let App = React.createClass({
+	*          render: function () {
+	*              return (
+	*                  <Draggable defaultPosition={{x: 25, y: 25}}>
+	*                      <div>I start with transformX: 25px and transformY: 25px;</div>
+	*                  </Draggable>
+	*              );
+	*          }
+	*      });
+	* ```
+	*/
+	defaultPosition: import_prop_types.default.shape({
+		x: import_prop_types.default.number,
+		y: import_prop_types.default.number
+	}),
+	positionOffset: import_prop_types.default.shape({
+		x: import_prop_types.default.oneOfType([import_prop_types.default.number, import_prop_types.default.string]),
+		y: import_prop_types.default.oneOfType([import_prop_types.default.number, import_prop_types.default.string])
+	}),
+	/**
+	* `position`, if present, defines the current position of the element.
+	*
+	*  This is similar to how form elements in React work - if no `position` is supplied, the component
+	*  is uncontrolled.
+	*
+	* Example:
+	*
+	* ```jsx
+	*      let App = React.createClass({
+	*          render: function () {
+	*              return (
+	*                  <Draggable position={{x: 25, y: 25}}>
+	*                      <div>I start with transformX: 25px and transformY: 25px;</div>
+	*                  </Draggable>
+	*              );
+	*          }
+	*      });
+	* ```
+	*/
+	position: import_prop_types.default.shape({
+		x: import_prop_types.default.number,
+		y: import_prop_types.default.number
+	}),
+	/**
+	* These properties should be defined on the child, not here.
+	*/
+	className: dontSetMe,
+	style: dontSetMe,
+	transform: dontSetMe
+});
+Draggable.defaultProps = _objectSpread2(_objectSpread2({}, DraggableCore.defaultProps), {}, {
+	axis: "both",
+	bounds: false,
+	defaultClassName: "react-draggable",
+	defaultClassNameDragging: "react-draggable-dragging",
+	defaultClassNameDragged: "react-draggable-dragged",
+	defaultPosition: {
+		x: 0,
+		y: 0
+	},
+	scale: 1
+});
 //#endregion
-//#region node_modules/react-draggable/build/cjs/cjs.js
-var require_cjs = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	var { default: Draggable, DraggableCore } = require_Draggable();
-	module.exports = Draggable;
-	module.exports.default = Draggable;
-	module.exports.DraggableCore = DraggableCore;
-}));
+//#region node_modules/react-draggable/build/cjs/cjs.mjs
+var cjs_default = Draggable;
 //#endregion
 //#region node_modules/re-resizable/lib/resizer.js
-var import_cjs = /* @__PURE__ */ __toESM(require_cjs());
 var import_jsx_runtime = require_jsx_runtime();
 var __assign$2 = function() {
 	__assign$2 = Object.assign || function(t) {
@@ -17489,7 +17519,7 @@ var Rnd = function(_super) {
 		}
 	};
 	Rnd.prototype.onDragStart = function(e, data) {
-		if (this.props.onDragStart) this.props.onDragStart(e, data);
+		if (this.props.onDragStart && this.props.onDragStart(e, data) === false) return false;
 		var pos = this.getDraggablePosition();
 		this.originalPosition = pos;
 		if (!this.props.bounds) return;
@@ -17585,6 +17615,7 @@ var Rnd = function(_super) {
 		}));
 	};
 	Rnd.prototype.onResizeStart = function(e, dir, elementRef) {
+		if (this.props.onResizeStart && this.props.onResizeStart(e, dir, elementRef) === false) return false;
 		e.stopPropagation();
 		this.setState({ resizing: true });
 		var scale = this.props.scale;
@@ -17655,7 +17686,6 @@ var Rnd = function(_super) {
 			maxWidth: this.props.maxWidth,
 			maxHeight: this.props.maxHeight
 		});
-		if (this.props.onResizeStart) this.props.onResizeStart(e, dir, elementRef);
 	};
 	Rnd.prototype.onResize = function(e, direction, elementRef, delta) {
 		var _this = this;
@@ -17784,7 +17814,7 @@ var Rnd = function(_super) {
 		};
 		var pos = this.state.resizing ? void 0 : draggablePosition;
 		var dragAxisOrUndefined = this.state.resizing ? "both" : dragAxis;
-		return (0, import_react.createElement)(import_cjs.default, {
+		return (0, import_react.createElement)(cjs_default, {
 			ref: function(c) {
 				if (!c) return;
 				_this.draggable = c;
@@ -17854,7 +17884,7 @@ var Rnd = function(_super) {
 var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/* @license
 	Papa Parse
-	v5.5.3
+	v5.5.4
 	https://github.com/mholt/PapaParse
 	License: MIT
 	*/
@@ -17863,6 +17893,9 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 	})(exports, function r() {
 		var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
 		var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || !1, o = {}, h = 0, v = {};
+		function P(e) {
+			return 65279 === e.charCodeAt(0) ? e.slice(1) : e;
+		}
 		function u(e) {
 			this._handle = null, this._finished = !1, this._completed = !1, this._halted = !1, this._input = null, this._baseIndex = 0, this._partialLine = "", this._rowCount = 0, this._start = 0, this._nextChunk = null, this.isFirstChunk = !0, this._completeResults = {
 				data: [],
@@ -17878,7 +17911,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 					let e = this._config.newline;
 					e || (r = this._config.quoteChar || "\"", e = this._handle.guessLineEndings(t, r)), t = [...t.split(e).slice(i)].join(e);
 				}
-				this.isFirstChunk && U(this._config.beforeFirstChunk) && void 0 !== (r = this._config.beforeFirstChunk(t)) && (t = r), this.isFirstChunk = !1, this._halted = !1;
+				this.isFirstChunk && q(this._config.beforeFirstChunk) && void 0 !== (r = this._config.beforeFirstChunk(t)) && (t = r), this.isFirstChunk = !1, this._halted = !1;
 				var i = this._partialLine + t, r = (this._partialLine = "", this._handle.parse(i, this._baseIndex, !this._finished));
 				if (!this._handle.paused() && !this._handle.aborted()) {
 					t = r.meta.cursor, i = (this._finished || (this._partialLine = i.substring(t - this._baseIndex), this._baseIndex = t), r && r.data && (this._rowCount += r.data.length), this._finished || this._config.preview && this._rowCount >= this._config.preview);
@@ -17887,15 +17920,15 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 						workerId: v.WORKER_ID,
 						finished: i
 					});
-					else if (U(this._config.chunk) && !e) {
+					else if (q(this._config.chunk) && !e) {
 						if (this._config.chunk(r, this._handle), this._handle.paused() || this._handle.aborted()) return void (this._halted = !0);
 						this._completeResults = r = void 0;
 					}
-					return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r.data), this._completeResults.errors = this._completeResults.errors.concat(r.errors), this._completeResults.meta = r.meta), this._completed || !i || !U(this._config.complete) || r && r.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = !0), i || r && r.meta.paused || this._nextChunk(), r;
+					return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r.data), this._completeResults.errors = this._completeResults.errors.concat(r.errors), this._completeResults.meta = r.meta), this._completed || !i || !q(this._config.complete) || r && r.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = !0), i || r && r.meta.paused || this._nextChunk(), r;
 				}
 				this._halted = !0;
 			}, this._sendError = function(e) {
-				U(this._config.error) ? this._config.error(e) : a && this._config.error && n.postMessage({
+				q(this._config.error) ? this._config.error(e) : a && this._config.error && n.postMessage({
 					workerId: v.WORKER_ID,
 					error: e,
 					finished: !1
@@ -18003,7 +18036,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 						p.data.splice(0, 1);
 					} else p.data.forEach(t);
 					function t(e, t) {
-						U(m.transformHeader) && (e = m.transformHeader(e, t)), c.push(e);
+						e = P(e), q(m.transformHeader) && (e = m.transformHeader(e, t)), c.push(e);
 					}
 				}
 				function i(e, t) {
@@ -18032,10 +18065,10 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 				};
 				void 0 !== r && (e.row = r), p.errors.push(e);
 			}
-			U(m.step) && (t = m.step, m.step = function(e) {
+			q(m.step) && (t = m.step, m.step = function(e) {
 				p = e, _() ? g() : (g(), 0 !== p.data.length && (r += e.data.length, m.preview && r > m.preview ? s.abort() : (p.data = p.data[0], t(p, i))));
 			}), this.parse = function(e, t, i) {
-				var r = m.quoteChar || "\"", r = (m.newline || (m.newline = this.guessLineEndings(e, r)), a = !1, m.delimiter ? U(m.delimiter) && (m.delimiter = m.delimiter(e), p.meta.delimiter = m.delimiter) : ((r = ((e, t, i, r, n) => {
+				var r = m.quoteChar || "\"", r = (m.newline || (m.newline = this.guessLineEndings(e, r)), a = !1, m.delimiter ? q(m.delimiter) && (m.delimiter = m.delimiter(e), p.meta.delimiter = m.delimiter) : ((r = ((e, t, i, r, n) => {
 					var s, a, o, h;
 					n = n || [
 						",",
@@ -18063,22 +18096,22 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 			}, this.paused = function() {
 				return l;
 			}, this.pause = function() {
-				l = !0, s.abort(), n = U(m.chunk) ? "" : n.substring(s.getCharIndex());
+				l = !0, s.abort(), n = q(m.chunk) ? "" : n.substring(s.getCharIndex());
 			}, this.resume = function() {
 				i.streamer._halted ? (l = !1, i.streamer.parseChunk(n, !0)) : setTimeout(i.resume, 3);
 			}, this.aborted = function() {
 				return e;
 			}, this.abort = function() {
-				e = !0, s.abort(), p.meta.aborted = !0, U(m.complete) && m.complete(p), n = "";
+				e = !0, s.abort(), p.meta.aborted = !0, q(m.complete) && m.complete(p), n = "";
 			}, this.guessLineEndings = function(e, t) {
 				e = e.substring(0, 1048576);
-				var t = new RegExp(P(t) + "([^]*?)" + P(t), "gm"), i = (e = e.replace(t, "")).split("\r"), t = e.split("\n"), e = 1 < t.length && t[0].length < i[0].length;
+				var t = new RegExp(U(t) + "([^]*?)" + U(t), "gm"), i = (e = e.replace(t, "")).split("\r"), t = e.split("\n"), e = 1 < t.length && t[0].length < i[0].length;
 				if (1 === i.length || e) return "\n";
 				for (var r = 0, n = 0; n < i.length; n++) "\n" === i[n][0] && r++;
 				return r >= i.length / 2 ? "\r\n" : "\r";
 			};
 		}
-		function P(e) {
+		function U(e) {
 			return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 		}
 		function E(C) {
@@ -18088,7 +18121,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 			var z = 0, M = !1;
 			this.parse = function(i, t, r) {
 				if ("string" != typeof i) throw new Error("Input must be a string");
-				var n = i.length, e = S.length, s = O.length, a = x.length, o = U(I), h = [], u = [], d = [], f = z = 0;
+				var n = i.length, e = S.length, s = O.length, a = x.length, o = q(I), h = [], u = [], d = [], f = z = 0;
 				if (!i) return w();
 				if (T || !1 !== T && -1 === i.indexOf(F)) {
 					for (var l = i.split(O), c = 0; c < l.length; c++) {
@@ -18103,7 +18136,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 					}
 					return w();
 				}
-				for (var p = i.indexOf(S, z), g = i.indexOf(O, z), _ = new RegExp(P(j) + P(F), "g"), m = i.indexOf(F, z);;) if (i[z] === F) for (m = z, z++;;) {
+				for (var p = i.indexOf(S, z), g = i.indexOf(O, z), _ = new RegExp(U(j) + U(F), "g"), m = i.indexOf(F, z);;) if (i[z] === F) for (m = z, z++;;) {
 					if (-1 === (m = i.indexOf(F, m + 1))) return r || u.push({
 						type: "Quotes",
 						code: "MissingQuotes",
@@ -18163,8 +18196,8 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 						var s = h[0], a = Object.create(null), o = new Set(s);
 						let n = !1;
 						for (let r = 0; r < s.length; r++) {
-							let i = s[r];
-							if (a[i = U(C.transformHeader) ? C.transformHeader(i, r) : i]) {
+							let i = P(s[r]);
+							if (a[i = q(C.transformHeader) ? C.transformHeader(i, r) : i]) {
 								let e, t = a[i];
 								for (; e = i + "_" + t, t++, o.has(e););
 								o.add(e), s[r] = e, a[i]++, n = !0, (D = null === D ? {} : D)[e] = i;
@@ -18210,20 +18243,20 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 					pause: m,
 					resume: m
 				};
-				if (U(i.userStep)) {
+				if (q(i.userStep)) {
 					for (var s = 0; s < t.results.data.length && (i.userStep({
 						data: t.results.data[s],
 						errors: t.results.errors,
 						meta: t.results.meta
 					}, n), !r); s++);
 					delete t.results;
-				} else U(i.userChunk) && (i.userChunk(t.results, n, t.file), delete t.results);
+				} else q(i.userChunk) && (i.userChunk(t.results, n, t.file), delete t.results);
 			}
 			t.finished && !r && _(t.workerId, t.results);
 		}
 		function _(e, t) {
 			var i = o[e];
-			U(i.userComplete) && i.userComplete(t), i.terminate(), delete o[e];
+			q(i.userComplete) && i.userComplete(t), i.terminate(), delete o[e];
 		}
 		function m() {
 			throw new Error("Not implemented.");
@@ -18239,13 +18272,13 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 				e.apply(t, arguments);
 			};
 		}
-		function U(e) {
+		function q(e) {
 			return "function" == typeof e;
 		}
 		return v.parse = function(e, t) {
 			var i = (t = t || {}).dynamicTyping || !1;
-			U(i) && (t.dynamicTypingFunction = i, i = {});
-			if (t.dynamicTyping = i, t.transform = !!U(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = ((e) => 65279 !== e.charCodeAt(0) ? e : e.slice(1))(e), i = new (t.download ? f : c)(t)) : !0 === e.readable && U(e.read) && U(e.on) ? i = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i = new l(t)), i.stream(e);
+			q(i) && (t.dynamicTypingFunction = i, i = {});
+			if (t.dynamicTyping = i, t.transform = !!q(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = P(e), i = new (t.download ? f : c)(t)) : !0 === e.readable && q(e.read) && q(e.on) ? i = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i = new l(t)), i.stream(e);
 			(i = (() => {
 				var e;
 				return !!v.WORKERS_SUPPORTED && (e = (() => {
@@ -18257,30 +18290,30 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 						")();"
 					], { type: "text/javascript" })));
 				})(), (e = new n.Worker(e)).onmessage = g, e.id = h++, o[e.id] = e);
-			})()).userStep = t.step, i.userChunk = t.chunk, i.userComplete = t.complete, i.userError = t.error, t.step = U(t.step), t.chunk = U(t.chunk), t.complete = U(t.complete), t.error = U(t.error), delete t.worker, i.postMessage({
+			})()).userStep = t.step, i.userChunk = t.chunk, i.userComplete = t.complete, i.userError = t.error, t.step = q(t.step), t.chunk = q(t.chunk), t.complete = q(t.complete), t.error = q(t.error), delete t.worker, i.postMessage({
 				input: e,
 				config: t,
 				workerId: i.id
 			});
 		}, v.unparse = function(e, t) {
-			var n = !1, _ = !0, m = ",", y = "\r\n", s = "\"", a = s + s, i = !1, r = null, o = !1, h = ((() => {
+			var s = !1, _ = !0, m = ",", y = "\r\n", a = "\"", o = a + a, i = !1, r = null, h = !1, u = ((() => {
 				if ("object" == typeof t) {
 					if ("string" != typeof t.delimiter || v.BAD_DELIMITERS.filter(function(e) {
 						return -1 !== t.delimiter.indexOf(e);
-					}).length || (m = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (n = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i = t.skipEmptyLines), "string" == typeof t.newline && (y = t.newline), "string" == typeof t.quoteChar && (s = t.quoteChar), "boolean" == typeof t.header && (_ = t.header), Array.isArray(t.columns)) {
+					}).length || (m = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (s = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i = t.skipEmptyLines), "string" == typeof t.newline && (y = t.newline), "string" == typeof t.quoteChar && (a = t.quoteChar, o = a + a), "boolean" == typeof t.header && (_ = t.header), Array.isArray(t.columns)) {
 						if (0 === t.columns.length) throw new Error("Option columns is empty");
 						r = t.columns;
 					}
-					void 0 !== t.escapeChar && (a = t.escapeChar + s), t.escapeFormulae instanceof RegExp ? o = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (o = /^[=+\-@\t\r].*$/);
+					void 0 !== t.escapeChar && (o = t.escapeChar + a), t.escapeFormulae instanceof RegExp ? h = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (h = /^[=+\-@\t\r].*$/);
 				}
-			})(), new RegExp(P(s), "g"));
+			})(), new RegExp(U(a), "g"));
 			"string" == typeof e && (e = JSON.parse(e));
 			if (Array.isArray(e)) {
-				if (!e.length || Array.isArray(e[0])) return u(null, e, i);
-				if ("object" == typeof e[0]) return u(r || Object.keys(e[0]), e, i);
-			} else if ("object" == typeof e) return "string" == typeof e.data && (e.data = JSON.parse(e.data)), Array.isArray(e.data) && (e.fields || (e.fields = e.meta && e.meta.fields || r), e.fields || (e.fields = Array.isArray(e.data[0]) ? e.fields : "object" == typeof e.data[0] ? Object.keys(e.data[0]) : []), Array.isArray(e.data[0]) || "object" == typeof e.data[0] || (e.data = [e.data])), u(e.fields || [], e.data || [], i);
+				if (!e.length || Array.isArray(e[0])) return n(null, e, i);
+				if ("object" == typeof e[0]) return n(r || Object.keys(e[0]), e, i);
+			} else if ("object" == typeof e) return "string" == typeof e.data && (e.data = JSON.parse(e.data)), Array.isArray(e.data) && (e.fields || (e.fields = e.meta && e.meta.fields || r), e.fields || (e.fields = Array.isArray(e.data[0]) ? e.fields : "object" == typeof e.data[0] ? Object.keys(e.data[0]) : []), Array.isArray(e.data[0]) || "object" == typeof e.data[0] || (e.data = [e.data])), n(e.fields || [], e.data || [], i);
 			throw new Error("Unable to serialize unrecognized input");
-			function u(e, t, i) {
+			function n(e, t, i) {
 				var r = "", n = ("string" == typeof e && (e = JSON.parse(e)), "string" == typeof t && (t = JSON.parse(t)), Array.isArray(e) && 0 < e.length), s = !Array.isArray(t[0]);
 				if (n && _) {
 					for (var a = 0; a < e.length; a++) 0 < a && (r += m), r += k(e[a], a);
@@ -18307,11 +18340,11 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 				return r;
 			}
 			function k(e, t) {
-				var i, r;
-				return null == e ? "" : e.constructor === Date ? JSON.stringify(e).slice(1, 25) : (r = !1, o && "string" == typeof e && o.test(e) && (e = "'" + e, r = !0), i = e.toString().replace(h, a), (r = r || !0 === n || "function" == typeof n && n(e, t) || Array.isArray(n) && n[t] || ((e, t) => {
+				var i, r, n;
+				return null == e ? "" : e.constructor === Date ? JSON.stringify(e).slice(1, 25) : (n = !1, h && "string" == typeof e && h.test(e) && (e = "'" + e, n = !0), r = (i = e.toString()).replace(u, o), (n = n || !0 === s || "function" == typeof s && s(e, t) || Array.isArray(s) && s[t] || ((e, t) => {
 					for (var i = 0; i < t.length; i++) if (-1 < e.indexOf(t[i])) return !0;
 					return !1;
-				})(i, v.BAD_DELIMITERS) || -1 < i.indexOf(m) || " " === i.charAt(0) || " " === i.charAt(i.length - 1)) ? s + i + s : i);
+				})(r, v.BAD_DELIMITERS) || -1 < r.indexOf(m) || -1 < i.indexOf(a) || " " === r.charAt(0) || " " === r.charAt(r.length - 1)) ? a + r + a : r);
 			}
 		}, v.RECORD_SEP = String.fromCharCode(30), v.UNIT_SEP = String.fromCharCode(31), v.BYTE_ORDER_MARK = "﻿", v.BAD_DELIMITERS = [
 			"\r",
@@ -18329,20 +18362,20 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 				});
 			}), e(), this;
 			function e() {
-				if (0 === h.length) U(o.complete) && o.complete();
+				if (0 === h.length) q(o.complete) && o.complete();
 				else {
 					var e, t, i, r, n = h[0];
-					if (U(o.before)) {
+					if (q(o.before)) {
 						var s = o.before(n.file, n.inputElem);
 						if ("object" == typeof s) {
-							if ("abort" === s.action) return e = "AbortError", t = n.file, i = n.inputElem, r = s.reason, void (U(o.error) && o.error({ name: e }, t, i, r));
+							if ("abort" === s.action) return e = "AbortError", t = n.file, i = n.inputElem, r = s.reason, void (q(o.error) && o.error({ name: e }, t, i, r));
 							if ("skip" === s.action) return void u();
 							"object" == typeof s.config && (n.instanceConfig = d.extend(n.instanceConfig, s.config));
 						} else if ("skip" === s) return void u();
 					}
 					var a = n.instanceConfig.complete;
 					n.instanceConfig.complete = function(e) {
-						U(a) && a(e, n.file, n.inputElem), u();
+						q(a) && a(e, n.file, n.inputElem), u();
 					}, v.parse(n.file, n.instanceConfig);
 				}
 			}
@@ -18460,15 +18493,17 @@ function convertFeature(features, geojson, options, index) {
 	if (type === "Point") convertPoint(coords, geometry);
 	else if (type === "MultiPoint") for (const p of coords) convertPoint(p, geometry);
 	else if (type === "LineString") convertLine(coords, geometry, tolerance, false);
-	else if (type === "MultiLineString") if (options.lineMetrics) {
-		for (const line of coords) {
-			geometry = [];
-			convertLine(line, geometry, tolerance, false);
-			features.push(createFeature(id, "LineString", geometry, geojson.properties));
+	else if (type === "MultiLineString") {
+		if (options.lineMetrics) {
+			for (const line of coords) {
+				geometry = [];
+				convertLine(line, geometry, tolerance, false);
+				features.push(createFeature(id, "LineString", geometry, geojson.properties));
+			}
+			return;
 		}
-		return;
-	} else convertLines(coords, geometry, tolerance, false);
-	else if (type === "Polygon") convertLines(coords, geometry, tolerance, true);
+		convertLines(coords, geometry, tolerance, false);
+	} else if (type === "Polygon") convertLines(coords, geometry, tolerance, true);
 	else if (type === "MultiPolygon") for (const polygon of coords) {
 		const newPolygon = [];
 		convertLines(polygon, newPolygon, tolerance, true);
@@ -18586,12 +18621,12 @@ function clipLine(geom, newGeom, k1, k2, axis, isPolygon, trackMetrics) {
 		let exited = false;
 		if (trackMetrics) segLen = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
 		if (a < k1) {
-			if (b > k1) {
+			if (b >= k1) {
 				t = intersect(slice, ax, ay, bx, by, k1);
 				if (trackMetrics) slice.start = len + segLen * t;
 			}
 		} else if (a > k2) {
-			if (b < k2) {
+			if (b <= k2) {
 				t = intersect(slice, ax, ay, bx, by, k2);
 				if (trackMetrics) slice.start = len + segLen * t;
 			}
@@ -18894,18 +18929,15 @@ var GeoJSONVT = class {
 			let bl = null;
 			let tr = null;
 			let br = null;
-			let left = clip(features, z2, x - k1, x + k3, 0, tile.minX, tile.maxX, options);
-			let right = clip(features, z2, x + k2, x + k4, 0, tile.minX, tile.maxX, options);
-			features = null;
+			const left = clip(features, z2, x - k1, x + k3, 0, tile.minX, tile.maxX, options);
+			const right = clip(features, z2, x + k2, x + k4, 0, tile.minX, tile.maxX, options);
 			if (left) {
 				tl = clip(left, z2, y - k1, y + k3, 1, tile.minY, tile.maxY, options);
 				bl = clip(left, z2, y + k2, y + k4, 1, tile.minY, tile.maxY, options);
-				left = null;
 			}
 			if (right) {
 				tr = clip(right, z2, y - k1, y + k3, 1, tile.minY, tile.maxY, options);
 				br = clip(right, z2, y + k2, y + k4, 1, tile.minY, tile.maxY, options);
-				right = null;
 			}
 			if (debug > 1) console.timeEnd("clipping");
 			stack.push(tl || [], z + 1, x * 2, y * 2);
@@ -18957,111 +18989,133 @@ function geojsonvt(data, options) {
 }
 //#endregion
 //#region node_modules/react-colorful/dist/index.mjs
-function u() {
-	return (u = Object.assign || function(e) {
+function l() {
+	return (l = Object.assign || function(e) {
 		for (var r = 1; r < arguments.length; r++) {
-			var t = arguments[r];
-			for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
+			var n = arguments[r];
+			for (var t in n) Object.prototype.hasOwnProperty.call(n, t) && (e[t] = n[t]);
 		}
 		return e;
 	}).apply(this, arguments);
 }
 function c(e, r) {
 	if (null == e) return {};
-	var t, n, o = {}, a = Object.keys(e);
-	for (n = 0; n < a.length; n++) r.indexOf(t = a[n]) >= 0 || (o[t] = e[t]);
+	var n, t, o = {}, a = Object.keys(e);
+	for (t = 0; t < a.length; t++) r.indexOf(n = a[t]) >= 0 || (o[n] = e[n]);
 	return o;
 }
 function i(e) {
-	var t = (0, import_react.useRef)(e), n = (0, import_react.useRef)(function(e) {
-		t.current && t.current(e);
+	var n = (0, import_react.useRef)(e), t = (0, import_react.useRef)(function(e) {
+		n.current && n.current(e);
 	});
-	return t.current = e, n.current;
+	return n.current = e, t.current;
 }
-var s = function(e, r, t) {
-	return void 0 === r && (r = 0), void 0 === t && (t = 1), e > t ? t : e < r ? r : e;
-}, f = function(e) {
+var s = function(e, r, n) {
+	return void 0 === r && (r = 0), void 0 === n && (n = 1), e > n ? n : e < r ? r : e;
+};
+var f = function(e) {
 	return "touches" in e;
-}, v = function(e) {
+};
+var d = function(e) {
 	return e && e.ownerDocument.defaultView || self;
-}, d = function(e, r, t) {
-	var n = e.getBoundingClientRect(), o = f(r) ? function(e, r) {
-		for (var t = 0; t < e.length; t++) if (e[t].identifier === r) return e[t];
+};
+var v = function(e, r, n) {
+	var t = e.getBoundingClientRect(), o = f(r) ? function(e, r) {
+		for (var n = 0; n < e.length; n++) if (e[n].identifier === r) return e[n];
 		return e[0];
-	}(r.touches, t) : r;
+	}(r.touches, n) : r;
 	return {
-		left: s((o.pageX - (n.left + v(e).pageXOffset)) / n.width),
-		top: s((o.pageY - (n.top + v(e).pageYOffset)) / n.height)
+		left: s((o.pageX - (t.left + d(e).pageXOffset)) / t.width),
+		top: s((o.pageY - (t.top + d(e).pageYOffset)) / t.height)
 	};
-}, h = function(e) {
+};
+var h = function(e) {
 	!f(e) && e.preventDefault();
-}, m = import_react.memo(function(o) {
-	var a = o.onMove, l = o.onKey, s = c(o, ["onMove", "onKey"]), m = (0, import_react.useRef)(null), g = i(a), p = i(l), b = (0, import_react.useRef)(null), _ = (0, import_react.useRef)(!1), x = (0, import_react.useMemo)(function() {
+};
+var g = import_react.memo(function(o) {
+	var a = o.onMove, u = o.onKey, s = o.onEnd, g = c(o, [
+		"onMove",
+		"onKey",
+		"onEnd"
+	]), m = (0, import_react.useRef)(null), p = i(a), b = i(u), _ = i(s), E = (0, import_react.useRef)(null), C = (0, import_react.useRef)(!1), x = (0, import_react.useMemo)(function() {
 		var e = function(e) {
-			h(e), (f(e) ? e.touches.length > 0 : e.buttons > 0) && m.current ? g(d(m.current, e, b.current)) : t(!1);
+			h(e), (f(e) ? e.touches.length > 0 : e.buttons > 0) && m.current ? p(v(m.current, e, E.current)) : (n(!1), _());
 		}, r = function() {
-			return t(!1);
+			n(!1), _();
 		};
-		function t(t) {
-			var n = _.current, o = v(m.current), a = t ? o.addEventListener : o.removeEventListener;
-			a(n ? "touchmove" : "mousemove", e), a(n ? "touchend" : "mouseup", r);
+		function n(n) {
+			var t = C.current, o = d(m.current), a = n ? o.addEventListener : o.removeEventListener;
+			a(t ? "touchmove" : "mousemove", e), a(t ? "touchend" : "mouseup", r);
 		}
 		return [
 			function(e) {
-				var r = e.nativeEvent, n = m.current;
-				if (n && (h(r), !function(e, r) {
+				var r = e.nativeEvent, t = m.current;
+				if (t && (h(r), !function(e, r) {
 					return r && !f(e);
-				}(r, _.current) && n)) {
+				}(r, C.current) && t)) {
 					if (f(r)) {
-						_.current = !0;
+						C.current = !0;
 						var o = r.changedTouches || [];
-						o.length && (b.current = o[0].identifier);
+						o.length && (E.current = o[0].identifier);
 					}
-					n.focus(), g(d(n, r, b.current)), t(!0);
+					t.focus(), p(v(t, r, E.current)), n(!0);
 				}
 			},
 			function(e) {
 				var r = e.which || e.keyCode;
-				r < 37 || r > 40 || (e.preventDefault(), p({
+				r < 37 || r > 40 || (e.preventDefault(), b({
 					left: 39 === r ? .05 : 37 === r ? -.05 : 0,
 					top: 40 === r ? .05 : 38 === r ? -.05 : 0
 				}));
 			},
-			t
+			function(e) {
+				var r = e.which || e.keyCode;
+				r >= 37 && r <= 40 && _();
+			},
+			n
 		];
-	}, [p, g]), C = x[0], E = x[1], H = x[2];
+	}, [
+		b,
+		p,
+		_
+	]), H = x[0], M = x[1], N = x[2], w = x[3];
 	return (0, import_react.useEffect)(function() {
-		return H;
-	}, [H]), import_react.createElement("div", u({}, s, {
-		onTouchStart: C,
-		onMouseDown: C,
+		return w;
+	}, [w]), import_react.createElement("div", l({}, g, {
+		onTouchStart: H,
+		onMouseDown: H,
 		className: "react-colorful__interactive",
 		ref: m,
-		onKeyDown: E,
+		onKeyDown: M,
+		onKeyUp: N,
 		tabIndex: 0,
 		role: "slider"
 	}));
-}), g = function(e) {
+});
+var m = function(e) {
 	return e.filter(Boolean).join(" ");
-}, p = function(r) {
-	var t = r.color, n = r.left, o = r.top, a = void 0 === o ? .5 : o, l = g(["react-colorful__pointer", r.className]);
+};
+var p = function(r) {
+	var n = r.color, t = r.left, o = r.top, a = void 0 === o ? .5 : o, u = m(["react-colorful__pointer", r.className]);
 	return import_react.createElement("div", {
-		className: l,
+		className: u,
 		style: {
 			top: 100 * a + "%",
-			left: 100 * n + "%"
+			left: 100 * t + "%"
 		}
 	}, import_react.createElement("div", {
 		className: "react-colorful__pointer-fill",
-		style: { backgroundColor: t }
+		style: { backgroundColor: n }
 	}));
-}, b = function(e, r, t) {
-	return void 0 === r && (r = 0), void 0 === t && (t = Math.pow(10, r)), Math.round(t * e) / t;
+};
+var b = function(e, r, n) {
+	return void 0 === r && (r = 0), void 0 === n && (n = Math.pow(10, r)), Math.round(n * e) / n;
 };
 360 / (2 * Math.PI);
-var x = function(e) {
+var E = function(e) {
 	return L(C(e));
-}, C = function(e) {
+};
+var C = function(e) {
 	return "#" === e[0] && (e = e.substring(1)), e.length < 6 ? {
 		r: parseInt(e[0] + e[0], 16),
 		g: parseInt(e[1] + e[1], 16),
@@ -19073,192 +19127,223 @@ var x = function(e) {
 		b: parseInt(e.substring(4, 6), 16),
 		a: 8 === e.length ? b(parseInt(e.substring(6, 8), 16) / 255, 2) : 1
 	};
-}, w = function(e) {
-	return K(I(e));
-}, y = function(e) {
-	var r = e.s, t = e.v, n = e.a, o = (200 - r) * t / 100;
+};
+var w = function(e) {
+	return B(I(e));
+};
+var y = function(e) {
+	var r = e.s, n = e.v, t = e.a, o = (200 - r) * n / 100;
 	return {
 		h: b(e.h),
-		s: b(o > 0 && o < 200 ? r * t / 100 / (o <= 100 ? o : 200 - o) * 100 : 0),
+		s: b(o > 0 && o < 200 ? r * n / 100 / (o <= 100 ? o : 200 - o) * 100 : 0),
 		l: b(o / 2),
-		a: b(n, 2)
+		a: b(t, 2)
 	};
-}, q = function(e) {
+};
+var k = function(e) {
 	var r = y(e);
 	return "hsl(" + r.h + ", " + r.s + "%, " + r.l + "%)";
-}, I = function(e) {
-	var r = e.h, t = e.s, n = e.v, o = e.a;
-	r = r / 360 * 6, t /= 100, n /= 100;
-	var a = Math.floor(r), l = n * (1 - t), u = n * (1 - (r - a) * t), c = n * (1 - (1 - r + a) * t), i = a % 6;
+};
+var I = function(e) {
+	var r = e.h, n = e.s, t = e.v, o = e.a;
+	r = r / 360 * 6, n /= 100, t /= 100;
+	var a = Math.floor(r), u = t * (1 - n), l = t * (1 - (r - a) * n), c = t * (1 - (1 - r + a) * n), i = a % 6;
 	return {
 		r: b(255 * [
-			n,
+			t,
+			l,
 			u,
-			l,
-			l,
+			u,
 			c,
-			n
+			t
 		][i]),
 		g: b(255 * [
 			c,
-			n,
-			n,
-			u,
+			t,
+			t,
 			l,
-			l
+			u,
+			u
 		][i]),
 		b: b(255 * [
-			l,
-			l,
+			u,
+			u,
 			c,
-			n,
-			n,
-			u
+			t,
+			t,
+			l
 		][i]),
 		a: b(o, 2)
 	};
-}, D = function(e) {
+};
+var K = function(e) {
 	var r = e.toString(16);
 	return r.length < 2 ? "0" + r : r;
-}, K = function(e) {
-	var r = e.r, t = e.g, n = e.b, o = e.a, a = o < 1 ? D(b(255 * o)) : "";
-	return "#" + D(r) + D(t) + D(n) + a;
-}, L = function(e) {
-	var r = e.r, t = e.g, n = e.b, o = e.a, a = Math.max(r, t, n), l = a - Math.min(r, t, n), u = l ? a === r ? (t - n) / l : a === t ? 2 + (n - r) / l : 4 + (r - t) / l : 0;
+};
+var B = function(e) {
+	var r = e.r, n = e.g, t = e.b, o = e.a, a = o < 1 ? K(b(255 * o)) : "";
+	return "#" + K(r) + K(n) + K(t) + a;
+};
+var L = function(e) {
+	var r = e.r, n = e.g, t = e.b, o = e.a, a = Math.max(r, n, t), u = a - Math.min(r, n, t), l = u ? a === r ? (n - t) / u : a === n ? 2 + (t - r) / u : 4 + (r - n) / u : 0;
 	return {
-		h: b(60 * (u < 0 ? u + 6 : u)),
-		s: b(a ? l / a * 100 : 0),
+		h: b(60 * (l < 0 ? l + 6 : l)),
+		s: b(a ? u / a * 100 : 0),
 		v: b(a / 255 * 100),
 		a: o
 	};
-}, S = import_react.memo(function(r) {
-	var t = r.hue, n = r.onChange, o = g(["react-colorful__hue", r.className]);
-	return import_react.createElement("div", { className: o }, import_react.createElement(m, {
+};
+var R = import_react.memo(function(r) {
+	var n = r.hue, t = r.onChange, o = r.onChangeEnd, a = m(["react-colorful__hue", r.className]);
+	return import_react.createElement("div", { className: a }, import_react.createElement(g, {
 		onMove: function(e) {
-			n({ h: 360 * e.left });
+			t({ h: 360 * e.left });
 		},
 		onKey: function(e) {
-			n({ h: s(t + 360 * e.left, 0, 360) });
+			t({ h: s(n + 360 * e.left, 0, 360) });
 		},
+		onEnd: o,
 		"aria-label": "Hue",
-		"aria-valuenow": b(t),
+		"aria-valuenow": b(n),
 		"aria-valuemax": "360",
 		"aria-valuemin": "0"
 	}, import_react.createElement(p, {
 		className: "react-colorful__hue-pointer",
-		left: t / 360,
-		color: q({
-			h: t,
+		left: n / 360,
+		color: k({
+			h: n,
 			s: 100,
 			v: 100,
 			a: 1
 		})
 	})));
-}), T = import_react.memo(function(r) {
-	var t = r.hsva, n = r.onChange, o = { backgroundColor: q({
-		h: t.h,
+});
+var S = import_react.memo(function(r) {
+	var n = r.hsva, t = r.onChange, o = r.onChangeEnd, a = { backgroundColor: k({
+		h: n.h,
 		s: 100,
 		v: 100,
 		a: 1
 	}) };
 	return import_react.createElement("div", {
 		className: "react-colorful__saturation",
-		style: o
-	}, import_react.createElement(m, {
+		style: a
+	}, import_react.createElement(g, {
 		onMove: function(e) {
-			n({
+			t({
 				s: 100 * e.left,
 				v: 100 - 100 * e.top
 			});
 		},
 		onKey: function(e) {
-			n({
-				s: s(t.s + 100 * e.left, 0, 100),
-				v: s(t.v - 100 * e.top, 0, 100)
+			t({
+				s: s(n.s + 100 * e.left, 0, 100),
+				v: s(n.v - 100 * e.top, 0, 100)
 			});
 		},
+		onEnd: o,
 		"aria-label": "Color",
-		"aria-valuetext": "Saturation " + b(t.s) + "%, Brightness " + b(t.v) + "%"
+		"aria-valuetext": "Saturation " + b(n.s) + "%, Brightness " + b(n.v) + "%"
 	}, import_react.createElement(p, {
 		className: "react-colorful__saturation-pointer",
-		top: 1 - t.v / 100,
-		left: t.s / 100,
-		color: q(t)
+		top: 1 - n.v / 100,
+		left: n.s / 100,
+		color: k(n)
 	})));
-}), F = function(e, r) {
+});
+var T = function(e, r) {
 	if (e === r) return !0;
-	for (var t in e) if (e[t] !== r[t]) return !1;
+	for (var n in e) if (e[n] !== r[n]) return !1;
 	return !0;
-}, X = function(e, r) {
-	return e.toLowerCase() === r.toLowerCase() || F(C(e), C(r));
 };
-function Y(e, t, l) {
-	var u = i(l), c = (0, import_react.useState)(function() {
-		return e.toHsva(t);
-	}), s = c[0], f = c[1], v = (0, import_react.useRef)({
-		color: t,
-		hsva: s
-	});
+var P = function(e, r) {
+	return e.toLowerCase() === r.toLowerCase() || T(C(e), C(r));
+};
+function X(e, n, u, l) {
+	var c = i(u), s = i(l), f = (0, import_react.useState)(function() {
+		return e.toHsva(n);
+	}), d = f[0], v = f[1], h = (0, import_react.useRef)({
+		color: n,
+		hsva: d
+	}), g = (0, import_react.useRef)(!1);
 	(0, import_react.useEffect)(function() {
-		if (!e.equal(t, v.current.color)) {
-			var r = e.toHsva(t);
-			v.current = {
+		if (!e.equal(n, h.current.color)) {
+			var r = e.toHsva(n);
+			h.current = {
 				hsva: r,
-				color: t
-			}, f(r);
+				color: n
+			}, v(r), g.current = !1;
 		}
-	}, [t, e]), (0, import_react.useEffect)(function() {
+	}, [n, e]), (0, import_react.useEffect)(function() {
 		var r;
-		F(s, v.current.hsva) || e.equal(r = e.fromHsva(s), v.current.color) || (v.current = {
-			hsva: s,
+		T(d, h.current.hsva) || e.equal(r = e.fromHsva(d), h.current.color) || (h.current = {
+			hsva: d,
 			color: r
-		}, u(r));
+		}, c(r), g.current = !0);
 	}, [
-		s,
+		d,
 		e,
-		u
+		c
 	]);
-	return [s, (0, import_react.useCallback)(function(e) {
-		f(function(r) {
-			return Object.assign({}, r, e);
-		});
-	}, [])];
+	return [
+		d,
+		(0, import_react.useCallback)(function(e) {
+			v(function(r) {
+				return Object.assign({}, r, e);
+			});
+		}, []),
+		(0, import_react.useCallback)(function() {
+			g.current && (g.current = !1, s(h.current.color));
+		}, [s])
+	];
 }
-var R, V = "undefined" != typeof window ? import_react.useLayoutEffect : import_react.useEffect, $ = function() {
-	return R || ("undefined" != typeof __webpack_nonce__ ? __webpack_nonce__ : void 0);
-}, J = /* @__PURE__ */ new Map(), Q = function(e) {
-	V(function() {
-		var r = e.current ? e.current.ownerDocument : document;
-		if (void 0 !== r && !J.has(r)) {
-			var t = r.createElement("style");
-			t.innerHTML = ".react-colorful{position:relative;display:flex;flex-direction:column;width:200px;height:200px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.react-colorful__saturation{position:relative;flex-grow:1;border-color:transparent;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(0deg,#000,transparent),linear-gradient(90deg,#fff,hsla(0,0%,100%,0))}.react-colorful__alpha-gradient,.react-colorful__pointer-fill{content:\"\";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;border-radius:inherit}.react-colorful__alpha-gradient,.react-colorful__saturation{box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.react-colorful__alpha,.react-colorful__hue{position:relative;height:24px}.react-colorful__hue{background:linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)}.react-colorful__last-control{border-radius:0 0 8px 8px}.react-colorful__interactive{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;outline:none;touch-action:none}.react-colorful__pointer{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}.react-colorful__interactive:focus .react-colorful__pointer{transform:translate(-50%,-50%) scale(1.1)}.react-colorful__alpha,.react-colorful__alpha-pointer{background-color:#fff;background-image:url('data:image/svg+xml;charset=utf-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill-opacity=\".05\"><path d=\"M8 0h8v8H8zM0 8h8v8H0z\"/></svg>')}.react-colorful__saturation-pointer{z-index:3}.react-colorful__hue-pointer{z-index:2}", J.set(r, t);
-			var n = $();
-			n && t.setAttribute("nonce", n), r.head.appendChild(t);
+var Y;
+var U = "undefined" != typeof window ? import_react.useLayoutEffect : import_react.useEffect;
+var V = function() {
+	return Y || ("undefined" != typeof __webpack_nonce__ ? __webpack_nonce__ : void 0);
+};
+var $ = /* @__PURE__ */ new WeakMap();
+var G = function(e) {
+	U(function() {
+		var r = e.current;
+		if ("undefined" != typeof document && r) {
+			var n = r.getRootNode ? r.getRootNode() : r.ownerDocument, t = n && ("head" in n || "host" in n) ? n : r.ownerDocument;
+			if (!$.has(t)) {
+				var o = "head" in t ? t.head : t, a = (o.ownerDocument || document).createElement("style");
+				a.innerHTML = ".react-colorful{position:relative;display:flex;flex-direction:column;width:200px;height:200px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.react-colorful__saturation{position:relative;flex-grow:1;border-color:transparent;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(0deg,#000,transparent),linear-gradient(90deg,#fff,hsla(0,0%,100%,0))}.react-colorful__alpha-gradient,.react-colorful__pointer-fill{content:\"\";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;border-radius:inherit}.react-colorful__alpha-gradient,.react-colorful__saturation{box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.react-colorful__alpha,.react-colorful__hue{position:relative;height:24px}.react-colorful__hue{background:linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)}.react-colorful__last-control{border-radius:0 0 8px 8px}.react-colorful__interactive{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;outline:none;touch-action:none}.react-colorful__pointer{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}.react-colorful__interactive:focus .react-colorful__pointer{transform:translate(-50%,-50%) scale(1.1)}.react-colorful__alpha,.react-colorful__alpha-pointer{background-color:#fff;background-image:url('data:image/svg+xml;charset=utf-8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill-opacity=\".05\"><path d=\"M8 0h8v8H8zM0 8h8v8H0z\"/></svg>')}.react-colorful__saturation-pointer{z-index:3}.react-colorful__hue-pointer{z-index:2}";
+				var u = V();
+				u && a.setAttribute("nonce", u), $.set(t, a), o.appendChild(a);
+			}
 		}
 	}, []);
-}, U = function(t) {
-	var n = t.className, o = t.colorModel, a = t.color, l = void 0 === a ? o.defaultColor : a, i = t.onChange, s = c(t, [
+};
+var J = function(n) {
+	var t = n.className, o = n.colorModel, a = n.color, u = void 0 === a ? o.defaultColor : a, i = n.onChange, s = n.onChangeEnd, f = c(n, [
 		"className",
 		"colorModel",
 		"color",
-		"onChange"
-	]), f = (0, import_react.useRef)(null);
-	Q(f);
-	var v = Y(o, l, i), d = v[0], h = v[1], m = g(["react-colorful", n]);
-	return import_react.createElement("div", u({}, s, {
-		ref: f,
-		className: m
-	}), import_react.createElement(T, {
-		hsva: d,
-		onChange: h
+		"onChange",
+		"onChangeEnd"
+	]), d = (0, import_react.useRef)(null);
+	G(d);
+	var v = X(o, u, i, s), h = v[0], g = v[1], p = v[2], b = m(["react-colorful", t]);
+	return import_react.createElement("div", l({}, f, {
+		ref: d,
+		className: b
 	}), import_react.createElement(S, {
-		hue: d.h,
-		onChange: h,
+		hsva: h,
+		onChange: g,
+		onChangeEnd: p
+	}), import_react.createElement(R, {
+		hue: h.h,
+		onChange: g,
+		onChangeEnd: p,
 		className: "react-colorful__last-control"
 	}));
-}, W = {
+};
+var Q = {
 	defaultColor: "000",
-	toHsva: x,
+	toHsva: E,
 	fromHsva: function(e) {
 		return w({
 			h: e.h,
@@ -19267,9 +19352,10 @@ var R, V = "undefined" != typeof window ? import_react.useLayoutEffect : import_
 			a: 1
 		});
 	},
-	equal: X
-}, Z = function(r) {
-	return import_react.createElement(U, u({}, r, { colorModel: W }));
+	equal: P
+};
+var Z = function(r) {
+	return import_react.createElement(J, l({}, r, { colorModel: Q }));
 };
 //#endregion
 //#region node_modules/colorbrewer/index.es.js
@@ -21903,7 +21989,8 @@ var require_lodash_debounce = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	* of values.
 	*/
 	var objectToString = Object.prototype.toString;
-	var nativeMax = Math.max, nativeMin = Math.min;
+	var nativeMax = Math.max;
+	var nativeMin = Math.min;
 	/**
 	* Gets the timestamp of the number of milliseconds that have elapsed since
 	* the Unix epoch (1 January 1970 00:00:00 UTC).
@@ -22159,6 +22246,6 @@ var require_lodash_debounce = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	module.exports = debounce;
 }));
 //#endregion
-export { require_Popover as C, zt as S, combineReducers as _, geojsonvt as a, require_lodash_xor as b, require_cjs as c, useDispatch as d, Provider as f, createSelector as g, configureStore as h, Z as i, purify as l, import_react_dom as m, stickybits as n, require_papaparse_min as o, useSelector as p, index as r, Rnd as s, require_lodash_debounce as t, purify_es_exports as u, proj4 as v, Fe as x, require_lodash_xorby as y };
+export { require_Popover as C, zt as S, combineReducers as _, geojsonvt as a, require_lodash_xor as b, cjs_default as c, useDispatch as d, Provider as f, createSelector as g, configureStore as h, Z as i, purify as l, import_react_dom as m, stickybits as n, require_papaparse_min as o, useSelector as p, index as r, Rnd as s, require_lodash_debounce as t, purify_es_exports as u, proj4 as v, Fe as x, require_lodash_xorby as y };
 
 //# sourceMappingURL=vendor-debug.js.map

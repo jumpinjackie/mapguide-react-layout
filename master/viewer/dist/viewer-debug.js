@@ -1,8 +1,8 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-codecs-debug.js","./chunks/geotiff-deps-debug.js","./chunks/jspdf-debug.js","./chunks/ol-deps-debug.js"])))=>i.map(i=>d[i]);
-import { a as __toESM, r as __exportAll } from "./chunks/rolldown-runtime-debug.js";
+import { n as __exportAll, r as __toESM } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react_dom, i as require_jsx_runtime, o as require_react } from "./chunks/react-vendor-debug.js";
-import { $t as fromLonLat, Cr as __vitePreload, Er as init_objectSpread2, Hn as buffer, Jt as init_objectWithoutProperties, P as DEVICE_PIXEL_RATIO, Qt as equivalent, Tr as _objectSpread2, V as createXYZ, W as TileGrid, Yn as createEmpty, Yt as register, dn as getArea, fn as getDistance, fr as getTopLeft, gn as METERS_PER_UNIT, gr as isEmpty, hn as Projection, k as easeOut, ln as transform, lr as getHeight, mr as getWidth, nn as get, qn as containsXY, qt as _objectWithoutProperties, sr as getCenter, tr as extend$1, un as transformExtent, wr as _asyncToGenerator, wt as unByKey } from "./chunks/geotiff-debug.js";
-import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as require_cjs, d as useDispatch, f as Provider, g as createSelector, h as configureStore$1, i as Z, l as purify, m as import_react_dom$1, n as stickybits, o as require_papaparse_min, p as useSelector, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
+import { Cr as _asyncToGenerator, Jn as createEmpty, Jt as register, Kn as containsXY, P as DEVICE_PIXEL_RATIO, Qt as fromLonLat, Sr as __vitePreload, V as createXYZ, Vn as buffer, W as TileGrid, Zt as equivalent, cn as transform, cr as getHeight, dn as getDistance, dr as getTopLeft, er as extend$1, hn as METERS_PER_UNIT, hr as isEmpty, k as easeOut, ln as transformExtent, mn as Projection, or as getCenter, pr as getWidth, qt as _objectWithoutProperties, tn as get, un as getArea, wr as _objectSpread2, wt as unByKey } from "./chunks/geotiff-debug.js";
+import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as cjs_default, d as useDispatch, f as Provider, g as createSelector, h as configureStore$1, i as Z, l as purify, m as import_react_dom$1, n as stickybits, o as require_papaparse_min, p as useSelector, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
 import { C as RegularShape, S as CircleStyle, a as WMSCapabilities, at as fromExtent, b as Stroke, c as GeoJSON, ct as LineString, d as MultiPolygon, f as MultiPoint, g as Style, h as Text, i as TopoJSON, it as fromCircle, l as GeometryCollection, m as Feature, mt as Point, n as IGC, o as MVT, p as MultiLineString, q as asArray, r as GPX, rt as Polygon, s as KML, st as LinearRing, t as WKT, w as Icon$1, x as Fill } from "./chunks/ol-formats-debug.js";
 import { A as TileWMS, B as ImageMapGuide, C as getRenderPixel, D as Cluster, E as VectorTile, F as OSM, G as UrlTile, H as defaultImageLoadFunction, I as ImageLayer, K as LayerGroup, L as TileLayer, M as UTFGrid, N as BingMaps, O as VectorSource, P as TileDebug, R as View, S as ImageWMS, T as VectorTileLayer, U as XYZ, V as ImageSource, W as TileImage, _ as Rotate, a as Circle, b as Translate, c as Map$1, d as MouseWheelZoom, f as KeyboardZoom, g as DragPan, h as DragRotate, i as Draw, j as WebGLTileLayer, k as VectorLayer, l as PinchZoom, m as DragBox, n as Snap, o as Select, p as KeyboardPan, q as Collection, r as Extent, s as OverviewMap, t as Modify, u as PinchRotate, v as Attribution, w as toContext, x as Heatmap, y as Overlay, z as Static } from "./chunks/ol-debug.js";
 //#region src/constants.ts
@@ -978,7 +978,6 @@ function isResourceId(str) {
 }
 //#endregion
 //#region src/utils/url.ts
-init_objectSpread2();
 /**
 * Converts a URLSearchParams instance to a plain object. Handles repeated keys by
 * converting them to arrays. Uses a single O(n) pass over entries.
@@ -1341,7 +1340,6 @@ var modal_exports = /* @__PURE__ */ __exportAll({
 	showModalUrl: () => showModalUrl,
 	updateModal: () => updateModal
 });
-init_objectSpread2();
 /**
 * Displays the specified component in a modal dialog
 *
@@ -1955,19 +1953,19 @@ var MnHeading = ({ level, style, className, children }) => {
 //#endregion
 //#region src/components/elements/providers/minimal/icon-map.ts
 /**
-* Returns the incoming Blueprint icon name for SVG lookup.
+* Returns the incoming icon name for SVG lookup.
 *
 * @hidden
 * @since 0.15
 */
-function getSvgIconName(blueprintName) {
-	return blueprintName;
+function getSvgIconName(iconName) {
+	return iconName;
 }
 //#endregion
 //#region src/components/elements/providers/minimal/svg-icons.tsx
 /**
 * All icon path data, keyed by a logical name.
-* SVG paths are replicated from our Blueprint icon path subset.
+* SVG paths are embedded inline — no external icon library required.
 * @hidden
 * @since 0.15
 */
@@ -1977,7 +1975,7 @@ function toInlineSvgIcon(paths) {
 function buildSvgIconRegistry(pathMap) {
 	return Object.fromEntries(Object.entries(pathMap).map(([name, paths]) => [name, toInlineSvgIcon(paths)]));
 }
-var BP_ICONS_20 = {
+var SVG_ICON_PATHS_20 = {
 	"arrow-left": ["M18 9H4.41L8.7 4.71c.19-.18.3-.43.3-.71a1.003 1.003 0 00-1.71-.71l-6 6c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l6 6a1.003 1.003 0 001.42-1.42L4.41 11H18c.55 0 1-.45 1-1s-.45-1-1-1z"],
 	"arrow-right": ["M18.71 9.29l-6-6a1.003 1.003 0 00-1.42 1.42L15.59 9H2c-.55 0-1 .45-1 1s.45 1 1 1h13.59l-4.29 4.29c-.19.18-.3.43-.3.71a1.003 1.003 0 001.71.71l6-6c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71z"],
 	"arrows-horizontal": ["M19.7 9.3l-5-5c-.2-.2-.4-.3-.7-.3-.6 0-1 .4-1 1 0 .3.1.5.3.7L16.6 9H3.4l3.3-3.3c.2-.2.3-.4.3-.7 0-.6-.4-1-1-1-.3 0-.5.1-.7.3l-5 5c-.2.2-.3.4-.3.7s.1.5.3.7l5 5c.2.2.4.3.7.3.6 0 1-.4 1-1 0-.3-.1-.5-.3-.7L3.4 11h13.2l-3.3 3.3c-.2.2-.3.4-.3.7 0 .6.4 1 1 1 .3 0 .5-.1.7-.3l5-5c.2-.2.3-.4.3-.7s-.1-.5-.3-.7z"],
@@ -2033,9 +2031,9 @@ var BP_ICONS_20 = {
 	"warning-sign": ["M19.86 17.52l.01-.01-9-16-.01.01C10.69 1.21 10.37 1 10 1s-.69.21-.86.52l-.01-.01-9 16 .01.01c-.08.14-.14.3-.14.48 0 .55.45 1 1 1h18c.55 0 1-.45 1-1 0-.18-.06-.34-.14-.48zM11 17H9v-2h2v2zm0-3H9V6h2v8z"],
 	"zoom-to-fit": ["M1 7c.55 0 1-.45 1-1V2h4c.55 0 1-.45 1-1s-.45-1-1-1H1C.45 0 0 .45 0 1v5c0 .55.45 1 1 1zm5 1a1.003 1.003 0 00-1.71-.71l-2 2c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l2 2a1.003 1.003 0 001.42-1.42L4.41 10 5.7 8.71c.19-.18.3-.43.3-.71zm2-2c.28 0 .53-.11.71-.29L10 4.41l1.29 1.29c.18.19.43.3.71.3a1.003 1.003 0 00.71-1.71l-2-2C10.53 2.11 10.28 2 10 2s-.53.11-.71.29l-2 2A1.003 1.003 0 008 6zM6 18H2v-4c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55.45 1 1 1h5c.55 0 1-.45 1-1s-.45-1-1-1zm8-6a1.003 1.003 0 001.71.71l2-2c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71l-2-2a1.003 1.003 0 00-1.42 1.42l1.3 1.29-1.29 1.29c-.19.18-.3.43-.3.71zm5-12h-5c-.55 0-1 .45-1 1s.45 1 1 1h4v4c0 .55.45 1 1 1s1-.45 1-1V1c0-.55-.45-1-1-1zm-7 14c-.28 0-.53.11-.71.29L10 15.59 8.71 14.3A.965.965 0 008 14a1.003 1.003 0 00-.71 1.71l2 2c.18.18.43.29.71.29s.53-.11.71-.29l2-2A1.003 1.003 0 0012 14zm7-1c-.55 0-1 .45-1 1v4h-4c-.55 0-1 .45-1 1s.45 1 1 1h5c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1z"]
 };
-buildSvgIconRegistry(BP_ICONS_20);
-function getBlueprintIconPaths(name) {
-	const paths = BP_ICONS_20[name];
+buildSvgIconRegistry(SVG_ICON_PATHS_20);
+function getSvgIconPaths(name) {
+	const paths = SVG_ICON_PATHS_20[name];
 	if (!paths) return null;
 	return {
 		paths,
@@ -2049,7 +2047,7 @@ function getBlueprintIconPaths(name) {
 * @hidden
 */
 var SvgIcon = ({ name, size = 16, style }) => {
-	const iconData = getBlueprintIconPaths(name);
+	const iconData = getSvgIconPaths(name);
 	if (!iconData) return null;
 	const { paths, viewBoxSize } = iconData;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
@@ -2305,7 +2303,8 @@ var MnInputGroup = ({ style, round, autoFocus, leftIcon, placeholder, value, rea
 		}
 		const updateWidth = () => {
 			var _rightElementRef$curr, _rightElementRef$curr2;
-			setRightElementWidth(Math.ceil((_rightElementRef$curr = (_rightElementRef$curr2 = rightElementRef.current) === null || _rightElementRef$curr2 === void 0 ? void 0 : _rightElementRef$curr2.getBoundingClientRect().width) !== null && _rightElementRef$curr !== void 0 ? _rightElementRef$curr : 0));
+			const width = Math.ceil((_rightElementRef$curr = (_rightElementRef$curr2 = rightElementRef.current) === null || _rightElementRef$curr2 === void 0 ? void 0 : _rightElementRef$curr2.getBoundingClientRect().width) !== null && _rightElementRef$curr !== void 0 ? _rightElementRef$curr : 0);
+			setRightElementWidth(width);
 		};
 		updateWidth();
 		if (typeof ResizeObserver === "undefined") return;
@@ -2646,7 +2645,6 @@ var ToolbarContext = import_react.createContext({
 });
 //#endregion
 //#region src/components/icon.tsx
-init_objectSpread2();
 var Icon = (props) => {
 	const spStyle = _objectSpread2({}, props.style || {});
 	if (!spStyle.display) spStyle.display = "inline-block";
@@ -2684,9 +2682,6 @@ var ImageIcon = (props) => {
 		onClick: props.onClick
 	}, props.otherProps), {}, { onError: (e) => e.currentTarget.src = ICON_ERROR }));
 };
-//#endregion
-//#region src/components/toolbar.tsx
-init_objectSpread2();
 var TOOLBAR_BACKGROUND_COLOR = "#f0f0f0";
 function isNumeric(arg) {
 	return typeof arg == "number";
@@ -3892,7 +3887,6 @@ function canUseQueryMapFeaturesV4(version) {
 }
 //#endregion
 //#region src/api/builders/mapagent.ts
-init_objectSpread2();
 var _MapAgentRequestBuilder;
 var deArrayifyModulePromise$1 = __vitePreload(() => import("./chunks/deArrayify-debug.js"), [], import.meta.url);
 var MG_MAPAGENT_ERROR_CODE = 559;
@@ -4893,7 +4887,6 @@ var map_exports = /* @__PURE__ */ __exportAll({
 	showSelectedFeature: () => showSelectedFeature,
 	updateMapSwipePosition: () => updateMapSwipePosition
 });
-init_objectSpread2();
 function combineSelectedFeatures(oldRes, newRes) {
 	return (0, import_lodash_xorby.default)(oldRes, newRes, (f) => f.SelectionKey);
 }
@@ -5689,7 +5682,6 @@ var legend_exports = /* @__PURE__ */ __exportAll({
 	setLayerSelectable: () => setLayerSelectable,
 	setLayerVisibility: () => setLayerVisibility
 });
-init_objectSpread2();
 /**
 * Sets the visibility for the given map group
 *
@@ -6226,7 +6218,6 @@ var MapContextProvider = ({ value, store, children }) => {
 };
 //#endregion
 //#region src/containers/hooks.ts
-init_objectSpread2();
 var EMPTY_INITIAL_EXTERNAL_LAYERS = [];
 var selectReducedToolbarAppState = createSelector([(state) => state], (state) => reduceAppToToolbarState(state));
 var selectActiveMapLayers = createSelector([(state) => state.config.activeMapName, (state) => state.mapState], (activeMapName, mapState) => {
@@ -6510,7 +6501,6 @@ var flyout_exports = /* @__PURE__ */ __exportAll({
 	openContextMenu: () => openContextMenu,
 	openFlyout: () => openFlyout
 });
-init_objectSpread2();
 /**
 * Opens the context menu at the specific position
 * 
@@ -6593,7 +6583,6 @@ function closeComponent(id) {
 }
 //#endregion
 //#region src/containers/toolbar.tsx
-init_objectSpread2();
 var ToolbarContainer = (props) => {
 	const { containerClass, containerStyle, vertical, hideVerticalLabels } = props;
 	const dispatch = useReduxDispatch();
@@ -7996,7 +7985,6 @@ var ViewerApiShim = () => {
 };
 //#endregion
 //#region src/components/modal-dialog.tsx
-init_objectSpread2();
 var DIAG_HEADER_HEIGHT = 40;
 var RndModalDialog = (props) => {
 	const { Icon, Button, NonIdealState, Heading, DialogContainer, DialogShell, DialogHeader, DialogBody } = useElementContext();
@@ -8287,7 +8275,6 @@ function isGenericSubjectMapLayer(map) {
 }
 //#endregion
 //#region src/actions/init-command.ts
-init_objectSpread2();
 /**
 * Parses comparison pair declarations from the application definition's MapSet.
 *
@@ -8484,7 +8471,6 @@ var ScopedId = class {
 };
 //#endregion
 //#region src/api/registry/command-spec.ts
-init_objectSpread2();
 var scopedId$2 = new ScopedId();
 function isCommandSpec$1(cmd) {
 	return !strIsNullOrEmpty(cmd.command);
@@ -8902,7 +8888,6 @@ function supportsWebGL() {
 }
 //#endregion
 //#region src/actions/init-mapguide.ts
-init_objectSpread2();
 var TYPE_SUBJECT = "SubjectLayer";
 var TYPE_EXTERNAL = "External";
 var scopedId$1 = new ScopedId();
@@ -9503,7 +9488,6 @@ function _sessionAcquiredAsync() {
 }
 //#endregion
 //#region src/actions/init.ts
-init_objectSpread2();
 function applyInitialBaseLayerVisibility(externalBaseLayers) {
 	if (externalBaseLayers.length > 0) {
 		const firstBase = externalBaseLayers.find((bl) => bl.kind != "UTFGrid");
@@ -9833,7 +9817,6 @@ var InitWarningDisplay = () => {
 };
 //#endregion
 //#region src/reducers/template.ts
-init_objectSpread2();
 var TEMPLATE_INITIAL_STATE = {
 	initialInfoPaneWidth: 250,
 	initialTaskPaneWidth: 300,
@@ -10050,10 +10033,11 @@ var SplitterLayout = (props) => {
 			if (splitterRef.current && containerRef.current && !props.percentage) {
 				const containerRect = containerRef.current.getBoundingClientRect();
 				const splitterRect = splitterRef.current.getBoundingClientRect();
-				setSecondaryPaneSize(getSecondaryPaneSize(containerRect, splitterRect, {
+				const newSize = getSecondaryPaneSize(containerRect, splitterRect, {
 					left: splitterRect.left,
 					top: splitterRect.top
-				}, false));
+				}, false);
+				setSecondaryPaneSize(newSize);
 			}
 		}
 		window.addEventListener("resize", handleResize);
@@ -10063,7 +10047,9 @@ var SplitterLayout = (props) => {
 		function handleMouseMove(e) {
 			if (resizing && containerRef.current && splitterRef.current) {
 				var _e$clientX, _e$clientY;
-				const newSize = getSecondaryPaneSize(containerRef.current.getBoundingClientRect(), splitterRef.current.getBoundingClientRect(), {
+				const containerRect = containerRef.current.getBoundingClientRect();
+				const splitterRect = splitterRef.current.getBoundingClientRect();
+				const newSize = getSecondaryPaneSize(containerRect, splitterRect, {
 					left: (_e$clientX = e.clientX) !== null && _e$clientX !== void 0 ? _e$clientX : e.clientX,
 					top: (_e$clientY = e.clientY) !== null && _e$clientY !== void 0 ? _e$clientY : e.clientY
 				}, true);
@@ -10331,7 +10317,6 @@ var AjaxViewerLayout = () => {
 };
 //#endregion
 //#region src/layouts/sidebar.tsx
-init_objectSpread2();
 var DEFAULT_LEGEND_COMPONENT_PROPS$4 = { inlineBaseLayerSwitcher: true };
 function sidebarTemplateReducer(origState, state, action) {
 	switch (action.type) {
@@ -10783,7 +10768,6 @@ function useActiveMapSubjectLayer() {
 }
 //#endregion
 //#region src/layouts/aqua.tsx
-init_objectSpread2();
 function aquaTemplateReducer(origState, state, action) {
 	switch (action.type) {
 		case ActionType.MAP_SET_SELECTION: {
@@ -11069,7 +11053,6 @@ var AquaTemplateLayout = () => {
 };
 //#endregion
 //#region src/layouts/turquoise-yellow.tsx
-init_objectSpread2();
 function turquoiseYellowTemplateReducer(origState, state, action) {
 	switch (action.type) {
 		case ActionType.FUSION_SET_LEGEND_VISIBILITY: {
@@ -11361,7 +11344,6 @@ var TurquoiseYellowTemplateLayout = () => {
 };
 //#endregion
 //#region src/layouts/limegold.tsx
-init_objectSpread2();
 function limegoldTemplateReducer(origState, state, action) {
 	switch (action.type) {
 		case ActionType.FUSION_SET_LEGEND_VISIBILITY: {
@@ -11656,7 +11638,6 @@ var LimeGoldTemplateLayout = () => {
 * In-house implementation of the useResizeObserver hook.
 * Adapted from https://usehooks-ts.com/react-hook/use-resize-observer
 */
-init_objectSpread2();
 function extractSize(entry, box, sizeType) {
 	if (!entry[box]) {
 		if (box === "contentBoxSize") return entry.contentRect[sizeType === "inlineSize" ? "width" : "height"];
@@ -11800,7 +11781,6 @@ var Accordion = import_react.memo((props) => {
 });
 //#endregion
 //#region src/layouts/slate.tsx
-init_objectSpread2();
 function slateTemplateReducer(origState, state, action) {
 	switch (action.type) {
 		case ActionType.FUSION_SET_LEGEND_VISIBILITY: {
@@ -12078,7 +12058,6 @@ var SlateTemplateLayout = () => {
 };
 //#endregion
 //#region src/layouts/maroon.tsx
-init_objectSpread2();
 function maroonTemplateReducer(origState, state, action) {
 	switch (action.type) {
 		case ActionType.FUSION_SET_LEGEND_VISIBILITY: {
@@ -12429,7 +12408,7 @@ var MouseCoordinatesContainer = (props) => {
 };
 //#endregion
 //#region src/components/navigator.tsx
-var import_cjs = /* @__PURE__ */ __toESM(require_cjs());
+var Draggable = cjs_default;
 var ZoomDirection = /* @__PURE__ */ function(ZoomDirection) {
 	ZoomDirection[ZoomDirection["In"] = 0] = "In";
 	ZoomDirection[ZoomDirection["Out"] = 1] = "Out";
@@ -12594,7 +12573,7 @@ var Navigator = (props) => {
 					}
 				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_cjs.default, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Draggable, {
 				axis: "y",
 				handle: "img.navigator-drag-handle",
 				position: {
@@ -12607,6 +12586,10 @@ var Navigator = (props) => {
 					left: 0,
 					right: 0
 				},
+				disabled: false,
+				allowAnyClick: false,
+				allowMobileScroll: false,
+				enableUserSelectHack: true,
 				onStart,
 				onDrag,
 				onStop,
@@ -12775,7 +12758,6 @@ var ScaleDisplayContainer = (props) => {
 };
 //#endregion
 //#region src/components/task-pane.tsx
-init_objectSpread2();
 var TASK_PANE_OVERLAY_BGCOLOR = "#dee8f9";
 function currentUrlDoesNotMatchMapName(currentUrl, mapName) {
 	const normUrl = currentUrl.toLowerCase();
@@ -13576,14 +13558,15 @@ var CsvFormatDriver = class {
 											propNames.push(k);
 										}
 									}
-									parsed = new ParsedFeatures(type, size, function() {
+									const pfs = function() {
 										var _ref = _asyncToGenerator(function* () {
 											return features;
 										});
 										return function pfs() {
 											return _ref.apply(this, arguments);
 										};
-									}(), features.length > 0, ["Point"], propNames);
+									}();
+									parsed = new ParsedFeatures(type, size, pfs, features.length > 0, ["Point"], propNames);
 									break;
 								}
 							}
@@ -14224,7 +14207,6 @@ function setOLVectorLayerStyle(layer, style, clusterStyle) {
 }
 //#endregion
 //#region src/components/external-layer-factory.ts
-init_objectSpread2();
 function sameProjectionAs(proj1, proj2) {
 	const nproj1 = get(proj1);
 	const nproj2 = get(proj2);
@@ -15138,7 +15120,7 @@ var MgInnerLayerSetFactory = class {
 //#region src/containers/measure.tsx
 var MeasureContainer = () => {
 	var _useAvailableMaps;
-	const { Callout, Button, HtmlTable } = useElementContext();
+	const { Callout, Button, HtmlTable, FormGroup } = useElementContext();
 	const activeMapName = useActiveMapName();
 	const locale = useViewerLocale();
 	const mapNames = (_useAvailableMaps = useAvailableMaps()) === null || _useAvailableMaps === void 0 ? void 0 : _useAvailableMaps.map((m) => m.value);
@@ -15253,13 +15235,14 @@ var MeasureContainer = () => {
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 			className: "form-inline",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-					className: "bp3-label",
-					children: [tr("MEASUREMENT_TYPE", locale), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TypedSelect, {
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormGroup, {
+					label: tr("MEASUREMENT_TYPE", locale),
+					inline: true,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TypedSelect, {
 						value: drawType,
 						onChange: onTypeChanged,
 						items: measurementTypes
-					})]
+					})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(ElementGroup, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
@@ -15848,9 +15831,9 @@ function getLegendImage(item, canvas = void 0, row = 0) {
 }
 //#endregion
 //#region src/components/vector-style-editor.tsx
-init_objectSpread2();
-init_objectWithoutProperties();
-var _excluded$3 = ["expr", "onExprChanged"], _excluded2 = ["placement"], _excluded3 = ["label"];
+var _excluded$3 = ["expr", "onExprChanged"];
+var _excluded2 = ["placement"];
+var _excluded3 = ["label"];
 function assertValue(val) {
 	if (isEvaluatable(val)) throw new Error("Value is expression instead of a raw value");
 }
@@ -15894,15 +15877,15 @@ var LabelStyleEditor = (props) => {
 	const [hasLabel, setHasLabel] = import_react.useState(style.label != null);
 	const onToggleLinePlacement = import_react.useCallback(() => {
 		if (localLabel.placement == "line") {
-			const { placement } = localLabel;
-			setLocalLabel(_objectWithoutProperties(localLabel, _excluded2));
+			const { placement } = localLabel, rest = _objectWithoutProperties(localLabel, _excluded2);
+			setLocalLabel(rest);
 		} else setLocalLabel(_objectSpread2(_objectSpread2({}, localLabel), {}, { placement: "line" }));
 	}, [localLabel]);
 	import_react.useEffect(() => {
 		if (hasLabel) onChange(_objectSpread2(_objectSpread2({}, style), {}, { label: localLabel }));
 		else {
-			const { label } = style;
-			onChange(_objectWithoutProperties(style, _excluded3));
+			const { label } = style, rest = _objectWithoutProperties(style, _excluded3);
+			onChange(rest);
 		}
 	}, [localLabel, hasLabel]);
 	import_react.useEffect(() => {
@@ -16621,7 +16604,8 @@ var ManageLayerItem = (props) => {
 			setWmsLegendUrl(void 0);
 			setOpenPanel(0);
 		} else {
-			setWmsLegendUrl(action(currentResolution));
+			const url = action(currentResolution);
+			setWmsLegendUrl(url);
 			setOpenPanel(3);
 		}
 	};
@@ -16844,7 +16828,6 @@ var ManageLayers = (props) => {
 };
 //#endregion
 //#region src/components/layer-manager/wms-capabilities-panel.tsx
-init_objectWithoutProperties();
 var _excluded$2 = ["Layer"];
 /**
 * Extracts WMS layers from the given parsed capabilities document
@@ -17704,7 +17687,6 @@ var AddWfsLayer = (props) => {
 };
 //#endregion
 //#region src/components/layer-manager/add-layer.tsx
-init_objectSpread2();
 var ADD_URL_LAYER_TYPES = {
 	"WMS": {
 		label: "WMS",
@@ -17794,11 +17776,12 @@ var AddFileLayer = (props) => {
 				setAddLayerError(void 0);
 				const layerMgr = viewer.getLayerManager();
 				try {
-					setParsedFile(yield layerMgr.parseFeaturesFromFile({
+					const parsed = yield layerMgr.parseFeaturesFromFile({
 						file,
 						name: file.name,
 						locale
-					}));
+					});
+					setParsedFile(parsed);
 				} catch (e) {
 					setAddLayerError(e);
 				}
@@ -18432,7 +18415,6 @@ var MapComparisonControl = () => {
 };
 //#endregion
 //#region src/containers/add-manage-layers.tsx
-init_objectSpread2();
 var EMPTY_MANAGE_LAYERS = [];
 function zoomToLayerExtents(layerName, viewer) {
 	const layer = viewer.getLayerManager().getLayer(layerName);
@@ -18716,7 +18698,6 @@ var ShareLinkToViewContainer = () => {
 };
 //#endregion
 //#region src/api/default-components.tsx
-init_objectSpread2();
 /**
 * Registers the default set of components
 */
@@ -19179,7 +19160,6 @@ function initMapGuideCommands() {
 }
 //#endregion
 //#region src/components/legend.tsx
-init_objectSpread2();
 var ICON_LEGEND_LAYER = "layer";
 var ICON_SELECT = "select";
 var ICON_LC_UNSELECT = "disable";
@@ -19649,10 +19629,13 @@ var GroupNode = (props) => {
 					if (item.DisplayInLegend === true) {
 						if (isLayer(item)) {
 							if (isLayerVisibleAtScale(item, currentScale, legendCtx.stateless)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LayerNode, { layer: item }, item.ObjectId);
-						} else if (isGroupVisibleAtScale(item, tree, currentScale, legendCtx.stateless)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
-							group: item,
-							childItems: tree.groupChildren[item.ObjectId] || []
-						}, item.ObjectId);
+						} else if (isGroupVisibleAtScale(item, tree, currentScale, legendCtx.stateless)) {
+							const children = tree.groupChildren[item.ObjectId] || [];
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
+								group: item,
+								childItems: children
+							}, item.ObjectId);
+						}
 					}
 				})
 			});
@@ -19763,7 +19746,8 @@ var Legend = (props) => {
 	const [contextMenu, setContextMenu] = import_react.useState(void 0);
 	import_react.useEffect(() => {
 		onExitFilterMode();
-		setState(setupTree(map));
+		const tree = setupTree(map);
+		setState(tree);
 	}, [map]);
 	const onEnterFilterMode = import_react.useCallback(() => {
 		setIsFiltering(true);
@@ -20030,10 +20014,13 @@ var Legend = (props) => {
 							if (providerImpl.isFiltering()) {
 								if (item.LegendLabel.toLocaleLowerCase().indexOf(providerImpl.getFilterText().toLocaleLowerCase()) >= 0) bGroupVisFilter = true;
 							}
-							if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
-								group: item,
-								childItems: daTree.groupChildren[item.ObjectId] || []
-							}, item.ObjectId);
+							if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) {
+								const children = daTree.groupChildren[item.ObjectId] || [];
+								return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
+									group: item,
+									childItems: children
+								}, item.ObjectId);
+							}
 						}
 					}), props.externalLayers && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExternalLayersGroupNode, { layers: props.externalLayers })]
 				})
@@ -20517,7 +20504,10 @@ var SelectionPanelContainer = (props) => {
 	const onZoomToSelectedFeature = (feature) => {
 		if (feature.Bounds) {
 			const bbox = feature.Bounds.split(" ").map((s) => parseFloat(s));
-			if (viewer.isReady()) setCurrentViewAction(viewer.getViewForExtent(bbox));
+			if (viewer.isReady()) {
+				const view = viewer.getViewForExtent(bbox);
+				setCurrentViewAction(view);
+			}
 		}
 	};
 	const resolveLayerLabel = (layerId, _) => {
@@ -20583,7 +20573,6 @@ var SelectionPanelContainer = (props) => {
 };
 //#endregion
 //#region src/components/pbmg.tsx
-init_objectSpread2();
 /**
 * "Powered by MapGuide" logo
 * @param props
@@ -21650,7 +21639,6 @@ var QuickPlotContainer = (props) => {
 };
 //#endregion
 //#region src/api/mapguide-components.tsx
-init_objectSpread2();
 function registerMapGuideComponents() {
 	registerComponentFactory(DefaultComponentNames.Legend, (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LegendContainer, _objectSpread2({}, props)));
 	registerComponentFactory(DefaultComponentNames.SelectionPanel, (props) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectionPanelContainer, _objectSpread2({}, props)));
@@ -22080,7 +22068,6 @@ var OLFactory = class {
 };
 //#endregion
 //#region src/components/map-providers/base.ts
-init_objectSpread2();
 function isValidView(view) {
 	if (view.resolution) return !isNaN(view.x) && !isNaN(view.y) && !isNaN(view.scale) && !isNaN(view.resolution);
 	else return !isNaN(view.x) && !isNaN(view.y) && !isNaN(view.scale);
@@ -23567,7 +23554,6 @@ var SessionKeepAlive = class {
 //#endregion
 //#region src/api/layer-set-group-base.ts
 var import_lodash_debounce = /* @__PURE__ */ __toESM(require_lodash_debounce());
-init_objectSpread2();
 var HIGHLIGHT_STYLE = new Style({
 	stroke: new Stroke({
 		color: "#f00",
@@ -24158,7 +24144,6 @@ var UTFGridTrackingTooltip = class {
 };
 //#endregion
 //#region src/components/map-providers/mapguide.ts
-init_objectSpread2();
 function isMapGuideProviderState(arg) {
 	return typeof arg.agentUri == "string" && typeof arg.agentKind == "string";
 }
@@ -24847,7 +24832,6 @@ var Subscriber = (props) => {
 };
 //#endregion
 //#region src/containers/neo-map-viewer.tsx
-init_objectSpread2();
 function useLoadingCounters() {
 	const [loading, setLoading] = import_react.useState(0);
 	const [loaded, setLoaded] = import_react.useState(0);
@@ -25445,8 +25429,6 @@ function areStatesEqual(a, b) {
 }
 //#endregion
 //#region src/containers/app.tsx
-init_objectSpread2();
-init_objectWithoutProperties();
 var _excluded$1 = [
 	"resourceId",
 	"session",
@@ -25587,8 +25569,8 @@ var App = (props) => {
 				}
 				try {
 					const fetchResult = yield fetchInitDocument(args, fetchClient);
-					const { resourceId: _resourceId, session: _session, onInit: _onInit } = args;
-					yield dispatch(initAppFromDocument(fetchResult, _objectWithoutProperties(args, _excluded$1)));
+					const { resourceId: _resourceId, session: _session, onInit: _onInit } = args, initArgs = _objectWithoutProperties(args, _excluded$1);
+					yield dispatch(initAppFromDocument(fetchResult, initArgs));
 					if (onInit) onInit(viewer);
 				} catch (e) {
 					processAndDispatchInitError(e, false, dispatch, args);
@@ -25702,7 +25684,6 @@ var App = (props) => {
 };
 //#endregion
 //#region src/store/promise-middleware.ts
-init_objectSpread2();
 /**
 * Returns whether the provided value is a promise
 *
@@ -25776,7 +25757,6 @@ var logger = (store) => (next) => (action) => {
 };
 //#endregion
 //#region src/reducers/config.ts
-init_objectSpread2();
 var CONFIG_INITIAL_STATE = {
 	agentUri: void 0,
 	agentKind: "mapagent",
@@ -25934,7 +25914,6 @@ function configReducer(state = CONFIG_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/utils/immutable.ts
-init_objectSpread2();
 /**
 * Checks if a value is a plain object (not null, array, or primitive).
 *
@@ -26008,7 +25987,6 @@ function immutableUpdate(state, spec) {
 }
 //#endregion
 //#region src/reducers/toolbar.ts
-init_objectSpread2();
 function mergeFlyoutState(flyoutId, state, flyoutPayload, flyoutUpdateAction, closeOtherFlyouts = false, bSettingStates = false) {
 	const updateSpec = { flyouts: {} };
 	if (!state.flyouts[flyoutId] && bSettingStates) return state;
@@ -26088,7 +26066,6 @@ function toolbarReducer(state = TOOLBAR_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/reducers/taskpane.ts
-init_objectSpread2();
 var TASK_PANE_INITIAL_STATE = {
 	navIndex: -1,
 	navigation: [],
@@ -26182,8 +26159,6 @@ function lastAction(state = null, action) {
 }
 //#endregion
 //#region src/reducers/modal.ts
-init_objectSpread2();
-init_objectWithoutProperties();
 var _excluded = ["modal"];
 function tryRestoreModalSizeAndPosition(modal, prevModal) {
 	if (prevModal === null || prevModal === void 0 ? void 0 : prevModal.position) modal.position = prevModal.position;
@@ -26235,7 +26210,6 @@ function modalReducer(state = MODAL_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/reducers/init-error.ts
-init_objectSpread2();
 var INIT_ERROR_INITIAL_STATE = {
 	options: {},
 	error: void 0,
@@ -26264,7 +26238,6 @@ function initErrorReducer(state = INIT_ERROR_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/reducers/map-state.ts
-init_objectSpread2();
 var MAP_STATE_INITIAL_STATE = {};
 var MG_INITIAL_SUB_STATE = {
 	selectionSet: void 0,
@@ -26689,7 +26662,6 @@ function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/reducers/viewer.ts
-init_objectSpread2();
 var VIEWER_INITIAL_STATE = {
 	busyCount: 0,
 	size: void 0,
@@ -26732,7 +26704,6 @@ function viewerReducer(state = VIEWER_INITIAL_STATE, action) {
 }
 //#endregion
 //#region src/reducers/mouse.ts
-init_objectSpread2();
 var MOUSE_INITIAL_STATE = { coords: void 0 };
 function mouseReducer(state = MOUSE_INITIAL_STATE, action) {
 	switch (action.type) {
@@ -26762,7 +26733,6 @@ var rootReducer = {
 };
 //#endregion
 //#region src/store/configure-store.ts
-init_objectSpread2();
 /**
 * Configures and creates a Redux store with optional initial state and extra reducers.
 *
@@ -26787,7 +26757,6 @@ function configureStore(initialState, extraReducers) {
 }
 //#endregion
 //#region src/entries/application.tsx
-init_objectSpread2();
 /**
 * This is the entry point to the Application component
 *
@@ -26907,7 +26876,6 @@ var library_exports = /* @__PURE__ */ __exportAll({
 	updateUrl: () => updateUrl,
 	useElementContext: () => useElementContext
 });
-init_objectSpread2();
 addFormatDriver(new CsvFormatDriver(CSV_COLUMN_ALIASES));
 addFormatDriver(new FormatDriver("GeoJSON", new GeoJSON()));
 addFormatDriver(new FormatDriver("TopoJSON", new TopoJSON()));

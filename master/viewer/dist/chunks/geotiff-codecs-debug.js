@@ -1,6 +1,6 @@
 import { t as __commonJSMin } from "./rolldown-runtime-debug.js";
 //#region node_modules/pako/dist/pako.esm.mjs
-/*! pako 2.1.0 https://github.com/nodeca/pako @license (MIT AND Zlib) */
+/*! pako 2.2.0 https://github.com/nodeca/pako @license (MIT AND Zlib) */
 var Z_FIXED$1 = 4;
 var Z_BINARY = 0;
 var Z_TEXT = 1;
@@ -683,7 +683,7 @@ var constants$2 = {
 	Z_DEFLATED: 8
 };
 var { _tr_init, _tr_stored_block, _tr_flush_block, _tr_tally, _tr_align } = trees;
-var { Z_NO_FLUSH: Z_NO_FLUSH$2, Z_PARTIAL_FLUSH, Z_FULL_FLUSH: Z_FULL_FLUSH$1, Z_FINISH: Z_FINISH$3, Z_BLOCK: Z_BLOCK$1, Z_OK: Z_OK$3, Z_STREAM_END: Z_STREAM_END$3, Z_STREAM_ERROR: Z_STREAM_ERROR$2, Z_DATA_ERROR: Z_DATA_ERROR$2, Z_BUF_ERROR: Z_BUF_ERROR$1, Z_DEFAULT_COMPRESSION: Z_DEFAULT_COMPRESSION$1, Z_FILTERED, Z_HUFFMAN_ONLY, Z_RLE, Z_FIXED, Z_DEFAULT_STRATEGY: Z_DEFAULT_STRATEGY$1, Z_UNKNOWN, Z_DEFLATED: Z_DEFLATED$2 } = constants$2;
+var { Z_NO_FLUSH: Z_NO_FLUSH$2, Z_PARTIAL_FLUSH, Z_FULL_FLUSH: Z_FULL_FLUSH$1, Z_FINISH: Z_FINISH$3, Z_BLOCK: Z_BLOCK$1, Z_OK: Z_OK$3, Z_STREAM_END: Z_STREAM_END$3, Z_STREAM_ERROR: Z_STREAM_ERROR$2, Z_DATA_ERROR: Z_DATA_ERROR$2, Z_BUF_ERROR: Z_BUF_ERROR$2, Z_DEFAULT_COMPRESSION: Z_DEFAULT_COMPRESSION$1, Z_FILTERED, Z_HUFFMAN_ONLY, Z_RLE, Z_FIXED, Z_DEFAULT_STRATEGY: Z_DEFAULT_STRATEGY$1, Z_UNKNOWN, Z_DEFLATED: Z_DEFLATED$2 } = constants$2;
 var MAX_MEM_LEVEL = 9;
 var MAX_WBITS$1 = 15;
 var DEF_MEM_LEVEL = 8;
@@ -733,8 +733,19 @@ var slide_hash = (s) => {
 		s.prev[p] = m >= wsize ? m - wsize : 0;
 	} while (--n);
 };
-var HASH_ZLIB = (s, prev, data) => (prev << s.hash_shift ^ data) & s.hash_mask;
-var HASH = HASH_ZLIB;
+var HASH = (s, prev, data) => (prev << s.hash_shift ^ data) & s.hash_mask;
+var INSERT_STRING = (s, str) => {
+	let h;
+	if (s.legacy_hash) h = s.ins_h = HASH(s, s.ins_h, s.window[str + MIN_MATCH - 1]);
+	else {
+		const w = s.window;
+		const value = w[str] | w[str + 1] << 8 | w[str + 2] << 16 | w[str + 3] << 24;
+		h = s.ins_h = Math.imul(value, 66521) + 66521 >>> 16 & s.hash_mask;
+	}
+	const hash_head = s.prev[str & s.w_mask] = s.head[h];
+	s.head[h] = str;
+	return hash_head;
+};
 var flush_pending = (strm) => {
 	const s = strm.state;
 	let len = s.pending;
@@ -825,14 +836,22 @@ var fill_window = (s) => {
 		if (s.strm.avail_in === 0) break;
 		n = read_buf(s.strm, s.window, s.strstart + s.lookahead, more);
 		s.lookahead += n;
-		if (s.lookahead + s.insert >= MIN_MATCH) {
+		if (!s.legacy_hash) {
+			if (s.lookahead + s.insert > MIN_MATCH) {
+				str = s.strstart - s.insert;
+				while (s.insert) {
+					INSERT_STRING(s, str);
+					str++;
+					s.insert--;
+					if (s.lookahead + s.insert <= MIN_MATCH) break;
+				}
+			}
+		} else if (s.lookahead + s.insert >= MIN_MATCH) {
 			str = s.strstart - s.insert;
 			s.ins_h = s.window[str];
 			s.ins_h = HASH(s, s.ins_h, s.window[str + 1]);
 			while (s.insert) {
-				s.ins_h = HASH(s, s.ins_h, s.window[str + MIN_MATCH - 1]);
-				s.prev[str & s.w_mask] = s.head[s.ins_h];
-				s.head[s.ins_h] = str;
+				INSERT_STRING(s, str);
 				str++;
 				s.insert--;
 				if (s.lookahead + s.insert < MIN_MATCH) break;
@@ -938,12 +957,7 @@ var deflate_fast = (s, flush) => {
 			if (s.lookahead === 0) break;
 		}
 		hash_head = 0;
-		if (s.lookahead >= MIN_MATCH) {
-			/*** INSERT_STRING(s, s.strstart, hash_head); ***/
-			s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + MIN_MATCH - 1]);
-			hash_head = s.prev[s.strstart & s.w_mask] = s.head[s.ins_h];
-			s.head[s.ins_h] = s.strstart;
-		}
+		if (s.lookahead >= MIN_MATCH) hash_head = INSERT_STRING(s, s.strstart);
 		if (hash_head !== 0 && s.strstart - hash_head <= s.w_size - MIN_LOOKAHEAD) s.match_length = longest_match(s, hash_head);
 		if (s.match_length >= MIN_MATCH) {
 			/*** _tr_tally_dist(s, s.strstart - s.match_start,
@@ -954,17 +968,16 @@ var deflate_fast = (s, flush) => {
 				s.match_length--;
 				do {
 					s.strstart++;
-					/*** INSERT_STRING(s, s.strstart, hash_head); ***/
-					s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + MIN_MATCH - 1]);
-					hash_head = s.prev[s.strstart & s.w_mask] = s.head[s.ins_h];
-					s.head[s.ins_h] = s.strstart;
+					hash_head = INSERT_STRING(s, s.strstart);
 				} while (--s.match_length !== 0);
 				s.strstart++;
 			} else {
 				s.strstart += s.match_length;
 				s.match_length = 0;
-				s.ins_h = s.window[s.strstart];
-				s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + 1]);
+				if (s.legacy_hash) {
+					s.ins_h = s.window[s.strstart];
+					s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + 1]);
+				}
 			}
 		} else {
 			/*** _tr_tally_lit(s, s.window[s.strstart], bflush); ***/
@@ -1003,12 +1016,7 @@ var deflate_slow = (s, flush) => {
 			if (s.lookahead === 0) break;
 		}
 		hash_head = 0;
-		if (s.lookahead >= MIN_MATCH) {
-			/*** INSERT_STRING(s, s.strstart, hash_head); ***/
-			s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + MIN_MATCH - 1]);
-			hash_head = s.prev[s.strstart & s.w_mask] = s.head[s.ins_h];
-			s.head[s.ins_h] = s.strstart;
-		}
+		if (s.lookahead >= MIN_MATCH) hash_head = INSERT_STRING(s, s.strstart);
 		s.prev_length = s.match_length;
 		s.prev_match = s.match_start;
 		s.match_length = MIN_MATCH - 1;
@@ -1024,12 +1032,7 @@ var deflate_slow = (s, flush) => {
 			s.lookahead -= s.prev_length - 1;
 			s.prev_length -= 2;
 			do
-				if (++s.strstart <= max_insert) {
-					/*** INSERT_STRING(s, s.strstart, hash_head); ***/
-					s.ins_h = HASH(s, s.ins_h, s.window[s.strstart + MIN_MATCH - 1]);
-					hash_head = s.prev[s.strstart & s.w_mask] = s.head[s.ins_h];
-					s.head[s.ins_h] = s.strstart;
-				}
+				if (++s.strstart <= max_insert) hash_head = INSERT_STRING(s, s.strstart);
 			while (--s.prev_length !== 0);
 			s.match_available = 0;
 			s.match_length = MIN_MATCH - 1;
@@ -1218,6 +1221,7 @@ function DeflateState() {
 	this.prev = null;
 	this.head = null;
 	this.ins_h = 0;
+	this.legacy_hash = 0;
 	this.hash_size = 0;
 	this.hash_bits = 0;
 	this.hash_mask = 0;
@@ -1293,7 +1297,7 @@ var deflateSetHeader = (strm, head) => {
 	strm.state.gzhead = head;
 	return Z_OK$3;
 };
-var deflateInit2 = (strm, level, method, windowBits, memLevel, strategy) => {
+var deflateInit2 = (strm, level, method, windowBits, memLevel, strategy, legacyHash) => {
 	if (!strm) return Z_STREAM_ERROR$2;
 	let wrap = 1;
 	if (level === Z_DEFAULT_COMPRESSION$1) level = 6;
@@ -1315,7 +1319,9 @@ var deflateInit2 = (strm, level, method, windowBits, memLevel, strategy) => {
 	s.w_bits = windowBits;
 	s.w_size = 1 << s.w_bits;
 	s.w_mask = s.w_size - 1;
+	s.legacy_hash = legacyHash ? 1 : 0;
 	s.hash_bits = memLevel + 7;
+	if (!s.legacy_hash && s.hash_bits < 15) s.hash_bits = 15;
 	s.hash_size = 1 << s.hash_bits;
 	s.hash_mask = s.hash_size - 1;
 	s.hash_shift = ~~((s.hash_bits + MIN_MATCH - 1) / MIN_MATCH);
@@ -1338,7 +1344,7 @@ var deflateInit = (strm, level) => {
 var deflate$2 = (strm, flush) => {
 	if (deflateStateCheck(strm) || flush > Z_BLOCK$1 || flush < 0) return strm ? err(strm, Z_STREAM_ERROR$2) : Z_STREAM_ERROR$2;
 	const s = strm.state;
-	if (!strm.output || strm.avail_in !== 0 && !strm.input || s.status === FINISH_STATE && flush !== Z_FINISH$3) return err(strm, strm.avail_out === 0 ? Z_BUF_ERROR$1 : Z_STREAM_ERROR$2);
+	if (!strm.output || strm.avail_in !== 0 && !strm.input || s.status === FINISH_STATE && flush !== Z_FINISH$3) return err(strm, strm.avail_out === 0 ? Z_BUF_ERROR$2 : Z_STREAM_ERROR$2);
 	const old_flush = s.last_flush;
 	s.last_flush = flush;
 	if (s.pending !== 0) {
@@ -1347,8 +1353,8 @@ var deflate$2 = (strm, flush) => {
 			s.last_flush = -1;
 			return Z_OK$3;
 		}
-	} else if (strm.avail_in === 0 && rank(flush) <= rank(old_flush) && flush !== Z_FINISH$3) return err(strm, Z_BUF_ERROR$1);
-	if (s.status === FINISH_STATE && strm.avail_in !== 0) return err(strm, Z_BUF_ERROR$1);
+	} else if (strm.avail_in === 0 && rank(flush) <= rank(old_flush) && flush !== Z_FINISH$3) return err(strm, Z_BUF_ERROR$2);
+	if (s.status === FINISH_STATE && strm.avail_in !== 0) return err(strm, Z_BUF_ERROR$2);
 	if (s.status === INIT_STATE && s.wrap === 0) s.status = BUSY_STATE;
 	if (s.status === INIT_STATE) {
 		let header = Z_DEFLATED$2 + (s.w_bits - 8 << 4) << 8;
@@ -1584,9 +1590,7 @@ var deflateSetDictionary = (strm, dictionary) => {
 		let str = s.strstart;
 		let n = s.lookahead - (MIN_MATCH - 1);
 		do {
-			s.ins_h = HASH(s, s.ins_h, s.window[str + MIN_MATCH - 1]);
-			s.prev[str & s.w_mask] = s.head[s.ins_h];
-			s.head[s.ins_h] = str;
+			INSERT_STRING(s, str);
 			str++;
 		} while (--n);
 		s.strstart = str;
@@ -1652,7 +1656,7 @@ try {
 }
 var _utf8len = /* @__PURE__ */ new Uint8Array(256);
 for (let q = 0; q < 256; q++) _utf8len[q] = q >= 252 ? 6 : q >= 248 ? 5 : q >= 240 ? 4 : q >= 224 ? 3 : q >= 192 ? 2 : 1;
-_utf8len[254] = _utf8len[254] = 1;
+_utf8len[254] = _utf8len[255] = 1;
 var string2buf = (str) => {
 	if (typeof TextEncoder === "function" && TextEncoder.prototype.encode) return new TextEncoder().encode(str);
 	let buf, c, c2, m_pos, i, str_len = str.length, buf_len = 0;
@@ -1768,6 +1772,15 @@ function ZStream() {
 var zstream = ZStream;
 var toString$1 = Object.prototype.toString;
 var { Z_NO_FLUSH: Z_NO_FLUSH$1, Z_SYNC_FLUSH, Z_FULL_FLUSH, Z_FINISH: Z_FINISH$2, Z_OK: Z_OK$2, Z_STREAM_END: Z_STREAM_END$2, Z_DEFAULT_COMPRESSION, Z_DEFAULT_STRATEGY, Z_DEFLATED: Z_DEFLATED$1 } = constants$2;
+var defaultOptions$1 = {
+	level: Z_DEFAULT_COMPRESSION,
+	method: Z_DEFLATED$1,
+	chunkSize: 16384,
+	windowBits: 15,
+	memLevel: 8,
+	strategy: Z_DEFAULT_STRATEGY,
+	legacyHash: true
+};
 /**
 * class Deflate
 *
@@ -1811,6 +1824,10 @@ var { Z_NO_FLUSH: Z_NO_FLUSH$1, Z_SYNC_FLUSH, Z_FULL_FLUSH, Z_FINISH: Z_FINISH$2
 * [http://zlib.net/manual.html#Advanced](http://zlib.net/manual.html#Advanced)
 * for more information on these.
 *
+* - `legacyHash` (Boolean) - use the classic zlib hash (default), which matches
+*   canonical zlib output byte-for-byte. Set to `false` to use the faster
+*   ANZAC++ hash, which matches recent (chromium) node.js output instead.
+*
 * Additional options, for internal needs:
 *
 * - `chunkSize` - size of generated data chunks (16K by default)
@@ -1843,14 +1860,7 @@ var { Z_NO_FLUSH: Z_NO_FLUSH$1, Z_SYNC_FLUSH, Z_FULL_FLUSH, Z_FINISH: Z_FINISH$2
 * ```
 **/
 function Deflate$1(options) {
-	this.options = common.assign({
-		level: Z_DEFAULT_COMPRESSION,
-		method: Z_DEFLATED$1,
-		chunkSize: 16384,
-		windowBits: 15,
-		memLevel: 8,
-		strategy: Z_DEFAULT_STRATEGY
-	}, options || {});
+	this.options = common.assign({}, defaultOptions$1, options || {});
 	let opt = this.options;
 	if (opt.raw && opt.windowBits > 0) opt.windowBits = -opt.windowBits;
 	else if (opt.gzip && opt.windowBits > 0 && opt.windowBits < 16) opt.windowBits += 16;
@@ -1860,7 +1870,7 @@ function Deflate$1(options) {
 	this.chunks = [];
 	this.strm = new zstream();
 	this.strm.avail_out = 0;
-	let status = deflate_1$2.deflateInit2(this.strm, opt.level, opt.method, opt.windowBits, opt.memLevel, opt.strategy);
+	let status = deflate_1$2.deflateInit2(this.strm, opt.level, opt.method, opt.windowBits, opt.memLevel, opt.strategy, opt.legacyHash);
 	if (status !== Z_OK$2) throw new Error(messages[status]);
 	if (opt.header) deflate_1$2.deflateSetHeader(this.strm, opt.header);
 	if (opt.dictionary) {
@@ -2316,8 +2326,8 @@ var lext = new Uint8Array([
 	21,
 	21,
 	16,
-	72,
-	78
+	199,
+	75
 ]);
 var dbase = new Uint16Array([
 	1,
@@ -2509,7 +2519,7 @@ var inftrees = inflate_table;
 var CODES = 0;
 var LENS = 1;
 var DISTS = 2;
-var { Z_FINISH: Z_FINISH$1, Z_BLOCK, Z_TREES, Z_OK: Z_OK$1, Z_STREAM_END: Z_STREAM_END$1, Z_NEED_DICT: Z_NEED_DICT$1, Z_STREAM_ERROR: Z_STREAM_ERROR$1, Z_DATA_ERROR: Z_DATA_ERROR$1, Z_MEM_ERROR: Z_MEM_ERROR$1, Z_BUF_ERROR, Z_DEFLATED } = constants$2;
+var { Z_FINISH: Z_FINISH$1, Z_BLOCK, Z_TREES, Z_OK: Z_OK$1, Z_STREAM_END: Z_STREAM_END$1, Z_NEED_DICT: Z_NEED_DICT$1, Z_STREAM_ERROR: Z_STREAM_ERROR$1, Z_DATA_ERROR: Z_DATA_ERROR$1, Z_MEM_ERROR: Z_MEM_ERROR$1, Z_BUF_ERROR: Z_BUF_ERROR$1, Z_DEFLATED } = constants$2;
 var HEAD = 16180;
 var FLAGS = 16181;
 var TIME = 16182;
@@ -2652,7 +2662,8 @@ var inflateInit = (strm) => {
 	return inflateInit2(strm, DEF_WBITS);
 };
 var virgin = true;
-var lenfix, distfix;
+var lenfix;
+var distfix;
 var fixedtables = (state) => {
 	if (virgin) {
 		lenfix = /* @__PURE__ */ new Int32Array(512);
@@ -2676,11 +2687,11 @@ var fixedtables = (state) => {
 var updatewindow = (strm, src, end, copy) => {
 	let dist;
 	const state = strm.state;
-	if (state.window === null) {
+	if (state.window === null) state.window = new Uint8Array(1 << state.wbits);
+	if (state.wsize === 0) {
 		state.wsize = 1 << state.wbits;
 		state.wnext = 0;
 		state.whave = 0;
-		state.window = new Uint8Array(state.wsize);
 	}
 	if (copy >= state.wsize) {
 		state.window.set(src.subarray(end - state.wsize, end), 0);
@@ -3462,7 +3473,7 @@ var inflate$2 = (strm, flush) => {
 	state.total += _out;
 	if (state.wrap & 4 && _out) strm.adler = state.check = state.flags ? crc32_1(state.check, output, _out, strm.next_out - _out) : adler32_1(state.check, output, _out, strm.next_out - _out);
 	strm.data_type = state.bits + (state.last ? 64 : 0) + (state.mode === TYPE ? 128 : 0) + (state.mode === LEN_ || state.mode === COPY_ ? 256 : 0);
-	if ((_in === 0 && _out === 0 || flush === Z_FINISH$1) && ret === Z_OK$1) ret = Z_BUF_ERROR;
+	if ((_in === 0 && _out === 0 || flush === Z_FINISH$1) && ret === Z_OK$1) ret = Z_BUF_ERROR$1;
 	return ret;
 };
 var inflateEnd = (strm) => {
@@ -3527,7 +3538,12 @@ function GZheader() {
 }
 var gzheader = GZheader;
 var toString = Object.prototype.toString;
-var { Z_NO_FLUSH, Z_FINISH, Z_OK, Z_STREAM_END, Z_NEED_DICT, Z_STREAM_ERROR, Z_DATA_ERROR, Z_MEM_ERROR } = constants$2;
+var { Z_NO_FLUSH, Z_FINISH, Z_OK, Z_STREAM_END, Z_NEED_DICT, Z_STREAM_ERROR, Z_DATA_ERROR, Z_MEM_ERROR, Z_BUF_ERROR } = constants$2;
+var defaultOptions = {
+	chunkSize: 1024 * 64,
+	windowBits: 15,
+	to: ""
+};
 /**
 * class Inflate
 *
@@ -3595,11 +3611,7 @@ var { Z_NO_FLUSH, Z_FINISH, Z_OK, Z_STREAM_END, Z_NEED_DICT, Z_STREAM_ERROR, Z_D
 * ```
 **/
 function Inflate$1(options) {
-	this.options = common.assign({
-		chunkSize: 1024 * 64,
-		windowBits: 15,
-		to: ""
-	}, options || {});
+	this.options = common.assign({}, defaultOptions, options || {});
 	const opt = this.options;
 	if (opt.raw && opt.windowBits >= 0 && opt.windowBits < 16) {
 		opt.windowBits = -opt.windowBits;
@@ -3677,7 +3689,7 @@ Inflate$1.prototype.push = function(data, flush_mode) {
 			if (status === Z_OK) status = inflate_1$2.inflate(strm, _flush_mode);
 			else if (status === Z_DATA_ERROR) status = Z_NEED_DICT;
 		}
-		while (strm.avail_in > 0 && status === Z_STREAM_END && strm.state.wrap > 0 && data[strm.next_in] !== 0) {
+		while (strm.avail_in > 0 && status === Z_STREAM_END && strm.state.wrap & 2 && strm.state.flags !== 0 && strm.input[strm.next_in] !== 0) {
 			inflate_1$2.inflateReset(strm);
 			status = inflate_1$2.inflate(strm, _flush_mode);
 		}
@@ -3692,7 +3704,7 @@ Inflate$1.prototype.push = function(data, flush_mode) {
 		}
 		last_avail_out = strm.avail_out;
 		if (strm.next_out) {
-			if (strm.avail_out === 0 || status === Z_STREAM_END) if (this.options.to === "string") {
+			if (strm.avail_out === 0 || status === Z_STREAM_END || _flush_mode > 0) if (this.options.to === "string") {
 				let next_out_utf8 = strings.utf8border(strm.output, strm.next_out);
 				let tail = strm.next_out - next_out_utf8;
 				let utf8str = strings.buf2string(strm.output, next_out_utf8);
@@ -3700,16 +3712,28 @@ Inflate$1.prototype.push = function(data, flush_mode) {
 				strm.avail_out = chunkSize - tail;
 				if (tail) strm.output.set(strm.output.subarray(next_out_utf8, next_out_utf8 + tail), 0);
 				this.onData(utf8str);
-			} else this.onData(strm.output.length === strm.next_out ? strm.output : strm.output.subarray(0, strm.next_out));
+			} else {
+				this.onData(strm.output.length === strm.next_out ? strm.output : strm.output.subarray(0, strm.next_out));
+				strm.avail_out = 0;
+				strm.next_out = 0;
+			}
 		}
-		if (status === Z_OK && last_avail_out === 0) continue;
+		if ((status === Z_OK || status === Z_BUF_ERROR) && last_avail_out === 0) continue;
 		if (status === Z_STREAM_END) {
 			status = inflate_1$2.inflateEnd(this.strm);
 			this.onEnd(status);
 			this.ended = true;
 			return true;
 		}
-		if (strm.avail_in === 0) break;
+		if (strm.avail_in === 0) {
+			if (_flush_mode === Z_FINISH) {
+				status = inflate_1$2.inflateEnd(this.strm);
+				this.onEnd(status === Z_OK ? Z_BUF_ERROR : status);
+				this.ended = true;
+				return false;
+			}
+			break;
+		}
 	}
 	return true;
 };
@@ -3781,7 +3805,7 @@ Inflate$1.prototype.onEnd = function(status) {
 **/
 function inflate$1(input, options) {
 	const inflator = new Inflate$1(options);
-	inflator.push(input);
+	inflator.push(input, true);
 	if (inflator.err) throw inflator.msg || messages[inflator.err];
 	return inflator.result;
 }

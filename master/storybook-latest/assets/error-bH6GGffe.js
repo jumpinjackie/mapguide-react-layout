@@ -1,0 +1,1 @@
+var e=class extends Error{constructor(e){super(e),this.message=e,this.name=`MgError`,this.message=e,this.stack=Error().stack}};function t(e){return e.message.indexOf(`MgSessionExpiredException`)>=0}export{t as n,e as t};

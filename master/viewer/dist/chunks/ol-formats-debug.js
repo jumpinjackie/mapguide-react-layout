@@ -1,4 +1,4 @@
-import { $n as createOrUpdateFromFlatCoordinates, At as memoizeOne, B as WORKER_OFFSCREEN_CANVAS, Bt as EventType_default, Er as init_objectSpread2, F as IMAGE_DECODE, Gt as abstract, Ht as listenOnce, In as squaredDistance, It as extend, Kt as getUid, Ln as squaredSegmentDistance, Mt as ascending, N as CREATE_IMAGE_BITMAP, Nn as lerp, Nt as binarySearch, On as compareVersions, Pn as modulo, Q as toSize, Qn as createOrUpdateFromCoordinate, Qt as equivalent, Rn as toFixed, St as BaseObject, Tr as _objectSpread2, Tt as Target, Ut as unlistenByKey, Vt as listen, Wn as closestSquaredDistanceXY, Yn as createEmpty, Zn as createOrUpdateEmpty, _r as returnOrUpdate, b as getSharedCanvasContext2D, et as intersectsLineString, gr as isEmpty, hn as Projection, it as forEach, jn as clamp, jt as toPromise, kn as padNumber, lr as getHeight, lt as compose, mn as isEmpty$1, nn as get$1, nt as intersectsLinearRingArray, ot as linearRingsContainsXY, pn as clear, qn as containsXY, rn as getTransform, rt as intersectsLinearRingMultiArray, sr as getCenter, st as linearRingssContainsXY, tr as extend$1, tt as intersectsLineStringArray, ut as create, v as createCanvasContext2D, wr as _asyncToGenerator, xt as assert, zn as toRadians } from "./geotiff-debug.js";
+import { An as clamp, At as memoizeOne, B as WORKER_OFFSCREEN_CANVAS, Bt as EventType_default, Cr as _asyncToGenerator, Dn as compareVersions, F as IMAGE_DECODE, Fn as squaredDistance, Gt as abstract, Ht as listenOnce, In as squaredSegmentDistance, It as extend, Jn as createEmpty, Kn as containsXY, Kt as getUid, Ln as toFixed, Mn as lerp, Mt as ascending, N as CREATE_IMAGE_BITMAP, Nn as modulo, Nt as binarySearch, On as padNumber, Q as toSize, Qn as createOrUpdateFromFlatCoordinates, Rn as toRadians, St as BaseObject, Tt as Target, Un as closestSquaredDistanceXY, Ut as unlistenByKey, Vt as listen, Xn as createOrUpdateEmpty, Zn as createOrUpdateFromCoordinate, Zt as equivalent, b as getSharedCanvasContext2D, cr as getHeight, er as extend$1, et as intersectsLineString, fn as clear, gr as returnOrUpdate, hr as isEmpty, it as forEach, jt as toPromise, lt as compose, mn as Projection, nn as getTransform, nt as intersectsLinearRingArray, or as getCenter, ot as linearRingsContainsXY, pn as isEmpty$1, rt as intersectsLinearRingMultiArray, st as linearRingssContainsXY, tn as get$1, tt as intersectsLineStringArray, ut as create, v as createCanvasContext2D, wr as _objectSpread2, xt as assert } from "./geotiff-debug.js";
 import { n as Pbf } from "./ol-deps-debug.js";
 //#region node_modules/ol/geom/flat/transform.js
 /**
@@ -2365,7 +2365,6 @@ function makeRegular(polygon, center, radius, angle) {
 }
 //#endregion
 //#region node_modules/ol/ImageState.js
-init_objectSpread2();
 /**
 * @module ol/ImageState
 */
@@ -12513,7 +12512,6 @@ function readHref(node) {
 /**
 * @module ol/format/WMSCapabilities
 */
-init_objectSpread2();
 /**
 * @const
 * @type {Array<null|string>}
@@ -12899,13 +12897,19 @@ function readLayer(node, objectStack) {
 	if (v13) addKeys.push("CRS");
 	else addKeys.push("SRS", "Dimension");
 	addKeys.forEach(function(key) {
-		if (key in parentLayerObject) layerObject[key] = (layerObject[key] || []).concat(parentLayerObject[key]);
+		if (key in parentLayerObject) {
+			const childValue = layerObject[key] || [];
+			layerObject[key] = childValue.concat(parentLayerObject[key]);
+		}
 	});
 	const replaceKeys = ["BoundingBox", "Attribution"];
 	if (v13) replaceKeys.push("Dimension", "EX_GeographicBoundingBox", "MinScaleDenominator", "MaxScaleDenominator");
 	else replaceKeys.push("LatLonBoundingBox", "ScaleHint", "Extent");
 	replaceKeys.forEach(function(key) {
-		if (!(key in layerObject)) layerObject[key] = parentLayerObject[key];
+		if (!(key in layerObject)) {
+			const parentValue = parentLayerObject[key];
+			layerObject[key] = parentValue;
+		}
 	});
 	return layerObject;
 }

@@ -1,4 +1,5 @@
-import { a as __toESM, r as __exportAll, t as __commonJSMin } from "./rolldown-runtime-debug.js";
+import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./rolldown-runtime-debug.js";
+import { n as _typeof$1 } from "./jspdf-debug.js";
 //#region node_modules/core-js/internals/global-this.js
 var require_global_this = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var check = function(it) {
@@ -181,7 +182,8 @@ var require_environment_v8_version = /* @__PURE__ */ __commonJSMin(((exports, mo
 	var Deno = globalThis.Deno;
 	var versions = process && process.versions || Deno && Deno.version;
 	var v8 = versions && versions.v8;
-	var match, version;
+	var match;
+	var version;
 	if (v8) {
 		match = v8.split(".");
 		version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
@@ -588,7 +590,9 @@ var require_internal_state = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 	var OBJECT_ALREADY_INITIALIZED = "Object already initialized";
 	var TypeError = globalThis.TypeError;
 	var WeakMap = globalThis.WeakMap;
-	var set, get, has;
+	var set;
+	var get;
+	var has;
 	var enforce = function(it) {
 		return has(it) ? get(it) : set(it, {});
 	};
@@ -1240,7 +1244,10 @@ var require_task = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var counter = 0;
 	var queue = {};
 	var ONREADYSTATECHANGE = "onreadystatechange";
-	var $location, defer, channel, port;
+	var $location;
+	var defer;
+	var channel;
+	var port;
 	fails(function() {
 		$location = globalThis.location;
 	});
@@ -1374,7 +1381,11 @@ var require_microtask = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var process = globalThis.process;
 	var Promise = globalThis.Promise;
 	var microtask = safeGetBuiltIn("queueMicrotask");
-	var notify, toggle, node, promise, then;
+	var notify;
+	var toggle;
+	var node;
+	var promise;
+	var then;
 	if (!microtask) {
 		var queue = new Queue();
 		var flush = function() {
@@ -1557,7 +1568,10 @@ var require_es_promise_constructor = /* @__PURE__ */ __commonJSMin((() => {
 	var REJECTED = 2;
 	var HANDLED = 1;
 	var UNHANDLED = 2;
-	var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
+	var Internal;
+	var OwnPromiseCapability;
+	var PromiseWrapper;
+	var nativeThen;
 	var isThenable = function(it) {
 		var then;
 		return isObject(it) && isCallable(then = it.then) ? then : false;
@@ -2853,7 +2867,9 @@ var require_iterators_core = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 	var IS_PURE = require_is_pure();
 	var ITERATOR = wellKnownSymbol("iterator");
 	var BUGGY_SAFARI_ITERATORS = false;
-	var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
+	var IteratorPrototype;
+	var PrototypeOfArrayIteratorPrototype;
+	var arrayIterator;
 	if ([].keys) {
 		arrayIterator = [].keys();
 		if (!("next" in arrayIterator)) BUGGY_SAFARI_ITERATORS = true;
@@ -3120,16 +3136,6 @@ require_es_string_replace();
 require_es_string_starts_with();
 require_es_array_iterator();
 require_web_dom_collections_iterator();
-function _typeof$1(o) {
-	"@babel/helpers - typeof";
-	return _typeof$1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
-		return typeof o;
-	} : function(o) {
-		return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-	}, _typeof$1(o);
-}
-//#endregion
-//#region node_modules/@babel/runtime/helpers/esm/toPrimitive.js
 function toPrimitive(t, r) {
 	if ("object" != _typeof$1(t) || !t) return t;
 	var e = t[Symbol.toPrimitive];
@@ -3371,7 +3377,12 @@ var require_performance_now = /* @__PURE__ */ __commonJSMin(((exports, module) =
 //#endregion
 //#region node_modules/raf/index.js
 var require_raf = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	var now = require_performance_now(), root = typeof window === "undefined" ? global : window, vendors = ["moz", "webkit"], suffix = "AnimationFrame", raf = root["request" + suffix], caf = root["cancel" + suffix] || root["cancelRequest" + suffix];
+	var now = require_performance_now();
+	var root = typeof window === "undefined" ? global : window;
+	var vendors = ["moz", "webkit"];
+	var suffix = "AnimationFrame";
+	var raf = root["request" + suffix];
+	var caf = root["cancel" + suffix] || root["cancelRequest" + suffix];
 	for (var i = 0; !raf && i < vendors.length; i++) {
 		raf = root[vendors[i] + "Request" + suffix];
 		caf = root[vendors[i] + "Cancel" + suffix] || root[vendors[i] + "CancelRequest" + suffix];
@@ -3877,7 +3888,8 @@ function s(t, r, e) {
 	var n = Math.sqrt(i);
 	return [[(t * e + r * n) / (t * t + r * r), (r * e - t * n) / (t * t + r * r)], [(t * e - r * n) / (t * t + r * r), (r * e + t * n) / (t * t + r * r)]];
 }
-var u, h = Math.PI / 180;
+var u;
+var h = Math.PI / 180;
 function c$1(t, r, e) {
 	return (1 - e) * t + e * r;
 }
@@ -4056,7 +4068,8 @@ function m$1(t, r, e, i, a) {
 		return c.minX = Infinity, c.maxX = -Infinity, c.minY = Infinity, c.maxY = -Infinity, c;
 	};
 })(u || (u = {}));
-var O, l = function() {
+var O;
+var l = function() {
 	function t() {}
 	return t.prototype.round = function(t) {
 		return this.transform(u.ROUND(t));
@@ -4093,11 +4106,14 @@ var O, l = function() {
 	}, t.prototype.annotateArcs = function() {
 		return this.transform(u.ANNOTATE_ARCS());
 	}, t;
-}(), T = function(t) {
+}();
+var T = function(t) {
 	return " " === t || "	" === t || "\r" === t || "\n" === t;
-}, v = function(t) {
+};
+var v = function(t) {
 	return "0".charCodeAt(0) <= t.charCodeAt(0) && t.charCodeAt(0) <= "9".charCodeAt(0);
-}, f = function(t) {
+};
+var f = function(t) {
 	function e() {
 		var r = t.call(this) || this;
 		return r.curNumber = "", r.curCommandType = -1, r.curCommandRelative = !1, r.canParseCommandOrComma = !0, r.curNumberHasExp = !1, r.curNumberHasExpDigits = !1, r.curNumberHasDecimal = !1, r.curArgs = [], r;
@@ -4205,7 +4221,8 @@ var O, l = function() {
 			return e;
 		} } });
 	}, e;
-}(l), _ = function(t) {
+}(l);
+var _ = function(t) {
 	function i(r) {
 		var e = t.call(this) || this;
 		return e.commands = "string" == typeof r ? i.parse(r) : r, e;
@@ -4227,7 +4244,8 @@ var O, l = function() {
 		var r = new f(), e = [];
 		return r.parse(t, e), r.finish(e), e;
 	}, i.CLOSE_PATH = 1, i.MOVE_TO = 2, i.HORIZ_LINE_TO = 4, i.VERT_LINE_TO = 8, i.LINE_TO = 16, i.CURVE_TO = 32, i.SMOOTH_CURVE_TO = 64, i.QUAD_TO = 128, i.SMOOTH_QUAD_TO = 256, i.ARC = 512, i.LINE_COMMANDS = i.LINE_TO | i.HORIZ_LINE_TO | i.VERT_LINE_TO, i.DRAWING_COMMANDS = i.HORIZ_LINE_TO | i.VERT_LINE_TO | i.LINE_TO | i.CURVE_TO | i.SMOOTH_CURVE_TO | i.QUAD_TO | i.SMOOTH_QUAD_TO | i.ARC, i;
-}(l), N = ((O = {})[_.MOVE_TO] = 2, O[_.LINE_TO] = 2, O[_.HORIZ_LINE_TO] = 1, O[_.VERT_LINE_TO] = 1, O[_.CLOSE_PATH] = 0, O[_.QUAD_TO] = 4, O[_.SMOOTH_QUAD_TO] = 2, O[_.CURVE_TO] = 6, O[_.SMOOTH_CURVE_TO] = 4, O[_.ARC] = 7, O);
+}(l);
+var N = ((O = {})[_.MOVE_TO] = 2, O[_.LINE_TO] = 2, O[_.HORIZ_LINE_TO] = 1, O[_.VERT_LINE_TO] = 1, O[_.CLOSE_PATH] = 0, O[_.QUAD_TO] = 4, O[_.SMOOTH_QUAD_TO] = 2, O[_.CURVE_TO] = 6, O[_.SMOOTH_CURVE_TO] = 4, O[_.ARC] = 7, O);
 (/* @__PURE__ */ __commonJSMin((() => {
 	var PROPER_FUNCTION_NAME = require_function_name().PROPER;
 	var defineBuiltIn = require_define_built_in();
@@ -9215,7 +9233,8 @@ var Canvg = class Canvg {
 		var _arguments = arguments;
 		return _asyncToGenerator(function* () {
 			var options = _arguments.length > 2 && _arguments[2] !== void 0 ? _arguments[2] : {};
-			return new Canvg(ctx, yield new Parser(options).parse(svg), options);
+			var svgDocument = yield new Parser(options).parse(svg);
+			return new Canvg(ctx, svgDocument, options);
 		})();
 	}
 	/**
@@ -9227,7 +9246,8 @@ var Canvg = class Canvg {
 	*/
 	static fromString(ctx, svg) {
 		var options = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
-		return new Canvg(ctx, new Parser(options).parseFromString(svg), options);
+		var svgDocument = new Parser(options).parseFromString(svg);
+		return new Canvg(ctx, svgDocument, options);
 	}
 	/**
 	* Create new Canvg instance with inherited options.

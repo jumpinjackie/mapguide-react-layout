@@ -13295,7 +13295,7 @@ setBatch(import_react_dom.unstable_batchedUpdates);
 //#endregion
 //#region node_modules/dompurify/dist/purify.es.mjs
 var purify_es_exports = /* @__PURE__ */ __exportAll({ default: () => purify });
-/*! @license DOMPurify 3.4.11 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.11/LICENSE */
+/*! @license DOMPurify 3.4.12 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.12/LICENSE */
 function _arrayLikeToArray(r, a) {
 	(null == a || a > r.length) && (a = r.length);
 	for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
@@ -13934,6 +13934,7 @@ var svg = freeze([
 	"direction",
 	"display",
 	"divisor",
+	"dominant-baseline",
 	"dur",
 	"edgemode",
 	"elevation",
@@ -14061,6 +14062,7 @@ var svg = freeze([
 	"transform-origin",
 	"text-anchor",
 	"text-decoration",
+	"text-orientation",
 	"text-rendering",
 	"textlength",
 	"type",
@@ -14243,7 +14245,7 @@ var _resolveSetOption = function _resolveSetOption(cfg, key, fallback, options) 
 function createDOMPurify() {
 	let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
 	const DOMPurify = (root) => createDOMPurify(root);
-	DOMPurify.version = "3.4.11";
+	DOMPurify.version = "3.4.12";
 	DOMPurify.removed = [];
 	if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
 		DOMPurify.isSupported = false;
@@ -14710,6 +14712,7 @@ function createDOMPurify() {
 	* @param root the in-place root to empty
 	*/
 	const _neutralizeRoot = function _neutralizeRoot(root) {
+		_neutralizeSubtree(root);
 		const childNodes = getChildNodes(root);
 		if (childNodes) {
 			const snapshot = [];
@@ -14806,6 +14809,65 @@ function createDOMPurify() {
 		while (stack.length > 0) {
 			const node = stack.pop();
 			if ((getNodeType ? getNodeType(node) : node.nodeType) === NODE_TYPE.element) _stripDisallowedAttributes(node);
+			const childNodes = getChildNodes(node);
+			if (childNodes) for (let i = childNodes.length - 1; i >= 0; --i) stack.push(childNodes[i]);
+		}
+	};
+	/**
+	* _neutralizePatchLinkage
+	*
+	* IN_PLACE entry pre-pass (declarative-partial-updates / streaming
+	* hardening, https://github.com/WICG/declarative-partial-updates).
+	*
+	* The main walk strips patch linkage (`for`/`patchsrc`) and removes range
+	* markers (PIs / markup comments) node-by-node, in document order, AS it
+	* reaches each node. On a live in-place root that leaves a window: from the
+	* moment the root is connected until the walk arrives at a given node, that
+	* node's linkage is live. A patch applied on connection/stream can fire as
+	* a microtask during the walk and inject or teleport an unsanitized DOM
+	* range into a region the iterator has already passed and will not revisit,
+	* so the post-return "tree is sanitized" contract is violated. Sweep the
+	* whole tree once up front and sever every linkage before the walk begins,
+	* closing that window.
+	*
+	* This CANNOT undo a patch that already fired before sanitize ran — that is
+	* the irreducible "do not IN_PLACE a live-connected attacker tree" caveat —
+	* but it closes everything from sanitize-start onward. Gated on SAFE_FOR_XML
+	* to group with the rest of the declarative-partial-updates handling and
+	* stay overridable, consistent with the codebase.
+	*
+	* Clobber-safe traversal (cached childNodes getter); per-node try/catch so a
+	* clobbered root cannot defeat the sweep of its non-clobbered descendants.
+	*
+	* NOTE (pending real-Chrome confirmation, see test/declarative-patch-probe
+	* .html Q1): this mirrors the existing policy of keeping `for` on
+	* <label>/<output>. If the shipping feature can drive a patch through a
+	* surviving `for`-on-label/output + `id` pair, this pre-pass and the
+	* attribute check at _isBasicCustomElement's caller must additionally drop
+	* that pair on the IN_PLACE path. Left as-is until the taxonomy is verified.
+	*
+	* @param root the in-place root to sweep
+	*/
+	const _neutralizePatchLinkage = function _neutralizePatchLinkage(root) {
+		if (!SAFE_FOR_XML) return;
+		const stack = [root];
+		while (stack.length > 0) {
+			const node = stack.pop();
+			const nodeType = getNodeType ? getNodeType(node) : node.nodeType;
+			if (nodeType === NODE_TYPE.processingInstruction || nodeType === NODE_TYPE.comment && regExpTest(COMMENT_MARKUP_PROBE, node.data)) {
+				try {
+					remove(node);
+				} catch (_) {}
+				continue;
+			}
+			if (nodeType === NODE_TYPE.element) {
+				const element = node;
+				const lcTag = transformCaseFunc(getNodeName ? getNodeName(node) : node.nodeName);
+				try {
+					if (element.hasAttribute && element.hasAttribute("patchsrc")) element.removeAttribute("patchsrc");
+					if (element.hasAttribute && element.hasAttribute("for") && lcTag !== "label" && lcTag !== "output") element.removeAttribute("for");
+				} catch (_) {}
+			}
 			const childNodes = getChildNodes(node);
 			if (childNodes) for (let i = childNodes.length - 1; i >= 0; --i) stack.push(childNodes[i]);
 		}
@@ -14978,9 +15040,15 @@ function createDOMPurify() {
 	/**
 	* Handle a node whose tag is forbidden or not allowlisted: keep
 	* allowed custom elements (false return exits _sanitizeElements
-	* early - namespace/fallback checks and the afterSanitizeElements
-	* hook are intentionally skipped for kept custom elements), else
-	* hoist content per KEEP_CONTENT and remove.
+	* early - the namespace and fallback-tag removal checks are
+	* intentionally skipped for kept custom elements), else hoist
+	* content per KEEP_CONTENT and remove.
+	*
+	* A kept custom element is the ONLY case in which this function
+	* returns false, so the caller uses that return value to run the
+	* afterSanitizeElements hook on the kept element and keep the
+	* element-hook lifecycle consistent with normal allowlisted
+	* elements (GHSA-c2j3-45gr-mqc4).
 	*
 	* @param currentNode the disallowed node
 	* @param tagName the node's transformCaseFunc'd tag name
@@ -15014,8 +15082,9 @@ function createDOMPurify() {
 	* @param currentNode to check for permission to exist
 	* @return true if node was killed, false if left alive
 	*/
-	const _sanitizeElements = function _sanitizeElements(currentNode) {
+	const _sanitizeElements = function _sanitizeElements(currentNode, root) {
 		_executeHooks(hooks.beforeSanitizeElements, currentNode, null);
+		if (currentNode !== root && getParentNode(currentNode) === null) return true;
 		if (_isClobbered(currentNode)) {
 			_forceRemove(currentNode);
 			return true;
@@ -15025,11 +15094,16 @@ function createDOMPurify() {
 			tagName,
 			allowedTags: ALLOWED_TAGS
 		});
+		if (currentNode !== root && getParentNode(currentNode) === null) return true;
 		if (_isUnsafeNode(currentNode, tagName)) {
 			_forceRemove(currentNode);
 			return true;
 		}
-		if (FORBID_TAGS[tagName] || !(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && !ALLOWED_TAGS[tagName]) return _sanitizeDisallowedNode(currentNode, tagName);
+		if (FORBID_TAGS[tagName] || !(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && !ALLOWED_TAGS[tagName]) {
+			const removed = _sanitizeDisallowedNode(currentNode, tagName);
+			if (removed === false) _executeHooks(hooks.afterSanitizeElements, currentNode, null);
+			return removed;
+		}
 		if ((getNodeType ? getNodeType(currentNode) : currentNode.nodeType) === NODE_TYPE.element && !_checkValidNamespace(currentNode)) {
 			_forceRemove(currentNode);
 			return true;
@@ -15058,6 +15132,8 @@ function createDOMPurify() {
 	*/
 	const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
 		if (FORBID_ATTR[lcName]) return false;
+		if (SAFE_FOR_XML && lcName === "patchsrc") return false;
+		if (SAFE_FOR_XML && lcName === "for" && lcTag !== "label" && lcTag !== "output") return false;
 		if (SANITIZE_DOM && (lcName === "id" || lcName === "name") && (value in document || value in formElement)) return false;
 		const nameIsPermitted = ALLOWED_ATTR[lcName] || EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag);
 		if (ALLOW_DATA_ATTR && regExpTest(DATA_ATTR$1, lcName));
@@ -15211,7 +15287,7 @@ function createDOMPurify() {
 		_executeHooks(hooks.beforeSanitizeShadowDOM, fragment, null);
 		while (shadowNode = shadowIterator.nextNode()) {
 			_executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
-			_sanitizeElements(shadowNode);
+			_sanitizeElements(shadowNode, fragment);
 			_sanitizeAttributes(shadowNode);
 			if (_isDocumentFragment(shadowNode.content)) _sanitizeShadowDOM2(shadowNode.content);
 			if ((getNodeType ? getNodeType(shadowNode) : shadowNode.nodeType) === NODE_TYPE.element) {
@@ -15305,12 +15381,19 @@ function createDOMPurify() {
 		DOMPurify.removed = [];
 		const inPlace = IN_PLACE && typeof dirty !== "string" && _isNode(dirty);
 		if (inPlace) {
+			_neutralizePatchLinkage(dirty);
 			const nn = getNodeName ? getNodeName(dirty) : dirty.nodeName;
 			if (typeof nn === "string") {
 				const tagName = transformCaseFunc(nn);
-				if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
+				if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+					_neutralizeRoot(dirty);
+					throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
+				}
 			}
-			if (_isClobbered(dirty)) throw typeErrorCreate("root node is clobbered and cannot be sanitized in-place");
+			if (_isClobbered(dirty)) {
+				_neutralizeRoot(dirty);
+				throw typeErrorCreate("root node is clobbered and cannot be sanitized in-place");
+			}
 			try {
 				_sanitizeAttachedShadowRoots(dirty);
 			} catch (error) {
@@ -15330,15 +15413,21 @@ function createDOMPurify() {
 			if (!body) return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : "";
 		}
 		if (body && FORCE_BODY) _forceRemove(body.firstChild);
-		const nodeIterator = _createNodeIterator(inPlace ? dirty : body);
+		const walkRoot = inPlace ? dirty : body;
+		const nodeIterator = _createNodeIterator(walkRoot);
 		try {
 			while (currentNode = nodeIterator.nextNode()) {
-				_sanitizeElements(currentNode);
+				_sanitizeElements(currentNode, walkRoot);
 				_sanitizeAttributes(currentNode);
 				if (_isDocumentFragment(currentNode.content)) _sanitizeShadowDOM2(currentNode.content);
 			}
 		} catch (error) {
-			if (inPlace) _neutralizeRoot(dirty);
+			if (inPlace) {
+				_neutralizeRoot(dirty);
+				arrayForEach(DOMPurify.removed, (entry) => {
+					if (entry.element) _neutralizeSubtree(entry.element);
+				});
+			}
 			throw error;
 		}
 		if (inPlace) {

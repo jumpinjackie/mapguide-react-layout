@@ -1,5 +1,5 @@
 import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./chunks/rolldown-runtime-debug.js";
-import { a as require_react_dom, i as require_jsx_runtime, n as require_react_is$1, o as require_react, r as require_react_is, t as require_prop_types } from "./chunks/react-vendor-debug.js";
+import { a as require_react, i as require_react_dom, r as require_jsx_runtime, t as require_prop_types } from "./chunks/react-vendor-debug.js";
 import { Cr as _asyncToGenerator, Tr as _defineProperty, qt as _objectWithoutProperties, wr as _objectSpread2 } from "./chunks/geotiff-debug.js";
 //#region node_modules/react-tiny-popover/dist/PopoverPortal.js
 var require_PopoverPortal = /* @__PURE__ */ __commonJSMin(((exports) => {
@@ -12962,89 +12962,23 @@ function formatProdErrorMessage(code) {
 	return `Minified Redux Toolkit error #${code}; visit https://redux-toolkit.js.org/Errors?code=${code} for the full message or use the non-minified dev environment for full errors. `;
 }
 //#endregion
-//#region node_modules/use-sync-external-store/cjs/use-sync-external-store-shim.production.js
+//#region node_modules/use-sync-external-store/cjs/use-sync-external-store-with-selector.production.js
 /**
 * @license React
-* use-sync-external-store-shim.production.js
+* use-sync-external-store-with-selector.production.js
 *
 * Copyright (c) Meta Platforms, Inc. and affiliates.
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
 */
-var require_use_sync_external_store_shim_production = /* @__PURE__ */ __commonJSMin(((exports) => {
+var require_use_sync_external_store_with_selector_production = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var React = require_react();
 	function is(x, y) {
 		return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
 	}
 	var objectIs = "function" === typeof Object.is ? Object.is : is;
-	var useState = React.useState;
-	var useEffect = React.useEffect;
-	var useLayoutEffect = React.useLayoutEffect;
-	var useDebugValue = React.useDebugValue;
-	function useSyncExternalStore$2(subscribe, getSnapshot) {
-		var value = getSnapshot(), _useState = useState({ inst: {
-			value,
-			getSnapshot
-		} }), inst = _useState[0].inst, forceUpdate = _useState[1];
-		useLayoutEffect(function() {
-			inst.value = value;
-			inst.getSnapshot = getSnapshot;
-			checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-		}, [
-			subscribe,
-			value,
-			getSnapshot
-		]);
-		useEffect(function() {
-			checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-			return subscribe(function() {
-				checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-			});
-		}, [subscribe]);
-		useDebugValue(value);
-		return value;
-	}
-	function checkIfSnapshotChanged(inst) {
-		var latestGetSnapshot = inst.getSnapshot;
-		inst = inst.value;
-		try {
-			var nextValue = latestGetSnapshot();
-			return !objectIs(inst, nextValue);
-		} catch (error) {
-			return !0;
-		}
-	}
-	function useSyncExternalStore$1(subscribe, getSnapshot) {
-		return getSnapshot();
-	}
-	var shim = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
-	exports.useSyncExternalStore = void 0 !== React.useSyncExternalStore ? React.useSyncExternalStore : shim;
-}));
-//#endregion
-//#region node_modules/use-sync-external-store/shim/index.js
-var require_shim = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	module.exports = require_use_sync_external_store_shim_production();
-}));
-//#endregion
-//#region node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with-selector.production.js
-/**
-* @license React
-* use-sync-external-store-shim/with-selector.production.js
-*
-* Copyright (c) Meta Platforms, Inc. and affiliates.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-var require_with_selector_production = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var React = require_react();
-	var shim = require_shim();
-	function is(x, y) {
-		return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
-	}
-	var objectIs = "function" === typeof Object.is ? Object.is : is;
-	var useSyncExternalStore = shim.useSyncExternalStore;
+	var useSyncExternalStore = React.useSyncExternalStore;
 	var useRef = React.useRef;
 	var useEffect = React.useEffect;
 	var useMemo = React.useMemo;
@@ -13099,213 +13033,14 @@ var require_with_selector_production = /* @__PURE__ */ __commonJSMin(((exports) 
 	};
 }));
 //#endregion
-//#region node_modules/use-sync-external-store/shim/with-selector.js
-var require_with_selector = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	module.exports = require_with_selector_production();
-}));
-//#endregion
-//#region node_modules/react-redux/es/utils/reactBatchedUpdates.js
-var import_shim = require_shim();
-var import_with_selector = require_with_selector();
-var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom());
-//#endregion
-//#region node_modules/react-redux/es/utils/batch.js
+//#region node_modules/react-redux/dist/react-redux.mjs
+var import_with_selector = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
+	module.exports = require_use_sync_external_store_with_selector_production();
+})))();
 function defaultNoopBatch(callback) {
 	callback();
 }
-var batch$1 = defaultNoopBatch;
-var setBatch = (newBatch) => batch$1 = newBatch;
-var getBatch = () => batch$1;
-//#endregion
-//#region node_modules/react-redux/es/components/Context.js
-var ContextKey = Symbol.for(`react-redux-context`);
-var gT = typeof globalThis !== "undefined" ? globalThis : {};
-function getContext() {
-	var _gT$ContextKey;
-	if (!import_react.createContext) return {};
-	const contextMap = (_gT$ContextKey = gT[ContextKey]) != null ? _gT$ContextKey : gT[ContextKey] = /* @__PURE__ */ new Map();
-	let realContext = contextMap.get(import_react.createContext);
-	if (!realContext) {
-		realContext = import_react.createContext(null);
-		contextMap.set(import_react.createContext, realContext);
-	}
-	return realContext;
-}
-var ReactReduxContext = /*#__PURE__*/ getContext();
-//#endregion
-//#region node_modules/react-redux/es/hooks/useReduxContext.js
-/**
-* Hook factory, which creates a `useReduxContext` hook bound to a given context. This is a low-level
-* hook that you should usually not need to call directly.
-*
-* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
-* @returns {Function} A `useReduxContext` hook bound to the specified context.
-*/
-function createReduxContextHook(context = ReactReduxContext) {
-	return function useReduxContext() {
-		return (0, import_react.useContext)(context);
-	};
-}
-/**
-* A hook to access the value of the `ReactReduxContext`. This is a low-level
-* hook that you should usually not need to call directly.
-*
-* @returns {any} the value of the `ReactReduxContext`
-*
-* @example
-*
-* import React from 'react'
-* import { useReduxContext } from 'react-redux'
-*
-* export const CounterComponent = () => {
-*   const { store } = useReduxContext()
-*   return <div>{store.getState()}</div>
-* }
-*/
-var useReduxContext = /*#__PURE__*/ createReduxContextHook();
-//#endregion
-//#region node_modules/react-redux/es/utils/useSyncExternalStore.js
-var notInitialized = () => {
-	throw new Error("uSES not initialized!");
-};
-//#endregion
-//#region node_modules/react-redux/es/hooks/useSelector.js
-var useSyncExternalStoreWithSelector$1 = notInitialized;
-var initializeUseSelector = (fn) => {
-	useSyncExternalStoreWithSelector$1 = fn;
-};
-var refEquality = (a, b) => a === b;
-/**
-* Hook factory, which creates a `useSelector` hook bound to a given context.
-*
-* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
-* @returns {Function} A `useSelector` hook bound to the specified context.
-*/
-function createSelectorHook(context = ReactReduxContext) {
-	const useReduxContext$2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
-	return function useSelector(selector, equalityFnOrOptions = {}) {
-		const { equalityFn = refEquality, stabilityCheck = void 0, noopCheck = void 0 } = typeof equalityFnOrOptions === "function" ? { equalityFn: equalityFnOrOptions } : equalityFnOrOptions;
-		const { store, subscription, getServerState, stabilityCheck: globalStabilityCheck, noopCheck: globalNoopCheck } = useReduxContext$2();
-		(0, import_react.useRef)(true);
-		const wrappedSelector = (0, import_react.useCallback)({ [selector.name](state) {
-			return selector(state);
-		} }[selector.name], [
-			selector,
-			globalStabilityCheck,
-			stabilityCheck
-		]);
-		const selectedState = useSyncExternalStoreWithSelector$1(subscription.addNestedSub, store.getState, getServerState || store.getState, wrappedSelector, equalityFn);
-		(0, import_react.useDebugValue)(selectedState);
-		return selectedState;
-	};
-}
-/**
-* A hook to access the redux store's state. This hook takes a selector function
-* as an argument. The selector is called with the store state.
-*
-* This hook takes an optional equality comparison function as the second parameter
-* that allows you to customize the way the selected state is compared to determine
-* whether the component needs to be re-rendered.
-*
-* @param {Function} selector the selector function
-* @param {Function=} equalityFn the function that will be used to determine equality
-*
-* @returns {any} the selected state
-*
-* @example
-*
-* import React from 'react'
-* import { useSelector } from 'react-redux'
-*
-* export const CounterComponent = () => {
-*   const counter = useSelector(state => state.counter)
-*   return <div>{counter}</div>
-* }
-*/
-var useSelector = /*#__PURE__*/ createSelectorHook();
-(/* @__PURE__ */ __commonJSMin(((exports, module) => {
-	var reactIs = require_react_is();
-	/**
-	* Copyright 2015, Yahoo! Inc.
-	* Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
-	*/
-	var REACT_STATICS = {
-		childContextTypes: true,
-		contextType: true,
-		contextTypes: true,
-		defaultProps: true,
-		displayName: true,
-		getDefaultProps: true,
-		getDerivedStateFromError: true,
-		getDerivedStateFromProps: true,
-		mixins: true,
-		propTypes: true,
-		type: true
-	};
-	var KNOWN_STATICS = {
-		name: true,
-		length: true,
-		prototype: true,
-		caller: true,
-		callee: true,
-		arguments: true,
-		arity: true
-	};
-	var FORWARD_REF_STATICS = {
-		"$$typeof": true,
-		render: true,
-		defaultProps: true,
-		displayName: true,
-		propTypes: true
-	};
-	var MEMO_STATICS = {
-		"$$typeof": true,
-		compare: true,
-		defaultProps: true,
-		displayName: true,
-		propTypes: true,
-		type: true
-	};
-	var TYPE_STATICS = {};
-	TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
-	TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
-	function getStatics(component) {
-		if (reactIs.isMemo(component)) return MEMO_STATICS;
-		return TYPE_STATICS[component["$$typeof"]] || REACT_STATICS;
-	}
-	var defineProperty = Object.defineProperty;
-	var getOwnPropertyNames = Object.getOwnPropertyNames;
-	var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-	var getPrototypeOf = Object.getPrototypeOf;
-	var objectPrototype = Object.prototype;
-	function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
-		if (typeof sourceComponent !== "string") {
-			if (objectPrototype) {
-				var inheritedComponent = getPrototypeOf(sourceComponent);
-				if (inheritedComponent && inheritedComponent !== objectPrototype) hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
-			}
-			var keys = getOwnPropertyNames(sourceComponent);
-			if (getOwnPropertySymbols) keys = keys.concat(getOwnPropertySymbols(sourceComponent));
-			var targetStatics = getStatics(targetComponent);
-			var sourceStatics = getStatics(sourceComponent);
-			for (var i = 0; i < keys.length; ++i) {
-				var key = keys[i];
-				if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
-					var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
-					try {
-						defineProperty(targetComponent, key, descriptor);
-					} catch (e) {}
-				}
-			}
-		}
-		return targetComponent;
-	}
-	module.exports = hoistNonReactStatics;
-})))();
-require_react_is$1();
 function createListenerCollection() {
-	const batch = getBatch();
 	let first = null;
 	let last = null;
 	return {
@@ -13314,7 +13049,7 @@ function createListenerCollection() {
 			last = null;
 		},
 		notify() {
-			batch(() => {
+			defaultNoopBatch(() => {
 				let listener = first;
 				while (listener) {
 					listener.callback();
@@ -13323,7 +13058,7 @@ function createListenerCollection() {
 			});
 		},
 		get() {
-			let listeners = [];
+			const listeners = [];
 			let listener = first;
 			while (listener) {
 				listeners.push(listener);
@@ -13333,7 +13068,7 @@ function createListenerCollection() {
 		},
 		subscribe(callback) {
 			let isSubscribed = true;
-			let listener = last = {
+			const listener = last = {
 				callback,
 				next: null,
 				prev: last
@@ -13420,24 +13155,36 @@ function createSubscription(store, parentSub) {
 	};
 	return subscription;
 }
-var useIsomorphicLayoutEffect = !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined") ? import_react.useLayoutEffect : import_react.useEffect;
-//#endregion
-//#region node_modules/react-redux/es/components/Provider.js
-function Provider({ store, context, children, serverState, stabilityCheck = "once", noopCheck = "once" }) {
+var canUseDOM = () => !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined");
+var isDOM = /* @__PURE__ */ canUseDOM();
+var isRunningInReactNative = () => typeof navigator !== "undefined" && navigator.product === "ReactNative";
+var isReactNative = /* @__PURE__ */ isRunningInReactNative();
+var getUseIsomorphicLayoutEffect = () => isDOM || isReactNative ? import_react.useLayoutEffect : import_react.useEffect;
+var useIsomorphicLayoutEffect = /* @__PURE__ */ getUseIsomorphicLayoutEffect();
+var ContextKey = /* @__PURE__ */ Symbol.for(`react-redux-context`);
+var gT = typeof globalThis !== "undefined" ? globalThis : {};
+function getContext() {
+	var _gT$ContextKey;
+	if (!import_react.createContext) return {};
+	const contextMap = (_gT$ContextKey = gT[ContextKey]) !== null && _gT$ContextKey !== void 0 ? _gT$ContextKey : gT[ContextKey] = /* @__PURE__ */ new Map();
+	let realContext = contextMap.get(import_react.createContext);
+	if (!realContext) {
+		realContext = import_react.createContext(null);
+		contextMap.set(import_react.createContext, realContext);
+	}
+	return realContext;
+}
+var ReactReduxContext = /* @__PURE__ */ getContext();
+function Provider(providerProps) {
+	const { children, context, serverState, store } = providerProps;
 	const contextValue = import_react.useMemo(() => {
+		const subscription = createSubscription(store);
 		return {
 			store,
-			subscription: createSubscription(store),
-			getServerState: serverState ? () => serverState : void 0,
-			stabilityCheck,
-			noopCheck
+			subscription,
+			getServerState: serverState ? () => serverState : void 0
 		};
-	}, [
-		store,
-		serverState,
-		stabilityCheck,
-		noopCheck
-	]);
+	}, [store, serverState]);
 	const previousState = import_react.useMemo(() => store.getState(), [store]);
 	useIsomorphicLayoutEffect(() => {
 		const { subscription } = contextValue;
@@ -13450,80 +13197,53 @@ function Provider({ store, context, children, serverState, stabilityCheck = "onc
 		};
 	}, [contextValue, previousState]);
 	const Context = context || ReactReduxContext;
-	return /*#__PURE__*/ import_react.createElement(Context.Provider, { value: contextValue }, children);
+	return /* @__PURE__ */ import_react.createElement(Context.Provider, { value: contextValue }, children);
 }
-//#endregion
-//#region node_modules/react-redux/es/hooks/useStore.js
-/**
-* Hook factory, which creates a `useStore` hook bound to a given context.
-*
-* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
-* @returns {Function} A `useStore` hook bound to the specified context.
-*/
+var Provider_default = Provider;
+function createReduxContextHook(context = ReactReduxContext) {
+	return function useReduxContext2() {
+		return import_react.useContext(context);
+	};
+}
+var useReduxContext = /* @__PURE__ */ createReduxContextHook();
 function createStoreHook(context = ReactReduxContext) {
-	const useReduxContext$1 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
-	return function useStore() {
-		const { store } = useReduxContext$1();
+	const useReduxContext2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
+	const useStore2 = () => {
+		const { store } = useReduxContext2();
 		return store;
 	};
+	Object.assign(useStore2, { withTypes: () => useStore2 });
+	return useStore2;
 }
-/**
-* A hook to access the redux store.
-*
-* @returns {any} the redux store
-*
-* @example
-*
-* import React from 'react'
-* import { useStore } from 'react-redux'
-*
-* export const ExampleComponent = () => {
-*   const store = useStore()
-*   return <div>{store.getState()}</div>
-* }
-*/
-var useStore = /*#__PURE__*/ createStoreHook();
-//#endregion
-//#region node_modules/react-redux/es/hooks/useDispatch.js
-/**
-* Hook factory, which creates a `useDispatch` hook bound to a given context.
-*
-* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
-* @returns {Function} A `useDispatch` hook bound to the specified context.
-*/
+var useStore = /* @__PURE__ */ createStoreHook();
 function createDispatchHook(context = ReactReduxContext) {
-	const useStore$1 = context === ReactReduxContext ? useStore : createStoreHook(context);
-	return function useDispatch() {
-		return useStore$1().dispatch;
+	const useStore2 = context === ReactReduxContext ? useStore : createStoreHook(context);
+	const useDispatch2 = () => {
+		return useStore2().dispatch;
 	};
+	Object.assign(useDispatch2, { withTypes: () => useDispatch2 });
+	return useDispatch2;
 }
-/**
-* A hook to access the redux `dispatch` function.
-*
-* @returns {any|function} redux store's `dispatch` function
-*
-* @example
-*
-* import React, { useCallback } from 'react'
-* import { useDispatch } from 'react-redux'
-*
-* export const CounterComponent = ({ value }) => {
-*   const dispatch = useDispatch()
-*   const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
-*   return (
-*     <div>
-*       <span>{value}</span>
-*       <button onClick={increaseCounter}>Increase counter</button>
-*     </div>
-*   )
-* }
-*/
-var useDispatch = /*#__PURE__*/ createDispatchHook();
-//#endregion
-//#region node_modules/react-redux/es/index.js
-initializeUseSelector(import_with_selector.useSyncExternalStoreWithSelector);
-import_shim.useSyncExternalStore;
-setBatch(import_react_dom.unstable_batchedUpdates);
+var useDispatch = /* @__PURE__ */ createDispatchHook();
+var refEquality = (a, b) => a === b;
+function createSelectorHook(context = ReactReduxContext) {
+	const useReduxContext2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
+	const useSelector2 = (selector, equalityFnOrOptions = {}) => {
+		const { equalityFn = refEquality } = typeof equalityFnOrOptions === "function" ? { equalityFn: equalityFnOrOptions } : equalityFnOrOptions;
+		const { store, subscription, getServerState } = useReduxContext2();
+		import_react.useRef(true);
+		const wrappedSelector = import_react.useCallback({ [selector.name](state) {
+			return selector(state);
+		} }[selector.name], [selector]);
+		const selectedState = (0, import_with_selector.useSyncExternalStoreWithSelector)(subscription.addNestedSub, store.getState, getServerState || store.getState, wrappedSelector, equalityFn);
+		import_react.useDebugValue(selectedState);
+		return selectedState;
+	};
+	Object.assign(useSelector2, { withTypes: () => useSelector2 });
+	return useSelector2;
+}
+var useSelector = /* @__PURE__ */ createSelectorHook();
+var batch = defaultNoopBatch;
 //#endregion
 //#region node_modules/dompurify/dist/purify.es.mjs
 var purify_es_exports = /* @__PURE__ */ __exportAll({ default: () => purify });
@@ -15737,6 +15457,7 @@ function createDOMPurify() {
 var purify = createDOMPurify();
 //#endregion
 //#region node_modules/clsx/dist/clsx.mjs
+var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var import_prop_types = /* @__PURE__ */ __toESM(require_prop_types(), 1);
 function r$1(e) {
 	var t, f, n = "";
@@ -22246,6 +21967,6 @@ var require_lodash_debounce = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	module.exports = debounce;
 }));
 //#endregion
-export { require_Popover as C, zt as S, combineReducers as _, geojsonvt as a, require_lodash_xor as b, cjs_default as c, useDispatch as d, Provider as f, createSelector as g, configureStore as h, Z as i, purify as l, import_react_dom as m, stickybits as n, require_papaparse_min as o, useSelector as p, index as r, Rnd as s, require_lodash_debounce as t, purify_es_exports as u, proj4 as v, Fe as x, require_lodash_xorby as y };
+export { require_Popover as C, zt as S, combineReducers as _, geojsonvt as a, require_lodash_xor as b, cjs_default as c, Provider_default as d, batch as f, createSelector as g, configureStore as h, Z as i, purify as l, useSelector as m, stickybits as n, require_papaparse_min as o, useDispatch as p, index as r, Rnd as s, require_lodash_debounce as t, purify_es_exports as u, proj4 as v, Fe as x, require_lodash_xorby as y };
 
 //# sourceMappingURL=vendor-debug.js.map

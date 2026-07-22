@@ -1,8 +1,8 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug.js","./chunks/rolldown-runtime-debug.js","./chunks/geotiff-codecs-debug.js","./chunks/geotiff-deps-debug.js","./chunks/jspdf-debug.js","./chunks/ol-deps-debug.js"])))=>i.map(i=>d[i]);
 import { n as __exportAll, r as __toESM } from "./chunks/rolldown-runtime-debug.js";
-import { a as require_react_dom, i as require_jsx_runtime, o as require_react } from "./chunks/react-vendor-debug.js";
+import { a as require_react, i as require_react_dom, n as require_client, r as require_jsx_runtime } from "./chunks/react-vendor-debug.js";
 import { Cr as _asyncToGenerator, Jn as createEmpty, Jt as register, Kn as containsXY, P as DEVICE_PIXEL_RATIO, Qt as fromLonLat, Sr as __vitePreload, V as createXYZ, Vn as buffer, W as TileGrid, Zt as equivalent, cn as transform, cr as getHeight, dn as getDistance, dr as getTopLeft, er as extend$1, hn as METERS_PER_UNIT, hr as isEmpty, k as easeOut, ln as transformExtent, mn as Projection, or as getCenter, pr as getWidth, qt as _objectWithoutProperties, tn as get, un as getArea, wr as _objectSpread2, wt as unByKey } from "./chunks/geotiff-debug.js";
-import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as cjs_default, d as useDispatch, f as Provider, g as createSelector, h as configureStore$1, i as Z, l as purify, m as import_react_dom$1, n as stickybits, o as require_papaparse_min, p as useSelector, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
+import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as cjs_default, d as Provider_default, f as batch, g as createSelector, h as configureStore$1, i as Z, l as purify, m as useSelector, n as stickybits, o as require_papaparse_min, p as useDispatch, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
 import { C as RegularShape, S as CircleStyle, a as WMSCapabilities, at as fromExtent, b as Stroke, c as GeoJSON, ct as LineString, d as MultiPolygon, f as MultiPoint, g as Style, h as Text, i as TopoJSON, it as fromCircle, l as GeometryCollection, m as Feature, mt as Point, n as IGC, o as MVT, p as MultiLineString, q as asArray, r as GPX, rt as Polygon, s as KML, st as LinearRing, t as WKT, w as Icon$1, x as Fill } from "./chunks/ol-formats-debug.js";
 import { A as TileWMS, B as ImageMapGuide, C as getRenderPixel, D as Cluster, E as VectorTile, F as OSM, G as UrlTile, H as defaultImageLoadFunction, I as ImageLayer, K as LayerGroup, L as TileLayer, M as UTFGrid, N as BingMaps, O as VectorSource, P as TileDebug, R as View, S as ImageWMS, T as VectorTileLayer, U as XYZ, V as ImageSource, W as TileImage, _ as Rotate, a as Circle, b as Translate, c as Map$1, d as MouseWheelZoom, f as KeyboardZoom, g as DragPan, h as DragRotate, i as Draw, j as WebGLTileLayer, k as VectorLayer, l as PinchZoom, m as DragBox, n as Snap, o as Select, p as KeyboardPan, q as Collection, r as Extent, s as OverviewMap, t as Modify, u as PinchRotate, v as Attribution, w as toContext, x as Heatmap, y as Overlay, z as Static } from "./chunks/ol-debug.js";
 //#region src/constants.ts
@@ -5818,6 +5818,7 @@ function setTemplateCustomData(name, value) {
 }
 //#endregion
 //#region src/api/default-commands.ts
+var import_client = require_client();
 function panMap(dispatch, viewer, value) {
 	const settings = {
 		"right": [2, 1],
@@ -6102,7 +6103,7 @@ function initDefaultCommands() {
                                 <title>Print View</title>
                                 `;
 					printWindow.document.body.innerHTML = "<div id=\"print\"></div>";
-					import_react_dom.render(el, printWindow.document.getElementById("print"));
+					(0, import_client.createRoot)(printWindow.document.getElementById("print")).render(el);
 				}
 			} });
 		}
@@ -6159,7 +6160,7 @@ var MapProviderContext = import_react.createContext({});
 * 
 * @since 0.14
 */
-var ReduxProvider = ({ store, children }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Provider, {
+var ReduxProvider = ({ store, children }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Provider_default, {
 	store,
 	children
 });
@@ -6172,8 +6173,11 @@ function useReduxDispatch() {
 	return useDispatch();
 }
 /**
-* Fetches the requested sub-section of the application state
-* 
+* Fetches the requested sub-section of the application state.
+*
+* In react-redux 9, useSelector no longer takes an explicit root-state generic;
+* the state type is inferred from the selector's parameter type.
+*
 * @since 0.14
 */
 function useAppState(selector, equalityFn) {
@@ -23088,7 +23092,7 @@ var BaseMapProviderContext = class {
 					}, createEmpty());
 					const inflatedBounds = inflateBoundsByMeters(this.getProjection(), zoomBounds, 20);
 					this.zoomToExtent(inflatedBounds);
-				} else (0, import_react_dom$1.unstable_batchedUpdates)(() => {
+				} else batch(() => {
 					clearSelectionForCurrentClick();
 					this.addClientSelectedFeature(f, l, effectiveMapName);
 				});
@@ -26817,11 +26821,11 @@ var ApplicationViewModel = class {
 		const extraReducers = this.getExtraReducers();
 		this._store = configureStore(initState, extraReducers);
 		const provider = new MapGuideMapProviderContext();
-		import_react_dom.render(/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContextProvider, {
+		(0, import_client.createRoot)(node).render(/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContextProvider, {
 			value: provider,
 			store: this._store,
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, _objectSpread2({}, props)), subs.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Subscriber, _objectSpread2({}, s), `subscriber-${i}-${s.name}`))]
-		}), node);
+		}));
 	}
 	/**
 	* Dispatches the given action

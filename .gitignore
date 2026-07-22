@@ -41,3 +41,4 @@ docker/devenv/server-data/*
 # Visual regression test outputs (keep baselines, ignore reports and temp files)
 playwright-report/
 test-results/
+docker/devenv/wwwroot/*

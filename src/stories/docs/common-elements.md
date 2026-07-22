@@ -1,6 +1,6 @@
 This group documents the abstract UI element layer used across the application.
 
-Abstract UI elements are backed by a particular UI toolkit implementation of this abstraction. Currently, that toolkit is Blueprint.js.
+Abstract UI elements are backed by a particular UI toolkit implementation of this abstraction. The default toolkit is `MinimalProvider`, a lightweight implementation using semantic HTML and CSS custom properties.
 
 ## What these stories validate
 - Element contracts exposed by the element context

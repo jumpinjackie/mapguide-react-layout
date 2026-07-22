@@ -50,16 +50,9 @@ module.exports = {
                 __DEV__: JSON.stringify(configType !== "PRODUCTION"),
                 __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
                 __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
-                __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master"),
-                "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3")
+                __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master")
             },
             resolve: {
-                alias: [
-                    {
-                        find: /.*\/generated\/iconSvgPaths.*/,
-                        replacement: path.resolve(__dirname, "..", "stdassets/bp-icons.js")
-                    }
-                ]
             },
             build: {
                 target: "es2020"

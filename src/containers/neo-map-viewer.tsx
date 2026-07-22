@@ -246,7 +246,7 @@ export const MapViewer = ({ children }: { children?: React.ReactNode }) => {
     if (nextState.isReady) {
         return (
             <>
-                {/* HACK: usePortal=false to workaround what I think is: https://github.com/palantir/blueprint/issues/3248 */}
+                {/* HACK: usePortal=false to workaround potential portal z-index issues */}
                 <Toaster usePortal={false} position="top" ref={toasterRef} />
                 <div
                     className="map-viewer-component"

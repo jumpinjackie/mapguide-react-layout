@@ -235,7 +235,7 @@ export const MapComparisonControl: React.FC = () => {
                         /*
                          * Pointer events and mouse events are separate event streams.
                          * stopPropagation on pointerdown/pointerup does NOT stop mousedown/mouseup.
-                         * BlueprintJS Popover listens for mousedown on document to detect outside clicks,
+                         * Popover listens for mousedown on document to detect outside clicks,
                          * so we must also stop mouse events from propagating to prevent the popover
                          * from closing when the swipe handle is dragged.
                          */

@@ -16,7 +16,7 @@ describe("MapLoadIndicator", () => {
         const { container } = render(<MapLoadIndicator {...baseProps} />);
         const div = container.firstChild as HTMLDivElement;
         expect(div).toBeInTheDocument();
-        expect(div.style.width).toBe("50.0%");
+        expect(div.style.width).toBe("50%");
         expect(div.style.background).toBe("rgb(255, 0, 0)"); // #ff0000 in rgb
         expect(div.style.visibility).toBe("visible");
         expect(div.style.position).toBe("absolute");
@@ -61,7 +61,7 @@ describe("MapLoadIndicator", () => {
         const props = { ...baseProps, loaded: 0, loading: 10 };
         const { container } = render(<MapLoadIndicator {...props} />);
         const div = container.firstChild as HTMLDivElement;
-        expect(div.style.width).toBe("0.0%");
+        expect(div.style.width).toBe("0%");
         expect(div.style.visibility).toBe("visible");
     });
 });

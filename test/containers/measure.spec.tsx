@@ -75,6 +75,7 @@ vi.mock("../../src/components/elements/element-context", () => ({
       Callout: ({ children }: React.PropsWithChildren<{}>) => <div data-testid="measuring-callout">{children}</div>,
       Button: ({ children, onClick, disabled }: any) => <button type="button" disabled={disabled} onClick={onClick}>{children}</button>,
       HtmlTable: ({ children }: React.PropsWithChildren<{}>) => <table>{children}</table>,
+      FormGroup: ({ children }: React.PropsWithChildren<{}>) => <div>{children}</div>,
    }),
 }));
 

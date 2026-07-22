@@ -60,8 +60,6 @@ Since the `0.14.3` release, the viewer has basic support for MapGuide Map Defini
  * Measure
    * Recorded measurements will temporarily disappear on templates with a collapsible Task Pane (eg. Slate) when the Task Pane panel is collapsed.
 
- * Modal dialog backdrops do not work (due to recent Blueprint update)
-
 ## Commands
 
  * General

@@ -14,8 +14,7 @@ const getBuildMetadata = () => ({
    __VERSION__: JSON.stringify(process.env.APPVEYOR_BUILD_VERSION || ""),
    __COMMITHASH__: JSON.stringify(process.env.APPVEYOR_REPO_COMMIT || ""),
    __BRANCH__: JSON.stringify(process.env.APPVEYOR_REPO_BRANCH || "master"),
-   "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development"),
-   "process.env.BLUEPRINT_NAMESPACE": JSON.stringify("bp3")
+   "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
 });
 
 const getAssetFileName = (assetInfo: IAssetFileInfo, isDebugBuild: boolean) => {
@@ -256,12 +255,6 @@ const config = async ({ mode }: { mode: string }) => {
          __DEV__: JSON.stringify(!isProduction)
       },
       resolve: {
-         alias: [
-            {
-               find: /.*\/generated\/iconSvgPaths.*/,
-               replacement: path.resolve(__dirname, "stdassets/bp-icons.js")
-            }
-         ]
       },
       build: {
          target: "es2015",

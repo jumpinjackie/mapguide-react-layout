@@ -1,7 +1,11 @@
 import * as React from "react";
 import { tr } from "../api/i18n";
 // TODO: Consolidate on react-rnd which should be able to provide equivalent functionality
-import Draggable from "react-draggable";
+import DraggableBase from "react-draggable";
+
+// react-draggable@4.x has stricter types incompatible with @types/react@17.
+// Cast through unknown to bypass the type mismatch.
+const Draggable = DraggableBase as unknown as React.ComponentType<any>;
 import { getFiniteScaleIndexForScale } from "../utils/number";
 import {
     IMG_SLIDER,
@@ -156,6 +160,10 @@ export const Navigator = (props: INavigatorProps) => {
             handle="img.navigator-drag-handle"
             position={{ x: 0, y: (VERT_START + pos) }}
             bounds={{ top: VERT_START, bottom: (VERT_START + VERT_SPAN), left: 0, right: 0 }}
+            disabled={false}
+            allowAnyClick={false}
+            allowMobileScroll={false}
+            enableUserSelectHack={true}
             onStart={onStart}
             onDrag={onDrag}
             onStop={onStop}>

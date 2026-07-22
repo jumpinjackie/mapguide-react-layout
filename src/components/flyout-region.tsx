@@ -80,7 +80,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
                         const met = flyout.metrics;
                         if (flyoutId == WEBLAYOUT_CONTEXTMENU) {
                             // TODO: Refine the layout positioning so that it better behaves like it did
-                            // previously when the blueprint context menu worked (ie. If right-clicking near
+                            // previously when the context menu worked (ie. If right-clicking near
                             // the bottom, the menu should be shown "above" the cursor)
                             containerStyle.top = met.posY - 40;
                             containerStyle.left = met.posX + 20;

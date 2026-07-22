@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { App, IAppProps } from "../containers/app";
 import { ReduxThunkedAction, ICommand, IApplicationState, IConfigurationReducerState } from "../api/common";
 import { configureStore } from "../store/configure-store";
@@ -92,10 +92,10 @@ export class ApplicationViewModel {
         this._store = configureStore(initState, extraReducers);
         // Register our MapGuide-specific viewer implementation
         const provider = new MapGuideMapProviderContext();
-        ReactDOM.render(<MapContextProvider value={provider} store={this._store}>
+        createRoot(node).render(<MapContextProvider value={provider} store={this._store}>
             <App {...props} />
             {subs.map((s, i) => <Subscriber key={`subscriber-${i}-${s.name}`} {...s} />)}
-        </MapContextProvider>, node);
+        </MapContextProvider>);
     }
     /**
      * Dispatches the given action

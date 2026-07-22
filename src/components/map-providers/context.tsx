@@ -27,14 +27,16 @@ export function useReduxDispatch(): ReduxDispatch {
 }
 
 /**
- * Pre-typed useSelector bound to IApplicationState.
+ * Fetches the requested sub-section of the application state.
  *
- * In react-redux 8 this was a hand-rolled wrapper; react-redux 9 provides
- * {@link useSelector.withTypes} which bakes in the root state type natively.
+ * In react-redux 9, useSelector no longer takes an explicit root-state generic;
+ * the state type is inferred from the selector's parameter type.
  *
  * @since 0.14
  */
-export const useAppState = useSelector.withTypes<IApplicationState>();
+export function useAppState<TState>(selector: (state: IApplicationState) => TState, equalityFn?: (left: TState, right: TState) => boolean) {
+    return useSelector(selector, equalityFn);
+}
 
 /**
  * @since 0.14

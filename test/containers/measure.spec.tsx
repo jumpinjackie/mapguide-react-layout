@@ -24,7 +24,7 @@ const actionMapMock = vi.hoisted(() => ({
 
 const measureClassMock = vi.hoisted(() => ({
    instances: [] as any[],
-   MeasureContext: vi.fn().mockImplementation((_viewer: any, mapName: string, parent: any) => {
+   MeasureContext: vi.fn().mockImplementation(function(this: any, _viewer: any, mapName: string, parent: any) {
       const instance = {
          mapName,
          parent,

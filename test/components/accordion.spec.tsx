@@ -36,11 +36,13 @@ const PANEL_SPEC: IAccordionPanelSpec[] = [
 describe("components/accordion", () => {
     beforeEach(() => {
         delete (window as any).ResizeObserver;
-        window.ResizeObserver = vi.fn().mockImplementation(() => ({
-            observe: vi.fn(),
-            unobserve: vi.fn(),
-            disconnect: vi.fn(),
-        }));
+        window.ResizeObserver = vi.fn().mockImplementation(function(this: any) {
+            return {
+                observe: vi.fn(),
+                unobserve: vi.fn(),
+                disconnect: vi.fn(),
+            };
+        });
     });
     afterEach(() => {
         window.ResizeObserver = ResizeObserver;

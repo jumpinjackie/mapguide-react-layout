@@ -11,14 +11,16 @@ describe("utils/browser-support", () => {
         document.documentElement.ontouchstart = orig;
     });
     it("isMobileViewport returns true if matchMedia matches", () => {
-        const spy = vi.spyOn(window, "matchMedia").mockImplementation((query: string) => ({ matches: true }) as any);
+        const orig = window.matchMedia;
+        window.matchMedia = vi.fn().mockImplementation((query: string) => ({ matches: true })) as any;
         expect(isMobileViewport()).toBe(true);
-        spy.mockRestore();
+        window.matchMedia = orig;
     });
     it("isMobileViewport returns false if matchMedia does not match", () => {
-        const spy = vi.spyOn(window, "matchMedia").mockImplementation((query: string) => ({ matches: false }) as any);
+        const orig = window.matchMedia;
+        window.matchMedia = vi.fn().mockImplementation((query: string) => ({ matches: false })) as any;
         expect(isMobileViewport()).toBe(false);
-        spy.mockRestore();
+        window.matchMedia = orig;
     });
     it("supportsWebGL returns a boolean", () => {
         // In jsdom, WebGLRenderingContext is not defined; mock it to false to test the path

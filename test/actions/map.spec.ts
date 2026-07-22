@@ -991,7 +991,9 @@ describe("actions/map - activateMap thunk", () => {
 });
 
 vi.mock("../../src/api/client", () => ({
-    Client: vi.fn()
+    Client: vi.fn().mockImplementation(function(this: any) {
+        return this;
+    })
 }));
 
 describe("actions/map - activateMap thunk (with session)", () => {
@@ -1039,7 +1041,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
             describeRuntimeMap_v4: vi.fn().mockResolvedValue(lazyMap),
             createRuntimeMap_v4: vi.fn()
         };
-        vi.mocked(Client).mockImplementation(() => mockClient as any);
+        vi.mocked(Client).mockImplementation(function(this: any) { return mockClient as any; });
 
         const state = createStateWithPendingMap("test-session-id", true);
         const dispatched: any[] = [];
@@ -1070,7 +1072,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
             describeRuntimeMap_v4: vi.fn(),
             createRuntimeMap_v4: vi.fn().mockResolvedValue(lazyMap)
         };
-        vi.mocked(Client).mockImplementation(() => mockClient as any);
+        vi.mocked(Client).mockImplementation(function(this: any) { return mockClient as any; });
 
         const state = createStateWithPendingMap("test-session-id", false);
         const dispatched: any[] = [];
@@ -1101,7 +1103,7 @@ describe("actions/map - activateMap thunk (with session)", () => {
             describeRuntimeMap_v4: vi.fn().mockRejectedValue(new Error("MgSessionExpiredException")),
             createRuntimeMap_v4: vi.fn()
         };
-        vi.mocked(Client).mockImplementation(() => mockClient as any);
+        vi.mocked(Client).mockImplementation(function(this: any) { return mockClient as any; });
 
         const state = createStateWithPendingMap("test-session-id", true);
         const dispatched: any[] = [];

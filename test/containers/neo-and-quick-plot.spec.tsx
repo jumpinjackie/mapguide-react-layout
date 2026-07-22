@@ -55,12 +55,14 @@ const loggerMock = vi.hoisted(() => ({
 }));
 
 const mapCapturerMock = vi.hoisted(() => ({
-   MapCapturerContext: vi.fn().mockImplementation(() => ({
-      getMapName: () => "Map1",
-      activate: vi.fn(),
-      updateBox: vi.fn(),
-      deactivate: vi.fn(),
-   })),
+   MapCapturerContext: vi.fn().mockImplementation(function(this: any) {
+      return {
+         getMapName: () => "Map1",
+         activate: vi.fn(),
+         updateBox: vi.fn(),
+         deactivate: vi.fn(),
+      };
+   }),
 }));
 
 const swipeMock = vi.hoisted(() => ({

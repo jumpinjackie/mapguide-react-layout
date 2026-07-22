@@ -48,7 +48,7 @@ import { showModalComponent, showModalUrl } from '../actions/modal';
 import { refresh } from '../actions/legend';
 import { setTaskPaneVisibility, setLegendVisibility, setSelectionPanelVisibility } from '../actions/template';
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 function panMap(dispatch: ReduxDispatch, viewer: IMapViewer, value: "right" | "left" | "up" | "down") {
     const settings: any = {
@@ -416,7 +416,7 @@ export function initDefaultCommands() {
                                 <title>Print View</title>
                                 `;
                         printWindow.document.body.innerHTML = '<div id="print"></div>';
-                        ReactDOM.render(el, printWindow.document.getElementById("print"));
+                        createRoot(printWindow.document.getElementById("print")!).render(el);
                     }
                 }
             });

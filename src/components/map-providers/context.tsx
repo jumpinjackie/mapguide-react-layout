@@ -27,12 +27,15 @@ export function useReduxDispatch(): ReduxDispatch {
 }
 
 /**
- * Fetches the requested sub-section of the application state
- * 
+ * Fetches the requested sub-section of the application state.
+ *
+ * In react-redux 9, useSelector no longer takes an explicit root-state generic;
+ * the state type is inferred from the selector's parameter type.
+ *
  * @since 0.14
  */
 export function useAppState<TState>(selector: (state: IApplicationState) => TState, equalityFn?: (left: TState, right: TState) => boolean) {
-    return useSelector<IApplicationState, TState>(selector, equalityFn);
+    return useSelector(selector, equalityFn);
 }
 
 /**

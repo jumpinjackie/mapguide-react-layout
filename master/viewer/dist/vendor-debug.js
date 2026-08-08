@@ -13247,7 +13247,7 @@ var batch = defaultNoopBatch;
 //#endregion
 //#region node_modules/dompurify/dist/purify.es.mjs
 var purify_es_exports = /* @__PURE__ */ __exportAll({ default: () => purify });
-/*! @license DOMPurify 3.4.12 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.12/LICENSE */
+/*! @license DOMPurify 3.4.13 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.13/LICENSE */
 function _arrayLikeToArray(r, a) {
 	(null == a || a > r.length) && (a = r.length);
 	for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
@@ -14205,7 +14205,7 @@ var _resolveSetOption = function _resolveSetOption(cfg, key, fallback, options) 
 function createDOMPurify() {
 	let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
 	const DOMPurify = (root) => createDOMPurify(root);
-	DOMPurify.version = "3.4.12";
+	DOMPurify.version = "3.4.13";
 	DOMPurify.removed = [];
 	if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
 		DOMPurify.isSupported = false;
@@ -14229,6 +14229,7 @@ function createDOMPurify() {
 	const getAttributes = lookupGetter(ElementPrototype, "attributes");
 	const getNodeType = Node && Node.prototype ? lookupGetter(Node.prototype, "nodeType") : null;
 	const getNodeName = Node && Node.prototype ? lookupGetter(Node.prototype, "nodeName") : null;
+	const getOwnerDocument = Node && Node.prototype ? lookupGetter(Node.prototype, "ownerDocument") : null;
 	if (typeof HTMLTemplateElement === "function") {
 		const template = document.createElement("template");
 		if (template.content && template.content.ownerDocument) document = template.content.ownerDocument;
@@ -14869,7 +14870,8 @@ function createDOMPurify() {
 	* @return The created NodeIterator
 	*/
 	const _createNodeIterator = function _createNodeIterator(root) {
-		return createNodeIterator.call(root.ownerDocument || root, root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION, null);
+		const doc = getOwnerDocument ? getOwnerDocument(root) : root.ownerDocument;
+		return createNodeIterator.call(doc || root, root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION, null);
 	};
 	/**
 	* Replace template expression syntax (mustache, ERB, template
@@ -14907,7 +14909,8 @@ function createDOMPurify() {
 	const _scrubTemplateExpressions2 = function _scrubTemplateExpressions(node) {
 		var _node$querySelectorAl;
 		node.normalize();
-		const walker = createNodeIterator.call(node.ownerDocument || node, node, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_CDATA_SECTION | NodeFilter.SHOW_PROCESSING_INSTRUCTION, null);
+		const doc = getOwnerDocument ? getOwnerDocument(node) : node.ownerDocument;
+		const walker = createNodeIterator.call(doc || node, node, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_CDATA_SECTION | NodeFilter.SHOW_PROCESSING_INSTRUCTION, null);
 		let currentNode = walker.nextNode();
 		while (currentNode) {
 			currentNode.data = _stripTemplateExpressions(currentNode.data);
@@ -15014,7 +15017,7 @@ function createDOMPurify() {
 	* @param tagName the node's transformCaseFunc'd tag name
 	* @return true if the node was removed, false if kept
 	*/
-	const _sanitizeDisallowedNode = function _sanitizeDisallowedNode(currentNode, tagName) {
+	const _sanitizeDisallowedNode = function _sanitizeDisallowedNode(currentNode, tagName, root) {
 		if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
 			if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
 			if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) return false;
@@ -15025,13 +15028,31 @@ function createDOMPurify() {
 			if (childNodes && parentNode) {
 				const childCount = childNodes.length;
 				for (let i = childCount - 1; i >= 0; --i) {
-					const hoisted = IN_PLACE ? childNodes[i] : cloneNode(childNodes[i], true);
+					const hoisted = currentNode === root ? cloneNode(childNodes[i], true) : childNodes[i];
 					parentNode.insertBefore(hoisted, getNextSibling(currentNode));
 				}
 			}
 		}
 		_forceRemove(currentNode);
 		return true;
+	};
+	/**
+	* Fork a hook-mutable allowlist off its shared binding the first time a
+	* (possibly lazily-installed) uponSanitize* hook is about to see it, so the
+	* hook cannot widen the per-instance default or the setConfig binding by
+	* reference and leak past the call. Returns the set unchanged once it is
+	* already call-local, so repeated calls across elements are idempotent.
+	*
+	* @param hookList the uponSanitize* hook array for this event
+	* @param set the current ALLOWED_TAGS / ALLOWED_ATTR binding
+	* @param defaultSet the per-instance DEFAULT_ALLOWED_* constant
+	* @param setConfigSet the captured setConfig() binding, or null
+	* @return a call-local clone if a hook is present and set is still shared,
+	*   else set unchanged
+	*/
+	const _forkSharedAllowlist = function _forkSharedAllowlist(hookList, set, defaultSet, setConfigSet) {
+		if (hookList.length === 0) return set;
+		return set === defaultSet || set === setConfigSet ? clone(set) : set;
 	};
 	/**
 	* _sanitizeElements
@@ -15044,23 +15065,30 @@ function createDOMPurify() {
 	*/
 	const _sanitizeElements = function _sanitizeElements(currentNode, root) {
 		_executeHooks(hooks.beforeSanitizeElements, currentNode, null);
-		if (currentNode !== root && getParentNode(currentNode) === null) return true;
+		if (currentNode !== root && getParentNode(currentNode) === null) {
+			if (IN_PLACE) _neutralizeSubtree(currentNode);
+			return true;
+		}
 		if (_isClobbered(currentNode)) {
 			_forceRemove(currentNode);
 			return true;
 		}
 		const tagName = transformCaseFunc(getNodeName ? getNodeName(currentNode) : currentNode.nodeName);
+		ALLOWED_TAGS = _forkSharedAllowlist(hooks.uponSanitizeElement, ALLOWED_TAGS, DEFAULT_ALLOWED_TAGS, SET_CONFIG_ALLOWED_TAGS);
 		_executeHooks(hooks.uponSanitizeElement, currentNode, {
 			tagName,
 			allowedTags: ALLOWED_TAGS
 		});
-		if (currentNode !== root && getParentNode(currentNode) === null) return true;
+		if (currentNode !== root && getParentNode(currentNode) === null) {
+			if (IN_PLACE) _neutralizeSubtree(currentNode);
+			return true;
+		}
 		if (_isUnsafeNode(currentNode, tagName)) {
 			_forceRemove(currentNode);
 			return true;
 		}
 		if (FORBID_TAGS[tagName] || !(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && !ALLOWED_TAGS[tagName]) {
-			const removed = _sanitizeDisallowedNode(currentNode, tagName);
+			const removed = _sanitizeDisallowedNode(currentNode, tagName, root);
 			if (removed === false) _executeHooks(hooks.afterSanitizeElements, currentNode, null);
 			return removed;
 		}
@@ -15184,6 +15212,7 @@ function createDOMPurify() {
 		_executeHooks(hooks.beforeSanitizeAttributes, currentNode, null);
 		const attributes = currentNode.attributes;
 		if (!attributes || _isClobbered(currentNode)) return;
+		ALLOWED_ATTR = _forkSharedAllowlist(hooks.uponSanitizeAttribute, ALLOWED_ATTR, DEFAULT_ALLOWED_ATTR, SET_CONFIG_ALLOWED_ATTR);
 		const hookEvent = {
 			attrName: "",
 			attrValue: "",
@@ -15374,8 +15403,8 @@ function createDOMPurify() {
 		}
 		if (body && FORCE_BODY) _forceRemove(body.firstChild);
 		const walkRoot = inPlace ? dirty : body;
-		const nodeIterator = _createNodeIterator(walkRoot);
 		try {
+			const nodeIterator = _createNodeIterator(walkRoot);
 			while (currentNode = nodeIterator.nextNode()) {
 				_sanitizeElements(currentNode, walkRoot);
 				_sanitizeAttributes(currentNode);

@@ -27,6 +27,10 @@ STREAM_STDOUT_FILES=""
 STREAM_STDERR_FILES=""
 CONTAINER_ENGINE=""
 ENGINE_OVERRIDE=""
+DOCKERFILE_OVERRIDE=0
+INSTALLER_DIR=""
+INSTALLER_FILE=""
+STAGING_DIR=""
 
 print_help() {
   cat <<'EOF'
@@ -49,6 +53,12 @@ Build options (for build and up):
   --no-cache                 Build without cache
   --pull                     Pull newer base image
   --progress <mode>          Build progress mode (e.g. plain)
+  --dockerfile <path>        Use an alternative Dockerfile
+  --installer-dir <host_dir> Build from a local MapGuide installer directory
+                             (uses docker/devenv/Dockerfile.fromdir unless
+                             --dockerfile is also given)
+  --installer-file <name>    Installer filename within --installer-dir
+                             (default: the single *.run file in that dir)
 
 Run options (for run and up):
   --packages-dir <host_dir>  Host dir mounted to .../server/Packages (required)
@@ -107,6 +117,14 @@ Examples:
     --repositories-dir /data/mg-repositories \
     --www-mount myapp:/data/mg-web \
     --stream-log apache-access
+
+  # Building from a local installer directory (uses Dockerfile.fromdir)
+  ./mapguide-devenv.sh build --installer-dir /data/mapguide-installers
+
+  # Building from a local installer with an explicit installer file
+  ./mapguide-devenv.sh build \
+    --installer-dir /data/mapguide-installers \
+    --installer-file mapguideopensource-4.0.0.10202-ubuntu22-install.run
 EOF
 }
 
@@ -131,7 +149,51 @@ select_container_engine() {
   fi
 }
 
+prepare_build_inputs() {
+  if [ -n "${INSTALLER_DIR}" ]; then
+    if [ "${DOCKERFILE_OVERRIDE}" -eq 0 ]; then
+      DOCKERFILE_PATH="${SCRIPT_DIR}/docker/devenv/Dockerfile.fromdir"
+    fi
+
+    [ -d "${INSTALLER_DIR}" ] || { echo "error: --installer-dir '${INSTALLER_DIR}' is not a directory" >&2; exit 1; }
+    INSTALLER_DIR="$(readlink -f "${INSTALLER_DIR}" 2>/dev/null || true)"
+
+    if [ -n "${INSTALLER_FILE}" ]; then
+      INSTALLER_SRC_FILE="${INSTALLER_DIR}/${INSTALLER_FILE}"
+      [ -f "${INSTALLER_SRC_FILE}" ] || { echo "error: installer '${INSTALLER_SRC_FILE}' was not found" >&2; exit 1; }
+    else
+      INSTALLER_SRC_FILE=""
+      INSTALLER_COUNT=0
+      for candidate in "${INSTALLER_DIR}"/*.run; do
+        [ -e "${candidate}" ] || continue
+        INSTALLER_SRC_FILE="${candidate}"
+        INSTALLER_COUNT=$((INSTALLER_COUNT + 1))
+      done
+      if [ "${INSTALLER_COUNT}" -ne 1 ]; then
+        echo "error: expected exactly one .run file in '${INSTALLER_DIR}' (found ${INSTALLER_COUNT}); use --installer-file" >&2
+        exit 1
+      fi
+    fi
+
+    STAGING_DIR="$(mktemp -d)"
+    mkdir -p "${STAGING_DIR}/.installer"
+    cp "${SCRIPT_DIR}/docker/devenv/entrypoint.sh" "${STAGING_DIR}/entrypoint.sh"
+    cp "${INSTALLER_SRC_FILE}" "${STAGING_DIR}/.installer/installer.run"
+    BUILD_CONTEXT="${STAGING_DIR}"
+  fi
+}
+
+cleanup_build_inputs() {
+  if [ -n "${STAGING_DIR}" ]; then
+    rm -rf "${STAGING_DIR}"
+    STAGING_DIR=""
+  fi
+}
+
 build_image() {
+  prepare_build_inputs
+  trap cleanup_build_inputs EXIT
+
   set -- build -t "${IMAGE_NAME}" -f "${DOCKERFILE_PATH}"
 
   if [ "${BUILD_NO_CACHE}" -eq 1 ]; then
@@ -146,6 +208,9 @@ build_image() {
 
   set -- "$@" "${BUILD_CONTEXT}"
   "${CONTAINER_ENGINE}" "$@"
+
+  cleanup_build_inputs
+  trap - EXIT
 }
 
 validate_run_inputs() {
@@ -398,6 +463,22 @@ while [ "$#" -gt 0 ]; do
     --progress)
       [ "$#" -ge 2 ] || { echo "error: --progress requires a value" >&2; exit 1; }
       BUILD_PROGRESS="$2"
+      shift 2
+    ;;
+    --dockerfile)
+      [ "$#" -ge 2 ] || { echo "error: --dockerfile requires a value" >&2; exit 1; }
+      DOCKERFILE_PATH="$2"
+      DOCKERFILE_OVERRIDE=1
+      shift 2
+    ;;
+    --installer-dir)
+      [ "$#" -ge 2 ] || { echo "error: --installer-dir requires a path" >&2; exit 1; }
+      INSTALLER_DIR="$2"
+      shift 2
+    ;;
+    --installer-file)
+      [ "$#" -ge 2 ] || { echo "error: --installer-file requires a value" >&2; exit 1; }
+      INSTALLER_FILE="$2"
       shift 2
     ;;
     -h|--help)

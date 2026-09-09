@@ -52,10 +52,44 @@ To build the MapGuide docker image:
 ./mapguide-devenv.sh build
 ```
 
+To build the image from a locally-downloaded MapGuide installer instead of the
+default download URL, pass `--installer-dir` pointing at the directory holding
+the installer. This uses `docker/devenv/Dockerfile.fromdir` and copies the
+installer into the build:
+
+```
+./mapguide-devenv.sh build --installer-dir /path/to/mapguide-installers
+```
+
+If that directory contains more than one `.run` file, select the exact one with
+`--installer-file`:
+
+```
+./mapguide-devenv.sh build \
+  --installer-dir /path/to/mapguide-installers \
+  --installer-file mapguideopensource-4.0.0.10202-ubuntu22-install.run
+```
+
+To use a different Dockerfile entirely, pass `--dockerfile`:
+
+```
+./mapguide-devenv.sh build --dockerfile /path/to/custom/Dockerfile
+```
+
 To spin up this MapGuide docker container:
 
 ```
 ./mapguide-devenv.sh run --packages-dir $PWD/docker/devenv/packages --www-mount viewer:$PWD/viewer --repositories-dir $PWD/docker/devenv/server-data
+```
+
+You can also combine a local-installer build with a run in one step:
+
+```
+./mapguide-devenv.sh up \
+  --installer-dir /path/to/mapguide-installers \
+  --packages-dir $PWD/docker/devenv/packages \
+  --www-mount viewer:$PWD/viewer \
+  --repositories-dir $PWD/docker/devenv/server-data
 ```
 
 The MapGuide web tier will then be accessible from port 8008. The server's repository data is volume mounted to `docker/devenv/server-data` so your data will persist between container runs.

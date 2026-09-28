@@ -28,6 +28,7 @@ import { useActiveMapState } from './hooks-mapguide';
 import { useMapProviderContext, useReduxDispatch } from "../components/map-providers/context";
 import DOMPurify from "dompurify";
 import { IMapProviderContext } from "../components/map-providers/base";
+import { isQueryMapFeaturesResponse } from "../api/builders/de-arrayify-guards";
 
 const deArrayifyModulePromise = import("../api/builders/deArrayify");
 
@@ -329,7 +330,7 @@ class FusionWidgetApiShim {
     processFeatureInfo(r: any): void {
         const o = JSON.parse(r.responseText);
         if (o.FeatureInformation) {
-            void deArrayifyModulePromise.then(({ deArrayify, isQueryMapFeaturesResponse }) => {
+            void deArrayifyModulePromise.then(({ deArrayify }) => {
                 const norm = deArrayify(o);
                 if (isQueryMapFeaturesResponse(norm)) {
                     const selXml = buildSelectionXml(norm.FeatureSet);

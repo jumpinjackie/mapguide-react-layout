@@ -22,6 +22,7 @@ import { MDF_INFINITY } from '../../constants';
 import { MapDefinition, MapDefinitionLayerGroup, MapDefinitionLayer as MdfLayer, TileSetSource } from "../contracts/map-definition";
 import { BaseMapLayer, BaseMapLayerGroup, TileSetDefinition, TileStoreParameters } from "../contracts/tile-set-definition";
 import { SiteVersionResponse } from '../contracts/common';
+import type { DeArrayifiedResult } from "./de-arrayify-guards";
 
 type ElementType = "string" | "boolean" | "int" | "float";
 
@@ -1010,79 +1011,6 @@ function deArrayifyTileSetDefinition(json: any): TileSetDefinition {
     };
     return resp;
 }
-
-/**
- * Indicates if the de-arrayified result is a {@link WebLayout}
- * 
- * @since 0.14
- */
-export function isWebLayout(arg: DeArrayifiedResult): arg is WebLayout {
-    return (arg as any).CommandSet != null
-        && (arg as any).ContextMenu != null
-        && (arg as any).Map != null
-}
-
-/**
- * Indicates if the de-arrayified result is an {@link ApplicationDefinition}
- * 
- * @since 0.14
- */
-export function isAppDef(arg: DeArrayifiedResult): arg is ApplicationDefinition {
-    return (arg as any).WidgetSet != null;
-}
-
-/**
- * Indicates if the de-arrayified result is a {@link MapDefinition}
- * 
- * @since 0.14
- */
-export function isMapDef(arg: DeArrayifiedResult): arg is MapDefinition {
-    return (arg as any).Extents != null
-        && (arg as any).BackgroundColor != null
-        && (arg as any).CoordinateSystem != null
-        && (arg as any).MapLayer != null
-        && (arg as any).MapLayerGroup != null;
-}
-
-/**
- * Indicates if the de-arrayified result is a {@link TileSetDefinition}
- * 
- * @since 0.14
- */
-export function isTileSet(arg: DeArrayifiedResult): arg is TileSetDefinition {
-    return (arg as any).Extents != null
-        && (arg as any).TileStoreParameters != null
-        && (arg as any).BaseMapLayerGroup != null;
-}
-
-/**
- * Indicates if the de-arrayified result is a {@link SiteVersionResponse}
- * 
- * @since 0.14
- */
-export function isSiteVersion(arg: DeArrayifiedResult): arg is SiteVersionResponse {
-    return (arg as any).Version != null;
-}
-
-/**
- * Indicates if the de-arrayified result is a {@link QueryMapFeaturesResponse}
- * 
- * @since 0.14
- */
-export function isQueryMapFeaturesResponse(arg: DeArrayifiedResult): arg is QueryMapFeaturesResponse {
-    return (arg as any).FeatureSet != null
-        || (arg as any).Hyperlink != null
-        || (arg as any).InlineSelectionImage != null
-        || (arg as any).SelectedFeatures != null
-        || (arg as any).Tooltip != null;
-}
-
-/**
- * The result of the normalization of JSON from the mapagent
- * 
- * @since 0.14
- */
-export type DeArrayifiedResult = RuntimeMap | QueryMapFeaturesResponse | WebLayout | ApplicationDefinition | MapDefinition | TileSetDefinition | SiteVersionResponse;
 
 /**
  * Normalizes the given JSON object to match the content model of its original XML form

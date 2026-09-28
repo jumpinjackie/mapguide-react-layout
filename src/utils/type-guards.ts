@@ -7,7 +7,7 @@ import {
 import { MapLayer, RuntimeMap } from "../api/contracts/runtime-map";
 import { IInlineMenu, IFlyoutMenu, IComponentFlyoutItem } from "../components/toolbar";
 import { IGenericSubjectMapLayer, ViewerAction } from '../actions/defs';
-import { DeArrayifiedResult } from "../api/builders/deArrayify";
+import type { DeArrayifiedResult } from "../api/builders/de-arrayify-guards";
 
 /**
  * Indicates if the given argument is an IModalDisplayOptions

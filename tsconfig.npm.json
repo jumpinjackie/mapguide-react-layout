@@ -2,10 +2,12 @@
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "declaration": true,
-        "outDir": "package/lib"
+        "outDir": "package/lib",
+        "rootDir": "src"
     },
     "exclude": [
         "vite.config.ts",
+        "playwright.config.ts",
         "vitest*.ts",
         "lib",
         "package",
@@ -15,6 +17,7 @@
         "src/entries/library.tsx",
         "src/stories",
         "test",
-        "test-data"
+        "test-data",
+        "tools"
     ]
 }

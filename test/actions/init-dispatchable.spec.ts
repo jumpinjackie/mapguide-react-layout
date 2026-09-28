@@ -3,7 +3,8 @@ import { configureStore } from "../../src/store/configure-store";
 import { CONFIG_INITIAL_STATE } from "../../src/reducers/config";
 import { initAppFromDocument } from "../../src/actions/init";
 import { AsyncLazy } from "../../src/api/lazy";
-import { deArrayify, isAppDef } from "../../src/api/builders/deArrayify";
+import { deArrayify } from "../../src/api/builders/deArrayify";
+import { isAppDef } from "../../src/api/builders/de-arrayify-guards";
 import legacyAppDef from "../../test-data/init_appdef_legacy";
 import cleanAppDef from "../../test-data/init_appdef_clean";
 

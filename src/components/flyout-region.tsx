@@ -68,7 +68,7 @@ export const FlyoutRegion = (props: IFlyoutRegionProps) => {
 
     return <div>
         {(() => {
-            const children = [] as JSX.Element[];
+            const children = [] as React.JSX.Element[];
             for (const flyoutId in props.flyoutConf) {
                 const flyout = props.flyoutConf[flyoutId];
                 const open = !!flyout.open;

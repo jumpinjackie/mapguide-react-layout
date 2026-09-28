@@ -56,7 +56,7 @@ export interface IAddLayerContentProps {
 
 interface IAddLayerConf {
     label: string;
-    content: (props: IAddLayerContentProps) => JSX.Element;
+    content: (props: IAddLayerContentProps) => React.JSX.Element;
 }
 
 const ADD_URL_LAYER_TYPES: { [key: string]: IAddLayerConf } = {

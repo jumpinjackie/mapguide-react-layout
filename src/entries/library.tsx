@@ -138,13 +138,13 @@ export class Registry {
      *
      * @static
      * @param {string} name The viewer template name
-     * @param {() => JSX.Element} factory The JSX element factory that creates the viewer template component
+     * @param {() => React.JSX.Element} factory The JSX element factory that creates the viewer template component
      * @param caps Viewer template capabilities
      *
      *
      * @since 0.14 Added required caps parameter
      */
-    public static registerLayout(name: string, factory: () => JSX.Element, caps: LayoutCapabilities) {
+    public static registerLayout(name: string, factory: () => React.JSX.Element, caps: LayoutCapabilities) {
         registerLayout(name, factory, caps);
     }
     /**
@@ -164,11 +164,11 @@ export class Registry {
      *
      * @static
      * @param {string} id The component id
-     * @param {(props: any) => JSX.Element} factory The JSX element factory that creates the component
+     * @param {(props: any) => React.JSX.Element} factory The JSX element factory that creates the component
      *
      *
      */
-    public static registerComponentFactory(id: string, factory: (props: any) => JSX.Element) {
+    public static registerComponentFactory(id: string, factory: (props: any) => React.JSX.Element) {
         registerComponentFactory(id, factory);
     }
 

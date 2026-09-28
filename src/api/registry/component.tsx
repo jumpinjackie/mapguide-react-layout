@@ -34,7 +34,7 @@ export enum DefaultComponentNames {
 /**
  * A react component factory function signature
  */
-export type ComponentFactory = (props: any) => JSX.Element;
+export type ComponentFactory = (props: any) => React.JSX.Element;
 
 const components: { [id: string]: ComponentFactory } = {};
 

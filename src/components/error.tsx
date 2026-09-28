@@ -10,7 +10,7 @@ import { useElementContext } from "./elements/element-context";
  */
 export interface IErrorProps {
     error: Error|InitError|string;
-    errorRenderer?: (err: Error|InitError) => JSX.Element;
+    errorRenderer?: (err: Error|InitError) => React.JSX.Element;
 }
 
 /**

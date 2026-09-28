@@ -131,7 +131,7 @@ export type InputGroupProps = {
     id?: string;
     /** @since 0.15 */
     name?: string;
-    rightElement?: JSX.Element;
+    rightElement?: React.JSX.Element;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
@@ -140,10 +140,10 @@ export type InputGroupProps = {
  * @since 0.15
  */
 export type NonIdealStateProps = {
-    icon?: SvgIconName | JSX.Element;
-    title?: string | JSX.Element;
+    icon?: SvgIconName | React.JSX.Element;
+    title?: string | React.JSX.Element;
     description?: string;
-    action?: JSX.Element;
+    action?: React.JSX.Element;
 }
 
 /**
@@ -167,7 +167,7 @@ export type SwitchProps = {
     disabled?: boolean;
     checked?: boolean;
     label?: string;
-    labelElement?: JSX.Element;
+    labelElement?: React.JSX.Element;
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -234,7 +234,7 @@ export interface TabSetProps {
     tabs: {
         id: string | number,
         title: React.ReactNode,
-        content?: JSX.Element
+        content?: React.JSX.Element
     }[];
 }
 
@@ -261,7 +261,7 @@ export type ToastPosition = "top" | "top-left" | "top-right" | "bottom" | "botto
  */
 export type ToastMessage = {
     icon?: SvgIconName;
-    message: string | JSX.Element;
+    message: string | React.JSX.Element;
     variant?: ElementVariant;
 };
 

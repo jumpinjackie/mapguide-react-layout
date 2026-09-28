@@ -493,7 +493,7 @@ export const App = (props: IAppProps) => {
             updateUrl(nextUrlState, undefined, effectiveIgnore);
     }, [map, activeMapName, ftEnabled, props, configuredAppSettings]);
 
-    const renderErrorMessage = React.useCallback((err: Error | InitError, locale: string, args: any): JSX.Element => {
+    const renderErrorMessage = React.useCallback((err: Error | InitError, locale: string, args: any): React.JSX.Element => {
         const msg = err.message;
         switch (msg) {
             case "MgConnectionFailedException":

@@ -118,7 +118,7 @@ export interface ISelectionPanelProps {
     onRequestZoomToFeature: (feat: SelectedFeature) => void;
     onShowSelectedFeature: (layerId: string, selectionKey: string) => void;
     maxHeight?: number;
-    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
+    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => React.JSX.Element;
     /**
      * Controls whether HTML values are allowed be rendered in property values
      * 

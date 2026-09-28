@@ -986,16 +986,16 @@ export abstract class BaseMapProviderContext<TState extends IMapProviderState, T
     setViewRotationEnabled(enabled: boolean): void {
         this._comp?.onDispatch(setViewRotationEnabled(enabled));
     }
-    toastSuccess(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
+    toastSuccess(iconName: SvgIconName, message: string | React.JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "success" });
     }
-    toastWarning(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
+    toastWarning(iconName: SvgIconName, message: string | React.JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "warning" });
     }
-    toastError(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
+    toastError(iconName: SvgIconName, message: string | React.JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "danger" });
     }
-    toastPrimary(iconName: SvgIconName, message: string | JSX.Element): string | undefined {
+    toastPrimary(iconName: SvgIconName, message: string | React.JSX.Element): string | undefined {
         return this._toasterRef?.current?.show({ icon: iconName, message: message, variant: "primary" });
     }
     dismissToast(key: string): void {

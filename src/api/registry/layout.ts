@@ -1,7 +1,9 @@
+import type * as React from "react";
+
 /**
  * A react layout template component factory function signature
  */
-export type LayoutFactory = (() => JSX.Element);
+export type LayoutFactory = (() => React.JSX.Element);
 
 /**
  * Capabilities of a viewer layout template

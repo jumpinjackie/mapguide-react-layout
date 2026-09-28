@@ -16,7 +16,7 @@ import type { ClientSelectionSet } from "../api/contracts/common";
 
 export interface ISelectionPanelContainerProps {
     maxHeight?: number;
-    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => JSX.Element;
+    selectedFeatureRenderer?: (props: ISelectedFeatureProps) => React.JSX.Element;
 }
 
 const selectorContainerStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6, marginBottom: 8 };
@@ -120,7 +120,7 @@ export const SelectionPanelContainer = (props: ISelectionPanelContainerProps) =>
         </div>
     ) : null;
 
-    const withSwipeSelectorLayout = (content: JSX.Element) => {
+    const withSwipeSelectorLayout = (content: React.JSX.Element) => {
         if (comparisonMapSelector) {
             return <div style={swipeSelectionRootStyle}>
                 {comparisonMapSelector}

@@ -24,6 +24,7 @@ import Geometry from 'ol/geom/Geometry';
 import { IBasicPointCircleStyle, IPointIconStyle, IBasicVectorLineStyle, IBasicVectorPolygonStyle, IVectorLayerStyle, IClusterSettings, ClusterClickAction, IHeatmapSettings } from './ol-style-contracts';
 import { IToolbarAppState } from './registry/command';
 import { ClientSelectionSet } from "./contracts/common";
+import type * as React from "react";
 
 // Event boilerplate
 export type GenericEvent = any;
@@ -954,10 +955,10 @@ export interface IMapViewer {
      */
     screenToMapUnits(x: number, y: number): [number, number];
 
-    toastSuccess(icon: string, message: string | JSX.Element): string | undefined;
-    toastWarning(icon: string, message: string | JSX.Element): string | undefined;
-    toastError(icon: string, message: string | JSX.Element): string | undefined;
-    toastPrimary(icon: string, message: string | JSX.Element): string | undefined;
+    toastSuccess(icon: string, message: string | React.JSX.Element): string | undefined;
+    toastWarning(icon: string, message: string | React.JSX.Element): string | undefined;
+    toastError(icon: string, message: string | React.JSX.Element): string | undefined;
+    toastPrimary(icon: string, message: string | React.JSX.Element): string | undefined;
     dismissToast(key: string): void;
     updateSize(): void;
 

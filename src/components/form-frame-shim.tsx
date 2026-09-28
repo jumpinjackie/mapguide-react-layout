@@ -33,11 +33,11 @@ export class FormFrameShim extends React.Component<FormFrameShimProps, any> {
             this._form.submit();
         })
     }
-    render(): JSX.Element {
+    render(): React.JSX.Element {
         const { target, action, params } = this.state;
         return <form style={{ visibility: "hidden", width: 0, height: 0 }} ref={this.onFormMounted} method="post" id="Frm" target={target} action={action} encType="application/x-www-form-urlencoded">
             {(() => {
-                const fields = [] as JSX.Element[];
+                const fields = [] as React.JSX.Element[];
                 for (let i = 0; i < params.length; i+=2) {
                     fields.push(<input id={`f${i}`} key={`f${i}`} type="hidden" name={params[i]} value={params[i+1]} />);
                 }

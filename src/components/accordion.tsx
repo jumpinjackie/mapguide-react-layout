@@ -23,7 +23,7 @@ export interface IAccordionPanelContentDimensions {
 export interface IAccordionPanelSpec {
     id: string;
     title: string;
-    contentRenderer: (dim: IAccordionPanelContentDimensions, isResizing?: boolean) => JSX.Element;
+    contentRenderer: (dim: IAccordionPanelContentDimensions, isResizing?: boolean) => React.JSX.Element;
 }
 
 /**

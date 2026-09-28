@@ -96,7 +96,7 @@ const ManageLayerItem = (props: IManageLayerItemProps) => {
     if (layer.type == "WMS") {
         iconName = "media";
     }
-    const extraActions = [] as JSX.Element[];
+    const extraActions = [] as React.JSX.Element[];
     const { extensions } = layer;
     let isWms = false;
     if (extensions) {

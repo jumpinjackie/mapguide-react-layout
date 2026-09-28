@@ -185,7 +185,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
     let icon = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE}>
         {bs => <BpIcon icon={ICON_LEGEND_LAYER} iconSize={bs} />}
     </Icon>;
-    let selectable: JSX.Element | undefined;
+    let selectable: React.JSX.Element | undefined;
     if (layer.Selectable === true) {
         //NOTE: As we've intercepted the BP icons package, we've re-appropriated the "disable" icon for
         //disabling selection
@@ -193,7 +193,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
             {bs => <BpIcon icon={getLayerSelectability(layer.ObjectId) ? ICON_SELECT : ICON_LC_UNSELECT} iconSize={bs} />}
         </Icon>;
     }
-    let chkbox: JSX.Element | undefined;
+    let chkbox: React.JSX.Element | undefined;
     if (layer.Type == 1) { //Dynamic
         chkbox = <input type='checkbox'
             className='layer-checkbox'
@@ -211,7 +211,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
                 const ruleElements = [];
                 //if (debug)
                 //    text = label + " (" + scaleRange.MinScale + " - " + scaleRange.MaxScale + ")";
-                let body: JSX.Element | undefined;
+                let body: React.JSX.Element | undefined;
                 let isExpanded = getExpanded();
                 let totalRuleCount = 0;
                 for (const fts of scaleRange.FeatureStyle) {
@@ -258,7 +258,7 @@ export const LayerNode = (props: ILayerNodeProps) => {
                     body = <ul style={UL_LIST_STYLE(legendCtx.getBaseIconSize())}>{ruleElements}</ul>;
                 }
 
-                let expanded: JSX.Element;
+                let expanded: React.JSX.Element;
                 if (totalRuleCount > 1) {
                     expanded = <Icon baseSize={legendCtx.getBaseIconSize()} style={ROW_ITEM_ELEMENT_STYLE} onClick={onToggleExpansion}>
                         {bs => <BpIcon icon={isExpanded ? ICON_LEGEND_TOGGLE : ICON_LEGEND_TOGGLE_EXPAND} iconSize={bs} />}

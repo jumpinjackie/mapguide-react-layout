@@ -1242,7 +1242,7 @@ class ViewerApiShimInner extends React.Component<ViewerApiShimProps, any> {
             this.triggerFusionEvent(this.fusionAPI.Event.MAP_BUSY_CHANGED);
         }
     }
-    render(): JSX.Element {
+    render(): React.JSX.Element {
         //This is for all intents and purposes, a "background" component. There is no real DOM representation
         return <div>
             <FormFrameShim ref={this.onFormFrameMounted} />

@@ -391,7 +391,7 @@ export interface IComponentFlyoutItem extends IItem {
 }
 
 export interface IContainerItem extends IItem {
-    renderContainerContent: () => JSX.Element;
+    renderContainerContent: () => React.JSX.Element;
 }
 
 /**

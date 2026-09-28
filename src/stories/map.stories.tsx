@@ -8,10 +8,8 @@ import { MapMenuContainer } from "../containers/map-menu";
 import { BaseLayerSwitcherContainer } from "../containers/base-layer-switcher";
 import { CoordinateTrackerContainer } from "../containers/coordinate-tracker";
 import { AddManageLayersContainer } from "../containers/add-manage-layers";
-import {
-  deArrayify,
-  isQueryMapFeaturesResponse,
-} from "../api/builders/deArrayify";
+import { deArrayify } from "../api/builders/deArrayify";
+import { isQueryMapFeaturesResponse } from "../api/builders/de-arrayify-guards";
 import { MouseCoordinatesContainer } from "../containers/mouse-coordinates";
 import { ViewSizeContainer } from "../containers/view-size";
 import { ViewerOptions } from "../containers/viewer-options";

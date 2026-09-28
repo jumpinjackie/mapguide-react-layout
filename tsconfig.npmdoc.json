@@ -5,6 +5,9 @@
     },
     "exclude": [
         "vite.config.ts",
+        "playwright.config.ts",
+        "vitest*.ts",
+        "tools",
         "lib",
         "package",
         "e2e",

@@ -6998,6 +6998,17 @@ function useActiveMapCoordinateFormat() {
 	});
 }
 //#endregion
+//#region src/api/builders/de-arrayify-guards.ts
+function isWebLayout(arg) {
+	return arg.CommandSet != null && arg.ContextMenu != null && arg.Map != null;
+}
+function isAppDef(arg) {
+	return arg.WidgetSet != null;
+}
+function isQueryMapFeaturesResponse(arg) {
+	return arg.FeatureSet != null || arg.Hyperlink != null || arg.InlineSelectionImage != null || arg.SelectedFeatures != null || arg.Tooltip != null;
+}
+//#endregion
 //#region src/containers/viewer-shim.tsx
 var deArrayifyModulePromise = __vitePreload(() => import("./chunks/deArrayify-debug.js"), [], import.meta.url);
 function isEmptySelection(selection) {
@@ -7229,7 +7240,7 @@ var FusionWidgetApiShim = class FusionWidgetApiShim {
 	}
 	processFeatureInfo(r) {
 		const o = JSON.parse(r.responseText);
-		if (o.FeatureInformation) deArrayifyModulePromise.then(({ deArrayify, isQueryMapFeaturesResponse }) => {
+		if (o.FeatureInformation) deArrayifyModulePromise.then(({ deArrayify }) => {
 			const norm = deArrayify(o);
 			if (isQueryMapFeaturesResponse(norm)) {
 				const selXml = buildSelectionXml(norm.FeatureSet);
@@ -8205,14 +8216,6 @@ function registerLayout(name, factory, caps) {
 */
 function getLayout(name) {
 	return layouts[name];
-}
-//#endregion
-//#region src/api/builders/de-arrayify-guards.ts
-function isWebLayout(arg) {
-	return arg.CommandSet != null && arg.ContextMenu != null && arg.Map != null;
-}
-function isAppDef(arg) {
-	return arg.WidgetSet != null;
 }
 //#endregion
 //#region src/actions/defs.ts
@@ -26952,7 +26955,7 @@ var Registry = class {
 	*
 	* @static
 	* @param {string} name The viewer template name
-	* @param {() => JSX.Element} factory The JSX element factory that creates the viewer template component
+	* @param {() => React.JSX.Element} factory The JSX element factory that creates the viewer template component
 	* @param caps Viewer template capabilities
 	*
 	*
@@ -26978,7 +26981,7 @@ var Registry = class {
 	*
 	* @static
 	* @param {string} id The component id
-	* @param {(props: any) => JSX.Element} factory The JSX element factory that creates the component
+	* @param {(props: any) => React.JSX.Element} factory The JSX element factory that creates the component
 	*
 	*
 	*/

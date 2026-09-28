@@ -720,54 +720,6 @@ function deArrayifyTileSetDefinition(json) {
 	};
 }
 /**
-* Indicates if the de-arrayified result is a {@link WebLayout}
-* 
-* @since 0.14
-*/
-function isWebLayout(arg) {
-	return arg.CommandSet != null && arg.ContextMenu != null && arg.Map != null;
-}
-/**
-* Indicates if the de-arrayified result is an {@link ApplicationDefinition}
-* 
-* @since 0.14
-*/
-function isAppDef(arg) {
-	return arg.WidgetSet != null;
-}
-/**
-* Indicates if the de-arrayified result is a {@link MapDefinition}
-* 
-* @since 0.14
-*/
-function isMapDef(arg) {
-	return arg.Extents != null && arg.BackgroundColor != null && arg.CoordinateSystem != null && arg.MapLayer != null && arg.MapLayerGroup != null;
-}
-/**
-* Indicates if the de-arrayified result is a {@link TileSetDefinition}
-* 
-* @since 0.14
-*/
-function isTileSet(arg) {
-	return arg.Extents != null && arg.TileStoreParameters != null && arg.BaseMapLayerGroup != null;
-}
-/**
-* Indicates if the de-arrayified result is a {@link SiteVersionResponse}
-* 
-* @since 0.14
-*/
-function isSiteVersion(arg) {
-	return arg.Version != null;
-}
-/**
-* Indicates if the de-arrayified result is a {@link QueryMapFeaturesResponse}
-* 
-* @since 0.14
-*/
-function isQueryMapFeaturesResponse(arg) {
-	return arg.FeatureSet != null || arg.Hyperlink != null || arg.InlineSelectionImage != null || arg.SelectedFeatures != null || arg.Tooltip != null;
-}
-/**
 * Normalizes the given JSON object to match the content model of its original XML form
 *
 * @param {*} json The JSON object to normalize
@@ -786,6 +738,6 @@ function deArrayify(json) {
 	throw new MgError(`Unsure how to process JSON response. Root elements are: (${keys.join(", ")})`);
 }
 //#endregion
-export { deArrayify, isAppDef, isMapDef, isQueryMapFeaturesResponse, isSiteVersion, isTileSet, isWebLayout };
+export { deArrayify };
 
 //# sourceMappingURL=deArrayify-debug.js.map

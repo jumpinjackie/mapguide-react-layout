@@ -23,6 +23,7 @@
     "build:dev:inner": "vite build --mode development",
     "analyze:prod": "cross-env ANALYZE=1 yarn run build:prod:inner",
     "build:json_schema": "typescript-json-schema tsconfig.npm.json ApplicationDefinition --out viewer/ApplicationDefinition.schema.json",
+    "snapshot:api": "yarn run build:barrels && node tools/snapshot-api.js",
     "clean:barrels": "rimraf src/index.ts",
     "clean:viewer": "rimraf viewer/dist",
     "watch:site": "docsify serve docs_dev/content",

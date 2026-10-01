@@ -2,7 +2,7 @@ const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./chunks/geotiff-debug
 import { n as __exportAll, r as __toESM } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react, i as require_react_dom, n as require_client, r as require_jsx_runtime } from "./chunks/react-vendor-debug.js";
 import { Cr as _asyncToGenerator, Jn as createEmpty, Jt as register, Kn as containsXY, P as DEVICE_PIXEL_RATIO, Qt as fromLonLat, Sr as __vitePreload, V as createXYZ, Vn as buffer, W as TileGrid, Zt as equivalent, cn as transform, cr as getHeight, dn as getDistance, dr as getTopLeft, er as extend$1, hn as METERS_PER_UNIT, hr as isEmpty, k as easeOut, ln as transformExtent, mn as Projection, or as getCenter, pr as getWidth, qt as _objectWithoutProperties, tn as get, un as getArea, wr as _objectSpread2, wt as unByKey } from "./chunks/geotiff-debug.js";
-import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as cjs_default, d as Provider_default, f as batch, g as createSelector, h as configureStore$1, i as Z, l as purify, m as useSelector, n as stickybits, o as require_papaparse_min, p as useDispatch, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
+import { C as require_Popover, S as zt, _ as combineReducers, a as geojsonvt, b as require_lodash_xor, c as cjs_default, d as Provider_default, f as batch, g as createSelector, h as configureStore$1, i as Z, l as purify_default, m as useSelector, n as stickybits, o as require_papaparse_min, p as useDispatch, r as index, s as Rnd, t as require_lodash_debounce, v as proj4, x as Fe, y as require_lodash_xorby } from "./vendor-debug.js";
 import { C as RegularShape, S as CircleStyle, a as WMSCapabilities, at as fromExtent, b as Stroke, c as GeoJSON, ct as LineString, d as MultiPolygon, f as MultiPoint, g as Style, h as Text, i as TopoJSON, it as fromCircle, l as GeometryCollection, m as Feature, mt as Point, n as IGC, o as MVT, p as MultiLineString, q as asArray, r as GPX, rt as Polygon, s as KML, st as LinearRing, t as WKT, w as Icon$1, x as Fill } from "./chunks/ol-formats-debug.js";
 import { A as TileWMS, B as ImageMapGuide, C as getRenderPixel, D as Cluster, E as VectorTile, F as OSM, G as UrlTile, H as defaultImageLoadFunction, I as ImageLayer, K as LayerGroup, L as TileLayer, M as UTFGrid, N as BingMaps, O as VectorSource, P as TileDebug, R as View, S as ImageWMS, T as VectorTileLayer, U as XYZ, V as ImageSource, W as TileImage, _ as Rotate, a as Circle, b as Translate, c as Map$1, d as MouseWheelZoom, f as KeyboardZoom, g as DragPan, h as DragRotate, i as Draw, j as WebGLTileLayer, k as VectorLayer, l as PinchZoom, m as DragBox, n as Snap, o as Select, p as KeyboardPan, q as Collection, r as Extent, s as OverviewMap, t as Modify, u as PinchRotate, v as Attribution, w as toContext, x as Heatmap, y as Overlay, z as Static } from "./chunks/ol-debug.js";
 //#region src/constants.ts
@@ -7382,21 +7382,21 @@ var FusionWidgetApiShim = class FusionWidgetApiShim {
 		const { viewer } = this.parent.props;
 		if (viewer.isReady()) this._activeToast = viewer.toastPrimary("info-sign", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "mg-fusion-message",
-			dangerouslySetInnerHTML: { __html: purify.sanitize(msg) }
+			dangerouslySetInnerHTML: { __html: purify_default.sanitize(msg) }
 		}));
 	}
 	warn(msg) {
 		const { viewer } = this.parent.props;
 		if (viewer.isReady()) this._activeToast = viewer.toastPrimary("warning-sign", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "mg-fusion-message",
-			dangerouslySetInnerHTML: { __html: purify.sanitize(msg) }
+			dangerouslySetInnerHTML: { __html: purify_default.sanitize(msg) }
 		}));
 	}
 	error(msg) {
 		const { viewer } = this.parent.props;
 		if (viewer.isReady()) this._activeToast = viewer.toastPrimary("error", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "mg-fusion-message",
-			dangerouslySetInnerHTML: { __html: purify.sanitize(msg) }
+			dangerouslySetInnerHTML: { __html: purify_default.sanitize(msg) }
 		}));
 	}
 	clear() {
@@ -12354,7 +12354,7 @@ function formatCoordinates(props) {
 		y: `${decimals != null ? y.toFixed(decimals) : y}`,
 		units: units || ""
 	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { dangerouslySetInnerHTML: { __html: purify.sanitize(strTrim(str)) } });
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(strTrim(str)) } });
 }
 /**
 * Displays tracked mouse coordinates
@@ -15279,7 +15279,7 @@ var MeasureContainer = () => {
 					children: tr("MEASURING_MESSAGE", locale)
 				}), segments && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(HtmlTable, {
 					condensed: true,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: tr("MEASURE_SEGMENT", locale) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: tr("MEASURE_LENGTH", locale) })] }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [segments.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment }) }), measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: `${roundTo(s.length, 2)} ${toProjUnit(measureUnits)}` }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) }) })] }, `segment-${s.segment}`)), segmentTotal !== void 0 && activeType && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: activeType === "Area" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: tr("MEASURE_TOTAL_AREA", locale) }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("UNIT_FMT_SQM", locale, { value: `${roundTo(segmentTotal, 4)}` })) } }) })] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: tr("MEASURE_TOTAL_LENGTH", locale) }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)}` } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("UNIT_FMT_M", locale, { value: `${roundTo(segmentTotal, 4)}` })) } }) })] }) })] })]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: tr("MEASURE_SEGMENT", locale) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: tr("MEASURE_LENGTH", locale) })] }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [segments.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: tr("MEASURE_SEGMENT_PART", locale, { segment: s.segment }) }), measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: `${roundTo(s.length, 2)} ${toProjUnit(measureUnits)}` }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: tr("UNIT_FMT_M", locale, { value: roundTo(s.length, 2) }) })] }, `segment-${s.segment}`)), segmentTotal !== void 0 && activeType && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: activeType === "Area" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: tr("MEASURE_TOTAL_AREA", locale) }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)} <sup>2</sup>` } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("UNIT_FMT_SQM", locale, { value: `${roundTo(segmentTotal, 4)}` })) } }) })] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: tr("MEASURE_TOTAL_LENGTH", locale) }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: measureUnits ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: `${roundTo(segmentTotal, 4)} ${toProjUnit(measureUnits)}` } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("UNIT_FMT_M", locale, { value: `${roundTo(segmentTotal, 4)}` })) } }) })] }) })] })]
 				})] })
 			]
 		})
@@ -17891,7 +17891,7 @@ var AddFileLayer = (props) => {
 				}))
 			})
 		})] });
-		const colorBrewerLabel = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("COLORBREWER_THEME", locale)) } });
+		const colorBrewerLabel = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("COLORBREWER_THEME", locale)) } });
 		const themeEl = /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FormGroup, {
 				label: tr("THEME_ON_PROPERTY", locale),
@@ -18597,7 +18597,7 @@ var ViewSizeContent = ({ gw, gh, unit }) => {
 		gh,
 		unit
 	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { dangerouslySetInnerHTML: { __html: purify.sanitize(str) } });
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(str) } });
 };
 var ViewSize = (props) => {
 	const { width, height, view, metersPerUnit, units, precision, locale } = props;
@@ -19233,7 +19233,7 @@ var LegendLabel = (props) => {
 			lineHeight: `${props.baseSize}px`,
 			verticalAlign: "middle"
 		},
-		dangerouslySetInnerHTML: { __html: purify.sanitize(inner) }
+		dangerouslySetInnerHTML: { __html: purify_default.sanitize(inner) }
 	});
 };
 function getIconUri(iconMimeType, iconBase64) {
@@ -19416,7 +19416,7 @@ var LayerNode = (props) => {
 				item: layer,
 				mapName,
 				session,
-				sanitize: (html) => purify.sanitize(html),
+				sanitize: (html) => purify_default.sanitize(html),
 				elementSize: legendCtx.getBaseIconSize()
 			})) !== null && _legendCtx$provideExt !== void 0 ? _legendCtx$provideExt : []).map((html, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				style: EXTRAS_STYLE(legendCtx.getBaseIconSize()),
@@ -19605,7 +19605,7 @@ var GroupNode = (props) => {
 			item: group,
 			mapName,
 			session,
-			sanitize: (html) => purify.sanitize(html),
+			sanitize: (html) => purify_default.sanitize(html),
 			elementSize: legendCtx.getBaseIconSize()
 		})) !== null && _legendCtx$provideExt3 !== void 0 ? _legendCtx$provideExt3 : []).map((html, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			style: EXTRAS_STYLE(legendCtx.getBaseIconSize()),
@@ -20218,7 +20218,7 @@ var DefaultSelectedFeature = (props) => {
 				if (formatPropertyValue && !strIsNullOrEmpty(value)) value = formatPropertyValue(value, context);
 				if (allowHtmlValues && !strIsNullOrEmpty(value)) {
 					if (cleanHTML) value = cleanHTML(value, context);
-					else value = purify.sanitize(value);
+					else value = purify_default.sanitize(value);
 					return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
 						className: "property-value-cell",
 						"data-property-value-for": prop.Name,
@@ -21713,20 +21713,20 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
 		var _popupConfig$clustere, _popupConfig$clustere2;
 		title = (_popupConfig$clustere = popupConfig === null || popupConfig === void 0 || (_popupConfig$clustere2 = popupConfig.clusteredTitle) === null || _popupConfig$clustere2 === void 0 ? void 0 : _popupConfig$clustere2.call(popupConfig, size)) !== null && _popupConfig$clustere !== void 0 ? _popupConfig$clustere : tr("SEL_CLUSTER_PROPERTIES", locale, { size });
 	}
-	html += "<div class='selected-popup-header'><div>" + purify.sanitize(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
+	html += "<div class='selected-popup-header'><div>" + purify_default.sanitize(title) + "</div><a id='feat-popup-closer' class='closer' href='#'>[x]</a><div class='clearit'></div></div>";
 	const renderForMultipleSanitized = (subFeatures) => {
 		let table = "<table class='selected-popup-cluster-table'>";
 		const fheadings = (popupConfig === null || popupConfig === void 0 ? void 0 : popupConfig.propertyMappings) ? popupConfig.propertyMappings.filter((pm) => pm.name != subFeatures[0].getGeometryName()).map((pm) => pm.value) : Object.keys(subFeatures[0].getProperties()).filter((pn) => pn != subFeatures[0].getGeometryName());
 		const fprops = (popupConfig === null || popupConfig === void 0 ? void 0 : popupConfig.propertyMappings) ? popupConfig.propertyMappings.map((pm) => pm.value) : Object.keys(subFeatures[0].getProperties()).filter((pn) => pn != subFeatures[0].getGeometryName());
 		table += "<thead><tr>";
-		for (const heading of fheadings) table += `<th>${purify.sanitize(heading)}</th>`;
+		for (const heading of fheadings) table += `<th>${purify_default.sanitize(heading)}</th>`;
 		table += "</tr></thead>";
 		table += "<tbody>";
 		for (const f of subFeatures) {
 			table += "<tr>";
 			for (const property of fprops) {
 				const val = f.get(property);
-				table += `<td>${purify.sanitize(val)}</td>`;
+				table += `<td>${purify_default.sanitize(val)}</td>`;
 			}
 			table += "</tr>";
 		}
@@ -21743,16 +21743,16 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
 		if (popupConfig === null || popupConfig === void 0 ? void 0 : popupConfig.propertyMappings) for (const pm of popupConfig.propertyMappings) {
 			if (pm.name == feat.getGeometryName()) continue;
 			table += "<tr>";
-			table += "<td class='property-name-cell'>" + purify.sanitize(pm.value) + "</td>";
-			table += "<td class='property-value-cell'>" + purify.sanitize(f[pm.name]) + "</td>";
+			table += "<td class='property-name-cell'>" + purify_default.sanitize(pm.value) + "</td>";
+			table += "<td class='property-value-cell'>" + purify_default.sanitize(f[pm.name]) + "</td>";
 			table += "</tr>";
 			pc++;
 		}
 		else for (const key in f) {
 			if (key == feat.getGeometryName()) continue;
 			table += "<tr>";
-			table += "<td class='property-name-cell'>" + purify.sanitize(key) + "</td>";
-			table += "<td class='property-value-cell'>" + purify.sanitize(f[key]) + "</td>";
+			table += "<td class='property-name-cell'>" + purify_default.sanitize(key) + "</td>";
+			table += "<td class='property-value-cell'>" + purify_default.sanitize(f[key]) + "</td>";
 			table += "</tr>";
 			pc++;
 		}
@@ -21776,7 +21776,7 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
 				}
 				linkHref = url;
 			}
-			if (!strIsNullOrEmpty(linkHref)) linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${purify.sanitize(linkHref)}" target='${purify.sanitize(linkTarget)}'>${purify.sanitize(label)}</a></div>`;
+			if (!strIsNullOrEmpty(linkHref)) linkFragment = `<div class='select-popup-single-link-wrapper'><a href="${purify_default.sanitize(linkHref)}" target='${purify_default.sanitize(linkTarget)}'>${purify_default.sanitize(label)}</a></div>`;
 		}
 		return [
 			table,
@@ -21787,7 +21787,7 @@ function defaultPopupContentRenderer(feat, locale, popupConfig) {
 	const singlePopupContentRender = (feature, appendHtml) => {
 		const [table, pc, linkFragment] = renderForSingleSanitized(feature);
 		if (pc > 0) appendHtml(`<div class='selected-popup-content-wrapper'>${table}</div>`);
-		else appendHtml("<div class='selected-popup-content-none'>" + purify.sanitize(tr("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
+		else appendHtml("<div class='selected-popup-content-none'>" + purify_default.sanitize(tr("SEL_FEATURE_PROPERTIES_NONE", locale)) + "</div>");
 		if (!strIsNullOrEmpty(linkFragment)) appendHtml(linkFragment);
 	};
 	if (bClustered) {
@@ -24126,7 +24126,7 @@ var UTFGridTrackingTooltip = class {
 		if (viewResolution) this.gridSource.forDataAtCoordinateAndResolution(e.coordinate, viewResolution, (data) => {
 			if (data) {
 				var html = "";
-				if (data.MG_TOOLTIP) html += purify.sanitize(data.MG_TOOLTIP.replace(/(\\n)+/g, "<br />"));
+				if (data.MG_TOOLTIP) html += purify_default.sanitize(data.MG_TOOLTIP.replace(/(\\n)+/g, "<br />"));
 				if (data.MG_URL) {
 					html += "<br/><br/>";
 					html += "<strong>CTRL + Click for more information</strong>";
@@ -25647,11 +25647,11 @@ var App = (props) => {
 	const renderErrorMessage = import_react.useCallback((err, locale, args) => {
 		const msg = err.message;
 		switch (msg) {
-			case "MgConnectionFailedException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) } });
-			case "MgResourceNotFoundException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) } });
-			case "MgSessionExpiredException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify.sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) } });
+			case "MgConnectionFailedException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) } });
+			case "MgResourceNotFoundException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) } });
+			case "MgSessionExpiredException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) } });
 			default: {
-				const arg = { __html: purify.sanitize(msg) };
+				const arg = { __html: purify_default.sanitize(msg) };
 				const stack = normalizeStack(err);
 				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: arg }), (() => {
 					if (includeStack === true && stack.length > 0) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Stack Trace" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: stack.map((ln, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: ln }, `stack-line-${i}`)) })] });

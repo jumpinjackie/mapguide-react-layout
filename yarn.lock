@@ -1691,9 +1691,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@modelcontextprotocol/sdk@npm:1.31.0":
-  version: 1.31.0
-  resolution: "@modelcontextprotocol/sdk@npm:1.31.0"
+"@modelcontextprotocol/sdk@npm:1.32.0":
+  version: 1.32.0
+  resolution: "@modelcontextprotocol/sdk@npm:1.32.0"
   dependencies:
     "@hono/node-server": "npm:^1.19.9 || ^2.0.5"
     ajv: "npm:^8.17.1"
@@ -1720,7 +1720,7 @@ __metadata:
       optional: true
     zod:
       optional: false
-  checksum: 10c0/2c4f011a765fb3346ec578455591d062008a842a0f6f8a763baa97b6a01e0f1febb97d1cc44024ee6d0761d43df56e9c71f72a37d47c7ea6aeb1c4f8be0f06d9
+  checksum: 10c0/13189842481a9cd52fe3b3ebe6ca53ea1e9bc9270d315b299a6f2003996b2e5406bf6ce16fabb3a84384f436c6cdcbc66e1642a89f101206491eccae99556570
   languageName: node
   linkType: hard
 
@@ -9265,7 +9265,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mapguide-react-layout@workspace:."
   dependencies:
-    "@modelcontextprotocol/sdk": "npm:1.31.0"
+    "@modelcontextprotocol/sdk": "npm:1.32.0"
     "@playwright/test": "npm:1.61.1"
     "@reduxjs/toolkit": "npm:^2.12.0"
     "@storybook/addon-actions": "npm:^8.6.18"

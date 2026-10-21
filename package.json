@@ -83,7 +83,7 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "1.31.0",
+    "@modelcontextprotocol/sdk": "1.32.0",
     "@playwright/test": "1.61.1",
     "@storybook/addon-actions": "^8.6.18",
     "@storybook/addon-docs": "^8.6.18",

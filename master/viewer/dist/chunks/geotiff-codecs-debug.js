@@ -9,9 +9,6 @@ function zero$1(buf) {
 	let len = buf.length;
 	while (--len >= 0) buf[len] = 0;
 }
-var STORED_BLOCK = 0;
-var STATIC_TREES = 1;
-var DYN_TREES = 2;
 var LENGTH_CODES$1 = 29;
 var LITERALS$1 = 256;
 var L_CODES$1 = 286;
@@ -131,9 +128,9 @@ var bl_order = new Uint8Array([
 	15
 ]);
 var DIST_CODE_LEN = 512;
-var static_ltree = new Array(288 * 2);
+var static_ltree = new Array(576);
 zero$1(static_ltree);
-var static_dtree = new Array(D_CODES$1 * 2);
+var static_dtree = new Array(60);
 zero$1(static_dtree);
 var _dist_code = new Array(DIST_CODE_LEN);
 zero$1(_dist_code);
@@ -277,7 +274,7 @@ var tr_static_init = () => {
 	let dist;
 	const bl_count = new Array(16);
 	length = 0;
-	for (code = 0; code < LENGTH_CODES$1 - 1; code++) {
+	for (code = 0; code < 28; code++) {
 		base_length[code] = length;
 		for (n = 0; n < 1 << extra_lbits[code]; n++) _length_code[length++] = code;
 	}
@@ -324,8 +321,8 @@ var tr_static_init = () => {
 	static_bl_desc = new StaticTreeDesc(new Array(0), extra_blbits, 0, BL_CODES$1, MAX_BL_BITS);
 };
 var init_block = (s) => {
-	let n;
-	for (n = 0; n < L_CODES$1; n++) s.dyn_ltree[n * 2] = 0;
+	let n = 0;
+	for (; n < L_CODES$1; n++) s.dyn_ltree[n * 2] = 0;
 	for (n = 0; n < D_CODES$1; n++) s.dyn_dtree[n * 2] = 0;
 	for (n = 0; n < BL_CODES$1; n++) s.bl_tree[n * 2] = 0;
 	s.dyn_ltree[END_BLOCK * 2] = 1;
@@ -448,9 +445,9 @@ var scan_tree = (s, tree, max_code) => {
 		else if (count < min_count) s.bl_tree[curlen * 2] += count;
 		else if (curlen !== 0) {
 			if (curlen !== prevlen) s.bl_tree[curlen * 2]++;
-			s.bl_tree[REP_3_6 * 2]++;
-		} else if (count <= 10) s.bl_tree[REPZ_3_10 * 2]++;
-		else s.bl_tree[REPZ_11_138 * 2]++;
+			s.bl_tree[32]++;
+		} else if (count <= 10) s.bl_tree[34]++;
+		else s.bl_tree[36]++;
 		count = 0;
 		prevlen = curlen;
 		if (nextlen === 0) {
@@ -517,7 +514,7 @@ var build_bl_tree = (s) => {
 	scan_tree(s, s.dyn_ltree, s.l_desc.max_code);
 	scan_tree(s, s.dyn_dtree, s.d_desc.max_code);
 	build_tree(s, s.bl_desc);
-	for (max_blindex = BL_CODES$1 - 1; max_blindex >= 3; max_blindex--) if (s.bl_tree[bl_order[max_blindex] * 2 + 1] !== 0) break;
+	for (max_blindex = 18; max_blindex >= 3; max_blindex--) if (s.bl_tree[bl_order[max_blindex] * 2 + 1] !== 0) break;
 	s.opt_len += 3 * (max_blindex + 1) + 5 + 5 + 4;
 	return max_blindex;
 };
@@ -532,8 +529,8 @@ var send_all_trees = (s, lcodes, dcodes, blcodes) => {
 };
 var detect_data_type = (s) => {
 	let block_mask = 4093624447;
-	let n;
-	for (n = 0; n <= 31; n++, block_mask >>>= 1) if (block_mask & 1 && s.dyn_ltree[n * 2] !== 0) return Z_BINARY;
+	let n = 0;
+	for (; n <= 31; n++, block_mask >>>= 1) if (block_mask & 1 && s.dyn_ltree[n * 2] !== 0) return Z_BINARY;
 	if (s.dyn_ltree[18] !== 0 || s.dyn_ltree[20] !== 0 || s.dyn_ltree[26] !== 0) return Z_TEXT;
 	for (n = 32; n < LITERALS$1; n++) if (s.dyn_ltree[n * 2] !== 0) return Z_TEXT;
 	return Z_BINARY;
@@ -552,7 +549,7 @@ var _tr_init$1 = (s) => {
 	init_block(s);
 };
 var _tr_stored_block$1 = (s, buf, stored_len, last) => {
-	send_bits(s, (STORED_BLOCK << 1) + (last ? 1 : 0), 3);
+	send_bits(s, 0 + (last ? 1 : 0), 3);
 	bi_windup(s);
 	put_short(s, stored_len);
 	put_short(s, ~stored_len);
@@ -560,7 +557,7 @@ var _tr_stored_block$1 = (s, buf, stored_len, last) => {
 	s.pending += stored_len;
 };
 var _tr_align$1 = (s) => {
-	send_bits(s, STATIC_TREES << 1, 3);
+	send_bits(s, 2, 3);
 	send_code(s, END_BLOCK, static_ltree);
 	bi_flush(s);
 };
@@ -578,10 +575,10 @@ var _tr_flush_block$1 = (s, buf, stored_len, last) => {
 	} else opt_lenb = static_lenb = stored_len + 5;
 	if (stored_len + 4 <= opt_lenb && buf !== -1) _tr_stored_block$1(s, buf, stored_len, last);
 	else if (s.strategy === Z_FIXED$1 || static_lenb === opt_lenb) {
-		send_bits(s, (STATIC_TREES << 1) + (last ? 1 : 0), 3);
+		send_bits(s, 2 + (last ? 1 : 0), 3);
 		compress_block(s, static_ltree, static_dtree);
 	} else {
-		send_bits(s, (DYN_TREES << 1) + (last ? 1 : 0), 3);
+		send_bits(s, 4 + (last ? 1 : 0), 3);
 		send_all_trees(s, s.l_desc.max_code + 1, s.d_desc.max_code + 1, max_blindex + 1);
 		compress_block(s, s.dyn_ltree, s.dyn_dtree);
 	}
@@ -804,8 +801,8 @@ var longest_match = (s, cur_match) => {
 		if (_win[match + best_len] !== scan_end || _win[match + best_len - 1] !== scan_end1 || _win[match] !== _win[scan] || _win[++match] !== _win[scan + 1]) continue;
 		scan += 2;
 		match++;
-		do		;
-while (_win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && scan < strend);
+		do;
+		while (_win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && _win[++scan] === _win[++match] && scan < strend);
 		len = MAX_MATCH - (strend - scan);
 		scan = strend - MAX_MATCH;
 		if (len > best_len) {
@@ -991,7 +988,7 @@ var deflate_fast = (s, flush) => {
 			if (s.strm.avail_out === 0) return BS_NEED_MORE;
 		}
 	}
-	s.insert = s.strstart < MIN_MATCH - 1 ? s.strstart : MIN_MATCH - 1;
+	s.insert = s.strstart < 2 ? s.strstart : 2;
 	if (flush === Z_FINISH$3) {
 		/*** FLUSH_BLOCK(s, 1); ***/
 		flush_block_only(s, true);
@@ -1019,10 +1016,10 @@ var deflate_slow = (s, flush) => {
 		if (s.lookahead >= MIN_MATCH) hash_head = INSERT_STRING(s, s.strstart);
 		s.prev_length = s.match_length;
 		s.prev_match = s.match_start;
-		s.match_length = MIN_MATCH - 1;
+		s.match_length = 2;
 		if (hash_head !== 0 && s.prev_length < s.max_lazy_match && s.strstart - hash_head <= s.w_size - MIN_LOOKAHEAD) {
 			s.match_length = longest_match(s, hash_head);
-			if (s.match_length <= 5 && (s.strategy === Z_FILTERED || s.match_length === MIN_MATCH && s.strstart - s.match_start > 4096)) s.match_length = MIN_MATCH - 1;
+			if (s.match_length <= 5 && (s.strategy === Z_FILTERED || s.match_length === MIN_MATCH && s.strstart - s.match_start > 4096)) s.match_length = 2;
 		}
 		if (s.prev_length >= MIN_MATCH && s.match_length <= s.prev_length) {
 			max_insert = s.strstart + s.lookahead - MIN_MATCH;
@@ -1035,7 +1032,7 @@ var deflate_slow = (s, flush) => {
 				if (++s.strstart <= max_insert) hash_head = INSERT_STRING(s, s.strstart);
 			while (--s.prev_length !== 0);
 			s.match_available = 0;
-			s.match_length = MIN_MATCH - 1;
+			s.match_length = 2;
 			s.strstart++;
 			if (bflush) {
 				/*** FLUSH_BLOCK(s, 0); ***/
@@ -1062,7 +1059,7 @@ var deflate_slow = (s, flush) => {
 		bflush = _tr_tally(s, 0, s.window[s.strstart - 1]);
 		s.match_available = 0;
 	}
-	s.insert = s.strstart < MIN_MATCH - 1 ? s.strstart : MIN_MATCH - 1;
+	s.insert = s.strstart < 2 ? s.strstart : 2;
 	if (flush === Z_FINISH$3) {
 		/*** FLUSH_BLOCK(s, 1); ***/
 		flush_block_only(s, true);
@@ -1093,8 +1090,8 @@ var deflate_rle = (s, flush) => {
 			prev = _win[scan];
 			if (prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan]) {
 				strend = s.strstart + MAX_MATCH;
-				do				;
-while (prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && scan < strend);
+				do;
+				while (prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && prev === _win[++scan] && scan < strend);
 				s.match_length = MAX_MATCH - (strend - scan);
 				if (s.match_length > s.lookahead) s.match_length = s.lookahead;
 			}
@@ -1197,7 +1194,7 @@ var lm_init = (s) => {
 	s.block_start = 0;
 	s.lookahead = 0;
 	s.insert = 0;
-	s.match_length = s.prev_length = MIN_MATCH - 1;
+	s.match_length = s.prev_length = 2;
 	s.match_available = 0;
 	s.ins_h = 0;
 };
@@ -1588,20 +1585,20 @@ var deflateSetDictionary = (strm, dictionary) => {
 	fill_window(s);
 	while (s.lookahead >= MIN_MATCH) {
 		let str = s.strstart;
-		let n = s.lookahead - (MIN_MATCH - 1);
+		let n = s.lookahead - 2;
 		do {
 			INSERT_STRING(s, str);
 			str++;
 		} while (--n);
 		s.strstart = str;
-		s.lookahead = MIN_MATCH - 1;
+		s.lookahead = 2;
 		fill_window(s);
 	}
 	s.strstart += s.lookahead;
 	s.block_start = s.strstart;
 	s.insert = s.lookahead;
 	s.lookahead = 0;
-	s.match_length = s.prev_length = MIN_MATCH - 1;
+	s.match_length = s.prev_length = 2;
 	s.match_available = 0;
 	strm.next_in = next;
 	strm.input = input;
@@ -3540,7 +3537,7 @@ var gzheader = GZheader;
 var toString = Object.prototype.toString;
 var { Z_NO_FLUSH, Z_FINISH, Z_OK, Z_STREAM_END, Z_NEED_DICT, Z_STREAM_ERROR, Z_DATA_ERROR, Z_MEM_ERROR, Z_BUF_ERROR } = constants$2;
 var defaultOptions = {
-	chunkSize: 1024 * 64,
+	chunkSize: 65536,
 	windowBits: 15,
 	to: ""
 };
@@ -3704,18 +3701,20 @@ Inflate$1.prototype.push = function(data, flush_mode) {
 		}
 		last_avail_out = strm.avail_out;
 		if (strm.next_out) {
-			if (strm.avail_out === 0 || status === Z_STREAM_END || _flush_mode > 0) if (this.options.to === "string") {
-				let next_out_utf8 = strings.utf8border(strm.output, strm.next_out);
-				let tail = strm.next_out - next_out_utf8;
-				let utf8str = strings.buf2string(strm.output, next_out_utf8);
-				strm.next_out = tail;
-				strm.avail_out = chunkSize - tail;
-				if (tail) strm.output.set(strm.output.subarray(next_out_utf8, next_out_utf8 + tail), 0);
-				this.onData(utf8str);
-			} else {
-				this.onData(strm.output.length === strm.next_out ? strm.output : strm.output.subarray(0, strm.next_out));
-				strm.avail_out = 0;
-				strm.next_out = 0;
+			if (strm.avail_out === 0 || status === Z_STREAM_END || _flush_mode > 0) {
+				if (this.options.to === "string") {
+					let next_out_utf8 = strings.utf8border(strm.output, strm.next_out);
+					let tail = strm.next_out - next_out_utf8;
+					let utf8str = strings.buf2string(strm.output, next_out_utf8);
+					strm.next_out = tail;
+					strm.avail_out = chunkSize - tail;
+					if (tail) strm.output.set(strm.output.subarray(next_out_utf8, next_out_utf8 + tail), 0);
+					this.onData(utf8str);
+				} else {
+					this.onData(strm.output.length === strm.next_out ? strm.output : strm.output.subarray(0, strm.next_out));
+					strm.avail_out = 0;
+					strm.next_out = 0;
+				}
 			}
 		}
 		if ((status === Z_OK || status === Z_BUF_ERROR) && last_avail_out === 0) continue;
@@ -3758,8 +3757,10 @@ Inflate$1.prototype.onData = function(chunk) {
 * free memory and fill `results` / `err` properties.
 **/
 Inflate$1.prototype.onEnd = function(status) {
-	if (status === Z_OK) if (this.options.to === "string") this.result = this.chunks.join("");
-	else this.result = common.flattenChunks(this.chunks);
+	if (status === Z_OK) {
+		if (this.options.to === "string") this.result = this.chunks.join("");
+		else this.result = common.flattenChunks(this.chunks);
+	}
 	this.chunks = [];
 	this.err = status;
 	this.msg = this.strm.msg;
@@ -4533,9 +4534,10 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						new Uint8Array(arrayBuf).set(new Uint8Array(input, ptr, numBytes));
 						rawData = new OutPixelTypeArray(arrayBuf);
 					}
-					if (rawData.length === numPixels * numDims) if (useBSQForOutputDim) data.pixels.resultPixels = Lerc2Helpers.swapDimensionOrder(rawData, numPixels, numDims, OutPixelTypeArray, true);
-					else data.pixels.resultPixels = rawData;
-					else {
+					if (rawData.length === numPixels * numDims) {
+						if (useBSQForOutputDim) data.pixels.resultPixels = Lerc2Helpers.swapDimensionOrder(rawData, numPixels, numDims, OutPixelTypeArray, true);
+						else data.pixels.resultPixels = rawData;
+					} else {
 						data.pixels.resultPixels = new OutPixelTypeArray(numPixels * numDims);
 						var z = 0, k = 0, i = 0, nStart = 0;
 						if (numDims > 1) {
@@ -4566,8 +4568,8 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					var blockDataBuffer = new Uint32Array(i1 - i0);
 					Lerc2Helpers.decodeBits(input, data, blockDataBuffer);
 					var codeTable = [];
-					var i, j, k, len;
-					for (i = i0; i < i1; i++) {
+					var i = i0, j, k, len;
+					for (; i < i1; i++) {
 						j = i - (i < size ? 0 : size);
 						codeTable[j] = {
 							first: blockDataBuffer[i - i0],
@@ -4873,9 +4875,10 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							store8.set(new Uint8Array(input, data.ptr, dataBytes));
 							stuffedData = new Uint32Array(arrayBuf);
 							data.ptr += dataBytes;
-							if (fileVersion >= 3) if (offset == null) BitStuffer.originalUnstuff2(stuffedData, blockDataBuffer, bitsPerPixel, numElements);
-							else BitStuffer.unstuff2(stuffedData, blockDataBuffer, bitsPerPixel, numElements, false, offset, scale, zMax);
-							else if (offset == null) BitStuffer.originalUnstuff(stuffedData, blockDataBuffer, bitsPerPixel, numElements);
+							if (fileVersion >= 3) {
+								if (offset == null) BitStuffer.originalUnstuff2(stuffedData, blockDataBuffer, bitsPerPixel, numElements);
+								else BitStuffer.unstuff2(stuffedData, blockDataBuffer, bitsPerPixel, numElements, false, offset, scale, zMax);
+							} else if (offset == null) BitStuffer.originalUnstuff(stuffedData, blockDataBuffer, bitsPerPixel, numElements);
 							else BitStuffer.unstuff(stuffedData, blockDataBuffer, bitsPerPixel, numElements, false, offset, scale, zMax);
 						}
 					}
@@ -4936,13 +4939,15 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 									data.ptr += blockPtr;
 									throw "Invalid block encoding (" + blockEncoding + ")";
 								} else if (blockEncoding === 2) {
-									if (isDiffEncoding) if (mask) for (row = 0; row < thisBlockHeight; row++) for (col = 0; col < thisBlockWidth; col++) {
-										if (mask[outPtr]) resultPixels[outPtr] = resultPixelsPrevDim[outPtr];
-										outPtr++;
-									}
-									else for (row = 0; row < thisBlockHeight; row++) for (col = 0; col < thisBlockWidth; col++) {
-										resultPixels[outPtr] = resultPixelsPrevDim[outPtr];
-										outPtr++;
+									if (isDiffEncoding) {
+										if (mask) for (row = 0; row < thisBlockHeight; row++) for (col = 0; col < thisBlockWidth; col++) {
+											if (mask[outPtr]) resultPixels[outPtr] = resultPixelsPrevDim[outPtr];
+											outPtr++;
+										}
+										else for (row = 0; row < thisBlockHeight; row++) for (col = 0; col < thisBlockWidth; col++) {
+											resultPixels[outPtr] = resultPixelsPrevDim[outPtr];
+											outPtr++;
+										}
 									}
 									data.counter.constant++;
 									data.ptr += blockPtr;
@@ -4996,21 +5001,22 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 										data.ptr += blockPtr;
 										Lerc2Helpers.decodeBits(input, data, blockDataBuffer, offset, iDim);
 										blockPtr = 0;
-										if (isDiffEncoding) if (mask) for (row = 0; row < thisBlockHeight; row++) {
-											for (col = 0; col < thisBlockWidth; col++) {
-												if (mask[outPtr]) resultPixels[outPtr] = blockDataBuffer[blockPtr++] + resultPixelsPrevDim[outPtr];
-												outPtr++;
+										if (isDiffEncoding) {
+											if (mask) for (row = 0; row < thisBlockHeight; row++) {
+												for (col = 0; col < thisBlockWidth; col++) {
+													if (mask[outPtr]) resultPixels[outPtr] = blockDataBuffer[blockPtr++] + resultPixelsPrevDim[outPtr];
+													outPtr++;
+												}
+												outPtr += outStride;
 											}
-											outPtr += outStride;
-										}
-										else for (row = 0; row < thisBlockHeight; row++) {
-											for (col = 0; col < thisBlockWidth; col++) {
-												resultPixels[outPtr] = blockDataBuffer[blockPtr++] + resultPixelsPrevDim[outPtr];
-												outPtr++;
+											else for (row = 0; row < thisBlockHeight; row++) {
+												for (col = 0; col < thisBlockWidth; col++) {
+													resultPixels[outPtr] = blockDataBuffer[blockPtr++] + resultPixelsPrevDim[outPtr];
+													outPtr++;
+												}
+												outPtr += outStride;
 											}
-											outPtr += outStride;
-										}
-										else if (mask) for (row = 0; row < thisBlockHeight; row++) {
+										} else if (mask) for (row = 0; row < thisBlockHeight; row++) {
 											for (col = 0; col < thisBlockWidth; col++) {
 												if (mask[outPtr]) resultPixels[outPtr] = blockDataBuffer[blockPtr++];
 												outPtr++;
@@ -5075,16 +5081,17 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								for (i = 0; i < numDims; i++) resultPixels[nStart + numDims] = maxValues[i];
 							}
 						} else for (k = 0; k < numPixels; k++) if (mask[k]) resultPixels[k] = val;
-					} else if (numDims > 1 && valMin !== val) if (useBSQForOutputDim) for (i = 0; i < numDims; i++) {
-						nStart = i * numPixels;
-						val = maxValues[i];
-						for (k = 0; k < numPixels; k++) resultPixels[nStart + k] = val;
-					}
-					else for (k = 0; k < numPixels; k++) {
-						nStart = k * numDims;
-						for (i = 0; i < numDims; i++) resultPixels[nStart + i] = maxValues[i];
-					}
-					else for (k = 0; k < numPixels * numDims; k++) resultPixels[k] = val;
+					} else if (numDims > 1 && valMin !== val) {
+						if (useBSQForOutputDim) for (i = 0; i < numDims; i++) {
+							nStart = i * numPixels;
+							val = maxValues[i];
+							for (k = 0; k < numPixels; k++) resultPixels[nStart + k] = val;
+						}
+						else for (k = 0; k < numPixels; k++) {
+							nStart = k * numDims;
+							for (i = 0; i < numDims; i++) resultPixels[nStart + i] = maxValues[i];
+						}
+					} else for (k = 0; k < numPixels * numDims; k++) resultPixels[k] = val;
 				},
 				getDataTypeArray: function(t) {
 					var tp;
@@ -5223,9 +5230,7 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							if (0 === tc) t = dt;
 							else t = dt - 2 * tc + 1;
 							break;
-						default:
-							t = dt;
-							break;
+						default: t = dt;
 					}
 					return t;
 				},
@@ -5324,21 +5329,23 @@ var require_LercDecode = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						constantoffset: 0
 					};
 					var useBSQForOutputDim = !options.returnPixelInterleavedDims;
-					if (headerInfo.numValidPixel !== 0) if (headerInfo.zMax === headerInfo.zMin) Lerc2Helpers.constructConstantSurface(data, useBSQForOutputDim);
-					else if (fileVersion >= 4 && Lerc2Helpers.checkMinMaxRanges(input, data)) Lerc2Helpers.constructConstantSurface(data, useBSQForOutputDim);
-					else {
-						var view = new DataView(input, data.ptr, 2);
-						var bReadDataOneSweep = view.getUint8(0);
-						data.ptr++;
-						if (bReadDataOneSweep) Lerc2Helpers.readDataOneSweep(input, data, OutPixelTypeArray, useBSQForOutputDim);
-						else if (fileVersion > 1 && headerInfo.imageType <= 1 && Math.abs(headerInfo.maxZError - .5) < 1e-5) {
-							var flagHuffman = view.getUint8(1);
+					if (headerInfo.numValidPixel !== 0) {
+						if (headerInfo.zMax === headerInfo.zMin) Lerc2Helpers.constructConstantSurface(data, useBSQForOutputDim);
+						else if (fileVersion >= 4 && Lerc2Helpers.checkMinMaxRanges(input, data)) Lerc2Helpers.constructConstantSurface(data, useBSQForOutputDim);
+						else {
+							var view = new DataView(input, data.ptr, 2);
+							var bReadDataOneSweep = view.getUint8(0);
 							data.ptr++;
-							data.encodeMode = flagHuffman;
-							if (flagHuffman > 2 || fileVersion < 4 && flagHuffman > 1) throw "Invalid Huffman flag " + flagHuffman;
-							if (flagHuffman) Lerc2Helpers.readHuffman(input, data, OutPixelTypeArray, useBSQForOutputDim);
-							else Lerc2Helpers.readTiles(input, data, OutPixelTypeArray, useBSQForOutputDim);
-						} else Lerc2Helpers.readTiles(input, data, OutPixelTypeArray, useBSQForOutputDim);
+							if (bReadDataOneSweep) Lerc2Helpers.readDataOneSweep(input, data, OutPixelTypeArray, useBSQForOutputDim);
+							else if (fileVersion > 1 && headerInfo.imageType <= 1 && Math.abs(headerInfo.maxZError - .5) < 1e-5) {
+								var flagHuffman = view.getUint8(1);
+								data.ptr++;
+								data.encodeMode = flagHuffman;
+								if (flagHuffman > 2 || fileVersion < 4 && flagHuffman > 1) throw "Invalid Huffman flag " + flagHuffman;
+								if (flagHuffman) Lerc2Helpers.readHuffman(input, data, OutPixelTypeArray, useBSQForOutputDim);
+								else Lerc2Helpers.readTiles(input, data, OutPixelTypeArray, useBSQForOutputDim);
+							} else Lerc2Helpers.readTiles(input, data, OutPixelTypeArray, useBSQForOutputDim);
+						}
 					}
 					data.eofOffset = data.ptr;
 					var diff;

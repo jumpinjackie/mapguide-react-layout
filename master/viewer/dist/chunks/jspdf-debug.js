@@ -77,7 +77,7 @@ function encode(str) {
 }
 //#endregion
 //#region node_modules/iobuffer/lib-esm/IOBuffer.js
-var defaultByteLength = 1024 * 8;
+var defaultByteLength = 8192;
 var hostBigEndian = (() => {
 	const array = /* @__PURE__ */ new Uint8Array(4);
 	const view = new Uint32Array(array.buffer);
@@ -1104,9 +1104,7 @@ var PngDecoder = class extends IOBuffer {
 			case "pHYs":
 				this.decodepHYs();
 				break;
-			default:
-				this.skip(length);
-				break;
+			default: this.skip(length);
 		}
 		if (this.offset - offset !== length) throw new Error(`Length mismatch while decoding chunk ${type}`);
 		if (this._checkCrc) checkCrc(this, length + 4, type);
@@ -1128,7 +1126,6 @@ var PngDecoder = class extends IOBuffer {
 			default:
 				this.decodeChunk(length, type);
 				this.offset = offset + length;
-				break;
 		}
 		if (this.offset - offset !== length) throw new Error(`Length mismatch while decoding chunk ${type}`);
 		if (this._checkCrc) checkCrc(this, length + 4, type);
@@ -2797,8 +2794,8 @@ function E(e) {
 		}), Ft[a.id] = a, de(a), a.id;
 	}, ge = y.__private__.pdfEscape = y.pdfEscape = function(t, e) {
 		return function(t, e) {
-			var r, n, i, a, o, s, u, c, l;
-			if (i = (e = e || {}).sourceEncoding || "Unicode", o = e.outputEncoding, (e.autoencode || o) && Ft[At].metadata && Ft[At].metadata[i] && Ft[At].metadata[i].encoding && (a = Ft[At].metadata[i].encoding, !o && Ft[At].encoding && (o = Ft[At].encoding), !o && a.codePages && (o = a.codePages[0]), "string" == typeof o && (o = a[o]), o)) {
+			var r, n, i = (e = e || {}).sourceEncoding || "Unicode", a, o = e.outputEncoding, s, u, c, l;
+			if ((e.autoencode || o) && Ft[At].metadata && Ft[At].metadata[i] && Ft[At].metadata[i].encoding && (a = Ft[At].metadata[i].encoding, !o && Ft[At].encoding && (o = Ft[At].encoding), !o && a.codePages && (o = a.codePages[0]), "string" == typeof o && (o = a[o]), o)) {
 				for (u = !1, s = [], r = 0, n = t.length; r < n; r++) (c = o[t.charCodeAt(r)]) ? s.push(String.fromCharCode(c)) : s.push(t[r]), s[r].charCodeAt(0) >> 8 && (u = !0);
 				t = s.join("");
 			}
@@ -3749,8 +3746,8 @@ function E(e) {
 			}
 		});
 	}, E.API) E.API.hasOwnProperty(wr) && ("events" === wr && E.API.events.length ? function(t, e) {
-		var r, n, i;
-		for (i = e.length - 1; -1 !== i; i--) r = e[i][0], n = e[i][1], t.subscribe.apply(t, [r].concat("function" == typeof n ? [n] : n));
+		var r, n, i = e.length - 1;
+		for (; -1 !== i; i--) r = e[i][0], n = e[i][1], t.subscribe.apply(t, [r].concat("function" == typeof n ? [n] : n));
 	}(Dt, E.API.events) : y[wr] = E.API[wr]);
 	function Nr(t) {
 		return Rt[t].mediaBox.topRightX - Rt[t].mediaBox.bottomLeftX;
@@ -5211,6 +5208,7 @@ function Pt(t) {
 	}, {});
 }
 (function(e) {
+	var r = "addImage_";
 	e.__addimage__ = {};
 	var n = "UNKNOWN", i = {
 		PNG: [[
@@ -5409,18 +5407,18 @@ function Pt(t) {
 			}), r("endobj");
 		}
 	}, s = function() {
-		var t = this.internal.collections["addImage_images"];
+		var t = this.internal.collections[r + "images"];
 		for (var e in t) o.call(this, t[e]);
 	}, u = function() {
-		var t, e = this.internal.collections["addImage_images"], n = this.internal.write;
+		var t, e = this.internal.collections[r + "images"], n = this.internal.write;
 		for (var i in e) n("/I" + (t = e[i]).index, t.objectId, "0", "R");
 	}, c = function() {
-		this.internal.collections["addImage_images"] || (this.internal.collections["addImage_images"] = {}, this.internal.events.subscribe("putResources", s), this.internal.events.subscribe("putXobjectDict", u));
+		this.internal.collections[r + "images"] || (this.internal.collections[r + "images"] = {}, this.internal.events.subscribe("putResources", s), this.internal.events.subscribe("putXobjectDict", u));
 	}, l = function() {
-		var t = this.internal.collections["addImage_images"];
+		var t = this.internal.collections[r + "images"];
 		return c.call(this), t;
 	}, h = function() {
-		return Object.keys(this.internal.collections["addImage_images"]).length;
+		return Object.keys(this.internal.collections[r + "images"]).length;
 	}, d = function(t) {
 		return "function" == typeof e["process" + t.toUpperCase()];
 	}, p = function(e) {
@@ -5447,7 +5445,7 @@ function Pt(t) {
 			return f(t.toDataURL(a, 1).split("base64,").pop());
 		}
 	}, m = function(t) {
-		var e = this.internal.collections["addImage_images"];
+		var e = this.internal.collections[r + "images"];
 		if (e) {
 			for (var n in e) if (t === e[n].alias) return e[n];
 		}
@@ -6461,8 +6459,8 @@ function Ot(t) {
 	};
 }
 function Bt(t, e, r, n) {
-	var i;
-	for (i = r; i >= 0 && i < e.length; i += n) if (t[e[i]]) return t[e[i]];
+	var i = r;
+	for (; i >= 0 && i < e.length; i += n) if (t[e[i]]) return t[e[i]];
 	for (i = r; i >= 0 && i < e.length; i -= n) if (t[e[i]]) return t[e[i]];
 }
 var Mt = {
@@ -7739,8 +7737,8 @@ function ue(t) {
 		}
 		function D(e, r) {
 			t[r] = function(r, n, i, a, o, s, u) {
-				var c;
-				for (c = 0; c < o; ++c) {
+				var c = 0;
+				for (; c < o; ++c) {
 					var l = t[e](s[u + c - 1], i, a + c);
 					s[u + c] = R(r[n + c], l);
 				}
@@ -7765,8 +7763,8 @@ function ue(t) {
 			for (n = a[o - 1], r = 0; r < i; ++r) a[o + r] = n = R(t[e + r], n);
 		}
 		function G(t, e, r, n, i) {
-			var a;
-			for (a = 0; a < r; ++a) {
+			var a = 0;
+			for (; a < r; ++a) {
 				var o = t[e + a], s = o >> 8 & 255, u = 16711935 & (u = (u = 16711935 & o) + ((s << 16) + s));
 				n[i + a] = (4278255360 & o) + u >>> 0;
 			}
@@ -7775,8 +7773,8 @@ function ue(t) {
 			e.jd = 255 & t, e.hd = t >> 8 & 255, e.ud = t >> 16 & 255;
 		}
 		function J(t, e, r, n, i, a) {
-			var o;
-			for (o = 0; o < n; ++o) {
+			var o = 0;
+			for (; o < n; ++o) {
 				var s = e[r + o], u = s >>> 8, c = s, l = 255 & (l = (l = s >>> 16) + ((t.jd << 24 >> 24) * (u << 24 >> 24) >>> 5));
 				c = 255 & (c = (c += (t.hd << 24 >> 24) * (u << 24 >> 24) >>> 5) + ((t.ud << 24 >> 24) * (l << 24 >> 24) >>> 5)), i[a + o] = (4278255360 & s) + (l << 16) + c;
 			}
@@ -8468,16 +8466,16 @@ function ue(t) {
 			ce(t, e, 16);
 		}
 		function de(t, e) {
-			var r;
-			for (r = 0; 16 > r; ++r) n(t, e + 32 * r, t, e - 32, 16);
+			var r = 0;
+			for (; 16 > r; ++r) n(t, e + 32 * r, t, e - 32, 16);
 		}
 		function pe(t, e) {
-			var r;
-			for (r = 16; 0 < r; --r) i(t, e, t[e - 1], 16), e += 32;
+			var r = 16;
+			for (; 0 < r; --r) i(t, e, t[e - 1], 16), e += 32;
 		}
 		function ge(t, e, r) {
-			var n;
-			for (n = 0; 16 > n; ++n) i(e, r + 32 * n, t, 16);
+			var n = 0;
+			for (; 16 > n; ++n) i(e, r + 32 * n, t, 16);
 		}
 		function me(t, e) {
 			var r, n = 16;
@@ -8543,16 +8541,16 @@ function ue(t) {
 			t[e + 0 + 0] = t[e + 2 + 32] = r + o + 1 >> 1, t[e + 0 + 32] = t[e + 2 + 64] = n + r + 1 >> 1, t[e + 0 + 64] = t[e + 2 + 96] = i + n + 1 >> 1, t[e + 0 + 96] = a + i + 1 >> 1, t[e + 3 + 0] = we(s, u, c), t[e + 2 + 0] = we(o, s, u), t[e + 1 + 0] = t[e + 3 + 32] = we(r, o, s), t[e + 1 + 32] = t[e + 3 + 64] = we(n, r, o), t[e + 1 + 64] = t[e + 3 + 96] = we(i, n, r), t[e + 1 + 96] = we(a, i, n);
 		}
 		function Ie(t, e) {
-			var r;
-			for (r = 0; 8 > r; ++r) n(t, e + 32 * r, t, e - 32, 8);
+			var r = 0;
+			for (; 8 > r; ++r) n(t, e + 32 * r, t, e - 32, 8);
 		}
 		function Ce(t, e) {
-			var r;
-			for (r = 0; 8 > r; ++r) i(t, e, t[e - 1], 8), e += 32;
+			var r = 0;
+			for (; 8 > r; ++r) i(t, e, t[e - 1], 8), e += 32;
 		}
 		function je(t, e, r) {
-			var n;
-			for (n = 0; 8 > n; ++n) i(e, r + 32 * n, t, 8);
+			var n = 0;
+			for (; 8 > n; ++n) i(e, r + 32 * n, t, 8);
 		}
 		function Oe(t, e) {
 			var r, n = 8;
@@ -8596,12 +8594,12 @@ function ue(t) {
 			for (n = 0; 16 > n; ++n) De(t, e + n * r, 1, i) && Ee(t, e + n * r, 1);
 		}
 		function He(t, e, r, n) {
-			var i;
-			for (i = 3; 0 < i; --i) ze(t, e += 4 * r, r, n);
+			var i = 3;
+			for (; 0 < i; --i) ze(t, e += 4 * r, r, n);
 		}
 		function We(t, e, r, n) {
-			var i;
-			for (i = 3; 0 < i; --i) Ue(t, e += 4, r, n);
+			var i = 3;
+			for (; 0 < i; --i) Ue(t, e += 4, r, n);
 		}
 		function Ve(t, e, r, n, i, a, o, s) {
 			for (a = 2 * a + 1; 0 < i--;) {
@@ -8630,12 +8628,12 @@ function ue(t) {
 			Ve(t, e, 1, r, 16, n, i, a);
 		}
 		function Xe(t, e, r, n, i, a) {
-			var o;
-			for (o = 3; 0 < o; --o) Ge(t, e += 4 * r, r, 1, 16, n, i, a);
+			var o = 3;
+			for (; 0 < o; --o) Ge(t, e += 4 * r, r, 1, 16, n, i, a);
 		}
 		function Ke(t, e, r, n, i, a) {
-			var o;
-			for (o = 3; 0 < o; --o) Ge(t, e += 4, 1, r, 16, n, i, a);
+			var o = 3;
+			for (; 0 < o; --o) Ge(t, e += 4, 1, r, 16, n, i, a);
 		}
 		function Ze(t, e, r, n, i, a, o, s) {
 			Ve(t, e, i, 1, 8, a, o, s), Ve(r, n, i, 1, 8, a, o, s);
@@ -8774,8 +8772,8 @@ function ue(t) {
 		}
 		function fr(t, e, r, n, i) {
 			for (; 0 < n--;) {
-				var a;
-				for (a = 0; a < r; ++a) {
+				var a = 0;
+				for (; a < r; ++a) {
 					var o = t[e + 2 * a + 0], s = 15 & (c = t[e + 2 * a + 1]), u = 4369 * s, c = (240 & c | c >> 4) * u >> 16;
 					t[e + 2 * a + 0] = (240 & o | o >> 4) * u >> 16 & 240 | (15 & o | o << 4) * u >> 16 >> 4 & 15, t[e + 2 * a + 1] = 240 & c | s;
 				}
@@ -8794,8 +8792,8 @@ function ue(t) {
 			return 255 != l;
 		}
 		function pr(t, e, r, n, i) {
-			var a;
-			for (a = 0; a < i; ++a) r[n + a] = t[e + a] >> 8;
+			var a = 0;
+			for (; a < i; ++a) r[n + a] = t[e + a] >> 8;
 		}
 		function gr() {
 			Ln = hr, xn = fr, An = dr, Sn = pr;
@@ -16462,8 +16460,8 @@ function le() {
 		}
 		return a.join("");
 	}, n = function(t) {
-		var e, r, n, i, a, o, s;
-		for (a = "/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n/CIDSystemInfo <<\n  /Registry (Adobe)\n  /Ordering (UCS)\n  /Supplement 0\n>> def\n/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n1 begincodespacerange\n<0000><ffff>\nendcodespacerange", n = [], o = 0, s = (r = Object.keys(t).sort(function(t, e) {
+		var e, r, n, i, a = "/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n/CIDSystemInfo <<\n  /Registry (Adobe)\n  /Ordering (UCS)\n  /Supplement 0\n>> def\n/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n1 begincodespacerange\n<0000><ffff>\nendcodespacerange", o, s;
+		for (n = [], o = 0, s = (r = Object.keys(t).sort(function(t, e) {
 			return t - e;
 		})).length; o < s; o++) e = r[o], n.length >= 100 && (a += "\n" + n.length + " beginbfchar\n" + n.join("\n") + "\nendbfchar", n = []), void 0 !== t[e] && null !== t[e] && "function" == typeof t[e].toString && (i = ("0000" + t[e].toString(16)).slice(-4), e = ("0000" + (+e).toString(16)).slice(-4), n.push("<" + e + "><" + i + ">"));
 		return n.length && (a += "\n" + n.length + " beginbfchar\n" + n.join("\n") + "\nendbfchar\n"), a + "endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend";
@@ -18953,19 +18951,19 @@ function le() {
 	}, t.prototype.registerTTF = function() {
 		var t, e, r, n, i;
 		if (this.scaleFactor = 1e3 / this.head.unitsPerEm, this.bbox = function() {
-			var e, r, n, i;
-			for (i = [], e = 0, r = (n = this.bbox).length; e < r; e++) t = n[e], i.push(Math.round(t * this.scaleFactor));
+			var e, r, n, i = [];
+			for (e = 0, r = (n = this.bbox).length; e < r; e++) t = n[e], i.push(Math.round(t * this.scaleFactor));
 			return i;
 		}.call(this), this.stemV = 0, this.post.exists ? (r = 255 & (n = this.post.italic_angle), 32768 & (e = n >> 16) && (e = -(1 + (65535 ^ e))), this.italicAngle = +(e + "." + r)) : this.italicAngle = 0, this.ascender = Math.round(this.ascender * this.scaleFactor), this.decender = Math.round(this.decender * this.scaleFactor), this.lineGap = Math.round(this.lineGap * this.scaleFactor), this.capHeight = this.os2.exists && this.os2.capHeight || this.ascender, this.xHeight = this.os2.exists && this.os2.xHeight || 0, this.familyClass = (this.os2.exists && this.os2.familyClass || 0) >> 8, this.isSerif = 1 === (i = this.familyClass) || 2 === i || 3 === i || 4 === i || 5 === i || 7 === i, this.isScript = 10 === this.familyClass, this.flags = 0, this.post.isFixedPitch && (this.flags |= 1), this.isSerif && (this.flags |= 2), this.isScript && (this.flags |= 8), 0 !== this.italicAngle && (this.flags |= 64), this.flags |= 32, !this.cmap.unicode) throw new Error("No unicode cmap for font");
 	}, t.prototype.characterToGlyph = function(t) {
 		var e;
 		return (null != (e = this.cmap.unicode) ? e.codeMap[t] : void 0) || 0;
 	}, t.prototype.widthOfGlyph = function(t) {
-		var e;
-		return e = 1e3 / this.head.unitsPerEm, this.hmtx.forGlyph(t).advance * e;
+		var e = 1e3 / this.head.unitsPerEm;
+		return this.hmtx.forGlyph(t).advance * e;
 	}, t.prototype.widthOfString = function(t, e, r) {
-		var n, i, a, o;
-		for (a = 0, i = 0, o = (t = "" + t).length; 0 <= o ? i < o : i > o; i = 0 <= o ? ++i : --i) n = t.charCodeAt(i), a += this.widthOfGlyph(this.characterToGlyph(n)) + r * (1e3 / e) || 0;
+		var n, i, a = 0, o;
+		for (i = 0, o = (t = "" + t).length; 0 <= o ? i < o : i > o; i = 0 <= o ? ++i : --i) n = t.charCodeAt(i), a += this.widthOfGlyph(this.characterToGlyph(n)) + r * (1e3 / e) || 0;
 		return a * (e / 1e3);
 	}, t.prototype.lineHeight = function(t, e) {
 		var r;
@@ -19000,34 +18998,34 @@ var fe = function() {
 	}, t.prototype.writeInt16 = function(t) {
 		return t < 0 && (t += 65536), this.writeUInt16(t);
 	}, t.prototype.readString = function(t) {
-		var e, r;
-		for (r = [], e = 0; 0 <= t ? e < t : e > t; e = 0 <= t ? ++e : --e) r[e] = String.fromCharCode(this.readByte());
+		var e, r = [];
+		for (e = 0; 0 <= t ? e < t : e > t; e = 0 <= t ? ++e : --e) r[e] = String.fromCharCode(this.readByte());
 		return r.join("");
 	}, t.prototype.writeString = function(t) {
-		var e, r, n;
-		for (n = [], e = 0, r = t.length; 0 <= r ? e < r : e > r; e = 0 <= r ? ++e : --e) n.push(this.writeByte(t.charCodeAt(e)));
+		var e, r, n = [];
+		for (e = 0, r = t.length; 0 <= r ? e < r : e > r; e = 0 <= r ? ++e : --e) n.push(this.writeByte(t.charCodeAt(e)));
 		return n;
 	}, t.prototype.readShort = function() {
 		return this.readInt16();
 	}, t.prototype.writeShort = function(t) {
 		return this.writeInt16(t);
 	}, t.prototype.readLongLong = function() {
-		var t, e, r, n, i, a, o, s;
-		return t = this.readByte(), e = this.readByte(), r = this.readByte(), n = this.readByte(), i = this.readByte(), a = this.readByte(), o = this.readByte(), s = this.readByte(), 128 & t ? -1 * (72057594037927940 * (255 ^ t) + 281474976710656 * (255 ^ e) + 1099511627776 * (255 ^ r) + 4294967296 * (255 ^ n) + 16777216 * (255 ^ i) + 65536 * (255 ^ a) + 256 * (255 ^ o) + (255 ^ s) + 1) : 72057594037927940 * t + 281474976710656 * e + 1099511627776 * r + 4294967296 * n + 16777216 * i + 65536 * a + 256 * o + s;
+		var t = this.readByte(), e = this.readByte(), r = this.readByte(), n = this.readByte(), i = this.readByte(), a = this.readByte(), o = this.readByte(), s = this.readByte();
+		return 128 & t ? -1 * (72057594037927940 * (255 ^ t) + 281474976710656 * (255 ^ e) + 1099511627776 * (255 ^ r) + 4294967296 * (255 ^ n) + 16777216 * (255 ^ i) + 65536 * (255 ^ a) + 256 * (255 ^ o) + (255 ^ s) + 1) : 72057594037927940 * t + 281474976710656 * e + 1099511627776 * r + 4294967296 * n + 16777216 * i + 65536 * a + 256 * o + s;
 	}, t.prototype.writeLongLong = function(t) {
-		var e, r;
-		return e = Math.floor(t / 4294967296), r = 4294967295 & t, this.writeByte(e >> 24 & 255), this.writeByte(e >> 16 & 255), this.writeByte(e >> 8 & 255), this.writeByte(255 & e), this.writeByte(r >> 24 & 255), this.writeByte(r >> 16 & 255), this.writeByte(r >> 8 & 255), this.writeByte(255 & r);
+		var e = Math.floor(t / 4294967296), r = 4294967295 & t;
+		return this.writeByte(e >> 24 & 255), this.writeByte(e >> 16 & 255), this.writeByte(e >> 8 & 255), this.writeByte(255 & e), this.writeByte(r >> 24 & 255), this.writeByte(r >> 16 & 255), this.writeByte(r >> 8 & 255), this.writeByte(255 & r);
 	}, t.prototype.readInt = function() {
 		return this.readInt32();
 	}, t.prototype.writeInt = function(t) {
 		return this.writeInt32(t);
 	}, t.prototype.read = function(t) {
-		var e, r;
-		for (e = [], r = 0; 0 <= t ? r < t : r > t; r = 0 <= t ? ++r : --r) e.push(this.readByte());
+		var e = [], r = 0;
+		for (; 0 <= t ? r < t : r > t; r = 0 <= t ? ++r : --r) e.push(this.readByte());
 		return e;
 	}, t.prototype.write = function(t) {
-		var e, r, n, i;
-		for (i = [], r = 0, n = t.length; r < n; r++) e = t[r], i.push(this.writeByte(e));
+		var e, r, n, i = [];
+		for (r = 0, n = t.length; r < n; r++) e = t[r], i.push(this.writeByte(e));
 		return i;
 	}, t;
 }();
@@ -19043,8 +19041,8 @@ var de = function() {
 		}, this.tables[e.tag] = e;
 	}
 	return e.prototype.encode = function(e) {
-		var r, n, i, a, o, s, u, c, l, h, f, d, p;
-		for (p in f = Object.keys(e).length, s = Math.log(2), l = 16 * Math.floor(Math.log(f) / s), a = Math.floor(l / s), c = 16 * f - l, (n = new fe()).writeInt(this.scalarType), n.writeShort(f), n.writeShort(l), n.writeShort(a), n.writeShort(c), i = 16 * f, u = n.pos + i, o = null, d = [], e) for (h = e[p], n.writeString(p), n.writeInt(t(h)), n.writeInt(u), n.writeInt(h.length), d = d.concat(h), "head" === p && (o = u), u += h.length; u % 4;) d.push(0), u++;
+		var r, n, i, a, o, s, u, c, l, h, f = Object.keys(e).length, d, p;
+		for (p in s = Math.log(2), l = 16 * Math.floor(Math.log(f) / s), a = Math.floor(l / s), c = 16 * f - l, (n = new fe()).writeInt(this.scalarType), n.writeShort(f), n.writeShort(l), n.writeShort(a), n.writeShort(c), i = 16 * f, u = n.pos + i, o = null, d = [], e) for (h = e[p], n.writeString(p), n.writeInt(t(h)), n.writeInt(u), n.writeInt(h.length), d = d.concat(h), "head" === p && (o = u), u += h.length; u % 4;) d.push(0), u++;
 		return n.write(d), r = 2981146554 - t(n.data), n.pos = o + 8, n.writeUInt32(r), n.data;
 	}, t = function(t) {
 		var e, r, n, i;
@@ -19089,32 +19087,32 @@ var ve = function() {
 				for (s = 0; s < 256; ++s) this.codeMap[s] = t.readByte();
 				break;
 			case 4: for (f = t.readUInt16(), h = f / 2, t.pos += 6, i = function() {
-				var e, r;
-				for (r = [], s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
+				var e, r = [];
+				for (s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
 				return r;
 			}(), t.pos += 2, p = function() {
-				var e, r;
-				for (r = [], s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
+				var e, r = [];
+				for (s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
 				return r;
 			}(), u = function() {
-				var e, r;
-				for (r = [], s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
+				var e, r = [];
+				for (s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
 				return r;
 			}(), c = function() {
-				var e, r;
-				for (r = [], s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
+				var e, r = [];
+				for (s = e = 0; 0 <= h ? e < h : e > h; s = 0 <= h ? ++e : --e) r.push(t.readUInt16());
 				return r;
 			}(), n = (this.length - t.pos + this.offset) / 2, o = function() {
-				var e, r;
-				for (r = [], s = e = 0; 0 <= n ? e < n : e > n; s = 0 <= n ? ++e : --e) r.push(t.readUInt16());
+				var e, r = [];
+				for (s = e = 0; 0 <= n ? e < n : e > n; s = 0 <= n ? ++e : --e) r.push(t.readUInt16());
 				return r;
 			}(), s = m = 0, b = i.length; m < b; s = ++m) for (g = i[s], r = v = d = p[s]; d <= g ? v <= g : v >= g; r = d <= g ? ++v : --v) 0 === c[s] ? a = r + u[s] : 0 !== (a = o[c[s] / 2 + (r - d) - (h - s)] || 0) && (a += u[s]), this.codeMap[r] = 65535 & a;
 		}
 		t.pos = l;
 	}
 	return t.encode = function(t, e) {
-		var r, n, i, a, o, s, u, c, l, h, f, d, p, g, m, v, b, y, w, N, L, x, A, S, _, P, k, F, I, C, j, O, B, M, q, E, R, D, T, z, U, H, W, V, G, Y;
-		switch (F = new fe(), a = Object.keys(t).sort(function(t, e) {
+		var r, n, i, a, o, s, u, c, l, h, f, d, p, g, m, v, b, y, w, N, L, x, A, S, _, P, k, F = new fe(), I, C, j, O, B, M, q, E, R, D, T, z, U, H, W, V, G, Y;
+		switch (a = Object.keys(t).sort(function(t, e) {
 			return t - e;
 		}), e) {
 			case "macroman":
@@ -19184,16 +19182,16 @@ var we = function() {
 	}
 	return ge(t, he), t.prototype.tag = "OS/2", t.prototype.parse = function(t) {
 		if (t.pos = this.offset, this.version = t.readUInt16(), this.averageCharWidth = t.readShort(), this.weightClass = t.readUInt16(), this.widthClass = t.readUInt16(), this.type = t.readShort(), this.ySubscriptXSize = t.readShort(), this.ySubscriptYSize = t.readShort(), this.ySubscriptXOffset = t.readShort(), this.ySubscriptYOffset = t.readShort(), this.ySuperscriptXSize = t.readShort(), this.ySuperscriptYSize = t.readShort(), this.ySuperscriptXOffset = t.readShort(), this.ySuperscriptYOffset = t.readShort(), this.yStrikeoutSize = t.readShort(), this.yStrikeoutPosition = t.readShort(), this.familyClass = t.readShort(), this.panose = function() {
-			var e, r;
-			for (r = [], e = 0; e < 10; ++e) r.push(t.readByte());
+			var e, r = [];
+			for (e = 0; e < 10; ++e) r.push(t.readByte());
 			return r;
 		}(), this.charRange = function() {
-			var e, r;
-			for (r = [], e = 0; e < 4; ++e) r.push(t.readInt());
+			var e, r = [];
+			for (e = 0; e < 4; ++e) r.push(t.readInt());
 			return r;
 		}(), this.vendorID = t.readString(4), this.selection = t.readShort(), this.firstCharIndex = t.readShort(), this.lastCharIndex = t.readShort(), this.version > 0 && (this.ascent = t.readShort(), this.descent = t.readShort(), this.lineGap = t.readShort(), this.winAscent = t.readShort(), this.winDescent = t.readShort(), this.codePageRange = function() {
-			var e, r;
-			for (r = [], e = 0; e < 2; e = ++e) r.push(t.readInt());
+			var e, r = [];
+			for (e = 0; e < 2; e = ++e) r.push(t.readInt());
 			return r;
 		}(), this.version > 1)) return this.xHeight = t.readShort(), this.capHeight = t.readShort(), this.defaultChar = t.readShort(), this.breakChar = t.readShort(), this.maxContext = t.readShort();
 	}, t;
@@ -19214,8 +19212,8 @@ var Ne = function() {
 				return n;
 			case 151552: return r = t.readUInt16(), this.offsets = t.read(r);
 			case 262144: return this.map = function() {
-				var e, r, n;
-				for (n = [], i = e = 0, r = this.file.maxp.numGlyphs; 0 <= r ? e < r : e > r; i = 0 <= r ? ++e : --e) n.push(t.readUInt32());
+				var e, r, n = [];
+				for (i = e = 0, r = this.file.maxp.numGlyphs; 0 <= r ? e < r : e > r; i = 0 <= r ? ++e : --e) n.push(t.readUInt32());
 				return n;
 			}.call(this);
 		}
@@ -19267,12 +19265,12 @@ var Se = function() {
 			lsb: t.readInt16()
 		});
 		for (n = this.file.maxp.numGlyphs - this.file.hhea.numberOfMetrics, this.leftSideBearings = function() {
-			var r, i;
-			for (i = [], e = r = 0; 0 <= n ? r < n : r > n; e = 0 <= n ? ++r : --r) i.push(t.readInt16());
+			var r, i = [];
+			for (e = r = 0; 0 <= n ? r < n : r > n; e = 0 <= n ? ++r : --r) i.push(t.readInt16());
 			return i;
 		}(), this.widths = function() {
-			var t, e, r, n;
-			for (n = [], t = 0, e = (r = this.metrics).length; t < e; t++) i = r[t], n.push(i.advance);
+			var t, e, r, n = [];
+			for (t = 0, e = (r = this.metrics).length; t < e; t++) i = r[t], n.push(i.advance);
 			return n;
 		}.call(this), r = this.widths[this.widths.length - 1], s = [], e = a = 0; 0 <= n ? a < n : a > n; e = 0 <= n ? ++a : --a) s.push(this.widths.push(r));
 		return s;
@@ -19294,8 +19292,8 @@ var Pe = function() {
 		var e, r, n, i, a, o, s, u, c, l;
 		return t in this.cache ? this.cache[t] : (i = this.file.loca, e = this.file.contents, r = i.indexOf(t), 0 === (n = i.lengthOf(t)) ? this.cache[t] = null : (e.pos = this.offset + r, a = (o = new fe(e.read(n))).readShort(), u = o.readShort(), l = o.readShort(), s = o.readShort(), c = o.readShort(), this.cache[t] = -1 === a ? new Fe(o, u, l, s, c) : new ke(o, a, u, l, s, c), this.cache[t]));
 	}, t.prototype.encode = function(t, e, r) {
-		var n, i, a, o, s;
-		for (a = [], i = [], o = 0, s = e.length; o < s; o++) n = t[e[o]], i.push(a.length), n && (a = a.concat(n.encode(r)));
+		var n, i, a = [], o, s;
+		for (i = [], o = 0, s = e.length; o < s; o++) n = t[e[o]], i.push(a.length), n && (a = a.concat(n.encode(r)));
 		return i.push(a.length), {
 			table: a,
 			offsets: i
@@ -19316,8 +19314,8 @@ var Fe = function() {
 		for (this.raw = t, this.xMin = e, this.yMin = r, this.xMax = n, this.yMax = i, this.compound = !0, this.glyphIDs = [], this.glyphOffsets = [], a = this.raw; o = a.readShort(), this.glyphOffsets.push(a.pos), this.glyphIDs.push(a.readUInt16()), 32 & o;) a.pos += 1 & o ? 4 : 2, 128 & o ? a.pos += 8 : 64 & o ? a.pos += 4 : 8 & o && (a.pos += 2);
 	}
 	return t.prototype.encode = function() {
-		var t, e, r;
-		for (e = new fe(_e.call(this.raw.data)), t = 0, r = this.glyphIDs.length; t < r; ++t) e.pos = this.glyphOffsets[t];
+		var t, e = new fe(_e.call(this.raw.data)), r;
+		for (t = 0, r = this.glyphIDs.length; t < r; ++t) e.pos = this.glyphOffsets[t];
 		return e.data;
 	}, t;
 }();
@@ -19328,12 +19326,12 @@ var Ie = function() {
 	return ge(t, he), t.prototype.tag = "loca", t.prototype.parse = function(t) {
 		var e, r;
 		return t.pos = this.offset, e = this.file.head.indexToLocFormat, this.offsets = 0 === e ? function() {
-			var e, n;
-			for (n = [], r = 0, e = this.length; r < e; r += 2) n.push(2 * t.readUInt16());
+			var e, n = [];
+			for (r = 0, e = this.length; r < e; r += 2) n.push(2 * t.readUInt16());
 			return n;
 		}.call(this) : function() {
-			var e, n;
-			for (n = [], r = 0, e = this.length; r < e; r += 4) n.push(t.readUInt32());
+			var e, n = [];
+			for (r = 0, e = this.length; r < e; r += 4) n.push(t.readUInt32());
 			return n;
 		}.call(this);
 	}, t.prototype.indexOf = function(t) {
@@ -19355,28 +19353,28 @@ var Ce = function() {
 		this.font = t, this.subset = {}, this.unicodes = {}, this.next = 33;
 	}
 	return t.prototype.generateCmap = function() {
-		var t, e, r, n, i;
-		for (e in n = this.font.cmap.tables[0].codeMap, t = {}, i = this.subset) r = i[e], t[e] = n[r];
+		var t, e, r, n = this.font.cmap.tables[0].codeMap, i;
+		for (e in t = {}, i = this.subset) r = i[e], t[e] = n[r];
 		return t;
 	}, t.prototype.glyphsFor = function(t) {
-		var e, r, n, i, a, o, s;
-		for (n = {}, a = 0, o = t.length; a < o; a++) n[i = t[a]] = this.font.glyf.glyphFor(i);
+		var e, r, n = {}, i, a = 0, o = t.length, s;
+		for (; a < o; a++) n[i = t[a]] = this.font.glyf.glyphFor(i);
 		for (i in e = [], n) null != (r = n[i]) && r.compound && e.push.apply(e, r.glyphIDs);
 		if (e.length > 0) for (i in s = this.glyphsFor(e)) r = s[i], n[i] = r;
 		return n;
 	}, t.prototype.encode = function(t, e) {
-		var r, n, i, a, o, s, u, c, l, h, f, d, p, g, m;
-		for (n in r = be.encode(this.generateCmap(), "unicode"), a = this.glyphsFor(t), f = { 0: 0 }, m = r.charMap) f[(s = m[n]).old] = s.new;
+		var r = be.encode(this.generateCmap(), "unicode"), n, i, a = this.glyphsFor(t), o, s, u, c, l, h, f = { 0: 0 }, d, p, g, m;
+		for (n in m = r.charMap) f[(s = m[n]).old] = s.new;
 		for (d in h = r.maxGlyphID, a) d in f || (f[d] = h++);
 		return c = function(t) {
-			var e, r;
-			for (e in r = {}, t) r[t[e]] = e;
+			var e, r = {};
+			for (e in t) r[t[e]] = e;
 			return r;
 		}(f), l = Object.keys(c).sort(function(t, e) {
 			return t - e;
 		}), p = function() {
-			var t, e, r;
-			for (r = [], t = 0, e = l.length; t < e; t++) o = l[t], r.push(c[o]);
+			var t, e, r = [];
+			for (t = 0, e = l.length; t < e; t++) o = l[t], r.push(c[o]);
 			return r;
 		}(), i = this.font.glyf.encode(a, p, f), u = this.font.loca.encode(i.offsets, p), g = {
 			cmap: this.font.cmap.raw(),
@@ -19399,8 +19397,8 @@ E.API.PDFObject = function() {
 	}, e.convert = function(r) {
 		var n, i, a, o;
 		if (Array.isArray(r)) return "[" + function() {
-			var t, i, a;
-			for (a = [], t = 0, i = r.length; t < i; t++) n = r[t], a.push(e.convert(n));
+			var t, i, a = [];
+			for (t = 0, i = r.length; t < i; t++) n = r[t], a.push(e.convert(n));
 			return a;
 		}().join(" ") + "]";
 		if ("string" == typeof r) return "/" + r;

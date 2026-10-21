@@ -1259,6 +1259,7 @@
   margin-bottom: 0;
 }
 
+
 /* glue: 0.13 hash: 28fada1b84 */
         .PoweredBy_en,
 .zoom-out-fixed,
@@ -1927,7 +1928,8 @@
                 background-size: 168px 147px;
             }
         }
-.splitter-layout {
+        
+        .splitter-layout {
   position: absolute;
   display: flex;
   flex-direction: row;

@@ -759,9 +759,10 @@ var LayerGroup = class LayerGroup extends BaseLayer {
 		*/
 		this.listenerKeys_ = {};
 		this.addChangeListener(Property$3.LAYERS, this.handleLayersChanged_);
-		if (layers) if (Array.isArray(layers)) layers = new Collection(layers.slice(), { unique: true });
-		else assert(typeof layers.getArray === "function", "Expected `layers` to be an array or a `Collection`");
-		else layers = new Collection(void 0, { unique: true });
+		if (layers) {
+			if (Array.isArray(layers)) layers = new Collection(layers.slice(), { unique: true });
+			else assert(typeof layers.getArray === "function", "Expected `layers` to be an array or a `Collection`");
+		} else layers = new Collection(void 0, { unique: true });
 		this.setLayers(layers);
 	}
 	/**
@@ -896,8 +897,10 @@ var LayerGroup = class LayerGroup extends BaseLayer {
 			layerState.minResolution = Math.max(layerState.minResolution, ownLayerState.minResolution);
 			layerState.minZoom = Math.max(layerState.minZoom, ownLayerState.minZoom);
 			layerState.maxZoom = Math.min(layerState.maxZoom, ownLayerState.maxZoom);
-			if (ownLayerState.extent !== void 0) if (layerState.extent !== void 0) layerState.extent = getIntersection(layerState.extent, ownLayerState.extent);
-			else layerState.extent = ownLayerState.extent;
+			if (ownLayerState.extent !== void 0) {
+				if (layerState.extent !== void 0) layerState.extent = getIntersection(layerState.extent, ownLayerState.extent);
+				else layerState.extent = ownLayerState.extent;
+			}
 			if (layerState.zIndex === void 0) layerState.zIndex = defaultZIndex;
 		}
 		return states;
@@ -1207,8 +1210,10 @@ var ReprojTile = class extends Tile {
 			return;
 		}
 		const sourceProjExtent = sourceProj.getExtent();
-		if (sourceProjExtent) if (!maxSourceExtent) maxSourceExtent = sourceProjExtent;
-		else maxSourceExtent = getIntersection(maxSourceExtent, sourceProjExtent);
+		if (sourceProjExtent) {
+			if (!maxSourceExtent) maxSourceExtent = sourceProjExtent;
+			else maxSourceExtent = getIntersection(maxSourceExtent, sourceProjExtent);
+		}
 		const targetResolution = targetTileGrid.getResolution(this.wrappedTileCoord_[0]);
 		const sourceResolution = calculateSourceExtentResolution(sourceProj, targetProj, limitedTargetExtent, targetResolution);
 		if (!isFinite(sourceResolution) || sourceResolution <= 0) {
@@ -1227,10 +1232,12 @@ var ReprojTile = class extends Tile {
 		}
 		this.sourceZ_ = sourceTileGrid.getZForResolution(sourceResolution);
 		let sourceExtent = this.triangulation_.calculateSourceExtent();
-		if (maxSourceExtent) if (sourceProj.canWrapX()) {
-			sourceExtent[1] = clamp(sourceExtent[1], maxSourceExtent[1], maxSourceExtent[3]);
-			sourceExtent[3] = clamp(sourceExtent[3], maxSourceExtent[1], maxSourceExtent[3]);
-		} else sourceExtent = getIntersection(sourceExtent, maxSourceExtent);
+		if (maxSourceExtent) {
+			if (sourceProj.canWrapX()) {
+				sourceExtent[1] = clamp(sourceExtent[1], maxSourceExtent[1], maxSourceExtent[3]);
+				sourceExtent[3] = clamp(sourceExtent[3], maxSourceExtent[1], maxSourceExtent[3]);
+			} else sourceExtent = getIntersection(sourceExtent, maxSourceExtent);
+		}
 		if (!getArea(sourceExtent)) this.state = TileState_default.EMPTY;
 		else {
 			let worldWidth = 0;
@@ -1406,7 +1413,8 @@ function renderXYZTemplate(template, z, x, y, maxY) {
 * @return {string} The chosen URL.
 */
 function pickUrl(urls, z, x, y) {
-	return urls[modulo(hashZXY(z, x, y), urls.length)];
+	const hash = hashZXY(z, x, y);
+	return urls[modulo(hash, urls.length)];
 }
 /**
 * @param {string} url URL.
@@ -1449,7 +1457,7 @@ function createFromTemplate(template, tileGrid) {
 	* @param {import("./proj/Projection.js").default} projection Projection.
 	* @return {string|undefined} Tile URL.
 	*/
-function(tileCoord, pixelRatio, projection) {
+	function(tileCoord, pixelRatio, projection) {
 		if (!tileCoord) return;
 		let maxY;
 		const z = tileCoord[0];
@@ -1484,9 +1492,10 @@ function createFromTileUrlFunctions(tileUrlFunctions) {
 	* @param {import("./proj/Projection.js").default} projection Projection.
 	* @return {string|undefined} Tile URL.
 	*/
-function(tileCoord, pixelRatio, projection) {
+	function(tileCoord, pixelRatio, projection) {
 		if (!tileCoord) return;
-		return tileUrlFunctions[modulo(hash(tileCoord), tileUrlFunctions.length)](tileCoord, pixelRatio, projection);
+		const h = hash(tileCoord);
+		return tileUrlFunctions[modulo(h, tileUrlFunctions.length)](tileCoord, pixelRatio, projection);
 	});
 }
 /**
@@ -2128,7 +2137,8 @@ var ReprojImage = class extends ImageWrapper {
 			maxTargetExtent[2] = Infinity;
 		}
 		const limitedTargetExtent = maxTargetExtent ? getIntersection(targetExtent, maxTargetExtent) : targetExtent;
-		const sourceResolution = calculateSourceResolution(sourceProj, targetProj, getCenter(limitedTargetExtent), targetResolution);
+		const targetCenter = getCenter(limitedTargetExtent);
+		const sourceResolution = calculateSourceResolution(sourceProj, targetProj, targetCenter, targetResolution);
 		const triangulation = new Triangulation(sourceProj, targetProj, limitedTargetExtent, maxSourceExtent, sourceResolution * ERROR_THRESHOLD, targetResolution);
 		const sourceExtent = triangulation.calculateSourceExtent();
 		const sourceImage = isEmpty(sourceExtent) ? null : getImageFunction(sourceExtent, sourceResolution, pixelRatio);
@@ -2515,7 +2525,9 @@ function getRequestExtent(extent, resolution, pixelRatio, ratio) {
 	const center = getCenter(extent);
 	const viewWidth = ceil(getWidth(extent) / imageResolution, 4);
 	const viewHeight = ceil(getHeight(extent) / imageResolution, 4);
-	return getForViewAndSize(center, imageResolution, 0, [viewWidth + 2 * ceil((ratio - 1) * viewWidth / 2, 4), viewHeight + 2 * ceil((ratio - 1) * viewHeight / 2, 4)]);
+	const requestWidth = viewWidth + 2 * ceil((ratio - 1) * viewWidth / 2, 4);
+	const requestHeight = viewHeight + 2 * ceil((ratio - 1) * viewHeight / 2, 4);
+	return getForViewAndSize(center, imageResolution, 0, [requestWidth, requestHeight]);
 }
 //#endregion
 //#region node_modules/ol/source/mapguide.js
@@ -2994,7 +3006,7 @@ function createExtent(extent, onlyCenter, smooth) {
 	* @param {Array<number>} [centerShift] Shift between map center and viewport center.
 	* @return {import("./coordinate.js").Coordinate|undefined} Center.
 	*/
-function(center, resolution, size, isMoving, centerShift) {
+	function(center, resolution, size, isMoving, centerShift) {
 		if (!center) return;
 		if (!resolution && !onlyCenter) return center;
 		const viewWidth = onlyCenter ? 0 : size[0] * resolution;
@@ -3092,7 +3104,7 @@ function createSnapToResolutions(resolutions, smooth, maxExtent, showFullExtent)
 	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
 	* @return {number|undefined} Resolution.
 	*/
-function(resolution, direction, size, isMoving) {
+	function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const maxResolution = resolutions[0];
 			const minResolution = resolutions[resolutions.length - 1];
@@ -3127,18 +3139,18 @@ function createSnapToPower(power, maxResolution, minResolution, smooth, maxExten
 	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
 	* @return {number|undefined} Resolution.
 	*/
-function(resolution, direction, size, isMoving) {
+	function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const cappedMaxRes = maxExtent ? getViewportClampedResolution(maxResolution, maxExtent, size, showFullExtent) : maxResolution;
 			if (isMoving) {
 				if (!smooth) return clamp(resolution, minResolution, cappedMaxRes);
 				return getSmoothClampedResolution(resolution, cappedMaxRes, minResolution);
 			}
-			const tolerance = 1e-9;
-			const minZoomLevel = Math.ceil(Math.log(maxResolution / cappedMaxRes) / Math.log(power) - tolerance);
-			const offset = -direction * (.5 - tolerance) + .5;
+			const minZoomLevel = Math.ceil(Math.log(maxResolution / cappedMaxRes) / Math.log(power) - 1e-9);
+			const offset = -direction * .499999999 + .5;
 			const cappedZoomLevel = Math.floor(Math.log(maxResolution / Math.min(cappedMaxRes, resolution)) / Math.log(power) + offset);
-			return clamp(maxResolution / Math.pow(power, Math.max(minZoomLevel, cappedZoomLevel)), minResolution, cappedMaxRes);
+			const newResolution = maxResolution / Math.pow(power, Math.max(minZoomLevel, cappedZoomLevel));
+			return clamp(newResolution, minResolution, cappedMaxRes);
 		}
 	});
 }
@@ -3160,7 +3172,7 @@ function createMinMaxResolution(maxResolution, minResolution, smooth, maxExtent,
 	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
 	* @return {number|undefined} Resolution.
 	*/
-function(resolution, direction, size, isMoving) {
+	function(resolution, direction, size, isMoving) {
 		if (resolution !== void 0) {
 			const cappedMaxRes = maxExtent ? getViewportClampedResolution(maxResolution, maxExtent, size, showFullExtent) : maxResolution;
 			if (!smooth || !isMoving) return clamp(resolution, minResolution, cappedMaxRes);
@@ -3202,7 +3214,7 @@ function createSnapToN(n) {
 	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
 	* @return {number|undefined} Rotation.
 	*/
-function(rotation, isMoving) {
+	function(rotation, isMoving) {
 		if (isMoving) return rotation;
 		if (rotation !== void 0) {
 			rotation = Math.floor(rotation / theta + .5) * theta;
@@ -3222,7 +3234,7 @@ function createSnapToZero(tolerance) {
 	* @param {boolean} [isMoving] True if an interaction or animation is in progress.
 	* @return {number|undefined} Rotation.
 	*/
-function(rotation, isMoving) {
+	function(rotation, isMoving) {
 		if (isMoving || rotation === void 0) return rotation;
 		if (Math.abs(rotation) <= t) return 0;
 		return rotation;
@@ -4011,7 +4023,8 @@ var View = class extends BaseObject {
 	* @api
 	*/
 	calculateExtent(size) {
-		return toUserExtent(this.calculateExtentInternal(size), this.getProjection());
+		const extent = this.calculateExtentInternal(size);
+		return toUserExtent(extent, this.getProjection());
 	}
 	/**
 	* @param {import("./size.js").Size} [size] Box pixel size. If not provided,
@@ -4150,7 +4163,7 @@ var View = class extends BaseObject {
 		* @param {number} value Value.
 		* @return {number} Resolution.
 		*/
-function(value) {
+		function(value) {
 			return maxResolution / Math.pow(power, value * max);
 		});
 	}
@@ -4179,7 +4192,7 @@ function(value) {
 		* @param {number} resolution Resolution.
 		* @return {number} Value.
 		*/
-function(resolution) {
+		function(resolution) {
 			return Math.log(maxResolution / resolution) / logPower / max;
 		});
 	}
@@ -4294,7 +4307,8 @@ function(resolution) {
 		assert(Array.isArray(geometryOrExtent) || typeof geometryOrExtent.getSimplifiedGeometry === "function", "Invalid extent or geometry provided as `geometry`");
 		if (Array.isArray(geometryOrExtent)) {
 			assert(!isEmpty(geometryOrExtent), "Cannot fit empty extent provided as `geometry`");
-			geometry = fromExtent(fromUserExtent(geometryOrExtent, this.getProjection()));
+			const extent = fromUserExtent(geometryOrExtent, this.getProjection());
+			geometry = fromExtent(extent);
 		} else if (geometryOrExtent.getType() === "Circle") {
 			const extent = fromUserExtent(geometryOrExtent.getExtent(), this.getProjection());
 			geometry = fromExtent(extent);
@@ -4746,14 +4760,17 @@ function createResolutionConstraint(options) {
 		else resolutionConstraint = createMinMaxResolution(maxResolution, minResolution, smooth, !constrainOnlyCenter && extent, showFullExtent);
 	} else {
 		const defaultMaxResolution = (!projExtent ? 360 * METERS_PER_UNIT.degrees / projection.getMetersPerUnit() : Math.max(getWidth(projExtent), getHeight(projExtent))) / 256 / Math.pow(defaultZoomFactor, DEFAULT_MIN_ZOOM);
-		const defaultMinResolution = defaultMaxResolution / Math.pow(defaultZoomFactor, defaultMaxZoom - DEFAULT_MIN_ZOOM);
+		const defaultMinResolution = defaultMaxResolution / Math.pow(defaultZoomFactor, 28);
 		maxResolution = options.maxResolution;
 		if (maxResolution !== void 0) minZoom = 0;
 		else maxResolution = defaultMaxResolution / Math.pow(zoomFactor, minZoom);
 		minResolution = options.minResolution;
-		if (minResolution === void 0) if (options.maxZoom !== void 0) if (options.maxResolution !== void 0) minResolution = maxResolution / Math.pow(zoomFactor, maxZoom);
-		else minResolution = defaultMaxResolution / Math.pow(zoomFactor, maxZoom);
-		else minResolution = defaultMinResolution;
+		if (minResolution === void 0) {
+			if (options.maxZoom !== void 0) {
+				if (options.maxResolution !== void 0) minResolution = maxResolution / Math.pow(zoomFactor, maxZoom);
+				else minResolution = defaultMaxResolution / Math.pow(zoomFactor, maxZoom);
+			} else minResolution = defaultMinResolution;
+		}
 		maxZoom = minZoom + Math.floor(Math.log(maxResolution / minResolution) / Math.log(zoomFactor));
 		minResolution = maxResolution / Math.pow(zoomFactor, maxZoom - minZoom);
 		if (options.constrainResolution) resolutionConstraint = createSnapToPower(zoomFactor, maxResolution, minResolution, smooth, !constrainOnlyCenter && extent, showFullExtent);
@@ -7038,16 +7055,18 @@ var CanvasImageLayerRenderer = class extends CanvasLayerRenderer {
 		const hints = frameState.viewHints;
 		let renderedExtent = frameState.extent;
 		if (layerState.extent !== void 0) renderedExtent = getIntersection(renderedExtent, fromUserExtent(layerState.extent, viewState.projection));
-		if (!hints[ViewHint_default.ANIMATING] && !hints[ViewHint_default.INTERACTING] && !isEmpty(renderedExtent)) if (imageSource) {
-			if (!this.getLayer().rendered && this.renderedSourceRevision_ !== imageSource.getRevision()) this.image = null;
-			this.renderedSourceRevision_ = imageSource.getRevision();
-			const projection = viewState.projection;
-			const image = imageSource.getImage(renderedExtent, viewResolution, pixelRatio, projection);
-			if (image) {
-				if (this.loadImage(image)) this.image = image;
-				else if (image.getState() === ImageState_default.EMPTY) this.image = null;
-			}
-		} else this.image = null;
+		if (!hints[ViewHint_default.ANIMATING] && !hints[ViewHint_default.INTERACTING] && !isEmpty(renderedExtent)) {
+			if (imageSource) {
+				if (!this.getLayer().rendered && this.renderedSourceRevision_ !== imageSource.getRevision()) this.image = null;
+				this.renderedSourceRevision_ = imageSource.getRevision();
+				const projection = viewState.projection;
+				const image = imageSource.getImage(renderedExtent, viewResolution, pixelRatio, projection);
+				if (image) {
+					if (this.loadImage(image)) this.image = image;
+					else if (image.getState() === ImageState_default.EMPTY) this.image = null;
+				}
+			} else this.image = null;
+		}
 		return !!this.image;
 	}
 	/**
@@ -7743,7 +7762,8 @@ var BingMaps = class extends TileImage {
 		}
 		const resource = response.resourceSets[0].resources[0];
 		const maxZoom = this.maxZoom_ == -1 ? resource.zoomMax : this.maxZoom_;
-		const extent = extentFromProjection(this.getProjection());
+		const sourceProjection = this.getProjection();
+		const extent = extentFromProjection(sourceProjection);
 		const scale = this.hidpi_ ? 2 : 1;
 		const tileSize = resource.imageWidth == resource.imageHeight ? resource.imageWidth / scale : [resource.imageWidth / scale, resource.imageHeight / scale];
 		const tileGrid = createXYZ({
@@ -7771,7 +7791,7 @@ var BingMaps = class extends TileImage {
 			* @param {import("../proj/Projection.js").default} projection Projection.
 			* @return {string|undefined} Tile URL.
 			*/
-function(tileCoord, pixelRatio, projection) {
+			function(tileCoord, pixelRatio, projection) {
 				if (!tileCoord) return;
 				createOrUpdate(tileCoord[0], tileCoord[1], tileCoord[2], quadKeyTileCoord);
 				const url = new URL(imageUrl.replace("{quadkey}", quadKey(quadKeyTileCoord)));
@@ -7800,12 +7820,14 @@ function(tileCoord, pixelRatio, projection) {
 						const coverageArea = coverageAreas[i];
 						if (zoom >= coverageArea.zoomMin && zoom <= coverageArea.zoomMax) {
 							const bbox = coverageArea.bbox;
-							if (intersects(applyTransform([
+							const epsg4326Extent = [
 								bbox[1],
 								bbox[0],
 								bbox[3],
 								bbox[2]
-							], transform), frameState.extent)) {
+							];
+							const extent = applyTransform(epsg4326Extent, transform);
+							if (intersects(extent, frameState.extent)) {
 								intersecting = true;
 								break;
 							}
@@ -8098,15 +8120,16 @@ var UTFGrid = class extends TileSource {
 		* @type {LRUCache}
 		*/
 		this.tileCache_ = new LRUCache(512);
-		if (options.url) if (this.jsonp_) jsonp(options.url, this.handleTileJSONResponse.bind(this), this.handleTileJSONError.bind(this));
-		else {
-			const client = new XMLHttpRequest();
-			client.addEventListener("load", this.onXHRLoad_.bind(this));
-			client.addEventListener("error", this.onXHRError_.bind(this));
-			client.open("GET", options.url);
-			client.send();
-		}
-		else if (options.tileJSON) this.handleTileJSONResponse(options.tileJSON);
+		if (options.url) {
+			if (this.jsonp_) jsonp(options.url, this.handleTileJSONResponse.bind(this), this.handleTileJSONError.bind(this));
+			else {
+				const client = new XMLHttpRequest();
+				client.addEventListener("load", this.onXHRLoad_.bind(this));
+				client.addEventListener("error", this.onXHRError_.bind(this));
+				client.open("GET", options.url);
+				client.send();
+			}
+		} else if (options.tileJSON) this.handleTileJSONResponse(options.tileJSON);
 		else throw new Error("Either `url` or `tileJSON` options must be provided");
 	}
 	/**
@@ -8185,9 +8208,10 @@ var UTFGrid = class extends TileSource {
 		}
 		const gridExtent = extentFromProjection(sourceProjection);
 		const minZoom = tileJSON["minzoom"] || 0;
+		const maxZoom = tileJSON["maxzoom"] || 22;
 		const tileGrid = createXYZ({
 			extent: gridExtent,
-			maxZoom: tileJSON["maxzoom"] || 22,
+			maxZoom,
 			minZoom
 		});
 		this.tileGrid = tileGrid;
@@ -8494,7 +8518,6 @@ function parse(encoded, expectedType, context) {
 			if (isType(expectedType, BooleanType)) return new LiteralExpression(BooleanType, !!encoded);
 			if (!includesType(expectedType, StringType)) throw new Error(`got a string, but expected ${typeName(expectedType)}`);
 			return new LiteralExpression(StringType, encoded);
-		default:
 	}
 	if (!Array.isArray(encoded)) throw new Error("expression must be an array or a primitive value");
 	if (encoded.length === 0) throw new Error("empty expression");
@@ -8715,7 +8738,10 @@ function withArgsOfReturnType(encoded, returnType, context) {
 	* @type {Array<Expression>}
 	*/
 	const args = new Array(argCount);
-	for (let i = 0; i < argCount; ++i) args[i] = parse(encoded[i + 1], returnType, context);
+	for (let i = 0; i < argCount; ++i) {
+		const expression = parse(encoded[i + 1], returnType, context);
+		args[i] = expression;
+	}
 	return args;
 }
 /**
@@ -8729,7 +8755,10 @@ function withArgsOfType(argType) {
 		* @type {Array<Expression>}
 		*/
 		const args = new Array(argCount);
-		for (let i = 0; i < argCount; ++i) args[i] = parse(encoded[i + 1], argType, context);
+		for (let i = 0; i < argCount; ++i) {
+			const expression = parse(encoded[i + 1], argType, context);
+			args[i] = expression;
+		}
 		return args;
 	};
 }
@@ -8760,7 +8789,8 @@ function withMatchArgs(encoded, returnType, context) {
 	const args = new Array(argsCount - 2);
 	for (let i = 0; i < argsCount - 2; i += 2) {
 		try {
-			args[i] = parse(encoded[i + 2], input.type, context);
+			const match = parse(encoded[i + 2], input.type, context);
+			args[i] = match;
 		} catch (err) {
 			throw new Error(`failed to parse argument ${i + 1} of match expression: ${err.message}`);
 		}
@@ -8807,7 +8837,8 @@ function withInterpolateArgs(encoded, returnType, context) {
 	const args = new Array(encoded.length - 3);
 	for (let i = 0; i < args.length; i += 2) {
 		try {
-			args[i] = parse(encoded[i + 3], NumberType, context);
+			const stop = parse(encoded[i + 3], NumberType, context);
+			args[i] = stop;
 		} catch (err) {
 			throw new Error(`failed to parse argument ${i + 2} for interpolate expression: ${err.message}`);
 		}
@@ -8832,7 +8863,8 @@ function withCaseArgs(encoded, returnType, context) {
 	const args = new Array(encoded.length - 1);
 	for (let i = 0; i < args.length - 1; i += 2) {
 		try {
-			args[i] = parse(encoded[i + 1], BooleanType, context);
+			const condition = parse(encoded[i + 1], BooleanType, context);
+			args[i] = condition;
 		} catch (err) {
 			throw new Error(`failed to parse argument ${i} of case expression: ${err.message}`);
 		}
@@ -8864,7 +8896,8 @@ function withInArgs(encoded, returnType, context) {
 	else needleType = NumberType;
 	const args = new Array(haystack.length);
 	for (let i = 0; i < args.length; i++) try {
-		args[i] = parse(haystack[i], needleType, context);
+		const arg = parse(haystack[i], needleType, context);
+		args[i] = arg;
 	} catch (err) {
 		throw new Error(`failed to parse haystack item ${i} for "in" expression: ${err.message}`);
 	}
@@ -10742,7 +10775,8 @@ var TileTexture = class extends BaseTileRepresentation {
 		for (let textureIndex = 0; textureIndex < textureCount; ++textureIndex) {
 			const texture = gl.createTexture();
 			this.textures.push(texture);
-			textureDataArrays[textureIndex] = new DataType(pixelCount * (textureIndex < textureCount - 1 ? 4 : (this.bandCount - 1) % 4 + 1));
+			const bandCount = textureIndex < textureCount - 1 ? 4 : (this.bandCount - 1) % 4 + 1;
+			textureDataArrays[textureIndex] = new DataType(pixelCount * bandCount);
 		}
 		let dataIndex = 0;
 		let rowOffset = 0;
@@ -12681,15 +12715,17 @@ var WebGLTileLayer = class extends BaseTileLayer {
 	handleSourceUpdate_() {
 		if (this.hasRenderer()) this.getRenderer().clearCache();
 		const source = this.getSource();
-		if (source) if (source.getState() === "loading") {
-			const onChange = () => {
-				if (source.getState() === "ready") {
-					source.removeEventListener("change", onChange);
-					this.setStyle(this.style_);
-				}
-			};
-			source.addEventListener("change", onChange);
-		} else this.setStyle(this.style_);
+		if (source) {
+			if (source.getState() === "loading") {
+				const onChange = () => {
+					if (source.getState() === "ready") {
+						source.removeEventListener("change", onChange);
+						this.setStyle(this.style_);
+					}
+				};
+				source.addEventListener("change", onChange);
+			} else this.setStyle(this.style_);
+		}
 	}
 	/**
 	* @private
@@ -13788,8 +13824,6 @@ var CanvasBuilder = class extends VectorContext {
 					void 0,
 					index
 				]);
-				break;
-			default:
 		}
 		this.endGeometry(feature);
 	}
@@ -14911,8 +14945,6 @@ var CanvasTextBuilder = class extends CanvasBuilder {
 					}
 					if (flatCoordinates.length === 0) return;
 					stride = 2;
-					break;
-				default:
 			}
 			const end = this.appendFlatPointCoordinates(flatCoordinates, stride);
 			if (end === begin) return;
@@ -15463,16 +15495,18 @@ function drawTextOnPath(flatCoordinates, offset, end, stride, text, startM, maxA
 	const endX = lerp(x1, x2, interpolate);
 	const endY = lerp(y1, y2, interpolate);
 	let reverse = false;
-	if (keepUpright) if (rotation) {
-		const flat = [
-			beginX,
-			beginY,
-			endX,
-			endY
-		];
-		rotate$2(flat, 0, 4, 2, rotation, flat, flat);
-		reverse = flat[0] > flat[2];
-	} else reverse = beginX > endX;
+	if (keepUpright) {
+		if (rotation) {
+			const flat = [
+				beginX,
+				beginY,
+				endX,
+				endY
+			];
+			rotate$2(flat, 0, 4, 2, rotation, flat, flat);
+			reverse = flat[0] > flat[2];
+		} else reverse = beginX > endX;
+	}
 	const PI = Math.PI;
 	const result = [];
 	const singleSegment = startOffset + stride === offset;
@@ -16333,9 +16367,7 @@ var Executor = class {
 					else context.stroke();
 					++i;
 					break;
-				default:
-					++i;
-					break;
+				default: ++i;
 			}
 		}
 		if (pendingFill) this.fill_(context);
@@ -17120,10 +17152,7 @@ var CanvasImmediateRenderer = class extends VectorContext {
 			case "GeometryCollection":
 				this.drawGeometryCollection(geometry);
 				break;
-			case "Circle":
-				this.drawCircle(geometry);
-				break;
-			default:
+			case "Circle": this.drawCircle(geometry);
 		}
 	}
 	/**
@@ -17536,12 +17565,14 @@ var HIT_DETECT_RESOLUTION = .5;
 */
 function createHitDetectionImageData(size, transforms, features, styleFunction, extent, resolution, rotation, squaredTolerance, projection) {
 	const userExtent = projection ? toUserExtent(extent, projection) : extent;
-	const context = createCanvasContext2D(size[0] * HIT_DETECT_RESOLUTION, size[1] * HIT_DETECT_RESOLUTION);
+	const width = size[0] * HIT_DETECT_RESOLUTION;
+	const height = size[1] * HIT_DETECT_RESOLUTION;
+	const context = createCanvasContext2D(width, height);
 	context.imageSmoothingEnabled = false;
 	const canvas = context.canvas;
 	const renderer = new CanvasImmediateRenderer(context, HIT_DETECT_RESOLUTION, extent, null, rotation, squaredTolerance, projection ? getTransformFromProjections(getUserProjection(), projection) : null);
 	const featureCount = features.length;
-	const indexFactor = Math.floor((256 * 256 * 256 - 1) / featureCount);
+	const indexFactor = Math.floor(16777215 / featureCount);
 	const featuresByZIndex = {};
 	for (let i = 1; i <= featureCount; ++i) {
 		const feature = features[i - 1];
@@ -17641,7 +17672,7 @@ function hitDetect(pixel, features, imageData) {
 		const r = imageData.data[index];
 		const g = imageData.data[index + 1];
 		const i = imageData.data[index + 2] + 256 * (g + 256 * r);
-		const indexFactor = Math.floor((256 * 256 * 256 - 1) / features.length);
+		const indexFactor = Math.floor(16777215 / features.length);
 		if (i && i % indexFactor === 0) resultFeatures.push(features[i / indexFactor - 1]);
 	}
 	return resultFeatures;
@@ -18171,10 +18202,12 @@ var CanvasVectorLayerRenderer = class extends CanvasLayerRenderer {
 		if (render && layerState.extent && this.clipping) {
 			const layerExtent = fromUserExtent(layerState.extent, projection);
 			render = intersects(layerExtent, frameState.extent);
-			if (render && !containsExtent(layerExtent, frameState.extent)) if (frameState.declutter) this.clipExtent_ = layerExtent;
-			else {
-				this.clipUnrotated(context, frameState, layerExtent);
-				clipped = true;
+			if (render && !containsExtent(layerExtent, frameState.extent)) {
+				if (frameState.declutter) this.clipExtent_ = layerExtent;
+				else {
+					this.clipUnrotated(context, frameState, layerExtent);
+					clipped = true;
+				}
 			}
 		}
 		if (render) this.renderWorlds(replayGroup, frameState, this.getLayer().getDeclutter() ? false : void 0);
@@ -18844,12 +18877,13 @@ function interpolateColor(base, value, input1, rgba1, input2, rgba2) {
 	let deltaHue = lcha2[2] - lcha1[2];
 	if (deltaHue > 180) deltaHue -= 360;
 	else if (deltaHue < -180) deltaHue += 360;
-	return lchaToRgba([
+	const lcha = [
 		interpolateNumber(base, value, input1, lcha1[0], input2, lcha2[0]),
 		interpolateNumber(base, value, input1, lcha1[1], input2, lcha2[1]),
 		lcha1[2] + interpolateNumber(base, value, input1, 0, input2, deltaHue),
 		interpolateNumber(base, value, input1, rgba1[3], input2, rgba2[3])
-	]);
+	];
+	return lchaToRgba(lcha);
 }
 //#endregion
 //#region node_modules/ol/render/canvas/style.js
@@ -19153,7 +19187,8 @@ function buildText(flatStyle, context) {
 	const evaluateBaseline = stringEvaluator(flatStyle, "text-baseline", context);
 	const evaluateKeepUpright = booleanEvaluator(flatStyle, "text-keep-upright", context);
 	const evaluatePadding = numberArrayEvaluator(flatStyle, "text-padding", context);
-	const text = new Text({ declutterMode: optionalDeclutterMode(flatStyle, "text-declutter-mode") });
+	const declutterMode = optionalDeclutterMode(flatStyle, "text-declutter-mode");
+	const text = new Text({ declutterMode });
 	return function(context) {
 		text.setText(evaluateValue(context));
 		if (evaluateFill) text.setFill(evaluateFill(context));
@@ -19228,8 +19263,10 @@ function buildIcon(flatStyle, context) {
 	const colorValue = getExpressionValue(flatStyle, "icon-color");
 	let color;
 	let evaluateColor = null;
-	if (colorValue !== void 0) if (Array.isArray(colorValue) && colorValue.length > 0 && typeof colorValue[0] === "string") evaluateColor = colorLikeEvaluator(flatStyle, "icon-color", context);
-	else color = requireColorLike(colorValue, "icon-color");
+	if (colorValue !== void 0) {
+		if (Array.isArray(colorValue) && colorValue.length > 0 && typeof colorValue[0] === "string") evaluateColor = colorLikeEvaluator(flatStyle, "icon-color", context);
+		else color = requireColorLike(colorValue, "icon-color");
+	}
 	const crossOrigin = optionalString(flatStyle, "icon-cross-origin");
 	const offset = optionalNumberArray(flatStyle, "icon-offset");
 	const offsetOrigin = optionalIconOrigin(flatStyle, "icon-offset-origin");
@@ -19284,12 +19321,14 @@ function buildShape(flatStyle, context) {
 	const evaluateDisplacement = coordinateEvaluator(flatStyle, "shape-displacement", context);
 	const evaluateRotation = numberEvaluator(flatStyle, "shape-rotation", context);
 	const evaluateRotateWithView = booleanEvaluator(flatStyle, "shape-rotate-with-view", context);
+	const angle = optionalNumber(flatStyle, "shape-angle");
+	const declutterMode = optionalDeclutterMode(flatStyle, "shape-declutter-mode");
 	const shape = new RegularShape({
 		points,
 		radius: initialRadius,
 		radius2: initialRadius2,
-		angle: optionalNumber(flatStyle, "shape-angle"),
-		declutterMode: optionalDeclutterMode(flatStyle, "shape-declutter-mode")
+		angle,
+		declutterMode
 	});
 	return function(context) {
 		if (evaluateRadius) shape.setRadius(evaluateRadius(context));
@@ -19317,9 +19356,10 @@ function buildCircle(flatStyle, context) {
 	const evaluateDisplacement = coordinateEvaluator(flatStyle, "circle-displacement", context);
 	const evaluateRotation = numberEvaluator(flatStyle, "circle-rotation", context);
 	const evaluateRotateWithView = booleanEvaluator(flatStyle, "circle-rotate-with-view", context);
+	const declutterMode = optionalDeclutterMode(flatStyle, "circle-declutter-mode");
 	const circle = new CircleStyle({
 		radius: 5,
-		declutterMode: optionalDeclutterMode(flatStyle, "circle-declutter-mode")
+		declutterMode
 	});
 	return function(context) {
 		if (evaluateRadius) circle.setRadius(evaluateRadius(context));
@@ -20245,12 +20285,13 @@ var RBush = class {
 	*/
 	update(extent, value) {
 		const item = this.items_[getUid(value)];
-		if (!equals([
+		const bbox = [
 			item.minX,
 			item.minY,
 			item.maxX,
 			item.maxY
-		], extent)) {
+		];
+		if (!equals(bbox, extent)) {
 			this.remove(value);
 			this.insert(extent, value);
 		}
@@ -21572,7 +21613,8 @@ var Cluster = class extends VectorSource {
 			if (!(getUid(feature) in clustered)) {
 				const geometry = this.geometryFunction(feature);
 				if (geometry) {
-					createOrUpdateFromCoordinate(geometry.getCoordinates(), extent);
+					const coordinates = geometry.getCoordinates();
+					createOrUpdateFromCoordinate(coordinates, extent);
 					buffer(extent, mapDistance, extent);
 					const neighbors = this.source.getFeaturesInExtent(extent).filter(function(neighbor) {
 						const uid = getUid(neighbor);
@@ -22199,7 +22241,8 @@ var VectorTile = class extends UrlTile {
 	* @override
 	*/
 	getTilePixelSize(z, pixelRatio, projection) {
-		const tileSize = toSize(this.getTileGridForProjection(projection).getTileSize(z), this.tmpSize);
+		const tileGrid = this.getTileGridForProjection(projection);
+		const tileSize = toSize(tileGrid.getTileSize(z), this.tmpSize);
 		return [Math.round(tileSize[0] * pixelRatio), Math.round(tileSize[1] * pixelRatio)];
 	}
 	/**
@@ -22499,7 +22542,8 @@ var CanvasVectorTileLayerRenderer = class extends CanvasTileLayerRenderer {
 		let found;
 		foundFeature: for (let i = renderedTiles.length - 1; i >= 0; --i) {
 			const tile = renderedTiles[i];
-			if (!intersects(tileGrid.getTileCoordExtent(tile.wrappedTileCoord), hitExtent)) continue;
+			const tileExtent = tileGrid.getTileCoordExtent(tile.wrappedTileCoord);
+			if (!intersects(tileExtent, hitExtent)) continue;
 			const executorGroups = tile.executorGroups[layerUid];
 			for (let t = 0, tt = executorGroups.length; t < tt; ++t) {
 				found = executorGroups[t].forEachFeatureAtCoordinate(coordinate, resolution, rotation, hitTolerance, featureCallback, declutteredFeatures);
@@ -22532,7 +22576,8 @@ var CanvasVectorTileLayerRenderer = class extends CanvasTileLayerRenderer {
 			}
 			if (source.getWrapX() && projection.canWrapX() && !containsExtent(projectionExtent, tileGrid.getTileCoordExtent(tile.tileCoord))) wrapX(coordinate, projection);
 			const layerUid = getUid(layer);
-			const corner = getTopLeft(tileGrid.getTileCoordExtent(tile.wrappedTileCoord));
+			const extent = tileGrid.getTileCoordExtent(tile.wrappedTileCoord);
+			const corner = getTopLeft(extent);
 			const tilePixel = [(coordinate[0] - corner[0]) / resolution, (corner[1] - coordinate[1]) / resolution];
 			const features = tile.getSourceTiles().reduce((accumulator, sourceTile) => accumulator.concat(sourceTile.getFeatures()), []);
 			let hitDetectionImageData = tile.hitDetectionImageData[layerUid];
@@ -22571,7 +22616,8 @@ var CanvasVectorTileLayerRenderer = class extends CanvasTileLayerRenderer {
 					const tileFeatures = sourceTile.getFeatures();
 					if (tileFeatures) for (let j = 0, jj = tileFeatures.length; j < jj; ++j) {
 						const candidate = tileFeatures[j];
-						if (intersects(extent, candidate.getGeometry().getExtent())) features.push(candidate);
+						const geometry = candidate.getGeometry();
+						if (intersects(extent, geometry.getExtent())) features.push(candidate);
 					}
 				}
 			}
@@ -22760,8 +22806,10 @@ var CanvasVectorTileLayerRenderer = class extends CanvasTileLayerRenderer {
 				var _frameState$declutter3;
 				executorGroups[t].execute(context, [context.canvas.width, context.canvas.height], transform, rotation, hifi, replayTypes, (_frameState$declutter3 = frameState.declutter) === null || _frameState$declutter3 === void 0 ? void 0 : _frameState$declutter3[declutter]);
 			}
-			if (contextSaved) if (clipContext === context) clipContext.restore();
-			else tileClipContexts[i] = tileClipContext;
+			if (contextSaved) {
+				if (clipContext === context) clipContext.restore();
+				else tileClipContexts[i] = tileClipContext;
+			}
 		}
 		if (this.layerExtent) context.restore();
 		context.globalAlpha = alpha;
@@ -24998,7 +25046,6 @@ var MixedGeometryBatch = class MixedGeometryBatch {
 				this.addCoordinates_(type, lineGeom.getFlatCoordinates(), null, feature, getUid(feature), stride, (_lineGeom$getLayout = lineGeom.getLayout) === null || _lineGeom$getLayout === void 0 ? void 0 : _lineGeom$getLayout.call(lineGeom));
 				break;
 			}
-			default:
 		}
 	}
 	/**
@@ -25090,8 +25137,6 @@ var MixedGeometryBatch = class MixedGeometryBatch {
 				this.lineStringBatch.geometriesCount++;
 				this.lineStringBatch.entries[featureUid].flatCoordss.push(getFlatCoordinatesXYM(flatCoords, stride, layout));
 				this.lineStringBatch.entries[featureUid].verticesCount += verticesCount;
-				break;
-			default:
 		}
 	}
 	/**
@@ -25263,7 +25308,7 @@ var WebGLWorkerMessageType = {
 function colorEncodeIdAndPack(id, array) {
 	array = array || [];
 	const radix = 256;
-	const divide = radix - 1;
+	const divide = 255;
 	const r = Math.floor(id / radix / radix / radix) / divide;
 	const g = Math.floor(id / radix / radix) % radix / divide;
 	const b = Math.floor(id / radix) % radix / divide;
@@ -25281,7 +25326,7 @@ function colorEncodeIdAndPack(id, array) {
 function colorDecodeId(color) {
 	let id = 0;
 	const radix = 256;
-	const mult = radix - 1;
+	const mult = 255;
 	id += Math.round(color[0] * radix * radix * radix * mult);
 	id += Math.round(color[1] * radix * radix * mult);
 	id += Math.round(color[2] * radix * mult);
@@ -25514,10 +25559,7 @@ function parseImageOffsetProperties(style, prefix, context, imageSize, sampleSiz
 		case "bottom-left":
 			offsetExpression = `vec2(0., ${imageSize}.y) + ${sampleSize} * vec2(0., -1.) + ${offsetExpression} * vec2(1., -1.)`;
 			break;
-		case "bottom-right":
-			offsetExpression = `${imageSize} - ${sampleSize} - ${offsetExpression}`;
-			break;
-		default:
+		case "bottom-right": offsetExpression = `${imageSize} - ${sampleSize} - ${offsetExpression}`;
 	}
 	return offsetExpression;
 }
@@ -25652,10 +25694,7 @@ function parseIconProperties(style, builder, uniforms, context) {
 			case "bottom-left":
 				offsetPx = `v_quadSizePx * 0.5 - ${shiftPx}`;
 				break;
-			case "bottom-right":
-				offsetPx = `v_quadSizePx * vec2(-0.5, 0.5) + ${shiftPx} * vec2(1., -1.)`;
-				break;
-			default:
+			case "bottom-right": offsetPx = `v_quadSizePx * vec2(-0.5, 0.5) + ${shiftPx} * vec2(1., -1.)`;
 		}
 		builder.setSymbolOffsetExpression(`${builder.getSymbolOffsetExpression()} + ${offsetPx}`);
 	}
@@ -26150,10 +26189,7 @@ var VectorStyleRenderer = class {
 			case "LineString":
 				messageType = WebGLWorkerMessageType.GENERATE_LINE_STRING_BUFFERS;
 				break;
-			case "Point":
-				messageType = WebGLWorkerMessageType.GENERATE_POINT_BUFFERS;
-				break;
-			default:
+			case "Point": messageType = WebGLWorkerMessageType.GENERATE_POINT_BUFFERS;
 		}
 		/** @type {import('./constants.js').WebGLWorkerGenerateBuffersMessage} */
 		const message = {
@@ -27924,14 +27960,15 @@ var Translate = class extends PointerInteraction {
 		this.features_ = options.features !== void 0 ? options.features : null;
 		/** @type {function(import("../layer/Layer.js").default<import("../source/Source.js").default>): boolean} */
 		let layerFilter;
-		if (options.layers && !this.features_) if (typeof options.layers === "function") layerFilter = options.layers;
-		else {
-			const layers = options.layers;
-			layerFilter = function(layer) {
-				return layers.includes(layer);
-			};
-		}
-		else layerFilter = TRUE;
+		if (options.layers && !this.features_) {
+			if (typeof options.layers === "function") layerFilter = options.layers;
+			else {
+				const layers = options.layers;
+				layerFilter = function(layer) {
+					return layers.includes(layer);
+				};
+			}
+		} else layerFilter = TRUE;
 		/**
 		* @private
 		* @type {function(import("../layer/Layer.js").default<import("../source/Source.js").default>): boolean}
@@ -29827,12 +29864,14 @@ var Rotate = class extends Control {
 		const view = this.getMap().getView();
 		if (!view) return;
 		const rotation = view.getRotation();
-		if (rotation !== void 0) if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) view.animate({
-			rotation: 0,
-			duration: this.duration_,
-			easing: easeOut
-		});
-		else view.setRotation(0);
+		if (rotation !== void 0) {
+			if (this.duration_ > 0 && rotation % (2 * Math.PI) !== 0) view.animate({
+				rotation: 0,
+				duration: this.duration_,
+				easing: easeOut
+			});
+			else view.setRotation(0);
+		}
 	}
 	/**
 	* Update the rotate control element.
@@ -31181,10 +31220,7 @@ var MouseWheelZoom = class extends Interaction {
 			case WheelEvent.DOM_DELTA_LINE:
 				delta *= DELTA_LINE_MULTIPLIER;
 				break;
-			case WheelEvent.DOM_DELTA_PAGE:
-				delta *= DELTA_PAGE_MULTIPLIER;
-				break;
-			default:
+			case WheelEvent.DOM_DELTA_PAGE: delta *= DELTA_PAGE_MULTIPLIER;
 		}
 		if (delta === 0) return false;
 		this.lastDelta_ = delta;
@@ -31612,7 +31648,8 @@ var MapRenderer = class extends Disposable {
 		const translatedCoordinate = wrapX(coordinate.slice(), projection);
 		const offsets = [[0, 0]];
 		if (projection.canWrapX() && checkWrapped) {
-			const worldWidth = getWidth(projection.getExtent());
+			const projectionExtent = projection.getExtent();
+			const worldWidth = getWidth(projectionExtent);
 			offsets.push([-worldWidth, 0], [worldWidth, 0]);
 		}
 		const layerStates = frameState.layerStatesArray;
@@ -33191,26 +33228,31 @@ function createOptionsInternal(options) {
 	values[MapProperty_default.VIEW] = options.view instanceof View ? options.view : new View();
 	/** @type {Collection<import("./control/Control.js").default>} */
 	let controls;
-	if (options.controls !== void 0) if (Array.isArray(options.controls)) controls = new Collection(options.controls.slice());
-	else {
-		assert(typeof options.controls.getArray === "function", "Expected `controls` to be an array or an `ol/Collection.js`");
-		controls = options.controls;
+	if (options.controls !== void 0) {
+		if (Array.isArray(options.controls)) controls = new Collection(options.controls.slice());
+		else {
+			assert(typeof options.controls.getArray === "function", "Expected `controls` to be an array or an `ol/Collection.js`");
+			controls = options.controls;
+		}
 	}
 	/** @type {Collection<import("./interaction/Interaction.js").default>} */
 	let interactions;
-	if (options.interactions !== void 0) if (Array.isArray(options.interactions)) interactions = new Collection(options.interactions.slice());
-	else {
-		assert(typeof options.interactions.getArray === "function", "Expected `interactions` to be an array or an `ol/Collection.js`");
-		interactions = options.interactions;
+	if (options.interactions !== void 0) {
+		if (Array.isArray(options.interactions)) interactions = new Collection(options.interactions.slice());
+		else {
+			assert(typeof options.interactions.getArray === "function", "Expected `interactions` to be an array or an `ol/Collection.js`");
+			interactions = options.interactions;
+		}
 	}
 	/** @type {Collection<import("./Overlay.js").default>} */
 	let overlays;
-	if (options.overlays !== void 0) if (Array.isArray(options.overlays)) overlays = new Collection(options.overlays.slice());
-	else {
-		assert(typeof options.overlays.getArray === "function", "Expected `overlays` to be an array or an `ol/Collection.js`");
-		overlays = options.overlays;
-	}
-	else overlays = new Collection();
+	if (options.overlays !== void 0) {
+		if (Array.isArray(options.overlays)) overlays = new Collection(options.overlays.slice());
+		else {
+			assert(typeof options.overlays.getArray === "function", "Expected `overlays` to be an array or an `ol/Collection.js`");
+			overlays = options.overlays;
+		}
+	} else overlays = new Collection();
 	return {
 		controls,
 		interactions,
@@ -33507,7 +33549,8 @@ var OverviewMap = class extends Control {
 		const extent = map.getView().calculateExtentInternal(mapSize);
 		const ovview = ovmap.getView();
 		const steps = Math.log(MAX_RATIO / MIN_RATIO) / Math.LN2;
-		scaleFromCenter(extent, 1 / (Math.pow(2, steps / 2) * MIN_RATIO));
+		const ratio = 1 / (Math.pow(2, steps / 2) * MIN_RATIO);
+		scaleFromCenter(extent, ratio);
 		ovview.fitInternal(fromExtent(extent));
 	}
 	/**
@@ -33877,14 +33920,15 @@ var Select = class Select extends Interaction {
 		this.features_ = options.features || new Collection();
 		/** @type {function(import("../layer/Layer.js").default<import("../source/Source.js").default>): boolean} */
 		let layerFilter;
-		if (options.layers) if (typeof options.layers === "function") layerFilter = options.layers;
-		else {
-			const layers = options.layers;
-			layerFilter = function(layer) {
-				return layers.includes(layer);
-			};
-		}
-		else layerFilter = TRUE;
+		if (options.layers) {
+			if (typeof options.layers === "function") layerFilter = options.layers;
+			else {
+				const layers = options.layers;
+				layerFilter = function(layer) {
+					return layers.includes(layer);
+				};
+			}
+		} else layerFilter = TRUE;
 		/**
 		* @private
 		* @type {function(import("../layer/Layer.js").default<import("../source/Source.js").default>): boolean}
@@ -34291,7 +34335,8 @@ var Circle = class Circle extends SimpleGeometry {
 	* @override
 	*/
 	intersectsExtent(extent) {
-		if (intersects(extent, this.getExtent())) {
+		const circleExtent = this.getExtent();
+		if (intersects(extent, circleExtent)) {
 			const center = this.getCenter();
 			if (extent[0] <= center[0] && extent[2] >= center[0]) return true;
 			if (extent[1] <= center[1] && extent[3] >= center[1]) return true;
@@ -34502,7 +34547,9 @@ function getTraceTargetUpdate(coordinate, traceState, map, snapTolerance) {
 	let considerBothDirections = newTarget.ring;
 	if (traceState.targetIndex === newTargetIndex && considerBothDirections) {
 		const newCoordinate = interpolateCoordinate(newTarget.coordinates, newEndIndex);
-		if (distance(map.getPixelFromCoordinate(newCoordinate), map.getPixelFromCoordinate(traceState.startCoord)) > snapTolerance) considerBothDirections = false;
+		const pixel = map.getPixelFromCoordinate(newCoordinate);
+		const startPx = map.getPixelFromCoordinate(traceState.startCoord);
+		if (distance(pixel, startPx) > snapTolerance) considerBothDirections = false;
 	}
 	if (considerBothDirections) {
 		const coordinates = newTarget.coordinates;
@@ -35000,10 +35047,12 @@ var Draw = class extends PointerInteraction {
 				* @return {import("../geom/SimpleGeometry.js").default} A geometry.
 				*/
 				geometryFunction = (coordinates, geometry, projection) => {
-					if (geometry) if (mode === "Polygon") if (coordinates[0].length) geometry.setCoordinates([coordinates[0].concat([coordinates[0][0]])], this.geometryLayout_);
-					else geometry.setCoordinates([], this.geometryLayout_);
-					else geometry.setCoordinates(coordinates, this.geometryLayout_);
-					else geometry = new Constructor(coordinates, this.geometryLayout_);
+					if (geometry) {
+						if (mode === "Polygon") {
+							if (coordinates[0].length) geometry.setCoordinates([coordinates[0].concat([coordinates[0][0]])], this.geometryLayout_);
+							else geometry.setCoordinates([], this.geometryLayout_);
+						} else geometry.setCoordinates(coordinates, this.geometryLayout_);
+					} else geometry = new Constructor(coordinates, this.geometryLayout_);
 					return geometry;
 				};
 			}
@@ -35241,7 +35290,9 @@ var Draw = class extends PointerInteraction {
 			return;
 		}
 		const map = this.getMap();
-		const extent = boundingExtent([map.getCoordinateFromPixel([event.pixel[0] - this.snapTolerance_, event.pixel[1] + this.snapTolerance_]), map.getCoordinateFromPixel([event.pixel[0] + this.snapTolerance_, event.pixel[1] - this.snapTolerance_])]);
+		const lowerLeft = map.getCoordinateFromPixel([event.pixel[0] - this.snapTolerance_, event.pixel[1] + this.snapTolerance_]);
+		const upperRight = map.getCoordinateFromPixel([event.pixel[0] + this.snapTolerance_, event.pixel[1] - this.snapTolerance_]);
+		const extent = boundingExtent([lowerLeft, upperRight]);
 		const features = this.traceSource_.getFeaturesInExtent(extent);
 		if (features.length === 0) return;
 		const targets = getTraceTargets(event.coordinate, features);
@@ -35319,7 +35370,8 @@ var Draw = class extends PointerInteraction {
 		const traceState = this.traceState_;
 		if (!traceState.active) return;
 		if (traceState.targetIndex === -1) {
-			if (distance(event.map.getPixelFromCoordinate(traceState.startCoord), event.pixel) < this.snapTolerance_) return;
+			const startPx = event.map.getPixelFromCoordinate(traceState.startCoord);
+			if (distance(startPx, event.pixel) < this.snapTolerance_) return;
 		}
 		const updatedTraceTarget = getTraceTargetUpdate(event.coordinate, traceState, this.getMap(), this.snapTolerance_);
 		if (traceState.targetIndex !== updatedTraceTarget.index) {
@@ -35370,9 +35422,11 @@ var Draw = class extends PointerInteraction {
 				const startingToDraw = !this.finishCoordinate_;
 				if (startingToDraw) this.startDrawing_(event.coordinate);
 				if (!startingToDraw && this.freehand_) this.finishDrawing();
-				else if (!this.freehand_ && (!startingToDraw || this.mode_ === "Point")) if (this.atFinish_(event.pixel, tracing)) {
-					if (this.finishCondition_(event)) this.finishDrawing();
-				} else this.addToDrawing_(event.coordinate);
+				else if (!this.freehand_ && (!startingToDraw || this.mode_ === "Point")) {
+					if (this.atFinish_(event.pixel, tracing)) {
+						if (this.finishCondition_(event)) this.finishDrawing();
+					} else this.addToDrawing_(event.coordinate);
+				}
 				pass = false;
 			} else if (this.freehand_) this.abortDrawing();
 		}
@@ -35537,14 +35591,18 @@ var Draw = class extends PointerInteraction {
 		if (mode === "LineString" || mode === "Circle") {
 			this.finishCoordinate_ = coordinate.slice();
 			coordinates = this.sketchCoords_;
-			if (coordinates.length >= this.maxPoints_) if (this.freehand_) coordinates.pop();
-			else done = true;
+			if (coordinates.length >= this.maxPoints_) {
+				if (this.freehand_) coordinates.pop();
+				else done = true;
+			}
 			coordinates.push(coordinate.slice());
 			this.geometryFunction_(coordinates, geometry, projection);
 		} else if (mode === "Polygon") {
 			coordinates = this.sketchCoords_[0];
-			if (coordinates.length >= this.maxPoints_) if (this.freehand_) coordinates.pop();
-			else done = true;
+			if (coordinates.length >= this.maxPoints_) {
+				if (this.freehand_) coordinates.pop();
+				else done = true;
+			}
 			coordinates.push(coordinate.slice());
 			if (done) this.finishCoordinate_ = coordinates[0];
 			this.geometryFunction_(this.sketchCoords_, geometry, projection);
@@ -36861,7 +36919,8 @@ var Snap = class extends PointerInteraction {
 			for (let i = 0; i < segmentsLength; ++i) {
 				const segmentData = segments[i];
 				if (segmentData.feature.getGeometry().getType() !== "Circle") for (const vertex of segmentData.segment) {
-					const delta = squaredDistance$1(projectedCoordinate, fromUserCoordinate(vertex, projection));
+					const tempVertexCoord = fromUserCoordinate(vertex, projection);
+					const delta = squaredDistance$1(projectedCoordinate, tempVertexCoord);
 					if (delta < minSquaredDistance && (this.intersection_ && segmentData.intersectionFeature || this.vertex_ && !segmentData.intersectionFeature)) {
 						closestVertex = vertex;
 						minSquaredDistance = delta;
@@ -37045,10 +37104,7 @@ function getCoordinatesArray(coordinates, geometryType, depth) {
 		case "Polygon":
 			coordinatesArray = coordinates[depth[0]];
 			break;
-		case "MultiPolygon":
-			coordinatesArray = coordinates[depth[1]][depth[0]];
-			break;
-		default:
+		case "MultiPolygon": coordinatesArray = coordinates[depth[1]][depth[0]];
 	}
 	return coordinatesArray;
 }
@@ -37729,8 +37785,10 @@ var Modify = class extends PointerInteraction {
 		this.lastPointerEvent_ = mapBrowserEvent;
 		let handled;
 		if (!mapBrowserEvent.map.getView().getInteracting() && mapBrowserEvent.type == MapBrowserEventType_default.POINTERMOVE && !this.handlingDownUpSequence) this.handlePointerMove_(mapBrowserEvent);
-		if (this.vertexFeature_ && this.deleteCondition_(mapBrowserEvent)) if (mapBrowserEvent.type != MapBrowserEventType_default.SINGLECLICK || !this.ignoreNextSingleClick_) handled = this.removePoint();
-		else handled = true;
+		if (this.vertexFeature_ && this.deleteCondition_(mapBrowserEvent)) {
+			if (mapBrowserEvent.type != MapBrowserEventType_default.SINGLECLICK || !this.ignoreNextSingleClick_) handled = this.removePoint();
+			else handled = true;
+		}
 		if (mapBrowserEvent.type == MapBrowserEventType_default.SINGLECLICK) this.ignoreNextSingleClick_ = false;
 		return super.handleEvent(mapBrowserEvent) && !handled;
 	}
@@ -37779,10 +37837,7 @@ var Modify = class extends PointerInteraction {
 						case "LineString":
 						case "MultiLineString": continue;
 						case "MultiPolygon": coordinates = coordinates[depth[1]];
-						case "Polygon":
-							if (segmentDataMatch.index !== coordinates[depth[0]].length - 2) continue;
-							break;
-						default:
+						case "Polygon": if (segmentDataMatch.index !== coordinates[depth[0]].length - 2) continue;
 					}
 				}
 				this.dragSegments_.push([segmentDataMatch, 1]);
@@ -37808,7 +37863,8 @@ var Modify = class extends PointerInteraction {
 		const traceState = this.traceState_;
 		if (!traceState.active) return;
 		if (traceState.targetIndex === -1) {
-			if (distance(event.map.getPixelFromCoordinate(traceState.startCoord), event.pixel) < this.pixelTolerance_) return;
+			const startPx = event.map.getPixelFromCoordinate(traceState.startCoord);
+			if (distance(startPx, event.pixel) < this.pixelTolerance_) return;
 		}
 		const updatedTraceTarget = getTraceTargetUpdate(event.coordinate, traceState, event.map, this.pixelTolerance_);
 		if (traceState.targetIndex === -1 && Math.sqrt(updatedTraceTarget.closestTargetDistance) / event.map.getView().getResolution() > this.pixelTolerance_) return;
@@ -37838,7 +37894,9 @@ var Modify = class extends PointerInteraction {
 	getTraceCandidates_(event) {
 		const map = this.getMap();
 		const tolerance = this.pixelTolerance_;
-		const extent = boundingExtent([map.getCoordinateFromPixel([event.pixel[0] - tolerance, event.pixel[1] + tolerance]), map.getCoordinateFromPixel([event.pixel[0] + tolerance, event.pixel[1] - tolerance])]);
+		const lowerLeft = map.getCoordinateFromPixel([event.pixel[0] - tolerance, event.pixel[1] + tolerance]);
+		const upperRight = map.getCoordinateFromPixel([event.pixel[0] + tolerance, event.pixel[1] - tolerance]);
+		const extent = boundingExtent([lowerLeft, upperRight]);
 		return this.traceSource_.getFeaturesInExtent(extent);
 	}
 	/**
@@ -38024,8 +38082,6 @@ var Modify = class extends PointerInteraction {
 					circle.setRadius(radius);
 					this.changingFeature_ = false;
 				}
-				break;
-			default:
 		}
 		if (coordinates) this.setGeometryCoordinates_(geometry, coordinates);
 	}
@@ -38159,7 +38215,9 @@ var Modify = class extends PointerInteraction {
 			}, { layerFilter });
 		}
 		if (!nodes) {
-			const box = toUserExtent(buffer(fromUserExtent(createOrUpdateFromCoordinate(pixelCoordinate, tempExtent), projection), map.getView().getResolution() * this.pixelTolerance_, tempExtent), projection);
+			const viewExtent = fromUserExtent(createOrUpdateFromCoordinate(pixelCoordinate, tempExtent), projection);
+			const buffer$1 = map.getView().getResolution() * this.pixelTolerance_;
+			const box = toUserExtent(buffer(viewExtent, buffer$1, tempExtent), projection);
 			nodes = this.rBush_.getInExtent(box);
 		}
 		if (nodes && nodes.length > 0) {
@@ -38393,8 +38451,6 @@ var Modify = class extends PointerInteraction {
 							newIndex = component.length - 1;
 						}
 					}
-					break;
-				default:
 			}
 			if (deleted) {
 				this.setGeometryCoordinates_(geometry, coordinates);

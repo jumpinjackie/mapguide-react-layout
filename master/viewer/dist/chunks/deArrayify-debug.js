@@ -352,7 +352,6 @@ function deArrayifyUIItem(json) {
 			item.DisabledImageURL = getter(root, "DisabledImageURL");
 			item.SubItem = [];
 			for (const si of root.SubItem) item.SubItem.push(deArrayifyUIItem(si));
-			break;
 	}
 	return item;
 }
@@ -497,16 +496,14 @@ function deArrayifyContainerItems(json) {
 				Widget: getter(i, "Widget", "string")
 			});
 			break;
-		case "Flyout":
-			items.push({
-				Function: "Flyout",
-				Label: getter(i, "Label", "string"),
-				Tooltip: getter(i, "Tooltip", "string"),
-				ImageUrl: getter(i, "ImageUrl", "string"),
-				ImageClass: getter(i, "ImageClass", "string"),
-				Item: deArrayifyContainerItems(i.Item || [])
-			});
-			break;
+		case "Flyout": items.push({
+			Function: "Flyout",
+			Label: getter(i, "Label", "string"),
+			Tooltip: getter(i, "Tooltip", "string"),
+			ImageUrl: getter(i, "ImageUrl", "string"),
+			ImageClass: getter(i, "ImageClass", "string"),
+			Item: deArrayifyContainerItems(i.Item || [])
+		});
 	}
 	return items;
 }
@@ -560,9 +557,7 @@ function deArrayifyExtension(json, arrayCheck = true) {
 		case "Projection":
 			ext[key] = root[0][key];
 			break;
-		default:
-			ext[key] = getter(root[0], key, "string");
-			break;
+		default: ext[key] = getter(root[0], key, "string");
 	}
 	else ext[key] = deArrayifyExtension(root[0][key], false);
 	return ext;

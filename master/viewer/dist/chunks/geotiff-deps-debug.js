@@ -120,13 +120,7 @@ for (const key of ReflectOwnKeys(ArrayIteratorPrototype)) {
 	if (key === "next") continue;
 	ObjectDefineProperty(DummyArrayIteratorPrototype, key, ReflectGetOwnPropertyDescriptor(ArrayIteratorPrototype, key));
 }
-//#endregion
-//#region node_modules/@petamoriken/float16/src/_util/converter.mjs
-var INVERSE_OF_EPSILON = 1 / EPSILON;
-var FLOAT16_MIN_VALUE = 6103515625e-14;
-var FLOAT16_EPSILON = .0009765625;
-FLOAT16_EPSILON * FLOAT16_MIN_VALUE;
-FLOAT16_EPSILON * INVERSE_OF_EPSILON;
+.0009765625 * (1 / EPSILON);
 var buffer = new NativeArrayBuffer(4);
 var floatView = new NativeFloat32Array(buffer);
 var uint32View = new NativeUint32Array(buffer);
@@ -246,6 +240,7 @@ function countSubstring(string, substring) {
 //#region node_modules/xml-utils/find-tag-by-name.mjs
 function findTagByName(xml, tagName, options) {
 	const debug = options && options.debug || false;
+	const nested = !(options && typeof options.nested === false);
 	const startIndex = options && options.startIndex || 0;
 	if (debug) console.log("[xml-utils] starting findTagByName with", tagName, " and ", options);
 	const start = indexOfMatch(xml, `\<${tagName}[ \n\>\/]`, startIndex);
@@ -256,16 +251,18 @@ function findTagByName(xml, tagName, options) {
 	const selfClosing = relativeEnd !== -1 && afterStart[relativeEnd - 1] === "/";
 	if (debug) console.log("[xml-utils] selfClosing:", selfClosing);
 	if (selfClosing === false) {
-		let startIndex = 0;
-		let openings = 1;
-		let closings = 0;
-		while ((relativeEnd = indexOfMatchEnd(afterStart, "[ /]" + tagName + ">", startIndex)) !== -1) {
-			const clip = afterStart.substring(startIndex, relativeEnd + 1);
-			openings += countSubstring(clip, "<" + tagName + "[ \n	>]");
-			closings += countSubstring(clip, "</" + tagName + ">");
-			if (closings >= openings) break;
-			startIndex = relativeEnd;
-		}
+		if (nested) {
+			let startIndex = 0;
+			let openings = 1;
+			let closings = 0;
+			while ((relativeEnd = indexOfMatchEnd(afterStart, "[ /]" + tagName + ">", startIndex)) !== -1) {
+				const clip = afterStart.substring(startIndex, relativeEnd + 1);
+				openings += countSubstring(clip, "<" + tagName + "[ \n	>]");
+				closings += countSubstring(clip, "</" + tagName + ">");
+				if (closings >= openings) break;
+				startIndex = relativeEnd;
+			}
+		} else relativeEnd = indexOfMatchEnd(afterStart, "[ /]" + tagName + ">", 0);
 	}
 	const end = start + tagName.length + relativeEnd + 1;
 	if (debug) console.log("[xml-utils] end:", end);

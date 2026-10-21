@@ -1,11 +1,11 @@
 import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./rolldown-runtime-debug.js";
 import { n as _typeof$1 } from "./jspdf-debug.js";
 //#region node_modules/core-js/internals/global-this.js
-var require_global_this = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+var require_global_this = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
 	var check = function(it) {
 		return it && it.Math === Math && it;
 	};
-	module.exports = check(typeof globalThis == "object" && globalThis) || check(typeof window == "object" && window) || check(typeof self == "object" && self) || check(typeof global == "object" && global) || check(typeof exports == "object" && exports) || (function() {
+	module.exports = check(typeof globalThis == "object" && globalThis) || check(typeof window == "object" && window) || check(typeof self == "object" && self) || check(typeof global == "object" && global) || check(typeof this$3 == "object" && this$3) || (function() {
 		return this;
 	})() || Function("return this")();
 }));
@@ -670,11 +670,13 @@ var require_make_built_in = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 		if (stringSlice($String(name), 0, 7) === "Symbol(") name = "[" + replace($String(name), /^Symbol\(([^)]*)\).*$/, "$1") + "]";
 		if (options && options.getter) name = "get " + name;
 		if (options && options.setter) name = "set " + name;
-		if (!hasOwn(value, "name") || CONFIGURABLE_FUNCTION_NAME && value.name !== name) if (DESCRIPTORS) defineProperty(value, "name", {
-			value: name,
-			configurable: true
-		});
-		else value.name = name;
+		if (!hasOwn(value, "name") || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+			if (DESCRIPTORS) defineProperty(value, "name", {
+				value: name,
+				configurable: true
+			});
+			else value.name = name;
+		}
 		if (CONFIGURABLE_LENGTH && options && hasOwn(options, "arity") && value.length !== options.arity) defineProperty(value, "length", { value: options.arity });
 		try {
 			if (options && hasOwn(options, "constructor") && options.constructor) {
@@ -701,9 +703,10 @@ var require_define_built_in = /* @__PURE__ */ __commonJSMin(((exports, module) =
 		var simple = options.enumerable;
 		var name = options.name !== void 0 ? options.name : key;
 		if (isCallable(value)) makeBuiltIn(value, name, options);
-		if (options.global) if (simple) O[key] = value;
-		else defineGlobalProperty(key, value);
-		else {
+		if (options.global) {
+			if (simple) O[key] = value;
+			else defineGlobalProperty(key, value);
+		} else {
 			try {
 				if (!options.unsafe) delete O[key];
 				else if (O[key]) simple = true;
@@ -2362,13 +2365,14 @@ var require_regexp_exec = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		if (NPCG_INCLUDED) reCopy = new RegExp("^" + source + "$(?!\\s)", flags);
 		if (UPDATES_LAST_INDEX_WRONG) lastIndex = re.lastIndex;
 		var match = call(nativeExec, sticky ? reCopy : re, strCopy);
-		if (sticky) if (match) {
-			match.input = str;
-			match[0] = stringSlice(match[0], charsAdded);
-			match.index = re.lastIndex;
-			re.lastIndex += match[0].length;
-		} else re.lastIndex = 0;
-		else if (UPDATES_LAST_INDEX_WRONG && match) re.lastIndex = re.global ? match.index + match[0].length : lastIndex;
+		if (sticky) {
+			if (match) {
+				match.input = str;
+				match[0] = stringSlice(match[0], charsAdded);
+				match.index = re.lastIndex;
+				re.lastIndex += match[0].length;
+			} else re.lastIndex = 0;
+		} else if (UPDATES_LAST_INDEX_WRONG && match) re.lastIndex = re.global ? match.index + match[0].length : lastIndex;
 		if (NPCG_INCLUDED && match && match.length > 1) call(nativeReplace, match[0], reCopy, function() {
 			for (var i = 1; i < arguments.length - 2; i++) if (arguments[i] === void 0) match[i] = void 0;
 		});
@@ -2976,12 +2980,14 @@ var require_iterator_define = /* @__PURE__ */ __commonJSMin(((exports, module) =
 				if (IS_PURE) Iterators[TO_STRING_TAG] = returnThis;
 			}
 		}
-		if (PROPER_FUNCTION_NAME && DEFAULT === VALUES && nativeIterator && nativeIterator.name !== VALUES) if (!IS_PURE && CONFIGURABLE_FUNCTION_NAME) createNonEnumerableProperty(IterablePrototype, "name", VALUES);
-		else {
-			INCORRECT_VALUES_NAME = true;
-			defaultIterator = function values() {
-				return call(nativeIterator, this);
-			};
+		if (PROPER_FUNCTION_NAME && DEFAULT === VALUES && nativeIterator && nativeIterator.name !== VALUES) {
+			if (!IS_PURE && CONFIGURABLE_FUNCTION_NAME) createNonEnumerableProperty(IterablePrototype, "name", VALUES);
+			else {
+				INCORRECT_VALUES_NAME = true;
+				defaultIterator = function values() {
+					return call(nativeIterator, this);
+				};
+			}
 		}
 		if (DEFAULT) {
 			methods = {
@@ -3343,7 +3349,7 @@ var require_es_string_split = /* @__PURE__ */ __commonJSMin((() => {
 }));
 //#endregion
 //#region node_modules/performance-now/lib/performance-now.js
-var require_performance_now = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+var require_performance_now = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
 	(function() {
 		var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
 		if (typeof performance !== "undefined" && performance !== null && performance.now) module.exports = function() {
@@ -3372,7 +3378,7 @@ var require_performance_now = /* @__PURE__ */ __commonJSMin(((exports, module) =
 			};
 			loadTime = (/* @__PURE__ */ new Date()).getTime();
 		}
-	}).call(exports);
+	}).call(this$2);
 }));
 //#endregion
 //#region node_modules/raf/index.js
@@ -4065,7 +4071,7 @@ function m$1(t, r, e, i, a) {
 			}
 			return r;
 		}));
-		return c.minX = Infinity, c.maxX = -Infinity, c.minY = Infinity, c.maxY = -Infinity, c;
+		return c.minX = 1 / 0, c.maxX = -1 / 0, c.minY = 1 / 0, c.maxY = -1 / 0, c;
 	};
 })(u || (u = {}));
 var O;
@@ -5772,9 +5778,7 @@ var Screen = class {
 			case meetOrSlice === "meet":
 				ctx.scale(scaleMin, scaleMin);
 				break;
-			case meetOrSlice === "slice":
-				ctx.scale(scaleMax, scaleMax);
-				break;
+			case meetOrSlice === "slice": ctx.scale(scaleMax, scaleMax);
 		}
 		ctx.translate(-minX, -minY);
 	}
@@ -6513,18 +6517,24 @@ var BoundingBox = class {
 		if (a === 0) {
 			if (b === 0) return;
 			var t = -c / b;
-			if (0 < t && t < 1) if (forX) this.addX(this.sumCubic(t, p0, p1, p2, p3));
-			else this.addY(this.sumCubic(t, p0, p1, p2, p3));
+			if (0 < t && t < 1) {
+				if (forX) this.addX(this.sumCubic(t, p0, p1, p2, p3));
+				else this.addY(this.sumCubic(t, p0, p1, p2, p3));
+			}
 			return;
 		}
 		var b2ac = Math.pow(b, 2) - 4 * c * a;
 		if (b2ac < 0) return;
 		var t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
-		if (0 < t1 && t1 < 1) if (forX) this.addX(this.sumCubic(t1, p0, p1, p2, p3));
-		else this.addY(this.sumCubic(t1, p0, p1, p2, p3));
+		if (0 < t1 && t1 < 1) {
+			if (forX) this.addX(this.sumCubic(t1, p0, p1, p2, p3));
+			else this.addY(this.sumCubic(t1, p0, p1, p2, p3));
+		}
 		var t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
-		if (0 < t2 && t2 < 1) if (forX) this.addX(this.sumCubic(t2, p0, p1, p2, p3));
-		else this.addY(this.sumCubic(t2, p0, p1, p2, p3));
+		if (0 < t2 && t2 < 1) {
+			if (forX) this.addX(this.sumCubic(t2, p0, p1, p2, p3));
+			else this.addY(this.sumCubic(t2, p0, p1, p2, p3));
+		}
 	}
 	addBezierCurve(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y) {
 		this.addPoint(p0x, p0y);
@@ -6765,9 +6775,7 @@ var PathElement = class PathElement extends RenderedElement {
 			case PathParser.ARC:
 				this.pathA(ctx, boundingBox);
 				break;
-			case PathParser.CLOSE_PATH:
-				this.pathZ(ctx, boundingBox);
-				break;
+			case PathParser.CLOSE_PATH: this.pathZ(ctx, boundingBox);
 		}
 		return boundingBox;
 	}
@@ -6784,14 +6792,18 @@ var PathElement = class PathElement extends RenderedElement {
 		this.path(ctx);
 		this.document.screen.mouse.checkPath(this, ctx);
 		var fillRuleStyleProp = this.getStyle("fill-rule");
-		if (ctx.fillStyle !== "") if (fillRuleStyleProp.getString("inherit") !== "inherit") ctx.fill(fillRuleStyleProp.getString());
-		else ctx.fill();
-		if (ctx.strokeStyle !== "") if (this.getAttribute("vector-effect").getString() === "non-scaling-stroke") {
-			ctx.save();
-			ctx.setTransform(1, 0, 0, 1, 0, 0);
-			ctx.stroke();
-			ctx.restore();
-		} else ctx.stroke();
+		if (ctx.fillStyle !== "") {
+			if (fillRuleStyleProp.getString("inherit") !== "inherit") ctx.fill(fillRuleStyleProp.getString());
+			else ctx.fill();
+		}
+		if (ctx.strokeStyle !== "") {
+			if (this.getAttribute("vector-effect").getString() === "non-scaling-stroke") {
+				ctx.save();
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.stroke();
+				ctx.restore();
+			} else ctx.stroke();
+		}
 		var markers = this.getMarkers();
 		if (markers) {
 			var markersLastIndex = markers.length - 1;
@@ -7388,10 +7400,12 @@ var SVGElement = class extends RenderedElement {
 		var styleAttr = this.getAttribute("style");
 		var originWidth = widthAttr.getNumber(0);
 		var originHeight = heightAttr.getNumber(0);
-		if (preserveAspectRatio) if (typeof preserveAspectRatio === "string") this.getAttribute("preserveAspectRatio", true).setValue(preserveAspectRatio);
-		else {
-			var preserveAspectRatioAttr = this.getAttribute("preserveAspectRatio");
-			if (preserveAspectRatioAttr.hasValue()) preserveAspectRatioAttr.setValue(preserveAspectRatioAttr.getString().replace(/^\s*(\S.*\S)\s*$/, "$1"));
+		if (preserveAspectRatio) {
+			if (typeof preserveAspectRatio === "string") this.getAttribute("preserveAspectRatio", true).setValue(preserveAspectRatio);
+			else {
+				var preserveAspectRatioAttr = this.getAttribute("preserveAspectRatio");
+				if (preserveAspectRatioAttr.hasValue()) preserveAspectRatioAttr.setValue(preserveAspectRatioAttr.getString().replace(/^\s*(\S.*\S)\s*$/, "$1"));
+			}
 		}
 		widthAttr.setValue(width);
 		heightAttr.setValue(height);
@@ -7907,7 +7921,6 @@ var FontElement = class extends Element {
 					if (typeof this.glyphs[glyph.unicode] === "undefined") this.glyphs[glyph.unicode] = Object.create(null);
 					this.glyphs[glyph.unicode][glyph.arabicForm] = glyph;
 				} else this.glyphs[glyph.unicode] = glyph;
-				break;
 		}
 	}
 	render() {}
@@ -8052,9 +8065,7 @@ var TextPathElement = class extends TextElement {
 						ctx.translate(-cx, -cy);
 					}
 					break;
-				case PathParser.CLOSE_PATH:
-					if (ctx) ctx.closePath();
-					break;
+				case PathParser.CLOSE_PATH: if (ctx) ctx.closePath();
 			}
 		});
 	}
@@ -8215,9 +8226,7 @@ var TextPathElement = class extends TextElement {
 				case PathParser.ARC:
 					points = this.pathA(pathParser);
 					break;
-				case PathParser.CLOSE_PATH:
-					PathElement.pathZ(pathParser);
-					break;
+				case PathParser.CLOSE_PATH: PathElement.pathZ(pathParser);
 			}
 			if (command.type !== PathParser.CLOSE_PATH) pathCommands.push({
 				type: nextCommandType,
@@ -8408,7 +8417,6 @@ var TextPathElement = class extends TextElement {
 					currentT = delta / command.pathLength;
 					if (currentT > 1) currentT = 1;
 					p = this.getPointOnQuadraticBezier(currentT, command.start.x, command.start.y, command.points[0], command.points[1], command.points[2], command.points[3]);
-					break;
 			}
 			if (p) return p;
 			break;
@@ -8765,35 +8773,33 @@ var FeColorMatrixElement = class extends Element {
 					1
 				];
 				break;
-			case "luminanceToAlpha":
-				matrix = [
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					.2125,
-					.7154,
-					.0721,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					1
-				];
-				break;
+			case "luminanceToAlpha": matrix = [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				.2125,
+				.7154,
+				.0721,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				1
+			];
 		}
 		this.matrix = matrix;
 		this.includeOpacity = this.getAttribute("includeOpacity").hasValue();
@@ -9331,7 +9337,7 @@ var Canvg = class Canvg {
 };
 //#endregion
 //#region node_modules/html2canvas/dist/html2canvas.js
-var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
 	/*!
 	* html2canvas 1.4.1 <https://html2canvas.hertzen.com>
 	* Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
@@ -9339,7 +9345,7 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	*/
 	(function(global, factory) {
 		typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.html2canvas = factory());
-	})(exports, (function() {
+	})(this$1, (function() {
 		"use strict";
 		/*! *****************************************************************************
 		Copyright (c) Microsoft Corporation.
@@ -9417,12 +9423,12 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				},
 				trys: [],
 				ops: []
-			}, f, y, t, g;
-			return g = {
+			}, f, y, t, g = {
 				next: verb(0),
 				"throw": verb(1),
 				"return": verb(2)
-			}, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+			};
+			return typeof Symbol === "function" && (g[Symbol.iterator] = function() {
 				return this;
 			}), g;
 			function verb(n) {
@@ -9826,8 +9832,10 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				if (classType === CJ) return types.push(lineBreak === "strict" ? NS : ID);
 				if (classType === SA) return types.push(AL);
 				if (classType === AI) return types.push(AL);
-				if (classType === XX) if (codePoint >= 131072 && codePoint <= 196605 || codePoint >= 196608 && codePoint <= 262141) return types.push(ID);
-				else return types.push(AL);
+				if (classType === XX) {
+					if (codePoint >= 131072 && codePoint <= 196605 || codePoint >= 196608 && codePoint <= 262141) return types.push(ID);
+					else return types.push(AL);
+				}
 				types.push(classType);
 			});
 			return [
@@ -10489,12 +10497,13 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					} else if (codePoint === QUOTATION_MARK || codePoint === APOSTROPHE || codePoint === LEFT_PARENTHESIS || isNonPrintableCodePoint(codePoint)) {
 						this.consumeBadUrlRemnants();
 						return BAD_URL_TOKEN;
-					} else if (codePoint === REVERSE_SOLIDUS) if (isValidEscape(codePoint, this.peekCodePoint(0))) value.push(this.consumeEscapedCodePoint());
-					else {
-						this.consumeBadUrlRemnants();
-						return BAD_URL_TOKEN;
-					}
-					else value.push(codePoint);
+					} else if (codePoint === REVERSE_SOLIDUS) {
+						if (isValidEscape(codePoint, this.peekCodePoint(0))) value.push(this.consumeEscapedCodePoint());
+						else {
+							this.consumeBadUrlRemnants();
+							return BAD_URL_TOKEN;
+						}
+					} else value.push(codePoint);
 				}
 			};
 			Tokenizer.prototype.consumeWhiteSpace = function() {
@@ -11238,15 +11247,13 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						ry = Math.max(Math.abs(y), Math.abs(y - height));
 					}
 					break;
-				case 3:
-					if (gradient.shape === 0) rx = ry = Math.max(distance(x, y), distance(x, y - height), distance(x - width, y), distance(x - width, y - height));
-					else if (gradient.shape === 1) {
-						var c = Math.max(Math.abs(y), Math.abs(y - height)) / Math.max(Math.abs(x), Math.abs(x - width));
-						var _b = findCorner(width, height, x, y, false), cx = _b[0], cy = _b[1];
-						rx = distance(cx - x, (cy - y) / c);
-						ry = c * rx;
-					}
-					break;
+				case 3: if (gradient.shape === 0) rx = ry = Math.max(distance(x, y), distance(x, y - height), distance(x - width, y), distance(x - width, y - height));
+				else if (gradient.shape === 1) {
+					var c = Math.max(Math.abs(y), Math.abs(y - height)) / Math.max(Math.abs(x), Math.abs(x - width));
+					var _b = findCorner(width, height, x, y, false), cx = _b[0], cy = _b[1];
+					rx = distance(cx - x, (cy - y) / c);
+					ry = c * rx;
+				}
 			}
 			if (Array.isArray(gradient.size)) {
 				rx = getAbsoluteValue(gradient.size[0], width);
@@ -12226,7 +12233,6 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 4:
 							results.push(accumulator.join(" "));
 							accumulator.length = 0;
-							break;
 					}
 				});
 				if (accumulator.length) results.push(accumulator.join(" "));
@@ -12435,9 +12441,7 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case "fill":
 							layers.push(0);
 							break;
-						case "markers":
-							layers.push(2);
-							break;
+						case "markers": layers.push(2);
 					}
 				});
 				DEFAULT_VALUE.forEach(function(value) {
@@ -12583,20 +12587,18 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				case 0: return descriptor.parse(context, parser.parseComponentValue());
 				case 1: return descriptor.parse(context, parser.parseComponentValues());
 				case 4: return parser.parseComponentValue();
-				case 3:
-					switch (descriptor.format) {
-						case "angle": return angle.parse(context, parser.parseComponentValue());
-						case "color": return color$1.parse(context, parser.parseComponentValue());
-						case "image": return image.parse(context, parser.parseComponentValue());
-						case "length":
-							var length_1 = parser.parseComponentValue();
-							return isLength(length_1) ? length_1 : ZERO_LENGTH;
-						case "length-percentage":
-							var value_1 = parser.parseComponentValue();
-							return isLengthPercentage(value_1) ? value_1 : ZERO_LENGTH;
-						case "time": return time.parse(context, parser.parseComponentValue());
-					}
-					break;
+				case 3: switch (descriptor.format) {
+					case "angle": return angle.parse(context, parser.parseComponentValue());
+					case "color": return color$1.parse(context, parser.parseComponentValue());
+					case "image": return image.parse(context, parser.parseComponentValue());
+					case "length":
+						var length_1 = parser.parseComponentValue();
+						return isLength(length_1) ? length_1 : ZERO_LENGTH;
+					case "length-percentage":
+						var value_1 = parser.parseComponentValue();
+						return isLengthPercentage(value_1) ? value_1 : ZERO_LENGTH;
+					case "time": return time.parse(context, parser.parseComponentValue());
+				}
 			}
 		};
 		var elementDebuggerAttribute = "data-html2canvas-debug";
@@ -13081,22 +13083,23 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			var textBounds = [];
 			var offset = 0;
 			textList.forEach(function(text) {
-				if (styles.textDecorationLine.length || text.trim().length > 0) if (FEATURES.SUPPORT_RANGE_BOUNDS) {
-					var clientRects = createRange(node, offset, text.length).getClientRects();
-					if (clientRects.length > 1) {
-						var subSegments = segmentGraphemes(text);
-						var subOffset_1 = 0;
-						subSegments.forEach(function(subSegment) {
-							textBounds.push(new TextBounds(subSegment, Bounds.fromDOMRectList(context, createRange(node, subOffset_1 + offset, subSegment.length).getClientRects())));
-							subOffset_1 += subSegment.length;
-						});
-					} else textBounds.push(new TextBounds(text, Bounds.fromDOMRectList(context, clientRects)));
-				} else {
-					var replacementNode = node.splitText(text.length);
-					textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
-					node = replacementNode;
-				}
-				else if (!FEATURES.SUPPORT_RANGE_BOUNDS) node = node.splitText(text.length);
+				if (styles.textDecorationLine.length || text.trim().length > 0) {
+					if (FEATURES.SUPPORT_RANGE_BOUNDS) {
+						var clientRects = createRange(node, offset, text.length).getClientRects();
+						if (clientRects.length > 1) {
+							var subSegments = segmentGraphemes(text);
+							var subOffset_1 = 0;
+							subSegments.forEach(function(subSegment) {
+								textBounds.push(new TextBounds(subSegment, Bounds.fromDOMRectList(context, createRange(node, subOffset_1 + offset, subSegment.length).getClientRects())));
+								subOffset_1 += subSegment.length;
+							});
+						} else textBounds.push(new TextBounds(text, Bounds.fromDOMRectList(context, clientRects)));
+					} else {
+						var replacementNode = node.splitText(text.length);
+						textBounds.push(new TextBounds(text, getWrapperBounds(context, node)));
+						node = replacementNode;
+					}
+				} else if (!FEATURES.SUPPORT_RANGE_BOUNDS) node = node.splitText(text.length);
 				offset += text.length;
 			});
 			return textBounds;
@@ -13301,9 +13304,7 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					case CHECKBOX:
 						_this.styles.borderTopRightRadius = _this.styles.borderTopLeftRadius = _this.styles.borderBottomRightRadius = _this.styles.borderBottomLeftRadius = CHECKBOX_BORDER_RADIUS;
 						break;
-					case RADIO:
-						_this.styles.borderTopRightRadius = _this.styles.borderTopLeftRadius = _this.styles.borderBottomRightRadius = _this.styles.borderBottomLeftRadius = RADIO_BORDER_RADIUS;
-						break;
+					case RADIO: _this.styles.borderTopRightRadius = _this.styles.borderTopLeftRadius = _this.styles.borderBottomRightRadius = _this.styles.borderBottomLeftRadius = RADIO_BORDER_RADIUS;
 				}
 				return _this;
 			}
@@ -13357,19 +13358,21 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			for (var childNode = node.firstChild, nextNode = void 0; childNode; childNode = nextNode) {
 				nextNode = childNode.nextSibling;
 				if (isTextNode(childNode) && childNode.data.trim().length > 0) parent.textNodes.push(new TextContainer(context, childNode, parent.styles));
-				else if (isElementNode(childNode)) if (isSlotElement(childNode) && childNode.assignedNodes) childNode.assignedNodes().forEach(function(childNode) {
-					return parseNodeTree(context, childNode, parent, root);
-				});
-				else {
-					var container = createContainer(context, childNode);
-					if (container.styles.isVisible()) {
-						if (createsRealStackingContext(childNode, container, root)) container.flags |= 4;
-						else if (createsStackingContext(container.styles)) container.flags |= 2;
-						if (LIST_OWNERS.indexOf(childNode.tagName) !== -1) container.flags |= 8;
-						parent.elements.push(container);
-						childNode.slot;
-						if (childNode.shadowRoot) parseNodeTree(context, childNode.shadowRoot, container, root);
-						else if (!isTextareaElement(childNode) && !isSVGElement(childNode) && !isSelectElement(childNode)) parseNodeTree(context, childNode, container, root);
+				else if (isElementNode(childNode)) {
+					if (isSlotElement(childNode) && childNode.assignedNodes) childNode.assignedNodes().forEach(function(childNode) {
+						return parseNodeTree(context, childNode, parent, root);
+					});
+					else {
+						var container = createContainer(context, childNode);
+						if (container.styles.isVisible()) {
+							if (createsRealStackingContext(childNode, container, root)) container.flags |= 4;
+							else if (createsStackingContext(container.styles)) container.flags |= 2;
+							if (LIST_OWNERS.indexOf(childNode.tagName) !== -1) container.flags |= 8;
+							parent.elements.push(container);
+							childNode.slot;
+							if (childNode.shadowRoot) parseNodeTree(context, childNode.shadowRoot, container, root);
+							else if (!isTextareaElement(childNode) && !isSVGElement(childNode) && !isSelectElement(childNode)) parseNodeTree(context, childNode, container, root);
+						}
 					}
 				}
 			}
@@ -14006,14 +14009,16 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					clonedCanvas.height = canvas.height;
 					var ctx = canvas.getContext("2d");
 					var clonedCtx = clonedCanvas.getContext("2d");
-					if (clonedCtx) if (!this.options.allowTaint && ctx) clonedCtx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
-					else {
-						var gl = (_a = canvas.getContext("webgl2")) !== null && _a !== void 0 ? _a : canvas.getContext("webgl");
-						if (gl) {
-							var attribs = gl.getContextAttributes();
-							if ((attribs === null || attribs === void 0 ? void 0 : attribs.preserveDrawingBuffer) === false) this.context.logger.warn("Unable to clone WebGL context as it has preserveDrawingBuffer=false", canvas);
+					if (clonedCtx) {
+						if (!this.options.allowTaint && ctx) clonedCtx.putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+						else {
+							var gl = (_a = canvas.getContext("webgl2")) !== null && _a !== void 0 ? _a : canvas.getContext("webgl");
+							if (gl) {
+								var attribs = gl.getContextAttributes();
+								if ((attribs === null || attribs === void 0 ? void 0 : attribs.preserveDrawingBuffer) === false) this.context.logger.warn("Unable to clone WebGL context as it has preserveDrawingBuffer=false", canvas);
+							}
+							clonedCtx.drawImage(canvas, 0, 0);
 						}
-						clonedCtx.drawImage(canvas, 0, 0);
 					}
 					return clonedCanvas;
 				} catch (e) {
@@ -14342,18 +14347,19 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					var responseType = FEATURES.SUPPORT_RESPONSE_TYPE ? "blob" : "text";
 					var xhr = new XMLHttpRequest();
 					xhr.onload = function() {
-						if (xhr.status === 200) if (responseType === "text") resolve(xhr.response);
-						else {
-							var reader_1 = new FileReader();
-							reader_1.addEventListener("load", function() {
-								return resolve(reader_1.result);
-							}, false);
-							reader_1.addEventListener("error", function(e) {
-								return reject(e);
-							}, false);
-							reader_1.readAsDataURL(xhr.response);
-						}
-						else reject("Failed to proxy resource " + key + " with status code " + xhr.status);
+						if (xhr.status === 200) {
+							if (responseType === "text") resolve(xhr.response);
+							else {
+								var reader_1 = new FileReader();
+								reader_1.addEventListener("load", function() {
+									return resolve(reader_1.result);
+								}, false);
+								reader_1.addEventListener("error", function(e) {
+									return reject(e);
+								}, false);
+								reader_1.readAsDataURL(xhr.response);
+							}
+						} else reject("Failed to proxy resource " + key + " with status code " + xhr.status);
 					};
 					xhr.onerror = reject;
 					var queryString = proxy.indexOf("?") > -1 ? "&" : "?";
@@ -15091,9 +15097,7 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 													case 2:
 														_this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, 1);
 														break;
-													case 3:
-														_this.ctx.fillRect(text.bounds.left, Math.ceil(text.bounds.top + middle), text.bounds.width, 1);
-														break;
+													case 3: _this.ctx.fillRect(text.bounds.left, Math.ceil(text.bounds.top + middle), text.bounds.width, 1);
 												}
 											});
 										}
@@ -15108,7 +15112,6 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 										_this.ctx.strokeStyle = "";
 										_this.ctx.lineWidth = 0;
 										_this.ctx.lineJoin = "miter";
-										break;
 								}
 							});
 						});
@@ -15246,9 +15249,7 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 										case 1:
 											x += bounds.width / 2;
 											break;
-										case 2:
-											x += bounds.width;
-											break;
+										case 2: x += bounds.width;
 									}
 									textBounds = bounds.add(x, 0, 0, -bounds.height / 2 + 1);
 									this.ctx.save();
@@ -15763,8 +15764,10 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							maxSpace = (length - (numberOfDashes + 1) * dashLength) / numberOfDashes;
 							spaceLength = maxSpace <= 0 || Math.abs(spaceLength - minSpace) < Math.abs(spaceLength - maxSpace) ? minSpace : maxSpace;
 						}
-						if (useLineDash) if (style === 3) this.ctx.setLineDash([0, dashLength + spaceLength]);
-						else this.ctx.setLineDash([dashLength, spaceLength]);
+						if (useLineDash) {
+							if (style === 3) this.ctx.setLineDash([0, dashLength + spaceLength]);
+							else this.ctx.setLineDash([dashLength, spaceLength]);
+						}
 						if (style === 3) {
 							this.ctx.lineCap = "round";
 							this.ctx.lineWidth = width;
@@ -15899,8 +15902,10 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			Logger.prototype.debug = function() {
 				var args = [];
 				for (var _i = 0; _i < arguments.length; _i++) args[_i] = arguments[_i];
-				if (this.enabled) if (typeof window !== "undefined" && window.console && typeof console.debug === "function") console.debug.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
-				else this.info.apply(this, args);
+				if (this.enabled) {
+					if (typeof window !== "undefined" && window.console && typeof console.debug === "function") console.debug.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
+					else this.info.apply(this, args);
+				}
 			};
 			Logger.prototype.getTime = function() {
 				return Date.now() - this.start;
@@ -15915,14 +15920,18 @@ var require_html2canvas = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			Logger.prototype.warn = function() {
 				var args = [];
 				for (var _i = 0; _i < arguments.length; _i++) args[_i] = arguments[_i];
-				if (this.enabled) if (typeof window !== "undefined" && window.console && typeof console.warn === "function") console.warn.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
-				else this.info.apply(this, args);
+				if (this.enabled) {
+					if (typeof window !== "undefined" && window.console && typeof console.warn === "function") console.warn.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
+					else this.info.apply(this, args);
+				}
 			};
 			Logger.prototype.error = function() {
 				var args = [];
 				for (var _i = 0; _i < arguments.length; _i++) args[_i] = arguments[_i];
-				if (this.enabled) if (typeof window !== "undefined" && window.console && typeof console.error === "function") console.error.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
-				else this.info.apply(this, args);
+				if (this.enabled) {
+					if (typeof window !== "undefined" && window.console && typeof console.error === "function") console.error.apply(console, __spreadArray([this.id, this.getTime() + "ms"], args));
+					else this.info.apply(this, args);
+				}
 			};
 			Logger.instances = {};
 			return Logger;

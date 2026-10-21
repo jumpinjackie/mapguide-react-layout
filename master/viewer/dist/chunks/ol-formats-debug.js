@@ -2561,8 +2561,10 @@ function listenImage(image, loadHandler, errorHandler) {
 		img.decode().then(function() {
 			if (listening) loadHandler();
 		}).catch(function(error) {
-			if (listening) if (loaded) loadHandler();
-			else errorHandler();
+			if (listening) {
+				if (loaded) loadHandler();
+				else errorHandler();
+			}
 		});
 	} else listenerKeys.push(listenOnce(img, EventType_default.ERROR, errorHandler));
 	return function unlisten() {
@@ -3163,13 +3165,15 @@ var IconImage = class extends Target {
 	*/
 	getHitDetectionImage() {
 		if (!this.image_) this.initializeImage_();
-		if (!this.hitDetectionImage_) if (this.isTainted_()) {
-			const width = this.size_[0];
-			const height = this.size_[1];
-			const context = createCanvasContext2D(width, height);
-			context.fillRect(0, 0, width, height);
-			this.hitDetectionImage_ = context.canvas;
-		} else this.hitDetectionImage_ = this.image_;
+		if (!this.hitDetectionImage_) {
+			if (this.isTainted_()) {
+				const width = this.size_[0];
+				const height = this.size_[1];
+				const context = createCanvasContext2D(width, height);
+				context.fillRect(0, 0, width, height);
+				this.hitDetectionImage_ = context.canvas;
+			} else this.hitDetectionImage_ = this.image_;
+		}
 		return this.hitDetectionImage_;
 	}
 	/**
@@ -3631,13 +3635,15 @@ var registerFont = (function() {
 			for (let i = fonts.length - 1; i >= 0; --i) {
 				const font = fonts[i];
 				let currentRetries = checkedFontsProperties[font];
-				if (currentRetries < retries) if (yield isAvailable(font)) {
-					clear(textHeights);
-					checkedFonts.set(font, retries);
-				} else {
-					currentRetries += 10;
-					checkedFonts.set(font, currentRetries, true);
-					if (currentRetries < retries) done = false;
+				if (currentRetries < retries) {
+					if (yield isAvailable(font)) {
+						clear(textHeights);
+						checkedFonts.set(font, retries);
+					} else {
+						currentRetries += 10;
+						checkedFonts.set(font, currentRetries, true);
+						if (currentRetries < retries) done = false;
+					}
 				}
 			}
 			timeout = void 0;
@@ -3796,8 +3802,10 @@ function getTextDimensions(baseStyle, chunks) {
 */
 function drawImageOrLabel(context, transform, opacity, labelOrImage, originX, originY, w, h, x, y, scale) {
 	context.save();
-	if (opacity !== 1) if (context.globalAlpha === void 0) context.globalAlpha = (context) => context.globalAlpha *= opacity;
-	else context.globalAlpha *= opacity;
+	if (opacity !== 1) {
+		if (context.globalAlpha === void 0) context.globalAlpha = (context) => context.globalAlpha *= opacity;
+		else context.globalAlpha *= opacity;
+	}
 	if (transform) context.transform.apply(context, transform);
 	if (labelOrImage.contextInstructions) {
 		context.translate(x, y);
@@ -4229,9 +4237,12 @@ var Icon = class Icon extends ImageStyle {
 		assert(!((options.width !== void 0 || options.height !== void 0) && options.scale !== void 0), "`width` or `height` cannot be provided together with `scale`");
 		let imageState;
 		if (options.src !== void 0) imageState = ImageState_default.IDLE;
-		else if (image !== void 0) if ("complete" in image) if (image.complete) imageState = image.src ? ImageState_default.LOADED : ImageState_default.IDLE;
-		else imageState = ImageState_default.LOADING;
-		else imageState = ImageState_default.LOADED;
+		else if (image !== void 0) {
+			if ("complete" in image) {
+				if (image.complete) imageState = image.src ? ImageState_default.LOADED : ImageState_default.IDLE;
+				else imageState = ImageState_default.LOADING;
+			} else imageState = ImageState_default.LOADED;
+		}
 		/**
 		* @private
 		* @type {import("../color.js").Color}
@@ -5918,7 +5929,7 @@ function createEditingStyle() {
 	styles["Circle"] = styles["Polygon"].concat(styles["LineString"]);
 	styles["Point"] = [new Style({
 		image: new CircleStyle({
-			radius: width * 2,
+			radius: 6,
 			fill: new Fill({ color: blue }),
 			stroke: new Stroke({
 				color: white,
@@ -6629,13 +6640,15 @@ var Feature = class Feature extends BaseObject {
 		*/
 		this.geometryChangeKey_ = null;
 		this.addChangeListener(this.geometryName_, this.handleGeometryChanged_);
-		if (geometryOrProperties) if (typeof geometryOrProperties.getSimplifiedGeometry === "function") {
-			const geometry = geometryOrProperties;
-			this.setGeometry(geometry);
-		} else {
-			/** @type {?} */
-			const properties = geometryOrProperties;
-			this.setProperties(properties);
+		if (geometryOrProperties) {
+			if (typeof geometryOrProperties.getSimplifiedGeometry === "function") {
+				const geometry = geometryOrProperties;
+				this.setGeometry(geometry);
+			} else {
+				/** @type {?} */
+				const properties = geometryOrProperties;
+				this.setProperties(properties);
+			}
 		}
 	}
 	/**
@@ -6992,7 +7005,8 @@ var MultiLineString = class MultiLineString extends SimpleGeometry {
 		const stride = this.stride;
 		for (let i = 0, ii = ends.length; i < ii; ++i) {
 			const end = ends[i];
-			extend(midpoints, interpolatePoint(flatCoordinates, offset, end, stride, .5));
+			const midpoint = interpolatePoint(flatCoordinates, offset, end, stride, .5);
+			extend(midpoints, midpoint);
 			offset = end;
 		}
 		return midpoints;
@@ -7797,8 +7811,6 @@ var RenderFeature = class RenderFeature {
 				case "Polygon":
 					simplifiedEnds = [];
 					simplifiedFlatCoordinates.length = quantizeArray(simplifiedFlatCoordinates, 0, this.simplifiedGeometry_.ends_, this.simplifiedGeometry_.stride_, Math.sqrt(squaredTolerance), simplifiedFlatCoordinates, 0, simplifiedEnds);
-					break;
-				default:
 			}
 			if (simplifiedEnds) this.simplifiedGeometry_ = new RenderFeature(this.type_, simplifiedFlatCoordinates, simplifiedEnds, this.stride_, this.properties_, this.id_);
 			this.squaredTolerance_ = squaredTolerance;
@@ -8726,10 +8738,11 @@ var GeoJSON = class extends JSONFeature {
 	readProjectionFromObject(object) {
 		const crs = object["crs"];
 		let projection;
-		if (crs) if (crs["type"] == "name") projection = get$1(crs["properties"]["name"]);
-		else if (crs["type"] === "EPSG") projection = get$1("EPSG:" + crs["properties"]["code"]);
-		else throw new Error("Unknown SRS type");
-		else projection = this.dataProjection;
+		if (crs) {
+			if (crs["type"] == "name") projection = get$1(crs["properties"]["name"]);
+			else if (crs["type"] === "EPSG") projection = get$1("EPSG:" + crs["properties"]["code"]);
+			else throw new Error("Unknown SRS type");
+		} else projection = this.dataProjection;
 		return projection;
 	}
 	/**
@@ -9117,9 +9130,10 @@ function getAllTextContent(node, normalizeWhitespace) {
 * @return {Array<string>} Accumulator.
 */
 function getAllTextContent_(node, normalizeWhitespace, accumulator) {
-	if (node.nodeType == Node.CDATA_SECTION_NODE || node.nodeType == Node.TEXT_NODE) if (normalizeWhitespace) accumulator.push(String(node.nodeValue).replace(/(\r\n|\r|\n)/g, ""));
-	else accumulator.push(node.nodeValue);
-	else {
+	if (node.nodeType == Node.CDATA_SECTION_NODE || node.nodeType == Node.TEXT_NODE) {
+		if (normalizeWhitespace) accumulator.push(String(node.nodeValue).replace(/(\r\n|\r|\n)/g, ""));
+		else accumulator.push(node.nodeValue);
+	} else {
 		let n;
 		for (n = node.firstChild; n; n = n.nextSibling) getAllTextContent_(n, normalizeWhitespace, accumulator);
 	}
@@ -9156,7 +9170,7 @@ function makeArrayExtender(valueReader, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, objectStack) {
+	function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const array = objectStack[objectStack.length - 1];
@@ -9179,7 +9193,7 @@ function makeArrayPusher(valueReader, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, objectStack) {
+	function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) objectStack[objectStack.length - 1].push(value);
 	});
@@ -9199,7 +9213,7 @@ function makeReplacer(valueReader, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, objectStack) {
+	function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) objectStack[objectStack.length - 1] = value;
 	});
@@ -9220,7 +9234,7 @@ function makeObjectPropertyPusher(valueReader, property, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, objectStack) {
+	function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const object = objectStack[objectStack.length - 1];
@@ -9250,7 +9264,7 @@ function makeObjectPropertySetter(valueReader, property, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, objectStack) {
+	function(node, objectStack) {
 		const value = valueReader.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, objectStack);
 		if (value !== void 0) {
 			const object = objectStack[objectStack.length - 1];
@@ -9276,7 +9290,7 @@ function makeChildAppender(nodeWriter, thisArg) {
 	* @param {Array<*>} objectStack Object stack.
 	* @this {*}
 	*/
-function(node, value, objectStack) {
+	function(node, value, objectStack) {
 		nodeWriter.call(thisArg !== null && thisArg !== void 0 ? thisArg : this, node, value, objectStack);
 		objectStack[objectStack.length - 1].node.appendChild(node);
 	});
@@ -9327,7 +9341,7 @@ function makeSimpleNodeFactory(fixedNodeName, fixedNamespaceURI) {
 	* @param {string} [newNodeName] Node name.
 	* @return {Node} Node.
 	*/
-function(value, objectStack, newNodeName) {
+	function(value, objectStack, newNodeName) {
 		const node = objectStack[objectStack.length - 1].node;
 		let nodeName = fixedNodeName;
 		if (nodeName === void 0) nodeName = newNodeName;
@@ -10559,21 +10573,23 @@ function createFeatureStyleFunction(style, styleUrl, defaultStyle, sharedStyles,
 	* @param {number} resolution Resolution.
 	* @return {Array<Style>|Style} Style.
 	*/
-function(feature, resolution) {
+	function(feature, resolution) {
 		let drawName = showPointNames;
 		let name = "";
 		let multiGeometryPoints = [];
 		if (drawName) {
 			const geometry = feature.getGeometry();
-			if (geometry) if (geometry instanceof GeometryCollection) {
-				multiGeometryPoints = geometry.getGeometriesArrayRecursive().filter(function(geometry) {
+			if (geometry) {
+				if (geometry instanceof GeometryCollection) {
+					multiGeometryPoints = geometry.getGeometriesArrayRecursive().filter(function(geometry) {
+						const type = geometry.getType();
+						return type === "Point" || type === "MultiPoint";
+					});
+					drawName = multiGeometryPoints.length > 0;
+				} else {
 					const type = geometry.getType();
-					return type === "Point" || type === "MultiPoint";
-				});
-				drawName = multiGeometryPoints.length > 0;
-			} else {
-				const type = geometry.getType();
-				drawName = type === "Point" || type === "MultiPoint";
+					drawName = type === "Point" || type === "MultiPoint";
+				}
 			}
 		}
 		if (drawName) {
@@ -10685,9 +10701,10 @@ function readVec2(node) {
 	const yunits = node.getAttribute("yunits");
 	/** @type {import('../style/Icon.js').IconOrigin} */
 	let origin;
-	if (xunits !== "insetPixels") if (yunits !== "insetPixels") origin = "bottom-left";
-	else origin = "top-left";
-	else if (yunits !== "insetPixels") origin = "bottom-right";
+	if (xunits !== "insetPixels") {
+		if (yunits !== "insetPixels") origin = "bottom-left";
+		else origin = "top-left";
+	} else if (yunits !== "insetPixels") origin = "bottom-right";
 	else origin = "top-right";
 	return {
 		x: parseFloat(node.getAttribute("x")),
@@ -14122,10 +14139,7 @@ function writeWptType(node, coordinate, objectStack) {
 		case "XYZ":
 			if (coordinate[2] !== 0) properties["ele"] = coordinate[2];
 			break;
-		case "XYM":
-			if (coordinate[2] !== 0) properties["time"] = coordinate[2];
-			break;
-		default:
+		case "XYM": if (coordinate[2] !== 0) properties["time"] = coordinate[2];
 	}
 	const orderedKeys = node.nodeName == "rtept" ? RTEPT_TYPE_SEQUENCE[namespaceURI] : WPT_TYPE_SEQUENCE[namespaceURI];
 	const values = makeSequence(properties, orderedKeys);
@@ -15009,9 +15023,10 @@ var Parser = class {
 			const ctor = GeometryConstructor[geomType];
 			if (!ctor) throw new Error("Invalid geometry type: " + geomType);
 			let coordinates;
-			if (isEmpty) if (geomType == "POINT") coordinates = [NaN, NaN];
-			else coordinates = [];
-			else switch (geomType) {
+			if (isEmpty) {
+				if (geomType == "POINT") coordinates = [NaN, NaN];
+				else coordinates = [];
+			} else switch (geomType) {
 				case "POINT":
 					coordinates = this.parsePointText_();
 					break;
@@ -15027,10 +15042,7 @@ var Parser = class {
 				case "MULTILINESTRING":
 					coordinates = this.parseMultiLineStringText_();
 					break;
-				case "MULTIPOLYGON":
-					coordinates = this.parseMultiPolygonText_();
-					break;
-				default: break;
+				case "MULTIPOLYGON": coordinates = this.parseMultiPolygonText_();
 			}
 			return new ctor(coordinates, this.layout_);
 		}

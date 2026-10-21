@@ -787,22 +787,22 @@ function getFusionRoot() {
 }
 //#endregion
 //#region stdassets/cursors/digitizePoint.cur
-var digitizePoint_default = "" + new URL("stdassets/cursors/digitizePoint.cur", import.meta.url).href;
+var digitizePoint_default = new URL("stdassets/cursors/digitizePoint.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/digitizeLine.cur
-var digitizeLine_default = "" + new URL("stdassets/cursors/digitizeLine.cur", import.meta.url).href;
+var digitizeLine_default = new URL("stdassets/cursors/digitizeLine.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/digitizeLineString.cur
-var digitizeLineString_default = "" + new URL("stdassets/cursors/digitizeLineString.cur", import.meta.url).href;
+var digitizeLineString_default = new URL("stdassets/cursors/digitizeLineString.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/digitizeRectangle.cur
-var digitizeRectangle_default = "" + new URL("stdassets/cursors/digitizeRectangle.cur", import.meta.url).href;
+var digitizeRectangle_default = new URL("stdassets/cursors/digitizeRectangle.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/digitizePolygon.cur
-var digitizePolygon_default = "" + new URL("stdassets/cursors/digitizePolygon.cur", import.meta.url).href;
+var digitizePolygon_default = new URL("stdassets/cursors/digitizePolygon.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/digitizeCircle.cur
-var digitizeCircle_default = "" + new URL("stdassets/cursors/digitizeCircle.cur", import.meta.url).href;
+var digitizeCircle_default = new URL("stdassets/cursors/digitizeCircle.cur", import.meta.url).href;
 //#endregion
 //#region stdassets/cursors/grabbing.cur
 var grabbing_default = "data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoDAAAFgAAACgAAAAgAAAAQAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////8AAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////8AAAD///////8AAAD///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////////////////////////////////////////////////////////////wD///8A///+AP///AB///gAf//4AD///AA///4AP//8AD///AB///5J///////////////////////////////////////////////////////w==";
@@ -814,7 +814,7 @@ var grab_default = "data:image/x-icon;base64,AAACAAEAICAAABAAEACoDAAAFgAAACgAAAA
 var zoomin_default = "data:image/x-icon;base64,AAACAAEAICAAAA4ADACoDAAAFgAAACgAAAAgAAAAQAAAAAEAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/v78AAAAAAADPz88AAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADf398AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADf398AAAAAAAAAAAAAAAAAAAAAAADf398AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/v78AAAAAAADPz88AAAAAAADPz88AAAAAAAC/v78AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAADPz88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////////////////////3////4////8f///+P//+BH//+GD///n9///znP//85z///YG///2Bv//85z///Oc///5+f//+GH///4H///////////////////////////////////////w==";
 //#endregion
 //#region stdassets/images/res/sliderscale.png
-var sliderscale_default = "" + new URL("stdassets/images/res/sliderscale.png", import.meta.url).href;
+var sliderscale_default = new URL("stdassets/images/res/sliderscale.png", import.meta.url).href;
 //#endregion
 //#region stdassets/images/res/spinner.gif
 var spinner_default = "data:image/gif;base64,R0lGODlhEgAGAMQSABBHfhCM2xCe94irv4m82InF5BA0ZBB3vIizy4iktBBfnonM77a0tM7OzsjIyNLS0sLCwry8u////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgASACwAAAAAEgAGAAAFNKAgSNLzkCZ6lk8QkE0Dy1I8HwfpODov7T2FggSBEI2S4hEAIEUiTqjkGTUYSAwGVivJbkMAIfkEBQoAEgAsAAAAAAYABgAABRngskiSIBQFGQQEQR4HgpCKMgwkACQJaRghACH5BAUKABIALAAAAAAKAAYAAAUp4PNI0rKQgtA0ZFGQQeA4JEGQxwFBJIKQCkUkQhoMSAAAg0FKJEgGQwgAIfkEBQoAEgAsBAAAAAoABgAABSng80jSspCC0DRkUZBB4DgkQZDHAUEkgpAKRSRCGgxIAACDQUokSAZDCAAh+QQFCgASACwIAAAACgAGAAAFKeDzSNKykILQNGRRkEHgOCRBkMcBQSSCkApFJEIaDEgAAINBSiRIBkMIACH5BAUKABIALAwAAAAGAAYAAAUZ4PNI0rI0DVkUjkMSBASRCBJF5DAwDJkkIQA7";
@@ -1108,16 +1108,20 @@ function ensureParameters(url, mapName, session, locale, uppercase = true, extra
 		case "mapname":
 			bNeedMapName = false;
 			break;
-		case "locale":
-			bNeedLocale = false;
-			break;
+		case "locale": bNeedLocale = false;
 	}
-	if (bNeedMapName && !strIsNullOrEmpty(mapName)) if (uppercase) params.MAPNAME = mapName;
-	else params.mapname = mapName;
-	if (bNeedSession && !strIsNullOrEmpty(session)) if (uppercase) params.SESSION = session;
-	else params.session = session;
-	if (bNeedLocale) if (uppercase) params.LOCALE = locale;
-	else params.locale = locale;
+	if (bNeedMapName && !strIsNullOrEmpty(mapName)) {
+		if (uppercase) params.MAPNAME = mapName;
+		else params.mapname = mapName;
+	}
+	if (bNeedSession && !strIsNullOrEmpty(session)) {
+		if (uppercase) params.SESSION = session;
+		else params.session = session;
+	}
+	if (bNeedLocale) {
+		if (uppercase) params.LOCALE = locale;
+		else params.locale = locale;
+	}
 	for (const p of extraParameters) params[p.name] = p.value;
 	return appendParameters(url, params, true, false);
 }
@@ -1681,23 +1685,25 @@ function isSupportedCommandInStatelessMode(name) {
 */
 function openUrlInTarget(name, cmdDef, hasTaskPane, dispatch, url, modalTitle) {
 	const target = cmdDef.target;
-	if (target == "TaskPane") if (!hasTaskPane) openModalUrl(name, dispatch, url, modalTitle);
-	else dispatch({
-		type: ActionType.TASK_INVOKE_URL,
-		payload: { url }
-	});
-	else if (target == "NewWindow") openModalUrl(name, dispatch, url, modalTitle);
-	else if (target == "SpecifiedFrame") if (cmdDef.targetFrame) {
-		const frames = window.frames;
-		let bInvoked = false;
-		for (let i = 0; i < frames.length; i++) if (frames[i].name == cmdDef.targetFrame) {
-			frames[i].location = url;
-			bInvoked = true;
-			break;
-		}
-		if (!bInvoked) error(`Frame not found: ${cmdDef.targetFrame}`);
-	} else error(`Command ${name} has a target of "SpecifiedFrame", but does not specify a target frame`);
-	else assertNever(target);
+	if (target == "TaskPane") {
+		if (!hasTaskPane) openModalUrl(name, dispatch, url, modalTitle);
+		else dispatch({
+			type: ActionType.TASK_INVOKE_URL,
+			payload: { url }
+		});
+	} else if (target == "NewWindow") openModalUrl(name, dispatch, url, modalTitle);
+	else if (target == "SpecifiedFrame") {
+		if (cmdDef.targetFrame) {
+			const frames = window.frames;
+			let bInvoked = false;
+			for (let i = 0; i < frames.length; i++) if (frames[i].name == cmdDef.targetFrame) {
+				frames[i].location = url;
+				bInvoked = true;
+				break;
+			}
+			if (!bInvoked) error(`Frame not found: ${cmdDef.targetFrame}`);
+		} else error(`Command ${name} has a target of "SpecifiedFrame", but does not specify a target frame`);
+	} else assertNever(target);
 }
 /**
 * Registers a viewer command
@@ -1794,7 +1800,7 @@ function isError(err) {
 * @returns {item is InitError}
 */
 function isInitError(item) {
-	return typeof item.message != "undefined" && true;
+	return typeof item.message != "undefined" && typeof item.stack != void 0;
 }
 /**
 * Indicates if the given arguemnt has the shape of an IFlyoutMenu
@@ -2088,17 +2094,18 @@ var MnIcon = ({ icon, style, iconSize }) => {
 */
 var MnButton = ({ type = "button", icon, variant, minimal, active, loading, disabled, onClick, title, style, className, children }) => {
 	const hasChildren = import_react.Children.count(children) > 0;
+	const classes = [
+		"mrl-btn",
+		variant ? `mrl-btn--${variant}` : null,
+		minimal ? "mrl-btn--minimal" : null,
+		active ? "mrl-btn--active" : null,
+		loading ? "mrl-btn--loading" : null,
+		icon && !hasChildren ? "mrl-btn--icon-only" : null,
+		className !== null && className !== void 0 ? className : null
+	].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type,
-		className: [
-			"mrl-btn",
-			variant ? `mrl-btn--${variant}` : null,
-			minimal ? "mrl-btn--minimal" : null,
-			active ? "mrl-btn--active" : null,
-			loading ? "mrl-btn--loading" : null,
-			icon && !hasChildren ? "mrl-btn--icon-only" : null,
-			className !== null && className !== void 0 ? className : null
-		].filter(Boolean).join(" "),
+		className: classes,
 		disabled: disabled || loading,
 		onClick,
 		title,
@@ -2315,13 +2322,14 @@ var MnInputGroup = ({ style, round, autoFocus, leftIcon, placeholder, value, rea
 		};
 	}, [rightElement]);
 	const inputStyle = rightElement ? { paddingRight: `${rightElementWidth + 10}px` } : void 0;
+	const classes = [
+		"mrl-input-group",
+		round ? "mrl-input-group--round" : null,
+		leftIcon ? "mrl-input-group--with-left-icon" : null,
+		rightElement ? "mrl-input-group--with-right-element" : null
+	].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: [
-			"mrl-input-group",
-			round ? "mrl-input-group--round" : null,
-			leftIcon ? "mrl-input-group--with-left-icon" : null,
-			rightElement ? "mrl-input-group--with-right-element" : null
-		].filter(Boolean).join(" "),
+		className: classes,
 		style,
 		children: [
 			leftIcon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -2392,12 +2400,13 @@ var MnNonIdealState = ({ icon, title, description, action }) => {
 * @since 0.15
 */
 var MnSpinner = ({ variant, sizePreset = "standard" }) => {
+	const cls = [
+		"mrl-spinner",
+		`mrl-spinner--${sizePreset}`,
+		variant ? `mrl-spinner--${variant}` : null
+	].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: [
-			"mrl-spinner",
-			`mrl-spinner--${sizePreset}`,
-			variant ? `mrl-spinner--${variant}` : null
-		].filter(Boolean).join(" "),
+		className: cls,
 		role: "status",
 		"aria-label": "Loading"
 	});
@@ -2471,8 +2480,9 @@ var MnSelect = ({ id, name, fill, style, placeholder, value, items, onChange, ke
 * @since 0.15
 */
 var MnFileInput = ({ fill, text, buttonText, onInputChange }) => {
+	const cls = ["mrl-file-input", fill ? "mrl-file-input--fill" : null].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-		className: ["mrl-file-input", fill ? "mrl-file-input--fill" : null].filter(Boolean).join(" "),
+		className: cls,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 				type: "file",
@@ -2496,8 +2506,9 @@ var MnFileInput = ({ fill, text, buttonText, onInputChange }) => {
 * @since 0.15
 */
 var MnFormGroup = ({ label, labelFor, inline, children }) => {
+	const cls = ["mrl-form-group", inline ? "mrl-form-group--inline" : null].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: ["mrl-form-group", inline ? "mrl-form-group--inline" : null].filter(Boolean).join(" "),
+		className: cls,
 		children: [label && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
 			htmlFor: labelFor,
 			children: label
@@ -2689,14 +2700,18 @@ function isNumeric(arg) {
 var SVG_SIZE_RATIO = 16 / 29;
 function getSelected(item) {
 	const sel = item.selected;
-	if (sel != null) if (typeof sel === "function") return sel();
-	else return sel;
+	if (sel != null) {
+		if (typeof sel === "function") return sel();
+		else return sel;
+	}
 	return false;
 }
 function getEnabled(item) {
 	const en = item.enabled;
-	if (en != null) if (typeof en === "function") return en();
-	else return en;
+	if (en != null) {
+		if (typeof en === "function") return en();
+		else return en;
+	}
 	return true;
 }
 var OpacityIcon = import_react.memo(({ opacity, icon, iconSize }) => {
@@ -2732,8 +2747,10 @@ function getFlyoutIconElement(isFlownOut, size) {
 }
 function getTooltip(item) {
 	const tt = item.tooltip;
-	if (tt != null) if (typeof tt === "function") return tt();
-	else return tt;
+	if (tt != null) {
+		if (typeof tt === "function") return tt();
+		else return tt;
+	}
 	return "";
 }
 function getIconStyle(enabled, height) {
@@ -2759,8 +2776,8 @@ function getItemStyle(enabled, selected, size, isMouseOver, vertical) {
 		style.borderWidth = 1;
 		style.paddingLeft = pad - 1;
 		style.paddingRight = pad - 1;
-		style.paddingTop = vertPad - 1;
-		style.paddingBottom = vertPad - 1;
+		style.paddingTop = 5;
+		style.paddingBottom = 5;
 	}
 	return style;
 }
@@ -2878,13 +2895,16 @@ var FlyoutMenuReferenceItem = (props) => {
 	const enabled = getEnabled(menu);
 	const style = getItemStyle(enabled, selected, size, isMouseOver, vertical);
 	let label = menu.label;
-	if (vertical === true) label = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "rotated-text",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			className: "rotated-text__inner rotated-text-ccw",
-			children: typeof menu.label === "function" ? menu.label() : menu.label
-		})
-	});
+	if (vertical === true) {
+		const text = typeof menu.label === "function" ? menu.label() : menu.label;
+		label = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "rotated-text",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "rotated-text__inner rotated-text-ccw",
+				children: text
+			})
+		});
+	}
 	let align = menu.flyoutAlign;
 	if (!align) align = vertical === true ? "right bottom" : "bottom right";
 	const ttip = getTooltip(menu);
@@ -3211,9 +3231,10 @@ var MnTabSet = ({ id, className, tabs, activeTabId, onTabChanged }) => {
 		setLocalActive(tabId);
 		onTabChanged === null || onTabChanged === void 0 || onTabChanged(tabId);
 	};
+	const cls = ["mrl-tab-set", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		id,
-		className: ["mrl-tab-set", className].filter(Boolean).join(" "),
+		className: cls,
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "mrl-tab-list",
 			role: "tablist",
@@ -3394,8 +3415,9 @@ var MnDialog = ({ icon, isOpen, title, onClose, children }) => {
 * @since 0.15
 */
 var MnDialogContainer = ({ style, className, children }) => {
+	const cls = ["mrl-dialog-container", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-container", className].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		children
 	});
@@ -3405,8 +3427,9 @@ var MnDialogContainer = ({ style, className, children }) => {
 * @since 0.15
 */
 var MnDialogShell = ({ style, className, children }) => {
+	const cls = ["mrl-dialog-shell", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-shell", className].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		role: "dialog",
 		"aria-modal": "true",
@@ -3418,8 +3441,9 @@ var MnDialogShell = ({ style, className, children }) => {
 * @since 0.15
 */
 var MnDialogHeader = ({ className, children }) => {
+	const cls = ["mrl-dialog-header", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-header", className].filter(Boolean).join(" "),
+		className: cls,
 		children
 	});
 };
@@ -3428,8 +3452,9 @@ var MnDialogHeader = ({ className, children }) => {
 * @since 0.15
 */
 var MnDialogBody = ({ style, className, children }) => {
+	const cls = ["mrl-dialog-body", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-body", className].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		children
 	});
@@ -3439,8 +3464,9 @@ var MnDialogBody = ({ style, className, children }) => {
 * @since 0.15
 */
 var MnDialogFooter = ({ style, className, children }) => {
+	const cls = ["mrl-dialog-footer", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-footer", className].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		children
 	});
@@ -3450,8 +3476,9 @@ var MnDialogFooter = ({ style, className, children }) => {
 * @since 0.15
 */
 var MnDialogFooterActions = ({ style, className, children }) => {
+	const cls = ["mrl-dialog-footer-actions", className].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: ["mrl-dialog-footer-actions", className].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		children
 	});
@@ -3463,13 +3490,14 @@ var MnDialogFooterActions = ({ style, className, children }) => {
 * @since 0.15
 */
 var MnHtmlTable = ({ condensed, bordered, className, style, children }) => {
+	const cls = [
+		"mrl-table",
+		condensed ? "mrl-table--condensed" : null,
+		bordered ? "mrl-table--bordered" : null,
+		className !== null && className !== void 0 ? className : null
+	].filter(Boolean).join(" ");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("table", {
-		className: [
-			"mrl-table",
-			condensed ? "mrl-table--condensed" : null,
-			bordered ? "mrl-table--bordered" : null,
-			className !== null && className !== void 0 ? className : null
-		].filter(Boolean).join(" "),
+		className: cls,
 		style,
 		children
 	});
@@ -3587,20 +3615,21 @@ function normalizeStack(err) {
 var Error$1 = (props) => {
 	const { Callout } = useElementContext();
 	const err = props.error;
-	if (isError(err) || isInitError(err)) if (props.errorRenderer) return props.errorRenderer(err);
-	else {
-		const stack = normalizeStack(err);
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
-			variant: "danger",
-			icon: "error",
-			title: err.message,
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-				className: "error-stack",
-				children: stack.map((ln, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: ln }, `stack-line-${i}`))
-			})
-		});
-	}
-	else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
+	if (isError(err) || isInitError(err)) {
+		if (props.errorRenderer) return props.errorRenderer(err);
+		else {
+			const stack = normalizeStack(err);
+			return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
+				variant: "danger",
+				icon: "error",
+				title: err.message,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+					className: "error-stack",
+					children: stack.map((ln, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: ln }, `stack-line-${i}`))
+				})
+			});
+		}
+	} else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
 		variant: "danger",
 		icon: "error",
 		title: err
@@ -3731,13 +3760,19 @@ function getClosestScaleIndex(scales, scale) {
 * @returns {number}
 */
 function getFiniteScaleIndexForScale(finiteScaleList, scale) {
-	for (let i = 0; i < finiteScaleList.length; i++) if (scale >= finiteScaleList[i]) if (i + 1 < finiteScaleList.length) {
-		if (scale <= finiteScaleList[i + 1]) if (getClosestScaleIndex([finiteScaleList[i], finiteScaleList[i + 1]], scale) == 0) return i;
-		else return i + 1;
-	} else return i;
-	else if (scale <= finiteScaleList[i]) if (i > 0) if (getClosestScaleIndex([finiteScaleList[i - 1], finiteScaleList[i]], scale) == 0) return i - 1;
-	else return i;
-	else return i;
+	for (let i = 0; i < finiteScaleList.length; i++) if (scale >= finiteScaleList[i]) {
+		if (i + 1 < finiteScaleList.length) {
+			if (scale <= finiteScaleList[i + 1]) {
+				if (getClosestScaleIndex([finiteScaleList[i], finiteScaleList[i + 1]], scale) == 0) return i;
+				else return i + 1;
+			}
+		} else return i;
+	} else if (scale <= finiteScaleList[i]) {
+		if (i > 0) {
+			if (getClosestScaleIndex([finiteScaleList[i - 1], finiteScaleList[i]], scale) == 0) return i - 1;
+			else return i;
+		} else return i;
+	}
 	return 0;
 }
 /**
@@ -4504,14 +4539,15 @@ function makeUnique(items) {
 * @since 0.13
 */
 function areArraysDifferent(arr, other, equalityFn) {
-	if (arr && other) if (arr.length != other.length) return true;
-	else {
-		for (let i = 0; i < arr.length; i++) if (equalityFn) {
-			if (!equalityFn(arr[i], other[i])) return true;
-		} else if (arr[i] !== other[i]) return true;
-		return false;
-	}
-	else return true;
+	if (arr && other) {
+		if (arr.length != other.length) return true;
+		else {
+			for (let i = 0; i < arr.length; i++) if (equalityFn) {
+				if (!equalityFn(arr[i], other[i])) return true;
+			} else if (arr[i] !== other[i]) return true;
+			return false;
+		}
+	} else return true;
 }
 //#endregion
 //#region src/utils/viewer-state.ts
@@ -4941,33 +4977,34 @@ function _queryMapFeaturesHelper() {
 			opts.options.requestdata &= ~QueryFeaturesSet.Attributes;
 		}
 		const res = yield queryOp(opts.options);
-		if (opts.options.persist === 1) if (opts.append === true) {
-			let combined = combineSelections(selectionSet, res);
-			const mergedXml = buildSelectionXml(combined.FeatureSet);
-			const opts2 = {
-				session: map.SessionId,
-				mapname: map.Name,
-				persist: 1,
-				featurefilter: mergedXml
-			};
-			if (isAppendingWithAttributesOnOldMapGuide) {
-				debug("Now asking for attributes in second QUERYMAPFEATURES");
-				opts2.requestdata = QueryFeaturesSet.Attributes;
+		if (opts.options.persist === 1) {
+			if (opts.append === true) {
+				let combined = combineSelections(selectionSet, res);
+				const mergedXml = buildSelectionXml(combined.FeatureSet);
+				const opts2 = {
+					session: map.SessionId,
+					mapname: map.Name,
+					persist: 1,
+					featurefilter: mergedXml
+				};
+				if (isAppendingWithAttributesOnOldMapGuide) {
+					debug("Now asking for attributes in second QUERYMAPFEATURES");
+					opts2.requestdata = QueryFeaturesSet.Attributes;
+				}
+				const res2 = yield queryOp(opts2);
+				if (isAppendingWithAttributesOnOldMapGuide) {
+					debug("Accepting second QUERYMAPFEATURES as new combined selection response");
+					combined = res2;
+				}
+				persistSelectionSetToLocalStorage(map.SessionId, mapName, combined);
+				dispatch(setSelection(mapName, combined));
+				return combined;
+			} else {
+				persistSelectionSetToLocalStorage(map.SessionId, mapName, res);
+				dispatch(setSelection(mapName, res));
+				return res;
 			}
-			const res2 = yield queryOp(opts2);
-			if (isAppendingWithAttributesOnOldMapGuide) {
-				debug("Accepting second QUERYMAPFEATURES as new combined selection response");
-				combined = res2;
-			}
-			persistSelectionSetToLocalStorage(map.SessionId, mapName, combined);
-			dispatch(setSelection(mapName, combined));
-			return combined;
-		} else {
-			persistSelectionSetToLocalStorage(map.SessionId, mapName, res);
-			dispatch(setSelection(mapName, res));
-			return res;
-		}
-		else return res;
+		} else return res;
 	});
 	return _queryMapFeaturesHelper.apply(this, arguments);
 }
@@ -6615,10 +6652,11 @@ var ToolbarContainer = (props) => {
 			tbContainerStyle.height = 29;
 			tbContainerStyle.overflow = "auto";
 		}
+		const childItems = processMenuItems(toolbar.items.map((tb) => mapToolbarReference(tb, tbState, invokeCommandAction)));
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toolbar, {
 			vertical,
 			hideVerticalLabels,
-			childItems: processMenuItems(toolbar.items.map((tb) => mapToolbarReference(tb, tbState, invokeCommandAction))),
+			childItems,
 			containerClass,
 			containerStyle: tbContainerStyle,
 			flyoutStates,
@@ -7043,9 +7081,22 @@ var FusionApiShim = class {
 		const client = this.parent.getClient();
 		const resolve = options.onSuccess || (() => debug(`No success handler defined for this operation`));
 		const fail = options.onFailure || options.onException || ((_r, res) => error(res));
-		if (client) if (typeof options.parameters == "string") {
-			reqUrl += "?" + options.parameters;
-			fetch(reqUrl, { method: "GET" }).then((res) => {
+		if (client) {
+			if (typeof options.parameters == "string") {
+				reqUrl += "?" + options.parameters;
+				fetch(reqUrl, { method: "GET" }).then((res) => {
+					if (!res.ok) {
+						const stat = res.statusText;
+						res.text().then((t) => {
+							fail({ transport: { responseText: t } }, new MgError(stat));
+						});
+					} else res.text().then((t) => resolve({ responseText: t }));
+				});
+			} else fetch(reqUrl, {
+				headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+				method: "POST",
+				body: serialize(options.parameters, false)
+			}).then((res) => {
 				if (!res.ok) {
 					const stat = res.statusText;
 					res.text().then((t) => {
@@ -7053,18 +7104,7 @@ var FusionApiShim = class {
 					});
 				} else res.text().then((t) => resolve({ responseText: t }));
 			});
-		} else fetch(reqUrl, {
-			headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-			method: "POST",
-			body: serialize(options.parameters, false)
-		}).then((res) => {
-			if (!res.ok) {
-				const stat = res.statusText;
-				res.text().then((t) => {
-					fail({ transport: { responseText: t } }, new MgError(stat));
-				});
-			} else res.text().then((t) => resolve({ responseText: t }));
-		});
+		}
 	}
 	getMapByName(name) {
 		if (this.parent.props.map && this.parent.props.map.Name == name) return new FusionWidgetApiShim(this.parent);
@@ -7810,17 +7850,19 @@ var ViewerApiShimInner = class extends import_react.Component {
 		if (selectionSet && selectionSet.SelectedFeatures) selectionSet.SelectedFeatures.SelectedLayer.forEach((layer) => {
 			layer.Feature.forEach((feature) => {
 				const bbox = feature.Bounds ? feature.Bounds.split(" ").map((s) => parseFloat(s)) : void 0;
-				if (bbox) if (bounds == null) bounds = {
-					minx: bbox[0],
-					miny: bbox[1],
-					maxx: bbox[2],
-					maxy: bbox[3]
-				};
-				else {
-					if (bbox[0] < bounds.minx) bounds.minx = bbox[0];
-					if (bbox[1] < bounds.miny) bounds.miny = bbox[1];
-					if (bbox[2] > bounds.maxx) bounds.maxx = bbox[2];
-					if (bbox[3] > bounds.maxy) bounds.maxy = bbox[3];
+				if (bbox) {
+					if (bounds == null) bounds = {
+						minx: bbox[0],
+						miny: bbox[1],
+						maxx: bbox[2],
+						maxy: bbox[3]
+					};
+					else {
+						if (bbox[0] < bounds.minx) bounds.minx = bbox[0];
+						if (bbox[1] < bounds.miny) bounds.miny = bbox[1];
+						if (bbox[2] > bounds.maxx) bounds.maxx = bbox[2];
+						if (bbox[3] > bounds.maxy) bounds.maxy = bbox[3];
+					}
 				}
 			});
 		});
@@ -8154,9 +8196,10 @@ var ModalLauncher = (props) => {
 					onChange: (args) => onModalChanged(key, args),
 					onClose: () => onCloseModal(key),
 					children: ([]) => {
-						if (componentRenderer) if (isModalComponentDisplayOptions(diag)) return componentRenderer(diag.componentProps);
-						else return componentRenderer(componentId.props);
-						else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Error$1, { error: tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId }) });
+						if (componentRenderer) {
+							if (isModalComponentDisplayOptions(diag)) return componentRenderer(diag.componentProps);
+							else return componentRenderer(componentId.props);
+						} else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Error$1, { error: tr("ERR_UNREGISTERED_COMPONENT", locale, { componentId }) });
 					}
 				}, key);
 			} else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Error$1, { error: tr("ERR_NO_COMPONENT_ID", locale) });
@@ -8759,21 +8802,19 @@ function parseWidgetsInAppDef(appDef, cmdRegister) {
 				});
 				if (isStatelessAppDef) console.warn(`The search command (${widget.Name}) is not supported in stateless mode. This widget will always be disabled`);
 				break;
-			case "InvokeURL":
-				cmdRegister(widget.Name, {
-					url: cmd.Url,
-					disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
-					target: convertToCommandTarget(cmd.Target),
-					targetFrame: cmd.Target,
-					parameters: (cmd.AdditionalParameter || []).map((p) => {
-						return {
-							name: p.Key,
-							value: p.Value
-						};
-					}),
-					title: isUIWidget(widget) ? widget.Label : void 0
-				});
-				break;
+			case "InvokeURL": cmdRegister(widget.Name, {
+				url: cmd.Url,
+				disableIfSelectionEmpty: cmd.DisableIfSelectionEmpty,
+				target: convertToCommandTarget(cmd.Target),
+				targetFrame: cmd.Target,
+				parameters: (cmd.AdditionalParameter || []).map((p) => {
+					return {
+						name: p.Key,
+						value: p.Value
+					};
+				}),
+				title: isUIWidget(widget) ? widget.Label : void 0
+			});
 		}
 		widgetsByKey[widget.Name] = widget;
 	}
@@ -9390,12 +9431,10 @@ function setupMaps(appDef, mapsByName, config, warnings, locale, pendingMapDefs)
 			} else processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayers);
 		}
 		if (isArbitrary) for (const wset of appDef.WidgetSet) for (const widget of wset.Widget) switch (widget.Type) {
-			case "CoordinateTracker":
-				warnings.push(tr("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, {
-					mapId: mGroup["@id"],
-					widget: widget.Type
-				}));
-				break;
+			case "CoordinateTracker": warnings.push(tr("INIT_WARNING_ARBITRARY_COORDSYS_UNSUPPORTED_WIDGET", locale, {
+				mapId: mGroup["@id"],
+				widget: widget.Type
+			}));
 		}
 		applyInitialBaseLayerVisibility(externalBaseLayers);
 		let initialView;
@@ -9471,20 +9510,21 @@ function _sessionAcquiredAsync() {
 			} catch (e) {
 				throw new MgError(tr("INIT_ERROR_MISSING_RESOURCE_PARAM", locale));
 			}
-		} else if (typeof resourceId == "string") if (strEndsWith(resourceId, "WebLayout")) {
-			assertIsDefined(client);
-			return yield initFromWebLayoutAsync(client, options, yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() }), session, sessionWasReused);
-		} else if (strEndsWith(resourceId, "ApplicationDefinition")) {
-			assertIsDefined(client);
-			return yield initFromAppDefAsync(client, options, yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() }), session, sessionWasReused);
-		} else if (isResourceId(resourceId)) throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId }));
-		else {
-			let fl;
-			if (!client) fl = yield new Client("", "mapagent").get(resourceId);
-			else fl = yield client.get(resourceId);
-			return yield initFromAppDefAsync(client, options, fl, session, sessionWasReused);
-		}
-		else {
+		} else if (typeof resourceId == "string") {
+			if (strEndsWith(resourceId, "WebLayout")) {
+				assertIsDefined(client);
+				return yield initFromWebLayoutAsync(client, options, yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() }), session, sessionWasReused);
+			} else if (strEndsWith(resourceId, "ApplicationDefinition")) {
+				assertIsDefined(client);
+				return yield initFromAppDefAsync(client, options, yield client.getResource(resourceId, { SESSION: yield session.getValueAsync() }), session, sessionWasReused);
+			} else if (isResourceId(resourceId)) throw new MgError(tr("INIT_ERROR_UNKNOWN_RESOURCE_TYPE", locale, { resourceId }));
+			else {
+				let fl;
+				if (!client) fl = yield new Client("", "mapagent").get(resourceId);
+				else fl = yield client.get(resourceId);
+				return yield initFromAppDefAsync(client, options, fl, session, sessionWasReused);
+			}
+		} else {
 			const doc = yield resourceId();
 			if (isWebLayout(doc)) return yield initFromWebLayoutAsync(client, options, doc, session, sessionWasReused);
 			if (isAppDef(doc)) return yield initFromAppDefAsync(client, options, doc, session, sessionWasReused);
@@ -9575,7 +9615,6 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
 					default:
 						bAdd = false;
 						warnings.push(tr("INIT_WARNING_BING_UNKNOWN_LAYER", config.locale, { type }));
-						break;
 				}
 				if (appDef.Extension.BingMapKey) options.key = appDef.Extension.BingMapKey;
 				else {
@@ -9599,9 +9638,7 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
 					case "CycleMap":
 						options.url = "http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png";
 						break;
-					case "TransportMap":
-						options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
-						break;
+					case "TransportMap": options.url = "http://tile2.opencyclemap.org/transport/{z}/{x}/{y}.png";
 				}
 				externalBaseLayers.push({
 					name: sName,
@@ -9648,26 +9685,24 @@ function processLayerInMapGroup(map, warnings, config, appDef, externalBaseLayer
 				kind: "XYZDebug"
 			});
 			break;
-		case "XYZ":
-			{
-				const { name, type, attributions } = map.Extension.Options;
-				const sName = Array.isArray(name) ? name[0] : name;
-				const sType = Array.isArray(type) ? type[0] : type;
-				let tilePixelRatio = 1;
-				if (map.Extension.Options.tilePixelRatio) tilePixelRatio = parseInt(map.Extension.Options.tilePixelRatio[0], 10);
-				const urls = (map.Extension.Options.urls || []).map((s) => strReplaceAll(s, "${", "{"));
-				externalBaseLayers.push({
-					name: sName,
-					kind: "XYZ",
-					options: {
-						layer: sType,
-						urls,
-						attributions,
-						tilePixelRatio
-					}
-				});
-			}
-			break;
+		case "XYZ": {
+			const { name, type, attributions } = map.Extension.Options;
+			const sName = Array.isArray(name) ? name[0] : name;
+			const sType = Array.isArray(type) ? type[0] : type;
+			let tilePixelRatio = 1;
+			if (map.Extension.Options.tilePixelRatio) tilePixelRatio = parseInt(map.Extension.Options.tilePixelRatio[0], 10);
+			const urls = (map.Extension.Options.urls || []).map((s) => strReplaceAll(s, "${", "{"));
+			externalBaseLayers.push({
+				name: sName,
+				kind: "XYZ",
+				options: {
+					layer: sType,
+					urls,
+					attributions,
+					tilePixelRatio
+				}
+			});
+		}
 	}
 }
 /**
@@ -9935,9 +9970,7 @@ function useCommonTemplateState(templateReducer) {
 				case "TaskPane":
 					states.taskPaneVisible = true;
 					break;
-				case "Selection":
-					states.selectionPanelVisible = true;
-					break;
+				case "Selection": states.selectionPanelVisible = true;
 			}
 			if (states.legendVisible || states.taskPaneVisible || states.selectionPanelVisible) setElementStatesAction(states);
 		}, [setElementStatesAction]),
@@ -9951,9 +9984,10 @@ var Pane = (props) => {
 	const unit = props.percentage ? "%" : "px";
 	let classes = "layout-pane";
 	const style = {};
-	if (!props.primary) if (props.vertical) style.height = `${size}${unit}`;
-	else style.width = `${size}${unit}`;
-	else classes += " layout-pane-primary";
+	if (!props.primary) {
+		if (props.vertical) style.height = `${size}${unit}`;
+		else style.width = `${size}${unit}`;
+	} else classes += " layout-pane-primary";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: classes,
 		style,
@@ -10462,7 +10496,7 @@ var Sidebar = (props) => {
 				props.onActivateTab("tasks", false);
 				break;
 			case ActionType.MAP_SET_SELECTION:
-			case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE: break;
+			case ActionType.MAP_ADD_CLIENT_SELECTED_FEATURE:
 		}
 	}, [lastAction]);
 	const { position, busy, collapsed, activeTab } = props;
@@ -10638,9 +10672,7 @@ var SidebarLayout = () => {
 			case "selection":
 				est.selectionPanelVisible = true;
 				break;
-			case "tasks":
-				est.taskPaneVisible = true;
-				break;
+			case "tasks": est.taskPaneVisible = true;
 		}
 		if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) setElementStatesAction(est);
 	};
@@ -10657,9 +10689,7 @@ var SidebarLayout = () => {
 			case "selection":
 				est.selectionPanelVisible = true;
 				break;
-			case "tasks":
-				est.taskPaneVisible = true;
-				break;
+			case "tasks": est.taskPaneVisible = true;
 		}
 		if (est.legendVisible || est.selectionPanelVisible || est.taskPaneVisible) {
 			setElementStatesAction(est);
@@ -12395,9 +12425,7 @@ var MouseCoordinatesContainer = (props) => {
 					units = getUnitOfMeasure(UnitOfMeasure.Meters).abbreviation(locale);
 					break;
 				case "ft":
-				case "us-ft":
-					units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
-					break;
+				case "us-ft": units = getUnitOfMeasure(UnitOfMeasure.Feet).abbreviation(locale);
 			}
 		}
 		let coords = [mouse[0], mouse[1]];
@@ -12611,17 +12639,20 @@ var Navigator = (props) => {
 						top: 28
 					}
 				}), (() => {
-					if (isDragging === true) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "tooltip",
-						style: {
-							position: "relative",
-							width: 170,
-							right: 190,
-							top: 28,
-							textAlign: "right"
-						},
-						children: tr("FMT_NAVIGATOR_ZOOM_TO_SCALE", props.locale, { scale: calculateScaleForPos(previewPos).toFixed(2) })
-					});
+					if (isDragging === true) {
+						const dragLabel = tr("FMT_NAVIGATOR_ZOOM_TO_SCALE", props.locale, { scale: calculateScaleForPos(previewPos).toFixed(2) });
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "tooltip",
+							style: {
+								position: "relative",
+								width: 170,
+								right: 190,
+								top: 28,
+								textAlign: "right"
+							},
+							children: dragLabel
+						});
+					}
 				})()] })
 			})
 		]
@@ -12646,9 +12677,7 @@ var NavigatorContainer = (props) => {
 			case ZoomDirection.In:
 				cmd = getCommand(DefaultCommands.ZoomIn);
 				break;
-			case ZoomDirection.Out:
-				cmd = getCommand(DefaultCommands.ZoomOut);
-				break;
+			case ZoomDirection.Out: cmd = getCommand(DefaultCommands.ZoomOut);
 		}
 		if (cmd) invokeCommandAction(cmd);
 	};
@@ -12664,9 +12693,7 @@ var NavigatorContainer = (props) => {
 			case PanDirection.North:
 				cmd = getCommand(DefaultCommands.PanUp);
 				break;
-			case PanDirection.South:
-				cmd = getCommand(DefaultCommands.PanDown);
-				break;
+			case PanDirection.South: cmd = getCommand(DefaultCommands.PanDown);
 		}
 		if (cmd) invokeCommandAction(cmd);
 	};
@@ -13241,7 +13268,9 @@ var MeasureContext = class {
 					});
 				}
 			} else for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-				const dist = getDistance(this.olFactory.transformCoordinate(coordinates[i], sourceProj, "EPSG:4326"), this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, "EPSG:4326"));
+				const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, "EPSG:4326");
+				const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, "EPSG:4326");
+				const dist = getDistance(c1, c2);
 				length += dist;
 				segments.push({
 					segment: i + 1,
@@ -13299,7 +13328,9 @@ var MeasureContext = class {
 				if (ring) {
 					const coordinates = ring.getCoordinates();
 					for (let i = 0, ii = coordinates.length - 1; i < ii; ++i) {
-						const dist = getDistance(this.olFactory.transformCoordinate(coordinates[i], sourceProj, "EPSG:4326"), this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, "EPSG:4326"));
+						const c1 = this.olFactory.transformCoordinate(coordinates[i], sourceProj, "EPSG:4326");
+						const c2 = this.olFactory.transformCoordinate(coordinates[i + 1], sourceProj, "EPSG:4326");
+						const dist = getDistance(c1, c2);
 						segments.push({
 							segment: i + 1,
 							length: dist
@@ -14347,7 +14378,8 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
 			return layer;
 		}
 		case GenericSubjectLayerType.XYZ: {
-			const layer = new TileLayer({ source: new XYZ(_objectSpread2({}, defn.sourceParams)) });
+			const sourceArgs = _objectSpread2({}, defn.sourceParams);
+			const layer = new TileLayer({ source: new XYZ(sourceArgs) });
 			layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
 			layer.set(LayerProperty.LAYER_TYPE, "XYZ");
 			layer.set(LayerProperty.IS_SELECTABLE, false);
@@ -14360,8 +14392,9 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
 		}
 		case GenericSubjectLayerType.GeoJSON_Inline: {
 			var _defn$sourceParams$fe, _defn$vectorStyle;
+			const features = new GeoJSON().readFeatures((_defn$sourceParams$fe = defn.sourceParams.features) !== null && _defn$sourceParams$fe !== void 0 ? _defn$sourceParams$fe : EMPTY_GEOJSON);
 			const source = new VectorSource({
-				features: new GeoJSON().readFeatures((_defn$sourceParams$fe = defn.sourceParams.features) !== null && _defn$sourceParams$fe !== void 0 ? _defn$sourceParams$fe : EMPTY_GEOJSON),
+				features,
 				attributions: defn.sourceParams.attributions
 			});
 			const layer = new VectorLayer(_objectSpread2(_objectSpread2({}, defn.layerOptions), {}, { source: clusterSourceIfRequired(source, defn) }));
@@ -14441,9 +14474,7 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
 			var _defn$vectorStyle4;
 			const mo = { idProperty: defn.sourceParams.mvtIdProperty };
 			switch (defn.sourceParams.mvtFeatureClass) {
-				case "feature":
-					mo.featureClass = Feature;
-					break;
+				case "feature": mo.featureClass = Feature;
 			}
 			const source = new VectorTile({
 				url: defn.sourceParams.url,
@@ -14503,7 +14534,8 @@ function createOLLayerFromSubjectDefn(defn, mapProjection, isExternal, appSettin
 			return layer;
 		}
 		case GenericSubjectLayerType.TileWMS: {
-			const layer = new TileLayer({ source: new TileWMS(_objectSpread2({}, defn.sourceParams)) });
+			const sourceArgs = _objectSpread2({}, defn.sourceParams);
+			const layer = new TileLayer({ source: new TileWMS(sourceArgs) });
 			layer.set(LayerProperty.LAYER_DESCRIPTION, defn.description);
 			layer.set(LayerProperty.LAYER_TYPE, "WMS");
 			layer.set(LayerProperty.IS_SELECTABLE, true);
@@ -14665,12 +14697,16 @@ var GenericLayerSetOL = class extends BaseLayerSetOL {
 		return sources;
 	}
 	updateTransparency(trans) {
-		if (this.externalBaseLayersGroup) if ("LAYER_ID_BASE" in trans) this.externalBaseLayersGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1));
-		else this.externalBaseLayersGroup.setOpacity(1);
-		if (this.subjectLayer) if ("LAYER_ID_MG_BASE" in trans) {
-			const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1);
-			this.subjectLayer.setOpacity(opacity);
-		} else this.subjectLayer.setOpacity(1);
+		if (this.externalBaseLayersGroup) {
+			if ("LAYER_ID_BASE" in trans) this.externalBaseLayersGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1));
+			else this.externalBaseLayersGroup.setOpacity(1);
+		}
+		if (this.subjectLayer) {
+			if ("LAYER_ID_MG_BASE" in trans) {
+				const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1);
+				this.subjectLayer.setOpacity(opacity);
+			} else this.subjectLayer.setOpacity(1);
+		}
 	}
 	/**
 	* 
@@ -14697,7 +14733,8 @@ function getMetersPerUnit(projection) {
 	return proj === null || proj === void 0 ? void 0 : proj.getMetersPerUnit();
 }
 function toMetersPerUnit(unit) {
-	let mpu = METERS_PER_UNIT[toProjUnit(unit)];
+	const u = toProjUnit(unit);
+	let mpu = METERS_PER_UNIT[u];
 	if (mpu) return mpu;
 	else switch (unit) {
 		case UnitOfMeasure.Centimeters: return .01;
@@ -14863,8 +14900,10 @@ var MgLayerSetOL = class {
 		});
 	}
 	updateTransparency(trans) {
-		if (this.externalBaseLayersGroup) if ("LAYER_ID_BASE" in trans) this.externalBaseLayersGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1));
-		else this.externalBaseLayersGroup.setOpacity(1);
+		if (this.externalBaseLayersGroup) {
+			if ("LAYER_ID_BASE" in trans) this.externalBaseLayersGroup.setOpacity(restrictToRange(trans[LAYER_ID_BASE], 0, 1));
+			else this.externalBaseLayersGroup.setOpacity(1);
+		}
 		if ("LAYER_ID_MG_DYNAMIC_OVERLAY" in trans) {
 			const opacity = restrictToRange(trans[LAYER_ID_MG_DYNAMIC_OVERLAY], 0, 1);
 			this.overlay.setOpacity(opacity);
@@ -14873,8 +14912,10 @@ var MgLayerSetOL = class {
 			const opacity = restrictToRange(trans[LAYER_ID_MG_BASE], 0, 1);
 			for (const group of this.mgTiledLayers) group.setOpacity(opacity);
 		} else for (const group of this.mgTiledLayers) group.setOpacity(1);
-		if (this.selectionOverlay) if ("LAYER_ID_MG_SEL_OVERLAY" in trans) this.selectionOverlay.setOpacity(restrictToRange(trans[LAYER_ID_MG_SEL_OVERLAY], 0, 1));
-		else this.selectionOverlay.setOpacity(1);
+		if (this.selectionOverlay) {
+			if ("LAYER_ID_MG_SEL_OVERLAY" in trans) this.selectionOverlay.setOpacity(restrictToRange(trans[LAYER_ID_MG_SEL_OVERLAY], 0, 1));
+			else this.selectionOverlay.setOpacity(1);
+		}
 	}
 	refreshMap(mode = RefreshMode.LayersOnly | RefreshMode.SelectionOnly) {
 		if ((mode & RefreshMode.LayersOnly) == RefreshMode.LayersOnly) this.overlay.getSource().updateParams({ seq: (/* @__PURE__ */ new Date()).getTime() });
@@ -14980,23 +15021,28 @@ var MgInnerLayerSetFactory = class {
 				if (group.Type === 3 && map.TileSetProvider === "XYZ") {
 					let retinaScale = 1;
 					if (typeof map.TilePixelRatio != "undefined") retinaScale = map.TilePixelRatio;
-					tileLayer = new TileLayer({ source: new XYZ({
+					const tileSource = new XYZ({
 						tileSize: [256 * retinaScale, 256 * retinaScale],
 						tileGrid: createXYZ({ tileSize: [256, 256] }),
 						projection,
 						url: this.callback.getClient().getTileTemplateUrl(resourceId, group.Name, "{x}", "{y}", "{z}", true),
 						wrapX: false
-					}) });
-				} else tileLayer = new TileLayer({ source: new TileImage({
-					tileGrid: new TileGrid({
+					});
+					tileLayer = new TileLayer({ source: tileSource });
+				} else {
+					const tileGrid = new TileGrid({
 						origin: getTopLeft(extent),
 						resolutions,
 						tileSize: [tileWidth, tileHeight]
-					}),
-					projection,
-					tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
-					wrapX: false
-				}) });
+					});
+					const tileSource = new TileImage({
+						tileGrid,
+						projection,
+						tileUrlFunction: this.getTileUrlFunctionForGroup(resourceId, group.Name, zOrigin),
+						wrapX: false
+					});
+					tileLayer = new TileLayer({ source: tileSource });
+				}
 				tileLayer.set(LayerProperty.LAYER_NAME, group.ObjectId);
 				tileLayer.set(LayerProperty.LAYER_DISPLAY_NAME, group.ObjectId);
 				tileLayer.set(LayerProperty.LAYER_TYPE, MgLayerType.Tiled);
@@ -15022,12 +15068,13 @@ var MgInnerLayerSetFactory = class {
 			}
 			let externalBaseLayersGroup;
 			if (mode != 2 && externalBaseLayers != null) {
-				externalBaseLayersGroup = new LayerGroup({
+				const groupOpts = {
 					title: tr("EXTERNAL_BASE_LAYERS", locale),
 					layers: externalBaseLayers.map((ext) => {
 						return this.createExternalBaseLayer(ext);
 					})
-				});
+				};
+				externalBaseLayersGroup = new LayerGroup(groupOpts);
 				externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
 				externalBaseLayersGroup.set(LayerProperty.LAYER_DISPLAY_NAME, MG_BASE_LAYER_GROUP_NAME);
 				externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
@@ -15050,12 +15097,13 @@ var MgInnerLayerSetFactory = class {
 			let bounds;
 			let externalBaseLayersGroup;
 			if (externalBaseLayers != null) {
-				externalBaseLayersGroup = new LayerGroup({
+				const groupOpts = {
 					title: tr("EXTERNAL_BASE_LAYERS", locale),
 					layers: externalBaseLayers.map((ext) => {
 						return this.createExternalBaseLayer(ext);
 					})
-				});
+				};
+				externalBaseLayersGroup = new LayerGroup(groupOpts);
 				externalBaseLayersGroup.set(LayerProperty.LAYER_NAME, MG_BASE_LAYER_GROUP_NAME);
 				externalBaseLayersGroup.set(LayerProperty.IS_EXTERNAL, false);
 				externalBaseLayersGroup.set(LayerProperty.IS_GROUP, true);
@@ -15090,12 +15138,13 @@ var MgInnerLayerSetFactory = class {
 			const loaders = this.callback.getBaseTileLoaders();
 			if (loaders[ext.name]) extSource.setTileLoadFunction(loaders[ext.name]);
 		}
-		const tl = new TileLayer({
+		const options = {
 			title: ext.name,
 			type: "base",
 			visible: ext.visible === true,
 			source: extSource
-		});
+		};
+		const tl = new TileLayer(options);
 		tl.set(LayerProperty.LAYER_TYPE, ext.kind);
 		tl.set(LayerProperty.LAYER_NAME, ext.name);
 		tl.set(LayerProperty.LAYER_DISPLAY_NAME, ext.name);
@@ -15379,18 +15428,20 @@ var MapMenuContainer = () => {
 	const activeMapName = useActiveMapName();
 	const availableMaps = useAvailableMaps();
 	const onActiveMapChanged = (mapName) => dispatch(activateMap(mapName));
-	if (locale && activeMapName && availableMaps) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapMenu, {
-		onActiveMapChanged,
-		selectedMap: activeMapName,
-		maps: availableMaps.map((m) => {
+	if (locale && activeMapName && availableMaps) {
+		const entries = availableMaps.map((m) => {
 			return {
 				label: m.name,
 				mapName: m.value
 			};
-		}),
-		locale
-	});
-	else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("noscript", {});
+		});
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapMenu, {
+			onActiveMapChanged,
+			selectedMap: activeMapName,
+			maps: entries,
+			locale
+		});
+	} else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("noscript", {});
 };
 //#endregion
 //#region src/containers/coordinate-tracker.tsx
@@ -15821,15 +15872,13 @@ function getLegendImage(item, canvas = void 0, row = 0) {
 					break;
 				case Polygon:
 				case "Polygon":
-				case "MultiPolygon":
-					vectorContext.drawGeometry(new Polygon([[
-						[cx - sx, cy - sy],
-						[cx + sx, cy - sy],
-						[cx + sx, cy + sy],
-						[cx - sx, cy + sy],
-						[cx - sx, cy - sy]
-					]]));
-					break;
+				case "MultiPolygon": vectorContext.drawGeometry(new Polygon([[
+					[cx - sx, cy - sy],
+					[cx + sx, cy - sy],
+					[cx + sx, cy + sy],
+					[cx - sx, cy + sy],
+					[cx - sx, cy - sy]
+				]]));
 			}
 		}
 		ctx.restore();
@@ -15856,11 +15905,12 @@ var DynamicSwitch = (props) => {
 	const { Switch } = useElementContext();
 	if (isEvaluatable(props.expr)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExprEditor, _objectSpread2(_objectSpread2({}, props), {}, { converter: (v) => (v === null || v === void 0 ? void 0 : v.toLowerCase()) == "true" }));
 	else {
-		const { expr, onExprChanged } = props;
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, _objectSpread2({}, _objectSpread2(_objectSpread2({}, _objectWithoutProperties(props, _excluded$3)), {}, {
+		const { expr, onExprChanged } = props, rest = _objectWithoutProperties(props, _excluded$3);
+		const innerProps = _objectSpread2(_objectSpread2({}, rest), {}, {
 			checked: props.expr,
 			onChange: (e) => props.onExprChanged(e.target.checked)
-		})));
+		});
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Switch, _objectSpread2({}, innerProps));
 	}
 };
 var buildFont = (size, bold, italic, font = "sans-serif") => `${bold ? "bold" : ""} ${italic ? "italic" : ""} ${size}px ${font}`;
@@ -16138,9 +16188,7 @@ var PointStyleEditor = ({ style, onChange, locale }) => {
 			case "Circle":
 				setCircleStyle(s);
 				break;
-			case "Icon":
-				setIconStyle(s);
-				break;
+			case "Icon": setIconStyle(s);
 		}
 	};
 	const onStyleTypeChange = (type) => {
@@ -16156,17 +16204,15 @@ var PointStyleEditor = ({ style, onChange, locale }) => {
 					onChange(s);
 				}
 				break;
-			case "Icon":
-				if (iconStyle) {
-					setCurrentStyle(iconStyle);
-					onChange(iconStyle);
-				} else {
-					const s = _objectSpread2({}, DEFAULT_POINT_ICON_STYLE);
-					setIconStyle(s);
-					setCurrentStyle(s);
-					onChange(s);
-				}
-				break;
+			case "Icon": if (iconStyle) {
+				setCurrentStyle(iconStyle);
+				onChange(iconStyle);
+			} else {
+				const s = _objectSpread2({}, DEFAULT_POINT_ICON_STYLE);
+				setIconStyle(s);
+				setCurrentStyle(s);
+				onChange(s);
+			}
 		}
 	};
 	import_react.useEffect(() => {
@@ -16621,9 +16667,7 @@ var ManageLayerItem = (props) => {
 		switch (panel) {
 			case 2:
 			case 1:
-			case 3:
-				p = panel == openPanel ? 0 : panel;
-				break;
+			case 3: p = panel == openPanel ? 0 : panel;
 		}
 		setOpenPanel(p);
 	};
@@ -17008,9 +17052,7 @@ function clonePointWithFill(baseTemplate, fillColor) {
 	if (!baseTemplate) return;
 	const clone = cloneObject(baseTemplate);
 	switch (clone.type) {
-		case "Circle":
-			clone.fill.color = fillColor;
-			break;
+		case "Circle": clone.fill.color = fillColor;
 	}
 	return clone;
 }
@@ -17238,7 +17280,8 @@ var LayerManager = class {
 				let baseTemplatePoint = bStyle.default.point;
 				let baseTemplateLine = bStyle.default.line;
 				let baseTemplatePoly = bStyle.default.polygon;
-				let ramp = index[extraOptions.colorBrewerTheme];
+				const th = extraOptions.colorBrewerTheme;
+				let ramp = index[th];
 				if (!ramp) ramp = index.Blues;
 				const chosenRamp = getMaxRamp(ramp);
 				const ruleCount = Math.min(values.length, (_chosenRamp$length = chosenRamp === null || chosenRamp === void 0 ? void 0 : chosenRamp.length) !== null && _chosenRamp$length !== void 0 ? _chosenRamp$length : 0);
@@ -17623,12 +17666,13 @@ var AddWfsLayer = (props) => {
 				featureProjection: sourceProj
 			});
 			sourceUrl = urlTemplate;
+			const source = new VectorSource({
+				format: vectorFmt,
+				url: sourceUrl,
+				strategy
+			});
 			const layer = new VectorLayer({
-				source: new VectorSource({
-					format: vectorFmt,
-					url: sourceUrl,
-					strategy
-				}),
+				source,
 				className: "external-vector-layer"
 			});
 			layer.set(LayerProperty.LAYER_TYPE, "WFS");
@@ -17829,9 +17873,7 @@ var AddFileLayer = (props) => {
 								colorBrewerTheme: themeToUse
 							};
 							break;
-						case "Heatmap":
-							extraOpts = { kind: "Heatmap" };
-							break;
+						case "Heatmap": extraOpts = { kind: "Heatmap" };
 					}
 					let labelProp;
 					if (enableLabels) labelProp = labelOnProperty;
@@ -18545,9 +18587,8 @@ var AddManageLayersContainer = () => {
 			style: { minWidth: 0 }
 		})]
 	}) : null;
-	if (primaryLayers) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		style: { padding: 8 },
-		children: [comparisonMapSelector, /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabSet, _objectSpread2({}, {
+	if (primaryLayers) {
+		const tabProps = {
 			id: "tabs",
 			tabs: [{
 				id: "add_layer",
@@ -18585,9 +18626,12 @@ var AddManageLayersContainer = () => {
 					onVectorStyleChanged: updateVectorStyle
 				})
 			}]
-		}))]
-	});
-	else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, {});
+		};
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			style: { padding: 8 },
+			children: [comparisonMapSelector, /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TabSet, _objectSpread2({}, tabProps))]
+		});
+	} else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, {});
 };
 //#endregion
 //#region src/components/view-size.tsx
@@ -18790,9 +18834,7 @@ var FormatDriver = class {
 					case "GeometryCollection":
 						bHasPoint = true;
 						break;
-					case "Circle":
-						bHasPoly = true;
-						break;
+					case "Circle": bHasPoly = true;
 				}
 			}
 			let geomTypes = [];
@@ -18863,11 +18905,15 @@ var CompositeSelectionLayer = class {
 		let bounds;
 		if (this.isSelectedLayer(this.layer)) this.layer.Feature.forEach((feat) => {
 			const b = feat.Bounds ? feat.Bounds.split(" ").map((s) => parseFloat(s)) : void 0;
-			if (b) if (!bounds) bounds = b;
-			else bounds = extend(bounds, b);
+			if (b) {
+				if (!bounds) bounds = b;
+				else bounds = extend(bounds, b);
+			}
 		});
-		else for (const f of this.layer.features) if (f.bounds) if (bounds == null) bounds = f.bounds;
-		else bounds = extend(bounds, f.bounds);
+		else for (const f of this.layer.features) if (f.bounds) {
+			if (bounds == null) bounds = f.bounds;
+			else bounds = extend(bounds, f.bounds);
+		}
 		return bounds;
 	}
 	getLayerId() {
@@ -18903,8 +18949,10 @@ var CompositeSelection = class {
 		let bounds;
 		for (const lyr of this.layers) {
 			let layerBounds = lyr.getBounds();
-			if (layerBounds) if (bounds) bounds = extend(bounds, layerBounds);
-			else bounds = layerBounds;
+			if (layerBounds) {
+				if (bounds) bounds = extend(bounds, layerBounds);
+				else bounds = layerBounds;
+			}
 		}
 		return bounds;
 	}
@@ -19493,20 +19541,21 @@ var ExternalLayerNode = ({ layer }) => {
 	});
 	let iconToUse = ICON_LEGEND_LAYER;
 	if (layer.type == "WMS") iconToUse = ICON_LEGEND_RASTER;
+	const icon = /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+		baseSize: legendCtx.getBaseIconSize(),
+		style: ROW_ITEM_ELEMENT_STYLE,
+		children: (bs) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BpIcon, {
+			icon: iconToUse,
+			iconSize: bs
+		})
+	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
 		style: nodeStyle,
 		className: nodeClassName,
 		children: [
 			chkbox,
 			" ",
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
-				baseSize: legendCtx.getBaseIconSize(),
-				style: ROW_ITEM_ELEMENT_STYLE,
-				children: (bs) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BpIcon, {
-					icon: iconToUse,
-					iconSize: bs
-				})
-			}),
+			icon,
 			" ",
 			layer.displayName
 		]
@@ -19526,11 +19575,12 @@ var ExternalLayersGroupNode = ({ layers }) => {
 				iconSize: bs
 			})
 		});
+		const nodeStyle = _objectSpread2({
+			whiteSpace: "nowrap",
+			overflow: "hidden"
+		}, LI_LIST_STYLE);
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-			style: _objectSpread2({
-				whiteSpace: "nowrap",
-				overflow: "hidden"
-			}, LI_LIST_STYLE),
+			style: nodeStyle,
 			className: nodeClassName,
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
 				icon,
@@ -20013,20 +20063,22 @@ var Legend = (props) => {
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
 					style: UL_LIST_STYLE((_props$baseIconSize2 = props.baseIconSize) !== null && _props$baseIconSize2 !== void 0 ? _props$baseIconSize2 : DEFAULT_ICON_SIZE),
 					children: [rootItems.map((item) => {
-						if (item.DisplayInLegend === true) if (isLayer(item)) {
-							if (showInvisibleLayers || isLayerVisibleAtScale(item, currentScale, props.stateless)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LayerNode, { layer: item }, item.ObjectId);
-						} else {
-							const bGroupVisAtScale = isGroupVisibleAtScale(item, daTree, currentScale, props.stateless);
-							let bGroupVisFilter = false;
-							if (providerImpl.isFiltering()) {
-								if (item.LegendLabel.toLocaleLowerCase().indexOf(providerImpl.getFilterText().toLocaleLowerCase()) >= 0) bGroupVisFilter = true;
-							}
-							if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) {
-								const children = daTree.groupChildren[item.ObjectId] || [];
-								return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
-									group: item,
-									childItems: children
-								}, item.ObjectId);
+						if (item.DisplayInLegend === true) {
+							if (isLayer(item)) {
+								if (showInvisibleLayers || isLayerVisibleAtScale(item, currentScale, props.stateless)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LayerNode, { layer: item }, item.ObjectId);
+							} else {
+								const bGroupVisAtScale = isGroupVisibleAtScale(item, daTree, currentScale, props.stateless);
+								let bGroupVisFilter = false;
+								if (providerImpl.isFiltering()) {
+									if (item.LegendLabel.toLocaleLowerCase().indexOf(providerImpl.getFilterText().toLocaleLowerCase()) >= 0) bGroupVisFilter = true;
+								}
+								if (showInvisibleLayers || bGroupVisAtScale || bGroupVisFilter) {
+									const children = daTree.groupChildren[item.ObjectId] || [];
+									return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(GroupNode, {
+										group: item,
+										childItems: children
+									}, item.ObjectId);
+								}
 							}
 						}
 					}), props.externalLayers && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ExternalLayersGroupNode, { layers: props.externalLayers })]
@@ -20136,17 +20188,19 @@ function countSelection(mgSelection, clientSelection) {
 		total: 0,
 		layerCount: 0
 	};
-	if (mgSelection) if (isSelectedFeatureSet(mgSelection)) {
-		summary.layerCount = mgSelection.SelectedLayer.length;
-		for (const lyr of mgSelection.SelectedLayer) {
-			var _lyr$Feature$length, _lyr$Feature;
-			summary.total += (_lyr$Feature$length = (_lyr$Feature = lyr.Feature) === null || _lyr$Feature === void 0 ? void 0 : _lyr$Feature.length) !== null && _lyr$Feature$length !== void 0 ? _lyr$Feature$length : 0;
-		}
-	} else {
-		summary.layerCount = mgSelection.Layer.length;
-		for (const lyr of mgSelection.Layer) {
-			var _lyr$Class$ID$length, _lyr$Class;
-			summary.total += (_lyr$Class$ID$length = (_lyr$Class = lyr.Class) === null || _lyr$Class === void 0 || (_lyr$Class = _lyr$Class.ID) === null || _lyr$Class === void 0 ? void 0 : _lyr$Class.length) !== null && _lyr$Class$ID$length !== void 0 ? _lyr$Class$ID$length : 0;
+	if (mgSelection) {
+		if (isSelectedFeatureSet(mgSelection)) {
+			summary.layerCount = mgSelection.SelectedLayer.length;
+			for (const lyr of mgSelection.SelectedLayer) {
+				var _lyr$Feature$length, _lyr$Feature;
+				summary.total += (_lyr$Feature$length = (_lyr$Feature = lyr.Feature) === null || _lyr$Feature === void 0 ? void 0 : _lyr$Feature.length) !== null && _lyr$Feature$length !== void 0 ? _lyr$Feature$length : 0;
+			}
+		} else {
+			summary.layerCount = mgSelection.Layer.length;
+			for (const lyr of mgSelection.Layer) {
+				var _lyr$Class$ID$length, _lyr$Class;
+				summary.total += (_lyr$Class$ID$length = (_lyr$Class = lyr.Class) === null || _lyr$Class === void 0 || (_lyr$Class = _lyr$Class.ID) === null || _lyr$Class === void 0 ? void 0 : _lyr$Class.length) !== null && _lyr$Class$ID$length !== void 0 ? _lyr$Class$ID$length : 0;
+			}
 		}
 	}
 	if (clientSelection) {
@@ -20279,15 +20333,17 @@ var SelectionPanel = import_react.memo((props) => {
 	const [selectedLayerIndex, setSelectedLayerIndex] = import_react.useState(-1);
 	const [featureIndex, setFeatureIndex] = import_react.useState(-1);
 	import_react.useEffect(() => {
-		if (selection.getLayerCount() > 0) if (selectedLayerIndex < 0) {
-			setSelectedLayerIndex(0);
-			setFeatureIndex(0);
-		} else {
-			const sl = selection.getLayerAt(selectedLayerIndex);
-			if (!sl) {
+		if (selection.getLayerCount() > 0) {
+			if (selectedLayerIndex < 0) {
 				setSelectedLayerIndex(0);
 				setFeatureIndex(0);
-			} else if (featureIndex < 0 && sl.getFeatureCount() > 0) setFeatureIndex(0);
+			} else {
+				const sl = selection.getLayerAt(selectedLayerIndex);
+				if (!sl) {
+					setSelectedLayerIndex(0);
+					setFeatureIndex(0);
+				} else if (featureIndex < 0 && sl.getFeatureCount() > 0) setFeatureIndex(0);
+			}
 		}
 	}, [selection]);
 	const getCurrentLayer = () => {
@@ -20418,25 +20474,26 @@ var SelectionPanel = import_react.memo((props) => {
 			className: "selection-panel-body",
 			style: selBodyStyle,
 			children: (() => {
-				if (feat) if (selectedFeatureRenderer) return selectedFeatureRenderer({
-					selectedFeature: feat,
-					cleanHTML,
-					formatPropertyValue,
-					allowHtmlValues,
-					selectedLayer: meta,
-					layerName,
-					locale
-				});
-				else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DefaultSelectedFeature, {
-					selectedFeature: feat,
-					cleanHTML,
-					formatPropertyValue,
-					allowHtmlValues,
-					selectedLayer: meta,
-					layerName,
-					locale
-				});
-				else if (!((selection === null || selection === void 0 ? void 0 : selection.getLayerCount()) > 0)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
+				if (feat) {
+					if (selectedFeatureRenderer) return selectedFeatureRenderer({
+						selectedFeature: feat,
+						cleanHTML,
+						formatPropertyValue,
+						allowHtmlValues,
+						selectedLayer: meta,
+						layerName,
+						locale
+					});
+					else return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DefaultSelectedFeature, {
+						selectedFeature: feat,
+						cleanHTML,
+						formatPropertyValue,
+						allowHtmlValues,
+						selectedLayer: meta,
+						layerName,
+						locale
+					});
+				} else if (!((selection === null || selection === void 0 ? void 0 : selection.getLayerCount()) > 0)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
 					variant: "primary",
 					icon: "info-sign",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -20557,19 +20614,23 @@ var SelectionPanelContainer = (props) => {
 		return content;
 	};
 	const compSel = new CompositeSelection(selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures, clientSelection);
-	if ((selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures) != null || clientSelection) return withSwipeSelectorLayout(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectionPanel, {
-		locale,
-		onResolveLayerLabel: resolveLayerLabel,
-		allowHtmlValues: appContext.allowHtmlValuesInSelection(),
-		cleanHTML: appContext.getHTMLCleaner(),
-		formatPropertyValue: appContext.getPropertyValueFormatter(),
-		selection: compSel,
-		onRequestZoomToFeature: onZoomToSelectedFeature,
-		onShowSelectedFeature,
-		selectedFeatureRenderer,
-		maxHeight
-	}) }));
-	else return withSwipeSelectorLayout(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
+	if ((selection === null || selection === void 0 ? void 0 : selection.SelectedFeatures) != null || clientSelection) {
+		const allowHtmlValues = appContext.allowHtmlValuesInSelection();
+		const cleaner = appContext.getHTMLCleaner();
+		const formatter = appContext.getPropertyValueFormatter();
+		return withSwipeSelectorLayout(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectionPanel, {
+			locale,
+			onResolveLayerLabel: resolveLayerLabel,
+			allowHtmlValues,
+			cleanHTML: cleaner,
+			formatPropertyValue: formatter,
+			selection: compSel,
+			onRequestZoomToFeature: onZoomToSelectedFeature,
+			onShowSelectedFeature,
+			selectedFeatureRenderer,
+			maxHeight
+		}) }));
+	} else return withSwipeSelectorLayout(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Callout, {
 		variant: "primary",
 		icon: "info-sign",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -20851,7 +20912,8 @@ var MapCapturerContext = class {
 	}
 	createCaptureBox(paperSize, scaleDenominator, rotation) {
 		const origin = this.viewer.getCurrentView();
-		const poly = new Polygon(this.getRing(origin, paperSize, scaleDenominator));
+		const ring = this.getRing(origin, paperSize, scaleDenominator);
+		const poly = new Polygon(ring);
 		poly.rotate(-deg2rad(rotation), [origin.x, origin.y]);
 		const box = new Feature(poly);
 		this.features.clear();
@@ -21002,16 +21064,18 @@ function toggleMapCapturerLayer(locale, viewer, mapNames, activeMapName, showAdv
 	const bVisible = showAdvanced;
 	if (viewer.isReady() && mapNames) {
 		const activeCapturer = getActiveCapturer(viewer, mapNames, activeMapName);
-		if (activeCapturer) if (bVisible) {
-			const ppSize = getPrintSize(viewer, showAdvanced, paperSize, orientation);
-			const cb = { updateBoxCoords };
-			activeCapturer.activate(cb, ppSize, parseFloat(scale), rotation);
-			setViewRotationEnabled(false);
-			setViewRotation(0);
-			viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
-		} else {
-			activeCapturer.deactivate();
-			setViewRotationEnabled(true);
+		if (activeCapturer) {
+			if (bVisible) {
+				const ppSize = getPrintSize(viewer, showAdvanced, paperSize, orientation);
+				const cb = { updateBoxCoords };
+				activeCapturer.activate(cb, ppSize, parseFloat(scale), rotation);
+				setViewRotationEnabled(false);
+				setViewRotation(0);
+				viewer.toastPrimary("info-sign", tr("QUICKPLOT_BOX_INFO", locale));
+			} else {
+				activeCapturer.deactivate();
+				setViewRotationEnabled(true);
+			}
 		}
 	}
 }
@@ -21126,7 +21190,7 @@ function _generateClientSidePdf() {
 		if (showCoordinates) {
 			pdf.setFontSize(8);
 			const tlLabel = `x:${extent[0].toFixed(6)}, y:${extent[3].toFixed(6)}`;
-			const tlW = pdf.getTextWidth(tlLabel) + COORD_PADDING * 2;
+			const tlW = pdf.getTextWidth(tlLabel) + 4;
 			const tlX = mapLeft + CORNER_MARGIN;
 			const tlY = mapTop + CORNER_MARGIN;
 			pdf.setFillColor(255, 255, 255);
@@ -21136,7 +21200,7 @@ function _generateClientSidePdf() {
 			pdf.setTextColor(0);
 			pdf.text(tlLabel, tlX + COORD_PADDING, tlY + COORD_BOX_H - 1.5, { align: "left" });
 			const brLabel = `x:${extent[2].toFixed(6)}, y:${extent[1].toFixed(6)}`;
-			const brW = pdf.getTextWidth(brLabel) + COORD_PADDING * 2;
+			const brW = pdf.getTextWidth(brLabel) + 4;
 			const brX = MAP_RIGHT - brW - CORNER_MARGIN;
 			const brY = mapBottom - COORD_BOX_H - CORNER_MARGIN;
 			pdf.setFillColor(255, 255, 255);
@@ -21160,7 +21224,7 @@ function _generateClientSidePdf() {
 			const scaleBarY = mapBottom + 8;
 			const N = scaleDenom;
 			let pointResolution = N / 1e3;
-			const MIN_WIDTH_MM = 64 * .28;
+			const MIN_WIDTH_MM = 17.92;
 			const MAX_WIDTH_MM = fullPrintW * .55;
 			let suffix;
 			let nominalCount = MIN_WIDTH_MM * pointResolution;
@@ -22080,7 +22144,9 @@ function isValidView(view) {
 	else return !isNaN(view.x) && !isNaN(view.y) && !isNaN(view.scale);
 }
 function inflateBoundsByMeters(thisProj, extent, meters) {
-	return transformExtent(buffer(transformExtent(extent, thisProj, "EPSG:3857"), meters), "EPSG:3857", thisProj);
+	const webmBounds = transformExtent(extent, thisProj, "EPSG:3857");
+	const webmBounds2 = buffer(webmBounds, meters);
+	return transformExtent(webmBounds2, "EPSG:3857", thisProj);
 }
 function recursiveFindLayer(layers, predicate) {
 	for (let i = 0; i < layers.getLength(); i++) {
@@ -22811,9 +22877,7 @@ var BaseMapProviderContext = class {
 						this._comp.onDispatch(setCurrentView(this.getViewForExtent(ext)));
 					}
 					break;
-				case ActiveMapTool.Select:
-					this.selectFeaturesByExtent(extent);
-					break;
+				case ActiveMapTool.Select: this.selectFeaturesByExtent(extent);
 			}
 		}
 	}
@@ -23029,9 +23093,10 @@ var BaseMapProviderContext = class {
 			var _theFeature$getGeomet;
 			const features = f.get("features");
 			let theFeature;
-			if (Array.isArray(features)) if (features.length == 1) theFeature = features[0];
-			else return;
-			else theFeature = f;
+			if (Array.isArray(features)) {
+				if (features.length == 1) theFeature = features[0];
+				else return;
+			} else theFeature = f;
 			const p = _objectSpread2({}, theFeature.getProperties());
 			delete p[theFeature.getGeometryName()];
 			const feat = {
@@ -23713,8 +23778,10 @@ var LayerSetGroupBase = class {
 	}
 	addLayer(map, name, layer, allowReplace) {
 		const bAllow = !!allowReplace;
-		if (this._customLayers[name]) if (!bAllow) throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name }));
-		else map.removeLayer(this._customLayers[name].layer);
+		if (this._customLayers[name]) {
+			if (!bAllow) throw new MgError(tr("LAYER_NAME_EXISTS", this.callback.getLocale(), { name }));
+			else map.removeLayer(this._customLayers[name].layer);
+		}
 		if (layer.get(LayerProperty.LAYER_NAME) != name) layer.set(LayerProperty.LAYER_NAME, name);
 		if (!layer.get(LayerProperty.LAYER_DISPLAY_NAME)) layer.set(LayerProperty.LAYER_DISPLAY_NAME, name);
 		map.removeLayer(layer);
@@ -23986,18 +24053,18 @@ var MgLayerSetGroup = class extends LayerSetGroupBase {
 		const allLayers = this.mainSet.getLayers();
 		for (const layer of allLayers) if (layer instanceof ImageLayer) {
 			const source = layer.getSource();
-			if (source instanceof ImageMapGuide) if (typeof mock != "undefined") switch (mock) {
-				case MapGuideMockMode.RenderPlaceholder:
-					source.setImageLoadFunction(mockMapGuideImageLoadFunction);
-					break;
-				case MapGuideMockMode.DoNotRender:
-					source.setImageLoadFunction(blankImageLoadFunction);
-					break;
-				default:
-					assertNever(mock);
-					break;
+			if (source instanceof ImageMapGuide) {
+				if (typeof mock != "undefined") switch (mock) {
+					case MapGuideMockMode.RenderPlaceholder:
+						source.setImageLoadFunction(mockMapGuideImageLoadFunction);
+						break;
+					case MapGuideMockMode.DoNotRender:
+						source.setImageLoadFunction(blankImageLoadFunction);
+						break;
+					default: assertNever(mock);
+				}
+				else source.setImageLoadFunction(defaultImageLoadFunction);
 			}
-			else source.setImageLoadFunction(defaultImageLoadFunction);
 		}
 	}
 };
@@ -24201,9 +24268,11 @@ function useMapGuideViewerState() {
 		isReady = false;
 		theMap = {};
 	} else if (subject && layerTransparency) isReady = true;
-	else if (agentUri && theMap && layerTransparency) if (!stateless) {
-		if (isRuntimeMap(theMap) && sessionId) isReady = true;
-	} else isReady = true;
+	else if (agentUri && theMap && layerTransparency) {
+		if (!stateless) {
+			if (isRuntimeMap(theMap) && sessionId) isReady = true;
+		} else isReady = true;
+	}
 	return {
 		stateless,
 		activeTool,
@@ -24341,7 +24410,8 @@ var MapGuideMapProviderContext = class extends BaseMapProviderContext {
 			else if (this._state.activeTool === ActiveMapTool.Select) {
 				var _this$_state$pointSel;
 				const ptBuffer = (_this$_state$pointSel = this._state.pointSelectionBuffer) !== null && _this$_state$pointSel !== void 0 ? _this$_state$pointSel : 2;
-				const geom = fromExtent(this.getPointSelectionBox(px, ptBuffer));
+				const box = this.getPointSelectionBox(px, ptBuffer);
+				const geom = fromExtent(box);
 				const options = this.buildDefaultQueryOptions(geom);
 				options.maxfeatures = 1;
 				this.sendSelectionQuery(options);
@@ -24758,17 +24828,18 @@ var MapGuideMapProviderContext = class extends BaseMapProviderContext {
 		const reqQueryFeatures = 1;
 		this.incrementBusyWorker();
 		const mapName = this._state.mapName;
+		const qOrig = {
+			mapname: mapName,
+			session: this._state.sessionId,
+			persist: 1,
+			featurefilter: xml,
+			selectioncolor: this._state.selectionColor,
+			selectionformat: (_this$_state$selectio = this._state.selectionImageFormat) !== null && _this$_state$selectio !== void 0 ? _this$_state$selectio : "PNG8",
+			maxfeatures: -1,
+			requestdata: reqQueryFeatures
+		};
 		const action = queryMapFeatures(mapName, {
-			options: _objectSpread2(_objectSpread2({}, {
-				mapname: mapName,
-				session: this._state.sessionId,
-				persist: 1,
-				featurefilter: xml,
-				selectioncolor: this._state.selectionColor,
-				selectionformat: (_this$_state$selectio = this._state.selectionImageFormat) !== null && _this$_state$selectio !== void 0 ? _this$_state$selectio : "PNG8",
-				maxfeatures: -1,
-				requestdata: reqQueryFeatures
-			}), queryOpts),
+			options: _objectSpread2(_objectSpread2({}, qOrig), queryOpts),
 			callback: (res) => {
 				this.decrementBusyWorker();
 				if (success) success(res);
@@ -24800,16 +24871,17 @@ var MapGuideMapProviderContext = class extends BaseMapProviderContext {
 		if (!this._state.mapName || !this._comp || !this._state.sessionId || !this._state.selectionColor || queryOpts != null && ((_queryOpts$layernames = queryOpts.layernames) !== null && _queryOpts$layernames !== void 0 ? _queryOpts$layernames : []).length == 0) return;
 		this.incrementBusyWorker();
 		const mapName = this._state.mapName;
+		const qOrig = {
+			mapname: mapName,
+			session: this._state.sessionId,
+			persist: 1,
+			selectionvariant: "INTERSECTS",
+			selectioncolor: this._state.selectionColor,
+			selectionformat: (_this$_state$selectio2 = this._state.selectionImageFormat) !== null && _this$_state$selectio2 !== void 0 ? _this$_state$selectio2 : "PNG8",
+			maxfeatures: -1
+		};
 		const action = queryMapFeatures(mapName, {
-			options: _objectSpread2(_objectSpread2({}, {
-				mapname: mapName,
-				session: this._state.sessionId,
-				persist: 1,
-				selectionvariant: "INTERSECTS",
-				selectioncolor: this._state.selectionColor,
-				selectionformat: (_this$_state$selectio2 = this._state.selectionImageFormat) !== null && _this$_state$selectio2 !== void 0 ? _this$_state$selectio2 : "PNG8",
-				maxfeatures: -1
-			}), queryOpts),
+			options: _objectSpread2(_objectSpread2({}, qOrig), queryOpts),
 			callback: (res) => {
 				this.decrementBusyWorker();
 				if (success) success(res);
@@ -24985,33 +25057,31 @@ var MapViewer = ({ children }) => {
 		width: "100%",
 		height: "100%"
 	};
-	if (!((appSettings === null || appSettings === void 0 ? void 0 : appSettings["DISABLE_CURSORS"]) == "1")) if (context.isDigitizing()) switch (digitizingType) {
-		case "Point":
-			style.cursor = `url(${digitizePoint_default}), auto`;
-			break;
-		case "Line":
-			style.cursor = `url(${digitizeLine_default}), auto`;
-			break;
-		case "LineString":
-			style.cursor = `url(${digitizeLineString_default}), auto`;
-			break;
-		case "Rectangle":
-			style.cursor = `url(${digitizeRectangle_default}), auto`;
-			break;
-		case "Polygon":
-			style.cursor = `url(${digitizePolygon_default}), auto`;
-			break;
-		case "Circle":
-			style.cursor = `url(${digitizeCircle_default}), auto`;
-			break;
-	}
-	else switch (tool) {
-		case ActiveMapTool.Pan:
-			style.cursor = isMouseDown ? `url(${grabbing_default}), auto` : `url(${grab_default}), auto`;
-			break;
-		case ActiveMapTool.Zoom:
-			style.cursor = `url(${zoomin_default}), auto`;
-			break;
+	if (!((appSettings === null || appSettings === void 0 ? void 0 : appSettings["DISABLE_CURSORS"]) == "1")) {
+		if (context.isDigitizing()) switch (digitizingType) {
+			case "Point":
+				style.cursor = `url(${digitizePoint_default}), auto`;
+				break;
+			case "Line":
+				style.cursor = `url(${digitizeLine_default}), auto`;
+				break;
+			case "LineString":
+				style.cursor = `url(${digitizeLineString_default}), auto`;
+				break;
+			case "Rectangle":
+				style.cursor = `url(${digitizeRectangle_default}), auto`;
+				break;
+			case "Polygon":
+				style.cursor = `url(${digitizePolygon_default}), auto`;
+				break;
+			case "Circle": style.cursor = `url(${digitizeCircle_default}), auto`;
+		}
+		else switch (tool) {
+			case ActiveMapTool.Pan:
+				style.cursor = isMouseDown ? `url(${grabbing_default}), auto` : `url(${grab_default}), auto`;
+				break;
+			case ActiveMapTool.Zoom: style.cursor = `url(${zoomin_default}), auto`;
+		}
 	}
 	if (bgColor) style.backgroundColor = bgColor;
 	if (nextState.isReady) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {
@@ -25356,9 +25426,7 @@ function updateUrl(state, extraState, ignoreProps) {
 			case "hg":
 				st.hg = val === null || val === void 0 ? void 0 : val.join(S_DELIM);
 				break;
-			default:
-				st[k] = val;
-				break;
+			default: st[k] = val;
 		}
 	}
 	debouncedReplaceState(st, "", appendParameters(window.location.href, st, true, false, true));
@@ -25416,9 +25484,7 @@ function getStateFromUrl(ignoreKeys) {
 			case "hg":
 				state.hg = val === null || val === void 0 ? void 0 : val.split(S_DELIM);
 				break;
-			default:
-				state[k] = val;
-				break;
+			default: state[k] = val;
 		}
 	}
 	return state;
@@ -25647,9 +25713,18 @@ var App = (props) => {
 	const renderErrorMessage = import_react.useCallback((err, locale, args) => {
 		const msg = err.message;
 		switch (msg) {
-			case "MgConnectionFailedException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) } });
-			case "MgResourceNotFoundException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) } });
-			case "MgSessionExpiredException": return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: { __html: purify_default.sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) } });
+			case "MgConnectionFailedException": {
+				const arg = { __html: purify_default.sanitize(tr("INIT_ERROR_NO_CONNECTION", locale)) };
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: arg });
+			}
+			case "MgResourceNotFoundException": {
+				const arg = { __html: purify_default.sanitize(tr("INIT_ERROR_RESOURCE_NOT_FOUND", locale, { resourceId: args.resourceId })) };
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: arg });
+			}
+			case "MgSessionExpiredException": {
+				const arg = { __html: purify_default.sanitize(tr("INIT_ERROR_EXPIRED_SESSION", locale, { sessionId: args.session })) };
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { dangerouslySetInnerHTML: arg });
+			}
 			default: {
 				const arg = { __html: purify_default.sanitize(msg) };
 				const stack = normalizeStack(err);
@@ -26332,11 +26407,13 @@ function mapStateReducer(state = MAP_STATE_INITIAL_STATE, action) {
 				let mrtm;
 				let mgeneric;
 				const rtm = maps[mapName].map;
-				if (rtm) if (!isGenericSubjectMapLayer(rtm)) mrtm = {
-					runtimeMap: rtm,
-					isArbitraryCs: tryParseArbitraryCs(rtm.CoordinateSystem.MentorCode) != null
-				};
-				else mgeneric = { subject: _objectSpread2({}, rtm) };
+				if (rtm) {
+					if (!isGenericSubjectMapLayer(rtm)) mrtm = {
+						runtimeMap: rtm,
+						isArbitraryCs: tryParseArbitraryCs(rtm.CoordinateSystem.MentorCode) != null
+					};
+					else mgeneric = { subject: _objectSpread2({}, rtm) };
+				}
 				if (mapName == mapNameToApplyInitialState) {
 					if (rtm && !isGenericSubjectMapLayer(rtm)) {
 						var _payload$initialShowL, _payload$initialShowG, _payload$initialHideL, _payload$initialHideG;
@@ -26750,8 +26827,9 @@ var rootReducer = {
 * @since 0.15 - Fixed return type to no longer be `any`
 */
 function configureStore(initialState, extraReducers) {
+	const rootReducerMap = extraReducers ? _objectSpread2(_objectSpread2({}, rootReducer), extraReducers) : rootReducer;
 	return configureStore$1({
-		reducer: combineReducers(extraReducers ? _objectSpread2(_objectSpread2({}, rootReducer), extraReducers) : rootReducer),
+		reducer: combineReducers(rootReducerMap),
 		preloadedState: initialState,
 		middleware: (getDefaultMiddleware) => {
 			return getDefaultMiddleware({

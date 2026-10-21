@@ -27,8 +27,8 @@ var require_PopoverPortal = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 //#endregion
 //#region node_modules/react-tiny-popover/dist/util.js
-var require_util = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __assign = exports && exports.__assign || function() {
+var require_util = /* @__PURE__ */ __commonJSMin(((exports, module, this$5) => {
+	var __assign = this$5 && this$5.__assign || function() {
 		__assign = Object.assign || function(t) {
 			for (var s, i = 1, n = arguments.length; i < n; i++) {
 				s = arguments[i];
@@ -102,7 +102,6 @@ var require_util = /* @__PURE__ */ __commonJSMin(((exports) => {
 				left = targetMidX - width / 2;
 				if (align === "start") left = childRect.left;
 				if (align === "end") left = childRect.right - width;
-				break;
 		}
 		return (0, exports.createRect)({
 			left,
@@ -407,8 +406,8 @@ var require_useHandlePrevValues = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 //#endregion
 //#region node_modules/react-tiny-popover/dist/useArrowContainer.js
-var require_useArrowContainer = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __assign = exports && exports.__assign || function() {
+var require_useArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module, this$4) => {
+	var __assign = this$4 && this$4.__assign || function() {
 		__assign = Object.assign || function(t) {
 			for (var s, i = 1, n = arguments.length; i < n; i++) {
 				s = arguments[i];
@@ -492,8 +491,8 @@ var require_useArrowContainer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 //#endregion
 //#region node_modules/react-tiny-popover/dist/ArrowContainer.js
-var require_ArrowContainer = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __assign = exports && exports.__assign || function() {
+var require_ArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
+	var __assign = this$3 && this$3.__assign || function() {
 		__assign = Object.assign || function(t) {
 			for (var s, i = 1, n = arguments.length; i < n; i++) {
 				s = arguments[i];
@@ -536,8 +535,8 @@ var require_ArrowContainer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 //#endregion
 //#region node_modules/react-tiny-popover/dist/Popover.js
-var require_Popover = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var __assign = exports && exports.__assign || function() {
+var require_Popover = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
+	var __assign = this$2 && this$2.__assign || function() {
 		__assign = Object.assign || function(t) {
 			for (var s, i = 1, n = arguments.length; i < n; i++) {
 				s = arguments[i];
@@ -880,7 +879,7 @@ var Y$1 = (e, t = k$1) => {
 		o === t && s(f$1[t]);
 	});
 };
-var _$1 = (e) => Object.keys(f$1).forEach((t) => Y$1(e, t));
+var _ = (e) => Object.keys(f$1).forEach((t) => Y$1(e, t));
 var Q$1 = (e) => Object.keys(f$1).find((t) => f$1[t].toasts.some((o) => o.id === e));
 var S$1 = (e = k$1) => (t) => {
 	Y$1(t, e);
@@ -889,7 +888,7 @@ var se = {
 	blank: 4e3,
 	error: 4e3,
 	success: 2e3,
-	loading: Infinity,
+	loading: 1 / 0,
 	custom: 4e3
 };
 var V$2 = (e = {}, t = k$1) => {
@@ -937,7 +936,7 @@ n$1.dismiss = (e, t) => {
 		type: 3,
 		toastId: e
 	};
-	t ? S$1(t)(o) : _$1(o);
+	t ? S$1(t)(o) : _(o);
 };
 n$1.dismissAll = (e) => n$1.dismiss(void 0, e);
 n$1.remove = (e, t) => {
@@ -945,7 +944,7 @@ n$1.remove = (e, t) => {
 		type: 4,
 		toastId: e
 	};
-	t ? S$1(t)(o) : _$1(o);
+	t ? S$1(t)(o) : _(o);
 };
 n$1.removeAll = (e) => n$1.remove(void 0, e);
 n$1.promise = (e, t, o) => {
@@ -973,7 +972,7 @@ var w$1 = (e, t = "default") => {
 	(0, import_react.useEffect)(() => {
 		if (s) return;
 		let c = Date.now(), m = o.map((p) => {
-			if (p.duration === Infinity) return;
+			if (p.duration === 1 / 0) return;
 			let R = (p.duration || 0) + p.pauseDuration - (c - p.createdAt);
 			if (R < 0) {
 				p.visible && n$1.dismiss(p.id);
@@ -1327,7 +1326,7 @@ var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** Used to stand-in for `undefined` hash values. */
 	var HASH_UNDEFINED = "__lodash_hash_undefined__";
 	/** Used as references for various `Number` constants. */
-	var INFINITY = Infinity;
+	var INFINITY = 1 / 0;
 	var MAX_SAFE_INTEGER = 9007199254740991;
 	/** `Object#toString` result references. */
 	var funcTag = "[object Function]";
@@ -2323,7 +2322,7 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var UNORDERED_COMPARE_FLAG = 1;
 	var PARTIAL_COMPARE_FLAG = 2;
 	/** Used as references for various `Number` constants. */
-	var INFINITY = Infinity;
+	var INFINITY = 1 / 0;
 	var MAX_SAFE_INTEGER = 9007199254740991;
 	/** `Object#toString` result references. */
 	var argsTag = "[object Arguments]";
@@ -3068,7 +3067,7 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var cache = this.__data__;
 		if (cache instanceof ListCache) {
 			var pairs = cache.__data__;
-			if (!Map || pairs.length < LARGE_ARRAY_SIZE - 1) {
+			if (!Map || pairs.length < 199) {
 				pairs.push([key, value]);
 				return this;
 			}
@@ -4794,9 +4793,7 @@ var PROJJSONBuilderBase = class {
 					};
 				}
 				break;
-			default:
-				result.keyword = node[0];
-				break;
+			default: result.keyword = node[0];
 		}
 		return result;
 	}
@@ -5163,8 +5160,10 @@ function transformPROJJSON(projjson, result = {}) {
 	if (!projjson || typeof projjson !== "object") return projjson;
 	if (projjson.type === "BoundCRS") {
 		transformPROJJSON(projjson.source_crs, result);
-		if (projjson.transformation) if (projjson.transformation.method && projjson.transformation.method.name === "NTv2") result.nadgrids = projjson.transformation.parameters[0].value;
-		else result.datum_params = projjson.transformation.parameters.map((param) => param.value);
+		if (projjson.transformation) {
+			if (projjson.transformation.method && projjson.transformation.method.name === "NTv2") result.nadgrids = projjson.transformation.parameters[0].value;
+			else result.datum_params = projjson.transformation.parameters.map((param) => param.value);
+		}
 		return result;
 	}
 	Object.keys(projjson).forEach((key) => {
@@ -5178,9 +5177,10 @@ function transformPROJJSON(projjson, result = {}) {
 				break;
 			case "type":
 				if (value === "GeographicCRS") result.projName = "longlat";
-				else if (value === "GeodeticCRS") if (projjson.coordinate_system && projjson.coordinate_system.subtype === "Cartesian") result.projName = "geocent";
-				else result.projName = "longlat";
-				else if (value === "ProjectedCRS" && projjson.conversion && projjson.conversion.method) result.projName = projjson.conversion.method.name;
+				else if (value === "GeodeticCRS") {
+					if (projjson.coordinate_system && projjson.coordinate_system.subtype === "Cartesian") result.projName = "geocent";
+					else result.projName = "longlat";
+				} else if (value === "ProjectedCRS" && projjson.conversion && projjson.conversion.method) result.projName = projjson.conversion.method.name;
 				break;
 			case "datum":
 			case "datum_ensemble":
@@ -5249,8 +5249,6 @@ function transformPROJJSON(projjson, result = {}) {
 			case "base_crs":
 				transformPROJJSON(value, result);
 				result.datumCode = value.id ? value.id.authority + "_" + value.id.code : value.name;
-				break;
-			default: break;
 		}
 	});
 	if (result.latitude_of_false_origin !== void 0) result.lat0 = result.latitude_of_false_origin;
@@ -5340,9 +5338,11 @@ function setPropertiesFromWkt(wkt) {
 	if (wkt.UNIT) {
 		wkt.units = wkt.UNIT.name.toLowerCase();
 		if (wkt.units === "metre") wkt.units = "meter";
-		if (wkt.UNIT.convert) if (wkt.type === "GEOGCS") {
-			if (wkt.DATUM && wkt.DATUM.SPHEROID) wkt.to_meter = wkt.UNIT.convert * wkt.DATUM.SPHEROID.a;
-		} else wkt.to_meter = wkt.UNIT.convert;
+		if (wkt.UNIT.convert) {
+			if (wkt.type === "GEOGCS") {
+				if (wkt.DATUM && wkt.DATUM.SPHEROID) wkt.to_meter = wkt.UNIT.convert * wkt.DATUM.SPHEROID.a;
+			} else wkt.to_meter = wkt.UNIT.convert;
+		}
 	}
 	var geogcs = wkt.GEOGCS;
 	if (wkt.type === "GEOGCS") geogcs = wkt;
@@ -5534,9 +5534,10 @@ function defs(name) {
 	var that = this;
 	if (arguments.length === 2) {
 		var def = arguments[1];
-		if (typeof def === "string") if (def.charAt(0) === "+") defs[name] = projString_default(arguments[1]);
-		else defs[name] = wkt_parser_default(arguments[1]);
-		else if (def && typeof def === "object" && !("projName" in def)) defs[name] = wkt_parser_default(arguments[1]);
+		if (typeof def === "string") {
+			if (def.charAt(0) === "+") defs[name] = projString_default(arguments[1]);
+			else defs[name] = wkt_parser_default(arguments[1]);
+		} else if (def && typeof def === "object" && !("projName" in def)) defs[name] = wkt_parser_default(arguments[1]);
 		else {
 			defs[name] = def;
 			if (!def) delete defs[name];
@@ -5671,10 +5672,13 @@ function init$35() {
 	if (!("x0" in this)) this.x0 = 0;
 	if (!("y0" in this)) this.y0 = 0;
 	this.e = Math.sqrt(this.es);
-	if (this.lat_ts) if (this.sphere) this.k0 = Math.cos(this.lat_ts);
-	else this.k0 = msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts));
-	else if (!this.k0) if (this.k) this.k0 = this.k;
-	else this.k0 = 1;
+	if (this.lat_ts) {
+		if (this.sphere) this.k0 = Math.cos(this.lat_ts);
+		else this.k0 = msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts));
+	} else if (!this.k0) {
+		if (this.k) this.k0 = this.k;
+		else this.k0 = 1;
+	}
 }
 function forward$33(p) {
 	var lon = p.x;
@@ -6695,7 +6699,7 @@ function _readGeotiffGrid() {
 			var data = yield image.readRasters();
 			var lim = [image.getWidth(), image.getHeight()];
 			var imageBBoxRadians = image.getBoundingBox().map(degreesToRadians);
-			var modelPixelScale = typeof image.fileDirectory.getValue === "function" ? image.fileDirectory.getValue("ModelPixelScale") : 			/** @type {any} */ image.fileDirectory.ModelPixelScale;
+			var modelPixelScale = typeof image.fileDirectory.getValue === "function" ? image.fileDirectory.getValue("ModelPixelScale") : /** @type {any} */ image.fileDirectory.ModelPixelScale;
 			var del = [modelPixelScale[0], modelPixelScale[1]].map(degreesToRadians);
 			var maxX = imageBBoxRadians[0] + (lim[0] - 1) * del[0];
 			var minY = imageBBoxRadians[3] - (lim[1] - 1) * del[1];
@@ -8283,9 +8287,10 @@ function forward$31(p) {
 			x = .5 * this.a * this.k0 * Math.log((1 + b) / (1 - b)) + this.x0;
 			y = cos_phi * Math.cos(delta_lon) / Math.sqrt(1 - Math.pow(b, 2));
 			b = Math.abs(y);
-			if (b >= 1) if (b - 1 > 1e-10) return 93;
-			else y = 0;
-			else y = Math.acos(y);
+			if (b >= 1) {
+				if (b - 1 > 1e-10) return 93;
+				else y = 0;
+			} else y = Math.acos(y);
 			if (lat < 0) y = -y;
 			y = this.a * this.k0 * (y - this.lat0) + this.y0;
 		}
@@ -8774,8 +8779,10 @@ function init$28() {
 	if (this.sphere) {
 		if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10) this.k0 = .5 * (1 + sign_default(this.lat0) * Math.sin(this.lat_ts));
 	} else {
-		if (Math.abs(this.coslat0) <= 1e-10) if (this.lat0 > 0) this.con = 1;
-		else this.con = -1;
+		if (Math.abs(this.coslat0) <= 1e-10) {
+			if (this.lat0 > 0) this.con = 1;
+			else this.con = -1;
+		}
 		this.cons = Math.sqrt(Math.pow(1 + this.e, 1 + this.e) * Math.pow(1 - this.e, 1 - this.e));
 		if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10 && Math.abs(Math.cos(this.lat_ts)) > 1e-10) this.k0 = .5 * this.cons * msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts)) / tsfnz_default(this.e, this.con * this.lat_ts, this.con * Math.sin(this.lat_ts));
 		this.ms1 = msfnz_default(this.e, this.sinlat0, this.coslat0);
@@ -8837,9 +8844,10 @@ function inverse$27(p) {
 			return p;
 		}
 		lat = Math.asin(Math.cos(c) * this.sinlat0 + p.y * Math.sin(c) * this.coslat0 / rh);
-		if (Math.abs(this.coslat0) < 1e-10) if (this.lat0 > 0) lon = adjust_lon_default(this.long0 + Math.atan2(p.x, -1 * p.y), this.over);
-		else lon = adjust_lon_default(this.long0 + Math.atan2(p.x, p.y), this.over);
-		else lon = adjust_lon_default(this.long0 + Math.atan2(p.x * Math.sin(c), rh * this.coslat0 * Math.cos(c) - p.y * this.sinlat0 * Math.sin(c)), this.over);
+		if (Math.abs(this.coslat0) < 1e-10) {
+			if (this.lat0 > 0) lon = adjust_lon_default(this.long0 + Math.atan2(p.x, -1 * p.y), this.over);
+			else lon = adjust_lon_default(this.long0 + Math.atan2(p.x, p.y), this.over);
+		} else lon = adjust_lon_default(this.long0 + Math.atan2(p.x * Math.sin(c), rh * this.coslat0 * Math.cos(c) - p.y * this.sinlat0 * Math.sin(c)), this.over);
 		p.x = lon;
 		p.y = lat;
 		return p;
@@ -9535,7 +9543,6 @@ function init$22() {
 				this.dd = Math.cos(this.lat0) / (Math.sqrt(1 - this.es * sinphi * sinphi) * this.rq * this.cosb1);
 				this.ymf = (this.xmf = this.rq) / this.dd;
 				this.xmf *= this.dd;
-				break;
 		}
 	} else if (this.mode === 4) {
 		this.sinph0 = Math.sin(this.lat0);
@@ -9591,7 +9598,6 @@ function forward$21(p) {
 			case this.S_POLE:
 				b = phi - HALF_PI;
 				q = this.qp + q;
-				break;
 		}
 		if (Math.abs(b) < 1e-10) return null;
 		switch (this.mode) {
@@ -9603,12 +9609,10 @@ function forward$21(p) {
 				x = this.xmf * b * cosb * sinlam;
 				break;
 			case this.N_POLE:
-			case this.S_POLE:
-				if (q >= 0) {
-					x = (b = Math.sqrt(q)) * sinlam;
-					y = coslam * (this.mode === this.S_POLE ? b : -b);
-				} else x = y = 0;
-				break;
+			case this.S_POLE: if (q >= 0) {
+				x = (b = Math.sqrt(q)) * sinlam;
+				y = coslam * (this.mode === this.S_POLE ? b : -b);
+			} else x = y = 0;
 		}
 	}
 	p.x = this.a * x + this.x0;
@@ -9646,9 +9650,7 @@ function inverse$21(p) {
 				y = -y;
 				phi = HALF_PI - phi;
 				break;
-			case this.S_POLE:
-				phi -= HALF_PI;
-				break;
+			case this.S_POLE: phi -= HALF_PI;
 		}
 		lam = y === 0 && (this.mode === this.EQUIT || this.mode === this.OBLIQ) ? 0 : Math.atan2(x, y);
 	} else {
@@ -9911,8 +9913,10 @@ var gnom_default = {
 //#region node_modules/proj4/lib/common/iqsfnz.js
 function iqsfnz_default(eccent, q) {
 	var temp = 1 - (1 - eccent * eccent) / (2 * eccent) * Math.log((1 - eccent) / (1 + eccent));
-	if (Math.abs(Math.abs(q) - temp) < 1e-6) if (q < 0) return -1 * HALF_PI;
-	else return HALF_PI;
+	if (Math.abs(Math.abs(q) - temp) < 1e-6) {
+		if (q < 0) return -1 * HALF_PI;
+		else return HALF_PI;
+	}
 	var phi = Math.asin(.5 * q);
 	var dphi;
 	var sin_phi;
@@ -10051,14 +10055,15 @@ function forward$16(p) {
 	var x, y, el;
 	var dlon = adjust_lon_default(lon - this.long0, this.over);
 	el = dlon * Math.sin(lat);
-	if (this.sphere) if (Math.abs(lat) <= 1e-10) {
-		x = this.a * dlon;
-		y = -1 * this.a * this.lat0;
-	} else {
-		x = this.a * Math.sin(el) / Math.tan(lat);
-		y = this.a * (adjust_lat_default(lat - this.lat0) + (1 - Math.cos(el)) / Math.tan(lat));
-	}
-	else if (Math.abs(lat) <= 1e-10) {
+	if (this.sphere) {
+		if (Math.abs(lat) <= 1e-10) {
+			x = this.a * dlon;
+			y = -1 * this.a * this.lat0;
+		} else {
+			x = this.a * Math.sin(el) / Math.tan(lat);
+			y = this.a * (adjust_lat_default(lat - this.lat0) + (1 - Math.cos(el)) / Math.tan(lat));
+		}
+	} else if (Math.abs(lat) <= 1e-10) {
 		x = this.a * dlon;
 		y = -1 * this.ml0;
 	} else {
@@ -10076,26 +10081,27 @@ function inverse$16(p) {
 	var phi, dphi;
 	x = p.x - this.x0;
 	y = p.y - this.y0;
-	if (this.sphere) if (Math.abs(y + this.a * this.lat0) <= 1e-10) {
-		lon = adjust_lon_default(x / this.a + this.long0, this.over);
-		lat = 0;
-	} else {
-		al = this.lat0 + y / this.a;
-		bl = x * x / this.a / this.a + al * al;
-		phi = al;
-		var tanphi;
-		for (i = MAX_ITER$1; i; --i) {
-			tanphi = Math.tan(phi);
-			dphi = -1 * (al * (phi * tanphi + 1) - phi - .5 * (phi * phi + bl) * tanphi) / ((phi - al) / tanphi - 1);
-			phi += dphi;
-			if (Math.abs(dphi) <= 1e-10) {
-				lat = phi;
-				break;
+	if (this.sphere) {
+		if (Math.abs(y + this.a * this.lat0) <= 1e-10) {
+			lon = adjust_lon_default(x / this.a + this.long0, this.over);
+			lat = 0;
+		} else {
+			al = this.lat0 + y / this.a;
+			bl = x * x / this.a / this.a + al * al;
+			phi = al;
+			var tanphi;
+			for (i = MAX_ITER$1; i; --i) {
+				tanphi = Math.tan(phi);
+				dphi = -1 * (al * (phi * tanphi + 1) - phi - .5 * (phi * phi + bl) * tanphi) / ((phi - al) / tanphi - 1);
+				phi += dphi;
+				if (Math.abs(dphi) <= 1e-10) {
+					lat = phi;
+					break;
+				}
 			}
+			lon = adjust_lon_default(this.long0 + Math.asin(x * Math.tan(phi) / this.a) / Math.sin(lat), this.over);
 		}
-		lon = adjust_lon_default(this.long0 + Math.asin(x * Math.tan(phi) / this.a) / Math.sin(lat), this.over);
-	}
-	else if (Math.abs(y + this.ml0) <= 1e-10) {
+	} else if (Math.abs(y + this.ml0) <= 1e-10) {
 		lat = 0;
 		lon = adjust_lon_default(this.long0 + x / this.a, this.over);
 	} else {
@@ -10655,8 +10661,10 @@ function inverse$9(p) {
 	a1 = (c1 - c2 * c2 / 3 / c3) / c3;
 	m1 = 2 * Math.sqrt(-a1 / 3);
 	con = 3 * d / a1 / m1;
-	if (Math.abs(con) > 1) if (con >= 0) con = 1;
-	else con = -1;
+	if (Math.abs(con) > 1) {
+		if (con >= 0) con = 1;
+		else con = -1;
+	}
 	th1 = Math.acos(con) / 3;
 	if (p.y >= 0) lat = (-m1 * Math.cos(th1 + Math.PI / 3) - c2 / 3 / c3) * Math.PI;
 	else lat = -(-m1 * Math.cos(th1 + Math.PI / 3) - c2 / 3 / c3) * Math.PI;
@@ -10802,23 +10810,24 @@ function forward$8(p) {
 	var cosphi = Math.cos(p.y);
 	var dlon = adjust_lon_default(lon - this.long0, this.over);
 	var e0, e1, e2, e3, Mlp, Ml, c, kp, cos_c, vars, azi1;
-	if (this.sphere) if (Math.abs(this.sin_p12 - 1) <= 1e-10) {
-		p.x = this.x0 + this.a * (HALF_PI - lat) * Math.sin(dlon);
-		p.y = this.y0 - this.a * (HALF_PI - lat) * Math.cos(dlon);
-		return p;
-	} else if (Math.abs(this.sin_p12 + 1) <= 1e-10) {
-		p.x = this.x0 + this.a * (HALF_PI + lat) * Math.sin(dlon);
-		p.y = this.y0 + this.a * (HALF_PI + lat) * Math.cos(dlon);
-		return p;
+	if (this.sphere) {
+		if (Math.abs(this.sin_p12 - 1) <= 1e-10) {
+			p.x = this.x0 + this.a * (HALF_PI - lat) * Math.sin(dlon);
+			p.y = this.y0 - this.a * (HALF_PI - lat) * Math.cos(dlon);
+			return p;
+		} else if (Math.abs(this.sin_p12 + 1) <= 1e-10) {
+			p.x = this.x0 + this.a * (HALF_PI + lat) * Math.sin(dlon);
+			p.y = this.y0 + this.a * (HALF_PI + lat) * Math.cos(dlon);
+			return p;
+		} else {
+			cos_c = this.sin_p12 * sinphi + this.cos_p12 * cosphi * Math.cos(dlon);
+			c = Math.acos(cos_c);
+			kp = c ? c / Math.sin(c) : 1;
+			p.x = this.x0 + this.a * kp * cosphi * Math.sin(dlon);
+			p.y = this.y0 + this.a * kp * (this.cos_p12 * sinphi - this.sin_p12 * cosphi * Math.cos(dlon));
+			return p;
+		}
 	} else {
-		cos_c = this.sin_p12 * sinphi + this.cos_p12 * cosphi * Math.cos(dlon);
-		c = Math.acos(cos_c);
-		kp = c ? c / Math.sin(c) : 1;
-		p.x = this.x0 + this.a * kp * cosphi * Math.sin(dlon);
-		p.y = this.y0 + this.a * kp * (this.cos_p12 * sinphi - this.sin_p12 * cosphi * Math.cos(dlon));
-		return p;
-	}
-	else {
 		e0 = e0fn_default(this.es);
 		e1 = e1fn_default(this.es);
 		e2 = e2fn_default(this.es);
@@ -10863,9 +10872,10 @@ function inverse$8(p) {
 		else {
 			lat = asinz_default(cosz * this.sin_p12 + p.y * sinz * this.cos_p12 / rh);
 			con = Math.abs(this.lat0) - HALF_PI;
-			if (Math.abs(con) <= 1e-10) if (this.lat0 >= 0) lon = adjust_lon_default(this.long0 + Math.atan2(p.x, -p.y), this.over);
-			else lon = adjust_lon_default(this.long0 - Math.atan2(-p.x, p.y), this.over);
-			else lon = adjust_lon_default(this.long0 + Math.atan2(p.x * sinz, rh * this.cos_p12 * cosz - p.y * this.sin_p12 * sinz), this.over);
+			if (Math.abs(con) <= 1e-10) {
+				if (this.lat0 >= 0) lon = adjust_lon_default(this.long0 + Math.atan2(p.x, -p.y), this.over);
+				else lon = adjust_lon_default(this.long0 - Math.atan2(-p.x, p.y), this.over);
+			} else lon = adjust_lon_default(this.long0 + Math.atan2(p.x * sinz, rh * this.cos_p12 * cosz - p.y * this.sin_p12 * sinz), this.over);
 		}
 		p.x = lon;
 		p.y = lat;
@@ -11678,9 +11688,7 @@ function forward$3(p) {
 		case mode.S_POLE:
 			y = -sinphi;
 			break;
-		case mode.N_POLE:
-			y = sinphi;
-			break;
+		case mode.N_POLE: y = sinphi;
 	}
 	y = this.pn1 / (this.p - y);
 	x = y * cosphi * Math.sin(p.x);
@@ -11694,9 +11702,7 @@ function forward$3(p) {
 		case mode.N_POLE:
 			y *= -(cosphi * coslam);
 			break;
-		case mode.S_POLE:
-			y *= cosphi * coslam;
-			break;
+		case mode.S_POLE: y *= cosphi * coslam;
 	}
 	var yt = y * this.cg + x * this.sg, ba = 1 / (yt * this.sw * this.h1 + this.cw);
 	x = (x * this.cg - y * this.sg) * this.cw * ba;
@@ -11740,9 +11746,7 @@ function inverse$3(p) {
 				r.y = Math.asin(cosz);
 				p.y = -p.y;
 				break;
-			case mode.S_POLE:
-				r.y = -Math.asin(cosz);
-				break;
+			case mode.S_POLE: r.y = -Math.asin(cosz);
 		}
 		r.x = Math.atan2(p.x, p.y);
 	}
@@ -11983,8 +11987,8 @@ function inverse$1(p) {
 		p.x /= this.rqda;
 		p.y /= this.rqda;
 	}
-	var EPS = 1e-9, NITER = 12, paramLat = p.y, paramLatSq, paramLatPow6, fy, fpy, dlat, i;
-	for (i = 0; i < NITER; ++i) {
+	var EPS = 1e-9, NITER = 12, paramLat = p.y, paramLatSq, paramLatPow6, fy, fpy, dlat, i = 0;
+	for (; i < NITER; ++i) {
 		paramLatSq = paramLat * paramLat;
 		paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
 		fy = paramLat * (A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq)) - p.y;
@@ -12826,8 +12830,10 @@ function isBoolean(x) {
 var buildGetDefaultMiddleware = () => function getDefaultMiddleware(options) {
 	const { thunk: thunk$1 = true, immutableCheck = true, serializableCheck = true, actionCreatorCheck = true } = options !== null && options !== void 0 ? options : {};
 	let middlewareArray = new Tuple();
-	if (thunk$1) if (isBoolean(thunk$1)) middlewareArray.push(thunk);
-	else middlewareArray.push(withExtraArgument(thunk$1.extraArgument));
+	if (thunk$1) {
+		if (isBoolean(thunk$1)) middlewareArray.push(thunk);
+		else middlewareArray.push(withExtraArgument(thunk$1.extraArgument));
+	}
 	return middlewareArray;
 };
 var SHOULD_AUTOBATCH = "RTK_autoBatch";
@@ -13461,9 +13467,11 @@ function clone(object) {
 		var _ref3 = _slicedToArray(_ref2, 2);
 		const property = _ref3[0];
 		const value = _ref3[1];
-		if (objectHasOwnProperty(object, property)) if (arrayIsArray(value)) newObject[property] = cleanArray(value);
-		else if (value && typeof value === "object" && value.constructor === Object) newObject[property] = clone(value);
-		else newObject[property] = value;
+		if (objectHasOwnProperty(object, property)) {
+			if (arrayIsArray(value)) newObject[property] = cleanArray(value);
+			else if (value && typeof value === "object" && value.constructor === Object) newObject[property] = clone(value);
+			else newObject[property] = value;
+		}
 	}
 	return newObject;
 }
@@ -14847,12 +14855,14 @@ function createDOMPurify() {
 				element.removeAttribute(name);
 			} catch (_) {}
 		}
-		if (name === "is") if (RETURN_DOM || RETURN_DOM_FRAGMENT) try {
-			_forceRemove(element);
-		} catch (_) {}
-		else try {
-			element.setAttribute(name, "");
-		} catch (_) {}
+		if (name === "is") {
+			if (RETURN_DOM || RETURN_DOM_FRAGMENT) try {
+				_forceRemove(element);
+			} catch (_) {}
+			else try {
+				element.setAttribute(name, "");
+			} catch (_) {}
+		}
 	};
 	/**
 	* _stripDisallowedAttributes
@@ -17259,19 +17269,20 @@ var Resizable = function(_super) {
 		var _this = this;
 		var _a = this.props, enable = _a.enable, handleStyles = _a.handleStyles, handleClasses = _a.handleClasses, handleWrapperStyle = _a.handleWrapperStyle, handleWrapperClass = _a.handleWrapperClass, handleComponent = _a.handleComponent;
 		if (!enable) return null;
+		var resizers = Object.keys(enable).map(function(dir) {
+			if (enable[dir] !== false) return (0, import_jsx_runtime.jsx)(Resizer, {
+				direction: dir,
+				onResizeStart: _this.onResizeStart,
+				replaceStyles: handleStyles && handleStyles[dir],
+				className: handleClasses && handleClasses[dir],
+				children: handleComponent && handleComponent[dir] ? handleComponent[dir] : null
+			}, dir);
+			return null;
+		});
 		return (0, import_jsx_runtime.jsx)("div", {
 			className: handleWrapperClass,
 			style: handleWrapperStyle,
-			children: Object.keys(enable).map(function(dir) {
-				if (enable[dir] !== false) return (0, import_jsx_runtime.jsx)(Resizer, {
-					direction: dir,
-					onResizeStart: _this.onResizeStart,
-					replaceStyles: handleStyles && handleStyles[dir],
-					className: handleClasses && handleClasses[dir],
-					children: handleComponent && handleComponent[dir] ? handleComponent[dir] : null
-				}, dir);
-				return null;
-			})
+			children: resizers
 		});
 	};
 	Resizable.prototype.render = function() {
@@ -17293,7 +17304,8 @@ var Resizable = function(_super) {
 			flexShrink: 0
 		});
 		if (this.state.flexBasis) style.flexBasis = this.state.flexBasis;
-		return (0, import_jsx_runtime.jsxs)(this.props.as || "div", __assign$1({
+		var Wrapper = this.props.as || "div";
+		return (0, import_jsx_runtime.jsxs)(Wrapper, __assign$1({
 			style,
 			className: this.props.className
 		}, extendsProps, {
@@ -17671,11 +17683,13 @@ var Rnd = function(_super) {
 			"topLeft",
 			"bottomLeft",
 			"topRight"
-		].includes(direction)) if (direction === "bottomLeft") newPos.x += left;
-		else if (direction === "topRight") newPos.y += top;
-		else {
-			newPos.x += left;
-			newPos.y += top;
+		].includes(direction)) {
+			if (direction === "bottomLeft") newPos.x += left;
+			else if (direction === "topRight") newPos.y += top;
+			else {
+				newPos.x += left;
+				newPos.y += top;
+			}
 		}
 		var draggableState = this.draggable.state;
 		if (newPos.x !== draggableState.x || newPos.y !== draggableState.y) (0, import_react_dom.flushSync)(function() {
@@ -17851,7 +17865,7 @@ var Rnd = function(_super) {
 }(import_react.PureComponent);
 //#endregion
 //#region node_modules/papaparse/papaparse.min.js
-var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
 	/* @license
 	Papa Parse
 	v5.5.4
@@ -17860,7 +17874,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 	*/
 	((e, t) => {
 		"function" == typeof define && define.amd ? define([], t) : "object" == typeof module && "undefined" != typeof exports ? module.exports = t() : e.Papa = t();
-	})(exports, function r() {
+	})(this$1, function r() {
 		var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
 		var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || !1, o = {}, h = 0, v = {};
 		function P(e) {
@@ -18499,8 +18513,10 @@ function convertLine(ring, out, tolerance, isPolygon) {
 		const x = projectX(ring[j][0]);
 		const y = projectY(ring[j][1]);
 		out.push(x, y, 0);
-		if (j > 0) if (isPolygon) size += (x0 * y - x * y0) / 2;
-		else size += Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
+		if (j > 0) {
+			if (isPolygon) size += (x0 * y - x * y0) / 2;
+			else size += Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
+		}
 		x0 = x;
 		y0 = y;
 	}
@@ -18559,10 +18575,12 @@ function clip(features, scale, k1, k2, axis, minAll, maxAll, options) {
 				for (const line of newGeometry) clipped.push(createFeature(feature.id, type, line, feature.tags));
 				continue;
 			}
-			if (type === "LineString" || type === "MultiLineString") if (newGeometry.length === 1) {
-				type = "LineString";
-				newGeometry = newGeometry[0];
-			} else type = "MultiLineString";
+			if (type === "LineString" || type === "MultiLineString") {
+				if (newGeometry.length === 1) {
+					type = "LineString";
+					newGeometry = newGeometry[0];
+				} else type = "MultiLineString";
+			}
 			if (type === "Point" || type === "MultiPoint") type = newGeometry.length === 3 ? "Point" : "MultiPoint";
 			clipped.push(createFeature(feature.id, type, newGeometry, feature.tags));
 		}
@@ -19081,7 +19099,6 @@ var p = function(r) {
 var b = function(e, r, n) {
 	return void 0 === r && (r = 0), void 0 === n && (n = Math.pow(10, r)), Math.round(n * e) / n;
 };
-360 / (2 * Math.PI);
 var E = function(e) {
 	return L(C(e));
 };
@@ -19267,10 +19284,9 @@ function X(e, n, u, l) {
 		}, [s])
 	];
 }
-var Y;
 var U = "undefined" != typeof window ? import_react.useLayoutEffect : import_react.useEffect;
 var V = function() {
-	return Y || ("undefined" != typeof __webpack_nonce__ ? __webpack_nonce__ : void 0);
+	return "undefined" != typeof __webpack_nonce__ ? __webpack_nonce__ : void 0;
 };
 var $ = /* @__PURE__ */ new WeakMap();
 var G = function(e) {

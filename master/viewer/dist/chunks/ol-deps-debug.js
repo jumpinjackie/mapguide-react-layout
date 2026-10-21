@@ -83,9 +83,11 @@ var RBush = class {
 			for (let i = 0; i < node.children.length; i++) {
 				const child = node.children[i];
 				const childBBox = node.leaf ? toBBox(child) : child;
-				if (intersects(bbox, childBBox)) if (node.leaf) result.push(child);
-				else if (contains(bbox, childBBox)) this._all(child, result);
-				else nodesToSearch.push(child);
+				if (intersects(bbox, childBBox)) {
+					if (node.leaf) result.push(child);
+					else if (contains(bbox, childBBox)) this._all(child, result);
+					else nodesToSearch.push(child);
+				}
 			}
 			node = nodesToSearch.pop();
 		}
@@ -334,11 +336,12 @@ var RBush = class {
 		for (let i = level; i >= 0; i--) extend(path[i], bbox);
 	}
 	_condense(path) {
-		for (let i = path.length - 1, siblings; i >= 0; i--) if (path[i].children.length === 0) if (i > 0) {
-			siblings = path[i - 1].children;
-			siblings.splice(siblings.indexOf(path[i]), 1);
-		} else this.clear();
-		else calcBBox(path[i], this.toBBox);
+		for (let i = path.length - 1, siblings; i >= 0; i--) if (path[i].children.length === 0) {
+			if (i > 0) {
+				siblings = path[i - 1].children;
+				siblings.splice(siblings.indexOf(path[i]), 1);
+			} else this.clear();
+		} else calcBBox(path[i], this.toBBox);
 	}
 };
 function findItem(item, items, equalsFn) {
@@ -420,7 +423,7 @@ function multiSelect(arr, left, right, n, compare) {
 }
 //#endregion
 //#region node_modules/pbf/index.js
-var SHIFT_LEFT_32 = 65536 * 65536;
+var SHIFT_LEFT_32 = 4294967296;
 var SHIFT_RIGHT_32 = 1 / SHIFT_LEFT_32;
 var TEXT_DECODER_MIN_LENGTH = 12;
 var utf8TextDecoder = typeof TextDecoder === "undefined" ? null : new TextDecoder("utf-8");
@@ -1112,25 +1115,27 @@ function readUtf8(buf, pos, end) {
 function writeUtf8(buf, str, pos) {
 	for (let i = 0, c, lead; i < str.length; i++) {
 		c = str.charCodeAt(i);
-		if (c > 55295 && c < 57344) if (lead) if (c < 56320) {
-			buf[pos++] = 239;
-			buf[pos++] = 191;
-			buf[pos++] = 189;
-			lead = c;
-			continue;
-		} else {
-			c = lead - 55296 << 10 | c - 56320 | 65536;
-			lead = null;
-		}
-		else {
-			if (c > 56319 || i + 1 === str.length) {
-				buf[pos++] = 239;
-				buf[pos++] = 191;
-				buf[pos++] = 189;
-			} else lead = c;
-			continue;
-		}
-		else if (lead) {
+		if (c > 55295 && c < 57344) {
+			if (lead) {
+				if (c < 56320) {
+					buf[pos++] = 239;
+					buf[pos++] = 191;
+					buf[pos++] = 189;
+					lead = c;
+					continue;
+				} else {
+					c = lead - 55296 << 10 | c - 56320 | 65536;
+					lead = null;
+				}
+			} else {
+				if (c > 56319 || i + 1 === str.length) {
+					buf[pos++] = 239;
+					buf[pos++] = 191;
+					buf[pos++] = 189;
+				} else lead = c;
+				continue;
+			}
+		} else if (lead) {
 			buf[pos++] = 239;
 			buf[pos++] = 191;
 			buf[pos++] = 189;

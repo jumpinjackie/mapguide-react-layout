@@ -1,7 +1,7 @@
 import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./rolldown-runtime-debug.js";
 import { a as inflate_1, n as ZSTDDecoder, r as require_LercDecode, t as ZSTDDecoder$1 } from "./geotiff-codecs-debug.js";
 import { a as getFloat16, i as getAttribute, n as browser_default, r as findTagsByName, t as QuickLRU } from "./geotiff-deps-debug.js";
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/typeof.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/typeof.js
 function _typeof(o) {
 	"@babel/helpers - typeof";
 	return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o) {
@@ -11,7 +11,7 @@ function _typeof(o) {
 	}, _typeof(o);
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/toPrimitive.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/toPrimitive.js
 function toPrimitive(t, r) {
 	if ("object" != _typeof(t) || !t) return t;
 	var e = t[Symbol.toPrimitive];
@@ -23,13 +23,13 @@ function toPrimitive(t, r) {
 	return ("string" === r ? String : Number)(t);
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/toPropertyKey.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/toPropertyKey.js
 function toPropertyKey(t) {
 	var i = toPrimitive(t, "string");
 	return "symbol" == _typeof(i) ? i : i + "";
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/defineProperty.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/defineProperty.js
 function _defineProperty(e, r, t) {
 	return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
 		value: t,
@@ -39,7 +39,7 @@ function _defineProperty(e, r, t) {
 	}) : e[r] = t, e;
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectSpread2.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/objectSpread2.js
 function ownKeys(e, r) {
 	var t = Object.keys(e);
 	if (Object.getOwnPropertySymbols) {
@@ -62,7 +62,7 @@ function _objectSpread2(e) {
 	return e;
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/asyncToGenerator.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/asyncToGenerator.js
 function asyncGeneratorStep(n, t, e, r, o, a, c) {
 	try {
 		var i = n[a](c), u = i.value;
@@ -94,10 +94,29 @@ var assetsURL = function(dep, importerUrl) {
 	return new URL(dep, importerUrl).href;
 };
 var seen = {};
+var isCssPreloadUrl = function isCssPreloadUrl(url) {
+	return url.pathname.endsWith(".css");
+};
+var preloadOnce = function preloadOnce(seen, href, preload) {
+	if (href in seen) return seen[href];
+	const promise = preload();
+	if (!promise) {
+		seen[href] = void 0;
+		return;
+	}
+	const preloadPromise = promise.then(() => {
+		seen[href] = void 0;
+	}, (err) => {
+		seen[href] = void 0;
+		throw err;
+	});
+	seen[href] = preloadPromise;
+	return preloadPromise;
+};
 var __vitePreload = function preload(baseModule, deps, importerUrl) {
 	let promise = Promise.resolve();
 	if (deps && deps.length > 0) {
-		const links = document.getElementsByTagName("link");
+		let preloadedHrefs;
 		const cspNonceMeta = document.querySelector("meta[property=csp-nonce]");
 		const cspNonce = (cspNonceMeta === null || cspNonceMeta === void 0 ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta === null || cspNonceMeta === void 0 ? void 0 : cspNonceMeta.getAttribute("nonce"));
 		function allSettled(promises) {
@@ -110,35 +129,44 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 			}))));
 		}
 		function importMetaResolve(specifier) {
-			if (import.meta.resolve) return import.meta.resolve(specifier);
+			if (import.meta.resolve) return new URL(import.meta.resolve(specifier));
 			return new URL(
 				specifier,
 				/** #__KEEP__ */
 				import.meta.url
-			).href;
+			);
 		}
-		promise = allSettled(deps.map((dep) => {
-			dep = assetsURL(dep, importerUrl);
-			dep = importMetaResolve(dep);
-			if (dep in seen) return;
-			seen[dep] = true;
-			const isCss = dep.endsWith(".css");
-			for (let i = links.length - 1; i >= 0; i--) {
-				const link = links[i];
-				if (link.href === dep && (!isCss || link.rel === "stylesheet")) return;
-			}
-			const link = document.createElement("link");
-			link.rel = isCss ? "stylesheet" : scriptRel;
-			if (!isCss) link.as = "script";
-			link.crossOrigin = "";
-			link.href = dep;
-			if (cspNonce) link.setAttribute("nonce", cspNonce);
-			document.head.appendChild(link);
-			if (isCss) return new Promise((res, rej) => {
-				link.addEventListener("load", res);
-				link.addEventListener("error", () => rej(/* @__PURE__ */ new Error(`Unable to preload CSS for ${dep}`)));
+		promise = allSettled(deps.map((depString) => {
+			depString = assetsURL(depString, importerUrl);
+			const dep = importMetaResolve(depString);
+			const isCss = isCssPreloadUrl(dep);
+			return preloadOnce(seen, dep.href, () => {
+				if (preloadedHrefs === void 0) {
+					preloadedHrefs = {
+						all: /* @__PURE__ */ new Set(),
+						styles: /* @__PURE__ */ new Set()
+					};
+					const links = document.getElementsByTagName("link");
+					for (let i = links.length - 1; i >= 0; i--) {
+						const link = links[i];
+						preloadedHrefs.all.add(link.href);
+						if (link.rel === "stylesheet") preloadedHrefs.styles.add(link.href);
+					}
+				}
+				if ((isCss ? preloadedHrefs.styles : preloadedHrefs.all).has(dep.href)) return;
+				const link = document.createElement("link");
+				link.rel = isCss ? "stylesheet" : scriptRel;
+				if (!isCss) link.as = "script";
+				link.crossOrigin = "";
+				link.href = dep.href;
+				if (cspNonce) link.setAttribute("nonce", cspNonce);
+				document.head.appendChild(link);
+				if (isCss) return new Promise((res, rej) => {
+					link.addEventListener("load", res);
+					link.addEventListener("error", () => rej(/* @__PURE__ */ new Error(`Unable to preload CSS for ${dep}`)));
+				});
 			});
-		}));
+		}).filter((p) => p !== void 0));
 	}
 	function handlePreloadError(err) {
 		const e = new Event("vite:preloadError", { cancelable: true });
@@ -1702,8 +1730,10 @@ function fromEPSG4326(input, output, dimension, stride) {
 	const length = input.length;
 	dimension = dimension > 1 ? dimension : 2;
 	stride = (_stride = stride) !== null && _stride !== void 0 ? _stride : dimension;
-	if (output === void 0) if (dimension > 2) output = input.slice();
-	else output = new Array(length);
+	if (output === void 0) {
+		if (dimension > 2) output = input.slice();
+		else output = new Array(length);
+	}
 	for (let i = 0; i < length; i += stride) {
 		output[i] = HALF_SIZE * input[i] / 180;
 		let y = RADIUS$1 * Math.log(Math.tan(Math.PI * (+input[i + 1] + 90) / 360));
@@ -1727,8 +1757,10 @@ function toEPSG4326(input, output, dimension, stride) {
 	const length = input.length;
 	dimension = dimension > 1 ? dimension : 2;
 	stride = (_stride2 = stride) !== null && _stride2 !== void 0 ? _stride2 : dimension;
-	if (output === void 0) if (dimension > 2) output = input.slice();
-	else output = new Array(length);
+	if (output === void 0) {
+		if (dimension > 2) output = input.slice();
+		else output = new Array(length);
+	}
 	for (let i = 0; i < length; i += stride) {
 		output[i] = 180 * input[i] / HALF_SIZE;
 		output[i + 1] = 360 * Math.atan(Math.exp(input[i + 1] / RADIUS$1)) / Math.PI - 90;
@@ -1905,8 +1937,8 @@ var K0 = .9996;
 var E = .00669438;
 var E2 = E * E;
 var E3 = E2 * E;
-var E_P2 = E / (1 - E);
-var SQRT_E = Math.sqrt(1 - E);
+var E_P2 = E / .99330562;
+var SQRT_E = Math.sqrt(.99330562);
 var _E = (1 - SQRT_E) / (1 + SQRT_E);
 var _E2 = _E * _E;
 var _E3 = _E2 * _E;
@@ -1939,7 +1971,7 @@ function toLonLat(easting, northing, zone) {
 	const pTan4 = pTan2 * pTan2;
 	const epSin = 1 - E * pSin2;
 	const n = R / Math.sqrt(1 - E * pSin2);
-	const r = (1 - E) / epSin;
+	const r = .99330562 / epSin;
 	const c = E_P2 * Math.pow(pCos, 2);
 	const c2 = c * c;
 	const d = x / (n * K0);
@@ -2042,8 +2074,10 @@ function makeTransformFunction(transformer, zone) {
 		const length = input.length;
 		dimension = dimension > 1 ? dimension : 2;
 		stride = (_stride = stride) !== null && _stride !== void 0 ? _stride : dimension;
-		if (!output) if (dimension > 2) output = input.slice();
-		else output = new Array(length);
+		if (!output) {
+			if (dimension > 2) output = input.slice();
+			else output = new Array(length);
+		}
 		for (let i = 0; i < length; i += stride) {
 			const x = input[i];
 			const y = input[i + 1];
@@ -2418,7 +2452,7 @@ function createTransformFromCoordinateTransform(coordTransform) {
 	* @param {number} [stride] Stride.
 	* @return {Array<number>} Output.
 	*/
-function(input, output, dimension, stride) {
+	function(input, output, dimension, stride) {
 		var _stride;
 		const length = input.length;
 		dimension = dimension !== void 0 ? dimension : 2;
@@ -2754,10 +2788,12 @@ function register(proj4) {
 		for (j = 0; j < len; ++j) {
 			const code2 = projCodes[j];
 			const proj2 = get$2(code2);
-			if (!get$1(code1, code2)) if (proj4.defs[code1] === proj4.defs[code2]) addEquivalentProjections([proj1, proj2]);
-			else {
-				const transform = proj4(code1, code2);
-				addCoordinateTransforms(proj1, proj2, createSafeCoordinateTransform(proj1, proj2, transform.forward), createSafeCoordinateTransform(proj2, proj1, transform.inverse));
+			if (!get$1(code1, code2)) {
+				if (proj4.defs[code1] === proj4.defs[code2]) addEquivalentProjections([proj1, proj2]);
+				else {
+					const transform = proj4(code1, code2);
+					addCoordinateTransforms(proj1, proj2, createSafeCoordinateTransform(proj1, proj2, transform.forward), createSafeCoordinateTransform(proj2, proj1, transform.inverse));
+				}
 			}
 		}
 	}
@@ -2808,7 +2844,7 @@ function _fromProjectionCode() {
 	return _fromProjectionCode.apply(this, arguments);
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectWithoutPropertiesLoose.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/objectWithoutPropertiesLoose.js
 function _objectWithoutPropertiesLoose(r, e) {
 	if (null == r) return {};
 	var t = {};
@@ -2819,7 +2855,7 @@ function _objectWithoutPropertiesLoose(r, e) {
 	return t;
 }
 //#endregion
-//#region \0@oxc-project+runtime@0.139.0/helpers/esm/objectWithoutProperties.js
+//#region \0@oxc-project+runtime@0.154.0/helpers/esm/objectWithoutProperties.js
 function _objectWithoutProperties(e, t) {
 	if (null == e) return {};
 	var o, r, i = _objectWithoutPropertiesLoose(e, t);
@@ -3467,12 +3503,14 @@ var Target = class extends Disposable {
 		const listeners = this.listeners_[type];
 		if (!listeners) return;
 		const index = listeners.indexOf(listener);
-		if (index !== -1) if (this.pendingRemovals_ && type in this.pendingRemovals_) {
-			listeners[index] = VOID;
-			++this.pendingRemovals_[type];
-		} else {
-			listeners.splice(index, 1);
-			if (listeners.length === 0) delete this.listeners_[type];
+		if (index !== -1) {
+			if (this.pendingRemovals_ && type in this.pendingRemovals_) {
+				listeners[index] = VOID;
+				++this.pendingRemovals_[type];
+			} else {
+				listeners.splice(index, 1);
+				if (listeners.length === 0) delete this.listeners_[type];
+			}
 		}
 	}
 };
@@ -5759,7 +5797,7 @@ function drawTestTriangle(ctx, u1, v1, u2, v2) {
 * @return {boolean} true if the diagonal rendering is broken
 */
 function verifyBrokenDiagonalRendering(data, offset) {
-	return Math.abs(data[offset * 4] - 210) > 2 || Math.abs(data[offset * 4 + 3] - .75 * 255) > 2;
+	return Math.abs(data[offset * 4] - 210) > 2 || Math.abs(data[offset * 4 + 3] - 191.25) > 2;
 }
 /**
 * Determines if the current browser configuration can render triangular clip regions correctly.
@@ -5963,8 +6001,8 @@ function render$1(width, height, pixelRatio, sourceResolution, sourceExtent, tar
 			const ud = u0 - u1;
 			const vd = v0 - v1;
 			for (let step = 0; step < steps; step++) {
-				context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound(step * vd / (steps - 1)));
-				if (step != steps - 1) context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound((step + 1) * vd / (steps - 1)));
+				context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound(step * vd / 3));
+				if (step != 3) context.lineTo(u1 + pixelRound((step + 1) * ud / steps), v1 + pixelRound((step + 1) * vd / 3));
 			}
 			context.lineTo(u2, v2);
 		} else {
@@ -6218,10 +6256,12 @@ var Triangulation = class {
 		}
 		let isNotFinite = 0;
 		if (!needsSubdivision) {
-			if (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) || !isFinite(bSrc[0]) || !isFinite(bSrc[1]) || !isFinite(cSrc[0]) || !isFinite(cSrc[1]) || !isFinite(dSrc[0]) || !isFinite(dSrc[1])) if (maxSubdivision > 0) needsSubdivision = true;
-			else {
-				isNotFinite = (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) ? 8 : 0) + (!isFinite(bSrc[0]) || !isFinite(bSrc[1]) ? 4 : 0) + (!isFinite(cSrc[0]) || !isFinite(cSrc[1]) ? 2 : 0) + (!isFinite(dSrc[0]) || !isFinite(dSrc[1]) ? 1 : 0);
-				if (isNotFinite != 1 && isNotFinite != 2 && isNotFinite != 4 && isNotFinite != 8) return;
+			if (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) || !isFinite(bSrc[0]) || !isFinite(bSrc[1]) || !isFinite(cSrc[0]) || !isFinite(cSrc[1]) || !isFinite(dSrc[0]) || !isFinite(dSrc[1])) {
+				if (maxSubdivision > 0) needsSubdivision = true;
+				else {
+					isNotFinite = (!isFinite(aSrc[0]) || !isFinite(aSrc[1]) ? 8 : 0) + (!isFinite(bSrc[0]) || !isFinite(bSrc[1]) ? 4 : 0) + (!isFinite(cSrc[0]) || !isFinite(cSrc[1]) ? 2 : 0) + (!isFinite(dSrc[0]) || !isFinite(dSrc[1]) ? 1 : 0);
+					if (isNotFinite != 1 && isNotFinite != 2 && isNotFinite != 4 && isNotFinite != 8) return;
+				}
 			}
 		}
 		if (maxSubdivision > 0) {
@@ -7736,8 +7776,10 @@ var ReprojDataTile = class extends DataTile {
 			this.state = TileState_default.EMPTY;
 			return;
 		}
-		if (sourceProjExtent) if (!maxSourceExtent) maxSourceExtent = sourceProjExtent;
-		else maxSourceExtent = getIntersection(maxSourceExtent, sourceProjExtent);
+		if (sourceProjExtent) {
+			if (!maxSourceExtent) maxSourceExtent = sourceProjExtent;
+			else maxSourceExtent = getIntersection(maxSourceExtent, sourceProjExtent);
+		}
 		const targetResolution = this.targetTileGrid_.getResolution(this.wrappedTileCoord_[0]);
 		const targetProj = options.targetProj;
 		const sourceResolution = calculateSourceExtentResolution(sourceProj, targetProj, limitedTargetExtent, targetResolution);
@@ -7757,10 +7799,12 @@ var ReprojDataTile = class extends DataTile {
 		}
 		this.sourceZ_ = this.sourceTileGrid_.getZForResolution(sourceResolution);
 		let sourceExtent = this.triangulation_.calculateSourceExtent();
-		if (maxSourceExtent) if (sourceProj.canWrapX()) {
-			sourceExtent[1] = clamp(sourceExtent[1], maxSourceExtent[1], maxSourceExtent[3]);
-			sourceExtent[3] = clamp(sourceExtent[3], maxSourceExtent[1], maxSourceExtent[3]);
-		} else sourceExtent = getIntersection(sourceExtent, maxSourceExtent);
+		if (maxSourceExtent) {
+			if (sourceProj.canWrapX()) {
+				sourceExtent[1] = clamp(sourceExtent[1], maxSourceExtent[1], maxSourceExtent[3]);
+				sourceExtent[3] = clamp(sourceExtent[3], maxSourceExtent[1], maxSourceExtent[3]);
+			} else sourceExtent = getIntersection(sourceExtent, maxSourceExtent);
+		}
 		if (!getArea$1(sourceExtent)) this.state = TileState_default.EMPTY;
 		else {
 			let worldWidth = 0;
@@ -8308,18 +8352,20 @@ var DataTileSource = class extends TileSource {
 		const thisProj = this.getProjection();
 		if (this.tileGrid && (!thisProj || equivalent$1(thisProj, projection)) && !this.transformMatrix) return this.tileGrid;
 		const projKey = getUid(projection);
-		if (!(projKey in this.tileGridForProjection_)) if (this.tileGrid && thisProj && !equivalent$1(thisProj, projection)) {
-			const sourceResolutions = this.tileGrid.getResolutions();
-			const sourceFinestRes = sourceResolutions[sourceResolutions.length - 1];
-			const sourceMetersPerUnit = thisProj.getMetersPerUnit() || 1;
-			const targetMetersPerUnit = projection.getMetersPerUnit() || 1;
-			const targetFinestRes = sourceFinestRes * sourceMetersPerUnit / targetMetersPerUnit;
-			const extent = extentFromProjection(projection);
-			const tileSize = 256;
-			const maxResolution = Math.max(getWidth(extent) / tileSize, getHeight(extent) / tileSize);
-			const maxZoom = Math.max(0, Math.ceil(Math.log2(maxResolution / targetFinestRes)) + 1);
-			this.tileGridForProjection_[projKey] = createForProjection(projection, maxZoom);
-		} else this.tileGridForProjection_[projKey] = getForProjection(projection);
+		if (!(projKey in this.tileGridForProjection_)) {
+			if (this.tileGrid && thisProj && !equivalent$1(thisProj, projection)) {
+				const sourceResolutions = this.tileGrid.getResolutions();
+				const sourceFinestRes = sourceResolutions[sourceResolutions.length - 1];
+				const sourceMetersPerUnit = thisProj.getMetersPerUnit() || 1;
+				const targetMetersPerUnit = projection.getMetersPerUnit() || 1;
+				const targetFinestRes = sourceFinestRes * sourceMetersPerUnit / targetMetersPerUnit;
+				const extent = extentFromProjection(projection);
+				const tileSize = 256;
+				const maxResolution = Math.max(getWidth(extent) / tileSize, getHeight(extent) / tileSize);
+				const maxZoom = Math.max(0, Math.ceil(Math.log2(maxResolution / targetFinestRes)) + 1);
+				this.tileGridForProjection_[projKey] = createForProjection(projection, maxZoom);
+			} else this.tileGridForProjection_[projKey] = getForProjection(projection);
+		}
 		return this.tileGridForProjection_[projKey];
 	}
 	/**
@@ -8798,16 +8844,17 @@ function decodeScan(data, initialOffset, frame, components, resetInterval, spect
 					if (rs === null) throw new Error("Unexpected end of data in AC coefficient decoding");
 					const s = rs & 15;
 					r = rs >> 4;
-					if (s === 0) if (r < 15) {
-						const value = receive(r);
-						if (value === void 0) throw new Error("Unexpected end of data in AC coefficient decoding");
-						eobrun = value + (1 << r);
-						successiveACState = 4;
+					if (s === 0) {
+						if (r < 15) {
+							const value = receive(r);
+							if (value === void 0) throw new Error("Unexpected end of data in AC coefficient decoding");
+							eobrun = value + (1 << r);
+							successiveACState = 4;
+						} else {
+							r = 16;
+							successiveACState = 1;
+						}
 					} else {
-						r = 16;
-						successiveACState = 1;
-					}
-					else {
 						if (s !== 1) throw new Error("invalid ACn encoding");
 						const nextVal = receiveAndExtend(s);
 						if (nextVal === void 0) throw new Error("Unexpected end of data in AC coefficient decoding");
@@ -8837,14 +8884,11 @@ function decodeScan(data, initialOffset, frame, components, resetInterval, spect
 						successiveACState = 0;
 					}
 					break;
-				case 4:
-					if (zz[z]) {
-						const bit = readBit();
-						if (bit === null) throw new Error("Unexpected end of data in AC coefficient decoding");
-						zz[z] += (bit << successive) * direction;
-					}
-					break;
-				default: break;
+				case 4: if (zz[z]) {
+					const bit = readBit();
+					if (bit === null) throw new Error("Unexpected end of data in AC coefficient decoding");
+					zz[z] += (bit << successive) * direction;
+				}
 			}
 			k++;
 		}
@@ -8886,9 +8930,10 @@ function decodeScan(data, initialOffset, frame, components, resetInterval, spect
 	let k;
 	let n;
 	let decodeFn;
-	if (progressive) if (spectralStart === 0) decodeFn = successivePrev === 0 ? decodeDCFirst : decodeDCSuccessive;
-	else decodeFn = successivePrev === 0 ? decodeACFirst : decodeACSuccessive;
-	else decodeFn = decodeBaseline;
+	if (progressive) {
+		if (spectralStart === 0) decodeFn = successivePrev === 0 ? decodeDCFirst : decodeDCSuccessive;
+		else decodeFn = successivePrev === 0 ? decodeACFirst : decodeACSuccessive;
+	} else decodeFn = decodeBaseline;
 	let mcu = 0;
 	let marker;
 	let mcuExpected;
@@ -8949,8 +8994,8 @@ function buildComponentData(component) {
 		let v7;
 		let t;
 		const p = dataIn;
-		let i;
-		for (i = 0; i < 64; i++) p[i] = zz[i] * qt[i];
+		let i = 0;
+		for (; i < 64; i++) p[i] = zz[i] * qt[i];
 		for (i = 0; i < 8; ++i) {
 			const row = 8 * i;
 			if (p[1 + row] === 0 && p[2 + row] === 0 && p[3 + row] === 0 && p[4 + row] === 0 && p[5 + row] === 0 && p[6 + row] === 0 && p[7 + row] === 0) {
@@ -10184,8 +10229,10 @@ function decompress(input) {
 			addToDictionary(oldCode, oldVal[oldVal.length - 1]);
 			oldCode = code;
 		}
-		if (dictionaryLength + 1 >= Math.pow(2, byteLength)) if (byteLength === MAX_BYTELENGTH) oldCode = void 0;
-		else byteLength++;
+		if (dictionaryLength + 1 >= Math.pow(2, byteLength)) {
+			if (byteLength === MAX_BYTELENGTH) oldCode = void 0;
+			else byteLength++;
+		}
 		code = getNext(array);
 	}
 	return new Uint8Array(result);
@@ -10790,19 +10837,13 @@ function arrayForType(format, bitsPerSample, sizeOrData) {
 			else if (bitsPerSample === 16) TypedArrayConstructor = Int16Array;
 			else if (bitsPerSample === 32) TypedArrayConstructor = Int32Array;
 			break;
-		case 3:
-			switch (bitsPerSample) {
-				case 16:
-				case 32:
-					TypedArrayConstructor = Float32Array;
-					break;
-				case 64:
-					TypedArrayConstructor = Float64Array;
-					break;
-				default: break;
-			}
-			break;
-		default: break;
+		case 3: switch (bitsPerSample) {
+			case 16:
+			case 32:
+				TypedArrayConstructor = Float32Array;
+				break;
+			case 64: TypedArrayConstructor = Float64Array;
+		}
 	}
 	if (TypedArrayConstructor) {
 		if (typeof sizeOrData === "number") return new TypedArrayConstructor(sizeOrData);
@@ -10988,17 +11029,13 @@ var GeoTIFFImage = class {
 				else if (bitsPerSample <= 16) return DataView.prototype.getInt16;
 				else if (bitsPerSample <= 32) return DataView.prototype.getInt32;
 				break;
-			case 3:
-				switch (bitsPerSample) {
-					case 16: return function(offset, littleEndian) {
-						return getFloat16(this, offset, littleEndian);
-					};
-					case 32: return DataView.prototype.getFloat32;
-					case 64: return DataView.prototype.getFloat64;
-					default: break;
-				}
-				break;
-			default: break;
+			case 3: switch (bitsPerSample) {
+				case 16: return function(offset, littleEndian) {
+					return getFloat16(this, offset, littleEndian);
+				};
+				case 32: return DataView.prototype.getFloat32;
+				case 64: return DataView.prototype.getFloat64;
+			}
 		}
 		throw Error("Unsupported data format/bitsPerSample");
 	}
@@ -11437,8 +11474,9 @@ var GeoTIFFImage = class {
 			/** @type {Record<string, unknown>} */
 			const metadata = {};
 			if (!_this6.fileDirectory.hasTag("GDAL_METADATA")) return null;
+			const string = yield _this6.fileDirectory.loadValue("GDAL_METADATA");
 			/** @type {Array<{inner: unknown}>} */
-			let items = findTagsByName(yield _this6.fileDirectory.loadValue("GDAL_METADATA"), "Item");
+			let items = findTagsByName(string, "Item");
 			if (sample === null) items = items.filter((item) => getAttribute(item, "sample") === void 0);
 			else items = items.filter((item) => Number(getAttribute(item, "sample")) === sample);
 			for (let i = 0; i < items.length; ++i) {
@@ -11609,12 +11647,14 @@ var DataView64 = class {
 		let carrying = true;
 		for (let i = 0; i < 8; i++) {
 			let byte = this._dataView.getUint8(offset + (littleEndian ? i : 7 - i));
-			if (isNegative) if (carrying) {
-				if (byte !== 0) {
-					byte = ~(byte - 1) & 255;
-					carrying = false;
-				}
-			} else byte = ~byte & 255;
+			if (isNegative) {
+				if (carrying) {
+					if (byte !== 0) {
+						byte = ~(byte - 1) & 255;
+						carrying = false;
+					}
+				} else byte = ~byte & 255;
+			}
 			value += byte * Math.pow(256, i);
 		}
 		if (isNegative) value = -value;
@@ -11813,12 +11853,14 @@ var DataSlice = class {
 		let carrying = true;
 		for (let i = 0; i < 8; i++) {
 			let byte = this._dataView.getUint8(offset + (this._littleEndian ? i : 7 - i));
-			if (isNegative) if (carrying) {
-				if (byte !== 0) {
-					byte = ~(byte - 1) & 255;
-					carrying = false;
-				}
-			} else byte = ~byte & 255;
+			if (isNegative) {
+				if (carrying) {
+					if (byte !== 0) {
+						byte = ~(byte - 1) & 255;
+						carrying = false;
+					}
+				} else byte = ~byte & 255;
+			}
 			value += byte * Math.pow(256, i);
 		}
 		if (isNegative) value = -value;
@@ -13506,8 +13548,6 @@ function getValues(dataSlice, fieldType, count, offset) {
 		case fieldTypes.DOUBLE:
 			values = new Float64Array(count);
 			readMethod = dataSlice.readFloat64;
-			break;
-		default:
 	}
 	if (values === null || readMethod === null) throw new RangeError(`Invalid field type: ${fieldType}`);
 	if (!(fieldType === fieldTypes.RATIONAL || fieldType === fieldTypes.SRATIONAL)) for (let i = 0; i < count; ++i) values[i] = readMethod.call(dataSlice, offset + i * fieldTypeLength);
@@ -14645,15 +14685,17 @@ var GeoTIFFSource = class extends DataTileSource {
 			});
 			/** @type {number|Array<number>} */
 			let fillValue;
-			if ("nodata" in source && source.nodata !== null) if (Array.isArray(source.nodata)) if (samples) fillValue = samples.map(function(sampleIndex) {
-				const v = source.nodata[sampleIndex];
-				return v !== void 0 ? v : nodataValues[sourceIndex][sampleIndex];
-			});
-			else fillValue = source.nodata.map(function(v, i) {
-				return v !== void 0 ? v : nodataValues[sourceIndex][i];
-			});
-			else fillValue = source.nodata;
-			else if (!samples) fillValue = nodataValues[sourceIndex];
+			if ("nodata" in source && source.nodata !== null) {
+				if (Array.isArray(source.nodata)) {
+					if (samples) fillValue = samples.map(function(sampleIndex) {
+						const v = source.nodata[sampleIndex];
+						return v !== void 0 ? v : nodataValues[sourceIndex][sampleIndex];
+					});
+					else fillValue = source.nodata.map(function(v, i) {
+						return v !== void 0 ? v : nodataValues[sourceIndex][i];
+					});
+				} else fillValue = source.nodata;
+			} else if (!samples) fillValue = nodataValues[sourceIndex];
 			else fillValue = samples.map(function(sampleIndex) {
 				return nodataValues[sourceIndex][sampleIndex];
 			});
@@ -14726,10 +14768,14 @@ var GeoTIFFSource = class extends DataTileSource {
 					else bandIndex = sampleIndex;
 					let min = Array.isArray(source.min) ? source.min[bandIndex] : source.min;
 					let max = Array.isArray(source.max) ? source.max[bandIndex] : source.max;
-					if (min === void 0) if (stats && STATISTICS_MINIMUM in stats) min = parseFloat(stats[STATISTICS_MINIMUM]);
-					else min = getMinForDataType(sourceSamples[sourceIndex][0]);
-					if (max === void 0) if (stats && STATISTICS_MAXIMUM in stats) max = parseFloat(stats[STATISTICS_MAXIMUM]);
-					else max = getMaxForDataType(sourceSamples[sourceIndex][0]);
+					if (min === void 0) {
+						if (stats && STATISTICS_MINIMUM in stats) min = parseFloat(stats[STATISTICS_MINIMUM]);
+						else min = getMinForDataType(sourceSamples[sourceIndex][0]);
+					}
+					if (max === void 0) {
+						if (stats && STATISTICS_MAXIMUM in stats) max = parseFloat(stats[STATISTICS_MAXIMUM]);
+						else max = getMaxForDataType(sourceSamples[sourceIndex][0]);
+					}
 					gains[sampleIndex] = 255 / (max - min);
 					biases[sampleIndex] = -min * gains[sampleIndex];
 				}

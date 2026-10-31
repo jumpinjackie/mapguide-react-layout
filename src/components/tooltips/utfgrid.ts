@@ -14,7 +14,7 @@ export class UTFGridTrackingTooltip {
     constructor(private map: olMap,
         private gridSource: UTFGridSource,
         private isContextMenuOpen: () => boolean) {
-        this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
+        this.map.getViewport()?.addEventListener("mouseout", this.onMouseOut.bind(this));
         this.tooltipElement = document.createElement("div");
         this.tooltipElement.className = 'feature-tooltip';
         this.tooltip = new olOverlay({

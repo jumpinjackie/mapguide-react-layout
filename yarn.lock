@@ -6866,7 +6866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"geotiff@npm:^3.0.5 || ^3.1.0-beta.0":
+"geotiff@npm:^3.1.0-beta.0":
   version: 3.1.0-beta.0
   resolution: "geotiff@npm:3.1.0-beta.0"
   dependencies:
@@ -9280,7 +9280,7 @@ __metadata:
     lodash.debounce: "npm:^4.0.8"
     lodash.xor: "npm:^4.5.0"
     lodash.xorby: "npm:^4.7.0"
-    ol: "npm:^10.9.0"
+    ol: "npm:^10.11.0"
     papaparse: "npm:^5.5.3"
     patch-package: "npm:^8.0.0"
     proj4: "npm:2.20.9"
@@ -9826,17 +9826,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ol@npm:^10.9.0":
-  version: 10.9.0
-  resolution: "ol@npm:10.9.0"
+"ol@npm:^10.11.0":
+  version: 10.11.0
+  resolution: "ol@npm:10.11.0"
   dependencies:
     "@types/rbush": "npm:4.0.0"
     earcut: "npm:^3.0.0"
-    geotiff: "npm:^3.0.5 || ^3.1.0-beta.0"
-    pbf: "npm:4.0.1"
+    geotiff: "npm:^3.1.0-beta.0"
+    pbf: "npm:5.1.2"
     rbush: "npm:^4.0.0"
     zarrita: "npm:^0.7.1"
-  checksum: 10c0/f8e955819db2d9c2f46430c81485d8f0a22fb1b0ec654a128e79716b419905e8fd3aadc23185570f45c60e5d1fe926f3593341441dfc35c5f3ed3a5e4a54ec48
+  checksum: 10c0/5ef8669260e16aafa66fa3e4455bdca711087360964ab4c431e02f45c9dac15a16b9c3ff976a76fd4bbc6e62f2bfdfe2fb2884ea3624964913411aa3a6a61d17
   languageName: node
   linkType: hard
 
@@ -10293,14 +10293,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pbf@npm:4.0.1":
-  version: 4.0.1
-  resolution: "pbf@npm:4.0.1"
+"pbf@npm:5.1.2":
+  version: 5.1.2
+  resolution: "pbf@npm:5.1.2"
   dependencies:
     resolve-protobuf-schema: "npm:^2.1.0"
   bin:
     pbf: bin/pbf
-  checksum: 10c0/1a95cc3bdc61ee01d4728f4a57a9f1233732d183a8568818b714a747fd8b957d99b63e1c67f0f72dc5623657c42f88a1a7e44e1fbcd06e2fe2ef9a85a964832e
+  checksum: 10c0/e28e901d61a66c7afdeac881b3e2b0ad2c09df98bcd3bc3447c1a55d7bc866d71415bd7d8fcc8273f23828c0169cc60cb5f7c5beb4a5829e23506c8196460e83
   languageName: node
   linkType: hard
 

@@ -71,7 +71,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.xor": "^4.5.0",
     "lodash.xorby": "^4.7.0",
-    "ol": "^10.9.0",
+    "ol": "^10.11.0",
     "papaparse": "^5.5.3",
     "proj4": "2.20.9",
     "react-colorful": "^5.7.0",

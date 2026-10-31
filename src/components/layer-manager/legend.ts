@@ -143,8 +143,8 @@ export function getLegendImage(item: LegendItemOptions, canvas: HTMLCanvasElemen
                     // Check anchor to center the image
                     if (img.getAnchor) {
                         const anchor = img.getAnchor();
-                        if (anchor) {
-                            const si = img.getSize();
+                        const si = img.getSize();
+                        if (anchor && si) {
                             const dx = anchor[0] - si[0];
                             const dy = anchor[1] - si[1];
                             if (!extent) {

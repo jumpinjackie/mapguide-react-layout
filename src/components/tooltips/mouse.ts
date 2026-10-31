@@ -16,7 +16,7 @@ export class MouseTrackingTooltip {
     constructor(map: olMap, contextMenuTest: () => boolean) {
         this.map = map;
         this.isContextMenuOpen = contextMenuTest;
-        this.map.getViewport().addEventListener("mouseout", this.onMouseOut.bind(this));
+        this.map.getViewport()?.addEventListener("mouseout", this.onMouseOut.bind(this));
         this.tooltipElement = document.createElement("div");
         this.tooltipElement.className = 'tooltip';
         this.tooltip = new olOverlay({

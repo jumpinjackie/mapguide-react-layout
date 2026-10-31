@@ -107,7 +107,7 @@ function createGeoJsonVectorSource(defn: IGenericSubjectMapLayer, mapProjection:
     if (typeof (url) == 'string') {
         const source = new VectorSource<Feature>({
             url: url,
-            format: new GeoJSON(),
+            format: new GeoJSON<Feature>(),
             attributions: attributions
         });
         return source;

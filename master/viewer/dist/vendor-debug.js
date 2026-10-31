@@ -1,7 +1,7 @@
-import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./chunks/rolldown-runtime-debug.js";
+import { r as __toESM, t as __commonJSMin } from "./chunks/rolldown-runtime-debug.js";
 import { a as require_react, i as require_react_dom, r as require_jsx_runtime, t as require_prop_types } from "./chunks/react-vendor-debug.js";
-import { Cr as _asyncToGenerator, Tr as _defineProperty, qt as _objectWithoutProperties, wr as _objectSpread2 } from "./chunks/geotiff-debug.js";
-//#region node_modules/react-tiny-popover/dist/PopoverPortal.js
+import { $t as _objectWithoutProperties, Mr as _asyncToGenerator, Nr as _objectSpread2, Pr as _defineProperty } from "./chunks/geotiff-debug.js";
+// node_modules/react-tiny-popover/dist/PopoverPortal.js
 var require_PopoverPortal = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PopoverPortal = void 0;
@@ -25,8 +25,7 @@ var require_PopoverPortal = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.PopoverPortal = PopoverPortal;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/util.js
+// node_modules/react-tiny-popover/dist/util.js
 var require_util = /* @__PURE__ */ __commonJSMin(((exports, module, this$5) => {
 	var __assign = this$5 && this$5.__assign || function() {
 		__assign = Object.assign || function(t) {
@@ -136,8 +135,7 @@ var require_util = /* @__PURE__ */ __commonJSMin(((exports, module, this$5) => {
 	};
 	exports.getNudgedPopoverRect = getNudgedPopoverRect;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/useElementRef.js
+// node_modules/react-tiny-popover/dist/useElementRef.js
 var require_useElementRef = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.useElementRef = void 0;
@@ -163,8 +161,7 @@ var require_useElementRef = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.useElementRef = useElementRef;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/usePopover.js
+// node_modules/react-tiny-popover/dist/usePopover.js
 var require_usePopover = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.usePopover = void 0;
@@ -339,8 +336,7 @@ var require_usePopover = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.usePopover = usePopover;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/useMemoizedArray.js
+// node_modules/react-tiny-popover/dist/useMemoizedArray.js
 var require_useMemoizedArray = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.useMemoizedArray = void 0;
@@ -362,8 +358,7 @@ var require_useMemoizedArray = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.useMemoizedArray = useMemoizedArray;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/useHandlePrevValues.js
+// node_modules/react-tiny-popover/dist/useHandlePrevValues.js
 var require_useHandlePrevValues = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.useHandlePrevValues = void 0;
@@ -404,8 +399,7 @@ var require_useHandlePrevValues = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.useHandlePrevValues = useHandlePrevValues;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/useArrowContainer.js
+// node_modules/react-tiny-popover/dist/useArrowContainer.js
 var require_useArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module, this$4) => {
 	var __assign = this$4 && this$4.__assign || function() {
 		__assign = Object.assign || function(t) {
@@ -489,8 +483,7 @@ var require_useArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module,
 	};
 	exports.useArrowContainer = useArrowContainer;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/ArrowContainer.js
+// node_modules/react-tiny-popover/dist/ArrowContainer.js
 var require_ArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module, this$3) => {
 	var __assign = this$3 && this$3.__assign || function() {
 		__assign = Object.assign || function(t) {
@@ -533,8 +526,7 @@ var require_ArrowContainer = /* @__PURE__ */ __commonJSMin(((exports, module, th
 	};
 	exports.ArrowContainer = ArrowContainer;
 }));
-//#endregion
-//#region node_modules/react-tiny-popover/dist/Popover.js
+// node_modules/react-tiny-popover/dist/Popover.js
 var require_Popover = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) => {
 	var __assign = this$2 && this$2.__assign || function() {
 		__assign = Object.assign || function(t) {
@@ -734,8 +726,7 @@ var require_Popover = /* @__PURE__ */ __commonJSMin(((exports, module, this$2) =
 		return (0, jsx_runtime_1.jsx)(PopoverInternal, __assign({}, props, { ref }));
 	});
 }));
-//#endregion
-//#region node_modules/goober/dist/goober.modern.js
+// node_modules/goober/dist/goober.modern.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var e$1 = { data: "" };
 var t$1 = (t) => {
@@ -820,8 +811,7 @@ function w$2(e, t) {
 		return t ? t(l) : l;
 	};
 }
-//#endregion
-//#region node_modules/react-hot-toast/dist/index.mjs
+// node_modules/react-hot-toast/dist/index.mjs
 var Z$2 = (e) => typeof e == "function";
 var h$1 = (e, t) => Z$2(e) ? e(t) : e;
 var W = (() => {
@@ -1028,200 +1018,29 @@ var w$1 = (e, t = "default") => {
 		}
 	};
 };
-var de = h$2`
-from {
-  transform: scale(0) rotate(45deg);
-	opacity: 0;
-}
-to {
- transform: scale(1) rotate(45deg);
-  opacity: 1;
-}`;
-var me = h$2`
-from {
-  transform: scale(0);
-  opacity: 0;
-}
-to {
-  transform: scale(1);
-  opacity: 1;
-}`;
-var le = h$2`
-from {
-  transform: scale(0) rotate(90deg);
-	opacity: 0;
-}
-to {
-  transform: scale(1) rotate(90deg);
-	opacity: 1;
-}`;
-var C$1 = w$2("div")`
-  width: 20px;
-  opacity: 0;
-  height: 20px;
-  border-radius: 10px;
-  background: ${(e) => e.primary || "#ff4b4b"};
-  position: relative;
-  transform: rotate(45deg);
-
-  animation: ${de} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-  animation-delay: 100ms;
-
-  &:after,
-  &:before {
-    content: '';
-    animation: ${me} 0.15s ease-out forwards;
-    animation-delay: 150ms;
-    position: absolute;
-    border-radius: 3px;
-    opacity: 0;
-    background: ${(e) => e.secondary || "#fff"};
-    bottom: 9px;
-    left: 4px;
-    height: 2px;
-    width: 12px;
-  }
-
-  &:before {
-    animation: ${le} 0.15s ease-out forwards;
-    animation-delay: 180ms;
-    transform: rotate(90deg);
-  }
-`;
-var Te = h$2`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-var F = w$2("div")`
-  width: 12px;
-  height: 12px;
-  box-sizing: border-box;
-  border: 2px solid;
-  border-radius: 100%;
-  border-color: ${(e) => e.secondary || "#e0e0e0"};
-  border-right-color: ${(e) => e.primary || "#616161"};
-  animation: ${Te} 1s linear infinite;
-`;
-var ge = h$2`
-from {
-  transform: scale(0) rotate(45deg);
-	opacity: 0;
-}
-to {
-  transform: scale(1) rotate(45deg);
-	opacity: 1;
-}`;
-var he = h$2`
-0% {
-	height: 0;
-	width: 0;
-	opacity: 0;
-}
-40% {
-  height: 0;
-	width: 6px;
-	opacity: 1;
-}
-100% {
-  opacity: 1;
-  height: 10px;
-}`;
-var L$1 = w$2("div")`
-  width: 20px;
-  opacity: 0;
-  height: 20px;
-  border-radius: 10px;
-  background: ${(e) => e.primary || "#61d345"};
-  position: relative;
-  transform: rotate(45deg);
-
-  animation: ${ge} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-  animation-delay: 100ms;
-  &:after {
-    content: '';
-    box-sizing: border-box;
-    animation: ${he} 0.2s ease-out forwards;
-    opacity: 0;
-    animation-delay: 200ms;
-    position: absolute;
-    border-right: 2px solid;
-    border-bottom: 2px solid;
-    border-color: ${(e) => e.secondary || "#fff"};
-    bottom: 6px;
-    left: 6px;
-    height: 10px;
-    width: 6px;
-  }
-`;
-var be = w$2("div")`
-  position: absolute;
-`;
-var Se = w$2("div")`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 20px;
-  min-height: 20px;
-`;
-var Ae = h$2`
-from {
-  transform: scale(0.6);
-  opacity: 0.4;
-}
-to {
-  transform: scale(1);
-  opacity: 1;
-}`;
-var Pe = w$2("div")`
-  position: relative;
-  transform: scale(0.6);
-  opacity: 0.4;
-  min-width: 20px;
-  animation: ${Ae} 0.3s 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    forwards;
-`;
+var de = h$2` from { transform: scale(0) rotate(45deg); opacity: 0; } to { transform: scale(1) rotate(45deg); opacity: 1; }`;
+var me = h$2` from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; }`;
+var le = h$2` from { transform: scale(0) rotate(90deg); opacity: 0; } to { transform: scale(1) rotate(90deg); opacity: 1; }`;
+var C$1 = w$2("div")` width: 20px; opacity: 0; height: 20px; border-radius: 10px; background: ${(e) => e.primary || "#ff4b4b"}; position: relative; transform: rotate(45deg); animation: ${de} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 100ms; &:after, &:before { content: ''; animation: ${me} 0.15s ease-out forwards; animation-delay: 150ms; position: absolute; border-radius: 3px; opacity: 0; background: ${(e) => e.secondary || "#fff"}; bottom: 9px; left: 4px; height: 2px; width: 12px; } &:before { animation: ${le} 0.15s ease-out forwards; animation-delay: 180ms; transform: rotate(90deg); } `;
+var Te = h$2` from { transform: rotate(0deg); } to { transform: rotate(360deg); } `;
+var F = w$2("div")` width: 12px; height: 12px; box-sizing: border-box; border: 2px solid; border-radius: 100%; border-color: ${(e) => e.secondary || "#e0e0e0"}; border-right-color: ${(e) => e.primary || "#616161"}; animation: ${Te} 1s linear infinite; `;
+var ge = h$2` from { transform: scale(0) rotate(45deg); opacity: 0; } to { transform: scale(1) rotate(45deg); opacity: 1; }`;
+var he = h$2` 0% { height: 0; width: 0; opacity: 0; } 40% { height: 0; width: 6px; opacity: 1; } 100% { opacity: 1; height: 10px; }`;
+var L$1 = w$2("div")` width: 20px; opacity: 0; height: 20px; border-radius: 10px; background: ${(e) => e.primary || "#61d345"}; position: relative; transform: rotate(45deg); animation: ${ge} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 100ms; &:after { content: ''; box-sizing: border-box; animation: ${he} 0.2s ease-out forwards; opacity: 0; animation-delay: 200ms; position: absolute; border-right: 2px solid; border-bottom: 2px solid; border-color: ${(e) => e.secondary || "#fff"}; bottom: 6px; left: 6px; height: 10px; width: 6px; } `;
+var be = w$2("div")` position: absolute; `;
+var Se = w$2("div")` position: relative; display: flex; justify-content: center; align-items: center; min-width: 20px; min-height: 20px; `;
+var Ae = h$2` from { transform: scale(0.6); opacity: 0.4; } to { transform: scale(1); opacity: 1; }`;
+var Pe = w$2("div")` position: relative; transform: scale(0.6); opacity: 0.4; min-width: 20px; animation: ${Ae} 0.3s 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; `;
 var $$1 = ({ toast: e }) => {
 	let { icon: t, type: o, iconTheme: s } = e;
 	return t !== void 0 ? typeof t == "string" ? import_react.createElement(Pe, null, t) : t : o === "blank" ? null : import_react.createElement(Se, null, import_react.createElement(F, _objectSpread2({}, s)), o !== "loading" && import_react.createElement(be, null, o === "error" ? import_react.createElement(C$1, _objectSpread2({}, s)) : import_react.createElement(L$1, _objectSpread2({}, s))));
 };
-var Re = (e) => `
-0% {transform: translate3d(0,${e * -200}%,0) scale(.6); opacity:.5;}
-100% {transform: translate3d(0,0,0) scale(1); opacity:1;}
-`;
-var Ee = (e) => `
-0% {transform: translate3d(0,0,-1px) scale(1); opacity:1;}
-100% {transform: translate3d(0,${e * -150}%,-1px) scale(.6); opacity:0;}
-`;
+var Re = (e) => ` 0% {transform: translate3d(0,${e * -200}%,0) scale(.6); opacity:.5;} 100% {transform: translate3d(0,0,0) scale(1); opacity:1;} `;
+var Ee = (e) => ` 0% {transform: translate3d(0,0,-1px) scale(1); opacity:1;} 100% {transform: translate3d(0,${e * -150}%,-1px) scale(.6); opacity:0;} `;
 var ve = "0%{opacity:0;} 100%{opacity:1;}";
 var De = "0%{opacity:1;} 100%{opacity:0;}";
-var Oe = w$2("div")`
-  display: flex;
-  align-items: center;
-  background: #fff;
-  color: #363636;
-  line-height: 1.3;
-  will-change: transform;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 3px 3px rgba(0, 0, 0, 0.05);
-  max-width: 350px;
-  pointer-events: auto;
-  padding: 8px 10px;
-  border-radius: 8px;
-`;
-var Ie = w$2("div")`
-  display: flex;
-  justify-content: center;
-  margin: 4px 10px;
-  color: inherit;
-  flex: 1 1 auto;
-  white-space: pre-line;
-`;
+var Oe = w$2("div")` :where(&) { display: flex; align-items: center; background: #fff; color: #363636; line-height: 1.3; will-change: transform; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 3px 3px rgba(0, 0, 0, 0.05); max-width: 350px; pointer-events: auto; padding: 8px 10px; border-radius: 8px; } `;
+var Ie = w$2("div")` display: flex; justify-content: center; margin: 4px 10px; color: inherit; flex: 1 1 auto; white-space: pre-line; `;
 var ke = (e, t) => {
 	let s = e.includes("top") ? 1 : -1, [a, i] = E$1() ? [ve, De] : [Re(s), Ee(s)];
 	return { animation: t ? `${h$2(a)} 0.35s cubic-bezier(.21,1.02,.73,1) forwards` : `${h$2(i)} 0.4s forwards cubic-bezier(.06,.71,.55,1)` };
@@ -1268,12 +1087,7 @@ var Me = (e, t) => {
 		transform: `translateY(${t * (o ? 1 : -1)}px)`
 	}, s), a);
 };
-var Ce = u$1`
-  z-index: 9999;
-  > * {
-    pointer-events: auto;
-  }
-`;
+var Ce = u$1` z-index: 9999; > * { pointer-events: auto; } `;
 var D = 16;
 var Fe = ({ reverseOrder: e, position: t = "top-center", toastOptions: o, gutter: s, children: a, toasterId: i, containerStyle: r, containerClassName: l }) => {
 	let { toasts: g, handlers: T } = w$1(o, i);
@@ -1310,8 +1124,7 @@ var Fe = ({ reverseOrder: e, position: t = "top-center", toastOptions: o, gutter
 	}));
 };
 var zt = n$1;
-//#endregion
-//#region node_modules/lodash.xor/index.js
+// node_modules/lodash.xor/index.js
 var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* lodash (Custom Build) <https://lodash.com/>
@@ -2301,8 +2114,7 @@ var require_lodash_xor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function noop() {}
 	module.exports = xor;
 }));
-//#endregion
-//#region node_modules/lodash.xorby/index.js
+// node_modules/lodash.xorby/index.js
 var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* lodash (Custom Build) <https://lodash.com/>
@@ -4373,8 +4185,7 @@ var require_lodash_xorby = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	}
 	module.exports = xorBy;
 }));
-//#endregion
-//#region node_modules/proj4/lib/global.js
+// node_modules/proj4/lib/global.js
 function global_default(defs) {
 	defs("EPSG:4326", "+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees");
 	defs("EPSG:4269", "+title=NAD83 (long/lat) +proj=longlat +a=6378137.0 +b=6356752.31414036 +ellps=GRS80 +datum=NAD83 +units=degrees");
@@ -4391,8 +4202,7 @@ function global_default(defs) {
 	defs["EPSG:900913"] = defs["EPSG:3857"];
 	defs["EPSG:102113"] = defs["EPSG:3857"];
 }
-//#endregion
-//#region node_modules/proj4/lib/constants/values.js
+// node_modules/proj4/lib/constants/values.js
 var SRS_WGS84_SEMIMAJOR = 6378137;
 var SRS_WGS84_SEMIMINOR = 6356752.314;
 var SRS_WGS84_ESQUARED = .0066943799901413165;
@@ -4407,8 +4217,7 @@ var R2D = 57.29577951308232;
 var FORTPI = Math.PI / 4;
 var TWO_PI = Math.PI * 2;
 var SPI = 3.14159265359;
-//#endregion
-//#region node_modules/proj4/lib/constants/PrimeMeridian.js
+// node_modules/proj4/lib/constants/PrimeMeridian.js
 var primeMeridian = {};
 primeMeridian.greenwich = 0;
 primeMeridian.lisbon = -9.131906111111;
@@ -4423,8 +4232,7 @@ primeMeridian.brussels = 4.367975;
 primeMeridian.stockholm = 18.058277777778;
 primeMeridian.athens = 23.7163375;
 primeMeridian.oslo = 10.722916666667;
-//#endregion
-//#region node_modules/proj4/lib/constants/units.js
+// node_modules/proj4/lib/constants/units.js
 var units_default = {
 	mm: { to_meter: .001 },
 	cm: { to_meter: .01 },
@@ -4447,8 +4255,7 @@ var units_default = {
 	"us-in": { to_meter: .025400050800101 },
 	"us-yd": { to_meter: .914401828803658 }
 };
-//#endregion
-//#region node_modules/proj4/lib/match.js
+// node_modules/proj4/lib/match.js
 var ignoredChar = /[\s_\-\/\(\)]/g;
 function match(obj, key) {
 	if (obj[key]) return obj[key];
@@ -4462,8 +4269,7 @@ function match(obj, key) {
 		if (processedKey === lkey) return obj[testkey];
 	}
 }
-//#endregion
-//#region node_modules/proj4/lib/projString.js
+// node_modules/proj4/lib/projString.js
 /**
 * @param {string} defData
 * @returns {import('./defs').ProjectionDefinition}
@@ -4484,7 +4290,13 @@ function projString_default(defData) {
 	}, {});
 	var paramName, paramVal, paramOutname;
 	var params = {
-		proj: "projName",
+		proj: function(v) {
+			self.projName = [
+				"lonlat",
+				"latlon",
+				"latlong"
+			].includes(v) ? "longlat" : v;
+		},
 		datum: "datumCode",
 		rf: function(v) {
 			self.rf = parseFloat(v);
@@ -4503,6 +4315,9 @@ function projString_default(defData) {
 		},
 		lon_0: function(v) {
 			self.long0 = v * D2R$1;
+		},
+		lon_wrap: function(v) {
+			self.long_wrap = parseFloat(v) * D2R$1;
 		},
 		lon_1: function(v) {
 			self.long1 = v * D2R$1;
@@ -4596,8 +4411,7 @@ function projString_default(defData) {
 	self["projStr"] = defData;
 	return self;
 }
-//#endregion
-//#region node_modules/wkt-parser/PROJJSONBuilderBase.js
+// node_modules/wkt-parser/PROJJSONBuilderBase.js
 var PROJJSONBuilderBase = class {
 	static getId(node) {
 		const idNode = node.find((child) => Array.isArray(child) && child[0] === "ID");
@@ -4798,8 +4612,7 @@ var PROJJSONBuilderBase = class {
 		return result;
 	}
 };
-//#endregion
-//#region node_modules/wkt-parser/PROJJSONBuilder2015.js
+// node_modules/wkt-parser/PROJJSONBuilder2015.js
 var PROJJSONBuilder2015 = class extends PROJJSONBuilderBase {
 	static convert(node, result = {}) {
 		super.convert(node, result);
@@ -4808,8 +4621,7 @@ var PROJJSONBuilder2015 = class extends PROJJSONBuilderBase {
 		return result;
 	}
 };
-//#endregion
-//#region node_modules/wkt-parser/PROJJSONBuilder2019.js
+// node_modules/wkt-parser/PROJJSONBuilder2019.js
 var PROJJSONBuilder2019 = class extends PROJJSONBuilderBase {
 	static convert(node, result = {}) {
 		super.convert(node, result);
@@ -4831,8 +4643,7 @@ var PROJJSONBuilder2019 = class extends PROJJSONBuilderBase {
 		return result;
 	}
 };
-//#endregion
-//#region node_modules/wkt-parser/buildPROJJSON.js
+// node_modules/wkt-parser/buildPROJJSON.js
 /**
 * Detects the WKT2 version based on the structure of the WKT.
 * @param {Array} root The root WKT array node.
@@ -4852,8 +4663,7 @@ function detectWKT2Version(root) {
 function buildPROJJSON(root) {
 	return (detectWKT2Version(root) === "2019" ? PROJJSONBuilder2019 : PROJJSONBuilder2015).convert(root);
 }
-//#endregion
-//#region node_modules/wkt-parser/detectWKTVersion.js
+// node_modules/wkt-parser/detectWKTVersion.js
 /**
 * Detects whether the WKT string is WKT1 or WKT2.
 * @param {string} wkt The WKT string.
@@ -4865,8 +4675,7 @@ function detectWKTVersion(wkt) {
 	if (normalizedWKT.includes("PROJCS") || normalizedWKT.includes("GEOGCS") || normalizedWKT.includes("LOCAL_CS") || normalizedWKT.includes("VERT_CS") || normalizedWKT.includes("UNIT")) return "WKT1";
 	return "WKT1";
 }
-//#endregion
-//#region node_modules/wkt-parser/parser.js
+// node_modules/wkt-parser/parser.js
 var parser_default = parseString;
 var NEUTRAL = 1;
 var KEYWORD = 2;
@@ -5007,8 +4816,7 @@ Parser.prototype.output = function() {
 function parseString(txt) {
 	return new Parser(txt).output();
 }
-//#endregion
-//#region node_modules/wkt-parser/process.js
+// node_modules/wkt-parser/process.js
 function mapit(obj, key, value) {
 	if (Array.isArray(key)) {
 		value.unshift(key);
@@ -5105,8 +4913,7 @@ function sExpr(v, obj) {
 			return mapit(obj, key, v);
 	}
 }
-//#endregion
-//#region node_modules/wkt-parser/util.js
+// node_modules/wkt-parser/util.js
 var D2R = .017453292519943295;
 function d2r(input) {
 	return input * D2R;
@@ -5124,8 +4931,7 @@ function applyProjectionDefaults(wkt) {
 		delete wkt.lat1;
 	}
 }
-//#endregion
-//#region node_modules/wkt-parser/transformPROJJSON.js
+// node_modules/wkt-parser/transformPROJJSON.js
 function processUnit(unit) {
 	let result = {
 		units: null,
@@ -5281,8 +5087,7 @@ function transformPROJJSON(projjson, result = {}) {
 	applyProjectionDefaults(result);
 	return result;
 }
-//#endregion
-//#region node_modules/wkt-parser/index.js
+// node_modules/wkt-parser/index.js
 var knownTypes = [
 	"PROJECTEDCRS",
 	"PROJCRS",
@@ -5468,8 +5273,7 @@ function wkt_parser_default(wkt) {
 	cleanWKT(obj);
 	return obj[type];
 }
-//#endregion
-//#region node_modules/proj4/lib/defs.js
+// node_modules/proj4/lib/defs.js
 /**
 * @typedef {Object} ProjectionDefinition
 * @property {string} title
@@ -5485,6 +5289,7 @@ function wkt_parser_default(wkt) {
 * @property {number} [long0]
 * @property {number} [long1]
 * @property {number} [long2]
+* @property {number} [long_wrap]
 * @property {number} [alpha]
 * @property {number} [longc]
 * @property {number} [x0]
@@ -5557,8 +5362,7 @@ function defs(name) {
 	}
 }
 global_default(defs);
-//#endregion
-//#region node_modules/proj4/lib/parseCode.js
+// node_modules/proj4/lib/parseCode.js
 function testObj(code) {
 	return typeof code === "string";
 }
@@ -5606,8 +5410,7 @@ function parse(code) {
 	else out = code;
 	return out && checkMercator(out) ? defs["EPSG:3857"] : out;
 }
-//#endregion
-//#region node_modules/proj4/lib/extend.js
+// node_modules/proj4/lib/extend.js
 function extend_default(destination, source) {
 	destination = destination || {};
 	var value, property;
@@ -5618,33 +5421,28 @@ function extend_default(destination, source) {
 	}
 	return destination;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/msfnz.js
+// node_modules/proj4/lib/common/msfnz.js
 function msfnz_default(eccent, sinphi, cosphi) {
 	var con = eccent * sinphi;
 	return cosphi / Math.sqrt(1 - con * con);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/sign.js
+// node_modules/proj4/lib/common/sign.js
 function sign_default(x) {
 	return x < 0 ? -1 : 1;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/adjust_lon.js
+// node_modules/proj4/lib/common/adjust_lon.js
 function adjust_lon_default(x, skipAdjust) {
 	if (skipAdjust) return x;
 	return Math.abs(x) <= 3.14159265359 ? x : x - sign_default(x) * TWO_PI;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/tsfnz.js
+// node_modules/proj4/lib/common/tsfnz.js
 function tsfnz_default(eccent, phi, sinphi) {
 	var con = eccent * sinphi;
 	var com = .5 * eccent;
 	con = Math.pow((1 - con) / (1 + con), com);
 	return Math.tan(.5 * (HALF_PI - phi)) / con;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/phi2z.js
+// node_modules/proj4/lib/common/phi2z.js
 function phi2z_default(eccent, ts) {
 	var eccnth = .5 * eccent;
 	var con, dphi;
@@ -5657,8 +5455,7 @@ function phi2z_default(eccent, ts) {
 	}
 	return -9999;
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/merc.js
+// node_modules/proj4/lib/projections/merc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} es
@@ -5671,6 +5468,7 @@ function init$35() {
 	this.es = 1 - con * con;
 	if (!("x0" in this)) this.x0 = 0;
 	if (!("y0" in this)) this.y0 = 0;
+	this.long0 = this.long0 || 0;
 	this.e = Math.sqrt(this.es);
 	if (this.lat_ts) {
 		if (this.sphere) this.k0 = Math.cos(this.lat_ts);
@@ -5729,15 +5527,19 @@ var merc_default = {
 		"merc"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/longlat.js
+// node_modules/proj4/lib/projections/longlat.js
 function init$34() {}
 function identity(pt) {
 	return pt;
 }
-var names$35 = ["longlat", "identity"];
-//#endregion
-//#region node_modules/proj4/lib/projections.js
+var names$35 = [
+	"longlat",
+	"identity",
+	"lonlat",
+	"latlon",
+	"latlong"
+];
+// node_modules/proj4/lib/projections.js
 /** @type {Array<Partial<import('./Proj').default>>} */
 var projs = [merc_default, {
 	init: init$34,
@@ -5786,8 +5588,7 @@ var projections_default = {
 	add,
 	get
 };
-//#endregion
-//#region node_modules/proj4/lib/constants/Ellipsoid.js
+// node_modules/proj4/lib/constants/Ellipsoid.js
 var ellipsoids = {
 	MERIT: {
 		a: 6378137,
@@ -5967,7 +5768,7 @@ var ellipsoids = {
 	},
 	plessis: {
 		a: 6376523,
-		rf: 6355863,
+		b: 6355863,
 		ellipseName: "Plessis 1817 (France)"
 	},
 	krass: {
@@ -6011,8 +5812,7 @@ var ellipsoids = {
 		ellipseName: "Normal Sphere (r=6370997)"
 	}
 };
-//#endregion
-//#region node_modules/proj4/lib/deriveConstants.js
+// node_modules/proj4/lib/deriveConstants.js
 var WGS84 = ellipsoids.WGS84;
 function eccentricity(a, b, rf, R_A) {
 	var a2 = a * a;
@@ -6051,8 +5851,7 @@ function sphere(a, b, rf, ellps, sphere) {
 		sphere
 	};
 }
-//#endregion
-//#region node_modules/proj4/lib/constants/Datum.js
+// node_modules/proj4/lib/constants/Datum.js
 var datums = {
 	wgs84: {
 		towgs84: "0,0,0",
@@ -6086,7 +5885,7 @@ var datums = {
 	},
 	carthage: {
 		towgs84: "-263.0,6.0,431.0",
-		ellipse: "clark80",
+		ellipse: "clrk80ign",
 		datumName: "Carthage 1934 Tunisia"
 	},
 	hermannskogel: {
@@ -6570,8 +6369,7 @@ for (var key in datums) {
 	if (!datum$1.datumName) continue;
 	datums[datum$1.datumName] = datum$1;
 }
-//#endregion
-//#region node_modules/proj4/lib/datum.js
+// node_modules/proj4/lib/datum.js
 function datum(datumCode, datum_params, a, b, es, ep2, nadgrids) {
 	var out = {};
 	out.datum_type = 5;
@@ -6599,8 +6397,7 @@ function datum(datumCode, datum_params, a, b, es, ep2, nadgrids) {
 	out.ep2 = ep2;
 	return out;
 }
-//#endregion
-//#region node_modules/proj4/lib/nadgrid.js
+// node_modules/proj4/lib/nadgrid.js
 /**
 * Resources for details of NTv2 file formats:
 * - https://web.archive.org/web/20140127204822if_/http://www.mgs.gov.on.ca:80/stdprodconsume/groups/content/@mgs/@iandit/documents/resourcelist/stel02_047447.pdf
@@ -6845,8 +6642,7 @@ function readGridNodes(view, offset, gridHeader, isLittleEndian, includeErrorFie
 	}
 	return gridShiftRecords;
 }
-//#endregion
-//#region node_modules/proj4/lib/Proj.js
+// node_modules/proj4/lib/Proj.js
 /**
 * @typedef {Object} DatumDefinition
 * @property {number} datum_type - The type of datum.
@@ -6896,7 +6692,6 @@ function Projection(srsCode, callback) {
 			json.datumName = datumDef.datumName ? datumDef.datumName : json.datumCode;
 		}
 	}
-	json.k0 = json.k0 || 1;
 	json.axis = json.axis || "enu";
 	json.ellps = json.ellps || "wgs84";
 	json.lat1 = json.lat1 || json.lat0;
@@ -6916,12 +6711,12 @@ function Projection(srsCode, callback) {
 	this.ep2 = ecc.ep2;
 	this.datum = datumObj;
 	if ("init" in this && typeof this.init === "function") this.init();
+	if (!this.k0) this.k0 = 1;
 	callback(null, this);
 }
 Projection.projections = projections_default;
 Projection.projections.start();
-//#endregion
-//#region node_modules/proj4/lib/datumUtils.js
+// node_modules/proj4/lib/datumUtils.js
 function compareDatums(source, dest) {
 	if (source.datum_type !== dest.datum_type) return false;
 	else if (source.a !== dest.a || Math.abs(source.es - dest.es) > 5e-11) return false;
@@ -7072,8 +6867,7 @@ function geocentricFromWgs84(p, datum_type, datum_params) {
 		};
 	}
 }
-//#endregion
-//#region node_modules/proj4/lib/datum_transform.js
+// node_modules/proj4/lib/datum_transform.js
 function checkParams(type) {
 	return type === 1 || type === 2;
 }
@@ -7244,8 +7038,7 @@ function nadInterpolate(pin, ct) {
 	val.y = m00 * f00.y + m10 * f10.y + m01 * f01.y + m11 * f11.y;
 	return val;
 }
-//#endregion
-//#region node_modules/proj4/lib/adjust_axis.js
+// node_modules/proj4/lib/adjust_axis.js
 var order = [
 	"x",
 	"y",
@@ -7321,8 +7114,7 @@ function adjustAxisFromEnu(crs, point) {
 	}
 	return out;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/toPoint.js
+// node_modules/proj4/lib/common/toPoint.js
 /**
 * @param {Array<number>} array
 * @returns {import("../core").InterfaceCoordinates}
@@ -7336,8 +7128,7 @@ function toPoint_default(array) {
 	if (array.length > 3) out.m = array[3];
 	return out;
 }
-//#endregion
-//#region node_modules/proj4/lib/checkSanity.js
+// node_modules/proj4/lib/checkSanity.js
 function checkSanity_default(point) {
 	checkCoord(point.x);
 	checkCoord(point.y);
@@ -7349,8 +7140,7 @@ function checkCoord(num) {
 	}
 	if (typeof num !== "number" || num !== num || !isFinite(num)) throw new TypeError("coordinates must be finite numbers");
 }
-//#endregion
-//#region node_modules/proj4/lib/transform.js
+// node_modules/proj4/lib/transform.js
 function checkNotWGS(source, dest) {
 	return (source.datum.datum_type === 1 || source.datum.datum_type === 2 || source.datum.datum_type === 3) && dest.datumCode !== "WGS84" || (dest.datum.datum_type === 1 || dest.datum.datum_type === 2 || dest.datum.datum_type === 3) && source.datumCode !== "WGS84";
 }
@@ -7395,12 +7185,14 @@ function transformInternal(source, dest, point, enforceAxis) {
 		y: point.y,
 		z: point.z || 0
 	};
-	if (dest.projName === "longlat") point = {
-		x: point.x * R2D,
-		y: point.y * R2D,
-		z: point.z || 0
-	};
-	else {
+	if (dest.projName === "longlat") {
+		if (dest.long_wrap !== void 0) point.x = dest.long_wrap + adjust_lon_default(point.x - dest.long_wrap);
+		point = {
+			x: point.x * R2D,
+			y: point.y * R2D,
+			z: point.z || 0
+		};
+	} else {
 		point = dest.forward(point);
 		if (dest.to_meter) point = {
 			x: point.x / dest.to_meter,
@@ -7430,8 +7222,7 @@ function transform(source, dest, point, enforceAxis) {
 	};
 	return transformInternal(source, dest, pt, enforceAxis);
 }
-//#endregion
-//#region node_modules/proj4/lib/core.js
+// node_modules/proj4/lib/core.js
 var wgs84 = Projection("WGS84");
 /**
 * @typedef {{x: number, y: number, z?: number, m?: number}} InterfaceCoordinates
@@ -7646,8 +7437,7 @@ function proj4$1(fromProjOrToProj, toProjOrCoord, coord) {
 		return obj;
 	}
 }
-//#endregion
-//#region node_modules/mgrs/mgrs.js
+// node_modules/mgrs/mgrs.js
 /**
 * UTM zones are grouped, and assigned to one of a group of 6
 * sets.
@@ -8166,8 +7956,7 @@ function getMinNorthing(zoneLetter) {
 	if (northing >= 0) return northing;
 	else throw "Invalid zone letter: " + zoneLetter;
 }
-//#endregion
-//#region node_modules/proj4/lib/Point.js
+// node_modules/proj4/lib/Point.js
 /**
 * @deprecated v3.0.0 - use proj4.toPoint instead
 * @param {number | import('./core').TemplateCoordinates | string} x
@@ -8202,8 +7991,7 @@ Point.fromMGRS = function(mgrsStr) {
 Point.prototype.toMGRS = function(accuracy) {
 	return forward$32([this.x, this.y], accuracy);
 };
-//#endregion
-//#region node_modules/proj4/lib/common/pj_enfn.js
+// node_modules/proj4/lib/common/pj_enfn.js
 var C00 = 1;
 var C02 = .25;
 var C04 = .046875;
@@ -8227,15 +8015,13 @@ function pj_enfn_default(es) {
 	en[4] = t * es * C88;
 	return en;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/pj_mlfn.js
+// node_modules/proj4/lib/common/pj_mlfn.js
 function pj_mlfn_default(phi, sphi, cphi, en) {
 	cphi *= sphi;
 	sphi *= sphi;
 	return en[0] * phi - cphi * (en[1] + sphi * (en[2] + sphi * (en[3] + sphi * en[4])));
 }
-//#endregion
-//#region node_modules/proj4/lib/common/pj_inv_mlfn.js
+// node_modules/proj4/lib/common/pj_inv_mlfn.js
 var MAX_ITER$3 = 20;
 function pj_inv_mlfn_default(arg, es, en) {
 	var k = 1 / (1 - es);
@@ -8249,8 +8035,7 @@ function pj_inv_mlfn_default(arg, es, en) {
 	}
 	return phi;
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/tmerc.js
+// node_modules/proj4/lib/projections/tmerc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} es
@@ -8361,15 +8146,13 @@ var tmerc_default = {
 	inverse: inverse$31,
 	names: ["Fast_Transverse_Mercator", "Fast Transverse Mercator"]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/sinh.js
+// node_modules/proj4/lib/common/sinh.js
 function sinh_default(x) {
 	var r = Math.exp(x);
 	r = (r - 1 / r) / 2;
 	return r;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/hypot.js
+// node_modules/proj4/lib/common/hypot.js
 function hypot_default(x, y) {
 	x = Math.abs(x);
 	y = Math.abs(y);
@@ -8377,22 +8160,19 @@ function hypot_default(x, y) {
 	var b = Math.min(x, y) / (a ? a : 1);
 	return a * Math.sqrt(1 + Math.pow(b, 2));
 }
-//#endregion
-//#region node_modules/proj4/lib/common/log1py.js
+// node_modules/proj4/lib/common/log1py.js
 function log1py_default(x) {
 	var y = 1 + x;
 	var z = y - 1;
 	return z === 0 ? x : x * Math.log(y) / z;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/asinhy.js
+// node_modules/proj4/lib/common/asinhy.js
 function asinhy_default(x) {
 	var y = Math.abs(x);
 	y = log1py_default(y * (1 + y / (hypot_default(1, y) + 1)));
 	return x < 0 ? -y : y;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/gatg.js
+// node_modules/proj4/lib/common/gatg.js
 function gatg_default(pp, B) {
 	var cos_2B = 2 * Math.cos(2 * B);
 	var i = pp.length - 1;
@@ -8406,8 +8186,7 @@ function gatg_default(pp, B) {
 	}
 	return B + h * Math.sin(2 * B);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/clens.js
+// node_modules/proj4/lib/common/clens.js
 function clens_default(pp, arg_r) {
 	var r = 2 * Math.cos(arg_r);
 	var i = pp.length - 1;
@@ -8421,15 +8200,13 @@ function clens_default(pp, arg_r) {
 	}
 	return Math.sin(arg_r) * hr;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/cosh.js
+// node_modules/proj4/lib/common/cosh.js
 function cosh_default(x) {
 	var r = Math.exp(x);
 	r = (r + 1 / r) / 2;
 	return r;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/clens_cmplx.js
+// node_modules/proj4/lib/common/clens_cmplx.js
 function clens_cmplx_default(pp, arg_r, arg_i) {
 	var sin_arg_r = Math.sin(arg_r);
 	var cos_arg_r = Math.cos(arg_r);
@@ -8456,8 +8233,7 @@ function clens_cmplx_default(pp, arg_r, arg_i) {
 	i = cos_arg_r * sinh_arg_i;
 	return [r * hr - i * hi, r * hi + i * hr];
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/etmerc.js
+// node_modules/proj4/lib/projections/etmerc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} es
@@ -8480,6 +8256,7 @@ function init$32() {
 	this.y0 = this.y0 !== void 0 ? this.y0 : 0;
 	this.long0 = this.long0 !== void 0 ? this.long0 : 0;
 	this.lat0 = this.lat0 !== void 0 ? this.lat0 : 0;
+	this.k0 = this.k0 !== void 0 ? this.k0 : 1;
 	this.cgb = [];
 	this.cbg = [];
 	this.utg = [];
@@ -8595,8 +8372,7 @@ var etmerc_default = {
 		"tmerc"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/adjust_zone.js
+// node_modules/proj4/lib/common/adjust_zone.js
 function adjust_zone_default(zone, lon) {
 	if (zone === void 0) {
 		zone = Math.floor((adjust_lon_default(lon) + Math.PI) * 30 / Math.PI) + 1;
@@ -8605,8 +8381,7 @@ function adjust_zone_default(zone, lon) {
 	}
 	return zone;
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/utm.js
+// node_modules/proj4/lib/projections/utm.js
 var dependsOn = "etmerc";
 /** @this {import('../defs.js').ProjectionDefinition} */
 function init$31() {
@@ -8626,13 +8401,11 @@ var utm_default = {
 	names: ["Universal Transverse Mercator System", "utm"],
 	dependsOn
 };
-//#endregion
-//#region node_modules/proj4/lib/common/srat.js
+// node_modules/proj4/lib/common/srat.js
 function srat_default(esinp, exp) {
 	return Math.pow((1 - esinp) / (1 + esinp), exp);
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/gauss.js
+// node_modules/proj4/lib/projections/gauss.js
 var MAX_ITER$2 = 20;
 /**
 * @typedef {Object} LocalThis
@@ -8683,8 +8456,7 @@ var gauss_default = {
 	inverse: inverse$29,
 	names: ["gauss"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/sterea.js
+// node_modules/proj4/lib/projections/sterea.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} sinc0
@@ -8750,8 +8522,7 @@ var sterea_default = {
 		"Double_Stereographic"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/stere.js
+// node_modules/proj4/lib/projections/stere.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} coslat0
@@ -8777,14 +8548,14 @@ function init$28() {
 	this.coslat0 = Math.cos(this.lat0);
 	this.sinlat0 = Math.sin(this.lat0);
 	if (this.sphere) {
-		if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10) this.k0 = .5 * (1 + sign_default(this.lat0) * Math.sin(this.lat_ts));
+		if (!isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10) this.k0 = .5 * (1 + sign_default(this.lat0) * Math.sin(this.lat_ts));
 	} else {
 		if (Math.abs(this.coslat0) <= 1e-10) {
 			if (this.lat0 > 0) this.con = 1;
 			else this.con = -1;
 		}
 		this.cons = Math.sqrt(Math.pow(1 + this.e, 1 + this.e) * Math.pow(1 - this.e, 1 - this.e));
-		if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10 && Math.abs(Math.cos(this.lat_ts)) > 1e-10) this.k0 = .5 * this.cons * msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts)) / tsfnz_default(this.e, this.con * this.lat_ts, this.con * Math.sin(this.lat_ts));
+		if (!isNaN(this.lat_ts) && Math.abs(this.coslat0) <= 1e-10 && Math.abs(Math.cos(this.lat_ts)) > 1e-10) this.k0 = .5 * this.cons * msfnz_default(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts)) / tsfnz_default(this.e, this.con * this.lat_ts, this.con * Math.sin(this.lat_ts));
 		this.ms1 = msfnz_default(this.e, this.sinlat0, this.coslat0);
 		this.X0 = 2 * Math.atan(ssfn_(this.lat0, this.sinlat0, this.e)) - HALF_PI;
 		this.cosX0 = Math.cos(this.X0);
@@ -8891,8 +8662,7 @@ var stere_default = {
 	],
 	ssfn_
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/somerc.js
+// node_modules/proj4/lib/projections/somerc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} lambda0
@@ -8903,6 +8673,7 @@ var stere_default = {
 */
 /** @this {import('../defs.js').ProjectionDefinition & LocalThis} */
 function init$27() {
+	if (!this.k0) this.k0 = 1;
 	var phy0 = this.lat0;
 	this.lambda0 = this.long0;
 	var sinPhy0 = Math.sin(phy0);
@@ -8958,8 +8729,7 @@ var somerc_default = {
 	inverse: inverse$26,
 	names: ["somerc"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/omerc.js
+// node_modules/proj4/lib/projections/omerc.js
 /**
 * @typedef {Object} LocalThis
 * @property {boolean} no_off
@@ -8998,6 +8768,7 @@ function isTypeA(P) {
 */
 function init$26() {
 	var con, com, cosph0, D, F, H, L, sinph0, p, J, gamma = 0, gamma0, lamc = 0, lam1 = 0, lam2 = 0, phi1 = 0, phi2 = 0, alpha_c = 0;
+	if (!this.k0) this.k0 = 1;
 	this.no_off = isTypeA(this);
 	this.no_rot = "no_rot" in this;
 	var alp = false;
@@ -9112,6 +8883,8 @@ function forward$25(p) {
 	}
 	coords.x = this.a * coords.x + this.x0;
 	coords.y = this.a * coords.y + this.y0;
+	if (p.z !== void 0) coords.z = p.z;
+	if (p.m !== void 0) coords.m = p.m;
 	return coords;
 }
 function inverse$25(p) {
@@ -9141,6 +8914,8 @@ function inverse$25(p) {
 		coords.x = -this.rB * Math.atan2(Sp * this.cosgam - Vp * this.singam, Math.cos(this.BrA * u));
 	}
 	coords.x += this.lam0;
+	if (p.z !== void 0) coords.z = p.z;
+	if (p.m !== void 0) coords.m = p.m;
 	return coords;
 }
 var omerc_default = {
@@ -9159,8 +8934,7 @@ var omerc_default = {
 		"omerc"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/lcc.js
+// node_modules/proj4/lib/projections/lcc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} e
@@ -9174,6 +8948,7 @@ function init$25() {
 	if (!this.k0) this.k0 = 1;
 	this.x0 = this.x0 || 0;
 	this.y0 = this.y0 || 0;
+	this.long0 = this.long0 || 0;
 	if (Math.abs(this.lat1 + this.lat2) < 1e-10) return;
 	var temp = this.b / this.a;
 	this.e = Math.sqrt(1 - temp * temp);
@@ -9185,12 +8960,12 @@ function init$25() {
 	var cos2 = Math.cos(this.lat2);
 	var ms2 = msfnz_default(this.e, sin2, cos2);
 	var ts2 = tsfnz_default(this.e, this.lat2, sin2);
-	var ts0 = Math.abs(Math.abs(this.lat0) - HALF_PI) < 1e-10 ? 0 : tsfnz_default(this.e, this.lat0, Math.sin(this.lat0));
+	var ts0 = tsfnz_default(this.e, this.lat0, Math.sin(this.lat0));
 	if (Math.abs(this.lat1 - this.lat2) > 1e-10) this.ns = Math.log(ms1 / ms2) / Math.log(ts1 / ts2);
 	else this.ns = sin1;
 	if (isNaN(this.ns)) this.ns = sin1;
 	this.f0 = ms1 / (this.ns * Math.pow(ts1, this.ns));
-	this.rh = this.a * this.f0 * Math.pow(ts0, this.ns);
+	this.rh = Math.abs(Math.abs(this.lat0) - HALF_PI) < 1e-10 ? 0 : this.a * this.f0 * Math.pow(ts0, this.ns);
 	if (!this.title) this.title = "Lambert Conformal Conic";
 }
 function forward$24(p) {
@@ -9251,8 +9026,7 @@ var lcc_default = {
 		"Lambert Conic Conformal (2SP)"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/krovak.js
+// node_modules/proj4/lib/projections/krovak.js
 function init$24() {
 	this.a = 6377397.155;
 	this.es = .006674372230614;
@@ -9338,44 +9112,36 @@ var krovak_default = {
 		"krovak"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/mlfn.js
+// node_modules/proj4/lib/common/mlfn.js
 function mlfn_default(e0, e1, e2, e3, phi) {
 	return e0 * phi - e1 * Math.sin(2 * phi) + e2 * Math.sin(4 * phi) - e3 * Math.sin(6 * phi);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/e0fn.js
+// node_modules/proj4/lib/common/e0fn.js
 function e0fn_default(x) {
 	return 1 - .25 * x * (1 + x / 16 * (3 + 1.25 * x));
 }
-//#endregion
-//#region node_modules/proj4/lib/common/e1fn.js
+// node_modules/proj4/lib/common/e1fn.js
 function e1fn_default(x) {
 	return .375 * x * (1 + .25 * x * (1 + .46875 * x));
 }
-//#endregion
-//#region node_modules/proj4/lib/common/e2fn.js
+// node_modules/proj4/lib/common/e2fn.js
 function e2fn_default(x) {
 	return .05859375 * x * x * (1 + .75 * x);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/e3fn.js
+// node_modules/proj4/lib/common/e3fn.js
 function e3fn_default(x) {
 	return x * x * x * (35 / 3072);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/gN.js
+// node_modules/proj4/lib/common/gN.js
 function gN_default(a, e, sinphi) {
 	var temp = e * sinphi;
 	return a / Math.sqrt(1 - temp * temp);
 }
-//#endregion
-//#region node_modules/proj4/lib/common/adjust_lat.js
+// node_modules/proj4/lib/common/adjust_lat.js
 function adjust_lat_default(x) {
 	return Math.abs(x) < HALF_PI ? x : x - sign_default(x) * Math.PI;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/imlfn.js
+// node_modules/proj4/lib/common/imlfn.js
 function imlfn_default(ml, e0, e1, e2, e3) {
 	var phi;
 	var dphi;
@@ -9387,8 +9153,7 @@ function imlfn_default(ml, e0, e1, e2, e3) {
 	}
 	return NaN;
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/cass.js
+// node_modules/proj4/lib/projections/cass.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} es
@@ -9472,8 +9237,7 @@ var cass_default = {
 		"cass"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/qsfnz.js
+// node_modules/proj4/lib/common/qsfnz.js
 function qsfnz_default(eccent, sinphi) {
 	var con;
 	if (eccent > 1e-7) {
@@ -9481,8 +9245,7 @@ function qsfnz_default(eccent, sinphi) {
 		return (1 - eccent * eccent) * (sinphi / (1 - con * con) - .5 / eccent * Math.log((1 - con) / (1 + con)));
 	} else return 2 * sinphi;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/authset.js
+// node_modules/proj4/lib/common/authset.js
 var P00 = .3333333333333333;
 var P01 = .17222222222222222;
 var P02 = .10257936507936508;
@@ -9502,8 +9265,7 @@ function authset(es) {
 	APA[2] = t * P20;
 	return APA;
 }
-//#endregion
-//#region node_modules/proj4/lib/common/authlat.js
+// node_modules/proj4/lib/common/authlat.js
 function authlat(beta, APA) {
 	var t = beta + beta;
 	return beta + APA[0] * Math.sin(t) + APA[1] * Math.sin(t + t) + APA[2] * Math.sin(t + t + t);
@@ -9708,14 +9470,12 @@ var laea_default = {
 	EQUIT: 3,
 	OBLIQ: 4
 };
-//#endregion
-//#region node_modules/proj4/lib/common/asinz.js
+// node_modules/proj4/lib/common/asinz.js
 function asinz_default(x) {
 	if (Math.abs(x) > 1) x = x > 1 ? 1 : -1;
 	return Math.asin(x);
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/aea.js
+// node_modules/proj4/lib/projections/aea.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} temp
@@ -9831,8 +9591,7 @@ var aea_default = {
 	],
 	phi1z
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/gnom.js
+// node_modules/proj4/lib/projections/gnom.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} sin_p14
@@ -9909,8 +9668,7 @@ var gnom_default = {
 	inverse: inverse$19,
 	names: ["gnom"]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/iqsfnz.js
+// node_modules/proj4/lib/common/iqsfnz.js
 function iqsfnz_default(eccent, q) {
 	var temp = 1 - (1 - eccent * eccent) / (2 * eccent) * Math.log((1 - eccent) / (1 + eccent));
 	if (Math.abs(Math.abs(q) - temp) < 1e-6) {
@@ -9932,8 +9690,7 @@ function iqsfnz_default(eccent, q) {
 	}
 	return NaN;
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/cea.js
+// node_modules/proj4/lib/projections/cea.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} e
@@ -9986,8 +9743,7 @@ var cea_default = {
 	inverse: inverse$18,
 	names: ["cea"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/eqc.js
+// node_modules/proj4/lib/projections/eqc.js
 function init$18() {
 	this.x0 = this.x0 || 0;
 	this.y0 = this.y0 || 0;
@@ -10024,8 +9780,7 @@ var eqc_default = {
 		"eqc"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/poly.js
+// node_modules/proj4/lib/projections/poly.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} temp
@@ -10140,8 +9895,6 @@ var poly_default = {
 		"poly"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/nzmg.js
 function init$16() {
 	this.A = [];
 	this.A[1] = .6399175073;
@@ -10302,10 +10055,10 @@ var nzmg_default = {
 	init: init$16,
 	forward: forward$15,
 	inverse: inverse$15,
-	names: ["New_Zealand_Map_Grid", "nzmg"]
+	names: ["New_Zealand_Map_Grid", "nzmg"],
+	iterations: 1
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/mill.js
+// node_modules/proj4/lib/projections/mill.js
 function init$15() {}
 function forward$14(p) {
 	var lon = p.x;
@@ -10332,8 +10085,7 @@ var mill_default = {
 	inverse: inverse$14,
 	names: ["Miller_Cylindrical", "mill"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/sinu.js
+// node_modules/proj4/lib/projections/sinu.js
 var MAX_ITER = 20;
 /**
 * @typedef {Object} LocalThis
@@ -10415,8 +10167,7 @@ var sinu_default = {
 	inverse: inverse$13,
 	names: ["Sinusoidal", "sinu"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/eck6.js
+// node_modules/proj4/lib/projections/eck6.js
 /**
 * Eckert VI projection — spherical sinusoidal variant with m=1, n=1+π/2.
 * Always forces spherical computation regardless of the ellipsoid.
@@ -10444,8 +10195,7 @@ var eck6_default = {
 	inverse: inverse$13,
 	names: ["Eckert_VI", "eck6"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/moll.js
+// node_modules/proj4/lib/projections/moll.js
 /** @this {import('../defs.js').ProjectionDefinition} */
 function init$12() {
 	this.x0 = this.x0 !== void 0 ? this.x0 : 0;
@@ -10495,8 +10245,7 @@ var moll_default = {
 	inverse: inverse$11,
 	names: ["Mollweide", "moll"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/eqdc.js
+// node_modules/proj4/lib/projections/eqdc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} temp
@@ -10593,8 +10342,7 @@ var eqdc_default = {
 	inverse: inverse$10,
 	names: ["Equidistant_Conic", "eqdc"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/vandg.js
+// node_modules/proj4/lib/projections/vandg.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} R - Radius of the Earth
@@ -10614,12 +10362,18 @@ function forward$9(p) {
 	if (Math.abs(lat) <= 1e-10) {
 		x = this.x0 + this.R * dlon;
 		y = this.y0;
+		p.x = x;
+		p.y = y;
+		return p;
 	}
 	var theta = asinz_default(2 * Math.abs(lat / Math.PI));
 	if (Math.abs(dlon) <= 1e-10 || Math.abs(Math.abs(lat) - HALF_PI) <= 1e-10) {
 		x = this.x0;
 		if (lat >= 0) y = this.y0 + Math.PI * this.R * Math.tan(.5 * theta);
 		else y = this.y0 + Math.PI * this.R * -Math.tan(.5 * theta);
+		p.x = x;
+		p.y = y;
+		return p;
 	}
 	var al = .5 * Math.abs(Math.PI / dlon - dlon / Math.PI);
 	var asq = al * al;
@@ -10685,8 +10439,7 @@ var vandg_default = {
 		"vandg"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/common/vincenty.js
+// node_modules/proj4/lib/common/vincenty.js
 /**
 * Calculates the inverse geodesic problem using Vincenty's formulae.
 * Computes the forward azimuth and ellipsoidal distance between two points
@@ -10787,8 +10540,7 @@ function vincentyDirect(lat1, lon1, azi1, s12, a, f) {
 		lon2: lon1 + (lambda - (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM))))
 	};
 }
-//#endregion
-//#region node_modules/proj4/lib/projections/aeqd.js
+// node_modules/proj4/lib/projections/aeqd.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} es
@@ -10801,6 +10553,9 @@ function vincentyDirect(lat1, lon1, azi1, s12, a, f) {
 function init$9() {
 	this.sin_p12 = Math.sin(this.lat0);
 	this.cos_p12 = Math.cos(this.lat0);
+	this.x0 = this.x0 || 0;
+	this.y0 = this.y0 || 0;
+	this.long0 = this.long0 || 0;
 	this.f = this.es / (1 + Math.sqrt(1 - this.es));
 }
 function forward$8(p) {
@@ -10846,13 +10601,14 @@ function forward$8(p) {
 			return p;
 		} else {
 			if (Math.abs(lon) < 1e-10 && Math.abs(lat - this.lat0) < 1e-10) {
-				p.x = p.y = 0;
+				p.x = this.x0;
+				p.y = this.y0;
 				return p;
 			}
 			vars = vincentyInverse(this.lat0, this.long0, lat, lon, this.a, this.f);
 			azi1 = vars.azi1;
-			p.x = vars.s12 * Math.sin(azi1);
-			p.y = vars.s12 * Math.cos(azi1);
+			p.x = this.x0 + vars.s12 * Math.sin(azi1);
+			p.y = this.y0 + vars.s12 * Math.cos(azi1);
 			return p;
 		}
 	}
@@ -10919,8 +10675,7 @@ var aeqd_default = {
 	inverse: inverse$8,
 	names: ["Azimuthal_Equidistant", "aeqd"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/ortho.js
+// node_modules/proj4/lib/projections/ortho.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} sin_p14
@@ -10946,7 +10701,7 @@ function forward$7(p) {
 	g = this.sin_p14 * sinphi + this.cos_p14 * cosphi * coslon;
 	ksp = 1;
 	if (g > 0 || Math.abs(g) <= 1e-10) {
-		x = this.a * ksp * cosphi * Math.sin(dlon);
+		x = (this.x0 || 0) + this.a * ksp * cosphi * Math.sin(dlon);
 		y = (this.y0 || 0) + this.a * ksp * (this.cos_p14 * sinphi - this.sin_p14 * cosphi * coslon);
 	}
 	p.x = x;
@@ -10995,8 +10750,7 @@ var ortho_default = {
 	inverse: inverse$7,
 	names: ["ortho"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/qsc.js
+// node_modules/proj4/lib/projections/qsc.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} face
@@ -11260,8 +11014,7 @@ var qsc_default = {
 		"qsc"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/robin.js
+// node_modules/proj4/lib/projections/robin.js
 var COEFS_X = [
 	[
 		1,
@@ -11535,6 +11288,8 @@ function forward$5(ll) {
 	if (ll.y < 0) xy.y = -xy.y;
 	xy.x = xy.x * this.a * FXC + this.x0;
 	xy.y = xy.y * this.a * FYC + this.y0;
+	if (ll.z !== void 0) xy.z = ll.z;
+	if (ll.m !== void 0) xy.m = ll.m;
 	return xy;
 }
 function inverse$5(xy) {
@@ -11562,6 +11317,8 @@ function inverse$5(xy) {
 		if (xy.y < 0) ll.y = -ll.y;
 	}
 	ll.x = adjust_lon_default(ll.x + this.long0, this.over);
+	if (xy.z !== void 0) ll.z = xy.z;
+	if (xy.m !== void 0) ll.m = xy.m;
 	return ll;
 }
 var robin_default = {
@@ -11570,8 +11327,7 @@ var robin_default = {
 	inverse: inverse$5,
 	names: ["Robinson", "robin"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/geocent.js
+// node_modules/proj4/lib/projections/geocent.js
 function init$5() {
 	this.name = "geocent";
 }
@@ -11592,8 +11348,7 @@ var geocent_default = {
 		"Geocent"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/tpers.js
+// node_modules/proj4/lib/projections/tpers.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} mode
@@ -11760,8 +11515,7 @@ var tpers_default = {
 	inverse: inverse$3,
 	names: ["Tilted_Perspective", "tpers"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/geos.js
+// node_modules/proj4/lib/projections/geos.js
 /**
 * @typedef {Object} LocalThis
 * @property {1 | 0} flip_axis
@@ -11908,8 +11662,7 @@ var geos_default = {
 		"geos"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/eqearth.js
+// node_modules/proj4/lib/projections/eqearth.js
 /**
 * Copyright 2018 Bernie Jenny, Monash University, Melbourne, Australia.
 *
@@ -12014,8 +11767,7 @@ var eqearth_default = {
 		"Equal_Earth"
 	]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/bonne.js
+// node_modules/proj4/lib/projections/bonne.js
 /**
 * @typedef {Object} LocalThis
 * @property {number} phi1
@@ -12096,8 +11848,7 @@ var bonne_default = {
 	init: init$1,
 	names: ["bonne", "Bonne (Werner lat_1=90)"]
 };
-//#endregion
-//#region node_modules/proj4/lib/projections/ob_tran.js
+// node_modules/proj4/lib/projections/ob_tran.js
 /**
 Original projection implementation:
 https://github.com/OSGeo/PROJ/blob/46c47e9adf6376ae06afabe5d24a0016a05ced82/src/projections/ob_tran.cpp
@@ -12362,8 +12113,7 @@ var ob_tran_default = {
 		"ob_tran"
 	]
 };
-//#endregion
-//#region node_modules/proj4/projs.js
+// node_modules/proj4/projs.js
 function projs_default(proj4) {
 	proj4.Proj.projections.add(tmerc_default);
 	proj4.Proj.projections.add(etmerc_default);
@@ -12399,8 +12149,7 @@ function projs_default(proj4) {
 	proj4.Proj.projections.add(bonne_default);
 	proj4.Proj.projections.add(ob_tran_default);
 }
-//#endregion
-//#region node_modules/proj4/lib/index.js
+// node_modules/proj4/lib/index.js
 /**
 * @typedef {Object} Mgrs
 * @property {(lonlat: [number, number]) => string} forward
@@ -12431,8 +12180,7 @@ var proj4 = Object.assign(proj4$1, {
 	version: "__VERSION__"
 });
 projs_default(proj4);
-//#endregion
-//#region node_modules/redux/dist/redux.mjs
+// node_modules/redux/dist/redux.mjs
 function formatProdErrorMessage$1(code) {
 	return `Minified Redux error #${code}; visit https://redux.js.org/Errors?code=${code} for the full message or use the non-minified dev environment for full errors. `;
 }
@@ -12612,8 +12360,7 @@ function applyMiddleware(...middlewares) {
 function isAction(action) {
 	return isPlainObject(action) && "type" in action && typeof action.type === "string";
 }
-//#endregion
-//#region node_modules/reselect/dist/reselect.mjs
+// node_modules/reselect/dist/reselect.mjs
 function assertIsFunction(func, errorMessage = `expected a function, instead received ${typeof func}`) {
 	if (typeof func !== "function") throw new TypeError(errorMessage);
 }
@@ -12769,8 +12516,7 @@ function createSelectorCreator(memoizeOrOptions, ...memoizeOptionsFromArgs) {
 	return createSelector2;
 }
 var createSelector = /* @__PURE__ */ createSelectorCreator(weakMapMemoize);
-//#endregion
-//#region node_modules/redux-thunk/dist/redux-thunk.mjs
+// node_modules/redux-thunk/dist/redux-thunk.mjs
 function createThunkMiddleware(extraArgument) {
 	const middleware = ({ dispatch, getState }) => (next) => (action) => {
 		if (typeof action === "function") return action(dispatch, getState, extraArgument);
@@ -12780,8 +12526,7 @@ function createThunkMiddleware(extraArgument) {
 }
 var thunk = createThunkMiddleware();
 var withExtraArgument = createThunkMiddleware;
-//#endregion
-//#region node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs
+// node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs
 var composeWithDevTools = typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : function() {
 	if (arguments.length === 0) return void 0;
 	if (typeof arguments[0] === "object") return compose;
@@ -12967,8 +12712,7 @@ var removeListener = /* @__PURE__ */ assign(/* @__PURE__ */ createAction(`${alm}
 function formatProdErrorMessage(code) {
 	return `Minified Redux Toolkit error #${code}; visit https://redux-toolkit.js.org/Errors?code=${code} for the full message or use the non-minified dev environment for full errors. `;
 }
-//#endregion
-//#region node_modules/use-sync-external-store/cjs/use-sync-external-store-with-selector.production.js
+// node_modules/use-sync-external-store/cjs/use-sync-external-store-with-selector.production.js
 /**
 * @license React
 * use-sync-external-store-with-selector.production.js
@@ -13038,8 +12782,7 @@ var require_use_sync_external_store_with_selector_production = /* @__PURE__ */ _
 		return value;
 	};
 }));
-//#endregion
-//#region node_modules/react-redux/dist/react-redux.mjs
+// node_modules/react-redux/dist/react-redux.mjs
 var import_with_selector = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_use_sync_external_store_with_selector_production();
 })))();
@@ -13163,6 +12906,13 @@ function createSubscription(store, parentSub) {
 }
 var canUseDOM = () => !!(typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined");
 var isDOM = /* @__PURE__ */ canUseDOM();
+/**
+* Checks if the code is running in a React Native environment.
+*
+* @returns Whether the code is running in a React Native environment.
+*
+* @see {@link https://github.com/facebook/react-native/issues/1331 Reference}
+*/
 var isRunningInReactNative = () => typeof navigator !== "undefined" && navigator.product === "ReactNative";
 var isReactNative = /* @__PURE__ */ isRunningInReactNative();
 var getUseIsomorphicLayoutEffect = () => isDOM || isReactNative ? import_react.useLayoutEffect : import_react.useEffect;
@@ -13180,7 +12930,7 @@ function getContext() {
 	}
 	return realContext;
 }
-var ReactReduxContext = /* @__PURE__ */ getContext();
+var ReactReduxContext = /*#__PURE__*/ getContext();
 function Provider(providerProps) {
 	const { children, context, serverState, store } = providerProps;
 	const contextValue = import_react.useMemo(() => {
@@ -13188,7 +12938,7 @@ function Provider(providerProps) {
 		return {
 			store,
 			subscription,
-			getServerState: serverState ? () => serverState : void 0
+			getServerState: serverState != null ? () => serverState : void 0
 		};
 	}, [store, serverState]);
 	const previousState = import_react.useMemo(() => store.getState(), [store]);
@@ -13205,38 +12955,114 @@ function Provider(providerProps) {
 	const Context = context || ReactReduxContext;
 	return /* @__PURE__ */ import_react.createElement(Context.Provider, { value: contextValue }, children);
 }
-var Provider_default = Provider;
+/**
+* Hook factory, which creates a `useReduxContext` hook bound to a given context. This is a low-level
+* hook that you should usually not need to call directly.
+*
+* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+* @returns {Function} A `useReduxContext` hook bound to the specified context.
+*/
 function createReduxContextHook(context = ReactReduxContext) {
-	return function useReduxContext2() {
+	return function useReduxContext() {
 		return import_react.useContext(context);
 	};
 }
-var useReduxContext = /* @__PURE__ */ createReduxContextHook();
+/**
+* A hook to access the value of the `ReactReduxContext`. This is a low-level
+* hook that you should usually not need to call directly.
+*
+* @returns {any} the value of the `ReactReduxContext`
+*
+* @example
+*
+* import React from 'react'
+* import { useReduxContext } from 'react-redux'
+*
+* export const CounterComponent = () => {
+*   const { store } = useReduxContext()
+*   return <div>{store.getState()}</div>
+* }
+*/
+var useReduxContext = /*#__PURE__*/ createReduxContextHook();
+/**
+* Hook factory, which creates a `useStore` hook bound to a given context.
+*
+* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+* @returns {Function} A `useStore` hook bound to the specified context.
+*/
 function createStoreHook(context = ReactReduxContext) {
-	const useReduxContext2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
-	const useStore2 = () => {
-		const { store } = useReduxContext2();
+	const useReduxContext$2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
+	const useStore = () => {
+		const { store } = useReduxContext$2();
 		return store;
 	};
-	Object.assign(useStore2, { withTypes: () => useStore2 });
-	return useStore2;
+	Object.assign(useStore, { withTypes: () => useStore });
+	return useStore;
 }
-var useStore = /* @__PURE__ */ createStoreHook();
+/**
+* A hook to access the redux store.
+*
+* @returns {any} the redux store
+*
+* @example
+*
+* import React from 'react'
+* import { useStore } from 'react-redux'
+*
+* export const ExampleComponent = () => {
+*   const store = useStore()
+*   return <div>{store.getState()}</div>
+* }
+*/
+var useStore = /*#__PURE__*/ createStoreHook();
+/**
+* Hook factory, which creates a `useDispatch` hook bound to a given context.
+*
+* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+* @returns {Function} A `useDispatch` hook bound to the specified context.
+*/
 function createDispatchHook(context = ReactReduxContext) {
-	const useStore2 = context === ReactReduxContext ? useStore : createStoreHook(context);
-	const useDispatch2 = () => {
-		return useStore2().dispatch;
+	const useStore$1 = context === ReactReduxContext ? useStore : createStoreHook(context);
+	const useDispatch = () => {
+		return useStore$1().dispatch;
 	};
-	Object.assign(useDispatch2, { withTypes: () => useDispatch2 });
-	return useDispatch2;
+	Object.assign(useDispatch, { withTypes: () => useDispatch });
+	return useDispatch;
 }
-var useDispatch = /* @__PURE__ */ createDispatchHook();
+/**
+* A hook to access the redux `dispatch` function.
+*
+* @returns {any|function} redux store's `dispatch` function
+*
+* @example
+*
+* import React, { useCallback } from 'react'
+* import { useDispatch } from 'react-redux'
+*
+* export const CounterComponent = ({ value }) => {
+*   const dispatch = useDispatch()
+*   const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
+*   return (
+*     <div>
+*       <span>{value}</span>
+*       <button onClick={increaseCounter}>Increase counter</button>
+*     </div>
+*   )
+* }
+*/
+var useDispatch = /*#__PURE__*/ createDispatchHook();
 var refEquality = (a, b) => a === b;
+/**
+* Hook factory, which creates a `useSelector` hook bound to a given context.
+*
+* @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+* @returns {Function} A `useSelector` hook bound to the specified context.
+*/
 function createSelectorHook(context = ReactReduxContext) {
-	const useReduxContext2 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
-	const useSelector2 = (selector, equalityFnOrOptions = {}) => {
+	const useReduxContext$1 = context === ReactReduxContext ? useReduxContext : createReduxContextHook(context);
+	const useSelector = (selector, equalityFnOrOptions = {}) => {
 		const { equalityFn = refEquality } = typeof equalityFnOrOptions === "function" ? { equalityFn: equalityFnOrOptions } : equalityFnOrOptions;
-		const { store, subscription, getServerState } = useReduxContext2();
+		const { store, subscription, getServerState } = useReduxContext$1();
 		import_react.useRef(true);
 		const wrappedSelector = import_react.useCallback({ [selector.name](state) {
 			return selector(state);
@@ -13245,15 +13071,40 @@ function createSelectorHook(context = ReactReduxContext) {
 		import_react.useDebugValue(selectedState);
 		return selectedState;
 	};
-	Object.assign(useSelector2, { withTypes: () => useSelector2 });
-	return useSelector2;
+	Object.assign(useSelector, { withTypes: () => useSelector });
+	return useSelector;
 }
-var useSelector = /* @__PURE__ */ createSelectorHook();
+/**
+* A hook to access the redux store's state. This hook takes a selector function
+* as an argument. The selector is called with the store state.
+*
+* This hook takes an optional equality comparison function as the second parameter
+* that allows you to customize the way the selected state is compared to determine
+* whether the component needs to be re-rendered.
+*
+* @param {Function} selector the selector function
+* @param {Function=} equalityFn the function that will be used to determine equality
+*
+* @returns {any} the selected state
+*
+* @example
+*
+* import React from 'react'
+* import { useSelector } from 'react-redux'
+*
+* export const CounterComponent = () => {
+*   const counter = useSelector(state => state.counter)
+*   return <div>{counter}</div>
+* }
+*/
+var useSelector = /*#__PURE__*/ createSelectorHook();
+/**
+* @deprecated As of React 18, batching is enabled by default for ReactDOM and React Native.
+* This is now a no-op that immediately runs the callback.
+*/
 var batch = defaultNoopBatch;
-//#endregion
-//#region node_modules/dompurify/dist/purify.es.mjs
-var purify_es_exports = /* @__PURE__ */ __exportAll({ default: () => purify_default });
-/*! @license DOMPurify 3.4.16 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.16/LICENSE */
+// node_modules/dompurify/dist/purify.es.mjs
+/*! @license DOMPurify 3.4.17 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.17/LICENSE */
 function _OverloadYield(e, d) {
 	this.v = e, this.k = d;
 }
@@ -13377,9 +13228,12 @@ Array.prototype.indexOf;
 var arrayLastIndexOf = unapply(Array.prototype.lastIndexOf);
 var arrayPop = unapply(Array.prototype.pop);
 var arrayPush = unapply(Array.prototype.push);
-Array.prototype.slice;
+var arraySlice = unapply(Array.prototype.slice);
 var arraySplice = unapply(Array.prototype.splice);
 var arrayIsArray = Array.isArray;
+var setCreate = unconstruct(Set);
+var setAdd = unapply(Set.prototype.add);
+var setHas = unapply(Set.prototype.has);
 var stringToLowerCase = unapply(String.prototype.toLowerCase);
 var stringToString = unapply(String.prototype.toString);
 var stringMatch = unapply(String.prototype.match);
@@ -13523,6 +13377,25 @@ function lookupGetter(object, prop) {
 		return null;
 	}
 	return fallbackValue;
+}
+/**
+* Like lookupGetter, but for accessor properties only, and returns null
+* instead of a null-returning fallback when no getter exists on the chain.
+* Lets a caller fall back to a direct property read in environments that
+* lack the getter, where a fallback returning null would be indistinguishable
+* from a legitimate null value (e.g. namespaceURI of a no-namespace element).
+*
+* @param object - The object (usually a prototype) to start the lookup at.
+* @param prop - The accessor property name.
+* @returns The unapplied getter, or null if none was found.
+*/
+function lookupAccessor(object, prop) {
+	while (object !== null) {
+		const desc = getOwnPropertyDescriptor(object, prop);
+		if (desc) return desc.get ? unapply(desc.get) : null;
+		object = getPrototypeOf(object);
+	}
+	return null;
 }
 function isRegex(value) {
 	try {
@@ -14208,7 +14081,7 @@ var NODE_TYPE = {
 	documentFragment: 11,
 	notation: 12
 };
-var LITERAL_TEXT_ELEMENT_NAMES = [
+var LITERAL_TEXT_ELEMENTS = freeze(addToSet({}, [
 	"style",
 	"script",
 	"xmp",
@@ -14217,15 +14090,7 @@ var LITERAL_TEXT_ELEMENT_NAMES = [
 	"noframes",
 	"plaintext",
 	"noscript"
-];
-var LITERAL_TEXT_ELEMENTS = freeze(addToSet({}, LITERAL_TEXT_ELEMENT_NAMES));
-var LITERAL_TEXT_CLOSE = function() {
-	const map = {};
-	arrayForEach(LITERAL_TEXT_ELEMENT_NAMES, (name) => {
-		map[name] = seal(new RegExp("</" + name + "(?=[\\t\\n\\f\\r />])", "i"));
-	});
-	return freeze(map);
-}();
+]));
 var getGlobal = function getGlobal() {
 	return typeof window === "undefined" ? null : window;
 };
@@ -14303,7 +14168,7 @@ var _resolveObjectOption = function _resolveObjectOption(cfg, key, makeFallback)
 function createDOMPurify() {
 	let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
 	const DOMPurify = (root) => createDOMPurify(root);
-	DOMPurify.version = "3.4.16";
+	DOMPurify.version = "3.4.17";
 	DOMPurify.removed = [];
 	if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
 		DOMPurify.isSupported = false;
@@ -14334,6 +14199,10 @@ function createDOMPurify() {
 	};
 	const _readNodeName = function _readNodeName(node) {
 		return getNodeName ? getNodeName(node) : node.nodeName;
+	};
+	const getNamespaceURI = lookupAccessor(ElementPrototype, "namespaceURI");
+	const _readNamespaceURI = function _readNamespaceURI(element) {
+		return getNamespaceURI ? getNamespaceURI(element) : element.namespaceURI;
 	};
 	if (typeof HTMLTemplateElement === "function") {
 		const template = document.createElement("template");
@@ -14455,6 +14324,7 @@ function createDOMPurify() {
 	const SANITIZE_NAMED_PROPS_PREFIX = "user-content-";
 	let KEEP_CONTENT = true;
 	let IN_PLACE = false;
+	let IN_PLACE_VISITED = null;
 	let USE_PROFILES = {};
 	let FORBID_CONTENTS = null;
 	const DEFAULT_FORBID_CONTENTS = addToSet({}, [
@@ -14728,18 +14598,23 @@ function createDOMPurify() {
 	*  return. Return true otherwise.
 	*/
 	const _checkValidNamespace = function _checkValidNamespace(element) {
-		let parent = getParentNode(element);
-		if (!parent || !parent.tagName) parent = {
-			namespaceURI: NAMESPACE,
-			tagName: "template"
-		};
-		const tagName = stringToLowerCase(element.tagName);
-		const parentTagName = stringToLowerCase(parent.tagName);
-		if (!ALLOWED_NAMESPACES[element.namespaceURI]) return false;
-		if (element.namespaceURI === SVG_NAMESPACE) return _checkSvgNamespace(tagName, parent, parentTagName);
-		if (element.namespaceURI === MATHML_NAMESPACE) return _checkMathMlNamespace(tagName, parent, parentTagName);
-		if (element.namespaceURI === HTML_NAMESPACE) return _checkHtmlNamespace(tagName, parent, parentTagName);
-		if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[element.namespaceURI]) return true;
+		const elementNamespace = _readNamespaceURI(element);
+		const tagName = stringToLowerCase(_readNodeName(element));
+		const parentNode = getParentNode(element);
+		let parent;
+		let parentTagName;
+		if (parentNode && _readNodeType(parentNode) === NODE_TYPE.element) {
+			parent = { namespaceURI: _readNamespaceURI(parentNode) };
+			parentTagName = stringToLowerCase(_readNodeName(parentNode));
+		} else {
+			parent = { namespaceURI: NAMESPACE };
+			parentTagName = "template";
+		}
+		if (!ALLOWED_NAMESPACES[elementNamespace]) return false;
+		if (elementNamespace === SVG_NAMESPACE) return _checkSvgNamespace(tagName, parent, parentTagName);
+		if (elementNamespace === MATHML_NAMESPACE) return _checkMathMlNamespace(tagName, parent, parentTagName);
+		if (elementNamespace === HTML_NAMESPACE) return _checkHtmlNamespace(tagName, parent, parentTagName);
+		if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[elementNamespace]) return true;
 		return false;
 	};
 	/**
@@ -14783,36 +14658,21 @@ function createDOMPurify() {
 		}
 	};
 	/**
-	* _neutralizeRoot
-	*
-	* Fail-closed teardown of an in-place root after the sanitize walk aborts
-	* (campaign-3 F2). An internal throw mid-walk — e.g. a page-registered
-	* custom element's reaction detaches a node so `_forceRemove`'s deliberate
-	* parentless guard throws, or any other re-entrant engine mutation — would
-	* otherwise leave the caller's *live* tree half-sanitized, with everything
-	* after the abort point still carrying its handlers. There is no safe way
-	* to resume the walk (the tree mutated under us), so we strip the root bare:
-	* remove every child and every attribute, then let the caller's catch see
-	* the original error. Clobber-safe (cached `remove`/`childNodes`/`attributes`
-	* getters; the root was already clobber-pre-flighted at the IN_PLACE entry).
+	* Fail-closed teardown of an in-place root: strip every disallowed attribute
+	* in the subtree first, so nothing armed is left behind, then remove all
+	* children and the root's own attributes.
 	*
 	* @param root the in-place root to empty
 	*/
 	const _neutralizeRoot = function _neutralizeRoot(root) {
 		_neutralizeSubtree(root);
 		const childNodes = getChildNodes(root);
-		if (childNodes) {
-			const snapshot = [];
-			arrayForEach(childNodes, (child) => {
-				arrayPush(snapshot, child);
-			});
-			arrayForEach(snapshot, (child) => {
-				try {
-					remove(child);
-				} catch (_) {}
-			});
-		}
-		const attributes = getAttributes(root);
+		if (childNodes) arrayForEach(arraySlice(childNodes), (child) => {
+			try {
+				remove(child);
+			} catch (_) {}
+		});
+		const attributes = _readNodeType(root) === NODE_TYPE.element ? getAttributes(root) : null;
 		if (attributes) for (let i = attributes.length - 1; i >= 0; --i) {
 			const attribute = attributes[i];
 			const name = attribute && attribute.name;
@@ -14820,18 +14680,9 @@ function createDOMPurify() {
 		}
 	};
 	/**
-	* _removeAttribute
-	*
-	* Name-based getAttributeNode()/removeAttribute() ASCII-lowercase their
-	* lookup key for HTML elements in an HTML document, so they silently miss an
-	* attribute whose stored qualified name still contains uppercase ASCII
-	* letters. That happens when the node came from a case-preserving source
-	* (an XML/XHTML document imported via importNode(), or createAttributeNS()),
-	* where e.g. `ONERROR` survives the walk: the policy check lowercases to
-	* `onerror` and rejects it, but `removeAttribute('ONERROR')` looks up
-	* `onerror` and finds nothing. Remove the exact Attr node instead, which is
-	* case- and namespace-exact, and fall back to name-based removal only when
-	* the caller could not supply the node.
+	* Removes an attribute, preferably as its exact Attr node: name-based
+	* removal lowercases the name in HTML documents and misses case-preserved
+	* names, e.g. from imported XHTML.
 	*
 	* @param name an Attribute name
 	* @param element a DOM node
@@ -14865,12 +14716,8 @@ function createDOMPurify() {
 		}
 	};
 	/**
-	* _stripDisallowedAttributes
-	*
-	* Removes every attribute the active configuration does not allow from a
-	* single element, using the same allowlist as the main attribute pass (so
-	* `on*` handlers go, but no `/^on/` blocklist is introduced). Used only to
-	* neutralise nodes that are being discarded from an in-place tree.
+	* Removes every attribute the configuration does not allow. Used to
+	* neutralize nodes discarded from an in-place tree.
 	*
 	* @param element the element to strip
 	*/
@@ -14885,77 +14732,158 @@ function createDOMPurify() {
 		}
 	};
 	/**
-	* _neutralizeSubtree
+	* Iterative depth-first walk, so deep trees cannot overflow the call stack,
+	* reading through the cached getters, so clobbering cannot hide children.
+	* When `visit` returns false, the node's children are skipped. With
+	* `intoShadow`, open shadow roots are walked after their host's children.
 	*
-	* Completes the audit-5 F1 fix across every removal path. The KEEP_CONTENT
-	* move-hoist neutralises only disallowed-tag removals; clobber, mXSS-canary,
-	* namespace, comment, processing-instruction and KEEP_CONTENT:false removals
-	* all drop their subtree wholesale via `_forceRemove`. On the IN_PLACE path
-	* those dropped nodes are detached from the caller's LIVE tree but a
-	* handler-bearing original among them (an `<img onerror>`/`<video>` that was
-	* loading) keeps its queued resource event, which fires in page scope after
-	* sanitize returns. This walks a removed subtree and strips every attribute
-	* the active configuration does not allow — so `on*` handlers are cancelled
-	* through the SAME allowlist that governs kept nodes, not a separate `/^on/`
-	* blocklist. Run synchronously before sanitize returns, i.e. before any
-	* queued event can fire. Hook-free by design: these nodes leave the output,
-	* so firing attribute hooks for them would be surprising. Clobber-safe reads;
-	* a doomed clobbered node may shadow `removeAttribute` (its own attributes are
-	* irrelevant — it is discarded — while its non-clobbered descendants, e.g.
-	* the `<img>`, are reached and scrubbed).
-	*
-	* @param root the root of a removed subtree to neutralise
+	* @param root where to start
+	* @param visit called for every node
+	* @param intoShadow whether to enter open shadow roots
 	*/
-	const _neutralizeSubtree = function _neutralizeSubtree(root) {
+	const _walkTree = function _walkTree(root, visit) {
+		let intoShadow = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
 		const stack = [root];
 		while (stack.length > 0) {
 			const node = stack.pop();
-			if (_readNodeType(node) === NODE_TYPE.element) _stripDisallowedAttributes(node);
+			if (visit(node) === false) continue;
+			if (intoShadow && _readNodeType(node) === NODE_TYPE.element) {
+				const shadowRoot = getShadowRoot(node);
+				if (_isDocumentFragment(shadowRoot)) stack.push(shadowRoot);
+			}
 			const childNodes = getChildNodes(node);
 			if (childNodes) for (let i = childNodes.length - 1; i >= 0; --i) stack.push(childNodes[i]);
 		}
 	};
 	/**
-	* _neutralizePatchLinkage
+	* Strips disallowed attributes from every element of a discarded subtree,
+	* so a handler that is already queued (a loading image) cannot fire.
 	*
-	* IN_PLACE entry pre-pass (declarative-partial-updates / streaming
-	* hardening, https://github.com/WICG/declarative-partial-updates).
-	*
-	* The main walk strips patch linkage (`for`/`patchsrc`) and removes range
-	* markers (PIs / markup comments) node-by-node, in document order, AS it
-	* reaches each node. On a live in-place root that leaves a window: from the
-	* moment the root is connected until the walk arrives at a given node, that
-	* node's linkage is live. A patch applied on connection/stream can fire as
-	* a microtask during the walk and inject or teleport an unsanitized DOM
-	* range into a region the iterator has already passed and will not revisit,
-	* so the post-return "tree is sanitized" contract is violated. Sweep the
-	* whole tree once up front and sever every linkage before the walk begins,
-	* closing that window.
-	*
-	* This CANNOT undo a patch that already fired before sanitize ran — that is
-	* the irreducible "do not IN_PLACE a live-connected attacker tree" caveat —
-	* but it closes everything from sanitize-start onward. Gated on SAFE_FOR_XML
-	* to group with the rest of the declarative-partial-updates handling and
-	* stay overridable, consistent with the codebase.
-	*
-	* Clobber-safe traversal (cached childNodes getter); per-node try/catch so a
-	* clobbered root cannot defeat the sweep of its non-clobbered descendants.
-	*
-	* NOTE (pending real-Chrome confirmation, see test/declarative-patch-probe
-	* .html Q1): this mirrors the existing policy of keeping `for` on
-	* <label>/<output>. If the shipping feature can drive a patch through a
-	* surviving `for`-on-label/output + `id` pair, this pre-pass and the
-	* attribute check at _isBasicCustomElement's caller must additionally drop
-	* that pair on the IN_PLACE path. Left as-is until the taxonomy is verified.
-	*
-	* @param root the in-place root to sweep
+	* @param root the root of a removed subtree
 	*/
+	const _neutralizeSubtree = function _neutralizeSubtree(root) {
+		_walkTree(root, (node) => {
+			if (_readNodeType(node) === NODE_TYPE.element) _stripDisallowedAttributes(node);
+		});
+	};
 	/**
-	* Central policy for declarative-partial-updates patch-linkage attributes,
-	* shared by the _neutralizePatchLinkage pre-pass and _isValidAttribute so
-	* the two sites cannot drift: `patchsrc` always links, `for` links
-	* everywhere except on <label>/<output>, and the whole policy is gated on
-	* SAFE_FOR_XML (see the rationale block in _isValidAttribute).
+	* All nodes under `root`, root first, including open shadow roots. Template
+	* content is not entered, it is inert.
+	*
+	* @param root the in-place root
+	* @return the nodes
+	*/
+	const _collectLiveNodes = function _collectLiveNodes(root) {
+		const nodes = [];
+		_walkTree(root, (node) => {
+			nodes.push(node);
+		}, true);
+		return nodes;
+	};
+	/**
+	* Strips disallowed attributes from every element that was under the
+	* in-place root when the call started and no longer is, whatever removed
+	* or moved it.
+	*
+	* @param root the in-place root
+	* @param before the root's nodes, collected before the walk
+	*/
+	const _neutralizeEscapedElements = function _neutralizeEscapedElements(root, before) {
+		const reachable = setCreate();
+		arrayForEach(_collectLiveNodes(root), (node) => {
+			if (_readNodeType(node) === NODE_TYPE.element) setAdd(reachable, node);
+		});
+		arrayForEach(before, (node) => {
+			if (_readNodeType(node) === NODE_TYPE.element && !setHas(reachable, node)) _stripDisallowedAttributes(node);
+		});
+	};
+	/**
+	* Neutralizes everything that left the in-place tree during the call: what
+	* DOMPurify removed, and what hooks or custom elements removed or moved out.
+	*
+	* @param root the in-place root
+	* @param before the root's nodes, collected before the walk
+	* @return true if the root itself was removed
+	*/
+	const _neutralizeDiscarded = function _neutralizeDiscarded(root, before) {
+		let rootRemoved = false;
+		arrayForEach(DOMPurify.removed, (entry) => {
+			if (entry.element) {
+				rootRemoved = rootRemoved || entry.element === root;
+				_neutralizeSubtree(entry.element);
+			}
+		});
+		_neutralizeEscapedElements(root, before);
+		return rootRemoved;
+	};
+	const MAX_UNVISITED_ROUNDS = 8;
+	/**
+	* The walk only moves forward, so a node moved to a position it already
+	* passed is never visited. Give every original node that is still in the
+	* tree but unvisited the normal treatment, hooks included. Nodes created
+	* during the call are left alone. Fails closed if the tree keeps changing.
+	*
+	* @param root the in-place root
+	* @param before the root's nodes, collected before the walk
+	*/
+	const _sanitizeUnvisitedNodes = function _sanitizeUnvisitedNodes(root, before) {
+		const visited = IN_PLACE_VISITED;
+		let original = null;
+		const getOriginal = () => {
+			if (!original) {
+				original = setCreate();
+				arrayForEach(before, (beforeNode) => {
+					setAdd(original, beforeNode);
+				});
+			}
+			return original;
+		};
+		for (let round = 0;; round++) {
+			const live = _collectLiveNodes(root);
+			const containers = [root];
+			let pending = false;
+			arrayForEach(live, (node) => {
+				if (_readNodeType(node) === NODE_TYPE.documentFragment) arrayPush(containers, node);
+				else if (!pending && !setHas(visited, node)) pending = setHas(getOriginal(), node);
+			});
+			if (!pending) return;
+			if (round >= MAX_UNVISITED_ROUNDS) throw typeErrorCreate("the tree kept changing during in-place sanitization; refusing to return it");
+			arrayForEach(containers, (container, index) => {
+				_sanitizeUnvisitedIn(container, index > 0, root, getOriginal());
+			});
+		}
+	};
+	/**
+	* One _sanitizeUnvisitedNodes pass over the root or an open shadow root.
+	*
+	* @param container the root or an open shadow root
+	* @param inShadow whether container is a shadow root
+	* @param root the in-place root
+	* @param original the root's nodes collected before the walk, as a set
+	*/
+	const _sanitizeUnvisitedIn = function _sanitizeUnvisitedIn(container, inShadow, root, original) {
+		const iterator = _createNodeIterator(container);
+		let node;
+		while (node = iterator.nextNode()) {
+			if (!setHas(original, node) || setHas(IN_PLACE_VISITED, node)) continue;
+			if (inShadow) _executeHooks(hooks.uponSanitizeShadowNode, node, null);
+			_sanitizeElements(node, root);
+			_sanitizeAttributes(node, root);
+			if (_isDocumentFragment(node.content)) _sanitizeShadowDOM2(node.content);
+		}
+	};
+	/**
+	* Records that _sanitizeElements processed `node`. No-op outside IN_PLACE.
+	*
+	* @param node the node being processed
+	*/
+	const _markVisited = function _markVisited(node) {
+		if (IN_PLACE_VISITED) setAdd(IN_PLACE_VISITED, node);
+	};
+	/**
+	* Patch-linkage attributes (declarative partial updates): `patchsrc`
+	* always, `for` everywhere except on <label> and <output>. Gated on
+	* SAFE_FOR_XML. Shared by the IN_PLACE pre-pass and _isValidAttribute.
 	*
 	* @param lcName the transformCaseFunc'd attribute name
 	* @param lcTag the transformCaseFunc'd tag name of the carrying element
@@ -14966,17 +14894,26 @@ function createDOMPurify() {
 		if (lcName === "patchsrc") return true;
 		return lcName === "for" && lcTag !== "label" && lcTag !== "output";
 	};
+	/**
+	* IN_PLACE pre-pass: sever all patch linkage before the walk, so no patch
+	* can fire mid-walk into a part of the tree the walker already passed.
+	* Removes range markers (processing instructions, comments with markup)
+	* and strips linkage attributes. It cannot undo a patch that already fired.
+	*
+	* TODO: if the shipped feature can patch through `for` on <label>/<output>,
+	* drop that pair here too (see test/declarative-patch-probe.html).
+	*
+	* @param root the in-place root to sweep
+	*/
 	const _neutralizePatchLinkage = function _neutralizePatchLinkage(root) {
 		if (!SAFE_FOR_XML) return;
-		const stack = [root];
-		while (stack.length > 0) {
-			const node = stack.pop();
+		_walkTree(root, (node) => {
 			const nodeType = _readNodeType(node);
 			if (nodeType === NODE_TYPE.processingInstruction || nodeType === NODE_TYPE.comment && regExpTest(COMMENT_MARKUP_PROBE, node.data)) {
 				try {
 					remove(node);
 				} catch (_) {}
-				continue;
+				return false;
 			}
 			if (nodeType === NODE_TYPE.element) {
 				const element = node;
@@ -14986,9 +14923,8 @@ function createDOMPurify() {
 					if (element.hasAttribute && element.hasAttribute("for") && _isPatchLinkageAttribute("for", lcTag)) element.removeAttribute("for");
 				} catch (_) {}
 			}
-			const childNodes = getChildNodes(node);
-			if (childNodes) for (let i = childNodes.length - 1; i >= 0; --i) stack.push(childNodes[i]);
-		}
+			return true;
+		});
 	};
 	/**
 	* _initDocument
@@ -15065,6 +15001,27 @@ function createDOMPurify() {
 	*/
 	const _scrubTemplateExpressions2 = function _scrubTemplateExpressions(node) {
 		var _node$querySelectorAl;
+		_scrubOwnCharacterData(node);
+		const templates = (_node$querySelectorAl = node.querySelectorAll) === null || _node$querySelectorAl === void 0 ? void 0 : _node$querySelectorAl.call(node, "template");
+		if (templates) arrayForEach(templates, (tmpl) => {
+			if (_isDocumentFragment(tmpl.content)) _scrubTemplateExpressions2(tmpl.content);
+		});
+	};
+	/**
+	* _scrubOwnCharacterData
+	*
+	* Non-recursive core of _scrubTemplateExpressions: normalize `node` and
+	* strip template expressions from its own character data only. Does not
+	* enter <template>.content or attached shadow roots (NodeIterator never
+	* does). Used by _sanitizeShadowDOM, where every nested template content
+	* and shadow root is already walked - and therefore scrubbed - by its own
+	* recursive _sanitizeShadowDOM call; recursing here as well would rescrub
+	* each nested fragment once per ancestor, which is quadratic in nesting
+	* depth.
+	*
+	* @param node The root whose own character data should be scrubbed.
+	*/
+	const _scrubOwnCharacterData = function _scrubOwnCharacterData(node) {
 		node.normalize();
 		const doc = getOwnerDocument ? getOwnerDocument(node) : node.ownerDocument;
 		const walker = createNodeIterator.call(doc || node, node, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_CDATA_SECTION | NodeFilter.SHOW_PROCESSING_INSTRUCTION, null);
@@ -15073,10 +15030,6 @@ function createDOMPurify() {
 			currentNode.data = _stripTemplateExpressions(currentNode.data);
 			currentNode = walker.nextNode();
 		}
-		const templates = (_node$querySelectorAl = node.querySelectorAll) === null || _node$querySelectorAl === void 0 ? void 0 : _node$querySelectorAl.call(node, "template");
-		if (templates) arrayForEach(templates, (tmpl) => {
-			if (_isDocumentFragment(tmpl.content)) _scrubTemplateExpressions2(tmpl.content);
-		});
 	};
 	/**
 	* _isClobbered
@@ -15152,7 +15105,7 @@ function createDOMPurify() {
 	*/
 	const _isUnsafeNode = function _isUnsafeNode(currentNode, tagName) {
 		if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(ELEMENT_MARKUP_PROBE, currentNode.textContent) && regExpTest(ELEMENT_MARKUP_PROBE, currentNode.innerHTML)) return true;
-		if (SAFE_FOR_XML && currentNode.namespaceURI === HTML_NAMESPACE && LITERAL_TEXT_ELEMENTS[tagName] && (_isNode(currentNode.firstElementChild) || typeof currentNode.textContent === "string" && regExpTest(LITERAL_TEXT_CLOSE[tagName], currentNode.textContent))) return true;
+		if (SAFE_FOR_XML && LITERAL_TEXT_ELEMENTS[tagName] && _readNodeType(currentNode) === NODE_TYPE.element && _readNamespaceURI(currentNode) === HTML_NAMESPACE && (_isNode(currentNode.firstElementChild) || typeof currentNode.textContent === "string" && regExpTest(ELEMENT_MARKUP_PROBE, currentNode.textContent))) return true;
 		if (currentNode.nodeType === NODE_TYPE.processingInstruction) return true;
 		if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(COMMENT_MARKUP_PROBE, currentNode.data)) return true;
 		return false;
@@ -15196,7 +15149,7 @@ function createDOMPurify() {
 	*/
 	const _sanitizeDisallowedNode = function _sanitizeDisallowedNode(currentNode, tagName, root) {
 		if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName) && _matchesNameCheck(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
-		if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+		if (KEEP_CONTENT && !FORBID_CONTENTS[tagName] && !FORBID_CONTENTS[stringToLowerCase(tagName)]) {
 			const parentNode = getParentNode(currentNode);
 			const childNodes = getChildNodes(currentNode);
 			if (childNodes && parentNode) {
@@ -15229,35 +15182,13 @@ function createDOMPurify() {
 		return set === defaultSet || set === setConfigSet ? clone(set) : set;
 	};
 	/**
-	* Shared guard for a node that a hook has detached from the walk tree,
-	* used after each element-hook site in _sanitizeElements. Detaching is a
-	* long-standing user pattern (issue #469; draw.io-style foreignObject
-	* filtering). Per the cached, unclobberable parentNode getter the node is
-	* genuinely out of the tree, so it can reach neither the serialized
-	* output nor an IN_PLACE live tree; treat it as removed and stop
-	* processing it. Without this guard, the unsafe-node / namespace checks
-	* would call _forceRemove on a parentless node and hit the REPORT-3
-	* fail-closed throw — which exists for nodes DOMPurify wants gone but
-	* *cannot* detach (clobbered / parentless roots), the opposite of a node
-	* that is already safely gone. The walk root is exempt: a detached
-	* IN_PLACE root is legitimate input and must still be fully sanitized,
-	* and a kill-decision on it must keep hitting the REPORT-3 throw.
-	*
-	* Nodes detached by hooks stay the hook's responsibility for placement:
-	* they are not recorded in DOMPurify.removed, so the post-walk IN_PLACE
-	* pass (which iterates DOMPurify.removed) does not reach them. But a
-	* hook-detached subtree can still hold a queued resource-event handler -
-	* e.g. an <img onload> that began loading when the caller built the live
-	* tree - which fires in page scope after sanitize returns even though the
-	* handler never reached the returned tree. That is the audit-5 F1 hazard,
-	* and the documented node.remove() hook pattern walks straight into it.
-	* So on the IN_PLACE path we neutralize the detached subtree inline,
-	* stripping its non-allow-listed attributes before returning, exactly as
-	* the post-walk pass does for _forceRemove'd subtrees.
+	* A hook may have detached the node it was called for. If so, treat it as
+	* removed and stop processing it; the walk root is exempt. On the IN_PLACE
+	* path the detached subtree is neutralized right away.
 	*
 	* @param currentNode the node a hook may have detached
 	* @param root the current walk root
-	* @return true if the node is detached and now handled, false otherwise
+	* @return true if the node was detached
 	*/
 	const _handleHookDetachedNode = function _handleHookDetachedNode(currentNode, root) {
 		if (currentNode === root || getParentNode(currentNode) !== null) return false;
@@ -15274,6 +15205,7 @@ function createDOMPurify() {
 	* @return true if node was killed, false if left alive
 	*/
 	const _sanitizeElements = function _sanitizeElements(currentNode, root) {
+		_markVisited(currentNode);
 		_executeHooks(hooks.beforeSanitizeElements, currentNode, null);
 		if (_handleHookDetachedNode(currentNode, root)) return true;
 		if (_isClobbered(currentNode)) {
@@ -15417,6 +15349,22 @@ function createDOMPurify() {
 		}
 	};
 	/**
+	* _isUnsafeAttributeValue
+	*
+	* Value-based attribute checks that the attribute walk applies before any
+	* hook can force-keep an attribute, shared with the public
+	* isValidAttribute() so that it never approves a value sanitize() would
+	* strip.
+	*
+	* @param name the attribute name as found on the node (case preserved)
+	* @param value the attribute value
+	* @returns true if the attribute must be removed because of its value
+	*/
+	const _isUnsafeAttributeValue = function _isUnsafeAttributeValue(name, value) {
+		if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) return true;
+		return stringToLowerCase(name) === "attributename" && stringMatch(value, "href") !== null;
+	};
+	/**
 	* _sanitizeAttributes
 	*
 	* @protect attributes
@@ -15460,11 +15408,7 @@ function createDOMPurify() {
 				value = SANITIZE_NAMED_PROPS_PREFIX + value;
 				recreatedNamedProp = true;
 			}
-			if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) {
-				_removeAttribute(name, currentNode, attr);
-				continue;
-			}
-			if (lcName === "attributename" && stringMatch(value, "href")) {
+			if (_isUnsafeAttributeValue(name, value)) {
 				_removeAttribute(name, currentNode, attr);
 				continue;
 			}
@@ -15512,24 +15456,13 @@ function createDOMPurify() {
 				}
 			}
 		}
+		if (SAFE_FOR_TEMPLATES) _scrubOwnCharacterData(fragment);
 		_executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
 	};
 	/**
-	* _sanitizeAttachedShadowRoots
-	*
-	* Walks `root` and feeds every attached shadow root we encounter into
-	* the existing _sanitizeShadowDOM pipeline. The default node iterator
-	* does not descend into shadow trees, so nodes inside an attached
-	* shadow root would otherwise be skipped entirely.
-	*
-	* Two real input paths put attached shadow roots in front of us:
-	*   1. IN_PLACE on a DOM node that already has shadow roots attached.
-	*   2. DOM-node input where importNode(dirty, true) deep-clones the
-	*      shadow root because it was created with `clonable: true`.
-	*
-	* This pass runs once, up front, so the main iteration loop (and the
-	* existing _sanitizeShadowDOM template-content recursion) stay
-	* untouched — string-input paths are not affected.
+	* Sanitizes every attached shadow root under `root`, since the node
+	* iterator does not enter shadow trees. Needed for IN_PLACE input and for
+	* DOM input whose clonable shadow roots were copied by importNode().
 	*
 	* @param root the subtree root to walk for attached shadow roots
 	*/
@@ -15594,6 +15527,8 @@ function createDOMPurify() {
 		if (hooks.uponSanitizeAttribute.length > 0) ALLOWED_ATTR = clone(ALLOWED_ATTR);
 		DOMPurify.removed = [];
 		const inPlace = IN_PLACE && typeof dirty !== "string" && _isNode(dirty);
+		let inPlaceNodes = [];
+		const outerVisited = IN_PLACE_VISITED;
 		if (inPlace) {
 			_neutralizePatchLinkage(dirty);
 			const nn = _readNodeName(dirty);
@@ -15608,12 +15543,8 @@ function createDOMPurify() {
 				_neutralizeRoot(dirty);
 				throw typeErrorCreate("root node is clobbered and cannot be sanitized in-place");
 			}
-			try {
-				_sanitizeAttachedShadowRoots(dirty);
-			} catch (error) {
-				_neutralizeRoot(dirty);
-				throw error;
-			}
+			inPlaceNodes = _collectLiveNodes(dirty);
+			IN_PLACE_VISITED = setCreate();
 		} else if (_isNode(dirty)) {
 			body = _initDocument("<!---->");
 			importedNode = body.ownerDocument.importNode(dirty, true);
@@ -15629,30 +15560,25 @@ function createDOMPurify() {
 		if (body && FORCE_BODY) _forceRemove(body.firstChild);
 		const walkRoot = inPlace ? dirty : body;
 		try {
+			if (inPlace) _sanitizeAttachedShadowRoots(dirty);
 			const nodeIterator = _createNodeIterator(walkRoot);
 			while (currentNode = nodeIterator.nextNode()) {
 				_sanitizeElements(currentNode, walkRoot);
 				_sanitizeAttributes(currentNode, walkRoot);
 				if (_isDocumentFragment(currentNode.content)) _sanitizeShadowDOM2(currentNode.content);
 			}
+			if (inPlace) _sanitizeUnvisitedNodes(dirty, inPlaceNodes);
 		} catch (error) {
 			if (inPlace) {
 				_neutralizeRoot(dirty);
-				arrayForEach(DOMPurify.removed, (entry) => {
-					if (entry.element) _neutralizeSubtree(entry.element);
-				});
+				_neutralizeDiscarded(dirty, inPlaceNodes);
 			}
 			throw error;
+		} finally {
+			IN_PLACE_VISITED = outerVisited;
 		}
 		if (inPlace) {
-			let rootWasRemoved = false;
-			arrayForEach(DOMPurify.removed, (entry) => {
-				if (entry.element) {
-					if (entry.element === dirty) rootWasRemoved = true;
-					_neutralizeSubtree(entry.element);
-				}
-			});
-			if (rootWasRemoved) throw typeErrorCreate("a node selected for removal could not be safely returned; refusing to sanitize in place");
+			if (_neutralizeDiscarded(dirty, inPlaceNodes)) throw typeErrorCreate("a node selected for removal could not be safely returned; refusing to sanitize in place");
 			if (SAFE_FOR_TEMPLATES) _scrubTemplateExpressions2(dirty);
 			return dirty;
 		}
@@ -15689,6 +15615,7 @@ function createDOMPurify() {
 		if (!CONFIG) _parseConfig({});
 		const lcTag = transformCaseFunc(tag);
 		const lcName = transformCaseFunc(attr);
+		if (typeof value === "string" && (_isUnsafeAttributeValue(attr, value) || !ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(SELF_CLOSING_TAG, value))) return false;
 		return _isValidAttribute(lcTag, lcName, value);
 	};
 	DOMPurify.addHook = function(entryPoint, hookFunction) {
@@ -15714,8 +15641,7 @@ function createDOMPurify() {
 	return DOMPurify;
 }
 var purify_default = createDOMPurify();
-//#endregion
-//#region node_modules/clsx/dist/clsx.mjs
+// node_modules/clsx/dist/clsx.mjs
 var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var import_prop_types = /* @__PURE__ */ __toESM(require_prop_types(), 1);
 function r$1(e) {
@@ -15731,8 +15657,7 @@ function clsx() {
 	for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r$1(e)) && (n && (n += " "), n += t);
 	return n;
 }
-//#endregion
-//#region node_modules/react-draggable/build/cjs/chunk-RXGSR3JC.mjs
+// node_modules/react-draggable/build/cjs/chunk-RXGSR3JC.mjs
 var _excluded = [
 	"axis",
 	"bounds",
@@ -16561,11 +16486,9 @@ Draggable.defaultProps = _objectSpread2(_objectSpread2({}, DraggableCore.default
 	},
 	scale: 1
 });
-//#endregion
-//#region node_modules/react-draggable/build/cjs/cjs.mjs
+// node_modules/react-draggable/build/cjs/cjs.mjs
 var cjs_default = Draggable;
-//#endregion
-//#region node_modules/re-resizable/lib/resizer.js
+// node_modules/re-resizable/lib/resizer.js
 var import_jsx_runtime = require_jsx_runtime();
 var __assign$2 = function() {
 	__assign$2 = Object.assign || function(t) {
@@ -16651,8 +16574,7 @@ var Resizer = (0, import_react.memo)(function(props) {
 		children
 	});
 });
-//#endregion
-//#region node_modules/re-resizable/lib/index.js
+// node_modules/re-resizable/lib/index.js
 var __extends$1 = (function() {
 	var extendStatics = function(d, b) {
 		extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d, b) {
@@ -17346,8 +17268,7 @@ var Resizable = function(_super) {
 	};
 	return Resizable;
 }(import_react.PureComponent);
-//#endregion
-//#region node_modules/react-rnd/lib/index.js
+// node_modules/react-rnd/lib/index.js
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -17863,12 +17784,11 @@ var Rnd = function(_super) {
 	};
 	return Rnd;
 }(import_react.PureComponent);
-//#endregion
-//#region node_modules/papaparse/papaparse.min.js
+// node_modules/papaparse/papaparse.min.js
 var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, this$1) => {
 	/* @license
 	Papa Parse
-	v5.5.4
+	v5.7.0
 	https://github.com/mholt/PapaParse
 	License: MIT
 	*/
@@ -17876,8 +17796,8 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 		"function" == typeof define && define.amd ? define([], t) : "object" == typeof module && "undefined" != typeof exports ? module.exports = t() : e.Papa = t();
 	})(this$1, function r() {
 		var n = "undefined" != typeof self ? self : "undefined" != typeof window ? window : void 0 !== n ? n : {};
-		var d, s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || !1, o = {}, h = 0, v = {};
-		function P(e) {
+		var s = !n.document && !!n.postMessage, a = n.IS_PAPA_WORKER || !1, o = {}, h = 0, w = {};
+		function q(e) {
 			return 65279 === e.charCodeAt(0) ? e.slice(1) : e;
 		}
 		function u(e) {
@@ -17886,7 +17806,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 				errors: [],
 				meta: {}
 			}, function(e) {
-				var t = b(e);
+				var t = v(e);
 				t.chunkSize = parseInt(t.chunkSize), e.step || e.chunk || (t.chunkSize = null);
 				this._handle = new i(t), (this._handle.streamer = this)._config = t;
 			}.call(this, e), this.parseChunk = function(t, e) {
@@ -17895,33 +17815,33 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 					let e = this._config.newline;
 					e || (r = this._config.quoteChar || "\"", e = this._handle.guessLineEndings(t, r)), t = [...t.split(e).slice(i)].join(e);
 				}
-				this.isFirstChunk && q(this._config.beforeFirstChunk) && void 0 !== (r = this._config.beforeFirstChunk(t)) && (t = r), this.isFirstChunk = !1, this._halted = !1;
+				this.isFirstChunk && U(this._config.beforeFirstChunk) && void 0 !== (r = this._config.beforeFirstChunk(t)) && (t = r), this.isFirstChunk = !1, this._halted = !1;
 				var i = this._partialLine + t, r = (this._partialLine = "", this._handle.parse(i, this._baseIndex, !this._finished));
 				if (!this._handle.paused() && !this._handle.aborted()) {
 					t = r.meta.cursor, i = (this._finished || (this._partialLine = i.substring(t - this._baseIndex), this._baseIndex = t), r && r.data && (this._rowCount += r.data.length), this._finished || this._config.preview && this._rowCount >= this._config.preview);
 					if (a) n.postMessage({
 						results: r,
-						workerId: v.WORKER_ID,
+						workerId: w.WORKER_ID,
 						finished: i
 					});
-					else if (q(this._config.chunk) && !e) {
+					else if (U(this._config.chunk) && !e) {
 						if (this._config.chunk(r, this._handle), this._handle.paused() || this._handle.aborted()) return void (this._halted = !0);
 						this._completeResults = r = void 0;
 					}
-					return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r.data), this._completeResults.errors = this._completeResults.errors.concat(r.errors), this._completeResults.meta = r.meta), this._completed || !i || !q(this._config.complete) || r && r.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = !0), i || r && r.meta.paused || this._nextChunk(), r;
+					return this._config.step || this._config.chunk || (this._completeResults.data = this._completeResults.data.concat(r.data), this._completeResults.errors = this._completeResults.errors.concat(r.errors), this._completeResults.meta = r.meta), this._completed || !i || !U(this._config.complete) || r && r.meta.aborted || (this._config.complete(this._completeResults, this._input), this._completed = !0), i || r && r.meta.paused || this._nextChunk(), r;
 				}
 				this._halted = !0;
 			}, this._sendError = function(e) {
-				q(this._config.error) ? this._config.error(e) : a && this._config.error && n.postMessage({
-					workerId: v.WORKER_ID,
+				U(this._config.error) ? this._config.error(e) : a && this._config.error && n.postMessage({
+					workerId: w.WORKER_ID,
 					error: e,
 					finished: !1
 				});
 			};
 		}
-		function f(e) {
+		function d(e) {
 			var r;
-			(e = e || {}).chunkSize || (e.chunkSize = v.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
+			(e = e || {}).chunkSize || (e.chunkSize = w.RemoteChunkSize), u.call(this, e), this._nextChunk = s ? function() {
 				this._readChunk(), this._chunkLoaded();
 			} : function() {
 				this._readChunk();
@@ -17930,7 +17850,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 			}, this._readChunk = function() {
 				if (this._finished) this._chunkLoaded();
 				else {
-					if (r = new XMLHttpRequest(), this._config.withCredentials && (r.withCredentials = this._config.withCredentials), s || (r.onload = y(this._chunkLoaded, this), r.onerror = y(this._chunkError, this)), r.open(this._config.downloadRequestBody ? "POST" : "GET", this._input, !s), this._config.downloadRequestHeaders) {
+					if (r = new XMLHttpRequest(), this._config.withCredentials && (r.withCredentials = this._config.withCredentials), s || (r.onload = m(this._chunkLoaded, this), r.onerror = m(this._chunkError, this)), r.ontimeout = m(this._chunkTimeout, this), r.open(this._config.downloadRequestBody ? "POST" : "GET", this._input, !s), this._config.downloadTimeout && !s && (r.timeout = this._config.downloadTimeout), this._config.downloadRequestHeaders) {
 						var e, t = this._config.downloadRequestHeaders;
 						for (e in t) r.setRequestHeader(e, t[e]);
 					}
@@ -17948,13 +17868,15 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 			}, this._chunkError = function(e) {
 				e = r.statusText || e;
 				this._sendError(new Error(e));
+			}, this._chunkTimeout = function() {
+				this._chunkError("Request timed out after " + this._config.downloadTimeout + "ms");
 			};
 		}
 		function l(e) {
-			(e = e || {}).chunkSize || (e.chunkSize = v.LocalChunkSize), u.call(this, e);
+			(e = e || {}).chunkSize || (e.chunkSize = w.LocalChunkSize), u.call(this, e);
 			var i, r, n = "undefined" != typeof FileReader;
 			this.stream = function(e) {
-				this._input = e, r = e.slice || e.webkitSlice || e.mozSlice, n ? ((i = new FileReader()).onload = y(this._chunkLoaded, this), i.onerror = y(this._chunkError, this)) : i = new FileReaderSync(), this._nextChunk();
+				this._input = e, r = e.slice || e.webkitSlice || e.mozSlice, n ? ((i = new FileReader()).onload = m(this._chunkLoaded, this), i.onerror = m(this._chunkError, this)) : i = new FileReaderSync(), this._nextChunk();
 			}, this._nextChunk = function() {
 				this._finished || this._config.preview && !(this._rowCount < this._config.preview) || this._readChunk();
 			}, this._readChunk = function() {
@@ -17966,7 +17888,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 				this._sendError(i.error);
 			};
 		}
-		function c(e) {
+		function f(e) {
 			var i;
 			u.call(this, e = e || {}), this.stream = function(e) {
 				return i = e, this._nextChunk();
@@ -17975,7 +17897,7 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 				if (!this._finished) return e = this._config.chunkSize, i = e ? (t = i.substring(0, e), i.substring(e)) : (t = i, ""), this._finished = !i, this.parseChunk(t);
 			};
 		}
-		function p(e) {
+		function c(e) {
 			u.call(this, e = e || {});
 			var t = [], i = !0, r = !1;
 			this.pause = function() {
@@ -17988,22 +17910,22 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 				r && 1 === t.length && (this._finished = !0);
 			}, this._nextChunk = function() {
 				this._checkIsFinished(), t.length ? this.parseChunk(t.shift()) : i = !0;
-			}, this._streamData = y(function(e) {
+			}, this._streamData = m(function(e) {
 				try {
 					t.push("string" == typeof e ? e : e.toString(this._config.encoding)), i && (i = !1, this._checkIsFinished(), this.parseChunk(t.shift()));
 				} catch (e) {
 					this._streamError(e);
 				}
-			}, this), this._streamError = y(function(e) {
+			}, this), this._streamError = m(function(e) {
 				this._streamCleanUp(), this._sendError(e);
-			}, this), this._streamEnd = y(function() {
+			}, this), this._streamEnd = m(function() {
 				this._streamCleanUp(), r = !0, this._streamData("");
-			}, this), this._streamCleanUp = y(function() {
+			}, this), this._streamCleanUp = m(function() {
 				this._input.removeListener("data", this._streamData), this._input.removeListener("end", this._streamEnd), this._input.removeListener("error", this._streamError);
 			}, this);
 		}
 		function i(m) {
-			var n, s, a, t, o = Math.pow(2, 53), h = -o, u = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i = this, r = 0, f = 0, l = !1, e = !1, c = [], p = {
+			var n, s, a, t, o = Math.pow(2, 53), h = -o, u = /^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/, d = /^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/, i = this, r = 0, l = 0, f = !1, e = !1, c = [], p = {
 				data: [],
 				errors: [],
 				meta: {}
@@ -18011,16 +17933,16 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 			function y(e) {
 				return "greedy" === m.skipEmptyLines ? "" === e.join("").trim() : 1 === e.length && 0 === e[0].length;
 			}
-			function g() {
-				if (p && a && (k("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + v.DefaultDelimiter + "'"), a = !1), m.skipEmptyLines && (p.data = p.data.filter(function(e) {
+			function _() {
+				if (p && a && (k("Delimiter", "UndetectableDelimiter", "Unable to auto-detect delimiting character; defaulted to '" + w.DefaultDelimiter + "'"), a = !1), m.skipEmptyLines && (p.data = p.data.filter(function(e) {
 					return !y(e);
-				})), _()) {
+				})), g()) {
 					if (p) if (Array.isArray(p.data[0])) {
-						for (var e = 0; _() && e < p.data.length; e++) p.data[e].forEach(t);
+						for (var e = 0; g() && e < p.data.length; e++) p.data[e].forEach(t);
 						p.data.splice(0, 1);
 					} else p.data.forEach(t);
-					function t(e, t) {
-						e = P(e), q(m.transformHeader) && (e = m.transformHeader(e, t)), c.push(e);
+					function t(e) {
+						c.push(e);
 					}
 				}
 				function i(e, t) {
@@ -18033,12 +17955,12 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 						})(t) ? parseFloat(t) : d.test(t) ? new Date(t) : "" === t ? null : t) : t)(n = m.header ? r >= c.length ? "__parsed_extra" : c[r] : n, s = m.transform ? m.transform(s, n) : s);
 						"__parsed_extra" === n ? (i[n] = i[n] || [], i[n].push(s)) : i[n] = s;
 					}
-					return m.header && (r > c.length ? k("FieldMismatch", "TooManyFields", "Too many fields: expected " + c.length + " fields but parsed " + r, f + t) : r < c.length && k("FieldMismatch", "TooFewFields", "Too few fields: expected " + c.length + " fields but parsed " + r, f + t)), i;
+					return m.header && (r > c.length ? k("FieldMismatch", "TooManyFields", "Too many fields: expected " + c.length + " fields but parsed " + r, l + t) : r < c.length && k("FieldMismatch", "TooFewFields", "Too few fields: expected " + c.length + " fields but parsed " + r, l + t)), i;
 				}
 				var r;
-				p && (m.header || m.dynamicTyping || m.transform) && (r = 1, !p.data.length || Array.isArray(p.data[0]) ? (p.data = p.data.map(i), r = p.data.length) : p.data = i(p.data, 0), m.header && p.meta && (p.meta.fields = c), f += r);
+				p && (m.header || m.dynamicTyping || m.transform) && (r = 1, !p.data.length || Array.isArray(p.data[0]) ? (p.data = p.data.map(i), r = p.data.length) : p.data = i(p.data, 0), m.header && p.meta && (p.meta.fields = c), l += r);
 			}
-			function _() {
+			function g() {
 				return m.header && 0 === c.length;
 			}
 			function k(e, t, i, r) {
@@ -18049,98 +17971,98 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 				};
 				void 0 !== r && (e.row = r), p.errors.push(e);
 			}
-			q(m.step) && (t = m.step, m.step = function(e) {
-				p = e, _() ? g() : (g(), 0 !== p.data.length && (r += e.data.length, m.preview && r > m.preview ? s.abort() : (p.data = p.data[0], t(p, i))));
+			U(m.step) && (t = m.step, m.step = function(e) {
+				p = e, g() ? _() : (_(), 0 !== p.data.length && (r += e.data.length, m.preview && r > m.preview ? s.abort() : (p.data = p.data[0], t(p, i))));
 			}), this.parse = function(e, t, i) {
-				var r = m.quoteChar || "\"", r = (m.newline || (m.newline = this.guessLineEndings(e, r)), a = !1, m.delimiter ? q(m.delimiter) && (m.delimiter = m.delimiter(e), p.meta.delimiter = m.delimiter) : ((r = ((e, t, i, r, n) => {
+				var r = m.quoteChar || "\"", r = (m.newline || (m.newline = this.guessLineEndings(e, r)), a = !1, m.delimiter ? U(m.delimiter) && (m.delimiter = m.delimiter(e), p.meta.delimiter = m.delimiter) : ((r = ((e, t, i, r, n) => {
 					var s, a, o, h;
 					n = n || [
 						",",
 						"	",
 						"|",
 						";",
-						v.RECORD_SEP,
-						v.UNIT_SEP
+						w.RECORD_SEP,
+						w.UNIT_SEP
 					];
 					for (var u = 0; u < n.length; u++) {
-						for (var d, f = n[u], l = 0, c = 0, p = 0, g = (o = void 0, new E({
+						for (var d, l = n[u], f = 0, c = 0, p = 0, _ = (o = void 0, new E({
 							comments: r,
-							delimiter: f,
+							delimiter: l,
 							newline: t,
 							preview: 10
-						}).parse(e)), _ = 0; _ < g.data.length; _++) i && y(g.data[_]) ? p++ : (d = g.data[_].length, c += d, void 0 === o ? o = d : 0 < d && (l += Math.abs(d - o), o = d));
-						0 < g.data.length && (c /= g.data.length - p), (void 0 === a || l <= a) && (void 0 === h || h < c) && 1.99 < c && (a = l, s = f, h = c);
+						}).parse(e)), g = 0; g < _.data.length; g++) i && y(_.data[g]) ? p++ : (d = _.data[g].length, c += d, void 0 === o ? o = d : 0 < d && (f += Math.abs(d - o), o = d));
+						0 < _.data.length && (c /= _.data.length - p), 1.99 < c && (void 0 === a || f < a || f === a && h < c) && (a = f, s = l, h = c);
 					}
 					return {
 						successful: !!(m.delimiter = s),
 						bestDelimiter: s
 					};
-				})(e, m.newline, m.skipEmptyLines, m.comments, m.delimitersToGuess)).successful ? m.delimiter = r.bestDelimiter : (a = !0, m.delimiter = v.DefaultDelimiter), p.meta.delimiter = m.delimiter), b(m));
-				return m.preview && m.header && r.preview++, n = e, s = new E(r), p = s.parse(n, t, i), g(), l ? { meta: { paused: !0 } } : p || { meta: { paused: !1 } };
+				})(e, m.newline, m.skipEmptyLines, m.comments, m.delimitersToGuess)).successful ? m.delimiter = r.bestDelimiter : (a = !0, m.delimiter = w.DefaultDelimiter), p.meta.delimiter = m.delimiter), v(m));
+				return r.header = g(), m.preview && m.header && r.preview++, n = e, s = new E(r), p = s.parse(n, t, i), _(), f ? { meta: { paused: !0 } } : p || { meta: { paused: !1 } };
 			}, this.paused = function() {
-				return l;
+				return f;
 			}, this.pause = function() {
-				l = !0, s.abort(), n = q(m.chunk) ? "" : n.substring(s.getCharIndex());
+				f = !0, s.abort(), n = U(m.chunk) ? "" : n.substring(s.getCharIndex());
 			}, this.resume = function() {
-				i.streamer._halted ? (l = !1, i.streamer.parseChunk(n, !0)) : setTimeout(i.resume, 3);
+				i.streamer._halted ? (f = !1, i.streamer.parseChunk(n, !0)) : setTimeout(i.resume, 3);
 			}, this.aborted = function() {
 				return e;
 			}, this.abort = function() {
-				e = !0, s.abort(), p.meta.aborted = !0, q(m.complete) && m.complete(p), n = "";
+				e = !0, s.abort(), p.meta.aborted = !0, U(m.complete) && m.complete(p), n = "";
 			}, this.guessLineEndings = function(e, t) {
 				e = e.substring(0, 1048576);
-				var t = new RegExp(U(t) + "([^]*?)" + U(t), "gm"), i = (e = e.replace(t, "")).split("\r"), t = e.split("\n"), e = 1 < t.length && t[0].length < i[0].length;
+				var t = new RegExp(P(t) + "([^]*?)" + P(t), "gm"), i = (e = e.replace(t, "")).split("\r"), t = e.split("\n"), e = 1 < t.length && t[0].length < i[0].length;
 				if (1 === i.length || e) return "\n";
 				for (var r = 0, n = 0; n < i.length; n++) "\n" === i[n][0] && r++;
 				return r >= i.length / 2 ? "\r\n" : "\r";
 			};
 		}
-		function U(e) {
+		function P(e) {
 			return e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 		}
 		function E(C) {
-			var S = (C = C || {}).delimiter, O = C.newline, x = C.comments, I = C.step, A = C.preview, T = C.fastMode, D = null, L = !1, F = null == C.quoteChar ? "\"" : C.quoteChar, j = F;
-			if (void 0 !== C.escapeChar && (j = C.escapeChar), ("string" != typeof S || -1 < v.BAD_DELIMITERS.indexOf(S)) && (S = ","), x === S) throw new Error("Comment character same as delimiter");
-			!0 === x ? x = "#" : ("string" != typeof x || -1 < v.BAD_DELIMITERS.indexOf(x)) && (x = !1), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
-			var z = 0, M = !1;
+			var S = (C = C || {}).delimiter, O = C.newline, x = C.comments, T = C.step, I = C.preview, A = C.fastMode, D = null, L = !1, F = null == C.quoteChar ? "\"" : C.quoteChar, z = F;
+			if (void 0 !== C.escapeChar && (z = C.escapeChar), ("string" != typeof S || -1 < w.BAD_DELIMITERS.indexOf(S)) && (S = ","), x === S) throw new Error("Comment character same as delimiter");
+			!0 === x ? x = "#" : ("string" != typeof x || -1 < w.BAD_DELIMITERS.indexOf(x)) && (x = !1), "\n" !== O && "\r" !== O && "\r\n" !== O && (O = "\n");
+			var M = 0, j = !1;
 			this.parse = function(i, t, r) {
 				if ("string" != typeof i) throw new Error("Input must be a string");
-				var n = i.length, e = S.length, s = O.length, a = x.length, o = q(I), h = [], u = [], d = [], f = z = 0;
-				if (!i) return w();
-				if (T || !1 !== T && -1 === i.indexOf(F)) {
-					for (var l = i.split(O), c = 0; c < l.length; c++) {
-						if (d = l[c], z += d.length, c !== l.length - 1) z += O.length;
-						else if (r) return w();
+				var n = i.length, e = S.length, s = O.length, a = x.length, o = U(T), h = [], u = [], d = [], l = M = 0;
+				if (!i) return b();
+				if (A || !1 !== A && -1 === i.indexOf(F)) {
+					for (var f = i.split(O), c = 0; c < f.length; c++) {
+						if (d = f[c], M += d.length, c !== f.length - 1) M += O.length;
+						else if (r) return b();
 						if (!x || d.substring(0, a) !== x) {
 							if (o) {
-								if (h = [], k(d.split(S)), R(), M) return w();
+								if (h = [], k(d.split(S)), R(), j) return b();
 							} else k(d.split(S));
-							if (A && A <= c) return h = h.slice(0, A), w(!0);
+							if (I && I <= c) return h = h.slice(0, I), b(!0);
 						}
 					}
-					return w();
+					return b();
 				}
-				for (var p = i.indexOf(S, z), g = i.indexOf(O, z), _ = new RegExp(U(j) + U(F), "g"), m = i.indexOf(F, z);;) if (i[z] === F) for (m = z, z++;;) {
+				for (var p = i.indexOf(S, M), _ = i.indexOf(O, M), g = new RegExp(P(z) + P(F), "g"), m = i.indexOf(F, M);;) if (i[M] === F) for (m = M, M++;;) {
 					if (-1 === (m = i.indexOf(F, m + 1))) return r || u.push({
 						type: "Quotes",
 						code: "MissingQuotes",
 						message: "Quoted field unterminated",
 						row: h.length,
-						index: z
+						index: M
 					}), E();
-					if (m === n - 1) return E(i.substring(z, m).replace(_, F));
-					if (F === j && i[m + 1] === j) m++;
-					else if (F === j || 0 === m || i[m - 1] !== j) {
+					if (m === n - 1) return E(i.substring(M, m).replace(g, F));
+					if (F === z && i[m + 1] === z) m++;
+					else if (F === z || 0 === m || i[m - 1] !== z) {
 						-1 !== p && p < m + 1 && (p = i.indexOf(S, m + 1));
-						var y = v(-1 === (g = -1 !== g && g < m + 1 ? i.indexOf(O, m + 1) : g) ? p : Math.min(p, g));
+						var y = w(-1 === (_ = -1 !== _ && _ < m + 1 ? i.indexOf(O, m + 1) : _) ? p : Math.min(p, _));
 						if (i.substr(m + 1 + y, e) === S) {
-							d.push(i.substring(z, m).replace(_, F)), i[z = m + 1 + y + e] !== F && (m = i.indexOf(F, z)), p = i.indexOf(S, z), g = i.indexOf(O, z);
+							d.push(i.substring(M, m).replace(g, F)), i[M = m + 1 + y + e] !== F && (m = i.indexOf(F, M)), p = i.indexOf(S, M), _ = i.indexOf(O, M);
 							break;
 						}
-						y = v(g);
+						y = w(_);
 						if (i.substring(m + 1 + y, m + 1 + y + s) === O) {
-							if (d.push(i.substring(z, m).replace(_, F)), b(m + 1 + y + s), p = i.indexOf(S, z), m = i.indexOf(F, z), o && (R(), M)) return w();
-							if (A && h.length >= A) return w(!0);
+							if (d.push(i.substring(M, m).replace(g, F)), v(m + 1 + y + s), p = i.indexOf(S, M), m = i.indexOf(F, M), o && (R(), j)) return b();
+							if (I && h.length >= I) return b(!0);
 							break;
 						}
 						u.push({
@@ -18148,40 +18070,40 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 							code: "InvalidQuotes",
 							message: "Trailing quote on quoted field is malformed",
 							row: h.length,
-							index: z
+							index: M
 						}), m++;
 					}
 				}
-				else if (x && 0 === d.length && i.substring(z, z + a) === x) {
-					if (-1 === g) return w();
-					z = g + s, g = i.indexOf(O, z), p = i.indexOf(S, z);
-				} else if (-1 !== p && (p < g || -1 === g)) d.push(i.substring(z, p)), z = p + e, p = i.indexOf(S, z);
+				else if (x && 0 === d.length && i.substring(M, M + a) === x) {
+					if (-1 === _) return b();
+					M = _ + s, _ = i.indexOf(O, M), p = i.indexOf(S, M);
+				} else if (-1 !== p && (p < _ || -1 === _)) d.push(i.substring(M, p)), M = p + e, p = i.indexOf(S, M);
 				else {
-					if (-1 === g) break;
-					if (d.push(i.substring(z, g)), b(g + s), o && (R(), M)) return w();
-					if (A && h.length >= A) return w(!0);
+					if (-1 === _) break;
+					if (d.push(i.substring(M, _)), v(_ + s), o && (R(), j)) return b();
+					if (I && h.length >= I) return b(!0);
 				}
 				return E();
 				function k(e) {
-					h.push(e), f = z;
+					h.push(e), l = M;
 				}
-				function v(e) {
+				function w(e) {
 					var t = 0;
 					return t = -1 !== e && (e = i.substring(m + 1, e)) && "" === e.trim() ? e.length : t;
 				}
 				function E(e) {
-					return r || (void 0 === e && (e = i.substring(z)), d.push(e), z = n, k(d), o && R()), w();
+					return r || (void 0 === e && (e = i.substring(M)), d.push(e), M = n, k(d), o && R()), b();
+				}
+				function v(e) {
+					M = e, k(d), d = [], _ = i.indexOf(O, M);
 				}
 				function b(e) {
-					z = e, k(d), d = [], g = i.indexOf(O, z);
-				}
-				function w(e) {
 					if (C.header && !t && h.length && !L) {
 						var s = h[0], a = Object.create(null), o = new Set(s);
 						let n = !1;
 						for (let r = 0; r < s.length; r++) {
-							let i = P(s[r]);
-							if (a[i = q(C.transformHeader) ? C.transformHeader(i, r) : i]) {
+							let i = q(s[r]);
+							if (a[i = U(C.transformHeader) ? C.transformHeader(i, r) : i]) {
 								let e, t = a[i];
 								for (; e = i + "_" + t, t++, o.has(e););
 								o.add(e), s[r] = e, a[i]++, n = !0, (D = null === D ? {} : D)[e] = i;
@@ -18196,23 +18118,23 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 						meta: {
 							delimiter: S,
 							linebreak: O,
-							aborted: M,
+							aborted: j,
 							truncated: !!e,
-							cursor: f + (t || 0),
+							cursor: l + (t || 0),
 							renamedHeaders: D
 						}
 					};
 				}
 				function R() {
-					I(w()), h = [], u = [];
+					T(b()), h = [], u = [];
 				}
 			}, this.abort = function() {
-				M = !0;
+				j = !0;
 			}, this.getCharIndex = function() {
-				return z;
+				return M;
 			};
 		}
-		function g(e) {
+		function p(e) {
 			var t = e.data, i = o[t.workerId], r = !1;
 			if (t.error) i.userError(t.error, t.file);
 			else if (t.results && t.results.data) {
@@ -18224,73 +18146,78 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 							meta: { aborted: !0 }
 						});
 					},
-					pause: m,
-					resume: m
+					pause: g,
+					resume: g
 				};
-				if (q(i.userStep)) {
+				if (U(i.userStep)) {
 					for (var s = 0; s < t.results.data.length && (i.userStep({
 						data: t.results.data[s],
 						errors: t.results.errors,
 						meta: t.results.meta
 					}, n), !r); s++);
 					delete t.results;
-				} else q(i.userChunk) && (i.userChunk(t.results, n, t.file), delete t.results);
+				} else U(i.userChunk) && (i.userChunk(t.results, n, t.file), delete t.results);
 			}
 			t.finished && !r && _(t.workerId, t.results);
 		}
 		function _(e, t) {
 			var i = o[e];
-			q(i.userComplete) && i.userComplete(t), i.terminate(), delete o[e];
+			U(i.userComplete) && i.userComplete(t), i.terminate(), delete o[e];
 		}
-		function m() {
+		function g() {
 			throw new Error("Not implemented.");
 		}
-		function b(e) {
+		function v(e) {
 			if ("object" != typeof e || null === e) return e;
 			var t, i = Array.isArray(e) ? [] : {};
-			for (t in e) i[t] = b(e[t]);
+			for (t in e) i[t] = v(e[t]);
 			return i;
 		}
-		function y(e, t) {
+		function m(e, t) {
 			return function() {
 				e.apply(t, arguments);
 			};
 		}
-		function q(e) {
+		function U(e) {
 			return "function" == typeof e;
 		}
-		return v.parse = function(e, t) {
+		return w.parse = function(e, t) {
 			var i = (t = t || {}).dynamicTyping || !1;
-			q(i) && (t.dynamicTypingFunction = i, i = {});
-			if (t.dynamicTyping = i, t.transform = !!q(t.transform) && t.transform, !t.worker || !v.WORKERS_SUPPORTED) return i = null, v.NODE_STREAM_INPUT, "string" == typeof e ? (e = P(e), i = new (t.download ? f : c)(t)) : !0 === e.readable && q(e.read) && q(e.on) ? i = new p(t) : (n.File && e instanceof File || e instanceof Object) && (i = new l(t)), i.stream(e);
+			U(i) && (t.dynamicTypingFunction = i, i = {});
+			if (t.dynamicTyping = i, t.transform = !!U(t.transform) && t.transform, void 0 !== t.downloadTimeout) {
+				var i = parseInt(t.downloadTimeout);
+				if (isNaN(i)) throw new Error("Config downloadTimeout value (" + t.downloadTimeout + ") not parsable by parseInt(val).");
+				t.downloadTimeout = i;
+			}
+			if (!t.worker || !w.WORKERS_SUPPORTED) return i = null, w.NODE_STREAM_INPUT, "string" == typeof e ? (e = q(e), i = new (t.download ? d : f)(t)) : !0 === e.readable && U(e.read) && U(e.on) ? i = new c(t) : (n.File && e instanceof File || e instanceof Object) && (i = new l(t)), i.stream(e);
 			(i = (() => {
 				var e;
-				return !!v.WORKERS_SUPPORTED && (e = (() => {
+				return !!w.WORKERS_SUPPORTED && (e = (() => {
 					var e = n.URL || n.webkitURL || null, t = r.toString();
-					return v.BLOB_URL || (v.BLOB_URL = e.createObjectURL(new Blob([
+					return w.BLOB_URL || (w.BLOB_URL = e.createObjectURL(new Blob([
 						"var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ",
 						"(",
 						t,
 						")();"
 					], { type: "text/javascript" })));
-				})(), (e = new n.Worker(e)).onmessage = g, e.id = h++, o[e.id] = e);
-			})()).userStep = t.step, i.userChunk = t.chunk, i.userComplete = t.complete, i.userError = t.error, t.step = q(t.step), t.chunk = q(t.chunk), t.complete = q(t.complete), t.error = q(t.error), delete t.worker, i.postMessage({
+				})(), (e = new n.Worker(e)).onmessage = p, e.id = h++, o[e.id] = e);
+			})()).userStep = t.step, i.userChunk = t.chunk, i.userComplete = t.complete, i.userError = t.error, t.step = U(t.step), t.chunk = U(t.chunk), t.complete = U(t.complete), t.error = U(t.error), delete t.worker, i.postMessage({
 				input: e,
 				config: t,
 				workerId: i.id
 			});
-		}, v.unparse = function(e, t) {
-			var s = !1, _ = !0, m = ",", y = "\r\n", a = "\"", o = a + a, i = !1, r = null, h = !1, u = ((() => {
+		}, w.unparse = function(e, t) {
+			var s = !1, g = !0, m = ",", y = "\r\n", a = "\"", o = a + a, i = !1, r = null, h = !1, u = ((() => {
 				if ("object" == typeof t) {
-					if ("string" != typeof t.delimiter || v.BAD_DELIMITERS.filter(function(e) {
+					if ("string" != typeof t.delimiter || w.BAD_DELIMITERS.filter(function(e) {
 						return -1 !== t.delimiter.indexOf(e);
-					}).length || (m = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (s = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i = t.skipEmptyLines), "string" == typeof t.newline && (y = t.newline), "string" == typeof t.quoteChar && (a = t.quoteChar, o = a + a), "boolean" == typeof t.header && (_ = t.header), Array.isArray(t.columns)) {
+					}).length || (m = t.delimiter), "boolean" != typeof t.quotes && "function" != typeof t.quotes && !Array.isArray(t.quotes) || (s = t.quotes), "boolean" != typeof t.skipEmptyLines && "string" != typeof t.skipEmptyLines || (i = t.skipEmptyLines), "string" == typeof t.newline && (y = t.newline), "string" == typeof t.quoteChar && (a = t.quoteChar, o = a + a), "boolean" == typeof t.header && (g = t.header), Array.isArray(t.columns)) {
 						if (0 === t.columns.length) throw new Error("Option columns is empty");
 						r = t.columns;
 					}
 					void 0 !== t.escapeChar && (o = t.escapeChar + a), t.escapeFormulae instanceof RegExp ? h = t.escapeFormulae : "boolean" == typeof t.escapeFormulae && t.escapeFormulae && (h = /^[=+\-@\t\r].*$/);
 				}
-			})(), new RegExp(U(a), "g"));
+			})(), new RegExp(P(a), "g"));
 			"string" == typeof e && (e = JSON.parse(e));
 			if (Array.isArray(e)) {
 				if (!e.length || Array.isArray(e[0])) return n(null, e, i);
@@ -18299,24 +18226,24 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 			throw new Error("Unable to serialize unrecognized input");
 			function n(e, t, i) {
 				var r = "", n = ("string" == typeof e && (e = JSON.parse(e)), "string" == typeof t && (t = JSON.parse(t)), Array.isArray(e) && 0 < e.length), s = !Array.isArray(t[0]);
-				if (n && _) {
+				if (n && g) {
 					for (var a = 0; a < e.length; a++) 0 < a && (r += m), r += k(e[a], a);
 					0 < t.length && (r += y);
 				}
 				for (var o = 0; o < t.length; o++) {
 					var h = (n ? e : t[o]).length, u = !1, d = n ? 0 === Object.keys(t[o]).length : 0 === t[o].length;
 					if (i && !n && (u = "greedy" === i ? "" === t[o].join("").trim() : 1 === t[o].length && 0 === t[o][0].length), "greedy" === i && n) {
-						for (var f = [], l = 0; l < h; l++) {
-							var c = s ? e[l] : l;
-							f.push(t[o][c]);
+						for (var l = [], f = 0; f < h; f++) {
+							var c = s ? e[f] : f;
+							l.push(t[o][c]);
 						}
-						u = "" === f.join("").trim();
+						u = "" === l.join("").trim();
 					}
 					if (!u) {
 						for (var p = 0; p < h; p++) {
 							0 < p && !d && (r += m);
-							var g = n && s ? e[p] : p;
-							r += k(t[o][g], p);
+							var _ = n && s ? e[p] : p;
+							r += k(t[o][_], p);
 						}
 						o < t.length - 1 && (!i || 0 < h && !d) && (r += y);
 					}
@@ -18325,64 +18252,83 @@ var require_papaparse_min = /* @__PURE__ */ __commonJSMin(((exports, module, thi
 			}
 			function k(e, t) {
 				var i, r, n;
-				return null == e ? "" : e.constructor === Date ? JSON.stringify(e).slice(1, 25) : (n = !1, h && "string" == typeof e && h.test(e) && (e = "'" + e, n = !0), r = (i = e.toString()).replace(u, o), (n = n || !0 === s || "function" == typeof s && s(e, t) || Array.isArray(s) && s[t] || ((e, t) => {
+				return null == e ? "" : e.constructor === Date ? isNaN(e.getTime()) ? "" : e.toISOString() : (n = !1, h && "string" == typeof e && h.test(e) && (e = "'" + e, n = !0), r = (i = e.toString()).replace(u, o), (n = n || !0 === s || "function" == typeof s && s(e, t) || Array.isArray(s) && s[t] || ((e, t) => {
 					for (var i = 0; i < t.length; i++) if (-1 < e.indexOf(t[i])) return !0;
 					return !1;
-				})(r, v.BAD_DELIMITERS) || -1 < r.indexOf(m) || -1 < i.indexOf(a) || " " === r.charAt(0) || " " === r.charAt(r.length - 1)) ? a + r + a : r);
+				})(r, w.BAD_DELIMITERS) || -1 < r.indexOf(m) || -1 < i.indexOf(a) || " " === r.charAt(0) || " " === r.charAt(r.length - 1)) ? a + r + a : r);
 			}
-		}, v.RECORD_SEP = String.fromCharCode(30), v.UNIT_SEP = String.fromCharCode(31), v.BYTE_ORDER_MARK = "﻿", v.BAD_DELIMITERS = [
+		}, w.RECORD_SEP = String.fromCharCode(30), w.UNIT_SEP = String.fromCharCode(31), w.BYTE_ORDER_MARK = "﻿", w.BAD_DELIMITERS = [
 			"\r",
 			"\n",
 			"\"",
-			v.BYTE_ORDER_MARK
-		], v.WORKERS_SUPPORTED = !s && !!n.Worker, v.NODE_STREAM_INPUT = 1, v.LocalChunkSize = 10485760, v.RemoteChunkSize = 5242880, v.DefaultDelimiter = ",", v.Parser = E, v.ParserHandle = i, v.NetworkStreamer = f, v.FileStreamer = l, v.StringStreamer = c, v.ReadableStreamStreamer = p, n.jQuery && ((d = n.jQuery).fn.parse = function(o) {
-			var i = o.config || {}, h = [];
-			return this.each(function(e) {
-				if (!("INPUT" === d(this).prop("tagName").toUpperCase() && "file" === d(this).attr("type").toLowerCase() && n.FileReader) || !this.files || 0 === this.files.length) return !0;
-				for (var t = 0; t < this.files.length; t++) h.push({
-					file: this.files[t],
-					inputElem: this,
-					instanceConfig: d.extend({}, i)
-				});
-			}), e(), this;
-			function e() {
-				if (0 === h.length) q(o.complete) && o.complete();
-				else {
-					var e, t, i, r, n = h[0];
-					if (q(o.before)) {
-						var s = o.before(n.file, n.inputElem);
-						if ("object" == typeof s) {
-							if ("abort" === s.action) return e = "AbortError", t = n.file, i = n.inputElem, r = s.reason, void (q(o.error) && o.error({ name: e }, t, i, r));
-							if ("skip" === s.action) return void u();
-							"object" == typeof s.config && (n.instanceConfig = d.extend(n.instanceConfig, s.config));
-						} else if ("skip" === s) return void u();
-					}
-					var a = n.instanceConfig.complete;
-					n.instanceConfig.complete = function(e) {
-						q(a) && a(e, n.file, n.inputElem), u();
-					}, v.parse(n.file, n.instanceConfig);
-				}
-			}
-			function u() {
-				h.splice(0, 1), e();
-			}
-		}), a && (n.onmessage = function(e) {
+			w.BYTE_ORDER_MARK
+		], w.WORKERS_SUPPORTED = !s && !!n.Worker, w.NODE_STREAM_INPUT = 1, w.LocalChunkSize = 10485760, w.RemoteChunkSize = 5242880, w.DefaultDelimiter = ",", w.Parser = E, w.ParserHandle = i, w.NetworkStreamer = d, w.FileStreamer = l, w.StringStreamer = f, w.ReadableStreamStreamer = c, a && (n.onmessage = function(e) {
 			e = e.data;
-			void 0 === v.WORKER_ID && e && (v.WORKER_ID = e.workerId);
+			void 0 === w.WORKER_ID && e && (w.WORKER_ID = e.workerId);
 			"string" == typeof e.input ? n.postMessage({
-				workerId: v.WORKER_ID,
-				results: v.parse(e.input, e.config),
+				workerId: w.WORKER_ID,
+				results: w.parse(e.input, e.config),
 				finished: !0
-			}) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = v.parse(e.input, e.config)) && n.postMessage({
-				workerId: v.WORKER_ID,
+			}) : (n.File && e.input instanceof File || e.input instanceof Object) && (e = w.parse(e.input, e.config)) && n.postMessage({
+				workerId: w.WORKER_ID,
 				results: e,
 				finished: !0
 			});
-		}), (f.prototype = Object.create(u.prototype)).constructor = f, (l.prototype = Object.create(u.prototype)).constructor = l, (c.prototype = Object.create(c.prototype)).constructor = c, (p.prototype = Object.create(u.prototype)).constructor = p, v;
+		}), (d.prototype = Object.create(u.prototype)).constructor = d, (l.prototype = Object.create(u.prototype)).constructor = l, (f.prototype = Object.create(f.prototype)).constructor = f, (c.prototype = Object.create(u.prototype)).constructor = c, w;
 	});
 }));
-//#endregion
-//#region node_modules/geojson-vt/src/simplify.js
+/** @import {CoordArray, Feature, SinglePointFeature, FeatureId, Tags} from './internal.d.ts' */
+var KEEP_Z = 2147483647;
+/** @param {FeatureId|undefined} id @param {number} x @param {number} y @param {Tags} tags @returns {SinglePointFeature} */
+function createSinglePoint(id, x, y, tags) {
+	return {
+		id,
+		type: 4,
+		x,
+		y,
+		tags
+	};
+}
+/** @param {FeatureId|undefined} id @param {1|2|3} type @param {CoordArray} geom @param {Tags} tags @returns {Feature} */
+function createFeature(id, type, geom, tags) {
+	const feature = {
+		id,
+		type,
+		geometry: geom,
+		tags,
+		minX: Infinity,
+		minY: Infinity,
+		maxX: -Infinity,
+		maxY: -Infinity
+	};
+	if (type === 1) calcBBox(feature, geom, 0, geom.length);
+	else {
+		const outerOnly = type === 3;
+		for (let i = 0; i < geom.length;) {
+			const ringLen = geom[i];
+			const ringSize = geom[i + 1];
+			const coords0 = i + 2;
+			const coordsEnd = coords0 + ringLen * 3;
+			if (!outerOnly || ringSize >= 0) calcBBox(feature, geom, coords0, coordsEnd);
+			i = coordsEnd;
+		}
+	}
+	return feature;
+}
+/** @param {Feature} feature @param {CoordArray} coords @param {number} start @param {number} end */
+function calcBBox(feature, coords, start, end) {
+	for (let i = start; i < end; i += 3) {
+		const x = coords[i];
+		const y = coords[i + 1];
+		if (x < feature.minX) feature.minX = x;
+		if (y < feature.minY) feature.minY = y;
+		if (x > feature.maxX) feature.maxX = x;
+		if (y > feature.maxY) feature.maxY = y;
+	}
+}
+// node_modules/geojson-vt/src/simplify.js
+/** @import {CoordArray} from './internal.d.ts' */
+/** @param {CoordArray} coords @param {number} first @param {number} last @param {number} sqTolerance */
 function simplify(coords, first, last, sqTolerance) {
 	let maxSqDist = sqTolerance;
 	const mid = first + (last - first >> 1);
@@ -18406,11 +18352,13 @@ function simplify(coords, first, last, sqTolerance) {
 		}
 	}
 	if (maxSqDist > sqTolerance) {
-		if (index - first > 3) simplify(coords, first, index, sqTolerance);
-		coords[index + 2] = maxSqDist;
-		if (last - index > 3) simplify(coords, index, last, sqTolerance);
+		const i = index;
+		if (i - first > 3) simplify(coords, first, i, sqTolerance);
+		coords[i + 2] = Math.min(Math.sqrt(maxSqDist), KEEP_Z);
+		if (last - i > 3) simplify(coords, i, last, sqTolerance);
 	}
 }
+/** @param {number} px @param {number} py @param {number} x @param {number} y @param {number} bx @param {number} by */
 function getSqSegDist(px, py, x, y, bx, by) {
 	let dx = bx - x;
 	let dy = by - y;
@@ -18428,177 +18376,321 @@ function getSqSegDist(px, py, x, y, bx, by) {
 	dy = py - y;
 	return dx * dx + dy * dy;
 }
-//#endregion
-//#region node_modules/geojson-vt/src/feature.js
-function createFeature(id, type, geom, tags) {
-	const feature = {
-		id: id == null ? null : id,
-		type,
-		geometry: geom,
-		tags,
-		minX: Infinity,
-		minY: Infinity,
-		maxX: -Infinity,
-		maxY: -Infinity
-	};
-	if (type === "Point" || type === "MultiPoint" || type === "LineString") calcLineBBox(feature, geom);
-	else if (type === "Polygon") calcLineBBox(feature, geom[0]);
-	else if (type === "MultiLineString") for (const line of geom) calcLineBBox(feature, line);
-	else if (type === "MultiPolygon") for (const polygon of geom) calcLineBBox(feature, polygon[0]);
-	return feature;
-}
-function calcLineBBox(feature, geom) {
-	for (let i = 0; i < geom.length; i += 3) {
-		feature.minX = Math.min(feature.minX, geom[i]);
-		feature.minY = Math.min(feature.minY, geom[i + 1]);
-		feature.maxX = Math.max(feature.maxX, geom[i]);
-		feature.maxY = Math.max(feature.maxY, geom[i + 1]);
-	}
-}
-//#endregion
-//#region node_modules/geojson-vt/src/convert.js
+// node_modules/geojson-vt/src/convert.js
+/** @import {AnyFeature, CoordArray, InternalOptions as Options, Tags, FeatureId as Id} from './internal.d.ts' */
+/** @import {Feature, GeoJSON} from 'geojson' */
+var INVALID_GEOJSON = "Input data is not a valid GeoJSON object.";
+var overflow = false;
+/** @param {GeoJSON} data @param {Options} options @returns {AnyFeature[]} */
 function convert(data, options) {
+	/** @type {AnyFeature[]} */
 	const features = [];
 	if (data.type === "FeatureCollection") for (let i = 0; i < data.features.length; i++) convertFeature(features, data.features[i], options, i);
 	else if (data.type === "Feature") convertFeature(features, data, options);
-	else convertFeature(features, { geometry: data }, options);
+	else convertFeature(features, {
+		type: "Feature",
+		geometry: data,
+		properties: null
+	}, options);
 	return features;
 }
+/** @param {AnyFeature[]} features @param {Feature} geojson @param {Options} options @param {number} [index] */
 function convertFeature(features, geojson, options, index) {
-	if (!geojson.geometry) return;
-	const coords = geojson.geometry.coordinates;
-	if (coords && coords.length === 0) return;
-	const type = geojson.geometry.type;
-	const tolerance = Math.pow(options.tolerance / ((1 << options.maxZoom) * options.extent), 2);
-	let geometry = [];
+	var _geojson$properties;
+	const geom = geojson.geometry;
+	if (!geom) return;
+	const parts = geom.type === "GeometryCollection" ? geom.geometries : geom.coordinates;
+	if (!parts) throw new Error(INVALID_GEOJSON);
+	if (!parts.length) return;
+	const tolerance = options.tolerance * options.worldScale / ((1 << options.maxZoom) * options.extent);
+	const sqTolerance = tolerance * tolerance;
+	const tags = geojson.properties;
+	const CoordArray = options.CoordArray;
+	const S = options.worldScale;
+	const O = options.originShift;
+	const R = options.useInt32;
 	let id = geojson.id;
-	if (options.promoteId) id = geojson.properties[options.promoteId];
+	if (options.promoteId) id = (_geojson$properties = geojson.properties) === null || _geojson$properties === void 0 ? void 0 : _geojson$properties[options.promoteId];
 	else if (options.generateId) id = index || 0;
-	if (type === "Point") convertPoint(coords, geometry);
-	else if (type === "MultiPoint") for (const p of coords) convertPoint(p, geometry);
-	else if (type === "LineString") convertLine(coords, geometry, tolerance, false);
-	else if (type === "MultiLineString") {
-		if (options.lineMetrics) {
-			for (const line of coords) {
-				geometry = [];
-				convertLine(line, geometry, tolerance, false);
-				features.push(createFeature(id, "LineString", geometry, geojson.properties));
-			}
-			return;
+	const start = features.length;
+	if (geom.type === "Point") features.push(createSinglePoint(id, projectX(geom.coordinates[0], S, O), projectY(geom.coordinates[1], S, O), tags));
+	else if (geom.type === "MultiPoint") {
+		const coords = geom.coordinates;
+		const out = new CoordArray(coords.length * 3);
+		for (let i = 0; i < coords.length; i++) {
+			const x = quantize(projectX(coords[i][0], S, O), R);
+			out[i * 3] = x;
+			if (Math.abs(x) >= 2147483648) overflow = true;
+			out[i * 3 + 1] = quantize(projectY(coords[i][1], S, O), R);
 		}
-		convertLines(coords, geometry, tolerance, false);
-	} else if (type === "Polygon") convertLines(coords, geometry, tolerance, true);
-	else if (type === "MultiPolygon") for (const polygon of coords) {
-		const newPolygon = [];
-		convertLines(polygon, newPolygon, tolerance, true);
-		geometry.push(newPolygon);
+		pushFeature(features, id, 1, out, tags, options);
+	} else if (geom.type === "LineString") pushLine(features, id, geom.coordinates, tags, sqTolerance, options);
+	else if (geom.type === "MultiLineString" && options.lineMetrics) for (const lineCoords of geom.coordinates) pushLine(features, id, lineCoords, tags, sqTolerance, options);
+	else if (geom.type === "MultiLineString" || geom.type === "Polygon" || geom.type === "MultiPolygon") {
+		const isPolygon = geom.type !== "MultiLineString";
+		const groups = geom.type === "MultiPolygon" ? geom.coordinates : [geom.coordinates];
+		let total = 0;
+		for (const rings of groups) total += ringsBufferSize(rings);
+		const out = new CoordArray(total);
+		let idx = 0;
+		for (const rings of groups) for (let i = 0; i < rings.length; i++) idx = writeLine(out, idx, rings[i], sqTolerance, isPolygon, isPolygon && i === 0, S, O, R);
+		pushFeature(features, id, isPolygon ? 3 : 2, out, tags, options);
+	} else if (geom.type === "GeometryCollection") for (const g of geom.geometries) convertFeature(features, {
+		type: "Feature",
+		id,
+		geometry: g,
+		properties: geojson.properties
+	}, options, index);
+	else throw new Error(INVALID_GEOJSON);
+	if (overflow) {
+		overflow = false;
+		if (CoordArray === Int32Array) {
+			features.length = start;
+			convertFeature(features, geojson, Object.assign(Object.create(options), { CoordArray: Float64Array }), index);
+		}
 	}
-	else if (type === "GeometryCollection") {
-		for (const singleGeometry of geojson.geometry.geometries) convertFeature(features, {
-			id,
-			geometry: singleGeometry,
-			properties: geojson.properties
-		}, options, index);
-		return;
-	} else throw new Error("Input data is not a valid GeoJSON object.");
-	features.push(createFeature(id, type, geometry, geojson.properties));
 }
-function convertPoint(coords, out) {
-	out.push(projectX(coords[0]), projectY(coords[1]), 0);
+/** @param {number[][][]} rings */
+function ringsBufferSize(rings) {
+	let n = 0;
+	for (const ring of rings) if (ring.length > 0) n += 2 + ring.length * 3;
+	return n;
 }
-function convertLine(ring, out, tolerance, isPolygon) {
-	let x0, y0;
+var lastLineSize = 0;
+/** @param {AnyFeature[]} features @param {Id|undefined} id @param {1|2|3} type @param {CoordArray} geom @param {Tags} tags @param {Options} options @param {number} [size] */
+function pushFeature(features, id, type, geom, tags, options, size) {
+	const feature = createFeature(id, type, geom, tags);
+	if (type === 2 && options.lineMetrics) {
+		feature.start = 0;
+		feature.end = feature.size = size;
+	}
+	features.push(feature);
+}
+/** @param {AnyFeature[]} features @param {Id|undefined} id @param {number[][]} coords @param {Tags} tags @param {number} sqTolerance @param {Options} options */
+function pushLine(features, id, coords, tags, sqTolerance, options) {
+	const out = new options.CoordArray(2 + coords.length * 3);
+	writeLine(out, 0, coords, sqTolerance, false, false, options.worldScale, options.originShift, options.useInt32);
+	pushFeature(features, id, 2, out, tags, options, lastLineSize);
+}
+/** @param {CoordArray} out @param {number} idx @param {number[][]} ring @param {number} sqTolerance @param {boolean} isPolygon @param {boolean} isOuter @param {number} S @param {number} O @param {boolean} R @returns {number} */
+function writeLine(out, idx, ring, sqTolerance, isPolygon, isOuter, S, O, R) {
+	if (ring.length === 0) return idx;
+	const headerIdx = idx;
+	idx += 2;
+	const coords0 = idx;
+	let x0 = 0, y0 = 0;
 	let size = 0;
 	for (let j = 0; j < ring.length; j++) {
-		const x = projectX(ring[j][0]);
-		const y = projectY(ring[j][1]);
-		out.push(x, y, 0);
+		const x = quantize(projectX(ring[j][0], S, O), R);
+		const y = quantize(projectY(ring[j][1], S, O), R);
+		out[idx] = x;
+		out[idx + 1] = y;
+		if (Math.abs(x) >= 2147483648) overflow = true;
+		idx += 3;
 		if (j > 0) {
 			if (isPolygon) size += (x0 * y - x * y0) / 2;
-			else size += Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
+			else {
+				const dx = x - x0, dy = y - y0;
+				size += Math.sqrt(dx * dx + dy * dy);
+			}
 		}
 		x0 = x;
 		y0 = y;
 	}
-	const last = out.length - 3;
-	out[2] = 1;
-	simplify(out, 0, last, tolerance);
-	out[last + 2] = 1;
-	out.size = Math.abs(size);
-	out.start = 0;
-	out.end = out.size;
-}
-function convertLines(rings, out, tolerance, isPolygon) {
-	for (let i = 0; i < rings.length; i++) {
-		const geom = [];
-		convertLine(rings[i], geom, tolerance, isPolygon);
-		out.push(geom);
+	const coordsEnd = idx;
+	if (isPolygon && (isOuter && size < 0 || !isOuter && size >= 0)) {
+		const nCoords = coordsEnd - coords0;
+		for (let k = 0; k < nCoords / 2; k += 3) {
+			const i = coords0 + k;
+			const j = coordsEnd - 3 - k;
+			const x = out[i];
+			const y = out[i + 1];
+			const z = out[i + 2];
+			out[i] = out[j];
+			out[i + 1] = out[j + 1];
+			out[i + 2] = out[j + 2];
+			out[j] = x;
+			out[j + 1] = y;
+			out[j + 2] = z;
+		}
+		size = -size;
 	}
+	const lastIdx = coordsEnd - 3;
+	out[coords0 + 2] = KEEP_Z;
+	simplify(out, coords0, lastIdx, sqTolerance);
+	out[lastIdx + 2] = KEEP_Z;
+	out[headerIdx] = (coordsEnd - coords0) / 3;
+	if (isPolygon) out[headerIdx + 1] = Math.sign(size) * Math.min(Math.sqrt(Math.abs(size)), KEEP_Z);
+	else {
+		lastLineSize = size;
+		out[headerIdx + 1] = Math.min(size, KEEP_Z);
+	}
+	return idx;
 }
-function projectX(x) {
-	return x / 360 + .5;
+/** @param {number} v @param {boolean} R */
+function quantize(v, R) {
+	return R ? Math.floor(v + .5) : v;
 }
-function projectY(y) {
+/** @param {number} x @param {number} S @param {number} O */
+function projectX(x, S, O) {
+	return (x / 360 + .5 - O) * S;
+}
+/** @param {number} y @param {number} S @param {number} O */
+function projectY(y, S, O) {
 	const sin = Math.sin(y * Math.PI / 180);
 	const y2 = .5 - .25 * Math.log((1 + sin) / (1 - sin)) / Math.PI;
-	return y2 < 0 ? 0 : y2 > 1 ? 1 : y2;
+	return ((y2 < 0 ? 0 : y2 > 1 ? 1 : y2) - O) * S;
 }
-//#endregion
-//#region node_modules/geojson-vt/src/clip.js
-function clip(features, scale, k1, k2, axis, minAll, maxAll, options) {
-	k1 /= scale;
-	k2 /= scale;
+// node_modules/geojson-vt/src/clip.js
+/** @import {AnyFeature, Feature, CoordArray, CoordArrayCtor, InternalOptions as Options} from './internal.d.ts' */
+/** @param {AnyFeature[]} features @param {number} k1 @param {number} k2 @param {0|1} axis @param {number} minAll @param {number} maxAll @param {Options} options @returns {AnyFeature[]|null} */
+function clip(features, k1, k2, axis, minAll, maxAll, options) {
 	if (minAll >= k1 && maxAll < k2) return features;
-	else if (maxAll < k1 || minAll >= k2) return null;
-	const clipped = [];
-	for (const feature of features) {
+	if (maxAll < k1 || minAll >= k2) return null;
+	const isMetrics = options.lineMetrics;
+	/** @type {AnyFeature[]|null} */
+	let clipped = null;
+	for (let fi = 0; fi < features.length; fi++) {
+		const feature = features[fi];
+		const type = feature.type;
+		if (type === 4) {
+			const a = axis === 0 ? feature.x : feature.y;
+			if (a >= k1 && a < k2) {
+				if (clipped !== null) clipped.push(feature);
+			} else if (clipped === null) clipped = features.slice(0, fi);
+			continue;
+		}
 		const geometry = feature.geometry;
-		let type = feature.type;
 		const min = axis === 0 ? feature.minX : feature.minY;
 		const max = axis === 0 ? feature.maxX : feature.maxY;
 		if (min >= k1 && max < k2) {
-			clipped.push(feature);
+			if (clipped !== null) clipped.push(feature);
 			continue;
-		} else if (max < k1 || min >= k2) continue;
-		let newGeometry = [];
-		if (type === "Point" || type === "MultiPoint") clipPoints(geometry, newGeometry, k1, k2, axis);
-		else if (type === "LineString") clipLine(geometry, newGeometry, k1, k2, axis, false, options.lineMetrics);
-		else if (type === "MultiLineString") clipLines(geometry, newGeometry, k1, k2, axis, false);
-		else if (type === "Polygon") clipLines(geometry, newGeometry, k1, k2, axis, true);
-		else if (type === "MultiPolygon") for (const polygon of geometry) {
-			const newPolygon = [];
-			clipLines(polygon, newPolygon, k1, k2, axis, true);
-			if (newPolygon.length) newGeometry.push(newPolygon);
 		}
-		if (newGeometry.length) {
-			if (options.lineMetrics && type === "LineString") {
-				for (const line of newGeometry) clipped.push(createFeature(feature.id, type, line, feature.tags));
-				continue;
-			}
-			if (type === "LineString" || type === "MultiLineString") {
-				if (newGeometry.length === 1) {
-					type = "LineString";
-					newGeometry = newGeometry[0];
-				} else type = "MultiLineString";
-			}
-			if (type === "Point" || type === "MultiPoint") type = newGeometry.length === 3 ? "Point" : "MultiPoint";
-			clipped.push(createFeature(feature.id, type, newGeometry, feature.tags));
+		if (max < k1 || min >= k2) {
+			if (clipped === null) clipped = features.slice(0, fi);
+			continue;
 		}
+		if (clipped === null) clipped = features.slice(0, fi);
+		const CoordArray = geometry.constructor;
+		if (type === 1) {
+			clipPoint(geometry, k1, k2, axis, feature, clipped, CoordArray);
+			continue;
+		}
+		clipLinesOrPolygons(geometry, type, k1, k2, axis, feature, clipped, isMetrics, CoordArray);
 	}
+	if (clipped === null) return features;
 	return clipped.length ? clipped : null;
 }
-function clipPoints(geom, newGeom, k1, k2, axis) {
-	for (let i = 0; i < geom.length; i += 3) {
-		const a = geom[i + axis];
-		if (a >= k1 && a <= k2) addPoint(newGeom, geom[i], geom[i + 1], geom[i + 2]);
+/** @param {CoordArray} geometry @param {number} k1 @param {number} k2 @param {0|1} axis @param {Feature} feature @param {AnyFeature[]} clipped @param {CoordArrayCtor} CoordArray */
+function clipPoint(geometry, k1, k2, axis, feature, clipped, CoordArray) {
+	let n = 0;
+	for (let i = 0; i < geometry.length; i += 3) if (geometry[i + axis] >= k1 && geometry[i + axis] < k2) n += 3;
+	if (n === 0) return;
+	const out = new CoordArray(n);
+	let w = 0;
+	for (let i = 0; i < geometry.length; i += 3) if (geometry[i + axis] >= k1 && geometry[i + axis] < k2) {
+		out[w] = geometry[i];
+		out[w + 1] = geometry[i + 1];
+		out[w + 2] = geometry[i + 2];
+		w += 3;
+	}
+	clipped.push(createFeature(feature.id, 1, out, feature.tags));
+}
+/** @param {CoordArray} geometry @param {1|2|3} type @param {number} k1 @param {number} k2 @param {0|1} axis @param {Feature} feature @param {AnyFeature[]} clipped @param {boolean} isMetrics @param {CoordArrayCtor} CoordArray */
+function clipLinesOrPolygons(geometry, type, k1, k2, axis, feature, clipped, isMetrics, CoordArray) {
+	const isPolygon = type === 3;
+	let total = 0;
+	for (let i = 0; i < geometry.length;) {
+		const coordsEnd = i + 2 + geometry[i] * 3;
+		total += countClipRing(geometry, i + 2, coordsEnd, k1, k2, axis, isPolygon);
+		i = coordsEnd;
+	}
+	if (total === 0) return;
+	let out = new CoordArray(total);
+	const round = CoordArray === Int32Array;
+	const metrics = isMetrics && type === 2 ? [] : null;
+	let w = 0;
+	for (let i = 0; i < geometry.length;) {
+		const coordsEnd = i + 2 + geometry[i] * 3;
+		w = clipRing(geometry, i + 2, coordsEnd, geometry[i + 1], out, w, k1, k2, axis, isPolygon, round, metrics, feature.start || 0);
+		i = coordsEnd;
+	}
+	if (w < total) out = out.subarray(0, w);
+	if (metrics === null) {
+		clipped.push(createFeature(feature.id, type, out, feature.tags));
+		return;
+	}
+	for (let i = 0, n = 0; i < out.length; n += 2) {
+		const coordsEnd = i + 2 + out[i] * 3;
+		const f = createFeature(feature.id, 2, out.slice(i, coordsEnd), feature.tags);
+		f.start = metrics[n];
+		f.end = metrics[n + 1];
+		f.size = feature.size;
+		clipped.push(f);
+		i = coordsEnd;
 	}
 }
-function clipLine(geom, newGeom, k1, k2, axis, isPolygon, trackMetrics) {
-	let slice = newSlice(geom);
-	const intersect = axis === 0 ? intersectX : intersectY;
-	let len = geom.start;
-	let segLen, t;
-	for (let i = 0; i < geom.length - 3; i += 3) {
+/** @param {CoordArray} geom @param {number} coords0 @param {number} coordsEnd @param {number} k1 @param {number} k2 @param {0|1} axis @param {boolean} isPolygon */
+function countClipRing(geom, coords0, coordsEnd, k1, k2, axis, isPolygon) {
+	let slices = 0;
+	let coordsTotal = 0;
+	let sliceCoords = 0;
+	let crossings = 0;
+	for (let i = coords0; i < coordsEnd - 3; i += 3) {
+		const a = geom[i + axis];
+		const b = geom[i + 3 + axis];
+		let exited = false;
+		if (a < k1) {
+			if (b >= k1) {
+				sliceCoords++;
+				crossings++;
+			}
+		} else if (a > k2) {
+			if (b <= k2) {
+				sliceCoords++;
+				crossings++;
+			}
+		} else sliceCoords++;
+		if (b < k1 && a >= k1) {
+			sliceCoords++;
+			crossings++;
+			exited = true;
+		}
+		if (b > k2 && a <= k2) {
+			sliceCoords++;
+			crossings++;
+			exited = true;
+		}
+		if (!isPolygon && exited) {
+			if (sliceCoords > 0) {
+				coordsTotal += sliceCoords;
+				slices++;
+			}
+			sliceCoords = 0;
+		}
+	}
+	const lastA = geom[coordsEnd - 3 + axis];
+	if (lastA >= k1 && lastA <= k2) sliceCoords++;
+	if (isPolygon && sliceCoords >= 2 && crossings >= 1) sliceCoords++;
+	if (sliceCoords > 0) {
+		coordsTotal += sliceCoords;
+		slices++;
+	}
+	return coordsTotal * 3 + slices * 2;
+}
+/** @param {CoordArray} geom @param {number} coords0 @param {number} coordsEnd @param {number} ringSize @param {CoordArray} out @param {number} w @param {number} k1 @param {number} k2 @param {0|1} axis @param {boolean} isPolygon @param {boolean} round @param {number[]|null} metrics @param {number} start */
+function clipRing(geom, coords0, coordsEnd, ringSize, out, w, k1, k2, axis, isPolygon, round, metrics, start) {
+	const trackMetrics = metrics !== null;
+	let headerIdx = w;
+	out[w] = 0;
+	out[w + 1] = ringSize;
+	w += 2;
+	let sliceWriteStart = w;
+	let len = start;
+	let sliceMetricStart = len;
+	let segLen = 0, t = 0;
+	for (let i = coords0; i < coordsEnd - 3; i += 3) {
 		const ax = geom[i];
 		const ay = geom[i + 1];
 		const az = geom[i + 2];
@@ -18607,140 +18699,150 @@ function clipLine(geom, newGeom, k1, k2, axis, isPolygon, trackMetrics) {
 		const a = axis === 0 ? ax : ay;
 		const b = axis === 0 ? bx : by;
 		let exited = false;
-		if (trackMetrics) segLen = Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
+		if (trackMetrics) segLen = Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
 		if (a < k1) {
 			if (b >= k1) {
-				t = intersect(slice, ax, ay, bx, by, k1);
-				if (trackMetrics) slice.start = len + segLen * t;
+				t = intersect(out, w, ax, ay, bx, by, k1, axis, round);
+				w += 3;
+				if (trackMetrics) sliceMetricStart = len + segLen * t;
 			}
 		} else if (a > k2) {
 			if (b <= k2) {
-				t = intersect(slice, ax, ay, bx, by, k2);
-				if (trackMetrics) slice.start = len + segLen * t;
+				t = intersect(out, w, ax, ay, bx, by, k2, axis, round);
+				w += 3;
+				if (trackMetrics) sliceMetricStart = len + segLen * t;
 			}
-		} else addPoint(slice, ax, ay, az);
+		} else {
+			out[w] = ax;
+			out[w + 1] = ay;
+			out[w + 2] = az;
+			w += 3;
+		}
 		if (b < k1 && a >= k1) {
-			t = intersect(slice, ax, ay, bx, by, k1);
+			t = intersect(out, w, ax, ay, bx, by, k1, axis, round);
+			w += 3;
 			exited = true;
 		}
 		if (b > k2 && a <= k2) {
-			t = intersect(slice, ax, ay, bx, by, k2);
+			t = intersect(out, w, ax, ay, bx, by, k2, axis, round);
+			w += 3;
 			exited = true;
 		}
 		if (!isPolygon && exited) {
-			if (trackMetrics) slice.end = len + segLen * t;
-			newGeom.push(slice);
-			slice = newSlice(geom);
+			const sliceLen = (w - sliceWriteStart) / 3;
+			if (sliceLen > 0) {
+				out[headerIdx] = sliceLen;
+				if (trackMetrics) /** @type {number[]} */ metrics.push(sliceMetricStart, len + segLen * t);
+				headerIdx = w;
+				out[w] = 0;
+				out[w + 1] = ringSize;
+				w += 2;
+				sliceWriteStart = w;
+			}
 		}
 		if (trackMetrics) len += segLen;
 	}
-	let last = geom.length - 3;
+	const last = coordsEnd - 3;
 	const ax = geom[last];
 	const ay = geom[last + 1];
 	const az = geom[last + 2];
 	const a = axis === 0 ? ax : ay;
-	if (a >= k1 && a <= k2) addPoint(slice, ax, ay, az);
-	last = slice.length - 3;
-	if (isPolygon && last >= 3 && (slice[last] !== slice[0] || slice[last + 1] !== slice[1])) addPoint(slice, slice[0], slice[1], slice[2]);
-	if (slice.length) newGeom.push(slice);
+	if (a >= k1 && a <= k2) {
+		out[w] = ax;
+		out[w + 1] = ay;
+		out[w + 2] = az;
+		w += 3;
+	}
+	if (isPolygon && w - sliceWriteStart >= 6 && (out[w - 3] !== out[sliceWriteStart] || out[w - 2] !== out[sliceWriteStart + 1])) {
+		out[w] = out[sliceWriteStart];
+		out[w + 1] = out[sliceWriteStart + 1];
+		out[w + 2] = out[sliceWriteStart + 2];
+		w += 3;
+	}
+	const sliceLen = (w - sliceWriteStart) / 3;
+	if (sliceLen > 0) {
+		out[headerIdx] = sliceLen;
+		if (trackMetrics) /** @type {number[]} */ metrics.push(sliceMetricStart, len);
+	} else w = headerIdx;
+	return w;
 }
-function newSlice(line) {
-	const slice = [];
-	slice.size = line.size;
-	slice.start = line.start;
-	slice.end = line.end;
-	return slice;
-}
-function clipLines(geom, newGeom, k1, k2, axis, isPolygon) {
-	for (const line of geom) clipLine(line, newGeom, k1, k2, axis, isPolygon, false);
-}
-function addPoint(out, x, y, z) {
-	out.push(x, y, z);
-}
-function intersectX(out, ax, ay, bx, by, x) {
-	const t = (x - ax) / (bx - ax);
-	addPoint(out, x, ay + (by - ay) * t, 1);
+/** @param {CoordArray} out @param {number} w @param {number} ax @param {number} ay @param {number} bx @param {number} by @param {number} k @param {0|1} axis @param {boolean} round @returns {number} */
+function intersect(out, w, ax, ay, bx, by, k, axis, round) {
+	let t;
+	if (axis === 0) {
+		t = (k - ax) / (bx - ax);
+		const y = ay + (by - ay) * t;
+		out[w] = k;
+		out[w + 1] = round ? Math.floor(y + .5) : y;
+	} else {
+		t = (k - ay) / (by - ay);
+		const x = ax + (bx - ax) * t;
+		out[w] = round ? Math.floor(x + .5) : x;
+		out[w + 1] = k;
+	}
+	out[w + 2] = KEEP_Z;
 	return t;
 }
-function intersectY(out, ax, ay, bx, by, y) {
-	const t = (y - ay) / (by - ay);
-	addPoint(out, ax + (bx - ax) * t, y, 1);
-	return t;
-}
-//#endregion
-//#region node_modules/geojson-vt/src/wrap.js
+// node_modules/geojson-vt/src/wrap.js
+/** @import {AnyFeature, CoordArray, InternalOptions as Options} from './internal.d.ts' */
+/** @param {AnyFeature[]} features @param {Options} options @returns {AnyFeature[]} */
 function wrap(features, options) {
-	const buffer = options.buffer / options.extent;
+	const S = options.worldScale;
+	const O = options.originShift;
+	const buf = options.buffer * S / options.extent;
+	const w0 = -O * S;
+	const w1 = (1 - O) * S;
 	let merged = features;
-	const left = clip(features, 1, -1 - buffer, buffer, 0, -1, 2, options);
-	const right = clip(features, 1, 1 - buffer, 2 + buffer, 0, -1, 2, options);
+	const left = clip(features, w0 - S - buf, w0 + buf, 0, w0 - S, w1 + S, options);
+	const right = clip(features, w1 - buf, w1 + S + buf, 0, w0 - S, w1 + S, options);
 	if (left || right) {
-		merged = clip(features, 1, -buffer, 1 + buffer, 0, -1, 2, options) || [];
-		if (left) merged = shiftFeatureCoords(left, 1).concat(merged);
-		if (right) merged = merged.concat(shiftFeatureCoords(right, -1));
+		merged = clip(features, w0 - buf, w1 + buf, 0, w0 - S, w1 + S, options) || [];
+		if (left) merged = shiftFeatureCoords(left, S).concat(merged);
+		if (right) merged = merged.concat(shiftFeatureCoords(right, -S));
 	}
 	return merged;
 }
+/** @param {AnyFeature[]} features @param {number} offset @returns {AnyFeature[]} */
 function shiftFeatureCoords(features, offset) {
-	const newFeatures = [];
-	for (let i = 0; i < features.length; i++) {
-		const feature = features[i];
-		const type = feature.type;
-		let newGeometry;
-		if (type === "Point" || type === "MultiPoint" || type === "LineString") newGeometry = shiftCoords(feature.geometry, offset);
-		else if (type === "MultiLineString" || type === "Polygon") {
-			newGeometry = [];
-			for (const line of feature.geometry) newGeometry.push(shiftCoords(line, offset));
-		} else if (type === "MultiPolygon") {
-			newGeometry = [];
-			for (const polygon of feature.geometry) {
-				const newPolygon = [];
-				for (const line of polygon) newPolygon.push(shiftCoords(line, offset));
-				newGeometry.push(newPolygon);
-			}
+	const out = [];
+	for (const feature of features) {
+		if (feature.type === 4) {
+			out.push(createSinglePoint(feature.id, feature.x + offset, feature.y, feature.tags));
+			continue;
 		}
-		newFeatures.push(createFeature(feature.id, type, newGeometry, feature.tags));
-	}
-	return newFeatures;
-}
-function shiftCoords(points, offset) {
-	const newPoints = [];
-	newPoints.size = points.size;
-	if (points.start !== void 0) {
-		newPoints.start = points.start;
-		newPoints.end = points.end;
-	}
-	for (let i = 0; i < points.length; i += 3) newPoints.push(points[i] + offset, points[i + 1], points[i + 2]);
-	return newPoints;
-}
-//#endregion
-//#region node_modules/geojson-vt/src/transform.js
-function transformTile(tile, extent) {
-	if (tile.transformed) return tile;
-	const z2 = 1 << tile.z;
-	const tx = tile.x;
-	const ty = tile.y;
-	for (const feature of tile.features) {
-		const geom = feature.geometry;
-		const type = feature.type;
-		feature.geometry = [];
-		if (type === 1) for (let j = 0; j < geom.length; j += 2) feature.geometry.push(transformPoint(geom[j], geom[j + 1], extent, z2, tx, ty));
-		else for (let j = 0; j < geom.length; j++) {
-			const ring = [];
-			for (let k = 0; k < geom[j].length; k += 2) ring.push(transformPoint(geom[j][k], geom[j][k + 1], extent, z2, tx, ty));
-			feature.geometry.push(ring);
+		const newGeom = shiftGeom(feature.geometry, feature.type, offset);
+		const shifted = createFeature(feature.id, feature.type, newGeom, feature.tags);
+		if (feature.start !== void 0) {
+			shifted.start = feature.start;
+			shifted.end = feature.end;
+			shifted.size = feature.size;
 		}
+		out.push(shifted);
 	}
-	tile.transformed = true;
-	return tile;
+	return out;
 }
-function transformPoint(x, y, extent, z2, tx, ty) {
-	return [Math.round(extent * (x * z2 - tx)), Math.round(extent * (y * z2 - ty))];
+/** @param {CoordArray} geom @param {1|2|3} type @param {number} offset @returns {CoordArray} */
+function shiftGeom(geom, type, offset) {
+	const out = geom.slice();
+	if (type === 1) for (let i = 0; i < out.length; i += 3) out[i] += offset;
+	else for (let i = 0; i < out.length;) {
+		const coordsEnd = i + 2 + out[i] * 3;
+		for (let j = i + 2; j < coordsEnd; j += 3) out[j] += offset;
+		i = coordsEnd;
+	}
+	return out;
 }
-//#endregion
-//#region node_modules/geojson-vt/src/tile.js
+// node_modules/geojson-vt/src/tile.js
+/** @import {AnyFeature, CoordArray, InternalOptions as Options, Tile, TileCoordArray, TileCoordArrayCtor, TileFeature, TileFeatureSinglePoint} from './internal.d.ts' */
+/** @param {AnyFeature[]} features @param {number} z @param {number} tx @param {number} ty @param {Options} options @returns {Tile} */
 function createTile(features, z, tx, ty, options) {
-	const tolerance = z === options.maxZoom ? 0 : options.tolerance / ((1 << z) * options.extent);
+	const extent = options.extent;
+	const S = options.worldScale;
+	const O = options.originShift;
+	const tolerance = z === options.maxZoom ? 0 : options.tolerance * S / ((1 << z) * extent);
+	const z2 = 1 << z;
+	const CoordArray = extent + options.buffer <= 32767 ? Int16Array : Int32Array;
+	/** @type {Tile} */
 	const tile = {
 		features: [],
 		numPoints: 0,
@@ -18750,82 +18852,116 @@ function createTile(features, z, tx, ty, options) {
 		x: tx,
 		y: ty,
 		z,
-		transformed: false,
-		minX: 2,
-		minY: 1,
-		maxX: -1,
-		maxY: 0
+		minX: Infinity,
+		minY: Infinity,
+		maxX: -Infinity,
+		maxY: -Infinity
 	};
-	for (const feature of features) addFeature(tile, feature, tolerance, options);
+	for (const feature of features) addFeature(tile, feature, tolerance, options, z2, tx, ty, extent, CoordArray, S, O);
 	return tile;
 }
-function addFeature(tile, feature, tolerance, options) {
-	const geom = feature.geometry;
+/** @param {number} v @param {number} z2 @param {number} t @param {number} extent @param {number} S @param {number} O */
+function project(v, z2, t, extent, S, O) {
+	return Math.round(extent * ((v / S + O) * z2 - t));
+}
+/** @param {Tile} tile @param {AnyFeature} feature @param {number} tolerance @param {Options} options @param {number} z2 @param {number} tx @param {number} ty @param {number} extent @param {TileCoordArrayCtor} CoordArray @param {number} S @param {number} O */
+function addFeature(tile, feature, tolerance, options, z2, tx, ty, extent, CoordArray, S, O) {
 	const type = feature.type;
-	const simplified = [];
-	tile.minX = Math.min(tile.minX, feature.minX);
-	tile.minY = Math.min(tile.minY, feature.minY);
-	tile.maxX = Math.max(tile.maxX, feature.maxX);
-	tile.maxY = Math.max(tile.maxY, feature.maxY);
-	if (type === "Point" || type === "MultiPoint") for (let i = 0; i < geom.length; i += 3) {
-		simplified.push(geom[i], geom[i + 1]);
+	if (type === 4) {
+		const x = feature.x;
+		const y = feature.y;
+		if (x < tile.minX) tile.minX = x;
+		if (y < tile.minY) tile.minY = y;
+		if (x > tile.maxX) tile.maxX = x;
+		if (y > tile.maxY) tile.maxY = y;
 		tile.numPoints++;
 		tile.numSimplified++;
-	}
-	else if (type === "LineString") addLine(simplified, geom, tile, tolerance, false, false);
-	else if (type === "MultiLineString" || type === "Polygon") for (let i = 0; i < geom.length; i++) addLine(simplified, geom[i], tile, tolerance, type === "Polygon", i === 0);
-	else if (type === "MultiPolygon") for (let k = 0; k < geom.length; k++) {
-		const polygon = geom[k];
-		for (let i = 0; i < polygon.length; i++) addLine(simplified, polygon[i], tile, tolerance, true, i === 0);
-	}
-	if (simplified.length) {
-		let tags = feature.tags || null;
-		if (type === "LineString" && options.lineMetrics) {
-			tags = {};
-			for (const key in feature.tags) tags[key] = feature.tags[key];
-			tags["mapbox_clip_start"] = geom.start / geom.size;
-			tags["mapbox_clip_end"] = geom.end / geom.size;
-		}
+		/** @type {TileFeatureSinglePoint} */
 		const tileFeature = {
-			geometry: simplified,
-			type: type === "Polygon" || type === "MultiPolygon" ? 3 : type === "LineString" || type === "MultiLineString" ? 2 : 1,
-			tags
+			x: project(x, z2, tx, extent, S, O),
+			y: project(y, z2, ty, extent, S, O),
+			type: 4,
+			tags: feature.tags || null
 		};
-		if (feature.id !== null) tileFeature.id = feature.id;
+		if (feature.id !== void 0) tileFeature.id = feature.id;
 		tile.features.push(tileFeature);
-	}
-}
-function addLine(result, geom, tile, tolerance, isPolygon, isOuter) {
-	const sqTolerance = tolerance * tolerance;
-	if (tolerance > 0 && geom.size < (isPolygon ? sqTolerance : tolerance)) {
-		tile.numPoints += geom.length / 3;
 		return;
 	}
-	const ring = [];
-	for (let i = 0; i < geom.length; i += 3) {
-		if (tolerance === 0 || geom[i + 2] > sqTolerance) {
-			tile.numSimplified++;
-			ring.push(geom[i], geom[i + 1]);
+	const geom = feature.geometry;
+	/** @type {TileCoordArray | TileCoordArray[]} */
+	let simplified;
+	if (feature.minX < tile.minX) tile.minX = feature.minX;
+	if (feature.minY < tile.minY) tile.minY = feature.minY;
+	if (feature.maxX > tile.maxX) tile.maxX = feature.maxX;
+	if (feature.maxY > tile.maxY) tile.maxY = feature.maxY;
+	if (type === 1) {
+		const n = geom.length / 3;
+		simplified = new CoordArray(n * 2);
+		for (let i = 0, j = 0; i < geom.length; i += 3, j += 2) {
+			simplified[j] = project(geom[i], z2, tx, extent, S, O);
+			simplified[j + 1] = project(geom[i + 1], z2, ty, extent, S, O);
 		}
-		tile.numPoints++;
+		tile.numPoints += n;
+		tile.numSimplified += n;
+		if (!simplified.length) return;
+	} else {
+		simplified = [];
+		const isPolygon = type === 3;
+		for (let i = 0; i < geom.length;) {
+			const ringLen = geom[i];
+			const ringSize = geom[i + 1];
+			const coords0 = i + 2;
+			const coordsEnd = coords0 + ringLen * 3;
+			addLine(simplified, geom, coords0, coordsEnd, ringSize, tile, tolerance, isPolygon, z2, tx, ty, extent, CoordArray, S, O);
+			i = coordsEnd;
+		}
+		if (!simplified.length) return;
 	}
-	if (isPolygon) rewind(ring, isOuter);
+	let tags = feature.tags || null;
+	if (type === 2 && options.lineMetrics) {
+		tags = {};
+		for (const key in feature.tags) tags[key] = feature.tags[key];
+		const start = feature.start;
+		const end = feature.end;
+		const size = feature.size;
+		const lenScale = extent * z2 / S;
+		tags.mapbox_clip_feature_len = size * lenScale;
+		tags.mapbox_clip_seg_len = (end - start) * lenScale;
+		tags.mapbox_clip_start = size > 0 ? Math.max(0, start / size) : 0;
+		tags.mapbox_clip_end = end >= size ? 1 : end / size;
+	}
+	const tileFeature = {
+		geometry: simplified,
+		type,
+		tags
+	};
+	if (feature.id !== void 0) tileFeature.id = feature.id;
+	tile.features.push(tileFeature);
+}
+/** @param {TileCoordArray[]} result @param {CoordArray} geom @param {number} coords0 @param {number} coordsEnd @param {number} ringSize @param {Tile} tile @param {number} tolerance @param {boolean} isPolygon @param {number} z2 @param {number} tx @param {number} ty @param {number} extent @param {TileCoordArrayCtor} CoordArray @param {number} S @param {number} O */
+function addLine(result, geom, coords0, coordsEnd, ringSize, tile, tolerance, isPolygon, z2, tx, ty, extent, CoordArray, S, O) {
+	const ringLen = (coordsEnd - coords0) / 3;
+	if (Math.abs(ringSize) < tolerance) {
+		tile.numPoints += ringLen;
+		return;
+	}
+	let kept = 0;
+	if (tolerance === 0) kept = ringLen;
+	else for (let i = coords0; i < coordsEnd; i += 3) if (geom[i + 2] > tolerance) kept++;
+	tile.numPoints += ringLen;
+	tile.numSimplified += kept;
+	const ring = new CoordArray(kept * 2);
+	let w = 0;
+	for (let i = coords0; i < coordsEnd; i += 3) if (tolerance === 0 || geom[i + 2] > tolerance) {
+		ring[w++] = project(geom[i], z2, tx, extent, S, O);
+		ring[w++] = project(geom[i + 1], z2, ty, extent, S, O);
+	}
 	result.push(ring);
 }
-function rewind(ring, clockwise) {
-	let area = 0;
-	for (let i = 0, len = ring.length, j = len - 2; i < len; j = i, i += 2) area += (ring[i] - ring[j]) * (ring[i + 1] + ring[j + 1]);
-	if (area > 0 === clockwise) for (let i = 0, len = ring.length; i < len / 2; i += 2) {
-		const x = ring[i];
-		const y = ring[i + 1];
-		ring[i] = ring[len - 2 - i];
-		ring[i + 1] = ring[len - 1 - i];
-		ring[len - 2 - i] = x;
-		ring[len - 1 - i] = y;
-	}
-}
-//#endregion
-//#region node_modules/geojson-vt/src/index.js
+// node_modules/geojson-vt/src/index.js
+/** @import {AnyFeature, InternalOptions, Tile} from './internal.d.ts' */
+/** @import {Options, LegacyTile, LegacyFeature, RawTile, TileCoord} from './index.d.ts' */
+/** @type {Required<Options>} */
 var defaultOptions = {
 	maxZoom: 14,
 	indexMaxZoom: 5,
@@ -18839,44 +18975,58 @@ var defaultOptions = {
 	debug: 0
 };
 var GeoJSONVT = class {
+	/** @param {import('geojson').GeoJSON} data @param {Options} [options] */
 	constructor(data, options) {
-		options = this.options = extend(Object.create(defaultOptions), options);
-		const debug = options.debug;
+		/** @type {InternalOptions} */
+		const opts = this.options = Object.assign(Object.create(defaultOptions), options);
+		const debug = opts.debug;
 		if (debug) console.time("preprocess data");
-		if (options.maxZoom < 0 || options.maxZoom > 24) throw new Error("maxZoom should be in the 0-24 range");
-		if (options.promoteId && options.generateId) throw new Error("promoteId and generateId cannot be used together.");
-		let features = convert(data, options);
+		if (opts.maxZoom < 0 || opts.maxZoom > 24) throw new Error("maxZoom should be in the 0-24 range");
+		if (opts.promoteId && opts.generateId) throw new Error("promoteId and generateId cannot be used together.");
+		const useInt32 = (opts.extent + 2 * opts.buffer) * (1 << opts.maxZoom) < 4294967296;
+		opts.useInt32 = useInt32;
+		opts.CoordArray = useInt32 ? Int32Array : Float64Array;
+		opts.worldScale = useInt32 ? opts.extent * (1 << opts.maxZoom) : 1;
+		opts.originShift = useInt32 ? .5 : 0;
+		let features = convert(data, opts);
+		/** @type {Record<number, Tile>} */
 		this.tiles = {};
+		/** @type {TileCoord[]} */
 		this.tileCoords = [];
+		/** @type {Record<string, number>} */
+		this.stats = {};
+		this.total = 0;
 		if (debug) {
 			console.timeEnd("preprocess data");
-			console.log("index: maxZoom: %d, maxPoints: %d", options.indexMaxZoom, options.indexMaxPoints);
+			console.log("index: maxZoom: %d, maxPoints: %d", opts.indexMaxZoom, opts.indexMaxPoints);
 			console.time("generate tiles");
-			this.stats = {};
-			this.total = 0;
 		}
-		features = wrap(features, options);
+		features = wrap(features, opts);
 		if (features.length) this.splitTile(features, 0, 0, 0);
 		if (debug) {
-			if (features.length) console.log("features: %d, points: %d", this.tiles[0].numFeatures, this.tiles[0].numPoints);
+			const top = this.tiles[0];
+			if (top) console.log(`features: ${top.numFeatures}, points: ${top.numPoints}`);
 			console.timeEnd("generate tiles");
 			console.log("tiles generated:", this.total, JSON.stringify(this.stats));
 		}
 	}
+	/** @param {AnyFeature[]} features @param {number} z @param {number} x @param {number} y @param {number} [cz] @param {number} [cx] @param {number} [cy] */
 	splitTile(features, z, x, y, cz, cx, cy) {
-		const stack = [
-			features,
+		/** @type {AnyFeature[][]} */
+		const featStack = [features];
+		/** @type {number[]} */
+		const numStack = [
 			z,
 			x,
 			y
 		];
 		const options = this.options;
 		const debug = options.debug;
-		while (stack.length) {
-			y = stack.pop();
-			x = stack.pop();
-			z = stack.pop();
-			features = stack.pop();
+		while (featStack.length) {
+			y = numStack.pop();
+			x = numStack.pop();
+			z = numStack.pop();
+			features = featStack.pop();
 			const z2 = 1 << z;
 			const id = toID(z, x, y);
 			let tile = this.tiles[id];
@@ -18888,62 +19038,71 @@ var GeoJSONVT = class {
 					x,
 					y
 				});
-				if (debug) {
-					if (debug > 1) {
-						console.log("tile z%d-%d-%d (features: %d, points: %d, simplified: %d)", z, x, y, tile.numFeatures, tile.numPoints, tile.numSimplified);
-						console.timeEnd("creation");
-					}
-					const key = `z${z}`;
-					this.stats[key] = (this.stats[key] || 0) + 1;
-					this.total++;
+				this.stats[z] = (this.stats[z] || 0) + 1;
+				this.total++;
+				if (debug > 1) {
+					console.log(`tile z${z}-${x}-${y} (features: ${tile.numFeatures}, points: ${tile.numPoints}, simplified: ${tile.numSimplified})`);
+					console.timeEnd("creation");
 				}
 			}
 			tile.source = features;
 			if (cz == null) {
 				if (z === options.indexMaxZoom || tile.numPoints <= options.indexMaxPoints) continue;
 			} else if (z === options.maxZoom || z === cz) continue;
-			else if (cz != null) {
+			else {
 				const zoomSteps = cz - z;
 				if (x !== cx >> zoomSteps || y !== cy >> zoomSteps) continue;
 			}
 			tile.source = null;
 			if (features.length === 0) continue;
 			if (debug > 1) console.time("clipping");
-			const k1 = .5 * options.buffer / options.extent;
-			const k2 = .5 - k1;
-			const k3 = .5 + k1;
-			const k4 = 1 + k1;
+			const S = options.worldScale;
+			const O = options.originShift;
+			const step = S / z2;
+			const b = .5 * options.buffer * S / (z2 * options.extent);
+			const xc = (x / z2 - O) * S;
+			const yc = (y / z2 - O) * S;
 			let tl = null;
 			let bl = null;
 			let tr = null;
 			let br = null;
-			const left = clip(features, z2, x - k1, x + k3, 0, tile.minX, tile.maxX, options);
-			const right = clip(features, z2, x + k2, x + k4, 0, tile.minX, tile.maxX, options);
+			const left = clip(features, xc - b, xc + step / 2 + b, 0, tile.minX, tile.maxX, options);
+			const right = clip(features, xc + step / 2 - b, xc + step + b, 0, tile.minX, tile.maxX, options);
 			if (left) {
-				tl = clip(left, z2, y - k1, y + k3, 1, tile.minY, tile.maxY, options);
-				bl = clip(left, z2, y + k2, y + k4, 1, tile.minY, tile.maxY, options);
+				tl = clip(left, yc - b, yc + step / 2 + b, 1, tile.minY, tile.maxY, options);
+				bl = clip(left, yc + step / 2 - b, yc + step + b, 1, tile.minY, tile.maxY, options);
 			}
 			if (right) {
-				tr = clip(right, z2, y - k1, y + k3, 1, tile.minY, tile.maxY, options);
-				br = clip(right, z2, y + k2, y + k4, 1, tile.minY, tile.maxY, options);
+				tr = clip(right, yc - b, yc + step / 2 + b, 1, tile.minY, tile.maxY, options);
+				br = clip(right, yc + step / 2 - b, yc + step + b, 1, tile.minY, tile.maxY, options);
 			}
 			if (debug > 1) console.timeEnd("clipping");
-			stack.push(tl || [], z + 1, x * 2, y * 2);
-			stack.push(bl || [], z + 1, x * 2, y * 2 + 1);
-			stack.push(tr || [], z + 1, x * 2 + 1, y * 2);
-			stack.push(br || [], z + 1, x * 2 + 1, y * 2 + 1);
+			featStack.push(tl || [], bl || [], tr || [], br || []);
+			numStack.push(z + 1, x * 2, y * 2, z + 1, x * 2, y * 2 + 1, z + 1, x * 2 + 1, y * 2, z + 1, x * 2 + 1, y * 2 + 1);
 		}
 	}
+	/** @param {number|string} z @param {number|string} x @param {number|string} y @returns {LegacyTile|null} */
 	getTile(z, x, y) {
+		const tile = this.findTile(z, x, y);
+		return tile ? materializeTile(tile) : null;
+	}
+	/** @param {number|string} z @param {number|string} x @param {number|string} y @returns {RawTile|null} */
+	getTileRaw(z, x, y) {
+		const tile = this.findTile(z, x, y);
+		return tile ? { features: tile.features } : null;
+	}
+	/** @param {number|string} z @param {number|string} x @param {number|string} y @returns {Tile|null} */
+	findTile(z, x, y) {
+		var _this$tiles$id;
 		z = +z;
 		x = +x;
 		y = +y;
-		const { extent, debug } = this.options;
+		const debug = this.options.debug;
 		if (z < 0 || z > 24) return null;
 		const z2 = 1 << z;
 		x = x + z2 & z2 - 1;
 		const id = toID(z, x, y);
-		if (this.tiles[id]) return transformTile(this.tiles[id], extent);
+		if (this.tiles[id]) return this.tiles[id];
 		if (debug > 1) console.log("drilling down to z%d-%d-%d", z, x, y);
 		let z0 = z;
 		let x0 = x;
@@ -18962,21 +19121,55 @@ var GeoJSONVT = class {
 		}
 		this.splitTile(parent.source, z0, x0, y0, z, x, y);
 		if (debug > 1) console.timeEnd("drilling down");
-		return this.tiles[id] ? transformTile(this.tiles[id], extent) : null;
+		return (_this$tiles$id = this.tiles[id]) !== null && _this$tiles$id !== void 0 ? _this$tiles$id : null;
 	}
 };
+/** @param {Tile} tile @returns {LegacyTile} */
+function materializeTile(tile) {
+	/** @type {LegacyFeature[]} */
+	const features = [];
+	for (const f of tile.features) {
+		/** @type {LegacyFeature} */
+		let legacy;
+		if (f.type === 4) {
+			var _f$tags;
+			legacy = {
+				type: 1,
+				geometry: [[f.x, f.y]],
+				tags: (_f$tags = f.tags) !== null && _f$tags !== void 0 ? _f$tags : null
+			};
+		} else if (f.type === 1) {
+			var _f$tags2;
+			legacy = {
+				type: 1,
+				geometry: flatToPairs(f.geometry),
+				tags: (_f$tags2 = f.tags) !== null && _f$tags2 !== void 0 ? _f$tags2 : null
+			};
+		} else {
+			var _f$tags3;
+			legacy = {
+				type: f.type,
+				geometry: f.geometry.map(flatToPairs),
+				tags: (_f$tags3 = f.tags) !== null && _f$tags3 !== void 0 ? _f$tags3 : null
+			};
+		}
+		if (f.id != null) legacy.id = f.id;
+		features.push(legacy);
+	}
+	return { features };
+}
+/** @param {import('./internal.d.ts').TileCoordArray} flat @returns {[number, number][]} */
+function flatToPairs(flat) {
+	/** @type {[number, number][]} */
+	const pairs = [];
+	for (let i = 0; i < flat.length; i += 2) pairs.push([flat[i], flat[i + 1]]);
+	return pairs;
+}
+/** @param {number} z @param {number} x @param {number} y */
 function toID(z, x, y) {
 	return ((1 << z) * y + x) * 32 + z;
 }
-function extend(dest, src) {
-	for (const i in src) dest[i] = src[i];
-	return dest;
-}
-function geojsonvt(data, options) {
-	return new GeoJSONVT(data, options);
-}
-//#endregion
-//#region node_modules/react-colorful/dist/index.mjs
+// node_modules/react-colorful/dist/index.mjs
 function l() {
 	return (l = Object.assign || function(e) {
 		for (var r = 1; r < arguments.length; r++) {
@@ -19174,9 +19367,9 @@ var B = function(e) {
 var L = function(e) {
 	var r = e.r, n = e.g, t = e.b, o = e.a, a = Math.max(r, n, t), u = a - Math.min(r, n, t), l = u ? a === r ? (n - t) / u : a === n ? 2 + (t - r) / u : 4 + (r - n) / u : 0;
 	return {
-		h: b(60 * (l < 0 ? l + 6 : l)),
-		s: b(a ? u / a * 100 : 0),
-		v: b(a / 255 * 100),
+		h: 60 * (l < 0 ? l + 6 : l),
+		s: a ? u / a * 100 : 0,
+		v: a / 255 * 100,
 		a: o
 	};
 };
@@ -19343,8 +19536,7 @@ var Q = {
 var Z = function(r) {
 	return import_react.createElement(J, l({}, r, { colorModel: Q }));
 };
-//#endregion
-//#region node_modules/colorbrewer/index.es.js
+// node_modules/colorbrewer/index.es.js
 var index = {
 	schemeGroups: {
 		sequential: [
@@ -21681,8 +21873,7 @@ var index = {
 		]
 	}
 };
-//#endregion
-//#region node_modules/stickybits/dist/stickybits.es.js
+// node_modules/stickybits/dist/stickybits.es.js
 /**
 stickybits - Stickybits is a lightweight alternative to `position: sticky` polyfills
 @version v3.7.11
@@ -21936,8 +22127,7 @@ var Stickybits = /*#__PURE__*/ function() {
 function stickybits(target, o) {
 	return new Stickybits(target, o);
 }
-//#endregion
-//#region node_modules/lodash.debounce/index.js
+// node_modules/lodash.debounce/index.js
 var require_lodash_debounce = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* lodash (Custom Build) <https://lodash.com/>
@@ -22231,7 +22421,6 @@ var require_lodash_debounce = /* @__PURE__ */ __commonJSMin(((exports, module) =
 	}
 	module.exports = debounce;
 }));
-//#endregion
-export { require_Popover as C, zt as S, combineReducers as _, geojsonvt as a, require_lodash_xor as b, cjs_default as c, Provider_default as d, batch as f, createSelector as g, configureStore as h, Z as i, purify_default as l, useSelector as m, stickybits as n, require_papaparse_min as o, useDispatch as p, index as r, Rnd as s, require_lodash_debounce as t, purify_es_exports as u, proj4 as v, Fe as x, require_lodash_xorby as y };
+export { require_Popover as S, proj4 as _, GeoJSONVT as a, Fe as b, cjs_default as c, batch as d, useDispatch as f, combineReducers as g, createSelector as h, Z as i, purify_default as l, configureStore as m, stickybits as n, require_papaparse_min as o, useSelector as p, index as r, Rnd as s, require_lodash_debounce as t, Provider as u, require_lodash_xorby as v, zt as x, require_lodash_xor as y };
 
 //# sourceMappingURL=vendor-debug.js.map

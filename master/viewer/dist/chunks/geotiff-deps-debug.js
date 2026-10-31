@@ -1,5 +1,4 @@
-//#endregion
-//#region node_modules/@petamoriken/float16/src/_util/primordials.mjs
+// node_modules/@petamoriken/float16/src/_util/primordials.mjs
 /** @type {<T extends (...args: any) => any>(target: T) => (thisArg: ThisType<T>, ...args: any[]) => any} */
 function uncurryThis(target) {
 	return (thisArg, ...args) => {
@@ -84,8 +83,7 @@ var WeakMapPrototypeGet = uncurryThis(WeakMapPrototype.get);
 WeakMapPrototype.has;
 /** @type {<K extends {}, V>(weakMap: WeakMap<K, V>, key: K, value: V) => WeakMap} */
 var WeakMapPrototypeSet = uncurryThis(WeakMapPrototype.set);
-//#endregion
-//#region node_modules/@petamoriken/float16/src/_util/arrayIterator.mjs
+// node_modules/@petamoriken/float16/src/_util/arrayIterator.mjs
 /** @type {WeakMap<{}, IterableIterator<any>>} */
 var arrayIterators = new NativeWeakMap();
 var SafeIteratorPrototype = ObjectCreate(null, {
@@ -186,8 +184,7 @@ function convertToNumber(float16bits) {
 	uint32View[0] = mantissaTable[offsetTable[i] + (float16bits & 1023)] + exponentTable[i];
 	return floatView[0];
 }
-//#endregion
-//#region node_modules/@petamoriken/float16/src/DataView.mjs
+// node_modules/@petamoriken/float16/src/DataView.mjs
 /**
 * returns an unsigned 16-bit float at the specified byte offset from the start of the DataView
 * @param {DataView} dataView
@@ -198,8 +195,7 @@ function convertToNumber(float16bits) {
 function getFloat16(dataView, byteOffset, ...opts) {
 	return convertToNumber(DataViewPrototypeGetUint16(dataView, byteOffset, ...safeIfNeeded(opts)));
 }
-//#endregion
-//#region node_modules/xml-utils/get-attribute.mjs
+// node_modules/xml-utils/get-attribute.mjs
 function getAttribute(tag, attributeName, options) {
 	const debug = options && options.debug || false;
 	if (debug) console.log("[xml-utils] getting " + attributeName + " in " + tag);
@@ -215,29 +211,25 @@ function getAttribute(tag, attributeName, options) {
 		if (match) return match[1];
 	}
 }
-//#endregion
-//#region node_modules/xml-utils/index-of-match.mjs
+// node_modules/xml-utils/index-of-match.mjs
 function indexOfMatch(xml, pattern, startIndex) {
 	const match = new RegExp(pattern).exec(xml.slice(startIndex));
 	if (match) return startIndex + match.index;
 	else return -1;
 }
-//#endregion
-//#region node_modules/xml-utils/index-of-match-end.mjs
+// node_modules/xml-utils/index-of-match-end.mjs
 function indexOfMatchEnd(xml, pattern, startIndex) {
 	const match = new RegExp(pattern).exec(xml.slice(startIndex));
 	if (match) return startIndex + match.index + match[0].length - 1;
 	else return -1;
 }
-//#endregion
-//#region node_modules/xml-utils/count-substring.mjs
+// node_modules/xml-utils/count-substring.mjs
 function countSubstring(string, substring) {
 	const pattern = new RegExp(substring, "g");
 	const match = string.match(pattern);
 	return match ? match.length : 0;
 }
-//#endregion
-//#region node_modules/xml-utils/find-tag-by-name.mjs
+// node_modules/xml-utils/find-tag-by-name.mjs
 function findTagByName(xml, tagName, options) {
 	const debug = options && options.debug || false;
 	const nested = !(options && typeof options.nested === false);
@@ -278,8 +270,7 @@ function findTagByName(xml, tagName, options) {
 		end
 	};
 }
-//#endregion
-//#region node_modules/xml-utils/find-tags-by-name.mjs
+// node_modules/xml-utils/find-tags-by-name.mjs
 function findTagsByName(xml, tagName, options) {
 	const tags = [];
 	const debug = options && options.debug || false;
@@ -297,8 +288,7 @@ function findTagsByName(xml, tagName, options) {
 	if (debug) console.log("findTagsByName found", tags.length, "tags");
 	return tags;
 }
-//#endregion
-//#region node_modules/web-worker/src/browser/index.js
+// node_modules/web-worker/src/browser/index.js
 /**
 * Copyright 2020 Google LLC
 *
@@ -315,8 +305,7 @@ function findTagsByName(xml, tagName, options) {
 * limitations under the License.
 */
 var browser_default = typeof Worker !== "undefined" ? Worker : void 0;
-//#endregion
-//#region node_modules/quick-lru/index.js
+// node_modules/quick-lru/index.js
 var QuickLRU = class extends Map {
 	constructor(options = {}) {
 		super();
@@ -487,7 +476,6 @@ var QuickLRU = class extends Map {
 		return JSON.stringify([...this.entriesAscending()]);
 	}
 };
-//#endregion
 export { getFloat16 as a, getAttribute as i, browser_default as n, findTagsByName as r, QuickLRU as t };
 
 //# sourceMappingURL=geotiff-deps-debug.js.map

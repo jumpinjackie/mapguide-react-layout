@@ -1,5 +1,5 @@
 import { t as __commonJSMin } from "./rolldown-runtime-debug.js";
-//#region node_modules/react/cjs/react.production.min.js
+// node_modules/react/cjs/react.production.min.js
 /**
 * @license React
 * react.production.min.js
@@ -340,13 +340,11 @@ var require_react_production_min = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.version = "18.3.1";
 }));
-//#endregion
-//#region node_modules/react/index.js
+// node_modules/react/index.js
 var require_react = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_production_min();
 }));
-//#endregion
-//#region node_modules/scheduler/cjs/scheduler.production.min.js
+// node_modules/scheduler/cjs/scheduler.production.min.js
 /**
 * @license React
 * scheduler.production.min.js
@@ -600,13 +598,11 @@ var require_scheduler_production_min = /* @__PURE__ */ __commonJSMin(((exports) 
 		};
 	};
 }));
-//#endregion
-//#region node_modules/scheduler/index.js
+// node_modules/scheduler/index.js
 var require_scheduler = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_scheduler_production_min();
 }));
-//#endregion
-//#region node_modules/react-dom/cjs/react-dom.production.min.js
+// node_modules/react-dom/cjs/react-dom.production.min.js
 /**
 * @license React
 * react-dom.production.min.js
@@ -7462,8 +7458,7 @@ var require_react_dom_production_min = /* @__PURE__ */ __commonJSMin(((exports) 
 	};
 	exports.version = "18.3.1-next-f1338f8080-20240426";
 }));
-//#endregion
-//#region node_modules/react-dom/index.js
+// node_modules/react-dom/index.js
 var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function checkDCE() {
 		if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") return;
@@ -7476,8 +7471,7 @@ var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	checkDCE();
 	module.exports = require_react_dom_production_min();
 }));
-//#endregion
-//#region node_modules/react/cjs/react-jsx-runtime.production.min.js
+// node_modules/react/cjs/react-jsx-runtime.production.min.js
 /**
 * @license React
 * react-jsx-runtime.production.min.js
@@ -7519,20 +7513,17 @@ var require_react_jsx_runtime_production_min = /* @__PURE__ */ __commonJSMin(((e
 	exports.jsx = q;
 	exports.jsxs = q;
 }));
-//#endregion
-//#region node_modules/react/jsx-runtime.js
+// node_modules/react/jsx-runtime.js
 var require_jsx_runtime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_jsx_runtime_production_min();
 }));
-//#endregion
-//#region node_modules/react-dom/client.js
+// node_modules/react-dom/client.js
 var require_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var m = require_react_dom();
 	exports.createRoot = m.createRoot;
 	exports.hydrateRoot = m.hydrateRoot;
 }));
-//#endregion
-//#region node_modules/prop-types/lib/ReactPropTypesSecret.js
+// node_modules/prop-types/lib/ReactPropTypesSecret.js
 /**
 * Copyright (c) 2013-present, Facebook, Inc.
 *
@@ -7542,8 +7533,7 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 var require_ReactPropTypesSecret = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED";
 }));
-//#endregion
-//#region node_modules/prop-types/factoryWithThrowingShims.js
+// node_modules/prop-types/factoryWithThrowingShims.js
 /**
 * Copyright (c) 2013-present, Facebook, Inc.
 *
@@ -7593,12 +7583,10 @@ var require_factoryWithThrowingShims = /* @__PURE__ */ __commonJSMin(((exports, 
 		return ReactPropTypes;
 	};
 }));
-//#endregion
-//#region node_modules/prop-types/index.js
+// node_modules/prop-types/index.js
 var require_prop_types = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_factoryWithThrowingShims()();
 }));
-//#endregion
 export { require_react as a, require_react_dom as i, require_client as n, require_jsx_runtime as r, require_prop_types as t };
 
 //# sourceMappingURL=react-vendor-debug.js.map

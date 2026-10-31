@@ -1,1 +1,0 @@
-import{i as e}from"./iframe-BJvvPdqm.js";import{t}from"./react-dom-CZ8j9IeC.js";var n=e((e=>{var n=t();e.createRoot=n.createRoot,e.hydrateRoot=n.hydrateRoot}));export{n as t};

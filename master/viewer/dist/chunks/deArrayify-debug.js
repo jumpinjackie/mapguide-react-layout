@@ -1,5 +1,5 @@
 import { n as MDF_INFINITY, t as MgError } from "../viewer-debug.js";
-//#region src/api/builders/deArrayify.ts
+// src/api/builders/deArrayify.ts
 /**
 * deArrayify.ts
 *
@@ -732,7 +732,6 @@ function deArrayify(json) {
 	for (const k in json) keys.push(k);
 	throw new MgError(`Unsure how to process JSON response. Root elements are: (${keys.join(", ")})`);
 }
-//#endregion
 export { deArrayify };
 
 //# sourceMappingURL=deArrayify-debug.js.map
